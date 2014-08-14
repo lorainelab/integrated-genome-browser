@@ -20,6 +20,8 @@ import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.dnd.DragSourceAdapter;
+import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
@@ -64,6 +66,13 @@ public class IGBToolBar extends JToolBar {
         toolbarItemPanel = new DragAndDropJPanel();
         toolbarItemPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         toolbarItemPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+        ((DragAndDropJPanel) toolbarItemPanel).addDragSourceListener(new DragSourceAdapter() {
+            @Override
+            public void dragDropEnd(DragSourceDropEvent dsde) {
+                triggerMouseReleasedEvent();
+            }
+            
+        });
         ((DragAndDropJPanel) toolbarItemPanel).addDropTargetListener(new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent dtde) {
@@ -72,14 +81,7 @@ public class IGBToolBar extends JToolBar {
 
             @Override
             public void dragEnter(DropTargetDragEvent dtde) {                
-                for (Component c : toolbarItemPanel.getComponents()) {
-                    if (c instanceof JRPButtonTLP) {
-                        for (MouseListener m : ((JRPButtonTLP) c).getMouseListeners()) {
-                            MouseEvent me = new MouseEvent(c, 0, 0, 0, 100, 100, 1, false);
-                            m.mouseReleased(me);
-                        }
-                    }
-                }
+                triggerMouseReleasedEvent();
             }
         });
 
@@ -129,7 +131,18 @@ public class IGBToolBar extends JToolBar {
 
         Selections.addRefreshSelectionListener(refreshSelectionListener);
     }
-
+    
+    private void triggerMouseReleasedEvent() {
+        for (Component c : toolbarItemPanel.getComponents()) {
+            if (c instanceof JRPButtonTLP) {
+                for (MouseListener m : ((JRPButtonTLP) c).getMouseListeners()) {
+                    MouseEvent me = new MouseEvent(c, 0, 0, 0, 100, 100, 1, false);
+                    m.mouseReleased(me);
+                }
+            }
+        }
+    }
+    
     public void setSelectionText(Map<String, Object> properties, String selectionText) {
         if (selectionText == null || selectionText.length() == 0) {
             selectionInfoTextField.setForeground(Color.LIGHT_GRAY);

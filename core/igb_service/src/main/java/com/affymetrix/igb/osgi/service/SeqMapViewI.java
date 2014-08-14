@@ -5,6 +5,7 @@ import java.util.List;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.event.AxisPopupListener;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
@@ -109,6 +110,8 @@ public interface SeqMapViewI {
 	public Object getMouseListener();
 	public void addPopupListener(ContextualPopupListener listener);
 	public void removePopupListener(ContextualPopupListener listener);
+        public void addAxisPopupListener(AxisPopupListener listener);
+	public void removeAxisPopupListener(AxisPopupListener listener);
 	public void selectAllGraphs();
 	public void select(List<SeqSymmetry> sym_list, boolean call_listener);
 	public void repackTheTiers(boolean full_repack, boolean stretch_vertically);

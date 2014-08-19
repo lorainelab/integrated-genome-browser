@@ -76,8 +76,7 @@
         <module>plugins/GraphTab</module>
         <module>plugins/IGBScript</module>
         <module>plugins/KeyWordSearch</module>
-        <module>plugins/NCBIBlast</module>
-        <module>plugins/NCBIPrimer</module>
+        <module>plugins/NCBIBlast</module>        
         <module>plugins/PropertyView</module>
         <module>plugins/RestrictionSites</module>
         <module>plugins/SearchModeIdOrProps</module>
@@ -116,6 +115,7 @@
                 <module>developmentPlugins/TutorialHelper</module>
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
+                <module>developmentPlugins/NCBIPrimer</module>
             </modules>
         </profile>      
     </profiles>

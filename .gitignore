@@ -200,3 +200,4 @@ www/release_notes/images/Thumbs.db
 /target/
 .gradle/
 .gradle/1.12/
+/developmentPlugins/NCBIPrimer/target/

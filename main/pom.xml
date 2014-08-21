@@ -302,17 +302,6 @@
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
-            <artifactId>ncbiPrimer</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency> 
-        <dependency> 
-            <groupId>com.affymetrix</groupId>
             <artifactId>propertyView</artifactId>
             <scope>runtime</scope>
             <exclusions>

@@ -371,7 +371,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	}
 
 	public void actionPerformed(ActionEvent evt) {
-		setRange(range_box.getText());
+		setRange(range_box.getText().trim());
 		// But if the user tries to zoom to something illogical, this can be helpful
 		// generally this is redundant, because zooming the view will make
 		// a call back to change this text.

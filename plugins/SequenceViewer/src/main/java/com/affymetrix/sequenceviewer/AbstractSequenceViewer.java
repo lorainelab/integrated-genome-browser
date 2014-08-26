@@ -748,88 +748,36 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     private String getSelectedResidues(int frame) {
         return ((NASequence) seqview.getSequence()).getTranslation(frame).substring(seqview.getSelectedStart(), seqview.getSelectedEnd()).trim();
     }
-
+    
     public void copyAnnotatedTransAction() {
 
-        int intronLengthBeforeCDSStart = 0;
-        int intronLengthBeforeCDSEnd = 0;
-        boolean computeIntronLengthForCDSStart = true;
-        boolean computerIntronLengthForCDSEnd = true;
-
         StringBuilder annotatedSeqStringBuffer = new StringBuilder();
-
-        int start = 0, end = 0;
-        Iterator<CreateValueSet> it_working = null;
-        if (toggleReverseComplement) {
-            it_working = reverse_complement.listIterator();
-        } else {
-            it_working = working_list.listIterator();
-        }
-        while (it_working.hasNext()) {
-            CreateValueSet cv = it_working.next();
-            String reverse_residues = cv.getSi().getReverseResidues();
+        Iterator<CreateValueSet> workingListIterator = working_list.listIterator();
+        boolean isStartCdsReached = false;
+        while (workingListIterator.hasNext()) {
+            CreateValueSet cv = workingListIterator.next();
             String residues = cv.getSi().getResidues();
 
-            if (cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal()) {
-                if (computeIntronLengthForCDSStart) {
-                    intronLengthBeforeCDSStart += residues.length();
-                }
-
-                if (computerIntronLengthForCDSEnd) {
-                    intronLengthBeforeCDSEnd += residues.length();
-                }
+            if (cv.si.getCdsStart() >= 0) {
+                isStartCdsReached = true;
+            }
+            if (!isStartCdsReached) {
                 continue;
             }
-
-            if (toggleReverseComplement) {
-                annotatedSeqStringBuffer.append(reverse_residues);
-            } else {
-                annotatedSeqStringBuffer.append(residues);
+            if (!(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal())) {
+                int start = cv.si.getCdsStart()>0?  cv.si.getCdsStart():0;
+                int end = cv.si.getCdsEnd() > 0 ? cv.si.getCdsEnd():residues.length();
+                annotatedSeqStringBuffer.append(residues.substring(start, end));
+            }
+            if (cv.si.getCdsEnd() >= 0) {
+                break;
             }
 
-            end += cv.getSi().getResidues().length();
-
-            if (cv.getSi().getCdsStart() >= 0) {
-                computeIntronLengthForCDSStart = false;
-            }
-
-            if (cv.getSi().getCdsEnd() >= 0) {
-                computerIntronLengthForCDSEnd = false;
-            }
-
-            start += cv.getSi().getResidues().length();
         }
 
-        String residues = "";
-        int cdsMinOffset = -1, cdsMaxOffset = -1;
-
-        if (showcDNASwitch) {
-            residues = seqview.getResidues().trim();
-            cdsMinOffset = seqview.getCdsStart();
-            cdsMaxOffset = seqview.getCdsEnd();
-        } else {
-            residues = annotatedSeqStringBuffer.toString();
-            cdsMinOffset = seqview.getCdsStart() - intronLengthBeforeCDSStart;
-            cdsMaxOffset = seqview.getCdsEnd() - intronLengthBeforeCDSEnd;
-        }
-        if (toggleReverseComplement) {
-            cdsMinOffset = cdsMinOffset + cdsMaxOffset;
-            cdsMaxOffset = cdsMinOffset - cdsMaxOffset;
-            cdsMinOffset = cdsMinOffset - cdsMaxOffset;
-        }
-        String annotatedResidues = residues.substring(cdsMinOffset, cdsMaxOffset + 3);
+        String annotatedResidues = annotatedSeqStringBuffer.toString();
         annotatedResidues = DNAUtils.translate(annotatedResidues, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
-        if (annotatedResidues != null) {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            StringBuffer hackbuf = new StringBuffer(annotatedResidues);
-            String hackstr = new String(hackbuf);
-            StringSelection data = new StringSelection(hackstr);
-            clipboard.setContents(data, null);
-        } else {
-            ErrorHandler.errorPanel("Missing Sequence Residues",
-                    "Don't have all the needed residues, can't copy to clipboard.\n"
-                    + "Please load sequence residues for this region.", Level.WARNING);
-        }
+        copyToClipBoard(annotatedResidues);
     }
 
     /*

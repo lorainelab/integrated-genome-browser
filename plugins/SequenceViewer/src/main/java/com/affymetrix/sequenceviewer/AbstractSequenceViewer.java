@@ -84,7 +84,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     private final static int INTRON_COLOR = 2;
     private boolean toggleReverseComplement = false;
 
-    List<CreateValueSet> bundle, reverse_bundle, reverse_complement, working_list;
+    List<CreateValueSet> bundle, reverseBundle, reverseComplementList, workingList;
     Color[] defaultColors = {Color.BLACK, Color.YELLOW, Color.WHITE};
     Color[] reverseColors = {Color.WHITE, Color.BLUE, Color.BLACK};
     Color[] okayColors = {Color.black, Color.black};
@@ -347,12 +347,12 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             SeqSpan span = residues_sym.getSpan(aseq);
             if (!span.isForward() && shouldReverseOnNegative()) {
                 Collections.reverse(bundle);
-                working_list = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<CreateValueSet>(bundle);
             } else {
-                working_list = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<CreateValueSet>(bundle);
             }
-            reverse_complement = new ArrayList<CreateValueSet>(working_list);
-            Collections.reverse(reverse_complement);
+            reverseComplementList = new ArrayList<CreateValueSet>(workingList);
+            Collections.reverse(reverseComplementList);
         }
     }
 
@@ -398,9 +398,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         Iterator<CreateValueSet> it_working = null;
         seqview.setResidues("");
         if (toggleReverseComplement) {
-            it_working = reverse_complement.listIterator();
+            it_working = reverseComplementList.listIterator();
         } else {
-            it_working = working_list.listIterator();
+            it_working = workingList.listIterator();
         }
         while (it_working.hasNext()) {
             CreateValueSet cv = it_working.next();
@@ -752,7 +752,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     public void copyAnnotatedTransAction() {
 
         StringBuilder annotatedSeqStringBuffer = new StringBuilder();
-        Iterator<CreateValueSet> workingListIterator = working_list.listIterator();
+        Iterator<CreateValueSet> workingListIterator = workingList.listIterator();
         boolean isStartCdsReached = false;
         while (workingListIterator.hasNext()) {
             CreateValueSet cv = workingListIterator.next();
@@ -789,9 +789,9 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;
         if (toggleReverseComplement) {
-            it_working = reverse_complement.listIterator();
+            it_working = reverseComplementList.listIterator();
         } else {
-            it_working = working_list.listIterator();
+            it_working = workingList.listIterator();
         }
         while (it_working.hasNext()) {
             CreateValueSet cv = it_working.next();

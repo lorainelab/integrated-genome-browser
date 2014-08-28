@@ -12,281 +12,291 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 
-
 /**
  *
  * @version $Id: WebLink.java 11425 2012-05-04 15:54:04Z lfrohman $
  */
 public final class WebLink implements Comparable<WebLink> {
-	private static final String separator = System.getProperty("line.separator");
-	private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
-	private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
-	
-	// TYPE is feature name, ID is annotation ID
-	public enum RegexType {
-		TYPE, ID
-	};
-	private String url = null;
-	private String name = "";
-	private String species = "";
-	private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
-	private String original_regex = null;
-	private String type = null; // server or local source
-	private RegexType regexType = RegexType.TYPE;	// matching on type or id
-	private Pattern pattern = null;
-	
-	public static final String LOCAL = "local";
-	
-	public WebLink() {
-	}
 
-	WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
-		this();
-		setName(name);
-		setRegex(regex);
-		setUrl(url);
-		setRegexType(regexType);
-	}
+    private static final String separator = System.getProperty("line.separator");
+    private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
+    private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
 
-	public String getName() {
-		return this.name;
-	}
+    // TYPE is feature name, ID is annotation ID
+    public enum RegexType {
 
-	public void setName(String name) {
-		if (name == null || "null".equals(name)) {
-			this.name = "";
-		} else {
-			this.name = name;
-		}
-	}
+        TYPE, ID
+    };
+    private String url = null;
+    private String name = "";
+    private String species = "";
+    private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
+    private String original_regex = null;
+    private String type = null; // server or local source
+    private RegexType regexType = RegexType.TYPE;	// matching on type or id
+    private Pattern pattern = null;
 
-	public void setIDField(String IDField) {
-		this.id_field_name = IDField;
-	}
+    public static final String LOCAL = "local";
 
-	public String getIDField() {
-		return this.id_field_name;
-	}
+    public WebLink() {
+    }
 
-	public String getSpeciesName() {
-		return this.species;
-	}
+    WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
+        this();
+        setName(name);
+        setRegex(regex);
+        setUrl(url);
+        setRegexType(regexType);
+    }
 
-	public void setSpeciesName(String name) {
-		if (name == null || "null".equals(name)) {
-			this.species = "";
-		} else {
-			this.species = name;
-		}
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public String getRegex() {
-		return original_regex;
-	}
+    public void setName(String name) {
+        if (name == null || "null".equals(name)) {
+            this.name = "";
+        } else {
+            this.name = name;
+        }
+    }
 
-	/** Sets the regular expression that must be matched.
-	 *  The special value <b>null</b> is also allowed, and matches every String.
-	 *  If the Regex does not begin with "(?i)", then this will be pre-pended
-	 *  automatically to generate a case-insensitive pattern.  If you want a
-	 *  case-sensitive pattern, start your regex with "(?-i)" and this will
-	 *  cancel-out the effect of the "(?i)" flag.
-	 */
-	public void setRegex(String regex) throws PatternSyntaxException {
-		if (regex == null || ".*".equals(regex) || "(?i).*".equals(regex)) {
-			pattern = null;
-			original_regex = regex;
-			return;
-		}
+    public void setIDField(String IDField) {
+        this.id_field_name = IDField;
+    }
 
-		// delete any double, triple, etc., "(?i)" strings caused by a bug in a previous version
-		while (regex.startsWith("(?i)(?i)")) {
-			regex = regex.substring(4);
-		}
-		if (!regex.startsWith("(?i)") && !type.equals(LOCAL)) {
-			regex = "(?i)" + regex; // force all server web link matches to be case-insensitive
-		}
-		original_regex = regex;
-		pattern = Pattern.compile(regex);
+    public String getIDField() {
+        return this.id_field_name;
+    }
 
-	}
+    public String getSpeciesName() {
+        return this.species;
+    }
 
-	/** Return the compiled form of the regular expression. */
-	public Pattern getPattern() {
-		return pattern;
-	}
+    public void setSpeciesName(String name) {
+        if (name == null || "null".equals(name)) {
+            this.species = "";
+        } else {
+            this.species = name;
+        }
+    }
 
-	/** Returns the URL (or URL pattern) associated with this WebLink.
-	 *  If the URL pattern contains any "$$" characters, those should be
-	 *  replaced with URL-Encoded annotation IDs to get the final URL.
-	 *  Better to use {@link #getURLForSym(SeqSymmetry)}.
-	 */
-	public String getUrl() {
-		return this.url;
-	}
+    public String getRegex() {
+        return original_regex;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    /**
+     * Sets the regular expression that must be matched. The special value
+     * <b>null</b> is also allowed, and matches every String. If the Regex does
+     * not begin with "(?i)", then this will be pre-pended automatically to
+     * generate a case-insensitive pattern. If you want a case-sensitive
+     * pattern, start your regex with "(?-i)" and this will cancel-out the
+     * effect of the "(?i)" flag.
+     */
+    public void setRegex(String regex) throws PatternSyntaxException {
+        if (regex == null || ".*".equals(regex) || "(?i).*".equals(regex)) {
+            pattern = null;
+            original_regex = regex;
+            return;
+        }
 
-	public String getType() {
-		return this.type;
-	}
+        // delete any double, triple, etc., "(?i)" strings caused by a bug in a previous version
+        while (regex.startsWith("(?i)(?i)")) {
+            regex = regex.substring(4);
+        }
+        if (!regex.startsWith("(?i)") && !type.equals(LOCAL)) {
+            regex = "(?i)" + regex; // force all server web link matches to be case-insensitive
+        }
+        original_regex = regex;
+        pattern = Pattern.compile(regex);
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    }
 
-	public void setRegexType(RegexType regexType) {
-		this.regexType = regexType;
-	}
+    /**
+     * Return the compiled form of the regular expression.
+     */
+    public Pattern getPattern() {
+        return pattern;
+    }
 
-	public RegexType getRegexType() {
-		return this.regexType;
-	}
+    /**
+     * Returns the URL (or URL pattern) associated with this WebLink. If the URL
+     * pattern contains any "$$" characters, those should be replaced with
+     * URL-Encoded annotation IDs to get the final URL. Better to use
+     * {@link #getURLForSym(SeqSymmetry)}.
+     */
+    public String getUrl() {
+        return this.url;
+    }
 
-	public boolean matches(String s) {
-		return (pattern == null
-				|| pattern.matcher(s).matches());
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	/**
-	 * replace all "$$" in the url pattern with the given id, URLEncoded
-	 * @param url
-	 * @param id
-	 * @return url
-	 */
-	public static String replacePlaceholderWithId(String url, String id) {
-		if (url == null || id == null) {
-			return url;
-		}
-		String encoded_id = "";
-		try {
-			encoded_id = URLEncoder.encode(id, "UTF-8");
-		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		url = DOUBLE_DOLLAR_PATTERN.matcher(url).replaceAll(encoded_id);
+    public String getType() {
+        return this.type;
+    }
 
-		return url;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	/**
-	 * replace all "$:genome:$" in the url pattern with the current seqGroup id, URLEncoded
-	 * @param url
-	 * @return url
-	 */
-	public static String replaceGenomeId(String url) {
-		if (url == null) {
-			return url;
-		}
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (group != null) {
-			String encoded_id = "";
-			try {
-				encoded_id = URLEncoder.encode(group.getID(), "UTF-8");
-			} catch (UnsupportedEncodingException ex) {
-				Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			url = DOLLAR_GENOME_PATTERN.matcher(url).replaceAll(encoded_id);
-		}
+    public void setRegexType(RegexType regexType) {
+        this.regexType = regexType;
+    }
 
-		return url;
-	}
+    public RegexType getRegexType() {
+        return this.regexType;
+    }
 
-	public String getURLForSym(SeqSymmetry sym) {
-		String url2 = getURLForSym_(sym);
-		return replaceGenomeId(url2);
-	}
+    public boolean matches(String s) {
+        return (pattern == null
+                || pattern.matcher(s).matches());
+    }
 
-	private String getURLForSym_(SeqSymmetry sym) {
+    /**
+     * replace all "$$" in the url pattern with the given id, URLEncoded
+     *
+     * @param url
+     * @param id
+     * @return url
+     */
+    public static String replacePlaceholderWithId(String url, String id) {
+        if (url == null || id == null) {
+            return url;
+        }
+        String encoded_id = "";
+        try {
+            encoded_id = URLEncoder.encode(id, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        url = DOUBLE_DOLLAR_PATTERN.matcher(url).replaceAll(encoded_id);
+
+        return url;
+    }
+
+    /**
+     * replace all "$:genome:$" in the url pattern with the current seqGroup id,
+     * URLEncoded
+     *
+     * @param url
+     * @return url
+     */
+    public static String replaceGenomeId(String url) {
+        if (url == null) {
+            return url;
+        }
+        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        if (group != null) {
+            String encoded_id = "";
+            try {
+                encoded_id = URLEncoder.encode(group.getID(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            url = DOLLAR_GENOME_PATTERN.matcher(url).replaceAll(encoded_id);
+        }
+
+        return url;
+    }
+
+    public String getURLForSym(SeqSymmetry sym) {
+        String url2 = getURLForSym_(sym);
+        return replaceGenomeId(url2);
+    }
+
+    private String getURLForSym_(SeqSymmetry sym) {
 		// Currently this just replaces any "$$" with the ID, but it could
-		// do something more sophisticated later, like replace "$$" with
-		// some other sym property.
-		if (id_field_name == null || id_field_name.trim().length() <= 0) {
-			return replacePlaceholderWithId(getUrl(), sym.getID());
-		}
+        // do something more sophisticated later, like replace "$$" with
+        // some other sym property.
+        if (id_field_name == null || id_field_name.trim().length() <= 0) {
+            return replacePlaceholderWithId(getUrl(), sym.getID());
+        }
 
-		Object field_value = null;
-		if (sym instanceof SymWithProps) {
-			field_value = ((SymWithProps) sym).getProperty(id_field_name);
-		}
+        Object field_value = null;
+        if (sym instanceof SymWithProps) {
+            field_value = ((SymWithProps) sym).getProperty(id_field_name);
+        }
 
-		if (field_value == null) {
-			if(id_field_name != null && id_field_name.trim().length() > 0){
-				Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
-						"Selected item has no value for property ''{0}'' which is needed to construct the web link.", id_field_name);
-			}
-			return replacePlaceholderWithId(getUrl(), "");
-		}
-		return replacePlaceholderWithId(getUrl(), field_value.toString());
-	}
+        if (field_value == null) {
+            if (id_field_name != null && id_field_name.trim().length() > 0) {
+                Logger.getLogger(WebLink.class.getName()).log(Level.WARNING,
+                        "Selected item has no value for property ''{0}'' which is needed to construct the web link.", id_field_name);
+            }
+            return replacePlaceholderWithId(getUrl(), "");
+        }
+        return replacePlaceholderWithId(getUrl(), field_value.toString());
+    }
 
-	@Override
-	public String toString() {
-		return "WebLink: name=" + name
-				+ ", regex=" + getRegex()
-				+ ", regexType=" + this.regexType.toString()
-				+ ", url=" + url
-				+ ", id_field_name=" + id_field_name;
-	}
+    @Override
+    public String toString() {
+        return "WebLink: name=" + name
+                + ", regex=" + getRegex()
+                + ", regexType=" + this.regexType.toString()
+                + ", url=" + url
+                + ", id_field_name=" + id_field_name;
+    }
 
-	public String toXML() {
-		String annotRegexString = (this.regexType == RegexType.TYPE) ? "annot_type_regex" : "annot_id_regex";
+    public String toXML() {
+        String annotRegexString = (this.regexType == RegexType.TYPE) ? "annot_type_regex" : "annot_id_regex";
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("<annotation_url ").append(separator);
-		sb.append(" ").append(annotRegexString).append("=\"").
-				append(escapeXML(getRegex() == null ? ".*" : getRegex())).append("\"").append(separator);
-		sb.append(" name=\"").append(escapeXML(name)).
-				append("\"").append(separator).append(" species=\"").
-				append(escapeXML(species)).append("\"").append(separator);
-		if (this.id_field_name != null && id_field_name.trim().length() > 0) {
-			sb.append(" id_field=\"").append(escapeXML(id_field_name)).
-					append("\"").append(separator);
-		}
-		sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
-		sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator);
-		sb.append("/>");
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append("<annotation_url ").append(separator);
+        sb.append(" ").append(annotRegexString).append("=\"").
+                append(escapeXML(getRegex() == null ? ".*" : getRegex())).append("\"").append(separator);
+        sb.append(" name=\"").append(escapeXML(name)).
+                append("\"").append(separator).append(" species=\"").
+                append(escapeXML(species)).append("\"").append(separator);
+        if (this.id_field_name != null && id_field_name.trim().length() > 0) {
+            sb.append(" id_field=\"").append(escapeXML(id_field_name)).
+                    append("\"").append(separator);
+        }
+        sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
+        sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator);
+        sb.append("/>");
+        return sb.toString();
+    }
 
-	/** Used to compute the hashCode and in the equals() method. */
-	private String toComparisonString() {
+    /**
+     * Used to compute the hashCode and in the equals() method.
+     */
+    private String toComparisonString() {
 		// Do NOT consider the "name" in tests of equality.
-		// We do not want to allow two links that are identical except for name.
-		// This is important in allowing users to over-ride the default links.
-		return original_regex + ", " + url.toString() + ", " + id_field_name;
-	}
+        // We do not want to allow two links that are identical except for name.
+        // This is important in allowing users to over-ride the default links.
+        return original_regex + ", " + url.toString() + ", " + id_field_name;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof WebLink)) {
-			return false;
-		}
-		WebLink w = (WebLink) o;
-		return toComparisonString().equals(w.toComparisonString());
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof WebLink)) {
+            return false;
+        }
+        WebLink w = (WebLink) o;
+        return toComparisonString().equals(w.toComparisonString());
+    }
 
-	@Override
-	public int hashCode() {
-		return toComparisonString().hashCode();
-	}
-	
-	@Override
-	public int compareTo(WebLink link){
-		return (sortString(this).compareTo(sortString(link)));
-	}
-	
-	private static String sortString(WebLink wl) {
-		return wl.getName() + ", " + wl.getRegex() + ", " + wl.getUrl() + ", " + wl.getIDField();
-	}
+    @Override
+    public int hashCode() {
+        return toComparisonString().hashCode();
+    }
 
-	private static String escapeXML(String s) {
-		if (s == null) {
-			return null;
-		}
-		return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
-	}
+    @Override
+    public int compareTo(WebLink link) {
+        return (sortString(this).compareTo(sortString(link)));
+    }
+
+    private static String sortString(WebLink wl) {
+        return wl.getName() + ", " + wl.getRegex() + ", " + wl.getUrl() + ", " + wl.getIDField();
+    }
+
+    private static String escapeXML(String s) {
+        if (s == null) {
+            return null;
+        }
+        return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
+    }
 
 }

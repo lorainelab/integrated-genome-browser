@@ -19,6 +19,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 final class LinkControl implements ContextualPopupListener {
+        private static String searchWebIconPath = "16x16/actions/searchweb.png";
 
         @Override
 	public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
@@ -125,7 +126,7 @@ final class LinkControl implements ContextualPopupListener {
 		} else {
 			name = "Search Web";
 			JMenu linkMenu = new JMenu(name);
-                        linkMenu.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/searchweb.png"));
+                        linkMenu.setIcon(CommonUtils.getInstance().getIcon(searchWebIconPath));
 //			linkMenu.getPopupMenu().setBorder(popup.getBorder());
 //			//linkMenu.setIcon(MenuUtil.getIcon("16x16/actions/search.png"));
 //			if (!isInternetReachable()) {

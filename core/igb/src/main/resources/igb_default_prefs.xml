@@ -36,6 +36,7 @@
     name="Google"
     url="http://www.google.com/search?q=$$"
     type="default"
+    image_icon_path="16x16/actions/google.png"
   />
 
 
@@ -43,7 +44,8 @@
   <annotation_url annot_type_regex="(EST)|(mRNA)|(RefGene)|(RefSeq)" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/nuccore/$$"
-	type="default"
+    type="default"
+    image_icon_path="16x16/actions/ncbi.png"
   />
 
 
@@ -54,6 +56,7 @@
     name="TAIR"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
     type="default"
+    image_icon_path="16x16/actions/tair.png"
   />
 
 

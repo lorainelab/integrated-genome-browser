@@ -176,6 +176,7 @@ public class WebLinkUtils {
 			String species = el.getAttribute("species");
 			String IDField = el.getAttribute("id_field");
 			String type = el.getAttribute("type");
+                        String imageIconPath = el.getAttribute("image_icon_path");
 			if (type == null) {
 				type = WebLink.LOCAL;
 			}
@@ -186,6 +187,7 @@ public class WebLinkUtils {
 			link.setUrl(url);
 			link.setType(type);
 			link.setSpeciesName(species);
+                        link.setImageIconPath(imageIconPath);
 			try {
 				if ("false".equalsIgnoreCase(el.getAttribute("match_case"))) {
 					link.setRegex("(?-i)" + annot_regex_string);

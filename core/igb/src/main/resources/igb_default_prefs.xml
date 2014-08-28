@@ -36,6 +36,7 @@
     name="Google"
     url="http://www.google.com/search?q=$$"
     type="default"
+    image_icon_path="16x16/actions/google.png"
   />
 
 

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -34,6 +35,7 @@ public final class WebLink implements Comparable<WebLink> {
     private String original_regex = null;
     private String type = null; // server or local source
     private RegexType regexType = RegexType.TYPE;	// matching on type or id
+    private String imageIconPath = null;
     private Pattern pattern = null;
 
     public static final String LOCAL = "local";
@@ -230,13 +232,23 @@ public final class WebLink implements Comparable<WebLink> {
         return replacePlaceholderWithId(getUrl(), field_value.toString());
     }
 
+    public String getImageIconPath() {
+        return imageIconPath;
+    }
+
+    public void setImageIconPath(String imageIconPath) {
+        this.imageIconPath = imageIconPath;
+    }
+
+    
     @Override
     public String toString() {
         return "WebLink: name=" + name
                 + ", regex=" + getRegex()
                 + ", regexType=" + this.regexType.toString()
                 + ", url=" + url
-                + ", id_field_name=" + id_field_name;
+                + ", id_field_name=" + id_field_name
+                +", image_icon_path="+ imageIconPath;
     }
 
     public String toXML() {
@@ -255,6 +267,7 @@ public final class WebLink implements Comparable<WebLink> {
         }
         sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
         sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator);
+        sb.append(" image_icon_path=\"").append(escapeXML(imageIconPath)).append("\"").append(separator);
         sb.append("/>");
         return sb.toString();
     }

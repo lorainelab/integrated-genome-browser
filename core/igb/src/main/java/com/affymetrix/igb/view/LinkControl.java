@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
@@ -110,7 +111,7 @@ final class LinkControl implements ContextualPopupListener {
 				}
 
 				mi = makeMenuItem(name, url);
-
+                                mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
 //				if (!isInternetReachable()) {
 //					name += " (No Internet)";
 //					mi = makeMenuItem(name, url);
@@ -140,6 +141,7 @@ final class LinkControl implements ContextualPopupListener {
 					name = "Unnamed link to web";
 				}
 				mi = makeMenuItem(name, url);
+                                mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
 				linkMenu.add(mi);
 			}
 		}

@@ -250,13 +250,11 @@ public class RemoteBlastNCBI {
     private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws UnsupportedEncodingException, IOException {
         //StringBuilder putBuf = new StringBuilder(BLAST_URL);
         StringBuilder putBuf = new StringBuilder();
-        processOptions(putBuf);
+        addDefaultParams(putBuf);
         putBuf.append("QUERY=");
         putBuf.append(URLEncoder.encode(">" + seq.getName() + "\n", ENCODING));
-        putBuf.append(URLEncoder.encode(strand == 1 ? seq.getResidues() : seq.getReverseComplement(), ENCODING));
-        putBuf.append("&DATABASE=nr&");
-        putBuf.append("QUERY_BELIEVE_DEFLINE=no&");
-        putBuf.append("PROGRAM=").append(type.toString()).append("&");
+        putBuf.append(URLEncoder.encode(seq.getResidues(), ENCODING));
+        putBuf.append("&PROGRAM=").append(type.toString()).append("&");
         putBuf.append("CMD=Put");
         //URL putUrl = new URL(putBuf.toString());
         URL url = new URL(BLAST_URL);
@@ -270,6 +268,17 @@ public class RemoteBlastNCBI {
         RemoteBlastNCBI.BlastRequest req = parseRequest(conn.getInputStream());
 //    apollo.util.IOUtil.informationDialog("Expected time before analysis starts: " + req.rtoe + " seconds (" + req.rid + ")");
         return req;
+    }
+   //Parameters link http://www.ncbi.nlm.nih.gov/BLAST/Doc/urlapi.html
+    private void addDefaultParams(StringBuilder putBuf) {
+        putBuf.append("AUTO_FORMAT=Off&");
+        putBuf.append("COMPOSITION_BASED_STATISTICS=no&");
+        putBuf.append("DATABASE=nr&");
+        putBuf.append("QUERY_BELIEVE_DEFLINE=no&");
+        putBuf.append("FILTER=L&");
+        putBuf.append("HITLIST_SZE=100&");
+        putBuf.append("AUTO_FORMAT=Off&");
+        
     }
 
     private String retrieveResponse(RemoteBlastNCBI.BlastRequest req, StrandedFeatureSetI sf, int strand, int genomicLength, int offset)

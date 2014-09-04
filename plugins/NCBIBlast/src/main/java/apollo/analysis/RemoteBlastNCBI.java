@@ -254,15 +254,19 @@ public class RemoteBlastNCBI {
         String blastType = type.toString();
         ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
         builder.put("QUERY", URLEncoder.encode(">" + title + "\n", ENCODING) + seq.getResidues());
+        builder.put("db",blastType.equals("blastx")?"nucleotide":"protein");
+        
         builder.put("GENETIC_CODE", "1");
         builder.put("JOB_TITLE", URLEncoder.encode(seq.getName(), ENCODING));
+        builder.put("stype","protein");
+        
         builder.put("DATABASE", "nr");
         builder.put("NUM_ORG", "1");
         builder.put("BLAST_PROGRAMS", blastType);
         builder.put("MAX_NUM_SEQ", "100");
         builder.put("SHORT_QUERY_ADJUST", "on");
-        builder.put("WORD_SIZE", "3");
         builder.put("EXPECT", "10");
+        builder.put("WORD_SIZE", "3");
         builder.put("HSP_RANGE_MAX", "0");
         builder.put("MATRIX_NAME", "BLOSUM62");
         builder.put("MATCH_SCORES", URLEncoder.encode("1,-2", ENCODING));
@@ -288,25 +292,29 @@ public class RemoteBlastNCBI {
         builder.put("NEW_VIEW", "true");
         builder.put("OLD_BLAST", "false");
         builder.put("OLD_VIEW", "false");
-        builder.put("NCBI_GI", "false");
-        builder.put("SHOW_CDS_FEATURE", "false");
 
         builder.put("NUM_OVERVIEW", "100");
+        builder.put("QUERY_INDEX", "0");
         builder.put("FORMAT_NUM_ORG", "1");
         builder.put("CONFIG_DESCR", URLEncoder.encode("2,3,4,5,6,7,8", ENCODING));
         builder.put("SERVICE", "plain");
-        builder.put("QUERY_INDEX", "0");
+        builder.put("CMD", "Put");
+        if(blastType.equals("blastp")){
+            builder.put("PAGE","Proteins");
+        }else{
+            builder.put("UNGAPPED_ALIGNMENT","no");
+        }
         builder.put("CDD_SEARCH", "on");
-        builder.put("NUM_DIFFS", "0");
-        builder.put("NUM_OPTS_DIFFS", "0");
+        builder.put("PROGRAM", blastType);
         builder.put("SELECTED_PROG_TYPE", blastType);
         builder.put("SAVED_SEARCH", "true");
+        
+        builder.put("NUM_DIFFS", blastType.equals("blastx")?"1":"0");
+        builder.put("NUM_OPTS_DIFFS", blastType.equals("blastx")?"1":"0");
         builder.put("PAGE_TYPE", "BlastSearch");
         builder.put("USER_DEFAULT_PROG_TYPE", blastType);
         builder.put("USER_DEFAULT_MATRIX", "4");
 
-        builder.put("PROGRAM", blastType);
-        builder.put("CMD", "Put");
         return builder.build();
     }
 

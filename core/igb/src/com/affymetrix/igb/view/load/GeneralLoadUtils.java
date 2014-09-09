@@ -264,7 +264,7 @@ public final class GeneralLoadUtils {
 					 * igb_defaults_prefs.xml by 'mirror' attribute
 					 *
 					 */
-					if (gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is not reachable.\nDo you want to use mirror site?")) {
+					if (gServer.useMirrorSite()) {
 //
 						// Change serverObj for Quickload to apply mirror site
 						// Currently only Quickload has mirror

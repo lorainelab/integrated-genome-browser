@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genometryImpl.util.FileDropHandler;
 
-import org.freehep.util.export.ExportDialog;
+//import org.freehep.util.export.ExportDialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -463,13 +463,13 @@ final public class ProtAnnotMain implements WindowListener {
 	}
 
 	void export() {
-		final ExportDialog export = new ExportDialog();
-		export.setIcon(new ImageIcon(imageIcon));
-		try {
-			export.showExportDialog(gview, "Export view as ...", gview, "export");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+//		final ExportDialog export = new ExportDialog();
+//		export.setIcon(new ImageIcon(imageIcon));
+//		try {
+//			export.showExportDialog(gview, "Export view as ...", gview, "export");
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
 
 	}
 

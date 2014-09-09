@@ -19,6 +19,8 @@ import org.xml.sax.SAXException;
 
 import apollo.datamodel.SequenceI;
 import apollo.datamodel.StrandedFeatureSetI;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Sends and retrieves a BLAST request to NCBI's qBLAST service.
@@ -34,7 +36,7 @@ public class RemoteBlastNCBI {
     private static final Pattern RID_PATTERN = Pattern.compile("^\\s*RID\\s*=\\s*(\\w+)$");
     private static final Pattern RTOE_PATTERN = Pattern.compile("^\\s*RTOE\\s*=\\s*(\\d+)$");
     private static final Pattern STATUS_PATTERN = Pattern.compile("^\\s*Status\\s*=\\s*(\\w+)$");
-
+    
     /**
      * Type of BLAST analysis to run.
      *
@@ -246,29 +248,93 @@ public class RemoteBlastNCBI {
         closeRequest(req);
         return type;
     }
+    
+    private ImmutableMap getMapWithParams(SequenceI seq) throws UnsupportedEncodingException {
+        String title = seq.getName();
+        String blastType = type.toString();
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
+        builder.put("QUERY", URLEncoder.encode(">" + title + "\n", ENCODING) + seq.getResidues());
+        builder.put("db",blastType.equals("blastx")?"nucleotide":"protein");
+        
+        builder.put("GENETIC_CODE", "1");
+        builder.put("JOB_TITLE", URLEncoder.encode(seq.getName(), ENCODING));
+        builder.put("stype","protein");
+        
+        builder.put("DATABASE", "nr");
+        builder.put("NUM_ORG", "1");
+        builder.put("BLAST_PROGRAMS", blastType);
+        builder.put("MAX_NUM_SEQ", "100");
+        builder.put("SHORT_QUERY_ADJUST", "on");
+        builder.put("EXPECT", "10");
+        builder.put("WORD_SIZE", "3");
+        builder.put("HSP_RANGE_MAX", "0");
+        builder.put("MATRIX_NAME", "BLOSUM62");
+        builder.put("MATCH_SCORES", URLEncoder.encode("1,-2", ENCODING));
+        builder.put("GAPCOSTS", "11+1");
+        builder.put("COMPOSITION_BASED_STATISTICS", "2");
 
+        builder.put("REPEATS", "5755");
+        builder.put("TEMPLATE_LENGTH", "0");
+        builder.put("TEMPLATE_TYPE", "0");
+
+        builder.put("SHOW_OVERVIEW", "on");
+        builder.put("SHOW_LINKOUT", "on");
+        builder.put("GET_SEQUENCE", "on");
+        builder.put("FORMAT_OBJECT", "Alignment");
+        builder.put("FORMAT_TYPE", "HTML");
+        builder.put("ALIGNMENT_VIEW", "Pairwise");
+        builder.put("MASK_CHAR", "2");
+        builder.put("MASK_COLOR", "1");
+
+        builder.put("DESCRIPTIONS", "100");
+        builder.put("ALIGNMENTS", "100");
+        builder.put("LINE_LENGTH", "60");
+        builder.put("NEW_VIEW", "true");
+        builder.put("OLD_BLAST", "false");
+        builder.put("OLD_VIEW", "false");
+
+        builder.put("NUM_OVERVIEW", "100");
+        builder.put("QUERY_INDEX", "0");
+        builder.put("FORMAT_NUM_ORG", "1");
+        builder.put("CONFIG_DESCR", URLEncoder.encode("2,3,4,5,6,7,8", ENCODING));
+        builder.put("SERVICE", "plain");
+        builder.put("CMD", "Put");
+        if(blastType.equals("blastp")){
+            builder.put("PAGE","Proteins");
+        }else{
+            builder.put("UNGAPPED_ALIGNMENT","no");
+        }
+        builder.put("CDD_SEARCH", "on");
+        builder.put("PROGRAM", blastType);
+        builder.put("SELECTED_PROG_TYPE", blastType);
+        builder.put("SAVED_SEARCH", "true");
+        
+        builder.put("NUM_DIFFS", blastType.equals("blastx")?"1":"0");
+        builder.put("NUM_OPTS_DIFFS", blastType.equals("blastx")?"1":"0");
+        builder.put("PAGE_TYPE", "BlastSearch");
+        builder.put("USER_DEFAULT_PROG_TYPE", blastType);
+        builder.put("USER_DEFAULT_MATRIX", "4");
+
+        return builder.build();
+    }
+
+    private String getURLWithParams(SequenceI seq) throws UnsupportedEncodingException {
+        ImmutableMap paramMap = getMapWithParams(seq);
+        String urlMap = Joiner.on("&").withKeyValueSeparator("=").join(paramMap.entrySet());
+        return urlMap;
+
+    }
+    
     private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws UnsupportedEncodingException, IOException {
-        //StringBuilder putBuf = new StringBuilder(BLAST_URL);
-        StringBuilder putBuf = new StringBuilder();
-        processOptions(putBuf);
-        putBuf.append("QUERY=");
-        putBuf.append(URLEncoder.encode(">" + seq.getName() + "\n", ENCODING));
-        putBuf.append(URLEncoder.encode(strand == 1 ? seq.getResidues() : seq.getReverseComplement(), ENCODING));
-        putBuf.append("&DATABASE=nr&");
-        putBuf.append("QUERY_BELIEVE_DEFLINE=no&");
-        putBuf.append("PROGRAM=").append(type.toString()).append("&");
-        putBuf.append("CMD=Put");
-        //URL putUrl = new URL(putBuf.toString());
+        String putBuf = getURLWithParams(seq);
         URL url = new URL(BLAST_URL);
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(putBuf.toString());
+        wr.write(putBuf);
         wr.flush();
         wr.close();
-        //return parseRequest(putUrl.openStream());
         RemoteBlastNCBI.BlastRequest req = parseRequest(conn.getInputStream());
-//    apollo.util.IOUtil.informationDialog("Expected time before analysis starts: " + req.rtoe + " seconds (" + req.rid + ")");
         return req;
     }
 

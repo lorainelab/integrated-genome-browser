@@ -18,7 +18,7 @@
   <AuxClasspathEntry>ext/dom4j-1.6.1.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/emma.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/emma_ant.jar</AuxClasspathEntry>
-  <AuxClasspathEntry>ext/freehep-2.1.1.jar</AuxClasspathEntry>
+  <AuxClasspathEntry>ext/freehep-graphicsio-svg-2.3.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/hibernate3.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/image4j.jar</AuxClasspathEntry>
   <AuxClasspathEntry>ext/org.mortbay.jetty.jar</AuxClasspathEntry>

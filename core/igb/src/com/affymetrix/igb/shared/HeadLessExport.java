@@ -27,7 +27,7 @@ import org.freehep.graphicsio.svg.SVGGraphics2D;
  * @author hiralv
  */
 public class HeadLessExport {
-    
+
 	protected static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
 
 	protected static final String PREF_FILE = "File";
@@ -41,12 +41,12 @@ public class HeadLessExport {
 		"Portable Network Graphics (*.png)",
 		"Joint Photographic Experts Group (*.jpeg)",
 	};
-	
+
 	protected final Properties svgProperties = new Properties();
 	protected final SVGExportFileType svgExport = new SVGExportFileType();
 	protected BufferedImage exportImage;
 	protected ImageInfo imageInfo;
-	
+
 	public void exportScreenshot(Component component, File f, String ext, boolean isScript) throws IOException {
 		// From Script Loader, need to initialize the export image
 		if (isScript) {
@@ -68,8 +68,8 @@ public class HeadLessExport {
 			while (iw.hasNext()) {
 				ImageWriter writer = iw.next();
 				ImageWriteParam writeParam = writer.getDefaultWriteParam();
-				ImageTypeSpecifier typeSpecifier =
-						ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+				ImageTypeSpecifier typeSpecifier
+						= ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
 				IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
 				if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
 					continue;
@@ -92,7 +92,7 @@ public class HeadLessExport {
 			}
 		}
 	}
-	
+
 	/**
 	 * Passed meta data of PNG image and reset its DPI
 	 *
@@ -130,7 +130,7 @@ public class HeadLessExport {
 		jfif.setAttribute("resUnits", "1"); // density is dots per inch 
 		metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
 	}
-	
+
 	public static class ImageInfo {
 
 		private double width;

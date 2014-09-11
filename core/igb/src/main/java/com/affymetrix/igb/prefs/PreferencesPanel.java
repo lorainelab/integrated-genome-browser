@@ -138,6 +138,12 @@ public final class PreferencesPanel extends JPanel {
      * Gets a JFrame containing the PreferencesView
      */
     public JFrame getFrame() {
+        int width = 558;
+        int height = 582;
+        if(IGB.IS_LINUX){
+            width = 574;
+            height = 610;
+        }
         if (frame == null) {
             frame = new JFrame(PREFERENCES);
             final Container cont = frame.getContentPane();
@@ -163,7 +169,7 @@ public final class PreferencesPanel extends JPanel {
             frame.setJMenuBar(menubar);
             cont.add(this);
             frame.pack(); // pack() to set frame to its preferred size
-            Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(558, 582));
+            Rectangle pos = PreferenceUtils.retrieveWindowLocation(WINDOW_NAME, new Rectangle(width, height));
             if (pos != null) {
                 PreferenceUtils.setWindowSize(frame, pos);
             }

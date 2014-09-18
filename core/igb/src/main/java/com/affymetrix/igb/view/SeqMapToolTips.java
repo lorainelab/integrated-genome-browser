@@ -15,14 +15,11 @@ import java.awt.Window;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
@@ -79,7 +76,6 @@ public class SeqMapToolTips extends JWindow {
             this.properties = properties;
             formatTooltip();
             tooltip.setCaretPosition(0);
-
             setLocation(determineBestLocation(point));
             setVisible(true);
             if (Opacity.INSTANCE.isSupported()) {
@@ -124,7 +120,6 @@ public class SeqMapToolTips extends JWindow {
         tooltip.setBackground(backgroundColor);
         tooltip.setEditable(false);
         tooltip.setDisabledTextColor(tooltip.getForeground());
-        
 
         JScrollPane scrollPane = new JScrollPane(tooltip);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -176,7 +171,6 @@ public class SeqMapToolTips extends JWindow {
         }
 
     };
-
 
     private enum Opacity {
 
@@ -242,6 +236,5 @@ public class SeqMapToolTips extends JWindow {
             return ((Float) getOpacityMethod.invoke(null, window));
         }
     }
-    
-    
+
 }

@@ -79,7 +79,7 @@ public class SeqMapToolTips extends JWindow {
             setLocation(determineBestLocation(point));
             setVisible(true);
             if (Opacity.INSTANCE.isSupported()) {
-                timer.setInitialDelay(1000);
+                timer.setInitialDelay(5000);
                 timer.start();
             }
 
@@ -92,6 +92,7 @@ public class SeqMapToolTips extends JWindow {
 
     private void formatTooltip() {
         tooltip.setText(null);
+        int heightRequired,numLines = 0;
         for (String[] propertie : properties) {
             try {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
@@ -100,11 +101,20 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[1], null);
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), "\n", null);
+               
+                if(tooltip.getDocument().getLength() > MAX_WIDTH){
+                    numLines = tooltip.getDocument().getLength() % MAX_WIDTH;
+                }else{
+                    numLines++;
+                }
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
         }
+        heightRequired = numLines *18;
+        setSize(MAX_WIDTH, heightRequired);
     }
+    
 
     private Point determineBestLocation(Point currentPoint) {
         Point bestLocation = new Point(currentPoint.x + 10, currentPoint.y + 10);
@@ -118,9 +128,8 @@ public class SeqMapToolTips extends JWindow {
         Opacity.INSTANCE.set(SeqMapToolTips.this, 0.5f);
 
         tooltip.setBackground(backgroundColor);
-        tooltip.setEditable(false);
         tooltip.setDisabledTextColor(tooltip.getForeground());
-
+        
         JScrollPane scrollPane = new JScrollPane(tooltip);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);

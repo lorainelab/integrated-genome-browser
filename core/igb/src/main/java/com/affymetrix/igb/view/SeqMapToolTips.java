@@ -5,26 +5,17 @@
  */
 package com.affymetrix.igb.view;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.lang.reflect.Method;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -37,6 +28,7 @@ public class SeqMapToolTips extends JWindow {
 
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
+
     static {
         StyleConstants.setBold(NAME, true);
     }
@@ -50,6 +42,7 @@ public class SeqMapToolTips extends JWindow {
     public SeqMapToolTips(Window owner) {
         super(owner);
         tooltip = new JTextPane();
+        tooltip.setEditable(false);
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();
     }
@@ -57,29 +50,23 @@ public class SeqMapToolTips extends JWindow {
     public void setToolTip(Point point, String[][] properties) {
         if (isVisible() && properties == null) {
             setVisible(false);
-            Opacity.INSTANCE.set(SeqMapToolTips.this, 0.5f);
         }
-
-        if (Opacity.INSTANCE.isSupported()) {
-            timer.stop();
-        }
-
+        timer.stop();
         if (!getOwner().isActive()) {
             return;
         }
 
         if (properties != null && properties.length > 1) {
+            timer.stop();
+
             this.properties = properties;
             formatTooltip();
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
             pack();
             setSize(MAX_WIDTH, getSize().height);
-            setVisible(true);
-            if (Opacity.INSTANCE.isSupported()) {
-                timer.setInitialDelay(1000);
-                timer.start();
-            }
+            timer.setInitialDelay(500);
+            timer.start();
 
         } else if (isVisible()) {
         } else {
@@ -98,14 +85,13 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[1], null);
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), "\n", null);
-               
+
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
         }
 
     }
-    
 
     private Point determineBestLocation(Point currentPoint) {
         Point bestLocation = new Point(currentPoint.x + 10, currentPoint.y + 10);
@@ -116,8 +102,6 @@ public class SeqMapToolTips extends JWindow {
         setFocusableWindowState(false);
         setBackground(backgroundColor);
         setForeground(backgroundColor);
-        Opacity.INSTANCE.set(SeqMapToolTips.this, 0.5f);
-
         tooltip.setBackground(backgroundColor);
         tooltip.setDisabledTextColor(tooltip.getForeground());
 
@@ -130,10 +114,6 @@ public class SeqMapToolTips extends JWindow {
         setLayout(new BorderLayout(0, 0));
         add(scrollPane);
 
-        if (Opacity.INSTANCE.isSupported()) {
-            Toolkit.getDefaultToolkit().addAWTEventListener(opacityController, AWTEvent.MOUSE_EVENT_MASK);
-        }
-
         pack();
         setSize(MAX_WIDTH, MIN_HEIGHT);
     }
@@ -142,99 +122,9 @@ public class SeqMapToolTips extends JWindow {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            float opacity = Opacity.INSTANCE.get(SeqMapToolTips.this);
-            if (opacity + 0.05f >= 1.0f) {
-                timer.stop();
-                return;
-            }
-            Opacity.INSTANCE.set(SeqMapToolTips.this, opacity + 0.05f);
+            setVisible(true);
+
         }
     });
-
-    AWTEventListener opacityController = new AWTEventListener() {
-        @Override
-        public void eventDispatched(AWTEvent event) {
-            if (event.getSource() instanceof Component
-                    && SwingUtilities.isDescendingFrom((Component) event.getSource(), SeqMapToolTips.this)) {
-                setTranslucency((MouseEvent) event);
-            }
-        }
-
-        private void setTranslucency(MouseEvent e) {
-            Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), SeqMapToolTips.this);
-
-            if (SeqMapToolTips.this.contains(p)) {
-                Opacity.INSTANCE.set(SeqMapToolTips.this, 1.0f);
-            } else {
-                Opacity.INSTANCE.set(SeqMapToolTips.this, 0.5f);
-            }
-        }
-
-    };
-
-    private enum Opacity {
-
-        INSTANCE;
-
-        private final boolean isSupported;
-        private Method setOpacityMethod, getOpacityMethod;
-
-        @SuppressWarnings("unchecked")
-        private Opacity() {
-            boolean noException = true;
-            try {
-                Class clazz = Class.forName("com.sun.awt.AWTUtilities");
-                setOpacityMethod = clazz.getDeclaredMethod("setWindowOpacity", Window.class, float.class);
-                getOpacityMethod = clazz.getDeclaredMethod("getWindowOpacity", Window.class);
-
-                // Make dummy call to methods
-                JWindow window = new JWindow();
-                float opacity = _get(window);
-                _set(window, opacity);
-            } catch (Exception ex) {
-                noException = false;
-            }
-
-            isSupported = noException;
-        }
-
-        public boolean isSupported() {
-            return isSupported;
-        }
-
-        // Catch excetions here
-        public void set(Window window, float opacity) {
-            if (!isSupported()) {
-                return;
-            }
-
-            try {
-                _set(window, opacity);
-            } catch (Exception ex) {
-            }
-        }
-
-        // Catch excetions here
-        public float get(Window window) {
-            if (!isSupported()) {
-                return 1.0f;
-            }
-
-            try {
-                return _get(window);
-            } catch (Exception ex) {
-            }
-
-            return 1.0f;
-        }
-
-        private void _set(Window window, float opacity) throws Exception {
-            setOpacityMethod.invoke(null, window, opacity);
-        }
-
-        private float _get(Window window) throws Exception {
-            return ((Float) getOpacityMethod.invoke(null, window));
-        }
-    }
 
 }

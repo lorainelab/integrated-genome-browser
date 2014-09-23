@@ -16,15 +16,15 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.font.TextAttribute;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -36,12 +36,8 @@ import javax.swing.text.StyleConstants;
 public class SeqMapToolTips extends JWindow {
 
     private static final long serialVersionUID = 1L;
-    private static final HashMap<TextAttribute, Object> messageAttrMap = new HashMap<TextAttribute, Object>();
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
-
     static {
-        messageAttrMap.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
-        messageAttrMap.put(TextAttribute.FOREGROUND, Color.DARK_GRAY);
         StyleConstants.setBold(NAME, true);
     }
     private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
@@ -77,9 +73,11 @@ public class SeqMapToolTips extends JWindow {
             formatTooltip();
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
+            pack();
+            setSize(MAX_WIDTH, getSize().height);
             setVisible(true);
             if (Opacity.INSTANCE.isSupported()) {
-                timer.setInitialDelay(5000);
+                timer.setInitialDelay(1000);
                 timer.start();
             }
 
@@ -92,7 +90,6 @@ public class SeqMapToolTips extends JWindow {
 
     private void formatTooltip() {
         tooltip.setText(null);
-        int heightRequired,numLines = 0;
         for (String[] propertie : properties) {
             try {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
@@ -102,17 +99,11 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), "\n", null);
                
-                if(tooltip.getDocument().getLength() > MAX_WIDTH){
-                    numLines = tooltip.getDocument().getLength() % MAX_WIDTH;
-                }else{
-                    numLines++;
-                }
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
         }
-        heightRequired = numLines *18;
-        setSize(MAX_WIDTH, heightRequired);
+
     }
     
 
@@ -129,7 +120,7 @@ public class SeqMapToolTips extends JWindow {
 
         tooltip.setBackground(backgroundColor);
         tooltip.setDisabledTextColor(tooltip.getForeground());
-        
+
         JScrollPane scrollPane = new JScrollPane(tooltip);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);

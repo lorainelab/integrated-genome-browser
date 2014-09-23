@@ -299,7 +299,8 @@ public class SeqMapView extends JPanel
     private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
     private TierGlyph axis_tier;
     private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-    private final PopupInfo popupInfo;
+    //private final PopupInfo popupInfo;
+    private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
 	// This preference change listener can reset some things, like whether
     // the axis uses comma format or not, in response to changes in the stored
@@ -436,7 +437,7 @@ public class SeqMapView extends JPanel
 
         mouse_listener = new SeqMapViewMouseListener(this);
 
-        popupInfo = new PopupInfo(frame);
+        seqMapToolTips = new SeqMapToolTips(frame);
 
         seqmap.getNeoCanvas().setDoubleBuffered(false);
 
@@ -2384,9 +2385,9 @@ public class SeqMapView extends JPanel
 //			seqmap.getNeoCanvas().setToolTipText(toolTip);
             if (evt != null) {
                 Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
-                popupInfo.setToolTip(point, properties);
+                seqMapToolTips.setToolTip(point, properties);
             } else {
-                popupInfo.setToolTip(null, properties);
+                seqMapToolTips.setToolTip(null, properties);
             }
         }
     }

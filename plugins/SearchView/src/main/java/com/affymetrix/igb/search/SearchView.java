@@ -482,7 +482,7 @@ public final class SearchView extends IGBTabPanel implements
         searchButton.setToolTipText("Search");
         searchButton.setEnabled(true);
 
-        clearButton.setToolTipText("Clear");
+        clearButton.setToolTipText("Clear All");
 //		cancel.setEnabled(false);
     }
 

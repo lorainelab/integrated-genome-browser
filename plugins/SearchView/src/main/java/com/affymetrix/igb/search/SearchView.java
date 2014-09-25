@@ -310,7 +310,6 @@ public final class SearchView extends IGBTabPanel implements
         pan1.add(clearButton);
 
         pan1.add(Box.createRigidArea(new Dimension(2, 0)));
-        //Make sure that the checkbox is the last component in pan1
         pan1.add(optionCheckBox);
         //pan1.add(customButton);
 
@@ -359,10 +358,10 @@ public final class SearchView extends IGBTabPanel implements
             return;
         }
         if (selectedSearchMode instanceof SearchModeResidue) {
-            pan1.getComponent(pan1.getComponentCount() - 1).setVisible(false);
+            optionCheckBox.setVisible(false);
             return;
         } else {
-            pan1.getComponent(pan1.getComponentCount() - 1).setVisible(true);
+            optionCheckBox.setVisible(true);
         }
         if (selectedSearchMode instanceof ISearchModeExtended) {
             ISearchModeExtended extenedSearch = (ISearchModeExtended) selectedSearchMode;

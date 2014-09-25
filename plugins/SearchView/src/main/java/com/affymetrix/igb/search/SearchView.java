@@ -132,7 +132,7 @@ public final class SearchView extends IGBTabPanel implements
                     @Override
                     protected SearchResultsTableModel runInBackground() {
                         if (selectedSearchMode instanceof SearchModeResidue) {
-                            SearchResults<GlyphI> searchResults = ((SearchModeResidue) selectedSearchMode).search(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this, optionCheckBox.isSelected());
+                            SearchResults<GlyphI> searchResults = ((SearchModeResidue) selectedSearchMode).searchResidue(SearchView.this.searchTF.getText().trim(), chrfilter, SearchView.this);
                             List<GlyphI> glyphs = searchResults != null ? searchResults.getResults() : null;
                             if (isCancelled()) {
                                 setStatus("Search cancelled");
@@ -310,7 +310,6 @@ public final class SearchView extends IGBTabPanel implements
         pan1.add(clearButton);
 
         pan1.add(Box.createRigidArea(new Dimension(2, 0)));
-
         pan1.add(optionCheckBox);
         //pan1.add(customButton);
 
@@ -358,10 +357,16 @@ public final class SearchView extends IGBTabPanel implements
         if (selectedSearchMode == null) {
             return;
         }
-
+        if (selectedSearchMode instanceof SearchModeResidue) {
+            optionCheckBox.setVisible(false);
+            return;
+        } else {
+            optionCheckBox.setVisible(true);
+        }
         if (selectedSearchMode instanceof ISearchModeExtended) {
             ISearchModeExtended extenedSearch = (ISearchModeExtended) selectedSearchMode;
-            optionCheckBox.setText(extenedSearch.getOptionName());
+            String name = extenedSearch.getOptionName();
+            optionCheckBox.setText(name);
             optionCheckBox.setToolTipText(extenedSearch.getOptionTooltip());
             boolean enabled = extenedSearch.getOptionEnable();
             optionCheckBox.setEnabled(enabled);

@@ -38,7 +38,6 @@ import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -51,9 +50,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 
     private static final int SEARCH_ALL_ORDINAL = -1;
     private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
-    private static final String OVERLAY_RESULTS = "Overlay Results";
     private static final boolean default_confirm_before_seq_change = true;
-    private static final boolean default_optionSelected = true;
     private static final String SEPARATOR = "\\|";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
     private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
@@ -118,8 +115,6 @@ public class SearchModeResidue implements ISearchModeExtended,
         super();
         this.igbService = igbService;
         igbService.getSeqMapView().addToRefreshList(this);
-        optionSelected = PreferenceUtils.getBooleanParam(OVERLAY_RESULTS, default_optionSelected);
-
         gmodel.addSeqSelectionListener(this);
     }
 
@@ -203,12 +198,12 @@ public class SearchModeResidue implements ISearchModeExtended,
 
     @Override
     public String getOptionName() {
-        return BUNDLE.getString("optionCheckBox");
+        return "";
     }
 
     @Override
     public String getOptionTooltip() {
-        return BUNDLE.getString("optionCheckBoxTT");
+        return "";
     }
 
     @Override
@@ -219,7 +214,6 @@ public class SearchModeResidue implements ISearchModeExtended,
     @Override
     public void setOptionState(boolean selected) {
         optionSelected = selected;
-        PreferenceUtils.getTopNode().putBoolean(OVERLAY_RESULTS, selected);
     }
 
     @Override
@@ -245,11 +239,8 @@ public class SearchModeResidue implements ISearchModeExtended,
         return false;
     }
 
-    public SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
+    public SearchResults<GlyphI> searchResidue(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
         String[] search_terms = search_text.split(SEPARATOR);
-        if (!option && search_terms.length <= 1) {
-            clearResults();
-        }
         StringBuilder searchSummary = new StringBuilder();
         for (String st : search_terms) {
             st = st.trim();

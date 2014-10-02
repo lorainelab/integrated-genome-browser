@@ -36,7 +36,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
@@ -2619,9 +2618,6 @@ public class SeqMapView extends JPanel
                         NumberFormat.getIntegerInstance().format(span.getEnd()));
 
             }
-        }
-        if (sym instanceof BAMSym) {
-            props.put("flags", ((BAMSym) sym).getFlags());
         }
         return props;
     }

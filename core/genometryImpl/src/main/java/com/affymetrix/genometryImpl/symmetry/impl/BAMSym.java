@@ -11,6 +11,7 @@ import java.util.Map;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
+import net.sf.samtools.util.CollectionUtil;
 
 /**
  *
@@ -46,6 +47,25 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
     //Residues residues;
     private String insResidues;
+
+    private static final Map<Integer,String> BAM_FLAG_MAP;
+    static{
+        BAM_FLAG_MAP = new CollectionUtil.DefaultingMap<Integer, String>("UNPAIRED READ FLAG");
+        BAM_FLAG_MAP.put(0, "UNPAIRED READ FLAG");
+        BAM_FLAG_MAP.put(1, "READ PAIRED FLAG");
+        BAM_FLAG_MAP.put(2, "PROPER PAIR FLAG");
+        BAM_FLAG_MAP.put(4, "READ UNMAPPED FLAG");
+        BAM_FLAG_MAP.put(8, "MATE UNMAPPED FLAG");
+        BAM_FLAG_MAP.put(16, "READ STRAND FLAG");
+        BAM_FLAG_MAP.put(32, "MATE STRAND FLAG");
+        BAM_FLAG_MAP.put(64, "FIRST OF PAIR FLAG");
+        BAM_FLAG_MAP.put(128, "SECOND OF PAIR FLAG");
+        BAM_FLAG_MAP.put(256, "NOT PRIMARY ALIGNMENT FLAG");
+        BAM_FLAG_MAP.put(512, "READ FAILS VENDOR_QUALITY CHECK FLAG");
+        BAM_FLAG_MAP.put(1024, "DUPLICATE READ FLAG");
+        BAM_FLAG_MAP.put(2048, "SUPPLEMENTARY ALIGNMENT FLAG");
+        
+    }
 
     public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
             boolean forward, int[] blockMins, int[] blockMaxs, int iblockMins[],
@@ -396,7 +416,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         }
         props.put("residues", getResidues().replaceAll("-", ""));
         props.put("mapq", mapq);
-
+        props.put("flags", BAM_FLAG_MAP.get(getFlags()));
         return super.cloneProperties();
     }
 

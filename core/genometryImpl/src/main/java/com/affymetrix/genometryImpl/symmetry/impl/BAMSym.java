@@ -47,23 +47,23 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
     //Residues residues;
     private String insResidues;
-
+    //net.sf.samtools.SAMRecord have the flag variable name.
+    //http://broadinstitute.github.io/picard/explain-flags.html
     private static final Map<Integer,String> BAM_FLAG_MAP;
     static{
-        BAM_FLAG_MAP = new CollectionUtil.DefaultingMap<Integer, String>("UNPAIRED READ FLAG");
-        BAM_FLAG_MAP.put(0, "UNPAIRED READ FLAG");
-        BAM_FLAG_MAP.put(1, "READ PAIRED FLAG");
-        BAM_FLAG_MAP.put(2, "PROPER PAIR FLAG");
-        BAM_FLAG_MAP.put(4, "READ UNMAPPED FLAG");
-        BAM_FLAG_MAP.put(8, "MATE UNMAPPED FLAG");
-        BAM_FLAG_MAP.put(16, "READ STRAND FLAG");
-        BAM_FLAG_MAP.put(32, "MATE STRAND FLAG");
-        BAM_FLAG_MAP.put(64, "FIRST OF PAIR FLAG");
-        BAM_FLAG_MAP.put(128, "SECOND OF PAIR FLAG");
-        BAM_FLAG_MAP.put(256, "NOT PRIMARY ALIGNMENT FLAG");
-        BAM_FLAG_MAP.put(512, "READ FAILS VENDOR_QUALITY CHECK FLAG");
-        BAM_FLAG_MAP.put(1024, "DUPLICATE READ FLAG");
-        BAM_FLAG_MAP.put(2048, "SUPPLEMENTARY ALIGNMENT FLAG");
+        BAM_FLAG_MAP = new CollectionUtil.DefaultingMap<Integer, String>("unpaired read");
+        BAM_FLAG_MAP.put(1, "read paired");
+        BAM_FLAG_MAP.put(2, "read mapped in proper pair");
+        BAM_FLAG_MAP.put(4, "read unmapped");
+        BAM_FLAG_MAP.put(8, "mate unmapped");
+        BAM_FLAG_MAP.put(16, "read reverse strand");
+        BAM_FLAG_MAP.put(32, "mate reverse strand");
+        BAM_FLAG_MAP.put(64, "first in pair");
+        BAM_FLAG_MAP.put(128, "second in pair");
+        BAM_FLAG_MAP.put(256, "not primary alignment");
+        BAM_FLAG_MAP.put(512, "read fails platform/vendor quality checks");
+        BAM_FLAG_MAP.put(1024, "read is PCR or optical duplicate");
+        BAM_FLAG_MAP.put(2048, "supplementary alignment");
         
     }
 

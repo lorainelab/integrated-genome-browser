@@ -21,7 +21,7 @@ import com.affymetrix.igb.shared.SearchResults;
 
 public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended, ISearchHints {
 
-    private static final int SEARCH_ALL_ORDINAL = -9000;
+    private static final int SEARCH_ALL_ORDINAL = -8000;
     private static final String REMOTESERVERSEARCH = BUNDLE.getString("optionCheckBox");
     private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
     private static final String REMOTESERVERSEARCHSINGULAR = BUNDLE.getString("remoteServerSearchSingular");

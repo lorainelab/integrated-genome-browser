@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
  */
 public class KeyWordSearch implements IKeyWordSearch {
 
-    private static final int SEARCH_ALL_ORDINAL = -9000;
+    private static final int SEARCH_ALL_ORDINAL = 1;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("keywordsearch");
     final private List<IKeyWordSearch> searchModes;
 

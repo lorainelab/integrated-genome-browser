@@ -122,7 +122,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         if (vseq == null) {
             return MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq);
         }
-        if (search_text.length() < 3) {
+        if (search_text.length() <= 3) {
             return BUNDLE.getString("searchErrorShort");
         }
         try {

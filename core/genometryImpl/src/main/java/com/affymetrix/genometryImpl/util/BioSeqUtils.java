@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.TypedSym;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,22 +34,25 @@ public class BioSeqUtils {
      * @param sym
      * @return 
      */
-    public static String determineMethod(SeqSymmetry sym) {
-        String meth = null;
+    public static Optional<String> determineMethod(SeqSymmetry sym) {
+        Optional<String> meth = Optional.absent();
         if (sym instanceof SymWithProps) {
             SymWithProps psym = (SymWithProps) sym;
-            meth = (String) psym.getProperty("method");
-            if (meth == null) {
-                meth = (String) psym.getProperty("meth");
+            meth = Optional.of((String)psym.getProperty("method"));
+            if (!meth.isPresent()) {
+                meth = Optional.of((String) psym.getProperty("meth"));
             }
-            if (meth == null) {
-                meth = (String) psym.getProperty("type");
+            if (!meth.isPresent()) {
+                meth = Optional.of((String) psym.getProperty("type"));
             }
         }
-        if (meth == null) {
+        if (!meth.isPresent()) {
             if (sym instanceof TypedSym) {
-                meth = ((TypedSym) sym).getType();
+                meth = Optional.of(((TypedSym) sym).getType());
             }
+        }
+        if(sym instanceof SingletonSymWithProps){
+            meth = Optional.absent();
         }
         return meth;
     }

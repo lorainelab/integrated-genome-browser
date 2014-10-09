@@ -533,11 +533,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     
     public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
         setSeqMap(gviewer);
-        String method = BioSeqUtils.determineMethod(sym);
-        if (method == null) {
+        Optional<String> method = BioSeqUtils.determineMethod(sym);
+        if (!method.isPresent()) {
             return;
         }
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method.get());
         TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
         TierGlyph forward_tier = seqMap.getTrack(style, useDirection);
         forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);

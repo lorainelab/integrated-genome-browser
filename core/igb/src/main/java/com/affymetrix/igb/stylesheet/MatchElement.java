@@ -143,13 +143,13 @@ class MatchElement implements DrawableElement {
     }
     
     else if (MATCH_BY_EXACT_METHOD.equals(match_test)) {
-      if (match_param.equals( BioSeqUtils.determineMethod(sym) ))  {
+      if (match_param.equals( BioSeqUtils.determineMethod(sym).get() ))  {
         result = true;
       }
     }
 
     else if (MATCH_BY_METHOD_REGEX.equals(match_test) && match_regex != null) {
-      if (match_regex.matcher(BioSeqUtils.determineMethod(sym)).matches())  {
+      if (match_regex.matcher(BioSeqUtils.determineMethod(sym).get()).matches())  {
         result = true;
       }
     }

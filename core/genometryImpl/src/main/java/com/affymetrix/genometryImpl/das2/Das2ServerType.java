@@ -341,14 +341,14 @@ public class Das2ServerType implements ServerTypeI {
  public Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
 		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
 		List<SeqSymmetry> resultList = null;
-		String method = null;
+		   com.google.common.base.Optional<String> method = com.google.common.base.Optional.absent();
 		for (SeqSymmetry result : results) {
 			method = BioSeqUtils.determineMethod(result);
 			if (track2Results.containsKey(method)) {
 				resultList = track2Results.get(method);
 			} else {
 				resultList = new ArrayList<SeqSymmetry>();
-				track2Results.put(method, resultList);
+				track2Results.put(method.get(), resultList);
 			}
 			resultList.add(result);
 		}

@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
+import com.google.common.base.Optional;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
@@ -98,8 +99,8 @@ public abstract class CytobandGlyph {
 			}
 		}
 
-		String meth = BioSeqUtils.determineMethod(cyto_annots);
-		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
+		Optional<String> meth = BioSeqUtils.determineMethod(cyto_annots);
+		final ITrackStyleExtended  style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
 //		TransformTierGlyph cytobandTier = new TransformTierGlyph(style);
 //		smv.getSeqMap().addTier(cytobandTier, false);
 

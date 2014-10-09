@@ -1440,12 +1440,12 @@ public static boolean areResiduesComplete(String residues) {
 	}
 
 	public static SeqSymmetry convert(SeqSymmetry sym, BioSeq aseq, BioSeq cseq){
-		String method = BioSeqUtils.determineMethod(sym);
-		if(method == null){
+		com.google.common.base.Optional<String> method = BioSeqUtils.determineMethod(sym);
+		if(!method.isPresent()){
 			return null;
 		}
 		SimpleSymWithPropsWithCdsSpan resultsym = new SimpleSymWithPropsWithCdsSpan(sym.getChildCount());
-		resultsym.setProperty("method", method);
+		resultsym.setProperty("method", method.get());
 		
 		SeqSpan span = sym.getSpan(aseq);
 		if(span != null) {

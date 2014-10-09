@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -86,8 +87,8 @@ public final class SearchUtils {
                 // If parent matches, then don't list children
                 return;
             } else if (sym instanceof SymWithProps) {
-                String method = BioSeqUtils.determineMethod(sym);
-                if (method != null && match.reset(method).matches()) {
+                Optional<String> method = BioSeqUtils.determineMethod(sym);
+                if (method.isPresent() && match.reset(method.get()).matches()) {
                     syms.add(sym);	// method matches
                     // If parent matches, then don't list children
                     return;

@@ -248,7 +248,7 @@ public class SearchModeResidue implements ISearchModeExtended,
                 SearchResults<GlyphI> results = search(st, chrFilter, statusHolder);
                 searchSummary.append(st).append(" : ").append(results.getSearchSummary()).append(" ");
             } else {
-                searchSummary.append(st).append(" : ").append("Search skipped because character lenght is less than 3.");
+                searchSummary.append(st).append(" : ").append("Search skipped because character length is less than 4.");
             }
         }
         return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);

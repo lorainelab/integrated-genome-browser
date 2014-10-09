@@ -40,7 +40,7 @@
                             <entry key="com.affymetrix.igb.bookmarks.action.SaveSessionAction" value="true"/>
                             <entry key="com.affymetrix.igb.bookmarks.action.LoadSessionAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.NewGenomeAction" value="true"/>
-                            <entry key="com.affymetrix.igb.action.ExportImageAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.SaveImageAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.PrintAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.PreferencesAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ExitAction" value="true"/>
@@ -59,7 +59,7 @@
                             <entry key="com.affymetrix.igb.bookmarks.action.SaveSessionAction.index" value="1"/>
                             <entry key="com.affymetrix.igb.bookmarks.action.LoadSessionAction.index" value="2"/>
                             <entry key="com.affymetrix.igb.action.NewGenomeAction.index" value="3"/>							
-                            <entry key="com.affymetrix.igb.action.ExportImageAction.index" value="4"/>
+                            <entry key="com.affymetrix.igb.action.SaveImageAction.index" value="4"/>
                             <entry key="com.affymetrix.igb.action.PrintAction.index" value="5"/>
                             <entry key="com.affymetrix.igb.action.PreferencesAction.index" value="6"/>
                             <entry key="com.affymetrix.igb.action.ExitAction.index" value="7"/>

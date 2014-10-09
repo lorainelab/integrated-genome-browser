@@ -13,21 +13,21 @@ import java.util.logging.Level;
  *
  * @author nick
  */
-public class ExportImageAction extends GenericAction {
+public class SaveImageAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
-    private static final ExportImageAction ACTION = new ExportImageAction();
+    private static final SaveImageAction ACTION = new SaveImageAction();
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
 
-    public static ExportImageAction getAction() {
+    public static SaveImageAction getAction() {
         return ACTION;
     }
 
-    private ExportImageAction() {
-        super(BUNDLE.getString("exportImage"), BUNDLE.getString("exportImageTooltip"),
+    private SaveImageAction() {
+        super(BUNDLE.getString("saveImage"), BUNDLE.getString("saveImageTooltip"),
                 "16x16/actions/export_image.png",
                 "22x22/actions/export_image.png",
                 KeyEvent.VK_UNDEFINED, null, true);

@@ -59,7 +59,7 @@ public class ExportDialog extends HeadLessExport {
 
     private static ExportDialog singleton;
     static float FONT_SIZE = 13.0f;
-    static final String TITLE = "Export Image";
+    static final String TITLE = "Save Image";
     static final String DEFAULT_FILE = "igb.png";
     static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     static final Object[] UNIT = {"pixels", "inches"};

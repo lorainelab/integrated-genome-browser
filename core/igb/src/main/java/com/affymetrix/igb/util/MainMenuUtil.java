@@ -16,7 +16,7 @@ import com.affymetrix.igb.action.DocumentationAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.action.ExportFileAction;
-import com.affymetrix.igb.action.ExportImageAction;
+import com.affymetrix.igb.action.SaveImageAction;
 import com.affymetrix.igb.action.IGBSupportAction;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.action.NewGenomeAction;
@@ -91,7 +91,7 @@ public class MainMenuUtil {
 		file_menu.addSeparator();
 //		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_print", PrintAction.getAction()));
 		//MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_printFrame", PrintFrameAction.getAction()));
-		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportImage", ExportImageAction.getAction()));
+		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_saveImage", SaveImageAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportFile", ExportFileAction.getAction()));
 //		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_exportAnnotations", ExportSelectedAnnotationFileAction.getAction()));
 		MenuUtil.addToMenu(file_menu, new JRPMenuItem(id + "_main_fileMenu_closeTracks", RemoveFeatureAction.getAction()));

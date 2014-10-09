@@ -48,7 +48,7 @@ import com.affymetrix.igb.shared.SearchResults;
 public class SearchModeResidue implements ISearchModeExtended,
         SeqMapRefreshed, SeqSelectionListener {
 
-    private static final int SEARCH_ALL_ORDINAL = -1;
+    private static final int SEARCH_ALL_ORDINAL = 3;
     private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
     private static final boolean default_confirm_before_seq_change = true;
     private static final String SEPARATOR = "\\|";

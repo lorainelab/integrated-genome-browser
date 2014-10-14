@@ -269,16 +269,18 @@ public abstract class SymLoader {
     public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
         Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
         List<SeqSymmetry> resultList = null;
-        String method = null;
+	com.google.common.base.Optional<String> method;
         for (SeqSymmetry result : results) {
-            method = BioSeqUtils.determineMethod(result).get();
-            if (track2Results.containsKey(method)) {
-                resultList = track2Results.get(method);
-            } else {
-                resultList = new ArrayList<SeqSymmetry>();
-                track2Results.put(method, resultList);
+            method = BioSeqUtils.determineMethod(result);
+            if(method.isPresent()){
+                if (track2Results.containsKey(method.get())) {
+                    resultList = track2Results.get(method.get());
+                } else {
+                    resultList = new ArrayList<SeqSymmetry>();
+                    track2Results.put(method.get(), resultList);
+                }
+                resultList.add(result);
             }
-            resultList.add(result);
         }
 
         return track2Results;

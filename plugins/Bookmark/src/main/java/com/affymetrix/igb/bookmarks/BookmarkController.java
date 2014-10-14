@@ -223,9 +223,6 @@ public abstract class BookmarkController {
 
 				} else {
                                         Optional<String> meth = BioSeqUtils.determineMethod(sym);
-                                        if(!meth.isPresent()){
-                                            continue;
-                                        }
 					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
 					GenericFeature feature = style.getFeature();
 

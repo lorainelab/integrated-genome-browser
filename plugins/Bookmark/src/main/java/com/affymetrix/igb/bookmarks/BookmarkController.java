@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.awt.Color;
@@ -221,7 +222,11 @@ public abstract class BookmarkController {
 							maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
 				} else {
-					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(BioSeqUtils.determineMethod(sym).get());
+                                        Optional<String> meth = BioSeqUtils.determineMethod(sym);
+                                        if(!meth.isPresent()){
+                                            continue;
+                                        }
+					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
 					GenericFeature feature = style.getFeature();
 
 					if (!gFeature.equals(feature)) {

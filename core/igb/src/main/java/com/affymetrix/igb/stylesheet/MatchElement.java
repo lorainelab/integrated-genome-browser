@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -121,7 +122,7 @@ class MatchElement implements DrawableElement {
 
   boolean matches(SeqSymmetry sym) {
     boolean result = false;
-    
+    Optional<String> meth = BioSeqUtils.determineMethod(sym);
     if (match_param == null) {
       return false;
     }
@@ -143,16 +144,16 @@ class MatchElement implements DrawableElement {
     }
     
     else if (MATCH_BY_EXACT_METHOD.equals(match_test)) {
-        if (BioSeqUtils.determineMethod(sym).isPresent()) {
-            if (match_param.equals(BioSeqUtils.determineMethod(sym).get())) {
+        if (meth.isPresent()) {
+            if (match_param.equals(meth.get())) {
                 result = true;
             }
         }
     }
     
     else if (MATCH_BY_METHOD_REGEX.equals(match_test) && match_regex != null) {
-        if (BioSeqUtils.determineMethod(sym).isPresent()) {
-            if (match_regex.matcher(BioSeqUtils.determineMethod(sym).get()).matches()) {
+        if (meth.isPresent()) {
+            if (match_regex.matcher(meth.get()).matches()) {
                 result = true;
             }
         }

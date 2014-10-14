@@ -23,6 +23,7 @@ import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.google.common.base.Optional;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -335,14 +336,14 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
                 return;
             }
         }
-        String meth = BioSeqUtils.determineMethod(probeset);
+        Optional<String> meth = BioSeqUtils.determineMethod(probeset);
         DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
         SeqUtils.transformSymmetry(probeset_sym, consensus_sym, true);
         // Note that the transformation generates a probeset_sym of depth 3
 
-        if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
+        if (meth.isPresent() && meth.get().endsWith(POLY_A_SITE_METHOD)) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_site_color);
-        } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
+        } else if (meth.isPresent() && meth.get().indexOf(POLY_A_STACK_METHOD) >= 0) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
         } else {
             drawProbeSetGlyph(gviewer, the_tier, probeset_sym, parent_glyph, y, height);
@@ -491,9 +492,8 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
-        String meth = BioSeqUtils.determineMethod(sym);
-        String human_name = meth;
-        if (meth != null) {
+        Optional<String> meth = BioSeqUtils.determineMethod(sym);
+        if (meth.isPresent()) {
 			// Why to strip off the ending ??
             // Not stripping off the ending to resolve bug ID: 3213610
             // http://sourceforge.net/tracker/?func=detail&aid=3213610&group_id=129420&atid=714744
@@ -502,6 +502,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 //			if (n > 0) {
 //				meth = meth.substring(0, n);
 //			}
+            String human_name = meth.get();
             int n = human_name.lastIndexOf(NETAFFX_CONSENSUS);
             if (n > 0) {
                 human_name = human_name.substring(0, n);

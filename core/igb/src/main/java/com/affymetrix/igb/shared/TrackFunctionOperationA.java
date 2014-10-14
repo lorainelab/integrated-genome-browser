@@ -21,6 +21,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -96,9 +97,9 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             }
             if (rootSym != null) {
                 seqSymList.add(rootSym);
-                String method = BioSeqUtils.determineMethod(rootSym);
-                if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && method != null) {
-                    preferredStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+                Optional<String> method = BioSeqUtils.determineMethod(rootSym);
+                if (rootSym instanceof SimpleSymWithProps && preferredStyle == null && method.isPresent()) {
+                    preferredStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method.get());
                 }
             }
         }

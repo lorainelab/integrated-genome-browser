@@ -683,13 +683,19 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  Write out a SeqSymmetry in DAS2FEATURE format.
 	 *  Recursively descends to write out all descendants.
+         * @param annot
+         * @param parent_id
+         * @param feat_type
+         * @param parent_index
 	 */
 	public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
 					String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		if (feat_type == null) {
-			feat_type = BioSeqUtils.determineMethod(annot);
+                    if (BioSeqUtils.determineMethod(annot).isPresent()) {
+                        feat_type = BioSeqUtils.determineMethod(annot).get();
+                    }
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;

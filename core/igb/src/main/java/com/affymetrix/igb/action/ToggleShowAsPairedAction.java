@@ -29,7 +29,7 @@ public class ToggleShowAsPairedAction extends SeqMapViewActionA {
 //    }
     private ToggleShowAsPairedAction() {
         super(BUNDLE.getString("toggleShowAsPaired"), KeyEvent.VK_UNDEFINED);
-        putValue(SELECTED_KEY, true);
+        putValue(SELECTED_KEY, false);
     }
 
     public static ToggleShowAsPairedAction getAction() {

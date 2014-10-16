@@ -492,6 +492,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             }
             if (canShowAsPaired) {
                 JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
+                showAsPaired.setSelected(ToggleShowAsPairedAction.getAction().isSelected());
                 popup.add(showAsPaired);
             }
         }

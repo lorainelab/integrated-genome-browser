@@ -38,17 +38,17 @@ public class BioSeqUtils {
         Optional<String> meth = Optional.absent();
         if (sym instanceof SymWithProps) {
             SymWithProps psym = (SymWithProps) sym;
-            meth = Optional.of((String)psym.getProperty("method"));
+            meth = Optional.fromNullable((String)psym.getProperty("method"));
             if (!meth.isPresent()) {
-                meth = Optional.of((String) psym.getProperty("meth"));
+                meth = Optional.fromNullable((String) psym.getProperty("meth"));
             }
             if (!meth.isPresent()) {
-                meth = Optional.of((String) psym.getProperty("type"));
+                meth = Optional.fromNullable((String) psym.getProperty("type"));
             }
         }
         if (!meth.isPresent()) {
             if (sym instanceof TypedSym) {
-                meth = Optional.of(((TypedSym) sym).getType());
+                meth = Optional.fromNullable(((TypedSym) sym).getType());
             }
         }
         if(sym instanceof SingletonSymWithProps){

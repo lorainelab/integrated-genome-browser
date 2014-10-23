@@ -66,6 +66,7 @@ public class ExportDialog extends HeadLessExport {
     static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
     static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
     static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+    private String currentUnit;
     private JFrame static_frame = null;
     private File defaultDir;
     private AffyTieredMap seqMap;
@@ -264,7 +265,7 @@ public class ExportDialog extends HeadLessExport {
 
             unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
             unitComboBox.setSelectedItem(unit);
-
+            currentUnit = unit;
             initSpinner(unit);
 
             static_frame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
@@ -739,13 +740,14 @@ public class ExportDialog extends HeadLessExport {
         unit = (String) unitComboBox.getSelectedItem();
 
         double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
-
-        if (unit.equals(UNIT[0])) {
-            newWidth *= imageInfo.getResolution();
-        } else {
-            newWidth /= imageInfo.getResolution();
+        if (!unit.equals(currentUnit)) {
+            if (unit.equals(UNIT[0])) {
+                newWidth *= imageInfo.getResolution();
+            } else {
+                newWidth /= imageInfo.getResolution();
+            }
         }
-
+        currentUnit = unit;
         widthSpinner.setValue(newWidth);
     }
 

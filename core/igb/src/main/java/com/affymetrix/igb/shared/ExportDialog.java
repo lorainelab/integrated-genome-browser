@@ -421,7 +421,7 @@ public class ExportDialog extends HeadLessExport {
         if (StringUtils.isBlank(ext)) {
             defaultFileName += selectedExt;
         }
-        FileDialog dialog = new FileDialog(static_frame, "Export Image", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(static_frame, "Save Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);

@@ -20,7 +20,7 @@ public class ExportSequenceViewerAction extends GenericAction {
     private final Adjustable scroller;
 
     public ExportSequenceViewerAction(Component comp, Adjustable scroller) {
-        super(AbstractSequenceViewer.BUNDLE.getString("exportImage"), null, "22x22/actions/Sequence_Viewer_export.png");
+        super(AbstractSequenceViewer.BUNDLE.getString("saveImage"), null, "22x22/actions/Sequence_Viewer_export.png");
         this.comp = comp;
         this.scroller = scroller;
     }

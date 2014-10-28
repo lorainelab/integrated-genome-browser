@@ -32,6 +32,7 @@
                             <entry key="com.affymetrix.igb.action.ZoomOutXAction" value="ctrl shift LEFT"/>
                             <entry key="com.affymetrix.igb.action.ZoomOutYAction" value="ctrl shift UP"/>
                             <entry key="com.affymetrix.igb.action.ZoomInXAction" value="ctrl shift RIGHT"/>
+                            <entry key="com.affymetrix.igb.action.HomeAction" value="ctrl H"/>
                         </map>
                     </node>
                     <node name="toolbar">
@@ -53,6 +54,7 @@
                             <entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ChangeExpandMaxAction" value="true"/>
                             <entry key="com.affymetrix.igb.action.ToggleToolTipAction" value="true"/>
+                            <entry key="com.affymetrix.igb.action.HomeAction" value="true"/>
 							
                             <!-- Toolbar Action Indices -->
                             <entry key="com.affymetrix.igb.action.LoadFileAction.index" value="0"/>
@@ -72,6 +74,7 @@
                             <entry key="com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction.index" value="14"/>
                             <entry key="com.affymetrix.igb.action.ChangeExpandMaxAction.index" value="15"/>
                             <entry key="com.affymetrix.igb.action.ToggleToolTipAction.index" value="16"/>
+                            <entry key="com.affymetrix.igb.action.HomeAction.index" value="17"/>
 
                         </map>
                     </node>

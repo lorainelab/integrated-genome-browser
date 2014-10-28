@@ -20,8 +20,8 @@ public class HomeAction extends GenericAction {
     }
 
     private HomeAction() {
-        super("Return to Home Screen", "Returns to home screen", "16x16/actions/home.png",
-                "22x22/actions/home.png", KeyEvent.VK_UNDEFINED);
+        super("Home", "Home", "16x16/actions/home.png",
+                "22x22/actions/home.png", KeyEvent.VK_H);
     }
 
     @Override

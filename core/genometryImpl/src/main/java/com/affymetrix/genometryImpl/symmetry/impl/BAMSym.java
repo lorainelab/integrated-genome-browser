@@ -222,6 +222,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("id", name);
             tprops.put("residues", getResidues());
             tprops.put("forward", this.isForward());
+            tprops.put("scores",getBaseQuality());
+            tprops.put("average quality",getAverageQuality());
             return tprops;
         }
 
@@ -310,6 +312,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("residues", getResidues());
             tprops.put("forward", this.isForward());
             tprops.put("feature_type", "insertion");
+            tprops.put("average quality",getAverageQuality());
             return tprops;
         }
 
@@ -417,6 +420,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         props.put("residues", getResidues().replaceAll("-", ""));
         props.put("mapq", mapq);
         props.put("flags", BAM_FLAG_MAP.get(getFlags()));
+        props.put("scores",getBaseQuality());
+        props.put("average quality",getAverageQuality());
         return super.cloneProperties();
     }
 

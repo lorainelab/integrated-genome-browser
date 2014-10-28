@@ -28,8 +28,8 @@ public class SaveImageAction extends GenericAction {
 
     private SaveImageAction() {
         super(BUNDLE.getString("saveImage"), BUNDLE.getString("saveImageTooltip"),
-                "16x16/actions/export_image.png",
-                "22x22/actions/export_image.png",
+                "16x16/actions/camera_toolbar.png",
+                "22x22/actions/camera_toolbar.png",
                 KeyEvent.VK_UNDEFINED, null, true);
         this.ordinal = -9002000;
     }

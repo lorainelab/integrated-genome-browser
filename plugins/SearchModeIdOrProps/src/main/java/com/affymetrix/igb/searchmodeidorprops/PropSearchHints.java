@@ -19,8 +19,12 @@ public class PropSearchHints implements ISearchHints {
             // Not much of a regular expression.  Assume the user wants to match at the start and end
             regexText = ".*" + regexText + ".*";
         }
-        Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
-
+            Pattern regex;
+        try{
+            regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
+        }catch(Exception e){
+            regex =  Pattern.compile("");
+        }
         return SearchUtils.findLocalSyms(GenometryModel.getGenometryModel().getSelectedSeqGroup(), regex, true, 20);
     }
 }

@@ -94,9 +94,6 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), " ", null);
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[1]), null);
-                tooltip.getDocument().insertString(
-                        tooltip.getDocument().getLength(), "\n", null);
-
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }

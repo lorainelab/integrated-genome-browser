@@ -74,7 +74,18 @@ public class SeqMapToolTips extends JWindow {
             tooltip.setText(null);
         }
     }
-
+    private String wrappedString(String input){
+        
+        StringBuilder output = new StringBuilder(input);
+        int index = input.length();
+        int size = MAX_WIDTH/10;
+        while(index > 0){
+            output.insert(index, "\n");
+            index-=size;
+        }
+        return output.toString();
+    }
+    
     private void formatTooltip() {
         tooltip.setText(null);
         for (String[] propertie : properties) {
@@ -82,7 +93,7 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), " ", null);
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[1], null);
+                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[1]), null);
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), "\n", null);
 

@@ -31,8 +31,8 @@ public class PreferencesAction extends GenericAction {
 
     private PreferencesAction() {
         super(BUNDLE.getString("Preferences"), BUNDLE.getString("preferencesTooltip"),
-                "16x16/actions/gear_toolbar.png",
-                "22x22/actions/gear_toolbar.png",
+                "16x16/actions/preferences_updated.png",
+                "22x22/actions/preferences_updated.png",
                 KeyEvent.VK_E, null, true);
         this.ordinal = -9006100;
     }

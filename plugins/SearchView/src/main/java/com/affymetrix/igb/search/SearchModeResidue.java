@@ -231,6 +231,8 @@ public class SearchModeResidue implements ISearchModeExtended,
             igbService.getSeqMap().select(glyph);
             igbService.zoomToCoord(seq, start, end);
             igbService.getSeqMapView().centerAtHairline();
+            igbService.getSeqMapView().select(glyph);
+
         }
     }
 

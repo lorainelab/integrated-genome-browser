@@ -1296,6 +1296,12 @@ public class SeqMapView extends JPanel
             }
         }
     }
+    
+    @Override
+    public final void select(GlyphI glyph){
+        List<GlyphI> glyphs = (List<GlyphI>) Collections.singletonList(glyph);
+        setSelectionStatus(getSelectionTitle(glyphs));
+    }
 
     public final void selectTrack(TierGlyph tier, boolean selected) {
         if (tier.getAnnotStyle().getFloatTier()) {

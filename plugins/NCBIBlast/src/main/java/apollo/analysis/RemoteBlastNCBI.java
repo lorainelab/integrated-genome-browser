@@ -264,7 +264,7 @@ public class RemoteBlastNCBI {
         builder.put("NUM_ORG", "1");
         builder.put("BLAST_PROGRAMS", blastType);
         builder.put("MAX_NUM_SEQ", "100");
-        builder.put("SHORT_QUERY_ADJUST", "on");
+       // builder.put("SHORT_QUERY_ADJUST", "on");
         builder.put("EXPECT", "10");
         builder.put("WORD_SIZE", "3");
         builder.put("HSP_RANGE_MAX", "0");

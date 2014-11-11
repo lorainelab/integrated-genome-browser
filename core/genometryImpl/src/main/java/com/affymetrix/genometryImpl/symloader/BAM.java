@@ -86,7 +86,7 @@ public final class BAM extends XAM {
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
             samFileReader = new SAMFileReader(seekableStream, indexFile, false);
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
-        } else if (scheme.startsWith("ftp")) {
+        } else if (scheme.startsWith(FTP_PROTOCOL)) {
             String baiUriStr = getBamIndexUriStr(uri);
             indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
             samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);

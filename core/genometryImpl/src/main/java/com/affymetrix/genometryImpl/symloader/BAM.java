@@ -107,7 +107,7 @@ public final class BAM extends XAM {
             ErrorHandler.errorPanel("No BAM index file",
                     "Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
             this.isInitialized = false;
-            return null;
+            throw new BamIndexNotFoundException();
         }
         return baiUriStr;
     }

@@ -483,7 +483,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         saveTrack.setIcon(null);
         popup.add(saveTrack);
 
-        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected) {
+        //for now do not allow multiselect action for show as paired, but this can be added easily if desired
+        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size()==1) {
             boolean canShowAsPaired = true;
             for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
                 if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam")) {
@@ -492,7 +493,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             }
             if (canShowAsPaired) {
                 JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
-                showAsPaired.setSelected(ToggleShowAsPairedAction.getAction().isSelected());
+                TierGlyph glyph = handler.getSelectedTiers().get(0);
+                showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
                 popup.add(showAsPaired);
             }
         }

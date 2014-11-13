@@ -94,7 +94,7 @@ public class SaveSessionAction extends GenericAction {
             saveSession(chooser.getSelectedFile());
         }
     }
-    
+
     public void saveSession(File f) {
         try {
             igbService.saveState();
@@ -115,22 +115,21 @@ public class SaveSessionAction extends GenericAction {
             Preferences topNode = PreferenceUtils.getTopNode();
             Preferences toolBarPref = PreferenceUtils.getToolbarNode();
             Preferences keyStrokePref = PreferenceUtils.getKeystrokesNode();
-            
-            Map<String,Object> toolBarKeyvalue = PreferenceUtils.getEntryFromPref(toolBarPref);
-            Map<String,Object> keyStrokeKeyvalue =PreferenceUtils.getEntryFromPref(keyStrokePref);
-                       
+
+            Map<String, Object> toolBarKeyvalue = PreferenceUtils.getEntryFromPref(toolBarPref);
+            Map<String, Object> keyStrokeKeyvalue = PreferenceUtils.getEntryFromPref(keyStrokePref);
+
             toolBarPref.removeNode();
             keyStrokePref.removeNode();
-            
+
             PreferenceUtils.exportPreferences(topNode, f);
-            
+
             topNode.node(toolBarPref.name());
             topNode.node(keyStrokePref.name());
-            
+
             PreferenceUtils.addEntryToNode(PreferenceUtils.getToolbarNode(), toolBarKeyvalue);
             PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);
 
-            
             PreferenceUtils.getSessionPrefsNode().removeNode();
         } catch (Exception x) {
             ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);

@@ -116,8 +116,8 @@ public class SaveSessionAction extends GenericAction {
             Preferences toolBarPref = PreferenceUtils.getToolbarNode();
             Preferences keyStrokePref = PreferenceUtils.getKeystrokesNode();
 
-            Map<String, Object> toolBarKeyvalue = PreferenceUtils.getEntryFromPref(toolBarPref);
-            Map<String, Object> keyStrokeKeyvalue = PreferenceUtils.getEntryFromPref(keyStrokePref);
+            Map<String, Object> toolBarKeyvalue = PreferenceUtils.getEntryMapFromNode(toolBarPref);
+            Map<String, Object> keyStrokeKeyvalue = PreferenceUtils.getEntryMapFromNode(keyStrokePref);
 
             toolBarPref.removeNode();
             keyStrokePref.removeNode();

@@ -724,7 +724,7 @@ public abstract class PreferenceUtils {
         node.addPreferenceChangeListener(papCL);
     }
 
-    public static Map<String, Object> getEntryFromPref(Preferences pref) throws BackingStoreException {
+    public static Map<String, Object> getEntryMapFromNode(Preferences pref) throws BackingStoreException {
         Map<String, Object> entry = new HashMap<String, Object>();
         String[] keys;
 

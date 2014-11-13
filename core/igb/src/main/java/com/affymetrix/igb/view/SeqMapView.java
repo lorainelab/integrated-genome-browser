@@ -2038,6 +2038,14 @@ public class SeqMapView extends JPanel
          */
         sym_popup.repaint();
     }
+    
+    public boolean isPopupActive(){
+        if(sym_popup != null) {
+            return sym_popup.isVisible();
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Prepares the given popup menu to be shown. The popup menu should have
@@ -2396,6 +2404,10 @@ public class SeqMapView extends JPanel
                 seqMapToolTips.setToolTip(null, properties);
             }
         }
+    }
+    
+    public void disableToolTip() {
+        seqMapToolTips.setToolTip(null, null);
     }
 
     public void showProperties(int x, GraphGlyph glyph) {

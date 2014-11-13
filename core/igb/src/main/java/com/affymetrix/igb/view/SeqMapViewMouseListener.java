@@ -100,6 +100,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 //			ToolTipManager.sharedInstance().setDismissDelay(toolTipDismissDelay);
 //		}
 //		ToolTipManager.sharedInstance().setInitialDelay(toolTipInitialDelay);
+            smv.disableToolTip();
 	}
 
 	public void mouseClicked(MouseEvent evt) {
@@ -107,6 +108,9 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 	}
 
 	public void mousePressed(MouseEvent evt) {
+            
+                // Disable tooltip when clicked
+                smv.disableToolTip();
 
 		if (map instanceof AffyLabelledTierMap) {
 			((AffyLabelledTierMap) map).getLabelMap().clearSelected();
@@ -175,7 +179,10 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 		}
 		
 //		optimziedTooltip(evt);
-		oldToolTip(evt);
+                if(!smv.isPopupActive()){
+                    oldToolTip(evt);
+                }
+		
 	}
 
 	private void oldToolTip(MouseEvent evt){

@@ -49,6 +49,8 @@ import com.affymetrix.common.CommonUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JRadioButton;
 
@@ -726,7 +728,25 @@ public abstract class PreferenceUtils {
 		action.addPropertyChangeListener(papCL);
 		node.addPreferenceChangeListener(papCL);
 	}
-	
+        
+    public static Map<String, Object> getEntryFromPref(Preferences pref) throws BackingStoreException {
+        Map<String, Object> entry = new HashMap<String, Object>();
+        String[] keys;
+
+        keys = pref.keys();
+        for (String key : keys) {
+            entry.put(key, pref.get(key, ""));
+        }
+
+        return entry;
+    }
+
+   public static void addEntryToNode(Preferences node, Map<String,Object> map){
+      for(Map.Entry<String,Object> entry : map.entrySet()){
+          save(node,entry.getKey(),entry.getValue());
+      }
+  }   
+    
 	public static boolean save(Preferences node, String key, Object value){
 		boolean saved = false;
 		if(node != null){

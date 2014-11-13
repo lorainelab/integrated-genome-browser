@@ -17,6 +17,11 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 
@@ -89,7 +94,7 @@ public class SaveSessionAction extends GenericAction {
             saveSession(chooser.getSelectedFile());
         }
     }
-
+    
     public void saveSession(File f) {
         try {
             igbService.saveState();
@@ -107,7 +112,25 @@ public class SaveSessionAction extends GenericAction {
                     }
                 }
             }
-            PreferenceUtils.exportPreferences(PreferenceUtils.getTopNode(), f);
+            Preferences topNode = PreferenceUtils.getTopNode();
+            Preferences toolBarPref = PreferenceUtils.getToolbarNode();
+            Preferences keyStrokePref = PreferenceUtils.getKeystrokesNode();
+            
+            Map<String,Object> toolBarKeyvalue = PreferenceUtils.getEntryFromPref(toolBarPref);
+            Map<String,Object> keyStrokeKeyvalue =PreferenceUtils.getEntryFromPref(keyStrokePref);
+                       
+            toolBarPref.removeNode();
+            keyStrokePref.removeNode();
+            
+            PreferenceUtils.exportPreferences(topNode, f);
+            
+            topNode.node(toolBarPref.name());
+            topNode.node(keyStrokePref.name());
+            
+            PreferenceUtils.addEntryToNode(PreferenceUtils.getToolbarNode(), toolBarKeyvalue);
+            PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);
+
+            
             PreferenceUtils.getSessionPrefsNode().removeNode();
         } catch (Exception x) {
             ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);

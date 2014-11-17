@@ -403,10 +403,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             }
             return true;
         }
+        if (col == SEPARATE_COLUMN) {
+            return !style.isShowAsPaired();
+        }
         if (col == DELETE_FEATURE_COLUMN
                 || col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
-                || col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN
-                || col == SEPARATE_COLUMN) {
+                || col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
             return true;
         } else if (getFeature(row) == null) {
             return false;
@@ -497,7 +499,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
         fireTableCellUpdated(row, col);
         update(col);
-		//if (!ScriptManager.SCRIPTING.equals(value)) {
+        //if (!ScriptManager.SCRIPTING.equals(value)) {
         //	TierPrefsView.getSingleton().setRowSelection(vFeature.getStyle());
         //}
     }
@@ -582,7 +584,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             smv.getAutoLoadAction().loadData();
         }
 
-		//  Whatever feature strategy changed, it may have affected
+        //  Whatever feature strategy changed, it may have affected
         // the enable status of the "load visible" button
         this.glv.changeVisibleDataButtonIfNecessary(features);
     }

@@ -218,9 +218,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // in order to look at the properties associated with them.  Otherwise, the method
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
-            if (sym instanceof PairedBamSymWrapper) {
+            if ((sym instanceof PairedBamSymWrapper)&& AbstractTierGlyph.useLabel(trackStyle)) {
                 pglyph = (EfficientSolidGlyph) EfficientMateJoinGlyph.class.newInstance();
-                color = Color.BLACK;
             } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
                 Optional<Object> property = getTheProperty(sym, trackStyle.getLabelField());
@@ -244,12 +243,17 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             } else {
                 pglyph = (EfficientSolidGlyph) glyphClass.newInstance();
             }
+            if (sym instanceof PairedBamSymWrapper) {
+                pglyph.setDirection(NeoConstants.NONE);
+                color = Color.BLACK;
+            } else {
+                DirectionType directionType = DirectionType.valueFor(tierGlyph.getAnnotStyle().getDirectionType());
+                if (directionType == DirectionType.ARROW || directionType == DirectionType.BOTH) {
+                    pglyph.setDirection(span.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
+                }
+            }
             pglyph.setCoords(span.getMin(), 0, span.getLength(), pheight);
             pglyph.setColor(color);
-            DirectionType directionType = DirectionType.valueFor(tierGlyph.getAnnotStyle().getDirectionType());
-            if (directionType == DirectionType.ARROW || directionType == DirectionType.BOTH) {
-                pglyph.setDirection(span.isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
-            }
             tierGlyph.setDataModelFromOriginalSym(pglyph, sym);
         } catch (InstantiationException ex) {
             Logger.getLogger(AnnotationGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);

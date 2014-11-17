@@ -72,6 +72,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
+import org.apache.commons.lang3.StringUtils;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -484,11 +485,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         popup.add(saveTrack);
 
         //for now do not allow multiselect action for show as paired, but this can be added easily if desired
-        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size()==1) {
-            boolean canShowAsPaired = true;
+        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size() == 1) {
+            boolean canShowAsPaired = false;
             for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
-                if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam") || !tierGlyph.getAnnotStyle().getMethodName().endsWith(".sam")) {
-                    canShowAsPaired = false;
+                String methodName = tierGlyph.getAnnotStyle().getMethodName();
+                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
+                    canShowAsPaired = true;
                 }
             }
             if (canShowAsPaired) {
@@ -498,18 +500,27 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 popup.add(showAsPaired);
             }
         }
-        popup.add(new JSeparator());
+
+        popup.add(
+                new JSeparator());
 
         JMenuItem removeDataFromTracks = new JRPMenuItemTLP(RemoveDataFromTracksAction.getAction());
-        removeDataFromTracks.setText("Clear Data");
+
+        removeDataFromTracks.setText(
+                "Clear Data");
         removeDataFromTracks.setEnabled(Selections.rootSyms.size() > 0);
-        removeDataFromTracks.setIcon(null);
+        removeDataFromTracks.setIcon(
+                null);
         popup.add(removeDataFromTracks); // Remove data from selected tracks.
 
         JMenuItem deleteTrack = new JRPMenuItemTLP(CloseTracksAction.getAction());
-        deleteTrack.setText("Delete Track");
-        deleteTrack.setEnabled(!coordinatesTrackSelected);
-        deleteTrack.setIcon(null);
+
+        deleteTrack.setText(
+                "Delete Track");
+        deleteTrack.setEnabled(
+                !coordinatesTrackSelected);
+        deleteTrack.setIcon(
+                null);
         popup.add(deleteTrack);
 
         //	if (tierGlyph != null) {
@@ -544,7 +555,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         }
     }
 
-    // purely for debugging
+// purely for debugging
     private void doDebugAction() {
         for (TierGlyph tg : handler.getSelectedTiers()) {
             ITrackStyleExtended style = tg.getAnnotStyle();
@@ -555,6 +566,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     SeqMapView getSeqMapView() {
         return gviewer;
+
     }
 
     private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {

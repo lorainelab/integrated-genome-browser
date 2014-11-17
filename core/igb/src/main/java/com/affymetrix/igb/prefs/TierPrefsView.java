@@ -527,8 +527,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		trackNameSizeComboBox.setSelectedItem(style.getTrackNameSize());
 		labelFieldComboBox.setSelectedItem(style.getLabelField());
 		maxDepthTextField.setText((style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || style.isGraphTier()) ? "" : String.valueOf(style.getMaxDepth()));
-		show2TracksCheckBox.setSelected(!(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || ((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate())));
-		collapsedCheckBox.setSelected(style.getCollapsed());
+		
+                show2TracksCheckBox.setSelected(!(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || ((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate())));
+		
+                collapsedCheckBox.setSelected(style.getCollapsed());
 
 		setSelectedByDirection(style.getDirectionName());
 	}
@@ -574,7 +576,10 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 			possitiveColorComboBox.setEnabled(false);
 			negativeColorComboBox.setEnabled(false);
 			show2TracksCheckBox.setEnabled(false);
-		} else {
+		} else if (style.isShowAsPaired()){
+                   show2TracksCheckBox.setEnabled(false);
+                } 
+                else {
 			resetLabelField(style);
 		}
 	}

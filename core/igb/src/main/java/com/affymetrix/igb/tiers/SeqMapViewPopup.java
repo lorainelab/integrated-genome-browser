@@ -487,7 +487,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size()==1) {
             boolean canShowAsPaired = true;
             for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
-                if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam")) {
+                if (!tierGlyph.getAnnotStyle().getMethodName().endsWith(".bam") || !tierGlyph.getAnnotStyle().getMethodName().endsWith(".sam")) {
                     canShowAsPaired = false;
                 }
             }

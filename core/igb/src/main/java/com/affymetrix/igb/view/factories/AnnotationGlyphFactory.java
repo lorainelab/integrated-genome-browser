@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
@@ -32,6 +33,7 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientMateJoinGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientSolidGlyph;
 import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
@@ -112,6 +114,16 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         setTierGlyph();
         int depth = SeqUtils.getDepthFor(sym);
+        if (sym instanceof PairedBamSymWrapper) {
+            if (trackStyle.isShowAsPaired()) {
+                addTopChild(sym);
+            } else {
+                addTopChild(sym.getChild(0));
+                initSymSpan(sym.getChild(1));
+                addTopChild(sym.getChild(1));
+            }
+            return;
+        }
         if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
             int childCount = sym.getChildCount();
             for (int i = 0; i < childCount; i++) {
@@ -150,8 +162,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // call out to handle rendering to indicate if any of the children of the
             //    original annotation are completely outside the view
             if (parentGlyph.isPresent()) {
-                addChildren(sym, parentGlyph.get());
-                handleInsertionGlyphs(sym, parentGlyph.get());
+                if (sym instanceof PairedBamSymWrapper) {
+                    handlePairedChildren((PairedBamSymWrapper) sym, parentGlyph.get());
+                } else {
+                    addChildren(sym, parentGlyph.get());
+                    handleInsertionGlyphs(sym, parentGlyph.get());
+                }
             }
 
         } else {
@@ -167,6 +183,29 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         return parentGlyph;
     }
 
+    private void handlePairedChildren(PairedBamSymWrapper sym, GlyphI parentGlyph) {
+        Optional<GlyphI> firstChildPglyph;
+        Optional<GlyphI> secondChildPglyph;
+        SeqSymmetry sym1 = sym.getChild(0);
+        SeqSymmetry sym2 = sym.getChild(1);
+
+        sym1 = seqMap.transformForViewSeq(sym1, annotSeq);
+        sym2 = seqMap.transformForViewSeq(sym2, annotSeq);
+
+        firstChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, sym1);
+        secondChildPglyph = determineGlyph(UNLABELLED_PARENT_GLYPH_CLASS, sym2);
+
+        if (firstChildPglyph.isPresent() && secondChildPglyph.isPresent()) {
+            addChildren(sym1, firstChildPglyph.get());
+            handleInsertionGlyphs(sym1, firstChildPglyph.get());
+            addChildren(sym2, secondChildPglyph.get());
+            handleInsertionGlyphs(sym2, secondChildPglyph.get());
+            parentGlyph.addChild(firstChildPglyph.get());
+            parentGlyph.addChild(secondChildPglyph.get());
+        }
+
+    }
+
     private Optional<GlyphI> determineGlyph(Class<?> glyphClass, SeqSymmetry sym) {
         EfficientSolidGlyph pglyph = null;
         try {
@@ -179,7 +218,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // in order to look at the properties associated with them.  Otherwise, the method
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
-            if (AbstractTierGlyph.useLabel(trackStyle)) {
+            if (sym instanceof PairedBamSymWrapper) {
+                pglyph = (EfficientSolidGlyph) EfficientMateJoinGlyph.class.newInstance();
+                color = Color.BLACK;
+            } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
                 Optional<Object> property = getTheProperty(sym, trackStyle.getLabelField());
                 String label = "";
@@ -527,7 +569,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         updateAnnotSeq();
         updateViewSeq();
         sym = seqMap.transformForViewSeq(originalSym, annotSeq);
-        updateSymSpan(sym);        
+        updateSymSpan(sym);
         return sym;
     }
 

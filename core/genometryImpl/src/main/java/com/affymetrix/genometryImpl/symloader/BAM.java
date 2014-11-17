@@ -8,7 +8,6 @@ import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.FTP_PR
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometryImpl.symloader.UriProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -86,7 +85,7 @@ public final class BAM extends XAM {
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
             samFileReader = new SAMFileReader(seekableStream, indexFile, false);
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
-        } else if (scheme.startsWith("ftp")) {
+        } else if (scheme.startsWith(FTP_PROTOCOL)) {
             String baiUriStr = getBamIndexUriStr(uri);
             indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
             samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
@@ -107,7 +106,7 @@ public final class BAM extends XAM {
             ErrorHandler.errorPanel("No BAM index file",
                     "Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
             this.isInitialized = false;
-            return null;
+            throw new BamIndexNotFoundException();
         }
         return baiUriStr;
     }
@@ -192,18 +191,7 @@ public final class BAM extends XAM {
                             }
 
                             BAMSym bamSym = (BAMSym) convertSAMRecordToSymWithProps(sr, seq, uri.toString());
-                            if (bamSym.getReadPairedFlag()) {
-                                if (bamSym.isMateNegativeStrandFlag()) {
-                                    Optional<BAMSym> mate = getReadMate(sr, seq);
-                                    if (mate.isPresent()) {
-                                        symList.add(new PairedBamSymWrapper(bamSym, mate.get()));
-                                    } else {
-                                        symList.add(bamSym);
-                                    }
-                                }
-                            } else {
-                                symList.add(bamSym);
-                            }
+                            symList.add(bamSym);
 
                         } catch (SAMException e) {
                             errList.add(e);

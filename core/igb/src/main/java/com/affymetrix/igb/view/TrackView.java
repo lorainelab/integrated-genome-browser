@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -132,7 +133,7 @@ public class TrackView {
     }
 
     void addTracks(SeqMapView smv, BioSeq seq) {
-		// WARNING: use seq.getAnnotationCount() in loop, because some annotations end up lazily instantiating
+        // WARNING: use seq.getAnnotationCount() in loop, because some annotations end up lazily instantiating
         //   other annotations and adding them to the annotation list
         // For example, accessing methods for the first time on a LazyChpSym can cause it to dynamically add
         //      probeset annotation tracks
@@ -159,8 +160,14 @@ public class TrackView {
         // Map symmetry subclass or method type to a factory, and call factory to make glyphs
         Optional<String> meth = BioSeqUtils.determineMethod(annotSym);
         if (meth.isPresent()) {
-            MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
             ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
+            //Temporary hack to switch glyph factory for bam files during paired end development
+            MapTierGlyphFactoryI factory;
+            if (style.isShowAsPaired()) {
+               factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.PairedRead);
+            } else {
+                factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
+            }
             factory.createGlyphs(annotSym, style, smv, seq);
         }
     }
@@ -207,7 +214,7 @@ public class TrackView {
 
         ITrackStyleExtended style;
 
-		// If feature has at least one track then don't add default.
+        // If feature has at least one track then don't add default.
         // Also if track has been loaded on one sequence then load it
         // for other sequence.
         if (!feature.getMethods().isEmpty()) {

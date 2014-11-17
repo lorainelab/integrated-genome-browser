@@ -174,7 +174,7 @@ public abstract class XAM extends SymLoader {
         BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
                 sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, iblockMins,
                 iblockMaxs, sr.getCigar(), includeResidues ? sr.getReadString() : null, sr.getBaseQualityString());
-        sym.setProperty("id", sr.getReadName());
+        sym.setProperty("Read name", sr.getReadName());
         sym.setProperty("method", meth);
         if (sr.getAttribute("NH") != null) {
             sym.setProperty("NH", sr.getAttribute("NH"));
@@ -182,13 +182,22 @@ public abstract class XAM extends SymLoader {
         sym.setFlags(sr.getFlags());
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
         sym.setReadPairedFlag(sr.getReadPairedFlag());
+        sym.setProperty("Location", seq.getID());
         if (sym.getReadPairedFlag()) {
             sym.setFirstOfPairFlag(sr.getFirstOfPairFlag());
             sym.setSecondOfPairFlag(sr.getSecondOfPairFlag());
             //1-based inclusive leftmost position of the clippped mate sequence, or 0 if there is no position.
             sym.setMateStart(sr.getMateAlignmentStart() - 1);
+            sym.setProperty("Mate start", sr.getMateAlignmentStart() - 1);
             sym.setMateUnMapped(sr.getMateUnmappedFlag());
+            sym.setProperty("Mate is mapped", sr.getMateUnmappedFlag());
             sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
+            if (sr.getMateNegativeStrandFlag()) {
+                sym.setProperty("Mate strand", "-");
+            } else {
+                sym.setProperty("Mate strand", "+");
+            }
+            
         }
 
         return sym;

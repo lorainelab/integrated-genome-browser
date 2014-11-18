@@ -1637,10 +1637,8 @@ public class SeqMapView extends JPanel
             }
             seqmap.addEdgeMatches(getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs));
             setStatus(null);
-        } else {
-            setStatus("Skipping edge matching; too many items selected.");
         }
-
+        
         if (update_map) {
             seqmap.updateWidget();
         }

@@ -89,6 +89,7 @@
         <module>plugins/Update</module>
         <module>plugins/plugins_page</module>
         <module>plugins/window_service_def</module>
+        <module>plugins/PairedEndDataPreprocessor</module>
         <module>main</module>
     </modules>
     

@@ -312,7 +312,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("residues", getResidues());
             tprops.put("forward", this.isForward());
             tprops.put("feature_type", "insertion");
-            tprops.put("average quality",getAverageQuality());
+            //tprops.put("average quality",getAverageQuality());
             return tprops;
         }
 

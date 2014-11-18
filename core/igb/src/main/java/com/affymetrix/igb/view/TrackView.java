@@ -161,13 +161,7 @@ public class TrackView {
         Optional<String> meth = BioSeqUtils.determineMethod(annotSym);
         if (meth.isPresent()) {
             ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
-            //Temporary hack to switch glyph factory for bam files during paired end development
-            MapTierGlyphFactoryI factory;
-            if (style.isShowAsPaired()) {
-               factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.PairedRead);
-            } else {
-                factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
-            }
+            MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
             factory.createGlyphs(annotSym, style, smv, seq);
         }
     }

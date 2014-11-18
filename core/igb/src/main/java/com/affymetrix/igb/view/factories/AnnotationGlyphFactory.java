@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -42,12 +43,15 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.CodonGlyphProcessor;
 import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.shared.GlyphPreprocessorI;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
+import com.affymetrix.igb.shared.PreprocessorTypeReference;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.google.common.base.Optional;
+import static com.google.common.base.Preconditions.checkNotNull;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -218,7 +222,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // in order to look at the properties associated with them.  Otherwise, the method
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
-            if ((sym instanceof PairedBamSymWrapper)&& AbstractTierGlyph.useLabel(trackStyle)) {
+            if ((sym instanceof PairedBamSymWrapper) && AbstractTierGlyph.useLabel(trackStyle)) {
                 pglyph = (EfficientSolidGlyph) EfficientMateJoinGlyph.class.newInstance();
             } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
@@ -496,6 +500,14 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
+        checkNotNull(sym);
+        checkNotNull(style);
+        checkNotNull(seq);
+        checkNotNull(gviewer);
+        //apply preprocessors
+        for (GlyphPreprocessorI preprocessor : PreprocessorTypeReference.getInstance().getPreprocessorsForType(FileTypeCategory.Annotation)) {
+            preprocessor.process(sym, style, gviewer, seq);
+        }
         setSeqMap(gviewer);
         if (sym != null) {
             int glyphDepth = style.getGlyphDepth();
@@ -521,6 +533,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
+        checkNotNull(syms);
+        checkNotNull(style);
+        checkNotNull(seq);
+        checkNotNull(gviewer);
         setSeqMap(gviewer);
         TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
         TierGlyph forward_tier = gviewer.getTrack(style, useDirection);
@@ -537,6 +553,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     public void createGlyph(SeqSymmetry sym, SeqMapViewExtendedI gviewer) {
+        checkNotNull(sym);
+        checkNotNull(gviewer);
         setSeqMap(gviewer);
         Optional<String> method = BioSeqUtils.determineMethod(sym);
         if (!method.isPresent()) {

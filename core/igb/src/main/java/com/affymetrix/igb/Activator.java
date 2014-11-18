@@ -78,12 +78,14 @@ import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
+import com.affymetrix.igb.shared.GlyphPreprocessorI;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
+import com.affymetrix.igb.shared.PreprocessorTypeReference;
 import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
@@ -97,7 +99,6 @@ import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MismatchGlyphFactory;
-import com.affymetrix.igb.view.factories.PairedReadGlyphFactory;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
@@ -241,7 +242,8 @@ public class Activator implements BundleActivator {
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
         // To avoid race condition on startup
-        initMapViewGlyphFactorys(bundleContext);
+        initAnnotationGlyphPreprocessors(bundleContext);
+        initMapViewGlyphFactorys(bundleContext);        
 
         igb.init(args);
 
@@ -443,6 +445,24 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.DuplicateFilter(), null);
     }
 
+    private void initAnnotationGlyphPreprocessors(final BundleContext bundleContext) {
+        ExtensionPointHandler<GlyphPreprocessorI> annotationGlyphPreprocessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphPreprocessorI.class);
+
+        annotationGlyphPreprocessorExtensionPoint.addListener(
+                new ExtensionPointListener<GlyphPreprocessorI>() {
+                    @Override
+                    public void removeService(GlyphPreprocessorI factory) {
+                        PreprocessorTypeReference.getInstance().removePreprocessor(factory);
+                    }
+
+                    @Override
+                    public void addService(GlyphPreprocessorI factory) {
+                        PreprocessorTypeReference.getInstance().addPreprocessor(FileTypeCategory.Annotation, factory);
+                    }
+                }
+        );        
+    }
+
     private void initMapViewGlyphFactorys(final BundleContext bundleContext) {
         ExtensionPointHandler<MapTierGlyphFactoryI> mapViewGlyphFactoryExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, MapTierGlyphFactoryI.class);
         mapViewGlyphFactoryExtensionPoint.addListener(
@@ -462,10 +482,6 @@ public class Activator implements BundleActivator {
         // Add Annotation/Alignment factory
         AnnotationGlyphFactory annotationGlyphFactory = new AnnotationGlyphFactory();
         bundleContext.registerService(MapTierGlyphFactoryI.class, annotationGlyphFactory, null);
-        
-        // Add Annotation/Alignment factory
-        PairedReadGlyphFactory pairedReadGlyphFactory = new PairedReadGlyphFactory();
-        bundleContext.registerService(MapTierGlyphFactoryI.class, pairedReadGlyphFactory, null);
 
         // Add Sequence factory
         SequenceGlyphFactory sequenceGlyphFactory = new SequenceGlyphFactory();
@@ -496,7 +512,6 @@ public class Activator implements BundleActivator {
 //		bundleContext.registerService(MapTierGlyphFactoryI.class, cytoBandGlyphFactory, null);
         // Set Default factory
         MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Annotation, annotationGlyphFactory);
-        MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.PairedRead, pairedReadGlyphFactory);
         MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Alignment, annotationGlyphFactory);
         MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Sequence, sequenceGlyphFactory);
         MapTierTypeHolder.getInstance().addDefaultFactory(FileTypeCategory.Graph, graphGlyphFactory);
@@ -667,6 +682,7 @@ public class Activator implements BundleActivator {
                 }
         );
     }
+
     private void addScriptListener(final BundleContext bundleContext) {
         ExtensionPointHandler<ScriptProcessor> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ScriptProcessor.class);
         popupExtensionPoint.addListener(

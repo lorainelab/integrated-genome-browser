@@ -113,10 +113,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth) {
         SeqSymmetry sym = initSymSpan(originalSym);
-        if (!isValidSymSpan) {
-            return;
-        }
-        setTierGlyph();
         int depth = SeqUtils.getDepthFor(sym);
         if (sym instanceof PairedBamSymWrapper) {
             if (trackStyle.isShowAsPaired()) {
@@ -145,6 +141,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     protected void addTopChild(SeqSymmetry sym) {
+        updateSymSpan(sym);
+        if (!isValidSymSpan) {
+            return;
+        }
+        setTierGlyph();
         int depth = SeqUtils.getDepthFor(sym);
         drawChildren = (depth >= 2);
         Optional<GlyphI> glyph = determinePGlyph(sym);
@@ -590,8 +591,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         SeqSymmetry sym;
         updateAnnotSeq();
         updateViewSeq();
-        sym = seqMap.transformForViewSeq(originalSym, annotSeq);
-        updateSymSpan(sym);
+        sym = seqMap.transformForViewSeq(originalSym, annotSeq);        
         return sym;
     }
 
@@ -611,13 +611,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             tierGlyph = track.getForwardTier();
         }
         trackStyle = tierGlyph.getAnnotStyle();
-    }
-
-    private Optional<TierGlyph> getReverseTierGlyph() {
-        if (track.getReverseTier().isPresent()) {
-            return Optional.<TierGlyph>fromNullable(track.getReverseTier().get());
-        }
-        return Optional.absent();
     }
 
     protected void setTrack(Track track) {

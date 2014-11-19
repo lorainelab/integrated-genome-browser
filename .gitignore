@@ -201,3 +201,4 @@ www/release_notes/images/Thumbs.db
 .gradle/
 .gradle/1.12/
 /developmentPlugins/NCBIPrimer/target/
+/plugins/PairedEndDataPreprocessor/target/

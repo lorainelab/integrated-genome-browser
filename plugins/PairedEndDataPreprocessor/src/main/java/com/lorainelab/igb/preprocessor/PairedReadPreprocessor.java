@@ -11,10 +11,10 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.shared.GlyphPreprocessorI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import static com.google.common.base.Preconditions.*;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -40,29 +40,31 @@ public class PairedReadPreprocessor implements GlyphPreprocessorI {
             for (SeqSymmetry child : updatedList) {
                 sym.addChild(child);
             }
+            bamSyms.clear();
         }
     }
 
     private List<SeqSymmetry> repackageSyms() {
-        Map<String, BAMSym> pairMap = new HashMap<String, BAMSym>();
+        Table<String, Integer, BAMSym> pairMap = HashBasedTable.create();
         List<SeqSymmetry> toReturn = new ArrayList<SeqSymmetry>();
         for (BAMSym bamSym : bamSyms) {
             String readName = bamSym.getName();
-            if (pairMap.containsKey(readName)) {
+            int mateStart = bamSym.getMateStart();
+            if (pairMap.contains(readName, mateStart)) {
                 PairedBamSymWrapper bamSymWrapper;
                 if (bamSym.isForward()) {
-                    bamSymWrapper = new PairedBamSymWrapper(bamSym, pairMap.remove(readName));
+                    bamSymWrapper = new PairedBamSymWrapper(bamSym, pairMap.remove(readName, mateStart));
                 } else {
-                    bamSymWrapper = new PairedBamSymWrapper(pairMap.remove(readName), bamSym);
+                    bamSymWrapper = new PairedBamSymWrapper(pairMap.remove(readName, mateStart), bamSym);
                 }
                 toReturn.add(bamSymWrapper);
             } else {
-                pairMap.put(readName, bamSym);
+                pairMap.put(readName, bamSym.getStart(), bamSym);
             }
         }
         //add anything remaining
-        for (Map.Entry<String, BAMSym> entry : pairMap.entrySet()) {
-            toReturn.add(entry.getValue());
+        for (BAMSym bamSym : pairMap.values()) {
+            toReturn.add(bamSym);
         }
         return toReturn;
     }

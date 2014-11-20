@@ -246,7 +246,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public String getResidues(int start, int end) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return BAMSym.this.getResidues(start, end, true);
         }
 
         @Override
@@ -266,12 +266,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public String getBaseQuality() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true);
         }
 
         @Override
         public String getBaseQuality(int start, int end) {
-            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true);
+            return BAMSym.this.getBaseQuality(start, end, true);
         }
 
         @Override
@@ -312,7 +312,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put("residues", getResidues());
             tprops.put("forward", this.isForward());
             tprops.put("feature_type", "insertion");
-            //tprops.put("average quality",getAverageQuality());
+            tprops.put("average quality",getAverageQuality());
             return tprops;
         }
 

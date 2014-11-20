@@ -228,6 +228,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         if (glyph != null) {
             int start = (int) glyph.getCoordBox().x;
             int end = (int) (glyph.getCoordBox().x + glyph.getCoordBox().width);
+            igbService.getSeqMap().clearSelected();
             igbService.getSeqMap().select(glyph);
             igbService.zoomToCoord(seq, start, end);
             igbService.getSeqMapView().centerAtHairline();

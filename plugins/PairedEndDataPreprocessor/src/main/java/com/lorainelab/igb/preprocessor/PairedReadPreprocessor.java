@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.shared.GlyphPreprocessorI;
+import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
 import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.HashBasedTable;
@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author dcnorris
  */
-public class PairedReadPreprocessor implements GlyphPreprocessorI {
+public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
 
     List<BAMSym> bamSyms;
     SeqMapViewExtendedI gviewer;

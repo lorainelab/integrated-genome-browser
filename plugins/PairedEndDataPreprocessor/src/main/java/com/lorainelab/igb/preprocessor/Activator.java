@@ -1,7 +1,7 @@
 package com.lorainelab.igb.preprocessor;
 
 import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
-import com.affymetrix.igb.shared.GlyphPreprocessorI;
+import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -16,7 +16,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) throws Exception {
         PairedReadPreprocessor pairedReadGlyphFactory = new PairedReadPreprocessor();
         return new ServiceRegistration[]{
-            bundleContext.registerService(GlyphPreprocessorI.class, pairedReadGlyphFactory, null)
+            bundleContext.registerService(SeqSymmetryPreprocessorI.class, pairedReadGlyphFactory, null)
         };
     }
 

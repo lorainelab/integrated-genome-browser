@@ -13,7 +13,7 @@ import java.util.Collections;
  */
 public class PreprocessorTypeReference {
 
-    private final Table<String, FileTypeCategory, GlyphPreprocessorI> preprocessorTypeReferenceTable;
+    private final Table<String, FileTypeCategory, SeqSymmetryPreprocessorI> preprocessorTypeReferenceTable;
 
     private PreprocessorTypeReference() {
         preprocessorTypeReferenceTable = HashBasedTable.create();
@@ -28,7 +28,7 @@ public class PreprocessorTypeReference {
         private static final PreprocessorTypeReference INSTANCE = new PreprocessorTypeReference();
     }
 
-    public void addPreprocessor(FileTypeCategory category, GlyphPreprocessorI factory) {
+    public void addPreprocessor(FileTypeCategory category, SeqSymmetryPreprocessorI factory) {
         checkNotNull(category);
         checkNotNull(factory);
         if (!preprocessorTypeReferenceTable.contains(factory.getName(), category)) {
@@ -36,19 +36,19 @@ public class PreprocessorTypeReference {
         }
     }
 
-    public void removePreprocessor(GlyphPreprocessorI factory, FileTypeCategory category) {
+    public void removePreprocessor(SeqSymmetryPreprocessorI factory, FileTypeCategory category) {
         checkNotNull(factory);
         if (preprocessorTypeReferenceTable.containsValue(factory)) {
             preprocessorTypeReferenceTable.remove(factory.getName(), category);
         }
     }
 
-    public Collection<GlyphPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
+    public Collection<SeqSymmetryPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
         checkNotNull(category);
         if (preprocessorTypeReferenceTable.columnMap().containsKey(category)) {
             return preprocessorTypeReferenceTable.columnMap().get(category).values();
         }
-        return Collections.<GlyphPreprocessorI>emptyList();
+        return Collections.<SeqSymmetryPreprocessorI>emptyList();
     }
 
 }

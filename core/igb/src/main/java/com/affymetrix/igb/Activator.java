@@ -78,7 +78,7 @@ import com.affymetrix.igb.prefs.PrefsLoader;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
-import com.affymetrix.igb.shared.GlyphPreprocessorI;
+import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeSym;
@@ -446,17 +446,16 @@ public class Activator implements BundleActivator {
     }
 
     private void initAnnotationGlyphPreprocessors(final BundleContext bundleContext) {
-        ExtensionPointHandler<GlyphPreprocessorI> annotationGlyphPreprocessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GlyphPreprocessorI.class);
+        ExtensionPointHandler<SeqSymmetryPreprocessorI> annotationSeqSymmetryPreprocessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SeqSymmetryPreprocessorI.class);
 
-        annotationGlyphPreprocessorExtensionPoint.addListener(
-                new ExtensionPointListener<GlyphPreprocessorI>() {
+        annotationSeqSymmetryPreprocessorExtensionPoint.addListener(new ExtensionPointListener<SeqSymmetryPreprocessorI>() {
                     @Override
-                    public void removeService(GlyphPreprocessorI factory) {
+                    public void removeService(SeqSymmetryPreprocessorI factory) {
                         PreprocessorTypeReference.getInstance().removePreprocessor(factory, FileTypeCategory.Annotation);
                     }
 
                     @Override
-                    public void addService(GlyphPreprocessorI factory) {
+                    public void addService(SeqSymmetryPreprocessorI factory) {
                         PreprocessorTypeReference.getInstance().addPreprocessor(FileTypeCategory.Annotation, factory);
                     }
                 }

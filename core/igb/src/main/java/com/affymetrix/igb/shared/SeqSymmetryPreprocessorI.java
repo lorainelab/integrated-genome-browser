@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
  *
  * @author dcnorris
  */
-public interface GlyphPreprocessorI {
+public interface SeqSymmetryPreprocessorI {
 
     /**
      * unique identifier

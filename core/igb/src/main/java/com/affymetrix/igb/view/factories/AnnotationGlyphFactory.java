@@ -43,7 +43,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.CodonGlyphProcessor;
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.GlyphPreprocessorI;
+import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
 import com.affymetrix.igb.shared.PreprocessorTypeReference;
@@ -506,7 +506,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         checkNotNull(seq);
         checkNotNull(gviewer);
         //apply preprocessors
-        for (GlyphPreprocessorI preprocessor : PreprocessorTypeReference.getInstance().getPreprocessorsForType(FileTypeCategory.Annotation)) {
+        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorTypeReference.getInstance().getPreprocessorsForType(FileTypeCategory.Annotation)) {
             preprocessor.process(sym, style, gviewer, seq);
         }
         setSeqMap(gviewer);

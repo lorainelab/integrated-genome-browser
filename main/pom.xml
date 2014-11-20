@@ -426,12 +426,22 @@
             <artifactId>windowsServiceDef</artifactId>
             <scope>runtime</scope>
         </dependency> 
-        <dependency> 
+         <dependency> 
+            <groupId>com.affymetrix</groupId>
+            <artifactId>paired-data-preprocessor</artifactId>
+            <scope>runtime</scope>
+             <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency> 
+        <!--End of plugin module dependencies--> <dependency> 
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate</artifactId>
             <scope>runtime</scope>
         </dependency> 
-        <!--End of plugin module dependencies-->
     </dependencies>
     <build>
         <resources>

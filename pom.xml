@@ -320,6 +320,12 @@
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency> 
+                <groupId>com.affymetrix</groupId>
+                <artifactId>paired-data-preprocessor</artifactId>
+                <version>${igbVersion}</version>
+                <scope>provided</scope>
+            </dependency>
          
             <!--End of plugin module dependencies-->
             

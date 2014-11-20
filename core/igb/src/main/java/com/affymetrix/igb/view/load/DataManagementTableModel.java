@@ -515,21 +515,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     }
 
     private void setVisibleTracks(VirtualFeature vFeature) {
-        LoadStrategy currentLoadStrategy = vFeature.getFeature().getLoadStrategy();
         ITrackStyleExtended style = vFeature.getStyle();
-
         if (style.getShow()) {
             style.setShow(false);
-            if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
-                previousLoadStrategyMap.put(vFeature.getFeature(), currentLoadStrategy); // Store the load strategy for using below when un-hidden
-                vFeature.getFeature().setLoadStrategy(LoadStrategy.NO_LOAD);
-            }
         } else {
             style.setShow(true);
-            if (!(currentLoadStrategy == LoadStrategy.GENOME)) {
-                LoadStrategy previousLoadStrategy = previousLoadStrategyMap.get(vFeature.getFeature());
-                vFeature.getFeature().setLoadStrategy((previousLoadStrategy == null) ? LoadStrategy.VISIBLE : previousLoadStrategy);
-            }
         }
     }
 

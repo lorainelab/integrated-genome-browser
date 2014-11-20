@@ -243,7 +243,7 @@ public class Activator implements BundleActivator {
 
         // To avoid race condition on startup
         initAnnotationGlyphPreprocessors(bundleContext);
-        initMapViewGlyphFactorys(bundleContext);        
+        initMapViewGlyphFactorys(bundleContext);
 
         igb.init(args);
 
@@ -452,7 +452,7 @@ public class Activator implements BundleActivator {
                 new ExtensionPointListener<GlyphPreprocessorI>() {
                     @Override
                     public void removeService(GlyphPreprocessorI factory) {
-                        PreprocessorTypeReference.getInstance().removePreprocessor(factory);
+                        PreprocessorTypeReference.getInstance().removePreprocessor(factory, FileTypeCategory.Annotation);
                     }
 
                     @Override
@@ -460,7 +460,7 @@ public class Activator implements BundleActivator {
                         PreprocessorTypeReference.getInstance().addPreprocessor(FileTypeCategory.Annotation, factory);
                     }
                 }
-        );        
+        );
     }
 
     private void initMapViewGlyphFactorys(final BundleContext bundleContext) {

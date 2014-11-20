@@ -12,22 +12,22 @@ import java.util.Collections;
  * @author dcnorris
  */
 public class PreprocessorTypeReference {
-    
+
     private final Table<String, FileTypeCategory, GlyphPreprocessorI> preprocessorTypeReferenceTable;
-    
+
     private PreprocessorTypeReference() {
         preprocessorTypeReferenceTable = HashBasedTable.create();
     }
-    
+
     public static PreprocessorTypeReference getInstance() {
         return PreprocessorTypeReferenceHolder.INSTANCE;
     }
-    
+
     private static class PreprocessorTypeReferenceHolder {
-        
+
         private static final PreprocessorTypeReference INSTANCE = new PreprocessorTypeReference();
     }
-    
+
     public void addPreprocessor(FileTypeCategory category, GlyphPreprocessorI factory) {
         checkNotNull(category);
         checkNotNull(factory);
@@ -35,14 +35,14 @@ public class PreprocessorTypeReference {
             preprocessorTypeReferenceTable.put(factory.getName(), category, factory);
         }
     }
-    
-    public void removePreprocessor(GlyphPreprocessorI factory) {
+
+    public void removePreprocessor(GlyphPreprocessorI factory, FileTypeCategory category) {
         checkNotNull(factory);
         if (preprocessorTypeReferenceTable.containsValue(factory)) {
-            preprocessorTypeReferenceTable.remove(factory.getName(), factory);
+            preprocessorTypeReferenceTable.remove(factory.getName(), category);
         }
     }
-    
+
     public Collection<GlyphPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
         checkNotNull(category);
         if (preprocessorTypeReferenceTable.columnMap().containsKey(category)) {
@@ -50,5 +50,5 @@ public class PreprocessorTypeReference {
         }
         return Collections.<GlyphPreprocessorI>emptyList();
     }
-    
+
 }

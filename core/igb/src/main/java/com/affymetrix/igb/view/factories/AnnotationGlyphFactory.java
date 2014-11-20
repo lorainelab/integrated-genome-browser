@@ -111,17 +111,23 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         return true;
     }
 
-    protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth) {
+    protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth, ITrackStyleExtended style) {
         SeqSymmetry sym = initSymSpan(originalSym);
         int depth = SeqUtils.getDepthFor(sym);
         if (sym instanceof PairedBamSymWrapper) {
-            addTopChild(sym);
+            if (style.isShowAsPaired()) {
+                addTopChild(sym);
+            } else {
+                addTopChild(sym.getChild(0));
+                initSymSpan(sym.getChild(1));
+                addTopChild(sym.getChild(1));
+            }
             return;
         }
         if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
             int childCount = sym.getChildCount();
             for (int i = 0; i < childCount; i++) {
-                addLeafsToTier(sym.getChild(i), desired_leaf_depth);
+                addLeafsToTier(sym.getChild(i), desired_leaf_depth, style);
             }
         } else {  // depth == desired_leaf_depth
             addTopChild(sym);
@@ -515,12 +521,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
                 reverse_tier.setInfo(sym);
                 setTrack(new Track(forwardTier, reverse_tier));
-                addLeafsToTier(sym, glyphDepth);
+                addLeafsToTier(sym, glyphDepth, style);
                 doMiddlegroundShading(reverse_tier, gviewer, seq);
             } else {
                 // use only one tier
                 setTrack(new Track(forwardTier));
-                addLeafsToTier(sym, glyphDepth);
+                addLeafsToTier(sym, glyphDepth, style);
             }
             doMiddlegroundShading(forwardTier, gviewer, seq);
         }

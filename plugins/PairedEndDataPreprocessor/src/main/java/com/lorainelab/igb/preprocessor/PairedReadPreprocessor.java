@@ -45,7 +45,7 @@ public class PairedReadPreprocessor implements GlyphPreprocessorI {
     }
 
     private List<SeqSymmetry> repackageSyms() {
-        Table<String, Integer, BAMSym> pairMap = HashBasedTable.create();
+        Table<String, Integer, List<BAMSym>> pairMap = HashBasedTable.create();
         List<SeqSymmetry> toReturn = new ArrayList<SeqSymmetry>();
         for (BAMSym bamSym : bamSyms) {
             String readName = bamSym.getName();
@@ -53,18 +53,48 @@ public class PairedReadPreprocessor implements GlyphPreprocessorI {
             if (pairMap.contains(readName, mateStart)) {
                 PairedBamSymWrapper bamSymWrapper;
                 if (bamSym.isForward()) {
-                    bamSymWrapper = new PairedBamSymWrapper(bamSym, pairMap.remove(readName, mateStart));
+                    List<BAMSym> matchingBAMSyms = pairMap.get(readName, mateStart);
+                    if (matchingBAMSyms.size() == 1) {
+                        matchingBAMSyms = pairMap.remove(readName, mateStart);
+                        bamSymWrapper = new PairedBamSymWrapper(bamSym, matchingBAMSyms.get(0));
+                    } else {
+                        //remove single matching sym
+                        bamSymWrapper = new PairedBamSymWrapper(bamSym, matchingBAMSyms.remove(0));
+                    }
                 } else {
-                    bamSymWrapper = new PairedBamSymWrapper(pairMap.remove(readName, mateStart), bamSym);
+                    List<BAMSym> matchingBAMSyms = pairMap.get(readName, mateStart);
+                    if (matchingBAMSyms.size() == 1) {
+                        matchingBAMSyms = pairMap.remove(readName, mateStart);
+                        bamSymWrapper = new PairedBamSymWrapper(matchingBAMSyms.get(0), bamSym);
+                    } else {
+                        //remove single matching sym
+                        bamSymWrapper = new PairedBamSymWrapper(matchingBAMSyms.remove(0), bamSym);
+                    }
                 }
                 toReturn.add(bamSymWrapper);
             } else {
-                pairMap.put(readName, bamSym.getStart(), bamSym);
+                if (bamSym.isForward() && pairMap.contains(readName, bamSym.getStart())) {
+                    List<BAMSym> matchingBAMSyms = pairMap.get(readName, bamSym.getStart());
+                    matchingBAMSyms.add(bamSym);
+                } else if (pairMap.contains(readName, bamSym.getEnd())) {
+                    List<BAMSym> matchingBAMSyms = pairMap.get(readName, bamSym.getEnd());
+                    matchingBAMSyms.add(bamSym);
+                } else {
+                    List<BAMSym> bamSymsList = new ArrayList<BAMSym>();
+                    bamSymsList.add(bamSym);
+                    if (bamSym.isForward()) {
+                        pairMap.put(readName, bamSym.getStart(), bamSymsList);
+                    } else {
+                        pairMap.put(readName, bamSym.getEnd(), bamSymsList);
+                    }
+                }
             }
         }
         //add anything remaining
-        for (BAMSym bamSym : pairMap.values()) {
-            toReturn.add(bamSym);
+        for (List<BAMSym> bamSymList : pairMap.values()) {
+            for (BAMSym bamSym : bamSymList) {
+                toReturn.add(bamSym);
+            }
         }
         return toReturn;
     }

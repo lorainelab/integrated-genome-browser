@@ -115,13 +115,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         SeqSymmetry sym = initSymSpan(originalSym);
         int depth = SeqUtils.getDepthFor(sym);
         if (sym instanceof PairedBamSymWrapper) {
-            if (trackStyle.isShowAsPaired()) {
-                addTopChild(sym);
-            } else {
-                addTopChild(sym.getChild(0));
-                initSymSpan(sym.getChild(1));
-                addTopChild(sym.getChild(1));
-            }
+            addTopChild(sym);
             return;
         }
         if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -591,7 +585,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         SeqSymmetry sym;
         updateAnnotSeq();
         updateViewSeq();
-        sym = seqMap.transformForViewSeq(originalSym, annotSeq);        
+        sym = seqMap.transformForViewSeq(originalSym, annotSeq);
         return sym;
     }
 

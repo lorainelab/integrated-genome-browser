@@ -77,7 +77,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
         }
         resultAxisTier.addChild(axis_glyph);
 
-		// it is important to set the colors before adding the tier
+        // it is important to set the colors before adding the tier
         // to the map, else the label tier colors won't match
         if (smv.getSeqMap().getTiers().size() >= tier_index) {
             smv.getSeqMap().addTier(resultAxisTier, tier_index);

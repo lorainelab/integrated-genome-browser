@@ -693,9 +693,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		if (feat_type == null) {
-                    if (BioSeqUtils.determineMethod(annot).isPresent()) {
-                        feat_type = BioSeqUtils.determineMethod(annot).get();
-                    }
+			feat_type = BioSeqUtils.determineMethod(annot);
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;

@@ -12,7 +12,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -275,10 +274,10 @@ public class BioSeq implements SearchableCharIterator {
             annots.add((RootSeqSymmetry) sym);
             return;
         }
-        Optional<String> type = determineMethod(sym);
-        if (type.isPresent()) {
+        String type = determineMethod(sym);
+        if (type != null) {
             // add as child to the top-level container
-            addAnnotation(sym, type.get(), ext, index); // side-effect calls notifyModified()
+            addAnnotation(sym, type, ext, index); // side-effect calls notifyModified()
         } else {
             throw new RuntimeException(
                     "BioSeq.addAnnotation(sym) will only accept "
@@ -332,11 +331,11 @@ public class BioSeq implements SearchableCharIterator {
         }
 
         // If the annotation contains other annotations, remove the container
-        Optional<String> type = determineMethod(annot);
-        if (!type.isPresent()) {
+        String type = determineMethod(annot);
+        if (type == null) {
             return;
         }
-        SymWithProps sym = getAnnotation(type.get());
+        SymWithProps sym = getAnnotation(type);
         if (sym != null && sym instanceof MutableSeqSymmetry) {
             MutableSeqSymmetry container = (MutableSeqSymmetry) sym;
             if (container == annot) {

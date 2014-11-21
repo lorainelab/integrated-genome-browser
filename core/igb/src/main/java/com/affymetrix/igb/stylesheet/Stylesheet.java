@@ -117,9 +117,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 			}
 		}
 		if (drawable == null) {
-                    if(BioSeqUtils.determineMethod(sym).isPresent()){
-			drawable = getAssociationForMethod(BioSeqUtils.determineMethod(sym).get());
-                    }
+			drawable = getAssociationForMethod(BioSeqUtils.determineMethod(sym));
 		}
 		if (drawable == null) {
 			drawable = getDefaultStyleElement();

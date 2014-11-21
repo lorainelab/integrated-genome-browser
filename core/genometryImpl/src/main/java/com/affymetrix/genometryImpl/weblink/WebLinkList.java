@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.google.common.base.Optional;
 
 /**
  *
@@ -82,15 +81,15 @@ public class WebLinkList {
 		
 		// Most links come from matching the tier name (i.e. method)
 		// to a regular expression.
-		Optional<String> method = BioSeqUtils.determineMethod(sym);
-		if (!method.isPresent()) { // rarely happens, but can
+		String method = BioSeqUtils.determineMethod(sym);
+		if (method == null) { // rarely happens, but can
 			return Collections.<WebLink>emptyList();
 		}
 
 		List<WebLink> results = new ArrayList<WebLink>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
-		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method.get());
+		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
 		String style_url = style.getUrl();
 		if (style_url != null && style_url.length() > 0) {
 			WebLink link = new WebLink("Track Line URL", null, style_url, WebLink.RegexType.TYPE);
@@ -98,12 +97,12 @@ public class WebLinkList {
 		}
 
 		if (DEBUG) {
-			System.out.println("method is : " + method.get());
+			System.out.println("method is : " + method);
 			System.out.println("ID is : " + sym.getID());
 		}
 
 		Set<WebLink> webLinks = new HashSet<WebLink>();
-		webLinks.addAll(getWebLink(sym, method.get()));
+		webLinks.addAll(getWebLink(sym, method));
 
 	//	if (webLinks.isEmpty()) {
 			if (style.getFeature() != null) {

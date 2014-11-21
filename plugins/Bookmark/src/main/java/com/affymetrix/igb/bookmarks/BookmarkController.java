@@ -222,8 +222,7 @@ public abstract class BookmarkController {
 							maxgap_thresh, show_thresh, thresh_direction, combo_name, combos);
 
 				} else {
-                                        Optional<String> meth = BioSeqUtils.determineMethod(sym);
-					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth.get());
+					style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(BioSeqUtils.determineMethod(sym));
 					GenericFeature feature = style.getFeature();
 
 					if (!gFeature.equals(feature)) {

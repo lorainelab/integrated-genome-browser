@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
-import com.google.common.base.Optional;
 
 public class SymSearchResultsTableModel extends SearchResultsTableModel {
 
@@ -72,9 +71,9 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
                 }
                 return "";
             case TIER_COLUMN:
-                Optional<String> method = BioSeqUtils.determineMethod(sym);
-                if (method.isPresent()) {
-                    return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method.get()).getTrackName();
+                String method = BioSeqUtils.determineMethod(sym);
+                if (method != null) {
+                    return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method).getTrackName();
                 }
                 return "";
             case START_COLUMN:

@@ -30,8 +30,9 @@ public class BioSeqUtils {
      * places, in order: (1) the property "method", (2) the property "meth", (3)
      * the property "type", (4) TypedSym.getType(). If no method is found,
      * returns null.
+     *
      * @param sym
-     * @return 
+     * @return
      */
     public static String determineMethod(SeqSymmetry sym) {
         String meth = null;

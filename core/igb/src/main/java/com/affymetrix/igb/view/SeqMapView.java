@@ -95,6 +95,7 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
+import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import java.awt.AWTEvent;
@@ -262,7 +263,7 @@ public class SeqMapView extends JPanel
     private final GlyphEdgeMatcher edge_matcher;
     private JRPPopupMenu sym_popup = null;
     private SeqSymmetry toolTipSym;
-	// A fake menu item, prevents null pointer exceptions in loadResidues()
+    // A fake menu item, prevents null pointer exceptions in loadResidues()
     // for menu items whose real definitions are commented-out in the code
     private static final JMenuItem empty_menu_item = new JMenuItem("");
     //JMenuItem zoomtoMI = empty_menu_item;
@@ -303,7 +304,7 @@ public class SeqMapView extends JPanel
     //private final PopupInfo popupInfo;
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
-	// This preference change listener can reset some things, like whether
+    // This preference change listener can reset some things, like whether
     // the axis uses comma format or not, in response to changes in the stored
     // preferences.  Changes to axis, and other tier, colors are not so simple,
     // in part because of the need to coordinate with the label glyphs.
@@ -463,7 +464,7 @@ public class SeqMapView extends JPanel
         seqmap.addMouseListener(gsm);
 
         if (add_popups) {
-			//NOTE: popup listeners are called in reverse of the order that they are added
+            //NOTE: popup listeners are called in reverse of the order that they are added
             // Must use separate instances of GraphSelectioManager if we want to use
             // one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
             //tier_manager.addPopupListener(new GraphSelectionManager(this));
@@ -473,7 +474,7 @@ public class SeqMapView extends JPanel
             autoload = new AutoLoadThresholdHandler(this);
         }
 
-		// Listener for track selection events.  We will use this to populate 'Selection Info'
+        // Listener for track selection events.  We will use this to populate 'Selection Info'
         // grid with properties of the Type.
         TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
 
@@ -493,7 +494,7 @@ public class SeqMapView extends JPanel
 
         tier_manager.setDoGraphSelections(true);
 
-		// A "Smart" rubber band is necessary becaus we don't want our attempts
+        // A "Smart" rubber band is necessary becaus we don't want our attempts
         // to drag the graph handles to also cause rubber-banding
         RubberBand srb = new SeqMapViewRubberBand(seqmap);
         seqmap.setRubberBand(srb);
@@ -579,8 +580,6 @@ public class SeqMapView extends JPanel
 
         LinkControl link_control = new LinkControl();
         this.addPopupListener(link_control);
-        
-        
 
 //		this.addPopupListener(new ReadAlignmentView());
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
@@ -792,7 +791,7 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
     }
 
-	//   want to optimize for several situations:
+    //   want to optimize for several situations:
     //       a) merging newly loaded data with existing data (adding more annotations to
     //           existing BioSeq) -- would like to avoid recreation and repacking
     //           of already glyphified annotations
@@ -833,7 +832,7 @@ public class SeqMapView extends JPanel
         // Save selected tiers
         List<TierGlyph> old_tier_selections = getTierManager().getSelectedTiers();
 
-		// stash annotation tiers for proper state restoration after resetting for same seq
+        // stash annotation tiers for proper state restoration after resetting for same seq
         //    (but presumably added / deleted / modified annotations...)
         List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
         TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
@@ -852,7 +851,7 @@ public class SeqMapView extends JPanel
         synchronized (this) {
             aseq = seq;
 
-			// if shifting coords, then seq2viewSym and viewseq are already taken care of,
+            // if shifting coords, then seq2viewSym and viewseq are already taken care of,
             //   but reset coord_shift to false...
             if (coord_shift) {
                 // map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
@@ -870,7 +869,7 @@ public class SeqMapView extends JPanel
         seqmap.repack();
 
         if (same_seq && preserve_selection) {
-			// reselect glyph(s) based on selected sym(s);
+            // reselect glyph(s) based on selected sym(s);
             // Unfortunately, some previously selected syms will not be directly
             // associatable with new glyphs, so not all selections can be preserved
             Iterator<SeqSymmetry> iter = old_selections.iterator();
@@ -929,7 +928,7 @@ public class SeqMapView extends JPanel
              * do appear at same position.
              *
              */
-			// NOTE: Below call to stretchToFit is not redundancy. It is there
+            // NOTE: Below call to stretchToFit is not redundancy. It is there
             //       to solve above mentioned bug.
             // Probably not necessary after a fix in r9248 - HV
             //seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
@@ -942,7 +941,7 @@ public class SeqMapView extends JPanel
              * System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
              *
              */
-			// NOTE: Below call to stretchToFit is not redundancy. It is there
+            // NOTE: Below call to stretchToFit is not redundancy. It is there
             //       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
             // Probably not necessary after a fix in r9248 - HV
             //seqmap.stretchToFit(true, true);
@@ -1006,7 +1005,7 @@ public class SeqMapView extends JPanel
 
         action.actionPerformed(null);
 
-		// reselect glyph(s) based on selected sym(s);
+        // reselect glyph(s) based on selected sym(s);
         // Unfortunately, some previously selected syms will not be directly
         // associatable with new glyphs, so not all selections can be preserved
         Iterator<SeqSymmetry> sym_iter = old_sym_selections.iterator();
@@ -1025,7 +1024,7 @@ public class SeqMapView extends JPanel
         }
     }
 
-	// copying map tiers to separate list to avoid problems when removing tiers
+    // copying map tiers to separate list to avoid problems when removing tiers
     //   (and thus modifying map.getTiers() list -- could probably deal with this
     //    via iterators, but feels safer this way...)
     private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
@@ -1043,7 +1042,7 @@ public class SeqMapView extends JPanel
     }
 
     private void addGlyphs(List<TierGlyph> temp_tiers, int axis_index) {
-		// The hairline needs to be among the first glyphs added,
+        // The hairline needs to be among the first glyphs added,
         // to keep it from interfering with selection of other glyphs.
         if (hairline != null) {
             hairline.destroy();
@@ -1158,14 +1157,14 @@ public class SeqMapView extends JPanel
         TrackView.getInstance().addDependentAndEmptyTrack(this, aseq);
     }
 
-	// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
+    // muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
     //   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
     private void handleCompositionSequence() {
         BioSeq cached_aseq = aseq;
         MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
         SeqSymmetry[] cached_path = transform_path;
         SeqSymmetry comp = aseq.getComposition();
-		// assuming a two-level deep composition hierarchy for now...
+        // assuming a two-level deep composition hierarchy for now...
         //   need to make more recursive at some point...
         //   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
         int scount = comp.getChildCount();
@@ -1271,7 +1270,7 @@ public class SeqMapView extends JPanel
         }
         glyphlist.clear();
 
-		// convert graph glyphs to GraphSyms via glyphsToSyms
+        // convert graph glyphs to GraphSyms via glyphsToSyms
         // Bring them all into the visual area
         for (GraphGlyph gl : visibleList) {
             if (gl.getAnnotStyle().getFloatTier()) {
@@ -1297,9 +1296,9 @@ public class SeqMapView extends JPanel
             }
         }
     }
-    
+
     @Override
-    public final void select(GlyphI glyph){
+    public final void select(GlyphI glyph) {
         List<GlyphI> glyphs = (List<GlyphI>) Collections.singletonList(glyph);
         setSelectionStatus(getSelectionTitle(glyphs));
     }
@@ -1574,7 +1573,7 @@ public class SeqMapView extends JPanel
             public void actionPerformed(ActionEvent e) {
                 horizontalClamp(horizontalClampedRegion == null);
                 seqmap.repackTheTiers(true, false);
-				//seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
+                //seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
                 //seqmap.updateWidget();
             }
         });
@@ -1645,7 +1644,7 @@ public class SeqMapView extends JPanel
             seqmap.addEdgeMatches(getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs));
             setStatus(null);
         }
-        
+
         if (update_map) {
             seqmap.updateWidget();
         }
@@ -1728,16 +1727,16 @@ public class SeqMapView extends JPanel
             setSelectionStatus(title);
         } // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
         else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView)) {
-			// catching SeqMapView as source of event because currently sym selection events actually originating
+            // catching SeqMapView as source of event because currently sym selection events actually originating
             //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
         } else {
             List<SeqSymmetry> symlist = evt.getSelectedGraphSyms();
-			// select:
+            // select:
             //   add_to_previous ==> false
             //   call_listeners ==> false
             //   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
             select(symlist, true, true, false);
-			// Zoom to selections, unless the selection was caused by the TierLabelManager
+            // Zoom to selections, unless the selection was caused by the TierLabelManager
             // (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
             if (src != getSeqMap() && src != getTierManager()) {
                 zoomToSelections();
@@ -1810,7 +1809,7 @@ public class SeqMapView extends JPanel
      * has a parent, or else the child itself is included in the list
      */
     static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
-		// linked hash set keeps parents in same order as child list so that comparison
+        // linked hash set keeps parents in same order as child list so that comparison
         // like childList.equals(parentList) can be used.
         Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
         for (GlyphI child : childGlyphs) {
@@ -1861,7 +1860,7 @@ public class SeqMapView extends JPanel
         Application.getSingleton().setStatus(title, false);
     }
 
-	// Compare the code here with SymTableView.selectionChanged()
+    // Compare the code here with SymTableView.selectionChanged()
     // The logic about finding the ID from instances of DerivedSeqSymmetry
     // should be similar in both places, or else users could get confused.
     private String getSelectionTitle(List<GlyphI> selected_glyphs) {
@@ -1988,18 +1987,39 @@ public class SeqMapView extends JPanel
         sym_popup.setVisible(false); // in case already showing
         sym_popup.removeAll();
 
-        if (seqmap.getSelected().isEmpty()) { // if no glyphs selected, use regular popup
-//			sym_popup.setVisible(true);
-//			getTierManager().doPopup(nevt);
+        if (seqmap.getSelected().isEmpty()) {
+            Rectangle2D.Double cbox = new Rectangle2D.Double(nevt.getCoordX(), nevt.getCoordY(), 1, 1);
+            for (TierGlyph tg : seqmap.getTiers()) {
+                if (tg == getAxisTier()) {
+                    continue;
+                }
+                if (tg.isVisible() && tg.intersects(cbox, seqmap.getView())) {
+                    for (TierLabelGlyph tglyph : tier_manager.getAllTierLabels()) {
+                        if (tglyph.getInfo() == tg) {
+                            tier_manager.select(tglyph.getReferenceTier());
+                            seqmap.updateWidget();
+                            postSelections();
+                            tier_manager.doPopup(nevt);
+                            return;
+                        }
+
+                    }
+
+                }
+            }
             return;
         }
 
         preparePopup(sym_popup, nevt);
         sym_popup = getOrganizedPopups(sym_popup);
-        if (sym_popup.getComponentCount() == 0) {
+
+        if (sym_popup.getComponentCount()
+                == 0) {
             return;
         }
-        if (sym_popup.getComponentCount() > 0) {
+
+        if (sym_popup.getComponentCount()
+                > 0) {
 
             if (nevt == null) {
                 // this might happen from pressing the Windows context menu key
@@ -2007,7 +2027,7 @@ public class SeqMapView extends JPanel
                 return;
             }
 
-			// if resultSeqMap is a MultiWindowTierMap, then using resultSeqMap as Component target arg to popup.show()
+            // if resultSeqMap is a MultiWindowTierMap, then using resultSeqMap as Component target arg to popup.show()
             //  won't work, since its component is never actually rendered -- so checking here
             /// to use appropriate target Component and pixel position
             EventObject oevt = nevt.getOriginalEvent();
@@ -2023,7 +2043,7 @@ public class SeqMapView extends JPanel
                 sym_popup.show(seqmap, nevt.getX() + xoffset_pop, nevt.getY() + yoffset_pop);
             }
         }
-		// For garbage collection, it would be nice to add a listener that
+        // For garbage collection, it would be nice to add a listener that
         // could call sym_popup.removeAll() when the popup is removed from view.
 
         /*
@@ -2037,9 +2057,9 @@ public class SeqMapView extends JPanel
          */
         sym_popup.repaint();
     }
-    
-    public boolean isPopupActive(){
-        if(sym_popup != null) {
+
+    public boolean isPopupActive() {
+        if (sym_popup != null) {
             return sym_popup.isVisible();
         } else {
             return false;
@@ -2153,7 +2173,6 @@ public class SeqMapView extends JPanel
         axisPopupListeners.remove(listener);
     }
 
-    
     @Override
     public void addPopupListener(ContextualPopupListener listener) {
         popup_listeners.add(listener);
@@ -2315,9 +2334,9 @@ public class SeqMapView extends JPanel
 		// Don't worry if newseq is null, setAnnotatedSeq can handle that
         // (It can also handle the case where newseq is same as old seq.)
 
-		// trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
+        // trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
         // Maybe should change GenometryModel.setSelectedSeq() to only fire if seq changes...
-		// reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq,
+        // reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq,
         //    because often need to trigger repacking / rendering anyway
         setAnnotatedSeq(newseq);
     }
@@ -2397,7 +2416,7 @@ public class SeqMapView extends JPanel
             }
         }
     }
-    
+
     public void disableToolTip() {
         seqMapToolTips.setToolTip(null, null);
     }
@@ -2933,6 +2952,7 @@ public class SeqMapView extends JPanel
         getSeqMap().removeItem(glyph);
         getSeqMap().updateWidget();
         return glyph;
+
     }
 
     private class SeqMapViewRubberBand extends RubberBand {

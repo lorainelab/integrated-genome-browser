@@ -45,7 +45,7 @@ import java.util.List;
  * it is not standard, but should be fine.
  */
 public final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
-		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
+		NeoRubberBandListener, NeoGlyphDragListener, PropertyListener { 
 
 	// This flag determines whether selection events are processed on
 	//  mousePressed() or mouseReleased().
@@ -270,13 +270,13 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
 	private boolean isTopParentAlreadySelected(MouseEvent evt){
 		NeoMouseEvent nevt = (NeoMouseEvent) evt;
-		Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+		Point2D.Double zoomPoint = nevt.getPoint2D();
 		List<GlyphI> hits = nevt.getItems();
 	
 		GlyphI topgl = null;
 		if (!hits.isEmpty()) {
 			topgl = nevt.getItems().get(hits.size() - 1);
-			topgl = map.zoomCorrectedGlyphChoice(topgl, zoom_point);
+			topgl = map.zoomCorrectedGlyphChoice(topgl, zoomPoint);
 		}
 		
 		if(topgl == null){

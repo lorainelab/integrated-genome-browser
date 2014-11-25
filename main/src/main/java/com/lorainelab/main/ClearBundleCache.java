@@ -1,4 +1,4 @@
-package com.affymetrix.main;
+package com.lorainelab.main;
 
 /**
  * This class is used to clear the OSGi bundle cache

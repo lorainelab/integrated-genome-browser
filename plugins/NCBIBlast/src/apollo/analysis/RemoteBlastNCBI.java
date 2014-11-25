@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableMap;
 public class RemoteBlastNCBI {
 
 	private static final String ENCODING = "UTF-8";
-	private static final String BLAST_URL = "http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?";
+	private static final String BLAST_URL = "http://blast.ncbi.nlm.nih.gov/Blast.cgi?";
 	private static final int SLEEP = 3000;
 	private static final Pattern RID_PATTERN = Pattern.compile("^\\s*RID\\s*=\\s*(\\w+)$");
 	private static final Pattern RTOE_PATTERN = Pattern.compile("^\\s*RTOE\\s*=\\s*(\\d+)$");

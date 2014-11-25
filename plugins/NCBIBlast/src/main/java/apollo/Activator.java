@@ -1,5 +1,6 @@
 package apollo;
 
+import com.affymetrix.genometryImpl.event.AxisPopupListener;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
@@ -20,7 +21,8 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
     @Override
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
         return new ServiceRegistration[]{
-            bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView()), null),};
+            bundleContext.registerService(ContextualPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView()), null),
+            bundleContext.registerService(AxisPopupListener.class, new NCBIBlastPopupListener(igbService.getSeqMapView()), null)};
     }
 
 }

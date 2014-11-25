@@ -26,121 +26,121 @@ import javax.swing.SwingUtilities;
  */
 public final class SimpleBookmarkServer {
 
-	private static final int NO_PORT = -1;
-	private static final int PORTS_TO_TRY = 1;
-	private static int server_port = NO_PORT;
-	private static final Logger ourLogger
-			= Logger.getLogger(SimpleBookmarkServer.class.getPackage().getName());
+    private static final int NO_PORT = -1;
+    private static final int PORTS_TO_TRY = 1;
+    private static int server_port = NO_PORT;
+    private static final Logger ourLogger
+            = Logger.getLogger(SimpleBookmarkServer.class.getPackage().getName());
 
-	static {
-		try {
-			setServerPort(ResourceBundle.getBundle("sockets").getString("server_port"));
-		} catch (MissingResourceException x) {
-		}
-	}
+    static {
+        try {
+            setServerPort(ResourceBundle.getBundle("sockets").getString("server_port"));
+        } catch (MissingResourceException x) {
+        }
+    }
 
-	public static void setServerPort(String portString) {
-		try {
-			int port = Integer.parseInt(portString);
-			if (port > 0 && port <= 65535) {
-				server_port = port;
-			} else {
-				ourLogger.log(Level.SEVERE,
-						"Invalid port number {0}, must be between 0 and 65535", Integer.toString(port));
-			}
-		} catch (NumberFormatException x) {
-			ourLogger.log(Level.SEVERE, "Invalid number {0} for server_port", portString);
-		}
-	}
+    public static void setServerPort(String portString) {
+        try {
+            int port = Integer.parseInt(portString);
+            if (port > 0 && port <= 65535) {
+                server_port = port;
+            } else {
+                ourLogger.log(Level.SEVERE,
+                        "Invalid port number {0}, must be between 0 and 65535", Integer.toString(port));
+            }
+        } catch (NumberFormatException x) {
+            ourLogger.log(Level.SEVERE, "Invalid number {0} for server_port", portString);
+        }
+    }
 
 	// Use the Swing Thread to start a non-Swing thread
-	// that will start the control server.
-	// Thus the control server will be started only after current GUI stuff is finished,
-	// but starting it won't cause the GUI to hang.
-	public static void init(final IGBService igbService) {
-		startServerSocket(igbService, DEFAULT_SERVER_PORT);
-		if (server_port != NO_PORT) {
-			startServerSocket(igbService, server_port);
-		}		
-	}
+    // that will start the control server.
+    // Thus the control server will be started only after current GUI stuff is finished,
+    // but starting it won't cause the GUI to hang.
+    public static void init(final IGBService igbService) {
+        startServerSocket(igbService, DEFAULT_SERVER_PORT);
+        if (server_port != NO_PORT) {
+            startServerSocket(igbService, server_port);
+        }
+    }
 
-	public static void startServerSocket(final IGBService igbService, int startPort) {
-		try {
-			final int serverPort = findAvailablePort(startPort);
+    public static void startServerSocket(final IGBService igbService, int startPort) {
+        try {
+            final int serverPort = findAvailablePort(startPort);
 
-			if (serverPort == NO_PORT) {
-				ourLogger.log(Level.SEVERE,
-						"Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
-			} else {
+            if (serverPort == NO_PORT) {
+                ourLogger.log(Level.SEVERE,
+                        "Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
+            } else {
 
-				Runnable r = new Runnable() {
-					@Override
-					public void run() {
-						BookmarkHttpRequestHandler handler = new BookmarkHttpRequestHandler(igbService, serverPort);
-						try {							
-							handler.start();
-						} catch (IOException ex) {
-							ourLogger.log(Level.SEVERE, "Could not start bookmark server, turning off IGB's URL-based control features.");
-						}
-					}
-				};
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        BookmarkHttpRequestHandler handler = new BookmarkHttpRequestHandler(igbService, serverPort);
+                        try {
+                            handler.start();
+                        } catch (IOException ex) {
+                            ourLogger.log(Level.SEVERE, "Could not start bookmark server, turning off IGB's URL-based control features.");
+                        }
+                    }
+                };
 
-				final Thread t = new Thread(r);
+                final Thread t = new Thread(r);
 
-				SwingUtilities.invokeLater(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
 
-					@Override
-					public void run() {
-						t.start();
-					}
-				});
-			}
+                    @Override
+                    public void run() {
+                        t.start();
+                    }
+                });
+            }
 
-		} catch (Exception ex) {
-			ourLogger.log(Level.SEVERE, "I/O Problem", ex);
-		}
-	}
+        } catch (Exception ex) {
+            ourLogger.log(Level.SEVERE, "I/O Problem", ex);
+        }
+    }
 
-	/**
-	 * Find an available port. Start with the default_server_point and
-	 * incrementing up from there.
-	 *
-	 * @return port found
-	 */
-	private static int findAvailablePort(int startPort) {
-		for (int i = 0; i < PORTS_TO_TRY; i++) {
-			if (isPortAvailable(startPort)) {
-				return startPort;
-			}
-			startPort++;
-		}
-		return NO_PORT;
-	}
+    /**
+     * Find an available port. Start with the default_server_point and
+     * incrementing up from there.
+     *
+     * @return port found
+     */
+    private static int findAvailablePort(int startPort) {
+        for (int i = 0; i < PORTS_TO_TRY; i++) {
+            if (isPortAvailable(startPort)) {
+                return startPort;
+            }
+            startPort++;
+        }
+        return NO_PORT;
+    }
 
-	/**
-	 * Returns the availability of a given port
-	 *
-	 * @param port
-	 * @return boolean
-	 */
-	private static boolean isPortAvailable(int port) {
-		ourLogger.log(Level.INFO, "Testing port {0}", Integer.toString(port));
-		Socket s = null;
-		try {
-			s = new Socket("localhost", port);
-			ourLogger.log(Level.INFO, "Port {0} is not available", Integer.toString(port));
-			return false;
-		} catch (IOException e) {
-			ourLogger.log(Level.INFO, "Port {0} is available", Integer.toString(port));
-			return true;
-		} finally {
-			if (s != null) {
-				try {
-					s.close();
-				} catch (IOException ex) {
-					throw new RuntimeException("Error attempting to close socket.", ex);
-				}
-			}
-		}
-	}
+    /**
+     * Returns the availability of a given port
+     *
+     * @param port
+     * @return boolean
+     */
+    private static boolean isPortAvailable(int port) {
+        ourLogger.log(Level.INFO, "Testing port {0}", Integer.toString(port));
+        Socket s = null;
+        try {
+            s = new Socket("localhost", port);
+            ourLogger.log(Level.INFO, "Port {0} is not available", Integer.toString(port));
+            return false;
+        } catch (IOException e) {
+            ourLogger.log(Level.INFO, "Port {0} is available", Integer.toString(port));
+            return true;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException("Error attempting to close socket.", ex);
+                }
+            }
+        }
+    }
 }

@@ -5,9 +5,9 @@
     <artifactId>igb-project</artifactId>
     <version>8.2</version>
     <packaging>pom</packaging>
-	
+
     <name>IGB Project</name>
-        
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -31,7 +31,7 @@
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
     </properties>
-    
+
     <repositories>
         <repository>
             <id>public</id>
@@ -57,7 +57,7 @@
         </repository>
     </repositories>
 
-	
+
     <modules>
         <module>core/HeatmapEditor</module>
         <module>core/common</module>
@@ -76,7 +76,7 @@
         <module>plugins/GraphTab</module>
         <module>plugins/IGBScript</module>
         <module>plugins/KeyWordSearch</module>
-        <module>plugins/NCBIBlast</module>        
+        <module>plugins/NCBIBlast</module>
         <module>plugins/PropertyView</module>
         <module>plugins/RestrictionSites</module>
         <module>plugins/SearchModeIdOrProps</module>
@@ -90,9 +90,10 @@
         <module>plugins/plugins_page</module>
         <module>plugins/window_service_def</module>
         <module>plugins/PairedEndDataPreprocessor</module>
+        <module>plugins/IGBR</module>
         <module>main</module>
     </modules>
-    
+
     <profiles>
         <profile>
             <id>externalBundles</id>
@@ -101,9 +102,9 @@
             </activation>
             <modules>
                 <module>developmentPlugins/DASRegistryServerType</module>
-                <module>developmentPlugins/TableView</module> 
+                <module>developmentPlugins/TableView</module>
                 <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/GeometricMean</module> 
+                <module>developmentPlugins/GeometricMean</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>
                 <module>developmentPlugins/MergeAnnotationOperator</module>
                 <module>developmentPlugins/PythonScript</module>
@@ -118,10 +119,10 @@
                 <module>developmentPlugins/BAMIndexer</module>
                 <module>developmentPlugins/NCBIPrimer</module>
             </modules>
-        </profile>   
+        </profile>
     </profiles>
-    
-    
+
+
     <dependencyManagement>
         <dependencies>
             <!--Start of core module dependencies-->
@@ -139,8 +140,8 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>genometryImpl</artifactId>   
-                <version>${igbVersion}</version>         
+                <artifactId>genometryImpl</artifactId>
+                <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -157,9 +158,9 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>igbSwingExt</artifactId>   
+                <artifactId>igbSwingExt</artifactId>
                 <version>${igbVersion}</version>
-                <scope>provided</scope>         
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
@@ -170,144 +171,144 @@
             <!--End of core module dependencies-->
 
             <!--Start of plugin module dependencies-->
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>apollo-library</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>annotation-tab</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bigBedHandler</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency>   
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bigWigHandler</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bookmark</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>externalView</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency>  
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>graphTab</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>igbScript</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>keyWordSearch</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>ncbiBlast</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>ncbiPrimer</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>propertyView</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>restrictionSites</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchModelIdOrProps</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchModeLucene</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchView</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>sequenceViewer</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>survey</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>thresholding</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>tutorial</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>update</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>pluginsPage</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
-            <dependency> 
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>windowsServiceDef</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
-            </dependency> 
+            </dependency>
             <!--            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>sampleSelection</artifactId>
@@ -320,15 +321,21 @@
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency> 
-                <groupId>com.affymetrix</groupId>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
                 <artifactId>paired-data-preprocessor</artifactId>
                 <version>${igbVersion}</version>
                 <scope>provided</scope>
             </dependency>
-         
+            <dependency>
+              <groupId>com.lorainelab</groupId>
+              <artifactId>igbr</artifactId>
+              <version>${igbVersion}</version>
+              <scope>provided</scope>
+            </dependency>
+
             <!--End of plugin module dependencies-->
-            
+
             <!--Start of logging dependencies-->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -341,7 +348,7 @@
                 <version>${log4jVersion}</version>
             </dependency>
             <!--End of logging dependencies-->
-            
+
             <!--Start of additional provided dependencies (i.e. osgi bundles which will be independently deployed to the container-->
             <dependency>
                 <groupId>commons-pool</groupId>
@@ -368,9 +375,9 @@
                 <scope>provided</scope>
             </dependency>
             <!--End of additional provided dependencies-->
-            
-            
-            
+
+
+
             <dependency>
                 <groupId>furbelow</groupId>
                 <artifactId>furbelow</artifactId>
@@ -381,7 +388,7 @@
                 <artifactId>jackson-mapper-lgpl</artifactId>
                 <version>1.7.9</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
@@ -392,7 +399,7 @@
                 <artifactId>org.apache.felix.main</artifactId>
                 <version>${felixMainVersion}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>be.pwnt</groupId>
                 <artifactId>jflow</artifactId>
@@ -408,7 +415,7 @@
                 <groupId>org.swinglabs</groupId>
                 <artifactId>swing-layout</artifactId>
                 <version>1.0.3</version>
-            </dependency>           
+            </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>genoviz</artifactId>
@@ -543,7 +550,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>        
+    <build>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -571,12 +578,12 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.3.7</version>                
-                </plugin>    
+                    <version>2.3.7</version>
+                </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.4</version>
-                </plugin>    
+                </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>2.5</version>
@@ -595,7 +602,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.8</version>                
+                    <version>2.8</version>
                     <executions>
                         <execution>
                             <id>copy</id>
@@ -603,7 +610,7 @@
                             <goals>
                                 <goal>copy</goal>
                             </goals>
-                            <configuration>                   
+                            <configuration>
                                 <artifactItems>
                                     <artifactItem>
                                         <groupId>${project.groupId}</groupId>
@@ -617,7 +624,7 @@
                             </configuration>
                         </execution>
                     </executions>
-                </plugin>                    
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -639,6 +646,6 @@
             </plugin>
         </plugins>
     </build>
-    
+
 
 </project>

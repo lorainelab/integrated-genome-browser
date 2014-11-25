@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
@@ -95,7 +96,7 @@ public final class BookmarkManagerView {
     private final BookmarkPropertiesGUI bpGUI;
     private BookmarkList selected_bl = null;
     public final IGBService igbService;
-    private final Action COPY_ACTION = CopyBookmarkToClipboardAction.getAction();
+    private static final CopyBookmarkAction COPY_ACTION = CopyBookmarkAction.getInstance();
 
     private KeyAdapter kl = new KeyAdapter() {
 
@@ -183,7 +184,6 @@ public final class BookmarkManagerView {
         ToolTipManager.sharedInstance().registerComponent(tree);
 
         properties_action = makePropertiesAction();
-
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
         properties_action.setEnabled(false);
@@ -241,7 +241,16 @@ public final class BookmarkManagerView {
         tree.setSelectionRow(0);
         tree.clearSelection();
     }
+    
+    public Bookmark getSelectedBookmark() {
+        Bookmark bookmark = null;
+        if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
+            bookmark = (Bookmark) selected_bl.getUserObject();
 
+        }
+        return bookmark;
+    }
+    
     private void initPopupMenu() {
         final JPopupMenu popup = new JPopupMenu() {
 
@@ -252,7 +261,7 @@ public final class BookmarkManagerView {
                 JMenuItem menu_item = super.add(a);
                 menu_item.setToolTipText(null);
                 return menu_item;
-            }
+            }            
         };
 
         popup.add(properties_action);
@@ -261,8 +270,9 @@ public final class BookmarkManagerView {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
+                if (e.isPopupTrigger()) {                   
+                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    
                     if (path != null) {
                         tree.setSelectionPath(path);
                         popup.show(tree, e.getX(), e.getY());
@@ -389,7 +399,7 @@ public final class BookmarkManagerView {
     public Action getPropertiesAction() {
         return properties_action;
     }
-
+    
     private Action makePropertiesAction() {
         Action a = new GenericAction("Properties ...", null, null) {
             private static final long serialVersionUID = 1L;

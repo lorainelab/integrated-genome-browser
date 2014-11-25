@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
@@ -94,6 +95,7 @@ public final class BookmarkManagerView {
     private final BookmarkPropertiesGUI bpGUI;
     private BookmarkList selected_bl = null;
     public final IGBService igbService;
+    private final Action COPY_ACTION = CopyBookmarkToClipboardAction.getAction();
 
     private KeyAdapter kl = new KeyAdapter() {
 
@@ -124,12 +126,13 @@ public final class BookmarkManagerView {
             }
 
             properties_action.setEnabled(false);
-
+            COPY_ACTION.setEnabled(false);
             TreePath[] selections = tree.getSelectionPaths();
             if (selections != null && selections.length == 1) {
                 selected_bl = (BookmarkList) selections[0].getLastPathComponent();
                 if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
                     properties_action.setEnabled(true);
+                    COPY_ACTION.setEnabled(true);
                 }
                 thing.valueChanged();
             }
@@ -184,7 +187,7 @@ public final class BookmarkManagerView {
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
         properties_action.setEnabled(false);
-
+        COPY_ACTION.setEnabled(false);
         initPopupMenu();
 
         tree.addKeyListener(kl);
@@ -253,22 +256,23 @@ public final class BookmarkManagerView {
         };
 
         popup.add(properties_action);
-
+        popup.add(COPY_ACTION);
         MouseAdapter mouse_adapter = new MouseAdapter() {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (processDoubleClick(e)) {
-                    return;
-                }
-
-                if (popup.isPopupTrigger(e)) {
+                if (e.isPopupTrigger()) {
                     TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
                     if (path != null) {
                         tree.setSelectionPath(path);
                         popup.show(tree, e.getX(), e.getY());
                     }
                 }
+                if (processDoubleClick(e)) {
+                    return;
+                }
+
+
             }
 
             private boolean processDoubleClick(MouseEvent e) {

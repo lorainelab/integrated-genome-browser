@@ -1,4 +1,4 @@
-package com.lorainelab.main;
+package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
 import java.io.File;

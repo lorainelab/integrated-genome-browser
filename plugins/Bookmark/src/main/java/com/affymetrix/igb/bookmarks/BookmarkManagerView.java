@@ -14,6 +14,8 @@ import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.FileTracker;
@@ -94,6 +96,7 @@ public final class BookmarkManagerView {
     private final BookmarkPropertiesGUI bpGUI;
     private BookmarkList selected_bl = null;
     public final IGBService igbService;
+    private static final CopyBookmarkAction COPY_ACTION = CopyBookmarkAction.getInstance();
 
     private KeyAdapter kl = new KeyAdapter() {
 
@@ -124,12 +127,13 @@ public final class BookmarkManagerView {
             }
 
             properties_action.setEnabled(false);
-
+            COPY_ACTION.setEnabled(false);
             TreePath[] selections = tree.getSelectionPaths();
             if (selections != null && selections.length == 1) {
                 selected_bl = (BookmarkList) selections[0].getLastPathComponent();
                 if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
                     properties_action.setEnabled(true);
+                    COPY_ACTION.setEnabled(true);
                 }
                 thing.valueChanged();
             }
@@ -180,11 +184,10 @@ public final class BookmarkManagerView {
         ToolTipManager.sharedInstance().registerComponent(tree);
 
         properties_action = makePropertiesAction();
-
         forwardButton.setEnabled(false);
         backwardButton.setEnabled(false);
         properties_action.setEnabled(false);
-
+        COPY_ACTION.setEnabled(false);
         initPopupMenu();
 
         tree.addKeyListener(kl);
@@ -238,7 +241,16 @@ public final class BookmarkManagerView {
         tree.setSelectionRow(0);
         tree.clearSelection();
     }
+    
+    public Bookmark getSelectedBookmark() {
+        Bookmark bookmark = null;
+        if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
+            bookmark = (Bookmark) selected_bl.getUserObject();
 
+        }
+        return bookmark;
+    }
+    
     private void initPopupMenu() {
         final JPopupMenu popup = new JPopupMenu() {
 
@@ -249,26 +261,28 @@ public final class BookmarkManagerView {
                 JMenuItem menu_item = super.add(a);
                 menu_item.setToolTipText(null);
                 return menu_item;
-            }
+            }            
         };
 
         popup.add(properties_action);
-
+        popup.add(COPY_ACTION);
         MouseAdapter mouse_adapter = new MouseAdapter() {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (processDoubleClick(e)) {
-                    return;
-                }
-
-                if (popup.isPopupTrigger(e)) {
-                    TreePath path = tree.getClosestPathForLocation(e.getX(), e.getY());
+                if (e.isPopupTrigger()) {                   
+                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    
                     if (path != null) {
                         tree.setSelectionPath(path);
                         popup.show(tree, e.getX(), e.getY());
                     }
                 }
+                if (processDoubleClick(e)) {
+                    return;
+                }
+
+
             }
 
             private boolean processDoubleClick(MouseEvent e) {
@@ -385,7 +399,7 @@ public final class BookmarkManagerView {
     public Action getPropertiesAction() {
         return properties_action;
     }
-
+    
     private Action makePropertiesAction() {
         Action a = new GenericAction("Properties ...", null, null) {
             private static final long serialVersionUID = 1L;

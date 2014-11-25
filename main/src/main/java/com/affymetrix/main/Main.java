@@ -1,4 +1,4 @@
-package com.lorainelab.main;
+package com.affymetrix.main;
 
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.

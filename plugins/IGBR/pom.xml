@@ -11,7 +11,7 @@
     <artifactId>igbr</artifactId>
     <packaging>bundle</packaging>
 
-    <name>IGBR</name>
+    <name>igbr</name>
 
     <dependencies>
         <dependency>

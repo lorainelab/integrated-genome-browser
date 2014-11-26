@@ -11,18 +11,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public abstract class BookmarkAction extends GenericAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BookmarkAction(String text, String iconPath, String largeIconPath) {
-		super(text, iconPath, largeIconPath);
-	}
+    public BookmarkAction(String text, String iconPath, String largeIconPath) {
+        super(text, iconPath, largeIconPath);
+    }
 
-	/**
-	 * add node to the tree.
-	 *
-	 * @param node (bookmark, folder or separator)
-	 */
-	protected void addNode(DefaultMutableTreeNode node) {
-		BookmarkManagerView.getSingleton().insert(node);
-	}
+    /**
+     * add node to the tree.
+     *
+     * @param node (bookmark, folder or separator)
+     */
+    protected void addNode(DefaultMutableTreeNode node) {
+        BookmarkManagerView.getSingleton().insert(node);
+    }
 }

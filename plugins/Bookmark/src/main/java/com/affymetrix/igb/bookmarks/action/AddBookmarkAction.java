@@ -9,28 +9,28 @@ import com.affymetrix.igb.osgi.service.IGBService;
 
 public class AddBookmarkAction extends BookmarkAction {
 
-	private static final long serialVersionUID = 1L;
-	private static AddBookmarkAction ACTION;
-	private final IGBService igbService;
-	
-	public static void createAction(IGBService igbService){
-		ACTION = new AddBookmarkAction(igbService);
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static AddBookmarkAction getAction() {
-		return ACTION;
-	}
+    private static final long serialVersionUID = 1L;
+    private static AddBookmarkAction ACTION;
+    private final IGBService igbService;
 
-	private AddBookmarkAction(IGBService igbService) {
-		super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
-				"22x22/actions/bookmark-new.png");
-		this.igbService = igbService;
-	}
+    public static void createAction(IGBService igbService) {
+        ACTION = new AddBookmarkAction(igbService);
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		BookmarkEditor.run(igbService.getSeqMapView().getVisibleSpan());
-	}
+    public static AddBookmarkAction getAction() {
+        return ACTION;
+    }
+
+    private AddBookmarkAction(IGBService igbService) {
+        super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
+                "22x22/actions/bookmark-new.png");
+        this.igbService = igbService;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        BookmarkEditor.run(igbService.getSeqMapView().getVisibleSpan());
+    }
 }

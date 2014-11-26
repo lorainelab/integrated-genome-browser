@@ -12,24 +12,24 @@ import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
  */
 public class AddFolderAction extends BookmarkAction {
 
-	private static final long serialVersionUID = 1L;
-	private static final AddFolderAction ACTION = new AddFolderAction();
+    private static final long serialVersionUID = 1L;
+    private static final AddFolderAction ACTION = new AddFolderAction();
 
-	static{
-		GenericActionHolder.getInstance().addGenericAction(ACTION);
-	}
-	
-	public static AddFolderAction getAction() {
-		return ACTION;
-	}
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
 
-	private AddFolderAction() {
-		super(BUNDLE.getString("addBookmarkFolder"), null, null);
-	}
+    public static AddFolderAction getAction() {
+        return ACTION;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		super.actionPerformed(e);
-		addNode(new BookmarkList("Folder"));
-	}
+    private AddFolderAction() {
+        super(BUNDLE.getString("addBookmarkFolder"), null, null);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        addNode(new BookmarkList("Folder"));
+    }
 }

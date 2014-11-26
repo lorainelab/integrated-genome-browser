@@ -35,6 +35,7 @@ public class ToolTipConstants {
     public static final String BASIC_CATEGORY = "Basic Info";
     public static final String BAM_CATEGORY = "Bam Info";
     public static final String CIGAR_CATEGORY = "Cigar";
+    public static final String MISC_CATEGORY = "Misc";
     
     private ToolTipConstants() {
         

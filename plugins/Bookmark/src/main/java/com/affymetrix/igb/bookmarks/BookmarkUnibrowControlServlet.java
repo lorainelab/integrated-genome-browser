@@ -368,7 +368,7 @@ public final class BookmarkUnibrowControlServlet {
             } else {
                 use_optimizer = false;
             }
-			//
+            //
             // only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
             // otherwise treat like any other opaque data url via loadDataFromURLs call
             //
@@ -465,7 +465,7 @@ public final class BookmarkUnibrowControlServlet {
             return null;
         }
 
-		// If server requires authentication then.
+        // If server requires authentication then.
         // If it cannot be authenticated then don't add the feature.
         // This method of authentication does not work for Das2
         //if (!LocalUrlCacher.isValidURL(query_url)) {
@@ -583,7 +583,7 @@ public final class BookmarkUnibrowControlServlet {
             ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
             return null;
         } else {
-			// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
+            // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
             if (book_seq != gmodel.getSelectedSeq()) {
                 gmodel.setSelectedSeq(book_seq);
@@ -594,7 +594,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     public static BioSeq determineSeq(String seqid, AnnotatedSeqGroup group) {
-		// hopefully setting gmodel's selected seq group above triggered population of seqs
+        // hopefully setting gmodel's selected seq group above triggered population of seqs
         //   for group if not already populated
         BioSeq book_seq;
         if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {

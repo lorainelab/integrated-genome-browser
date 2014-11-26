@@ -120,7 +120,7 @@ public abstract class BookmarkController {
                     continue;
                 }
 
-				// for some parameters, testing more than one parameter name because how some params used to have
+                // for some parameters, testing more than one parameter name because how some params used to have
                 //    slightly different names, and we need to support legacy bookmarks
                 String sym_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.NAME.toString() + i);
                 String sym_ypos = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.YPOS.toString() + i);
@@ -143,7 +143,7 @@ public abstract class BookmarkController {
                 Color backgroundColor = defaultBackgroundColor;
                 if (sym_col != null) {
                     try {
-						// Color.decode() can handle colors in plain integer format
+                        // Color.decode() can handle colors in plain integer format
                         // as well as hex format: "-20561" == "#FFAFAF" == "0xFFAFAF" == "16756655"
                         // We now write in the hex format, but can still read the older int format.
                         foregroundColor = Color.decode(sym_col);
@@ -304,7 +304,7 @@ public abstract class BookmarkController {
         // Holds a list of labels of graphs for which no url could be found.
         Set<String> unfound_labels = new LinkedHashSet<String>();
 
-		// "j" loops throug all graphs, while "i" counts only the ones
+        // "j" loops throug all graphs, while "i" counts only the ones
         // that are actually book-markable (thus i <= j)
         int i = -1;
 
@@ -370,7 +370,7 @@ public abstract class BookmarkController {
 
         }
 
-		// TODO: Now save the colors and such of the combo graphs!
+        // TODO: Now save the colors and such of the combo graphs!
         if (!unfound_labels.isEmpty()) {
             ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
                     "Warning: could not bookmark some graphs.\n"

@@ -25,94 +25,92 @@ import javax.swing.event.TableModelListener;
  */
 public class BookmarkPropertiesGUI extends JFrame {
 
-	
-	private static final String TITLE = "Bookmark Properties";
-	private static final Logger ourLogger
-		  = Logger.getLogger(BookmarkPropertiesGUI.class.getPackage().getName());
-	
-	private final BookmarkPropertyTableModel propertyModel;
-	private BookmarkList bookmarkList;
-	
-	public BookmarkPropertiesGUI(final TableModelListener listener) {
-		propertyModel = new BookmarkPropertyTableModel();
-		propertyModel.addTableModelListener(new TableModelListener() {
+    private static final String TITLE = "Bookmark Properties";
+    private static final Logger ourLogger
+            = Logger.getLogger(BookmarkPropertiesGUI.class.getPackage().getName());
 
-			/**
-			 * Any values changed in property table will trigger to update info
-			 * or data list table
-			 */
-			@Override
-			public void tableChanged(TableModelEvent e) {
-				if (bookmarkList != null) {
-					Bookmark bm = (Bookmark) bookmarkList.getUserObject();
-					URL url = bm.getURL();
-					String url_base = bm.getURL().toExternalForm();
-					int index = url_base.indexOf('?');
-					if (index > 0) {
-						url_base = url_base.substring(0, index);
-					}
+    private final BookmarkPropertyTableModel propertyModel;
+    private BookmarkList bookmarkList;
 
-					// record the modified time
-					ListMultimap<String, String> props = propertyModel.getValuesAsMap();
-					props.put(Bookmark.MODIFIED, BookmarkController.DATE_FORMAT.format(new Date()));
+    public BookmarkPropertiesGUI(final TableModelListener listener) {
+        propertyModel = new BookmarkPropertyTableModel();
+        propertyModel.addTableModelListener(new TableModelListener() {
 
-					
-					try {
-						String str = Bookmark.constructURL(url_base, props);
-						url = new URL(str);
-					} catch (MalformedURLException ex) {
-						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
-					}catch (UnsupportedEncodingException ex) {
-						ourLogger.log(Level.SEVERE, "Malformed URL", ex);
-					}
-					bm.setURL(url);
-					listener.tableChanged(e);
-				}
-			}
-		});
-		
-		Rectangle pos = PreferenceUtils.retrieveWindowLocation(TITLE, new Rectangle(400, 400));
-		if (pos != null) {
-			PreferenceUtils.setWindowSize(this, pos);
-		}
+            /**
+             * Any values changed in property table will trigger to update info
+             * or data list table
+             */
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (bookmarkList != null) {
+                    Bookmark bm = (Bookmark) bookmarkList.getUserObject();
+                    URL url = bm.getURL();
+                    String url_base = bm.getURL().toExternalForm();
+                    int index = url_base.indexOf('?');
+                    if (index > 0) {
+                        url_base = url_base.substring(0, index);
+                    }
 
-		this.setTitle(TITLE);
-		this.addWindowListener(new WindowAdapter() {
+                    // record the modified time
+                    ListMultimap<String, String> props = propertyModel.getValuesAsMap();
+                    props.put(Bookmark.MODIFIED, BookmarkController.DATE_FORMAT.format(new Date()));
 
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				/**
-				* Writes the window location to the persistent preferences.
-				*/
-				PreferenceUtils.saveWindowLocation(BookmarkPropertiesGUI.this, TITLE);
-			}
-		});
+                    try {
+                        String str = Bookmark.constructURL(url_base, props);
+                        url = new URL(str);
+                    } catch (MalformedURLException ex) {
+                        ourLogger.log(Level.SEVERE, "Malformed URL", ex);
+                    } catch (UnsupportedEncodingException ex) {
+                        ourLogger.log(Level.SEVERE, "Malformed URL", ex);
+                    }
+                    bm.setURL(url);
+                    listener.tableChanged(e);
+                }
+            }
+        });
 
-		initComponents();
-	}
+        Rectangle pos = PreferenceUtils.retrieveWindowLocation(TITLE, new Rectangle(400, 400));
+        if (pos != null) {
+            PreferenceUtils.setWindowSize(this, pos);
+        }
 
-	public synchronized void displayPanel(BookmarkList bl) {
-		bookmarkList = bl;
-		setTableFromBookmark(propertyModel, bl);
-		this.setVisible(true);
-	}
+        this.setTitle(TITLE);
+        this.addWindowListener(new WindowAdapter() {
 
-	private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
-		Bookmark bm = (Bookmark) bl.getUserObject();
-		if (bm == null) {
-			model.setValuesFromMap(ImmutableListMultimap.<String, String>builder().build());
-		} else {
-			URL url = bm.getURL();
-			model.setValuesFromMap(Bookmark.parseParameters(url));
-		}
-	}
-	
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                /**
+                 * Writes the window location to the persistent preferences.
+                 */
+                PreferenceUtils.saveWindowLocation(BookmarkPropertiesGUI.this, TITLE);
+            }
+        });
+
+        initComponents();
+    }
+
+    public synchronized void displayPanel(BookmarkList bl) {
+        bookmarkList = bl;
+        setTableFromBookmark(propertyModel, bl);
+        this.setVisible(true);
+    }
+
+    private void setTableFromBookmark(BookmarkPropertyTableModel model, BookmarkList bl) {
+        Bookmark bm = (Bookmark) bl.getUserObject();
+        if (bm == null) {
+            model.setValuesFromMap(ImmutableListMultimap.<String, String>builder().build());
+        } else {
+            URL url = bm.getURL();
+            model.setValuesFromMap(Bookmark.parseParameters(url));
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

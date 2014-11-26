@@ -123,7 +123,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         }
         return "";
     }
-    
+
     private static boolean remoteFileExists(String url) {
         try {
             HttpURLConnection.setFollowRedirects(true);

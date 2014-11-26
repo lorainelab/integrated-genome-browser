@@ -304,7 +304,7 @@ public final class BookmarkManagerView {
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String createdTime = dateFormat.format(cal.getTime());
-        BookmarkList bookmark_list = new BookmarkList("Import "+createdTime);
+        BookmarkList bookmark_list = new BookmarkList("Import " + createdTime);
         bookmark_list.setComment("Created Time: " + createdTime);
 
         JFileChooser chooser = getJFileChooser(false);

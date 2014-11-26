@@ -53,7 +53,7 @@ public final class SimpleBookmarkServer {
         }
     }
 
-	// Use the Swing Thread to start a non-Swing thread
+    // Use the Swing Thread to start a non-Swing thread
     // that will start the control server.
     // Thus the control server will be started only after current GUI stuff is finished,
     // but starting it won't cause the GUI to hang.

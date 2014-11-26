@@ -103,6 +103,15 @@ public class ToolTipOperations {
         count++;
         cigarInfoProps.put(ToolTipConstants.XS, fetchToolTipValue(props, XS, count));
         count++;
+        
+        count = 1;
+        HashMap<String, ToolTipValue> miscInfoProps = new HashMap<String, ToolTipValue>();
+        ToolTipCategory miscInfoCategory = new ToolTipCategory(ToolTipConstants.MISC_CATEGORY, 3, miscInfoProps);
+        
+        for(String key : props.keySet()) {
+            miscInfoProps.put(key, new ToolTipValue(props.get(key).toString(), count));
+            count++;
+        }
 
         if (basicInfoProps.size() > 1) {
             properties.add(basicInfoCategory);
@@ -113,7 +122,10 @@ public class ToolTipOperations {
         if (cigarInfoProps.size() > 1) {
             properties.add(cigarInfoCategory);
         }
-
+        if (miscInfoProps.size() > 1) {
+            properties.add(miscInfoCategory);
+        }
+        
         return properties;
     }
 

@@ -246,6 +246,7 @@ public final class ServerList {
      * Load server preferences from the Java preferences subsystem.
      */
     public void loadServerPrefs() {
+        Logger.getLogger(ServerList.class.getName()).log(Level.INFO, "Loading server preferences from the Java preferences subsystem");
         ServerTypeI serverType;
         Preferences node;
 
@@ -287,6 +288,7 @@ public final class ServerList {
 
                 addServer(node);
             }
+            Logger.getLogger(ServerList.class.getName()).log(Level.INFO, "Completed loading server preferences from the Java preferences subsystem");
         } catch (BackingStoreException ex) {
             Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
         }

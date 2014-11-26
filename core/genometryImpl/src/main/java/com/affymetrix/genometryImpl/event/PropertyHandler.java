@@ -2,10 +2,11 @@ package com.affymetrix.genometryImpl.event;
 
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import java.util.Map;
 
 public interface PropertyHandler {
-	public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder);
-	public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder);
+	public Map<String, Object> getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder);
+	public Map<String, Object> getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder);
 	public void showGraphProperties(GraphSym sym, int x, PropertyHolder propertyHolder);
 
 	// The general order these fields should show up in.

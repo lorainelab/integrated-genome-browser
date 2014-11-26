@@ -206,15 +206,20 @@ public class Activator implements BundleActivator {
                 = bundleContext.getServiceReference(IWindowService.class);
 
         if (windowServiceReference != null) {
+            logger.info("Starting IGB");
             run(bundleContext, windowServiceReference);
+            logger.info("IGB Started");
         } else {
+            logger.info("Getting serviceTracker");
             ServiceTracker<IWindowService, Object> serviceTracker
                     = new ServiceTracker<IWindowService, Object>(
                             bundleContext, IWindowService.class, null) {
 
                                 @Override
                                 public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
+                                    logger.info("Starting IGB from  addingService()");
                                     run(bundleContext, windowServiceReference);
+                                    logger.info("IGB Started");
                                     return super.addingService(windowServiceReference);
                                 }
                             };

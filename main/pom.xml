@@ -454,6 +454,7 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>runtime</scope>
         </dependency> 
+        <!--End of plugin module dependencies-->
     </dependencies>
     <build>
         <resources>

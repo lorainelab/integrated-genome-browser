@@ -131,7 +131,7 @@ public class Activator implements BundleActivator {
     String[] args;
     private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
 
-    private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
+    private static final Logger logger = Logger.getLogger(Activator.class.getPackage().getName());
 
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
@@ -196,8 +196,12 @@ public class Activator implements BundleActivator {
             PrefsLoader.loadIGBPrefs(args);
         }
         // Verify jidesoft license.
+        logger.info("Verifying Jidesoft license");
+        
         com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
+        
+        logger.info("Getting IWindowService from ");
         ServiceReference<IWindowService> windowServiceReference
                 = bundleContext.getServiceReference(IWindowService.class);
 
@@ -219,7 +223,7 @@ public class Activator implements BundleActivator {
         initOperators(bundleContext);
         initColorProvider(bundleContext);
         initFilter(bundleContext);
-    }
+    }   
 
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
@@ -287,7 +291,7 @@ public class Activator implements BundleActivator {
                 if (null == a) { // A keystroke in the preferences has no known action.
                     String message = "key stroke \"" + k
                             + "\" is not among our generic actions.";
-                    ourLogger.config(message);
+                    logger.config(message);
                     try { // to load the missing class.
                         ClassLoader l = this.getClass().getClassLoader();
                         Class<?> type = l.loadClass(k);
@@ -298,11 +302,11 @@ public class Activator implements BundleActivator {
                         continue;
                     } catch (ClassNotFoundException cnfe) {
                         message = "Class " + cnfe.getMessage() + " not found.";
-                        ourLogger.config(message);
+                        logger.config(message);
                         continue; // Skip this one.
                     } finally {
                         message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
-                        ourLogger.config(message);
+                        logger.config(message);
                     }
                 }
                 InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -312,15 +316,15 @@ public class Activator implements BundleActivator {
                 if (null == ks) { // nothing we can do.
                     String message = "Could not find preferred key stroke: "
                             + preferredKeyStroke;
-                    ourLogger.config(message);
+                    logger.config(message);
                     continue; // Skip this one.
                 }
                 im.put(ks, actionIdentifier);
                 am.put(actionIdentifier, a);
             }
         } catch (BackingStoreException bse) {
-            ourLogger.config(bse.getMessage());
-            ourLogger.config("Some keyboard shortcuts may not be set.");
+            logger.config(bse.getMessage());
+            logger.config("Some keyboard shortcuts may not be set.");
         }
     }
 
@@ -624,7 +628,7 @@ public class Activator implements BundleActivator {
             public void addService(AMenuItem amenuItem) {
                 JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
                 if (parent == null) {
-                    ourLogger.log(Level.WARNING, "No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+                    logger.log(Level.WARNING, "No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
                     return;
                 }
                 if (amenuItem.getLocation() == -1) {
@@ -639,7 +643,7 @@ public class Activator implements BundleActivator {
             public void removeService(AMenuItem amenuItem) {
                 JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
                 if (parent == null) {
-                    ourLogger.log(Level.WARNING, "No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+                    logger.log(Level.WARNING, "No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
                     return;
                 }
                 MenuUtil.removeFromMenu(parent, amenuItem.getMenuItem());

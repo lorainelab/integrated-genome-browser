@@ -47,7 +47,7 @@ import java.util.List;
 public final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
         NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
 
-	// This flag determines whether selection events are processed on
+    // This flag determines whether selection events are processed on
     //  mousePressed() or mouseReleased().
     //
     // Users normally expect something to happen on mousePressed(), but
@@ -144,7 +144,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         // process selections in mousePressed() or mouseReleased()
         if (!SELECT_ON_MOUSE_PRESSED) {
-			// if rubber-banding is going on, don't post selections now,
+            // if rubber-banding is going on, don't post selections now,
             // because that will be handled in rubberBandChanged().
             // Still need to call processSelections, though, to set
             // the zoom point and to select the items under the current mouse point.
@@ -154,14 +154,19 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             }
         }
 
-		//  do popup in mouseReleased(), never in mousePressed(),
+        //  do popup in mouseReleased(), never in mousePressed(),
         //  so it doesn't interfere with rubber band
         if (isOurPopupTrigger(evt)) {
+            //clear selections
+            NeoMouseEvent nevt = (NeoMouseEvent) evt;
+            if (nevt.getItems().isEmpty()) {
+               smv.clearSelection();
+            }
             smv.showPopup((NeoMouseEvent) evt);
         }
 
         sub_sel_glyph = null;
-		// if the GraphSelectionManager is also trying to control popup menus,
+        // if the GraphSelectionManager is also trying to control popup menus,
         // then there needs to be code here to prevent both this and that from
         // trying to do a popup at the same time.  But it is tricky.  So for
         // now we let ONLY this class trigger the pop-up.
@@ -343,17 +348,17 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 //		if (startedInAxisTier()) {
 //			topgl = null;
 //		}
-		// Normally, clicking will clear previons selections before selecting new things.
+        // Normally, clicking will clear previons selections before selecting new things.
         // but we preserve the current selections if:
         //  shift (Add To) or alt (Toggle) or pop-up (button 3) is being pressed
         boolean preserve_selections
                 = (isAddToSelectionEvent(nevt) || isToggleSelectionEvent(nevt) || isOurPopupTrigger(nevt));
 
-		// Special case:  if pop-up button is pressed on top of a single item and
+        // Special case:  if pop-up button is pressed on top of a single item and
         // that item is not already selected, then do not preserve selections
         if (topgl != null && isOurPopupTrigger(nevt)) {
             if (isAddToSelectionEvent(nevt)) {
-				// This particular special-special case is really splitting hairs....
+                // This particular special-special case is really splitting hairs....
                 // It would be ok to get rid of it.
                 preserve_selections = true;
             } else if (!map.getSelected().contains(topgl)) {
@@ -366,7 +371,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             smv.clearSelection(); // Note that this also clears the selected sequence region
         }
 
-		// seems no longer needed
+        // seems no longer needed
         //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
         List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
         ITrackStyleExtended combo_style = null;
@@ -493,7 +498,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         if (isOurPopupTrigger(evt)) {
             return;
-			// This doesn't stop the rubber band from being drawn, because you would
+            // This doesn't stop the rubber band from being drawn, because you would
             // have to do that inside the SmartRubberBand itself.  But if you don't
             // have this return statement here, it is possible for the selections
             // reported in the pop-up menu to differ from what appears to be selected

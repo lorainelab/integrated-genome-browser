@@ -202,6 +202,7 @@ public class Activator implements BundleActivator {
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
         
         logger.info("Getting IWindowService from ");
+        Thread.sleep(2000);
         ServiceReference<IWindowService> windowServiceReference
                 = bundleContext.getServiceReference(IWindowService.class);
 

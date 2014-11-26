@@ -8,6 +8,7 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
+import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
 import com.affymetrix.igb.bookmarks.action.ExportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.LoadSessionAction;

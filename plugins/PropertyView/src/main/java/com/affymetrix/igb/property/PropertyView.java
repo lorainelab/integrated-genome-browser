@@ -200,24 +200,26 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     @SuppressWarnings("unchecked")
     @Override
     // implement PropertyHandler
-    public String[][] getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder) {
+    public Map<String, Object> getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder) {
         List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
         Map<String, Object> props = propertyHolder.determineProps(sym);
         propList.add(props);
 
-        return getPropertiesRow(propList.toArray(new Map[propList.size()]), prop_order, "", false);
+        //return getPropertiesRow(propList.toArray(new Map[propList.size()]), prop_order, "", false);
+        return props;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     // implement PropertyHandler
-    public String[][] getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder) {
+    public Map<String, Object> getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder) {
         List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
         Map<String, Object> props = propertyHolder.determineProps(sym);
         props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
         propList.add(props);
 
-        return getPropertiesRow(propList.toArray(new Map[propList.size()]), graph_tooltip_order, "", false);
+        //return getPropertiesRow(propList.toArray(new Map[propList.size()]), graph_tooltip_order, "", false);
+        return props;
     }
 
     @SuppressWarnings("unchecked")

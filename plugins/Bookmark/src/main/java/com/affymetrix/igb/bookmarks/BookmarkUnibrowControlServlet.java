@@ -67,42 +67,42 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class BookmarkUnibrowControlServlet {
 
-	
-	private static final Logger ourLogger
-			= Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
-	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+    private static final Logger ourLogger
+            = Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
+    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
-	private BookmarkUnibrowControlServlet() {
-	}
-    
+    private BookmarkUnibrowControlServlet() {
+    }
+
     public static BookmarkUnibrowControlServlet getInstance() {
         return BookmarkUnibrowControlServletHolder.INSTANCE;
     }
-    
+
     private static class BookmarkUnibrowControlServletHolder {
+
         private static final BookmarkUnibrowControlServlet INSTANCE = new BookmarkUnibrowControlServlet();
     }
-	
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
-	/**
-	 * Loads a bookmark.
-	 *
-	 * @param igbService
-	 * @param parameters Must be a Map where the only values are String and
-	 * String[] objects. For example, this could be the Map returned by
-	 * {@link javax.servlet.ServletRequest#getParameterMap()}.
-	 */
-	public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
-		String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
-		if (StringUtils.isNotBlank(batchFileStr)) {
-			igbService.doActions(batchFileStr);
-			return;
-		}
+    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
-		String threadDescription = "Loading Bookmark Data";
-		if (isGalaxyBookmark) {
+    /**
+     * Loads a bookmark.
+     *
+     * @param igbService
+     * @param parameters Must be a Map where the only values are String and
+     * String[] objects. For example, this could be the Map returned by
+     * {@link javax.servlet.ServletRequest#getParameterMap()}.
+     */
+    public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
+        String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
+        if (StringUtils.isNotBlank(batchFileStr)) {
+            igbService.doActions(batchFileStr);
+            return;
+        }
+
+        String threadDescription = "Loading Bookmark Data";
+        if (isGalaxyBookmark) {
             threadDescription = "Loading Your Galaxy Data";
         }
 
@@ -119,7 +119,7 @@ public final class BookmarkUnibrowControlServlet {
                     String select_start_param = getFirstValueEntry(parameters, Bookmark.SELECTSTART);
                     String select_end_param = getFirstValueEntry(parameters, Bookmark.SELECTEND);
                     boolean loadResidue = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.LOADRESIDUES));
-				// For historical reasons, there are two ways of specifying graphs in a bookmark
+                    // For historical reasons, there are two ways of specifying graphs in a bookmark
                     // Eventually, they should be treated more similarly, but for now some
                     // differences remain
                     // parameter "graph_file" can be handled by goToBookmark()
@@ -248,7 +248,7 @@ public final class BookmarkUnibrowControlServlet {
                                         combo_style = new SimpleTrackStyle("Joined Graphs", true);
                                         combo_style.setTrackName("Joined Graphs");
                                         combo_style.setExpandable(true);
-									//combo_style.setCollapsed(true);
+                                        //combo_style.setCollapsed(true);
                                         //combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
                                         combo_style.setBackground(igbService.getDefaultBackgroundColor());
                                         //combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
@@ -277,7 +277,7 @@ public final class BookmarkUnibrowControlServlet {
                         loadOldBookmarks(igbService, gServers2, das2_query_urls, start, end);
                     }
 
-				//loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
+                    //loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
                     //String[] data_urls = parameters.get(Bookmark.DATA_URL);
                     //String[] url_file_extensions = parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
                     //loadDataFromURLs(uni, data_urls, url_file_extensions, null);
@@ -307,325 +307,325 @@ public final class BookmarkUnibrowControlServlet {
         CThreadHolder.getInstance().execute(parameters, worker);
     }
 
-	/**
-	 * Checks for nulls or Strings with zero length.
-	 *
-	 * @param params
-	 * @return
-	 */
-	public static boolean missingString(String[] params) {
-		for (String s : params) {
-			if (StringUtils.isBlank(s)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Checks for nulls or Strings with zero length.
+     *
+     * @param params
+     * @return
+     */
+    public static boolean missingString(String[] params) {
+        for (String s : params) {
+            if (StringUtils.isBlank(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public List<String> getGraphUrls(ListMultimap<String, String> multimap) {
-		List<String> graph_paths = new ArrayList<String>();
-		for (int i = 0; !multimap.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
-			graph_paths.add(getFirstValueEntry(multimap, SYM.FEATURE_URL.toString() + i));
-		}
-		return graph_paths;
-	}
+    public List<String> getGraphUrls(ListMultimap<String, String> multimap) {
+        List<String> graph_paths = new ArrayList<String>();
+        for (int i = 0; !multimap.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+            graph_paths.add(getFirstValueEntry(multimap, SYM.FEATURE_URL.toString() + i));
+        }
+        return graph_paths;
+    }
 
-	private void loadOldBookmarks(final IGBService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
-		List<String> opaque_requests = new ArrayList<String>();
-		int i = 0;
-		for (String url : das2_query_urls) {
-			String das2_query_url = GeneralUtils.URLDecode(url);
-			String seg_uri = null;
-			String type_uri = null;
-			String overstr = null;
-			String format = null;
-			boolean use_optimizer = true;
-			int qindex = das2_query_url.indexOf('?');
-			if (qindex > -1) {
-				String query = das2_query_url.substring(qindex + 1);
-				String[] query_array = query_splitter.split(query);
-				for (int k = -0; k < query_array.length; k++) {
-					String tagval = query_array[k];
-					int eqindex = tagval.indexOf('=');
-					String tag = tagval.substring(0, eqindex);
-					String val = tagval.substring(eqindex + 1);
-					if (tag.equals("format") && (format == null)) {
-						format = val;
-					} else if (tag.equals("type") && (type_uri == null)) {
-						type_uri = val;
-					} else if (tag.equals("segment") && (seg_uri == null)) {
-						seg_uri = val;
-					} else if (tag.equals("overlaps") && (overstr == null)) {
-						overstr = val;
-					} else {
-						use_optimizer = false;
-						break;
-					}
-				}
-				if (type_uri == null || seg_uri == null || overstr == null) {
-					use_optimizer = false;
-				}
-			} else {
-				use_optimizer = false;
-			}
+    private void loadOldBookmarks(final IGBService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
+        List<String> opaque_requests = new ArrayList<String>();
+        int i = 0;
+        for (String url : das2_query_urls) {
+            String das2_query_url = GeneralUtils.URLDecode(url);
+            String seg_uri = null;
+            String type_uri = null;
+            String overstr = null;
+            String format = null;
+            boolean use_optimizer = true;
+            int qindex = das2_query_url.indexOf('?');
+            if (qindex > -1) {
+                String query = das2_query_url.substring(qindex + 1);
+                String[] query_array = query_splitter.split(query);
+                for (int k = -0; k < query_array.length; k++) {
+                    String tagval = query_array[k];
+                    int eqindex = tagval.indexOf('=');
+                    String tag = tagval.substring(0, eqindex);
+                    String val = tagval.substring(eqindex + 1);
+                    if (tag.equals("format") && (format == null)) {
+                        format = val;
+                    } else if (tag.equals("type") && (type_uri == null)) {
+                        type_uri = val;
+                    } else if (tag.equals("segment") && (seg_uri == null)) {
+                        seg_uri = val;
+                    } else if (tag.equals("overlaps") && (overstr == null)) {
+                        overstr = val;
+                    } else {
+                        use_optimizer = false;
+                        break;
+                    }
+                }
+                if (type_uri == null || seg_uri == null || overstr == null) {
+                    use_optimizer = false;
+                }
+            } else {
+                use_optimizer = false;
+            }
 			//
-			// only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
-			// otherwise treat like any other opaque data url via loadDataFromURLs call
-			//
-			if (!use_optimizer) {
-				opaque_requests.add(das2_query_url);
-				continue;
-			}
+            // only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
+            // otherwise treat like any other opaque data url via loadDataFromURLs call
+            //
+            if (!use_optimizer) {
+                opaque_requests.add(das2_query_url);
+                continue;
+            }
 
-			GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers.get(i), type_uri);
-			if (feature != null) {
-				loadFeature(igbService, feature, start, end);
-			}
-			i++;
-		}
+            GenericFeature feature = getFeature(igbService, gmodel.getSelectedSeqGroup(), gServers.get(i), type_uri);
+            if (feature != null) {
+                loadFeature(igbService, feature, start, end);
+            }
+            i++;
+        }
 
-		if (!opaque_requests.isEmpty()) {
-			String[] data_urls = new String[opaque_requests.size()];
-			for (int r = 0; r < opaque_requests.size(); r++) {
-				data_urls[r] = opaque_requests.get(r);
-			}
-			loadDataFromURLs(igbService, data_urls, null, null);
-		}
-	}
+        if (!opaque_requests.isEmpty()) {
+            String[] data_urls = new String[opaque_requests.size()];
+            for (int r = 0; r < opaque_requests.size(); r++) {
+                data_urls[r] = opaque_requests.get(r);
+            }
+            loadDataFromURLs(igbService, data_urls, null, null);
+        }
+    }
 
-	private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
-		int i = 0;
-		for (String queryUrl : query_urls) {
-			gFeatures.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
-			i++;
-		}
-		boolean show_message = false;
-		for (GenericFeature gFeature : gFeatures) {
-			if (gFeature != null) {
-				loadFeature(igbService, gFeature, start, end);
-				if (!show_message && (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE)) {
-					gFeature.setVisible();
-					show_message = true;
-				}
-			}
-		}
-		igbService.updateGeneralLoadView();
+    private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
+        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
+        int i = 0;
+        for (String queryUrl : query_urls) {
+            gFeatures.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
+            i++;
+        }
+        boolean show_message = false;
+        for (GenericFeature gFeature : gFeatures) {
+            if (gFeature != null) {
+                loadFeature(igbService, gFeature, start, end);
+                if (!show_message && (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE)) {
+                    gFeature.setVisible();
+                    show_message = true;
+                }
+            }
+        }
+        igbService.updateGeneralLoadView();
 
-		if (show_message) {
-			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
-					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
-		}
-		return gFeatures;
-	}
+        if (show_message) {
+            igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+                    GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+        }
+        return gFeatures;
+    }
 
-	private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
-		List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
-		for (GenericFeature gFeature : gFeatures) {
-			if (gFeature != null) {
-				igbService.loadChromosomes(gFeature);
-			}
-		}
-	}
+    private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
+        List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
+        for (GenericFeature gFeature : gFeatures) {
+            if (gFeature != null) {
+                igbService.loadChromosomes(gFeature);
+            }
+        }
+    }
 
-	private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
-		List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
+    private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
+        List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
 
-		boolean show_message = false;
-		int i = 0;
-		for (String query_url : query_urls) {
-			GenericFeature gFeature = getFeature(igbService, seqGroup, gServers.get(i), query_url);
-			gFeatures.add(gFeature);
-			if (gFeature != null) {
-				gFeature.setVisible();
-				gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-				if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
-						 gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
-					show_message = true;
-				}
-			}
-			i++;
-		}
+        boolean show_message = false;
+        int i = 0;
+        for (String query_url : query_urls) {
+            GenericFeature gFeature = getFeature(igbService, seqGroup, gServers.get(i), query_url);
+            gFeatures.add(gFeature);
+            if (gFeature != null) {
+                gFeature.setVisible();
+                gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE /*||
+                         gFeatures[i].getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
+                    show_message = true;
+                }
+            }
+            i++;
+        }
 
-		igbService.updateGeneralLoadView();
+        igbService.updateGeneralLoadView();
 
-		// Show message on how to load
-		if (show_message) {
-			igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
-					GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
-		}
+        // Show message on how to load
+        if (show_message) {
+            igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+                    GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+        }
 
-		return gFeatures;
-	}
+        return gFeatures;
+    }
 
-	private GenericFeature getFeature(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
+    private GenericFeature getFeature(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
 
-		if (gServer == null) {
-			return null;
-		}
+        if (gServer == null) {
+            return null;
+        }
 
 		// If server requires authentication then.
-		// If it cannot be authenticated then don't add the feature.
-		// This method of authentication does not work for Das2
-		//if (!LocalUrlCacher.isValidURL(query_url)) {
-		//	return null;
-		//}
-		GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url, false);
+        // If it cannot be authenticated then don't add the feature.
+        // This method of authentication does not work for Das2
+        //if (!LocalUrlCacher.isValidURL(query_url)) {
+        //	return null;
+        //}
+        GenericFeature feature = igbService.getFeature(seqGroup, gServer, query_url, false);
 
-		if (feature == null) {
-			Logger.getLogger(GeneralUtils.class.getName()).log(
-					Level.SEVERE, "Couldn''t find feature for bookmark url {0}", query_url);
-		}
+        if (feature == null) {
+            Logger.getLogger(GeneralUtils.class.getName()).log(
+                    Level.SEVERE, "Couldn''t find feature for bookmark url {0}", query_url);
+        }
 
-		return feature;
-	}
+        return feature;
+    }
 
-	private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
-		//a bit of a hack to force track creation since with no overlap there is currently no track being created.
-		if (end == 0) {
-			end = 1;
-		}
-		SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-		gFeature.setVisible();
-		gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-		if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
-			overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-		}
-		igbService.loadAndDisplaySpan(overlap, gFeature);
-	}
+    private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
+        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        //a bit of a hack to force track creation since with no overlap there is currently no track being created.
+        if (end == 0) {
+            end = 1;
+        }
+        SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
+        gFeature.setVisible();
+        gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+        if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
+            overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
+        }
+        igbService.loadAndDisplaySpan(overlap, gFeature);
+    }
 
-	private List<GenericServer> loadServers(IGBService igbService, List<String> server_urls) {
-		final ImmutableList.Builder<GenericServer> builder = ImmutableList.<GenericServer>builder();
+    private List<GenericServer> loadServers(IGBService igbService, List<String> server_urls) {
+        final ImmutableList.Builder<GenericServer> builder = ImmutableList.<GenericServer>builder();
 
-		for (String server_url : server_urls) {
-			builder.add(igbService.loadServer(server_url));
-		}
+        for (String server_url : server_urls) {
+            builder.add(igbService.loadServer(server_url));
+        }
 
-		return builder.build();
-	}
+        return builder.build();
+    }
 
-	private void loadDataFromURLs(final IGBService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {
-		try {
-			if (data_urls != null && data_urls.length != 0) {
-				URL[] urls = new URL[data_urls.length];
-				for (int i = 0; i < data_urls.length; i++) {
-					urls[i] = new URL(data_urls[i]);
-				}
-				final UrlLoaderThread t = new UrlLoaderThread(igbService, urls, extensions, tier_names);
-				t.runEventually();
-				t.join();
-			}
-		} catch (MalformedURLException e) {
-			ErrorHandler.errorPanel("Error loading bookmark\nData URL malformed\n", e);
-		} catch (InterruptedException ex) {
-		}
-	}
+    private void loadDataFromURLs(final IGBService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {
+        try {
+            if (data_urls != null && data_urls.length != 0) {
+                URL[] urls = new URL[data_urls.length];
+                for (int i = 0; i < data_urls.length; i++) {
+                    urls[i] = new URL(data_urls[i]);
+                }
+                final UrlLoaderThread t = new UrlLoaderThread(igbService, urls, extensions, tier_names);
+                t.runEventually();
+                t.join();
+            }
+        } catch (MalformedURLException e) {
+            ErrorHandler.errorPanel("Error loading bookmark\nData URL malformed\n", e);
+        } catch (InterruptedException ex) {
+        }
+    }
 
-	private List<Integer> initializeIntValues(String start_param, String end_param,
-			String select_start_param, String select_end_param) {
+    private List<Integer> initializeIntValues(String start_param, String end_param,
+            String select_start_param, String select_end_param) {
 
-		Integer start = 0;
-		Integer end = 0;
-		if (StringUtils.isNotBlank(start_param)) {
-			start = Ints.tryParse(start_param);
-			if (start == null) {
-				start = 0;
-			}
-		}
-		if (StringUtils.isNotBlank(end_param)) {
-			end = Ints.tryParse(end_param);
-			if (end == null) {
-				end = 0;
-			}
-		}
-		Integer selstart = -1;
-		Integer selend = -1;
-		if (StringUtils.isNotBlank(select_start_param) && StringUtils.isNotBlank(select_end_param)) {
-			selstart = Ints.tryParse(select_start_param);
-			selend = Ints.tryParse(select_end_param);
-			if (selstart == null) {
-				selstart = -1;
-			}
-			if (selend == null) {
-				selend = -1;
-			}
-		}
-		ImmutableList<Integer> intValues = ImmutableList.<Integer>builder().add(start).add(end).add(selstart).add(selend).build();
-		return intValues;
-	}
+        Integer start = 0;
+        Integer end = 0;
+        if (StringUtils.isNotBlank(start_param)) {
+            start = Ints.tryParse(start_param);
+            if (start == null) {
+                start = 0;
+            }
+        }
+        if (StringUtils.isNotBlank(end_param)) {
+            end = Ints.tryParse(end_param);
+            if (end == null) {
+                end = 0;
+            }
+        }
+        Integer selstart = -1;
+        Integer selend = -1;
+        if (StringUtils.isNotBlank(select_start_param) && StringUtils.isNotBlank(select_end_param)) {
+            selstart = Ints.tryParse(select_start_param);
+            selend = Ints.tryParse(select_end_param);
+            if (selstart == null) {
+                selstart = -1;
+            }
+            if (selend == null) {
+                selend = -1;
+            }
+        }
+        ImmutableList<Integer> intValues = ImmutableList.<Integer>builder().add(start).add(end).add(selstart).add(selend).build();
+        return intValues;
+    }
 
-	/**
-	 * Loads the sequence and goes to the specified location. If version doesn't
-	 * match the currently-loaded version, asks the user if it is ok to proceed.
-	 * NOTE: This schedules events on the AWT event queue. If you want to make
-	 * sure that everything has finished before you do something else, then you
-	 * have to schedule that something else to occur on the AWT event queue.
-	 *
-	 * @param graph_files it is ok for this parameter to be null.
-	 * @return true indicates that the action succeeded
-	 */
-	private Optional<BioSeq> goToBookmark(IGBService igbService, String seqid, String version, int start, int end) {
-		AnnotatedSeqGroup book_group = null;
-		try{
-		 book_group = igbService.determineAndSetGroup(version).orNull();
-		}catch(Throwable ex){
-			ourLogger.log(Level.SEVERE, "info", ex);
-		}
-		
-		if (book_group == null) {
-			return Optional.fromNullable(null);
-		}
+    /**
+     * Loads the sequence and goes to the specified location. If version doesn't
+     * match the currently-loaded version, asks the user if it is ok to proceed.
+     * NOTE: This schedules events on the AWT event queue. If you want to make
+     * sure that everything has finished before you do something else, then you
+     * have to schedule that something else to occur on the AWT event queue.
+     *
+     * @param graph_files it is ok for this parameter to be null.
+     * @return true indicates that the action succeeded
+     */
+    private Optional<BioSeq> goToBookmark(IGBService igbService, String seqid, String version, int start, int end) {
+        AnnotatedSeqGroup book_group = null;
+        try {
+            book_group = igbService.determineAndSetGroup(version).orNull();
+        } catch (Throwable ex) {
+            ourLogger.log(Level.SEVERE, "info", ex);
+        }
 
-		final BioSeq book_seq = determineSeq(seqid, book_group);
-		if (book_seq == null) {
-			ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
-			return null;
-		} else {
+        if (book_group == null) {
+            return Optional.fromNullable(null);
+        }
+
+        final BioSeq book_seq = determineSeq(seqid, book_group);
+        if (book_seq == null) {
+            ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
+            return null;
+        } else {
 			// gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
-			//     gviewer is registered as a SeqSelectionListener on gmodel
-			if (book_seq != gmodel.getSelectedSeq()) {
-				gmodel.setSelectedSeq(book_seq);
-			}
-		}
-		igbService.getSeqMapView().setRegion(start, end, book_seq);
-		return Optional.fromNullable(book_seq);
-	}
+            //     gviewer is registered as a SeqSelectionListener on gmodel
+            if (book_seq != gmodel.getSelectedSeq()) {
+                gmodel.setSelectedSeq(book_seq);
+            }
+        }
+        igbService.getSeqMapView().setRegion(start, end, book_seq);
+        return Optional.fromNullable(book_seq);
+    }
 
-	public static BioSeq determineSeq(String seqid, AnnotatedSeqGroup group) {
+    public static BioSeq determineSeq(String seqid, AnnotatedSeqGroup group) {
 		// hopefully setting gmodel's selected seq group above triggered population of seqs
-		//   for group if not already populated
-		BioSeq book_seq;
-		if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
-			book_seq = gmodel.getSelectedSeq();
-			if (book_seq == null && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
-				book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
-			}
-		} else {
-			book_seq = group.getSeq(seqid);
-		}
-		return book_seq;
-	}
+        //   for group if not already populated
+        BioSeq book_seq;
+        if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
+            book_seq = gmodel.getSelectedSeq();
+            if (book_seq == null && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+                book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
+            }
+        } else {
+            book_seq = group.getSeq(seqid);
+        }
+        return book_seq;
+    }
 
-	String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
-		if (multimap.get(key).isEmpty()) {
-			return null;
-		}
-		return multimap.get(key).get(0);
-	}
-	
-	private void loadUnknownData(final ListMultimap<String, String> parameters) {
-		List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-		//These bookmarks should only contain one url
-		if (!query_urls.isEmpty()) {
-			try {
-				String urlToLoad = query_urls.get(0);
-				AnnotatedSeqGroup loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-				LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", true);
-			} catch (URISyntaxException ex) {
-				ourLogger.log(Level.SEVERE, "Invalid bookmark syntax.", ex);
-			}
-		}
-	}
+    String getFirstValueEntry(ListMultimap<String, String> multimap, String key) {
+        if (multimap.get(key).isEmpty()) {
+            return null;
+        }
+        return multimap.get(key).get(0);
+    }
+
+    private void loadUnknownData(final ListMultimap<String, String> parameters) {
+        List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+        //These bookmarks should only contain one url
+        if (!query_urls.isEmpty()) {
+            try {
+                String urlToLoad = query_urls.get(0);
+                AnnotatedSeqGroup loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
+                LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", true);
+            } catch (URISyntaxException ex) {
+                ourLogger.log(Level.SEVERE, "Invalid bookmark syntax.", ex);
+            }
+        }
+    }
 }

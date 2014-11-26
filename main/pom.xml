@@ -426,18 +426,30 @@
             <artifactId>windowsServiceDef</artifactId>
             <scope>runtime</scope>
         </dependency> 
-         <dependency> 
-            <groupId>com.affymetrix</groupId>
+        <dependency> 
+            <groupId>com.lorainelab</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>
-             <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency> 
-        <!--End of plugin module dependencies--> <dependency> 
+        <dependency> 
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igbr</artifactId>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency> 
+        <!--End of plugin module dependencies--> 
+        <dependency> 
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate</artifactId>
             <scope>runtime</scope>

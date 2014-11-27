@@ -24,11 +24,11 @@
             <artifactId>genometryImpl</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>	
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.main</artifactId>

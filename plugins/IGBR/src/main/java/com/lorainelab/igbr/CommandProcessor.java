@@ -1,7 +1,7 @@
 package com.lorainelab.igbr;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-//import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.ScriptManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author dcnorris
  */
-public class CommandProcessor extends Thread {
+public class CommandProcessor implements Runnable {
 
     private Socket connection;
     private BufferedReader in;
@@ -32,7 +32,7 @@ public class CommandProcessor extends Thread {
 
     public void recieveIgbCommand(String igbCommand) {
         if (out != null) {
-//           ScriptManager.getInstance().runScriptString(igbCommand, "igb");
+           ScriptManager.getInstance().runScriptString(igbCommand, "igb");
             out.println("Command processed");
         }
     }

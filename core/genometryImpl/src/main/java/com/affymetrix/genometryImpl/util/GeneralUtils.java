@@ -38,11 +38,13 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import static com.google.common.io.Closeables.close;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import net.sf.samtools.seekablestream.SeekableStream;
 import net.sf.samtools.seekablestream.SeekableStreamFactory;
@@ -66,6 +68,26 @@ public final class GeneralUtils {
 			ex.printStackTrace();
 		}
 	}
+        
+    public static void closeQuietly(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                close(closeable, true);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public static void closeQuietly(ServerSocket socket) {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
 	/** A list of all the compression-type file endings that this
 	 *  object knows how to decompress.

@@ -277,7 +277,7 @@ public class SeqMapView extends JPanel
     private final SeqMapViewMouseListener mouse_listener;
     private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
     private SeqSpan horizontalClampedRegion = null; //Span representing clamped region
-    protected TierLabelManager tier_manager;
+    protected TierLabelManager tierLabelManager;
     protected JComponent xzoombox;
     protected JComponent yzoombox;
     protected com.affymetrix.igb.swing.JRPButton zoomInXB;
@@ -454,11 +454,11 @@ public class SeqMapView extends JPanel
         seqmap.setZoomer(NeoMap.X, xzoomer);
         seqmap.setZoomer(NeoMap.Y, yzoomer);
 
-        tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
-        popup = new SeqMapViewPopup(tier_manager, this);
+        tierLabelManager = new TierLabelManager((AffyLabelledTierMap) seqmap);
+        popup = new SeqMapViewPopup(tierLabelManager, this);
         MouseShortCut msc = new MouseShortCut(popup);
 
-        tier_manager.setDoGraphSelections(true);
+        tierLabelManager.setDoGraphSelections(true);
 
         GraphSelectionManager gsm = new GraphSelectionManager(this);
         seqmap.addMouseListener(gsm);
@@ -470,7 +470,7 @@ public class SeqMapView extends JPanel
             //tier_manager.addPopupListener(new GraphSelectionManager(this));
             //tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
             //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
-            tier_manager.addPopupListener(popup);
+            tierLabelManager.addPopupListener(popup);
             autoload = new AutoLoadThresholdHandler(this);
         }
 
@@ -483,7 +483,7 @@ public class SeqMapView extends JPanel
                 // TODO:  Find properties of selected track and show in 'Selection Info' tab.
             }
         };
-        tier_manager.addTrackSelectionListener(track_selection_listener);
+        tierLabelManager.addTrackSelectionListener(track_selection_listener);
 
         seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
         seqmap.addMouseListener(mouse_listener);
@@ -492,7 +492,7 @@ public class SeqMapView extends JPanel
         ((AffyLabelledTierMap) seqmap).getLabelMap().addMouseMotionListener(mouse_listener);
         //((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
-        tier_manager.setDoGraphSelections(true);
+        tierLabelManager.setDoGraphSelections(true);
 
         // A "Smart" rubber band is necessary becaus we don't want our attempts
         // to drag the graph handles to also cause rubber-banding
@@ -705,7 +705,7 @@ public class SeqMapView extends JPanel
     }
 
     public final TierLabelManager getTierManager() {
-        return tier_manager;
+        return tierLabelManager;
     }
 
     private void setupPopups() {
@@ -1307,9 +1307,9 @@ public class SeqMapView extends JPanel
         if (tier.getAnnotStyle().getFloatTier()) {
             tier.setSelected(selected);
         } else if (selected) {
-            tier_manager.select(tier);
+            tierLabelManager.select(tier);
         } else {
-            tier_manager.deselect(tier);
+            tierLabelManager.deselect(tier);
         }
         seqmap.updateWidget();
         postSelections();
@@ -1352,7 +1352,7 @@ public class SeqMapView extends JPanel
     @Override
     public final void postSelections() {
         // Note that seq_selected_sym (the selected residues) is not included in selected_syms
-        gmodel.setSelectedSymmetries(glyphsToRootSyms(tier_manager.getSelectedTiers()), getSelectedSyms(), this);
+        gmodel.setSelectedSymmetries(glyphsToRootSyms(tierLabelManager.getSelectedTiers()), getSelectedSyms(), this);
     }
 
     public void trackstylePropertyChanged(EventObject eo) {
@@ -1381,11 +1381,11 @@ public class SeqMapView extends JPanel
     public List<GlyphI> getAllSelectedTiers() {
         List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
         // this adds all tracks selected on the label, including join tracks (not join children)
-        for (TierGlyph tierGlyph : tier_manager.getSelectedTiers()) {
+        for (TierGlyph tierGlyph : tierLabelManager.getSelectedTiers()) {
             allSelectedTiers.add(tierGlyph);
         }
         // this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
-        for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
             if (!allSelectedTiers.contains(tierGlyph)) {
                 if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
                     for (GlyphI child : tierGlyph.getChildren()) {
@@ -1994,12 +1994,13 @@ public class SeqMapView extends JPanel
                     continue;
                 }
                 if (tg.isVisible() && tg.intersects(cbox, seqmap.getView())) {
-                    for (TierLabelGlyph tglyph : tier_manager.getAllTierLabels()) {
+                    for (TierLabelGlyph tglyph : tierLabelManager.getAllTierLabels()) {
                         if (tglyph.getInfo() == tg) {
-                            tier_manager.select(tglyph.getReferenceTier());
+                            tierLabelManager.select(tglyph.getReferenceTier());
+                          
                             seqmap.updateWidget();
                             postSelections();
-                            tier_manager.doPopup(nevt);
+                            tierLabelManager.doPopup(nevt);
                             return;
                         }
 
@@ -2111,7 +2112,7 @@ public class SeqMapView extends JPanel
 
         }
 
-        TierGlyph tglyph = tier_manager.getTierGlyph(nevt);
+        TierGlyph tglyph = tierLabelManager.getTierGlyph(nevt);
 
         if (tglyph != null) {
             GenericFeature feature = tglyph.getAnnotStyle().getFeature();
@@ -2205,7 +2206,7 @@ public class SeqMapView extends JPanel
         clearAllSelections();
         // this selects all regular tracks on the label
         AffyTieredMap labelmap = ((AffyLabelledTierMap) seqmap).getLabelMap();
-        for (TierLabelGlyph labelGlyph : tier_manager.getAllTierLabels()) {
+        for (TierLabelGlyph labelGlyph : tierLabelManager.getAllTierLabels()) {
             TierGlyph tierGlyph = (TierGlyph) labelGlyph.getInfo();
             if (labelGlyph.isVisible()
                     && tierGlyph.getInfo() != null) {
@@ -2225,7 +2226,7 @@ public class SeqMapView extends JPanel
             }
         }
         // this selects all join subtracks on the track itself (arrow on left edge)
-        for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
             if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
                 for (GlyphI child : tierGlyph.getChildren()) {
                     boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
@@ -2235,7 +2236,7 @@ public class SeqMapView extends JPanel
                 }
             }
         }
-        gmodel.setSelectedSymmetries(glyphsToRootSyms(tier_manager.getSelectedTiers()), getSelectedSyms(), this);
+        gmodel.setSelectedSymmetries(glyphsToRootSyms(tierLabelManager.getSelectedTiers()), getSelectedSyms(), this);
         seqmap.updateWidget();
     }
 
@@ -2247,7 +2248,7 @@ public class SeqMapView extends JPanel
                 floatGlyph.setSelected(false);
             }
         }
-        for (TierGlyph tierGlyph : tier_manager.getVisibleTierGlyphs()) {
+        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
             if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
                 for (GlyphI child : tierGlyph.getChildren()) {
                     seqmap.deselect(child);

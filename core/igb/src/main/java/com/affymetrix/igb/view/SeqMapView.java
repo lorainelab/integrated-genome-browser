@@ -1997,7 +1997,7 @@ public class SeqMapView extends JPanel
                     for (TierLabelGlyph tglyph : tierLabelManager.getAllTierLabels()) {
                         if (tglyph.getInfo() == tg) {
                             tierLabelManager.select(tglyph.getReferenceTier());
-                          
+                            tierLabelManager.getSelectedTierLabels().clear(); //not needed, except to fix for windows bug
                             seqmap.updateWidget();
                             postSelections();
                             tierLabelManager.doPopup(nevt);

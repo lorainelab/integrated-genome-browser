@@ -79,14 +79,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private static final boolean DEBUG = false;
     private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
     private final SeqMapView gviewer;
-    private final TierLabelManager handler;
+    private final TierLabelManager tierLabelManager;
     private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
     private final ActionToggler at1;
     private final ActionToggler at2;
     private final RepackTiersAction repackStub;
 
     public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
-        this.handler = handler;
+        this.tierLabelManager = handler;
         this.gviewer = smv;
         this.repackStub = new RepackTiersAction(null, null, null) {
             private static final long serialVersionUID = 1L;
@@ -146,7 +146,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             gviewer.updatePanel(preserveViewX, preserveViewY);
         } else {
             // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
-            handler.repackTheTiers(false, stretchVertically);
+            tierLabelManager.repackTheTiers(false, stretchVertically);
         }
     }
 
@@ -211,8 +211,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         change_font_size.setEnabled(numSelections > 0);
         changeMenu.add(change_font_size);
         JMenuItem change_Tier_Height = new JRPMenuItemTLP(ChangeTierHeightAction.getAction());
-        if (numSelections > 0 && !(handler.getSelectedTierLabels().get(0).getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
-                && (((DefaultTierGlyph) (handler.getSelectedTierLabels().get(0).getReferenceTier())).isHeightFixed())) {
+        if (numSelections > 0 && !(tierLabelManager.getSelectedTierLabels().get(0).getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE))
+                && (((DefaultTierGlyph) (tierLabelManager.getSelectedTierLabels().get(0).getReferenceTier())).isHeightFixed())) {
             change_Tier_Height.setEnabled(true);
         } else {
             change_Tier_Height.setEnabled(false);
@@ -236,7 +236,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         showMenu.add(showAllAction);
         showMenu.add(new JSeparator());
         //showMenu.setEnabled(false);
-        List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
+        List<TierLabelGlyph> tiervec = tierLabelManager.getAllTierLabels();
 
         for (TierLabelGlyph label : tiervec) {
             TierGlyph tier = (TierGlyph) label.getInfo();
@@ -268,7 +268,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                     public void actionPerformed(ActionEvent e) {
                         style.setShow(true);
                         showMenu.remove(show_tier);
-                        handler.sortTiers();
+                        tierLabelManager.sortTiers();
                         GeneralLoadView.getLoadView().refreshDataManagementView();
                         repack(false, true);
                     }
@@ -557,7 +557,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 // purely for debugging
     private void doDebugAction() {
-        for (TierGlyph tg : handler.getSelectedTiers()) {
+        for (TierGlyph tg : tierLabelManager.getSelectedTiers()) {
             ITrackStyleExtended style = tg.getAnnotStyle();
             System.out.println("Track: " + tg);
             System.out.println("Style: " + style);

@@ -31,11 +31,11 @@ public class OSGiHandler {
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
 
-    final public static boolean IS_WINDOWS
+    public static final boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
-    final public static boolean IS_MAC
+    public static final boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
-    final public static boolean IS_LINUX
+    public static final boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
 
     private static final OSGiHandler instance = new OSGiHandler();

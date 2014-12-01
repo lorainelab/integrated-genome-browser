@@ -1996,8 +1996,8 @@ public class SeqMapView extends JPanel
                 if (tg.isVisible() && tg.intersects(cbox, seqmap.getView())) {
                     for (TierLabelGlyph tglyph : tierLabelManager.getAllTierLabels()) {
                         if (tglyph.getInfo() == tg) {
+                            tierLabelManager.deselectTierLabels();
                             tierLabelManager.select(tglyph.getReferenceTier());
-                            tierLabelManager.getSelectedTierLabels().clear(); //not needed, except to fix for windows bug
                             seqmap.updateWidget();
                             postSelections();
                             tierLabelManager.doPopup(nevt);

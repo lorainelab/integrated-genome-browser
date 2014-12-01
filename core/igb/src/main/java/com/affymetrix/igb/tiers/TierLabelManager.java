@@ -243,9 +243,7 @@ public final class TierLabelManager implements PropertyHolder {
                 }
                 labelmap.select(selected_glyphs);
 
-                
                 tiermap.clearSelected();
-                
 
                 doGraphSelections(preserve_selections);
                 // make sure selections becomes visible
@@ -690,6 +688,12 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         return tglyph;
+    }
+
+    public void deselectTierLabels() {
+        for (TierLabelGlyph tglyph : getAllTierLabels()) {
+            labelmap.deselect(tglyph);
+        }
     }
 
     public void deselect(GlyphI tierGlyph) {

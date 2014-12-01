@@ -44,8 +44,8 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 	
 	AltSpliceSeqMapView(boolean b) {
 		super(b, "AltSpliceSeqMapView", Application.getSingleton().getFrame());
-		if (tier_manager != null) {
-			tier_manager.setDoGraphSelections(false);
+		if (tierLabelManager != null) {
+			tierLabelManager.setDoGraphSelections(false);
 		}
 		report_hairline_position_in_status_bar = false;
 		report_status_in_status_bar = false;

@@ -243,9 +243,9 @@ public final class TierLabelManager implements PropertyHolder {
                 }
                 labelmap.select(selected_glyphs);
 
-                if (!isPopupTrigger) {
-                    tiermap.clearSelected();
-                }
+                
+                tiermap.clearSelected();
+                
 
                 doGraphSelections(preserve_selections);
                 // make sure selections becomes visible

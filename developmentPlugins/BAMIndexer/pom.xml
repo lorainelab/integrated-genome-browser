@@ -93,17 +93,21 @@
                             <goal>manifest</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>              
                 <configuration>
-                    <mavenRepository>${project.parent.basedir}/extbundles</mavenRepository>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>
                     <instructions>
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Import-Package>*;resolution:=optional</Import-Package>
                         <Export-Package/>
-                        <Bundle-Activator>com.affymetrix.igb.bamindexer.Activator</Bundle-Activator>                        
+                        <Bundle-Activator>com.affymetrix.igb.bamindexer.Activator</Bundle-Activator>   
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-SymbolicName>com.affymetrix.igb.bamindexer</Bundle-SymbolicName>
+                        <Bundle-Description>Plugin to enable indexing of local bam files if an index does not exist</Bundle-Description>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>                  
         </plugins>
     </build>
 </project>

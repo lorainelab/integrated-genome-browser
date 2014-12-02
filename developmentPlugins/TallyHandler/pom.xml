@@ -14,10 +14,66 @@
 
     <name>talleyHandler</name>
     
-    <dependencies>       
+    <dependencies>        
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
+            <scope>provided</scope>
+        </dependency>    
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igbSwingExt</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>igb-picard</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genometryImpl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>window-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>affymetrix-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.broad</groupId>
+            <artifactId>tribble-ext</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -61,11 +117,12 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                         <Bundle-Activator>com.gene.tallyhandler.Activator</Bundle-Activator>
-                         <Bundle-Category>FileTypeHandler-com.gene.tallyhandler.TallyHandler</Bundle-Category>
+                        <Bundle-Activator>com.gene.tallyhandler.Activator</Bundle-Activator>
+                        <Bundle-Category>FileTypeHandler-com.gene.tallyhandler.TallyHandler</Bundle-Category>
                     </instructions>
                 </configuration>
             </plugin>            

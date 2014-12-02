@@ -16,8 +16,44 @@
 
     <dependencies>        
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
+            <scope>provided</scope>
+        </dependency>    
+        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igbSwingExt</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>igb-picard</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genometryImpl</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -60,6 +96,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
                         <Export-Package>com.gene.sampleselection</Export-Package>
                         <Bundle-Activator>com.gene.sampleselection.Activator</Bundle-Activator>

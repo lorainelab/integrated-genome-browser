@@ -13,18 +13,60 @@
     <packaging>jar</packaging>
 
     <name>tableView</name>
+       
 
-    <dependencies>
+    <dependencies>        
         <dependency>
             <groupId>tableview</groupId>
             <artifactId>tableview</artifactId>
             <version>1.0</version>
             <systemPath>${basedir}/lib/TableView.jar</systemPath>
             <scope>system</scope>
-        </dependency>      
+        </dependency>          
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
+            <scope>provided</scope>
+        </dependency>    
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>   
+            <artifactId>igb</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igbSwingExt</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>igb-picard</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genometryImpl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>affymetrix-common</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -57,8 +99,18 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 
-                <extensions>true</extensions><executions><execution><id>bundle-manifest</id><phase>process-classes</phase><goals><goal>manifest</goal></goals></execution></executions>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
+                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.tableview.Activator</Bundle-Activator>

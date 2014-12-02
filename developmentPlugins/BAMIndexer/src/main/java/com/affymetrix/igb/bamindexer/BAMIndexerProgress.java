@@ -33,9 +33,8 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     }
 
     public void finishedTask() {
-		
+
         double newValue = jProgressBar1.getValue() + stepSize;
-		
 
         if (jProgressBar1.isIndeterminate()) {
             jProgressBar1.setIndeterminate(false);
@@ -48,13 +47,14 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     public void updateTitle(Object... args) {
         jLabel1.setText(DEBUG(CAT(BAMIndexer.TAB.HEADER, args)).trim());
     }
-    
-    private Double sum(Number[] arr){
-        return sum(arr,0,arr.length-1);
+
+    private Double sum(Number[] arr) {
+        return sum(arr, 0, arr.length - 1);
     }
-    private Double sum(Number[] arr, int start, Integer end){
+
+    private Double sum(Number[] arr, int start, Integer end) {
         Double answer = new Double(0);
-        for(Double value: (Double[]) Arrays.copyOfRange(arr,start,end+1)){
+        for (Double value : (Double[]) Arrays.copyOfRange(arr, start, end + 1)) {
             answer += value;
         }
         return answer;
@@ -65,22 +65,22 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
             iCompleteJobs++;
         }
         if (jProgressBar1.getValue() >= this.max) {
-			this.jButton1.setText("Close");  
+            this.jButton1.setText("Close");
             this.updateProgressBarMessage("No Errors");
-			this.updateTitle("Completed");
-			this.updateStatus("OK to close");
-			          
+            this.updateTitle("Completed");
+            this.updateStatus("OK to close");
+
             this.repaint();
             return true;
         }
-		if(force){
+        if (force) {
             jButton1.setText("Log");
             this.updateProgressBarMessage("Errors exist!");
-			this.updateTitle("inComplete with errors");
+            this.updateTitle("inComplete with errors");
             this.updateStatus("Check the log");
             this.repaint();
             return true;
-		}
+        }
         return false;
     }
 
@@ -93,17 +93,16 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
         return new Double[]{min, max};
     }
 
-
     public BAMIndexerProgress() throws Exception {
         this(null, null);
     }
-	
-	public void cancel(){
-		this.updateTitle("Canceled. You may now close the window.");
-		this.updateStatus("canceled");
-		this.jButton1.setText("Close");
-		this.updateProgressBarMessage("");
-	}
+
+    public void cancel() {
+        this.updateTitle("Canceled. You may now close the window.");
+        this.updateStatus("canceled");
+        this.jButton1.setText("Close");
+        this.updateProgressBarMessage("");
+    }
 
     /**
      * Creates new form BAMIndexerFrame
@@ -111,12 +110,11 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     public BAMIndexerProgress(BAMIndexer backend, Double[] jobs) throws Exception {
         initComponents();
         this.backend = backend;
-        
-        if(sum(jobs) != 1){
+
+        if (sum(jobs) != 1) {
             throw new Exception("Job partitions should equal 100%");
         }
         this.jobs = jobs;
-        
 
         jProgressBar1.setMinimum((int) min);
         jProgressBar1.setMaximum((int) max);
@@ -182,11 +180,11 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String message = ((JButton) evt.getSource()).getText();
-		if (message.equalsIgnoreCase("close")) {
+        if (message.equalsIgnoreCase("close")) {
             this.dispose();
-        } else if (message.equalsIgnoreCase("log")){
-			ShowConsoleAction.getAction().actionPerformed(evt);
-		}else{
+        } else if (message.equalsIgnoreCase("log")) {
+            ShowConsoleAction.getAction().actionPerformed(evt);
+        } else {
             backend.cancel();
             this.dispose();
         }
@@ -196,7 +194,6 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
 
 //                final BAMProgress it = new BAMProgress(null, 1);
 //
@@ -257,9 +254,9 @@ public class BAMIndexerProgress extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 
-	void updateProgressBarMessage(String message) {
-		this.jProgressBar1.setStringPainted(true);
-		this.jProgressBar1.setString(message);
-	}
+    void updateProgressBarMessage(String message) {
+        this.jProgressBar1.setStringPainted(true);
+        this.jProgressBar1.setString(message);
+    }
 
 }

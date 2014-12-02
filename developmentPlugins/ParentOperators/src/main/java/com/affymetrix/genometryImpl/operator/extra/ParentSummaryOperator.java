@@ -1,9 +1,5 @@
 package com.affymetrix.genometryImpl.operator.extra;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
@@ -12,9 +8,12 @@ import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleScoredSymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.SimpleScoredSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.SeqUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *

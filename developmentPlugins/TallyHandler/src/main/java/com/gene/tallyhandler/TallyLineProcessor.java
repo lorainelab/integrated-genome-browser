@@ -13,11 +13,10 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symloader.LineProcessor;
-import com.affymetrix.genometryImpl.symmetry.MisMatchPileupGraphSym;
+import com.affymetrix.genometryImpl.symmetry.impl.MisMatchPileupGraphSym;
+import org.broad.tribble.readers.LineReader;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.shared.GraphGlyphUtils;
-
-import org.broad.tribble.readers.LineReader;
 
 public class TallyLineProcessor implements LineProcessor {
 

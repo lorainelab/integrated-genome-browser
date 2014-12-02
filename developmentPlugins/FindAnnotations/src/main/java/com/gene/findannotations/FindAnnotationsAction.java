@@ -1,5 +1,6 @@
 package com.gene.findannotations;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import javax.swing.SwingWorker;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;

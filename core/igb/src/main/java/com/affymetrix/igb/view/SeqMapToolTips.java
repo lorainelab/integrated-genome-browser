@@ -25,6 +25,7 @@ import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  *
@@ -81,16 +82,12 @@ public class SeqMapToolTips extends JWindow {
         }
     }
 
-    private String wrappedString(String input) {
-
-        StringBuilder output = new StringBuilder(input);
-        int index = input.length();
-        int size = MAX_WIDTH / 10;
-        while (index > 0) {
-            output.insert(index, "\n");
-            index -= size;
-        }
-        return output.toString();
+    private String wrappedString(String key, String value) {
+        String input = key + " " + value;
+        int size = (MAX_WIDTH / 10) - 2;
+        String output = WordUtils.wrap(input, size, "\n", true);
+        output = output.substring(key.length()+1);
+        return output;
     }
 
     public void setToolTip(Point point, Map<String, Object> properties) {
@@ -134,7 +131,7 @@ public class SeqMapToolTips extends JWindow {
                 for (String propKey : toolTipProps.keySet()) {
                     propValue = toolTipProps.get(propKey);
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propValue + "\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue) + "\n", null);
                 }
 
             }
@@ -150,7 +147,7 @@ public class SeqMapToolTips extends JWindow {
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
                 tooltip.getDocument().insertString(
                         tooltip.getDocument().getLength(), " ", null);
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[1]), null);
+                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[0], propertie[1]), null);
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }

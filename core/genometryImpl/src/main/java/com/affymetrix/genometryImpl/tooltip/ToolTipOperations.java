@@ -64,7 +64,7 @@ public class ToolTipOperations {
         fetchAndPopulateToolTipValue(props, basicInfoProps, LENGTH, count);
         count++;
         fetchAndPopulateToolTipValue(props, basicInfoProps, AVERAGE_QUALITY, count);
-        count++;
+
 
         count = 1;
         HashMap<String, ToolTipValue> bamInfoProps = new HashMap<String, ToolTipValue>();
@@ -84,7 +84,6 @@ public class ToolTipOperations {
         fetchAndPopulateToolTipValue(props, bamInfoProps, MAPQ, count);
         count++;
         fetchAndPopulateToolTipValue(props, bamInfoProps, FLAGS, count);
-        count++;
 
         count = 1;
         HashMap<String, ToolTipValue> cigarInfoProps = new HashMap<String, ToolTipValue>();
@@ -102,7 +101,6 @@ public class ToolTipOperations {
         fetchAndPopulateToolTipValue(props, cigarInfoProps, NM, count);
         count++;
         fetchAndPopulateToolTipValue(props, cigarInfoProps, XS, count);
-        count++;
         
         count = 1;
         HashMap<String, ToolTipValue> miscInfoProps = new HashMap<String, ToolTipValue>();

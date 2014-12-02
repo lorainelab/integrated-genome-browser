@@ -5,7 +5,7 @@
  */
 package com.affymetrix.genometryImpl.tooltip;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -15,14 +15,14 @@ public class ToolTipCategory {
     
     private String category;
     private int weight;
-    private HashMap<String, ToolTipValue> properties;
+    private Map<String, String> properties;
     
-    public ToolTipCategory(String category, HashMap<String, ToolTipValue> properties) {
+    public ToolTipCategory(String category, Map<String, String> properties) {
         this.category = category;
         this.properties = properties;
     }
     
-    public ToolTipCategory(String category, int weight, HashMap<String, ToolTipValue> properties) {
+    public ToolTipCategory(String category, int weight, Map<String, String> properties) {
         this.category = category;
         this.weight = weight;
         this.properties = properties;
@@ -44,11 +44,11 @@ public class ToolTipCategory {
         this.weight = weight;
     }
 
-    public HashMap<String, ToolTipValue> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(HashMap<String, ToolTipValue> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 

@@ -7,7 +7,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
-import com.affymetrix.genometryImpl.tooltip.ToolTipValue;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
@@ -16,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
@@ -81,20 +81,20 @@ public class SeqMapToolTips extends JWindow {
         }
     }
 
-    private String wrappedString(String input){
-        
+    private String wrappedString(String input) {
+
         StringBuilder output = new StringBuilder(input);
         int index = input.length();
-        int size = MAX_WIDTH/10;
-        while(index > 0){
+        int size = MAX_WIDTH / 10;
+        while (index > 0) {
             output.insert(index, "\n");
-            index-=size;
+            index -= size;
         }
         return output.toString();
     }
 
     public void setToolTip(Point point, Map<String, Object> properties) {
-        ArrayList<ToolTipCategory> propList = null;
+        List<ToolTipCategory> propList = null;
         if (isVisible() && properties == null) {
             setVisible(false);
         }
@@ -119,13 +119,13 @@ public class SeqMapToolTips extends JWindow {
         }
     }
 
-    private void formatCategoryToolTip(ArrayList<ToolTipCategory> properties) {
-        HashMap<String, ToolTipValue> toolTipProps = null;
-        ToolTipValue propValue = null;
+    private void formatCategoryToolTip(List<ToolTipCategory> properties) {
+        Map<String, String> toolTipProps = null;
+        String propValue = null;
         int count = 0;
         try {
             for (ToolTipCategory category : properties) {
-                if(count > 0 ){
+                if (count > 0) {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
                 }
                 count = 1;
@@ -133,12 +133,10 @@ public class SeqMapToolTips extends JWindow {
                 toolTipProps = category.getProperties();
                 for (String propKey : toolTipProps.keySet()) {
                     propValue = toolTipProps.get(propKey);
-                    if (propValue.getWeight() != -1) {
-                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
-                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propValue.getValue() + "\n", null);
-                    }
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propValue + "\n", null);
                 }
-                
+
             }
         } catch (BadLocationException e) {
             e.printStackTrace();

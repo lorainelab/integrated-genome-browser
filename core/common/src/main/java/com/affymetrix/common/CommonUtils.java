@@ -162,7 +162,7 @@ public class CommonUtils {
         return icon;
     }
 
-    private ImageIcon getIcon(Class<?> clazz, String resource_name) {
+    public ImageIcon getIcon(Class<?> clazz, String resource_name) {
         ImageIcon icon = null;
         try {
             // Note: MenuUtil.class.getResource(resource_name) does not work;

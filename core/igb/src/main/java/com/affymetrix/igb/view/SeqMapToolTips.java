@@ -122,8 +122,13 @@ public class SeqMapToolTips extends JWindow {
     private void formatCategoryToolTip(ArrayList<ToolTipCategory> properties) {
         HashMap<String, ToolTipValue> toolTipProps = null;
         ToolTipValue propValue = null;
+        int count = 0;
         try {
             for (ToolTipCategory category : properties) {
+                if(count > 0 ){
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
+                }
+                count = 1;
                 tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
                 toolTipProps = category.getProperties();
                 for (String propKey : toolTipProps.keySet()) {
@@ -133,7 +138,7 @@ public class SeqMapToolTips extends JWindow {
                         tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propValue.getValue() + "\n", null);
                     }
                 }
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
+                
             }
         } catch (BadLocationException e) {
             e.printStackTrace();

@@ -66,8 +66,109 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
     private static final int TAB_POSITION = 7;
 
+    private BundleContext bundleContext;
+    private JScrollPane jScrollPane;
+    private final BundleTableModel bundleTableModel;
+    private final JRPStyledTable bundleTable;
+    private JRPCheckBox installedBundlesCheckbox;
+    private JRPCheckBox uninstalledBundlesCheckbox;
+    private JRPButton updateAllBundlesButton;
+    private JRPButton updateSelectedBundlesButton;
+    private JRPButton repositoryPrefsButton;
+    private boolean isShowInstalledBundles = true;
+    private boolean isShowUninstalledBundles = true;
+    private RepositoryAdmin repoAdmin;
+    private BundleListener bundleListener;
+    private List< Bundle> installedBundles;
+    private List< Bundle> repositoryBundles;
+    private List< Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
+    private List< Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
+    private HashMap< String, Bundle> latest;
+    private BundleFilter bundleFilter;
+    private OSGIImpl osgiImpl;
+
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
+
+    public PluginsView(IGBService igbService) {
+        super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
+        latest = new HashMap< String, Bundle>();
+        osgiImpl = new Felix();
+
+        igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
+        setLayout(new BorderLayout());
+        BundleTableModel.setPluginsHandler(this); // is there a better way ?
+        bundleTableModel = new BundleTableModel();
+        bundleTable = new JRPStyledTable("PluginsView_bundleTable", bundleTableModel) {
+            private static final long serialVersionUID = 1L;
+
+            public void valueChanged(ListSelectionEvent e) {
+                super.valueChanged(e);
+                updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
+            }
+        };
+        bundleTable.setCellSelectionEnabled(false);
+        //		bundleTable.setAutoCreateRowSorter(true);
+        //		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
+        bundleTable.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Bundle bundle = getNameInfoBundle(e.getPoint());
+                        if (bundle != null) {
+                            String bundleDocURL = bundle.getHeaders().get(Constants.BUNDLE_DOCURL);
+                            if (bundleDocURL != null) {
+                                GeneralUtils.browse(bundleDocURL);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        Bundle bundle = getNameInfoBundle(e.getPoint());
+                        if (bundle == null) {
+                            setCursor(defaultCursor);
+                        } else {
+                            setCursor(handCursor);
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        setCursor(defaultCursor);
+                    }
+                });
+
+        bundleTable.addMouseMotionListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        Bundle bundle = getNameInfoBundle(e.getPoint());
+                        if (bundle == null) {
+                            setCursor(defaultCursor);
+                        } else {
+                            setCursor(handCursor);
+                        }
+                    }
+                });
+
+        bundleTableModel.setJTable(bundleTable);
+
+        jScrollPane = new JScrollPane(bundleTable);
+        add("Center", jScrollPane);
+        add("South", getButtonPanel());
+        setBundleFilter(getBundleFilter());
+
+        bundleListener = new BundleListener() {
+            public void bundleChanged(BundleEvent arg0) {
+                if (bundleContext != null) {
+                    setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
+                    reloadBundleTable();
+                }
+            }
+        };
+    }
+
     private static final BundleFilter BOTH_BUNDLE_FILTER = new BundleFilter() {
         @Override
         public boolean filterBundle(Bundle bundle) {
@@ -106,108 +207,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
             return false;
         }
     };
-    private BundleContext bundleContext;
-    private JScrollPane jScrollPane;
-    private final BundleTableModel bundleTableModel;
-    private final JRPStyledTable bundleTable;
-    private JRPCheckBox installedBundlesCheckbox;
-    private JRPCheckBox uninstalledBundlesCheckbox;
-    private JRPButton updateAllBundlesButton;
-    private JRPButton updateSelectedBundlesButton;
-    private JRPButton repositoryPrefsButton;
-    private boolean isShowInstalledBundles = true;
-    private boolean isShowUninstalledBundles = true;
-    private RepositoryAdmin repoAdmin;
-    private BundleListener bundleListener;
-    private List<Bundle> installedBundles;
-    private List<Bundle> repositoryBundles;
-    private List<Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
-    private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
-    private HashMap<String, Bundle> latest;
-    private BundleFilter bundleFilter;
-    private OSGIImpl osgiImpl;
-
-    public PluginsView(IGBService igbService) {
-        super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
-        latest = new HashMap<String, Bundle>();
-        osgiImpl = new Felix();
-
-        igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
-        setLayout(new BorderLayout());
-        BundleTableModel.setPluginsHandler(this); // is there a better way ?
-        bundleTableModel = new BundleTableModel();
-        bundleTable = new JRPStyledTable("PluginsView_bundleTable", bundleTableModel) {
-            private static final long serialVersionUID = 1L;
-
-            public void valueChanged(ListSelectionEvent e) {
-                super.valueChanged(e);
-                updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());
-            }
-        };
-        bundleTable.setCellSelectionEnabled(false);
-//		bundleTable.setAutoCreateRowSorter(true);
-//		bundleTable.getRowSorter().setSortKeys(BundleTableModel.SORT_KEYS);
-        bundleTable.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        Bundle bundle = getNameInfoBundle(e.getPoint());
-                        if (bundle != null) {
-                            String bundleDocURL = bundle.getHeaders().get(Constants.BUNDLE_DOCURL);
-                            if (bundleDocURL != null) {
-                                GeneralUtils.browse(bundleDocURL);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        Bundle bundle = getNameInfoBundle(e.getPoint());
-                        if (bundle == null) {
-                            setCursor(defaultCursor);
-                        } else {
-                            setCursor(handCursor);
-                        }
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        setCursor(defaultCursor);
-                    }
-                }
-        );
-
-        bundleTable.addMouseMotionListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseMoved(MouseEvent e) {
-                        Bundle bundle = getNameInfoBundle(e.getPoint());
-                        if (bundle == null) {
-                            setCursor(defaultCursor);
-                        } else {
-                            setCursor(handCursor);
-                        }
-                    }
-                }
-        );
-
-        bundleTableModel.setJTable(bundleTable);
-
-        jScrollPane = new JScrollPane(bundleTable);
-        add("Center", jScrollPane);
-        add("South", getButtonPanel());
-        setBundleFilter(getBundleFilter());
-
-        bundleListener
-                = new BundleListener() {
-                    public void bundleChanged(BundleEvent arg0) {
-                        if (bundleContext != null) {
-                            setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-                            reloadBundleTable();
-                        }
-                    }
-                };
-    }
 
     /**
      * get the Bundle on the line where the cursor is
@@ -248,8 +247,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                         reloadBundleTable();
                         igbService.setStatus("");
                     }
-                }
-        );
+                });
         installedBundlesCheckbox.setSelected(true);
         buttonPanel.add(installedBundlesCheckbox);
 
@@ -263,8 +261,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                         reloadBundleTable();
                         igbService.setStatus("");
                     }
-                }
-        );
+                });
         uninstalledBundlesCheckbox.setSelected(true);
         buttonPanel.add(uninstalledBundlesCheckbox);
 
@@ -277,8 +274,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                         updateAllBundles();
                         igbService.setStatus("");
                     }
-                }
-        );
+                });
         updateAllBundlesButton.setEnabled(false);
         buttonPanel.add(updateAllBundlesButton);
 
@@ -291,8 +287,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                         updateSelectedBundles();
                         igbService.setStatus("");
                     }
-                }
-        );
+                });
         updateSelectedBundlesButton.setEnabled(false);
         buttonPanel.add(updateSelectedBundlesButton);
 
@@ -310,8 +305,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                             igbService.getRepositoryChangerHolder().displayRepositoryPreferences();
                         }
                     }
-                }
-        );
+                });
         repositoryPrefsButton.setToolTipText(BUNDLE.getString("repositoryTooltip"));
         buttonPanel.add(repositoryPrefsButton);
 
@@ -468,7 +462,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      */
     private void setRepositoryBundles() {
         Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
-        List<Bundle> repositoryBundles = new ArrayList<Bundle>();
+        List< Bundle> repositoryBundles = new ArrayList< Bundle>();
         for (Resource resource : allResourceArray) {
             if (checkRequirements(resource.getRequirements())) {
                 repositoryBundles.add(new ResourceWrapper(resource));
@@ -485,17 +479,17 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-//		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getName());
-//		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-//		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
-//		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
+        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getName());
+        //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
+        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
+        //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
         repoAdmin = osgiImpl.getRepositoryAdmin(bundleContext);
         for (String url : igbService.getRepositoryChangerHolder().getRepositories().values()) {
             repositoryAdded(url);
         }
         setRepositoryBundles();
         bundleContext.addBundleListener(bundleListener);
-//		reloadBundleTable();
+        //		reloadBundleTable();
     }
 
     /**
@@ -584,7 +578,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      *
      * @param installedBundles the currently installed bundles
      */
-    private void setInstalledBundles(List<Bundle> installedBundles) {
+    private void setInstalledBundles(List< Bundle> installedBundles) {
         this.installedBundles = installedBundles;
         setUnfilteredBundles();
     }
@@ -594,7 +588,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      *
      * @param repositoryBundles the bundles in all repositories
      */
-    private void setRepositoryBundles(List<Bundle> repositoryBundles) {
+    private void setRepositoryBundles(List< Bundle> repositoryBundles) {
         this.repositoryBundles = repositoryBundles;
         setUnfilteredBundles();
     }
@@ -608,8 +602,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         String symbolicName = bundle.getSymbolicName();
         Version version = bundle.getVersion();
         for (Bundle unfilteredBundle : unfilteredBundles) {
-            if (symbolicName.equals(unfilteredBundle.getSymbolicName())
-                    && version.equals(unfilteredBundle.getVersion())) {
+            if (symbolicName.equals(unfilteredBundle.getSymbolicName()) && version.equals(unfilteredBundle.getVersion())) {
                 return;
             }
         }
@@ -623,7 +616,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      * update the set of all bundles (unfiltered) due to a change
      */
     private synchronized void setUnfilteredBundles() {
-        unfilteredBundles = new ArrayList<Bundle>();
+        unfilteredBundles = new ArrayList< Bundle>();
         latest.clear();
         if (installedBundles != null) {
             for (Bundle bundle : installedBundles) {
@@ -641,7 +634,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      * filter the unfiltered bundles using the current bundle filter
      */
     private synchronized void filterBundles() {
-        filteredBundles = new ArrayList<Bundle>();
+        filteredBundles = new ArrayList< Bundle>();
         for (Bundle bundle : unfilteredBundles) {
             if (SYSTEM_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
                 filteredBundles.add(bundle);
@@ -649,7 +642,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         }
         Collections.sort(
                 filteredBundles,
-                new Comparator<Bundle>() {
+                new Comparator< Bundle>() {
                     @Override
                     public int compare(Bundle o1, Bundle o2) {
                         int result = o1.getSymbolicName().compareTo(o2.getSymbolicName());
@@ -658,8 +651,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
                         }
                         return result;
                     }
-                }
-        );
+                });
         updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
     }
 
@@ -674,7 +666,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
     @Override
     public boolean repositoryAdded(final String url) {
-        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("repositoryAdded") {
+        CThreadWorker< Void, Void> worker = new CThreadWorker< Void, Void>("repositoryAdded") {
             @Override
             protected Void runInBackground() {
                 try {
@@ -723,7 +715,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         if (bundle != null) {
             String location = bundle.getLocation();
             if (location != null) {
-                Map<String, String> repositories = igbService.getRepositoryChangerHolder().getRepositories();
+                Map< String, String> repositories = igbService.getRepositoryChangerHolder().getRepositories();
                 for (String name : repositories.keySet()) {
                     if (location.startsWith(repositories.get(name)) && ("".equals(repository) || repositories.get(name).length() > repositories.get(repository).length())) {
                         repository = name;

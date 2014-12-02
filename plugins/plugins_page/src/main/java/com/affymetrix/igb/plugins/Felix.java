@@ -1,6 +1,8 @@
 package com.affymetrix.igb.plugins;
 
 import com.affymetrix.common.CommonUtils;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.felix.bundlerepository.Capability;
 import org.apache.felix.bundlerepository.Property;

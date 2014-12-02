@@ -18,73 +18,50 @@ import java.util.Map;
 public class ToolTipOperations {
 
     public static List<ToolTipCategory> formatBamSymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> properties = new ArrayList<ToolTipCategory>();
-
-        Map<String, String> basicInfoProps = new HashMap<String, String>();
-        ToolTipCategory basicInfoCategory = new ToolTipCategory(ToolTipConstants.BASIC_CATEGORY, 1, basicInfoProps);
+        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
         // Populating BASIC Category
-        fetchAndPopulateToolTipValue(props, basicInfoProps, NAME);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, ID);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, CHROMOSOME);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, START);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, END);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, LENGTH);
-        fetchAndPopulateToolTipValue(props, basicInfoProps, AVERAGE_QUALITY);
-
-
-        Map<String, String> bamInfoProps = new HashMap<String, String>();
-        ToolTipCategory bamInfoCategory = new ToolTipCategory(ToolTipConstants.BAM_CATEGORY, 2, bamInfoProps);
+        populateCategory(props, BASIC_CAT_KEYS, BASIC_CATEGORY, categories);
 
         // Populating BAM Category
-        fetchAndPopulateToolTipValue(props, bamInfoProps, RESIDUES);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, STRAND);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, SHOW_MASK);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, SCORES);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, FORWARD);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, MAPQ);
-        fetchAndPopulateToolTipValue(props, bamInfoProps, FLAGS);
-
-        Map<String, String> cigarInfoProps = new HashMap<String, String>();
-        ToolTipCategory cigarInfoCategory = new ToolTipCategory(ToolTipConstants.CIGAR_CATEGORY, 3, cigarInfoProps);
+        populateCategory(props, BAM_CAT_KEYS, BAM_CATEGORY, categories);
 
         // Populating CIGAR Category
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, CIGAR);
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, CL);
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, VN);
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, NH);
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, NM);
-        fetchAndPopulateToolTipValue(props, cigarInfoProps, XS);
-        
+        populateCategory(props, CIGAR_CAT_KEYS, CIGAR_CATEGORY, categories);
+
+        // Populating MISC category
+        populateMisc(props, categories);
+
+        return categories;
+    }
+
+    private static void populateCategory(Map<String, Object> props, String[] keys, String categoryKey, List<ToolTipCategory> categories) {
+        String value;
+        Map<String, String> destProps = new HashMap<String, String>();
+        ToolTipCategory category = null;
+        for (String key : keys) {
+            if (props.containsKey(key)) {
+                value = props.get(key).toString();
+                props.remove(key);
+                destProps.put(key, value);
+            }
+        }
+        if(destProps.size() > 0){
+            category = new ToolTipCategory(ToolTipConstants.BASIC_CATEGORY, 1, destProps);
+            categories.add(category);
+        }
+    }
+    
+    private static void populateMisc(Map<String, Object> props, List<ToolTipCategory> categories) {
         Map<String, String> miscInfoProps = new HashMap<String, String>();
         ToolTipCategory miscInfoCategory = new ToolTipCategory(ToolTipConstants.MISC_CATEGORY, 3, miscInfoProps);
-        
-        for(String key : props.keySet()) {
+
+        for (String key : props.keySet()) {
             miscInfoProps.put(key, props.get(key).toString());
         }
 
-        if (basicInfoProps.size() > 1) {
-            properties.add(basicInfoCategory);
-        }
-        if (bamInfoProps.size() > 1) {
-            properties.add(bamInfoCategory);
-        }
-        if (cigarInfoProps.size() > 1) {
-            properties.add(cigarInfoCategory);
-        }
         if (miscInfoProps.size() > 1) {
-            properties.add(miscInfoCategory);
-        }
-        
-        return properties;
-    }
-
-    private static void fetchAndPopulateToolTipValue(Map<String, Object> props, Map<String, String> destProps, String key) {
-        String value;
-        if (props.containsKey(key)) {
-            value = props.get(key).toString();
-            props.remove(key);
-            destProps.put(key, value);
+            categories.add(miscInfoCategory);
         }
     }
     

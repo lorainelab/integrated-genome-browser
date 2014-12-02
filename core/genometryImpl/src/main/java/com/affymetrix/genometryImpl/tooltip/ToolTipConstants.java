@@ -17,20 +17,25 @@ public class ToolTipConstants {
     public static final String START = "start";
     public static final String END = "end";
     public static final String LENGTH = "length";
+    public static final String AVERAGE_QUALITY = "average quality";
+    public static final String[] BASIC_CAT_KEYS = {NAME,ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY};
+    
+    public static final String RESIDUES = "residues";
     public static final String STRAND = "strand";
     public static final String SHOW_MASK = "showMask";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
     public static final String MAPQ = "mapq";
-    public static final String RESIDUES = "residues";
     public static final String FLAGS = "flags";
-    public static final String AVERAGE_QUALITY = "average quality";
+    public static final String[] BAM_CAT_KEYS = {RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS};
+    
     public static final String CL = "CL";
     public static final String CIGAR = "cigar";
     public static final String VN = "VN";
     public static final String NH = "NH";
     public static final String XS = "XS";
     public static final String NM = "NM";
+    public static final String[] CIGAR_CAT_KEYS = {CL, CIGAR, VN, NH, XS, NM};
     
     public static final String BASIC_CATEGORY = "Basic Info";
     public static final String BAM_CATEGORY = "Bam Info";

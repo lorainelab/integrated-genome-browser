@@ -80,7 +80,7 @@ public class ToolTipOperations {
     }
 
     private static void fetchAndPopulateToolTipValue(Map<String, Object> props, Map<String, String> destProps, String key) {
-        String value = null;
+        String value;
         if (props.containsKey(key)) {
             value = props.get(key).toString();
             props.remove(key);

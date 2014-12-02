@@ -2419,7 +2419,7 @@ public class SeqMapView extends JPanel
     }
 
     public void disableToolTip() {
-        seqMapToolTips.setToolTip(null, null);
+        seqMapToolTips.setToolTip(null, new HashMap<String, Object>());
     }
 
     public void showProperties(int x, GraphGlyph glyph) {

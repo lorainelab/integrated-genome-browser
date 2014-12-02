@@ -51,19 +51,19 @@ public class ToolTipOperations {
         ToolTipCategory basicInfoCategory = new ToolTipCategory(ToolTipConstants.BASIC_CATEGORY, 1, basicInfoProps);
 
         // Populating BASIC Category
-        basicInfoProps.put(NAME, fetchToolTipValue(props, NAME, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, NAME, count);
         count++;
-        basicInfoProps.put(ID, fetchToolTipValue(props, ID, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, ID, count);
         count++;
-        basicInfoProps.put(CHROMOSOME, fetchToolTipValue(props, CHROMOSOME, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, CHROMOSOME, count);
         count++;
-        basicInfoProps.put(START, fetchToolTipValue(props, START, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, START, count);
         count++;
-        basicInfoProps.put(END, fetchToolTipValue(props, END, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, END, count);
         count++;
-        basicInfoProps.put(LENGTH, fetchToolTipValue(props, LENGTH, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, LENGTH, count);
         count++;
-        basicInfoProps.put(AVERAGE_QUALITY, fetchToolTipValue(props, AVERAGE_QUALITY, count));
+        fetchAndPopulateToolTipValue(props, basicInfoProps, AVERAGE_QUALITY, count);
         count++;
 
         count = 1;
@@ -71,19 +71,19 @@ public class ToolTipOperations {
         ToolTipCategory bamInfoCategory = new ToolTipCategory(ToolTipConstants.BAM_CATEGORY, 2, bamInfoProps);
 
         // Populating BAM Category
-        bamInfoProps.put(ToolTipConstants.RESIDUES, fetchToolTipValue(props, RESIDUES, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, RESIDUES, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.STRAND, fetchToolTipValue(props, STRAND, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, STRAND, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.SHOW_MASK, fetchToolTipValue(props, SHOW_MASK, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, SHOW_MASK, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.SCORES, fetchToolTipValue(props, SCORES, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, SCORES, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.FORWARD, fetchToolTipValue(props, FORWARD, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, FORWARD, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.MAPQ, fetchToolTipValue(props, MAPQ, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, MAPQ, count);
         count++;
-        bamInfoProps.put(ToolTipConstants.FLAGS, fetchToolTipValue(props, FLAGS, count));
+        fetchAndPopulateToolTipValue(props, bamInfoProps, FLAGS, count);
         count++;
 
         count = 1;
@@ -91,17 +91,17 @@ public class ToolTipOperations {
         ToolTipCategory cigarInfoCategory = new ToolTipCategory(ToolTipConstants.CIGAR_CATEGORY, 3, cigarInfoProps);
 
         // Populating CIGAR Category
-        cigarInfoProps.put(ToolTipConstants.CIGAR, fetchToolTipValue(props, CIGAR, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, CIGAR, count);
         count++;
-        cigarInfoProps.put(ToolTipConstants.CL, fetchToolTipValue(props, CL, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, CL, count);
         count++;
-        cigarInfoProps.put(ToolTipConstants.VN, fetchToolTipValue(props, VN, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, VN, count);
         count++;
-        cigarInfoProps.put(ToolTipConstants.NH, fetchToolTipValue(props, NH, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, NH, count);
         count++;
-        cigarInfoProps.put(ToolTipConstants.NM, fetchToolTipValue(props, NM, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, NM, count);
         count++;
-        cigarInfoProps.put(ToolTipConstants.XS, fetchToolTipValue(props, XS, count));
+        fetchAndPopulateToolTipValue(props, cigarInfoProps, XS, count);
         count++;
         
         count = 1;
@@ -129,14 +129,13 @@ public class ToolTipOperations {
         return properties;
     }
 
-    private static ToolTipValue fetchToolTipValue(Map<String, Object> props, String key, int weight) {
+    private static void fetchAndPopulateToolTipValue(Map<String, Object> props, Map<String, ToolTipValue> destProps, String key, int weight) {
         ToolTipValue value = null;
         if (props.containsKey(key)) {
             value = new ToolTipValue(props.get(key).toString(), weight);
             props.remove(key);
-            return value;
-        } else {
-            return new ToolTipValue(key, -1);
+            destProps.put(key, value);
         }
     }
+    
 }

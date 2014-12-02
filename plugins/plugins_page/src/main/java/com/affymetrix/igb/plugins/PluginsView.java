@@ -62,6 +62,8 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger LOG = Logger.getLogger(PluginsView.class.getName());
+    
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
     private static final int TAB_POSITION = 7;
@@ -199,7 +201,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
             if (bundle.getBundleId() == 0) { // system bundle
                 return false;
             }
-            try {
+            try {                
                 BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
             } catch (MissingResourceException x) {
                 return true;
@@ -448,13 +450,13 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         return bundleFilter;
     }
 
-    private boolean checkRequirements(Requirement[] requirements) {
-        boolean checked = false;
-        for (Requirement requirement : requirements) {
-            checked |= requirement.isSatisfied(osgiImpl.getCapability());
-        }
-        return checked;
-    }
+//    private boolean checkRequirements(Requirement[] requirements) {
+//        boolean checked = false;
+//        for (Requirement requirement : requirements) {
+//            checked |= requirement.isSatisfied(osgiImpl.getCapability());
+//        }
+//        return checked;
+//    }
 
     /**
      * gets the full set of all bundles in all the bundle repositories in the
@@ -464,9 +466,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
         List< Bundle> repositoryBundles = new ArrayList< Bundle>();
         for (Resource resource : allResourceArray) {
-            if (checkRequirements(resource.getRequirements())) {
+//            if (checkRequirements(resource.getRequirements())) {
                 repositoryBundles.add(new ResourceWrapper(resource));
-            }
+//            }
         }
         setRepositoryBundles(repositoryBundles);
     }

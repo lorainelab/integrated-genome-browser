@@ -104,6 +104,9 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>                    
                     <instructions>
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Import-Package>*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.dasregistryservertype.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

@@ -118,6 +118,66 @@
                 <module>developmentPlugins/NCBIPrimer</module>
             </modules>
         </profile>
+        <profile> <!-- profile for jenkins -->
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <!-- start of core modules-->
+                <module>core/HeatmapEditor</module>
+                <module>core/common</module>
+                <module>core/genometryImpl</module>
+                <module>core/igb</module>
+                <module>core/igbSwingExt</module>
+                <module>core/igb_service</module>
+                <module>core/window_service</module>
+                <module>core/sharedLibWrapper</module>
+                <module>plugins/ApolloLibrary</module>
+                <module>plugins/AnnotationTab</module>
+                <module>plugins/BigBedHandler</module>
+                <module>plugins/BigWigHandler</module>
+                <module>plugins/Bookmark</module>
+                <module>plugins/ExternalView</module>
+                <module>plugins/GraphTab</module>
+                <module>plugins/IGBScript</module>
+                <module>plugins/KeyWordSearch</module>
+                <module>plugins/NCBIBlast</module>
+                <module>plugins/PropertyView</module>
+                <module>plugins/RestrictionSites</module>
+                <module>plugins/SearchModeIdOrProps</module>
+                <module>plugins/SearchModeLucene</module>
+                <module>plugins/SearchView</module>
+                <module>plugins/SequenceViewer</module>
+                <module>plugins/Survey</module>
+                <module>plugins/Thresholding</module>
+                <module>plugins/Tutorial</module>
+                <module>plugins/Update</module>
+                <module>plugins/plugins_page</module>
+                <module>plugins/window_service_def</module>
+                <module>plugins/PairedEndDataPreprocessor</module>
+                <module>plugins/IGBR</module>
+                <module>main</module>
+                <!-- end of core modules-->
+                <!-- start of dev plugin modules-->
+                <module>developmentPlugins/DASRegistryServerType</module>
+                <module>developmentPlugins/TableView</module>
+                <module>developmentPlugins/FindAnnotations</module>
+                <module>developmentPlugins/GeometricMean</module>
+                <module>developmentPlugins/OverlapAnnotationOperator</module>
+                <module>developmentPlugins/MergeAnnotationOperator</module>
+                <module>developmentPlugins/SampleSelection</module>
+                <module>developmentPlugins/SearchModeSymmetryFilter</module>
+                <module>developmentPlugins/TallyHandler</module>
+                <module>developmentPlugins/ThousandGenomesServerType</module>
+                <module>developmentPlugins/TranscriptIsoform</module>
+                <module>developmentPlugins/TutorialHelper</module>
+                <module>developmentPlugins/ParentOperators</module>
+                <module>developmentPlugins/BAMIndexer</module>
+                <module>developmentPlugins/NCBIPrimer</module>
+                <!-- end of dev plugin modules-->
+            </modules>            
+        </profile>
     </profiles>
 
 
@@ -320,10 +380,10 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-              <groupId>com.lorainelab</groupId>
-              <artifactId>igbr</artifactId>
-              <version>${igbVersion}</version>
-              <scope>provided</scope>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>igbr</artifactId>
+                <version>${igbVersion}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!--End of plugin module dependencies-->

@@ -5,12 +5,18 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
+import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -74,18 +80,69 @@ public class SeqMapToolTips extends JWindow {
             tooltip.setText(null);
         }
     }
-    private String wrappedString(String input){
-        
+
+    private String wrappedString(String input) {
+
         StringBuilder output = new StringBuilder(input);
         int index = input.length();
-        int size = MAX_WIDTH/10;
-        while(index > 0){
+        int size = MAX_WIDTH / 10;
+        while (index > 0) {
             output.insert(index, "\n");
-            index-=size;
+            index -= size;
         }
         return output.toString();
     }
-    
+
+    public void setToolTip(Point point, Map<String, Object> properties) {
+        List<ToolTipCategory> propList = null;
+        if (isVisible() && properties == null) {
+            setVisible(false);
+        }
+        timer.stop();
+        if (!getOwner().isActive()) {
+            return;
+        }
+        tooltip.setText(null);
+        if (properties != null && properties.size() > 0) {
+            propList = ToolTipOperations.formatBamSymTooltip(properties);
+            formatCategoryToolTip(propList);
+            tooltip.setCaretPosition(0);
+            setLocation(determineBestLocation(point));
+            pack();
+            setSize(MAX_WIDTH, getSize().height);
+            timer.setInitialDelay(500);
+            timer.start();
+        } else if (isVisible()) {
+
+        } else {
+            tooltip.setText(null);
+        }
+    }
+
+    private void formatCategoryToolTip(List<ToolTipCategory> properties) {
+        Map<String, String> toolTipProps = null;
+        String propValue = null;
+        int count = 0;
+        try {
+            for (ToolTipCategory category : properties) {
+                if (count > 0) {
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
+                }
+                count = 1;
+                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
+                toolTipProps = category.getProperties();
+                for (String propKey : toolTipProps.keySet()) {
+                    propValue = toolTipProps.get(propKey);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propValue + "\n", null);
+                }
+
+            }
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void formatTooltip() {
         tooltip.setText(null);
         for (String[] propertie : properties) {

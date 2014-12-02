@@ -2399,7 +2399,7 @@ public class SeqMapView extends JPanel
                 || x != -1) {
             toolTipSym = sym;
 //			String toolTip = null;
-            String[][] properties = null;
+            Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
                     properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, this);
@@ -2419,7 +2419,7 @@ public class SeqMapView extends JPanel
     }
 
     public void disableToolTip() {
-        seqMapToolTips.setToolTip(null, null);
+        seqMapToolTips.setToolTip(null, new HashMap<String, Object>());
     }
 
     public void showProperties(int x, GraphGlyph glyph) {

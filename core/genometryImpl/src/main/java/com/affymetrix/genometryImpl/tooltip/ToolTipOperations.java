@@ -6,8 +6,6 @@
 package com.affymetrix.genometryImpl.tooltip;
 
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,25 +35,28 @@ public class ToolTipOperations {
         return categories;
     }
 
-    private static void populateCategory(Map<String, Object> props, ImmutableMap<String, ImmutableList<String>> categoryData, List<ToolTipCategory> categories) {
+    private static void populateCategory(Map<String, Object> props, Map<String, List<String>> categoryData, List<ToolTipCategory> categories) {
         String value;
-        String categoryKey = categoryData.keySet().iterator().next();
-        ImmutableList<String> keys = categoryData.get(categoryKey);
-        Map<String, String> destProps = new HashMap<String, String>();
-        ToolTipCategory category = null;
-        for (String key : keys) {
-            if (props.containsKey(key)) {
-                value = props.get(key).toString();
-                props.remove(key);
-                destProps.put(key, value);
+
+        for (Map.Entry<String, List<String>> entry : categoryData.entrySet()) {
+            String categoryKey = entry.getKey();
+            List<String> keys = entry.getValue();
+            Map<String, String> destProps = new HashMap<String, String>();
+            ToolTipCategory category = null;
+            for (String key : keys) {
+                if (props.containsKey(key)) {
+                    value = props.get(key).toString();
+                    props.remove(key);
+                    destProps.put(key, value);
+                }
+            }
+            if (destProps.size() > 0) {
+                category = new ToolTipCategory(categoryKey, 1, destProps);
+                categories.add(category);
             }
         }
-        if(destProps.size() > 0){
-            category = new ToolTipCategory(categoryKey, 1, destProps);
-            categories.add(category);
-        }
     }
-    
+
     private static void populateMisc(Map<String, Object> props, List<ToolTipCategory> categories) {
         Map<String, String> miscInfoProps = new HashMap<String, String>();
         ToolTipCategory miscInfoCategory = new ToolTipCategory(MISC_CATEGORY, 3, miscInfoProps);
@@ -68,5 +69,5 @@ public class ToolTipOperations {
             categories.add(miscInfoCategory);
         }
     }
-    
+
 }

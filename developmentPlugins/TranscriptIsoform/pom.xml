@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>transcriptIsoForm</artifactId>
+    <version>${transcriptIsoForm-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>transcriptIsoForm</name>

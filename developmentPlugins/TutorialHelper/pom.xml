@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>tutorialHelper</artifactId>
+    <version>${tutorialHelper-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>tutorialHelper</name>

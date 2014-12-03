@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>overlapAnnotationOperator</artifactId>
+    <version>${overlapAnnotationOperator-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>Overlap Annotation Operator</name>

@@ -10,6 +10,9 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>geometricMean</artifactId>
+    <version>${genometricMean-version}</version>
+    
+    
     <packaging>jar</packaging>
 
     <name>Geometric Mean</name>

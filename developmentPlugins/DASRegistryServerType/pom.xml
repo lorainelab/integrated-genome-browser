@@ -10,6 +10,7 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>DasRegistryServerType</artifactId>
+    <version>${DasRegistryServerType-version}</version>
     
     <packaging>jar</packaging>
 

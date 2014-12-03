@@ -7,8 +7,11 @@
         <version>8.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    
     <groupId>com.affymetrix</groupId>
     <artifactId>bam-indexer</artifactId>
+    <version>${bam-indexer-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>Bam Indexer</name>

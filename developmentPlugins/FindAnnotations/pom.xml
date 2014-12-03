@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>findAnnotations</artifactId>
+    <version>${findAnnotations-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>Find Annotations</name>

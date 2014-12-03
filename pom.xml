@@ -39,7 +39,7 @@
         <jide.version>3.5.15</jide.version>
         <!-- End of external bundle version declarations -->
         
-        <!-- Start of included stable bundle version declarations -->           
+        <!-- Start of included core bundle version declarations -->   
         <heatmap-editor-version>2.0.0</heatmap-editor-version>
         <affymetrix-common-version>2.0.0</affymetrix-common-version>
         <genomitryImpl-version>2.0.0</genomitryImpl-version>
@@ -48,6 +48,9 @@
         <igb-service-version>2.0.0</igb-service-version>
         <windows-service-version>2.0.0</windows-service-version>
         <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
+        <!-- End of included core bundle version declarations -->      
+        
+        <!-- Start of included plugin version declarations -->
         <apollo-library-version>2.0.0</apollo-library-version>
         <annotation-tab-version>2.0.0</annotation-tab-version>
         <bigBedHandler-version>2.0.0</bigBedHandler-version>
@@ -73,8 +76,25 @@
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>
         <igbr-version>2.0.0</igbr-version>        
         <main-version>2.0.0</main-version>
-        <!-- End of included stable bundle version declarations -->
-         <ncbiPrimer-version>2.0.0</ncbiPrimer-version>
+        <!-- End of included plugin version declarations -->
+        
+        <!-- Start of development plugin version declarations -->
+        <bam-indexer-version>0.0.1</bam-indexer-version>
+        <DasRegistryServerType-version>0.0.1</DasRegistryServerType-version>
+        <findAnnotations-version>0.0.1</findAnnotations-version>
+        <genometricMean-version>0.0.1</genometricMean-version>
+        <ncbiPrimer-version>0.0.1</ncbiPrimer-version>
+        <overlapAnnotationOperator-version>0.0.1</overlapAnnotationOperator-version>
+        <overlapAnnotationOperator-version>0.0.1</overlapAnnotationOperator-version>
+        <sampleSelection-version>0.0.1  </sampleSelection-version>
+        <searchModeSymetryFilter-version>0.0.1</searchModeSymetryFilter-version>
+        <tableView-version>0.0.1</tableView-version>
+        <talleyHandler-version>0.0.1</talleyHandler-version>
+        <thousandGenomesServerType-version>0.0.1</thousandGenomesServerType-version>
+        <transcriptIsoForm-version>0.0.1</transcriptIsoForm-version>
+        <tutorialHelper-version>0.0.1</tutorialHelper-version>
+        <!-- End of development plugin version declarations -->
+        
     </properties>
 
     <repositories>
@@ -333,13 +353,7 @@
                 <artifactId>ncbiBlast</artifactId>
                 <version>${ncbiBlast-version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>ncbiPrimer</artifactId>
-                <version>${ncbiPrimer-version}</version>
-                <scope>provided</scope>
-            </dependency>
+            </dependency>           
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>propertyView</artifactId>
@@ -430,8 +444,94 @@
                 <version>${igbr-version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <!--End of plugin module dependencies-->
+            
+            <!-- Start of development plugins -->
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>bam-indexer</artifactId>
+                <version>${bam-indexer-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>DasRegistryServerType</artifactId>
+                <version>${DasRegistryServerType-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>findAnnotations</artifactId>
+                <version>${findAnnotations-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>geometricMean</artifactId>
+                <version>${genometricMean-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>ncbiPrimer</artifactId>
+                <version>${ncbiPrimer-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>overlapAnnotationOperator</artifactId>
+                <version>${overlapAnnotationOperator-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>overlapAnnotationOperator</artifactId>
+                <version>${overlapAnnotationOperator-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>sampleSelection</artifactId>
+                <version>${sampleSelection-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>searchModeSymetryFilter</artifactId>
+                <version>${searchModeSymetryFilter-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>tableView</artifactId>
+                <version>${tableView-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>talleyHandler</artifactId>
+                <version>${talleyHandler-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>thousandGenomesServerType</artifactId>
+                <version>${thousandGenomesServerType-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>transcriptIsoForm</artifactId>
+                <version>${transcriptIsoForm-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>tutorialHelper</artifactId>
+                <version>${tutorialHelper-version}</version>
+                <scope>provided</scope>
+            </dependency> 
+            <!-- End of development plugins -->
 
             <!--Start of logging dependencies-->
             <dependency>

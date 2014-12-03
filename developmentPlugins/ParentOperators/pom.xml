@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>parentOperators</artifactId>
+    <version>${parentOperators-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>Parent Operators</name>

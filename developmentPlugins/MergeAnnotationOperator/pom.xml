@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>mergeAnnotationOperator</artifactId>
+    <version>${mergeAnnotationOperator-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>Merge Annotation Operator</name>

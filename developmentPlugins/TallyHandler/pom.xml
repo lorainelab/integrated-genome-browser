@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>talleyHandler</artifactId>
+    <version>${talleyHandler-version}</version>
+    
     <packaging>jar</packaging>
 
     <name>talleyHandler</name>

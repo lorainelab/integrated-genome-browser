@@ -102,6 +102,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.mergeannotationoperator.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>Annotation Operator that merges selected annotation tracks.</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

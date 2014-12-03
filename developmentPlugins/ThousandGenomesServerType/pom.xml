@@ -110,6 +110,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.thousandgenomesservertype.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin adding support for the 1000 GENOMES Server type</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

@@ -123,6 +123,7 @@
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Activator>com.gene.tallyhandler.Activator</Bundle-Activator>
                         <Bundle-Category>FileTypeHandler-com.gene.tallyhandler.TallyHandler</Bundle-Category>
+                        <Bundle-Description>A plugin adding some metrics for tabular data</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

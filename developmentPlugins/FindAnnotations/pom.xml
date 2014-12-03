@@ -117,6 +117,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.findannotations.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A simple search panel that uses all search modes</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

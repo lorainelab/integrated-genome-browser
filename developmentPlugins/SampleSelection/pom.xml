@@ -102,6 +102,7 @@
                         <Bundle-Activator>com.gene.sampleselection.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.gene.sampleselection.SampleSelectionView</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>plugin tab to allow the user to select sample data</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

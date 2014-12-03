@@ -115,6 +115,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.tableview.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin adding an interactive view for tabular data via TableView</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

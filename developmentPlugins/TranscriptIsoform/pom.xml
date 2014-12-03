@@ -101,6 +101,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.transcriptisoform.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>BETA release of transcript isoform evidence visualization</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

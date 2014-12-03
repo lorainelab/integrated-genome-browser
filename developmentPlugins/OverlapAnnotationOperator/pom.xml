@@ -101,6 +101,7 @@
                     <instructions>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>plugin to allow the user to find symmetries that overlap on two selected annotation tracks</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

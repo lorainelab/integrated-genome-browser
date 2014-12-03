@@ -101,6 +101,7 @@
                         <Export-Package>com.affymetrix.searchmodesymmetryfilter</Export-Package>
                         <Bundle-Activator>com.affymetrix.searchmodesymmetryfilter.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin which adds a symetry filter search mode option</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

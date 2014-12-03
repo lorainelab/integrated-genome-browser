@@ -110,6 +110,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.dasregistryservertype.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin to add support for DAS Registry Server Type</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

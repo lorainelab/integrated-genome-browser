@@ -102,6 +102,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.tutorialhelper.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin to allow the user to see widget ids to help develop tutorials</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

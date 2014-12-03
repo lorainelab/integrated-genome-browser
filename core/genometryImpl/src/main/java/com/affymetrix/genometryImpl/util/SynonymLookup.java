@@ -92,7 +92,7 @@ public class SynonymLookup {
 		try {
 			reader = new InputStreamReader(istream);
 			Iterable<CSVRecord> records = CSVFormat.TDF
-					.withCommentStart('#')
+					.withCommentMarker('#')
 					.withIgnoreSurroundingSpaces(true)
 					.withIgnoreEmptyLines(true)
 					.parse(reader);

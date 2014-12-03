@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>thresholding</artifactId>
+    <version>${thresholding-version}</version>
+    
     <packaging>bundle</packaging>
 
     <name>thresholding</name>

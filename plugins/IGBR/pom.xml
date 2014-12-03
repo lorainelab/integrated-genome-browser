@@ -9,6 +9,7 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>igbr</artifactId>
+    <version>${igbr-version}</version>
     <packaging>bundle</packaging>
 
     <name>igbr</name>

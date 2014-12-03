@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>igbScript</artifactId>
+    <version>${igbScript-version}</version>
+    
     <packaging>bundle</packaging>
 
     <name>IGB Script</name>

@@ -9,6 +9,7 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>bookmark</artifactId>
+    <version>${bookmark-version}</version>
     <packaging>bundle</packaging>
 
     <name>Bookmark</name>

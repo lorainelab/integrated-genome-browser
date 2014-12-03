@@ -10,6 +10,7 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>externalView</artifactId>
+    <version>${externalView-version}</version>
     <packaging>bundle</packaging>
 
     <name>External View</name>

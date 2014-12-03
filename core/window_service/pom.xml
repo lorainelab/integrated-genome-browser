@@ -9,6 +9,7 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>window-service</artifactId>
+    <version>${windows-service-version}</version>
     <packaging>bundle</packaging>
 
     <name>Window Service</name>

@@ -10,6 +10,7 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>tutorial</artifactId>
+    <version>${tutorial-version}</version>
     <packaging>bundle</packaging>
 
     <name>tutorial</name>

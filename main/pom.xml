@@ -10,6 +10,7 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>main</artifactId>
+    <version>${main-version}</version>
     <packaging>jar</packaging>
     
     <properties>

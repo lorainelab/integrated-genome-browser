@@ -7,8 +7,11 @@
         <version>8.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    
     <groupId>com.affymetrix</groupId>
     <artifactId>igb</artifactId>
+    <version>${igb-version}</version>
+    
     <packaging>bundle</packaging>
 
     <name>igb</name>

@@ -10,6 +10,7 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>pluginsPage</artifactId>
+    <version>${pluginsPage-version}</version>
     <packaging>bundle</packaging>
 
     <name>pluginsPage</name>

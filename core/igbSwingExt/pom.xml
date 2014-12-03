@@ -9,6 +9,7 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>igbSwingExt</artifactId>
+    <version>${igbSwingExt-version}</version>
 	
     <packaging>bundle</packaging>
 

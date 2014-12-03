@@ -7,8 +7,10 @@
         <version>8.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    
     <groupId>com.affymetrix</groupId>
     <artifactId>affymetrix-common</artifactId>
+    <version>${affymetrix-common-version}</version>
     
     <name>Affymetrix Common</name>
 

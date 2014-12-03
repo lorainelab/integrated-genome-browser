@@ -10,6 +10,7 @@
 
     <groupId>com.lorainelab</groupId>
     <artifactId>paired-data-preprocessor</artifactId>
+    <version>${paired-data-preprocessor-version}</version>
     <packaging>bundle</packaging>
 
 
@@ -67,6 +68,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.lorainelab.igb.preprocessor.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>A plugin to allow a custom visualization for paired read data from sam/bam files</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

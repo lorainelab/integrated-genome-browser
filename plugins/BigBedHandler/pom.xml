@@ -9,6 +9,7 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>bigBedHandler</artifactId>
+    <version>${bigBedHandler-version}</version>
     <packaging>bundle</packaging>
 
     <name>BigBedHandler</name>

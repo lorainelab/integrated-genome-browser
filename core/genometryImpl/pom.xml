@@ -10,6 +10,8 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>genometryImpl</artifactId>
+    <version>${genomitryImpl-version}</version>
+    
     <packaging>bundle</packaging>
 
     <name>genometryImpl</name>

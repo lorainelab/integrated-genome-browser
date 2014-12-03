@@ -7,11 +7,11 @@
         <version>8.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    
     <groupId>com.affymetrix</groupId>
     <artifactId>heatmap-editor</artifactId>
-    
-    
-	
+    <version>${heatmap-editor-version}</version>
+
     <packaging>bundle</packaging>
 
     <name>Heatmap Editor</name>

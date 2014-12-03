@@ -690,6 +690,7 @@
                             <directory>${basedir}/bundles</directory>
                             <includes>
                                 <include>*.jar</include>
+                                <include>repository.xml</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>

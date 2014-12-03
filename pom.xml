@@ -83,9 +83,10 @@
         <DasRegistryServerType-version>0.0.1</DasRegistryServerType-version>
         <findAnnotations-version>0.0.1</findAnnotations-version>
         <genometricMean-version>0.0.1</genometricMean-version>
+        <mergeAnnotationOperator-version>0.0.1</mergeAnnotationOperator-version>
         <ncbiPrimer-version>0.0.1</ncbiPrimer-version>
         <overlapAnnotationOperator-version>0.0.1</overlapAnnotationOperator-version>
-        <overlapAnnotationOperator-version>0.0.1</overlapAnnotationOperator-version>
+        <parentOperators-version>0.0.1</parentOperators-version>
         <sampleSelection-version>0.0.1  </sampleSelection-version>
         <searchModeSymetryFilter-version>0.0.1</searchModeSymetryFilter-version>
         <tableView-version>0.0.1</tableView-version>

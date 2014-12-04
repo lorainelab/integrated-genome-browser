@@ -26,7 +26,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("updates");
         InputStream inputStream = null;
         try {
@@ -54,4 +54,6 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
 
         return null;
     }
+    
+
 }

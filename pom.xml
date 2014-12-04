@@ -70,7 +70,7 @@
         <survey-version>2.0.1</survey-version>
         <thresholding-version>2.0.0</thresholding-version>
         <tutorial-version>2.0.0</tutorial-version>
-        <update-version>2.0.0</update-version>
+        <update-version>2.0.1</update-version>
         <pluginsPage-version>2.0.0</pluginsPage-version>
         <windowsServiceDef-version>2.0.0</windowsServiceDef-version>
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>

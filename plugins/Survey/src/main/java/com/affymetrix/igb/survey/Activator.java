@@ -38,7 +38,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
         JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "News and Surveys");
 

@@ -2,6 +2,7 @@ package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
@@ -30,8 +31,8 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         ResourceBundle BUNDLE = ResourceBundle.getBundle("updates");
         InputStream inputStream = null;
         try {
-            inputStream = Activator.class.getResourceAsStream("/updates.xml");
-            //inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("updates"));
+//            inputStream = Activator.class.getResourceAsStream("/updates.xml");
+            inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("updates"));
             if (inputStream != null) {
                 final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getAppVersion());
                 final List<Update> updates = UpdateParser.parse(inputStream);

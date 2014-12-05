@@ -27,6 +27,7 @@ import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
 import com.google.common.io.Resources;
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Logger;
@@ -100,8 +101,11 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
             if (surveysMenu.getItemCount() > 0) {
                 return new ServiceRegistration<?>[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(surveysMenu, "help"), null)};
             }
-        } catch (IOException ex) {
+        } catch (FileNotFoundException ex) {
             LOG.info("No survey.xml currently published");
+        }
+        catch (IOException ex) {
+            LOG.info("Error reading survey.xml");
         }
 
         return null;

@@ -102,7 +102,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
                 return new ServiceRegistration<?>[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(surveysMenu, "help"), null)};
             }
         } catch (FileNotFoundException ex) {
-            LOG.info("No survey.xml currently published");
+            LOG.info("There are currently no surveys available.");
         }
         catch (IOException ex) {
             LOG.info("Error reading survey.xml");

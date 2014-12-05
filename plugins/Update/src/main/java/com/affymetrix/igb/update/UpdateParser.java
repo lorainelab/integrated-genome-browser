@@ -1,7 +1,7 @@
 package com.affymetrix.igb.update;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,12 +32,12 @@ public class UpdateParser {
     /*
      * Parsers given input stream
      */
-    public static List<Update> parse(InputStream inputstream) throws ParserConfigurationException, SAXException, IOException {
+    public static List<Update> parse(String updateXml) throws ParserConfigurationException, SAXException, IOException {
         List<Update> updates = new ArrayList<Update>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(inputstream);
+        Document doc = dBuilder.parse(new ByteArrayInputStream(updateXml.getBytes()));
         doc.getDocumentElement().normalize();
 
         NodeList nList = doc.getElementsByTagName(UPDATE);

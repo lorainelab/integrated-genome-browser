@@ -1,16 +1,17 @@
 package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
-import java.io.InputStream;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -29,13 +30,12 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
     @Override
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("updates");
-        InputStream inputStream = null;
         try {
-//            inputStream = Activator.class.getResourceAsStream("/updates.xml");
-            inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("updates"));
-            if (inputStream != null) {
+            URL url = new URL(BUNDLE.getString("updates"));
+            String updateXml = Resources.toString(url, Charsets.UTF_8);
+            if (StringUtils.isNotBlank(updateXml)) {
                 final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getAppVersion());
-                final List<Update> updates = UpdateParser.parse(inputStream);
+                final List<Update> updates = UpdateParser.parse(updateXml);
                 Collections.sort(updates, new Comparator<Update>() {
                     public int compare(Update o1, Update o2) {
                         return o2.getVersion().compareTo(o1.getVersion());
@@ -49,12 +49,9 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
             }
         } catch (Exception ex) {
 
-        } finally {
-            GeneralUtils.safeClose(inputStream);
         }
 
         return null;
     }
-    
 
 }

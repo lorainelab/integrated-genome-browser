@@ -6,13 +6,12 @@
         <link>http://wiki.transvar.org</link>
         <startdate>Jan 25, 2013</startdate>
         <enddate>Feb 25, 2013</enddate>
-    </survey>
-	
+    </survey>	
     <survey id="Survey2">
         <name>Survey 2</name>
         <description>This is survey 2. It ends on Feb 15, 2013</description>
         <link>http://wiki.transvar.org</link>
-        <startdate>Jan 25, 2013</startdate>
-        <enddate>Feb 15, 2013</enddate>
+        <startdate>Nov 25, 2014</startdate>
+        <enddate>Dec 15, 2014</enddate>
     </survey>
 </surveys>

@@ -17,7 +17,6 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 
 import com.affymetrix.genoviz.swing.AMenuItem;
@@ -26,6 +25,9 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
+import com.google.common.io.Resources;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
 
 /**
  *
@@ -43,8 +45,9 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "News and Surveys");
 
         InputStream inputStream = null;
-        //inputStream = Activator.class.getResourceAsStream("/surveys.xml");
-        inputStream = LocalUrlCacher.getInputStream(BUNDLE.getString("surveys"));
+        //inputStream = Activator.class.getResourceAsStream("/surveys.xml");        
+        URL url = new URL(BUNDLE.getString("surveys"));
+        inputStream = new ByteArrayInputStream(Resources.toByteArray(url));
         if (inputStream != null) {
             List<Survey> surveys = SurveyParser.parse(inputStream);
             GeneralUtils.safeClose(inputStream);

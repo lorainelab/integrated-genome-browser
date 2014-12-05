@@ -51,10 +51,26 @@
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <plugins><plugin><artifactId>maven-clean-plugin</artifactId></plugin><plugin><artifactId>maven-dependency-plugin</artifactId></plugin>      
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>      
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -64,8 +80,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
-                        <Export-Package/>
-                        com.affymetrix.igb.survey.Activator
+                        <Export-Package/>                        
+                        <Bundle-Activator>com.affymetrix.igb.survey.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                     </instructions>
                 </configuration>

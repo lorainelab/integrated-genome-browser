@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +33,7 @@ public class CommandProcessor implements Runnable {
 
     public void recieveIgbCommand(String igbCommand) {
         if (out != null) {
-           ScriptManager.getInstance().runScriptString(igbCommand, "igb");
+            ScriptManager.getInstance().runScriptString(igbCommand, "igb");
             out.println("Command processed");
         }
     }
@@ -45,6 +46,8 @@ public class CommandProcessor implements Runnable {
                 recieveIgbCommand(input);
             }
             connection.close();
+        } catch (SocketException ex) {
+            //do nothing
         } catch (IOException ex) {
             Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

@@ -495,4 +495,16 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public GenericFeature createFeature(String featureName, SymLoader loader) {
         return GeneralLoadView.getLoadView().createFeature(featureName, loader);
     }
+    
+    @Override
+    public void bringToFront() {
+        JFrame f = Application.getSingleton().getFrame();
+        boolean tmp = f.isAlwaysOnTop();
+        f.setAlwaysOnTop(true);
+        f.toFront();
+        f.requestFocus();
+        f.repaint();
+        f.setAlwaysOnTop(tmp);
+    }
+    
 }

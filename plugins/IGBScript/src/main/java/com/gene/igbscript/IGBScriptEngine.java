@@ -340,6 +340,10 @@ public class IGBScriptEngine implements ScriptEngine {
             igbService.setHome();
             return;
         }
+        if (action.equalsIgnoreCase("bringToFront")) {
+            igbService.bringToFront();
+            return;
+        }
         LOG.log(Level.WARNING, "Unrecognized or invalid command: {0}", action);
     }
 

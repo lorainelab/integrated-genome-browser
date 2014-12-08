@@ -186,4 +186,5 @@ public interface IGBService {
 	public void removeServer(GenericServer gServer);
 	public Component determineSlicedComponent();
 	public GenericFeature createFeature(String featureName, SymLoader loader);
+        public void bringToFront();
 }

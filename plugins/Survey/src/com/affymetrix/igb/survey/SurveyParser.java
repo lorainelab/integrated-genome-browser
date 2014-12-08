@@ -21,19 +21,20 @@ import org.xml.sax.SAXException;
  * @author hiralv
  */
 public class SurveyParser {
-	private static final String ID		= "id";
-	private static final String NAME	= "name";
-	private static final String DESC	= "description";
-	private static final String LINK	= "link";
-	private static final String START	= "startdate";
-	private static final String END		= "enddate";
-	
+
+	private static final String ID = "id";
+	private static final String NAME = "name";
+	private static final String DESC = "description";
+	private static final String LINK = "link";
+	private static final String START = "startdate";
+	private static final String END = "enddate";
+
 	/*
 	 * Parsers given input stream
 	 */
 	public static List<Survey> parse(InputStream inputstream) throws ParserConfigurationException, SAXException, IOException {
 		List<Survey> surveys = new ArrayList<Survey>();
-		
+
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(inputstream);
@@ -57,15 +58,15 @@ public class SurveyParser {
 					end = DateFormat.getDateInstance().parse(getText(eElement, END));
 					surveys.add(new Survey(id, name, description, link, start, end));
 				} catch (ParseException ex) {
-					
+
 				}
 			}
 		}
 
 		return surveys;
 	}
-	
-	private static String getText(Element element, String tag){
+
+	private static String getText(Element element, String tag) {
 		return element.getElementsByTagName(tag).item(0).getTextContent();
 	}
 }

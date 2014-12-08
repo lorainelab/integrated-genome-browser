@@ -1,7 +1,7 @@
 package com.affymetrix.igb.update;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -23,21 +23,21 @@ import org.xml.sax.SAXException;
  * @author hiralv
  */
 public class UpdateParser {
-	private static final String UPDATE				= "update";
-	private static final String VERSION				= "version";
-	private static final String RELEASE_DATE		= "release_date";
-	private static final String LINK				= "link";
-	
-	
+
+	private static final String UPDATE = "update";
+	private static final String VERSION = "version";
+	private static final String RELEASE_DATE = "release_date";
+	private static final String LINK = "link";
+
 	/*
 	 * Parsers given input stream
 	 */
-	public static List<Update> parse(InputStream inputstream) throws ParserConfigurationException, SAXException, IOException {
+	public static List<Update> parse(String updateXml) throws ParserConfigurationException, SAXException, IOException {
 		List<Update> updates = new ArrayList<Update>();
-		
+
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(inputstream);
+		Document doc = dBuilder.parse(new ByteArrayInputStream(updateXml.getBytes()));
 		doc.getDocumentElement().normalize();
 
 		NodeList nList = doc.getElementsByTagName(UPDATE);
@@ -54,18 +54,18 @@ public class UpdateParser {
 					version = new Version(getText(eElement, VERSION));
 					link = getText(eElement, LINK);
 					release_date = DateFormat.getDateInstance().parse(getText(eElement, RELEASE_DATE));
-	
+
 					updates.add(new Update(version, release_date, link));
 				} catch (ParseException ex) {
-					
+
 				}
 			}
 		}
 
 		return updates;
 	}
-	
-	private static String getText(Element element, String tag){
+
+	private static String getText(Element element, String tag) {
 		return element.getElementsByTagName(tag).item(0).getTextContent();
 	}
 }

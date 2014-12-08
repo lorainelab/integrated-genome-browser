@@ -92,13 +92,13 @@ public final class KeyStrokesView {
                     String id = (String) table.getModel().getValueAt(srow, IdColumn);
                     editKeystroke(id);
                 } else {
-                    edit_panel.setPreferenceKey(null, null, null, null);
+                    edit_panel.setPreferenceKey(null, null);
                 }
             }
         }
 
         private void editKeystroke(String id) {
-            edit_panel.setPreferenceKey(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode(), id, "");
+            edit_panel.setPreferenceKey(id, "");
         }
     };
 
@@ -373,6 +373,7 @@ public final class KeyStrokesView {
                 KeyStroke ks = KeyStroke.getKeyStroke(evt.getKeyCode(), evt.getModifiers());
                 if (ks.getKeyCode() == KeyEvent.VK_ENTER) {
                     stopCellEditing();
+                    invokeRefreshTable();
                 }
             }
 

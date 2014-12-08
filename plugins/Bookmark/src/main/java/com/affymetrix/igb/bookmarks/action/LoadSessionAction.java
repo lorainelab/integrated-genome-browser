@@ -1,6 +1,5 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -10,7 +9,7 @@ import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.google.common.base.Charsets;
 import java.awt.FileDialog;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;  
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLDecoder;

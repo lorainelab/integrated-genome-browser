@@ -17,11 +17,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 
@@ -128,7 +124,7 @@ public class SaveSessionAction extends GenericAction {
             topNode.node(keyStrokePref.name());
 
             PreferenceUtils.addEntryToNode(PreferenceUtils.getToolbarNode(), toolBarKeyvalue);
-            PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);
+            PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);            
 
             PreferenceUtils.getSessionPrefsNode().removeNode();
         } catch (Exception x) {

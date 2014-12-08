@@ -77,12 +77,6 @@ public class NewGenome extends javax.swing.JPanel {
 
         versionLabel.setText("Genome Version");
 
-        versionTextField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                versionTextFieldFocusGained(evt);
-            }
-        });
-
         refSeqLabel.setText("Reference Sequence");
 
         refSeqBrowseButton.setText("...");
@@ -133,21 +127,6 @@ public class NewGenome extends javax.swing.JPanel {
                 .add(43, 43, 43))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void versionTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_versionTextFieldFocusGained
-        if (getVersionName().length() == 0 && getSpeciesName().length() > 2) {
-            String[] species = space_regex.split(getSpeciesName());
-            if (species.length > 1) {
-                StringBuilder version = new StringBuilder();
-                version.append(species[0].toUpperCase().charAt(0));
-                for (int i = 1; i < species.length; i++) {
-                    version.append("_").append(species[i].toLowerCase());
-                }
-                version.append("_");
-                versionTextField.setText(version.toString());
-            }
-        }
-    }//GEN-LAST:event_versionTextFieldFocusGained
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refSeqBrowseButtonActionPerformed
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;

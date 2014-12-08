@@ -456,6 +456,16 @@
             <scope>runtime</scope>
         </dependency> 
         <!--End of plugin module dependencies-->
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>bundle-info</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -502,6 +512,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <executions>
+                    <execution>
+                        <phase>install</phase> 
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>                   
+                </executions>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bundle-registrar</artifactId>        
+                <version>1.0.0</version>
+                <configuration>
+                    <bundlesDir>${project.parent.basedir}/bundles</bundlesDir>
+                </configuration>
             </plugin>     
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -526,20 +552,23 @@
                                         <attribute name="Permissions" value="all-permissions"/>
                                         <attribute name="Codebase" value="*"/>
                                     </manifest>
-                                    <metainf file="${basedir}/../LICENSE.html"/>
-                                    <metainf file="${basedir}/../NOTICES.txt"/>
                                     <zipgroupfileset dir="${basedir}/target">
                                         <include name="*.jar"/>
                                     </zipgroupfileset>
                                     <zipgroupfileset dir="${basedir}/target/lib">
                                         <include name="affymetrix-common-*.jar"/>
                                         <include name="org.apache.felix.main-*.jar"/>
+                                        <include name="bundle-info-*.jar"/>
+                                        <include name="gson-*.jar"/>
                                     </zipgroupfileset>
                                     <fileset dir="${basedir}/target/lib">
                                         <include name="*.jar"/>
                                         <exclude name="main-*.jar"/>
                                         <exclude name="org.apache.felix.main-*.jar"/>
                                         <exclude name="org.apache.felix.framework*.jar"/>                                                
+                                    </fileset>
+                                    <fileset dir="${basedir}/../bundles">
+                                        <include name="*.json"/>                                               
                                     </fileset>
                                 </jar>
                             </target>

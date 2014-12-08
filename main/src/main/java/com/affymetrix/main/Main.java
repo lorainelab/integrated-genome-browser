@@ -1,5 +1,9 @@
 package com.affymetrix.main;
 
+import com.affymetrix.common.CommonUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
@@ -15,15 +19,19 @@ package com.affymetrix.main;
  */
 public final class Main {
 
+    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+
     /**
      * Start the program. Nothing to it, just start OSGi and all the bundles.
      */
     public static void main(final String[] args) {
+        // replacing singleton pattern would be preferred
+        CommonUtils commonUtils = CommonUtils.getInstance();
         try {
-            //check to see if IGB is already running, if so bring it to the front, if not launch it.
-            OSGiHandler.getInstance().startOSGi(args);
+            OSGiHandler osgiHandler = new OSGiHandler(commonUtils);
+            osgiHandler.startOSGi(args);
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOG.log(Level.SEVERE, "Error starting osgi runtime container", t);
             System.exit(1);
         }
     }

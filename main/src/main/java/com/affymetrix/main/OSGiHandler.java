@@ -1,6 +1,7 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
+import com.lorainelab.osgi.bundle.BundleInfo;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -26,7 +26,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class OSGiHandler {
 
     private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
-    private static final Logger ourLogger = Logger.getLogger(OSGiHandler.class.getPackage().getName());
+    private static final Logger logger = Logger.getLogger(OSGiHandler.class.getPackage().getName());
     private Framework framework;
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
@@ -38,17 +38,29 @@ public class OSGiHandler {
     public static final boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
 
-    private static final OSGiHandler instance = new OSGiHandler();
+    private final CommonUtils commonUtils;
 
-    public static OSGiHandler getInstance() {
-        return instance;
+    public OSGiHandler(CommonUtils commonUtils) {
+        this.commonUtils = commonUtils;
     }
 
-    private OSGiHandler() {
-    }
-
-    public static void main(final String[] args) {
-        getInstance().startOSGi(args);
+    private boolean isBundleCacheExpired() {
+        List<BundleInfo> cacheBundleDetails = commonUtils.getCachedBundleInfo();
+        List<BundleInfo> currentBundleDetails = commonUtils.getCurrentBundleInfo();
+        for (BundleInfo bundle : cacheBundleDetails) {
+            for (BundleInfo matchingBundleCandidate : currentBundleDetails) {
+                if (bundle.getName().equals(matchingBundleCandidate.getName())) {
+                    if (!CommonUtils.equals(bundle.getVersion(), matchingBundleCandidate.getVersion())) {
+                        return true;
+                    }
+                    //also check bnd last modified as a possible indication a bundle has changed without version increment
+                    if (!CommonUtils.equals(bundle.getLastModified(), matchingBundleCandidate.getLastModified())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -59,38 +71,44 @@ public class OSGiHandler {
      */
     public void startOSGi(String[] args) {
         if (isDevelopmentMode()) {
-            deleteDirectory(new File(getCacheFolder()));
+            clearCache();
+        } else if (isBundleCacheExpired()) {
+            clearCache();
         }
+
+        if (!isDevelopmentMode()) {
+            commonUtils.exportBundleInfo();
+        }
+
         if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
             clearCache();
             return;
         }
-        ourLogger.log(Level.INFO, "Starting OSGi");
+        logger.log(Level.INFO, "Starting OSGi");
         setLaf();
 
-        ourLogger.log(Level.INFO, "Loading OSGi framework");
+        logger.log(Level.INFO, "Loading OSGi framework");
         String argArray = Arrays.toString(args);
         loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try {
             BundleContext bundleContext = framework.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
-                ourLogger.log(Level.INFO, "Loading embedded OSGi bundles");
+                logger.log(Level.INFO, "Loading embedded OSGi bundles");
                 loadEmbeddedBundles(bundleContext);
             }
-            uninstallBundles(bundleContext, CommonUtils.getInstance().getArg("-uninstall_bundle", args));
-            installBundles(bundleContext, CommonUtils.getInstance().getArg("-install_bundle", args));
+
             for (Bundle bundle : bundleContext.getBundles()) {
-                if (isDevelopmentMode()) {
-                    System.out.println("Starting Bundle: " + bundle.getSymbolicName());
+                if (true) {
+                    logger.log(Level.INFO, "Starting Bundle: " + bundle.getSymbolicName());
                 }
                 bundle.start();
             }
-            ourLogger.log(Level.INFO, "OSGi is started with {0} version {1}",
+            logger.log(Level.INFO, "OSGi is started with {0} version {1}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
-            ourLogger.log(Level.WARNING,
+            logger.log(Level.WARNING,
                     "Could not create framework, plugins disabled: {0}", ex.getMessage());
         }
     }
@@ -166,52 +184,11 @@ public class OSGiHandler {
             FrameworkFactory factory = getFrameworkFactory();
             framework = factory.newFramework(configProps);
             framework.init();
-            if (CommonUtils.getInstance().isHelp(framework.getBundleContext())) {
-                System.out.println(CommonUtils.getInstance().getAppName() + " " + CommonUtils.getInstance().getAppVersion());
-                System.out.println("Options:");
-                System.out.println("-install_bundle - install an OSGi bundle (plugin) in the specified .jar file");
-                System.out.println("-uninstall_bundle - uninstall an installed OSGi bundle (plugin)");
-                System.out.println("-cbc - clear bundle cache and exit - this will ignore all other options");
-            }
             framework.start();
         } catch (Exception ex) {
             System.err.println("Could not create framework: " + ex);
             ex.printStackTrace(System.err);
             System.exit(0);
-        }
-    }
-
-    private void uninstallBundles(BundleContext bundleContext, String uninstall_bundle) throws BundleException {
-        if (uninstall_bundle != null) {
-            for (Bundle bundle : bundleContext.getBundles()) {
-                if (uninstall_bundle.equals(bundle.getSymbolicName())) {
-                    bundle.uninstall();
-                    ourLogger.log(Level.INFO, "uninstalled bundle: {0}", uninstall_bundle);
-                }
-            }
-        }
-        if (bundleSymbolicNameToUninstall != null) {
-            for (Bundle bundle : bundleContext.getBundles()) {
-                if (bundleSymbolicNameToUninstall.equals(bundle.getSymbolicName())) {
-                    bundle.uninstall();
-                    ourLogger.log(Level.INFO, "uninstalled bundle: {0}", bundleSymbolicNameToUninstall);
-                }
-            }
-        }
-    }
-
-    private void installBundles(BundleContext bundleContext, String install_bundle) throws BundleException {
-        if (install_bundle != null) {
-            Bundle bundle = bundleContext.installBundle(install_bundle);
-            if (bundle != null) {
-                ourLogger.log(Level.INFO, "installed bundle: {0}", install_bundle);
-            }
-        }
-        if (bundlePathToInstall != null) {
-            Bundle bundle = bundleContext.installBundle(bundlePathToInstall);
-            if (bundle != null) {
-                ourLogger.log(Level.INFO, "installed bundle: {0}", bundlePathToInstall);
-            }
         }
     }
 
@@ -228,13 +205,13 @@ public class OSGiHandler {
             if (locationURL != null) {
                 try {
                     bundleContext.installBundle(locationURL.toString());
-                    ourLogger.log(Level.INFO, "loading {0}", new Object[]{fileName});
+                    logger.log(Level.INFO, "loading {0}", new Object[]{fileName});
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);
-                    ourLogger.log(Level.WARNING, "Could not install {0}", new Object[]{fileName});
+                    logger.log(Level.WARNING, "Could not install {0}", new Object[]{fileName});
                 }
             } else {
-                ourLogger.log(Level.WARNING, "Could not find {0}", new Object[]{fileName});
+                logger.log(Level.WARNING, "Could not find {0}", new Object[]{fileName});
             }
         }
     }
@@ -292,6 +269,8 @@ public class OSGiHandler {
             System.out.println(messageWrapper);
             System.exit(0);
         }
+        //this shouldn't be needed, but since windowservicedef needs all tabs to already registered it is... also this ordering is consistent with the jar ordering 
+        Collections.sort(entries);
         return entries;
     }
 
@@ -347,11 +326,11 @@ public class OSGiHandler {
                 bundle = bundleContext.installBundle(filePath);
                 bundle.start();
             } catch (Exception x) {
-                ourLogger.log(Level.SEVERE, "error installing bundle", x);
+                logger.log(Level.SEVERE, "error installing bundle", x);
                 bundle = null;
             }
             if (bundle != null) {
-                ourLogger.log(Level.INFO, "installed bundle: {0}", filePath);
+                logger.log(Level.INFO, "installed bundle: {0}", filePath);
             }
         }
         return bundle != null;
@@ -369,10 +348,10 @@ public class OSGiHandler {
                 if (symbolicName.equals(bundle.getSymbolicName())) {
                     try {
                         bundle.uninstall();
-                        ourLogger.log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
+                        logger.log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
                         found = true;
                     } catch (Exception x) {
-                        ourLogger.log(Level.SEVERE, "error uninstalling bundle", x);
+                        logger.log(Level.SEVERE, "error uninstalling bundle", x);
                         found = false;
                     }
                 }

@@ -60,6 +60,9 @@ public class OSGiHandler {
                 }
             }
         }
+        if (cacheBundleDetails.isEmpty()) {
+            return true;
+        }
         return false;
     }
 

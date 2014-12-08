@@ -173,6 +173,16 @@
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.lorainelab</groupId>
+                                    <artifactId>bundle-info</artifactId>
+                                    <version>${bundle-info-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.google.code.gson</groupId>
+                                    <artifactId>gson</artifactId>
+                                    <version>${gsonVersion}</version>
+                                </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>

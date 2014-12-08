@@ -79,12 +79,8 @@ public class NewGenomeAction extends OpenURIAction {
                 ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
             }
 
-            if (ng.shouldSwitch()) {
-                gmodel.setSelectedSeqGroup(group);
-            } else {
-                GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
-                ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
-            }
+            gmodel.setSelectedSeqGroup(group);
+
         }
     }
 

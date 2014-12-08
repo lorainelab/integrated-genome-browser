@@ -37,7 +37,6 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Component id="refSeqBrowseButton" min="-2" pref="41" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="switchCheckBox" alignment="0" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -61,9 +60,7 @@
                   <Component id="refSeqTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="refSeqBrowseButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-              <Component id="switchCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,7 +68,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="speciesLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Species Name"/>
+        <Property name="text" type="java.lang.String" value="Species"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="speciesTextField">
@@ -88,12 +85,6 @@
       <Events>
         <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="versionTextFieldFocusGained"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="switchCheckBox">
-      <Properties>
-        <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="Switch to custom genome"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="refSeqLabel">
       <Properties>

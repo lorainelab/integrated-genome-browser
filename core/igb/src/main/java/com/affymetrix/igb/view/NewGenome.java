@@ -8,6 +8,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.jidesoft.hints.ListDataIntelliHints;
+import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -17,6 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import org.jdesktop.swingx.prompt.PromptSupport;
+import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
 /**
  *
@@ -32,6 +35,11 @@ public class NewGenome extends javax.swing.JPanel {
      */
     public NewGenome() {
         initComponents();
+        PromptSupport.setPrompt("Enter Species Name", speciesTextField);
+        PromptSupport.setPrompt("Enter Version Name", versionTextField);
+        PromptSupport.setFocusBehavior(FocusBehavior.HIGHLIGHT_PROMPT, speciesTextField);
+        PromptSupport.setFocusBehavior(FocusBehavior.HIGHLIGHT_PROMPT, versionTextField);
+
     }
 
     public String getSpeciesName() {
@@ -40,10 +48,6 @@ public class NewGenome extends javax.swing.JPanel {
 
     public String getVersionName() {
         return versionTextField.getText();
-    }
-
-    public boolean shouldSwitch() {
-        return switchCheckBox.isSelected();
     }
 
     public String getRefSeqFile() {
@@ -63,12 +67,11 @@ public class NewGenome extends javax.swing.JPanel {
         speciesTextField = new javax.swing.JTextField();
         versionLabel = new javax.swing.JLabel();
         versionTextField = new javax.swing.JTextField();
-        switchCheckBox = new javax.swing.JCheckBox();
         refSeqLabel = new javax.swing.JLabel();
         refSeqTextField = new javax.swing.JTextField();
         refSeqBrowseButton = new javax.swing.JButton();
 
-        speciesLabel.setText("Species Name");
+        speciesLabel.setText("Species");
 
         ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
 
@@ -79,9 +82,6 @@ public class NewGenome extends javax.swing.JPanel {
                 versionTextFieldFocusGained(evt);
             }
         });
-
-        switchCheckBox.setSelected(true);
-        switchCheckBox.setText("Switch to custom genome");
 
         refSeqLabel.setText("Reference Sequence");
 
@@ -112,8 +112,7 @@ public class NewGenome extends javax.swing.JPanel {
                     .add(layout.createSequentialGroup()
                         .add(refSeqTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 257, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, Short.MAX_VALUE)
-                        .add(refSeqBrowseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(switchCheckBox, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(refSeqBrowseButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 41, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -131,9 +130,7 @@ public class NewGenome extends javax.swing.JPanel {
                     .add(refSeqLabel)
                     .add(refSeqTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(refSeqBrowseButton))
-                .add(15, 15, 15)
-                .add(switchCheckBox)
-                .add(5, 5, 5))
+                .add(43, 43, 43))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -201,7 +198,6 @@ public class NewGenome extends javax.swing.JPanel {
     private javax.swing.JTextField refSeqTextField;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JTextField speciesTextField;
-    private javax.swing.JCheckBox switchCheckBox;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JTextField versionTextField;
     // End of variables declaration//GEN-END:variables

@@ -112,6 +112,11 @@
             <artifactId>swing-layout</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.swinglabs.swingx</groupId>
+            <artifactId>swingx-all</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

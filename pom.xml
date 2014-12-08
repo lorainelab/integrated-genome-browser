@@ -124,6 +124,31 @@
             </snapshots>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <url>http://eos.transvar.org/nexus/content/groups/public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>releases</id>
+            <url>http://eos.transvar.org/nexus/content/repositories/releases</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>freehep-maven</id>
+            <url>http://eos.transvar.org/nexus/content/repositories/freehep-maven/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://eos.transvar.org/nexus/content/repositories/central/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 
     <modules>

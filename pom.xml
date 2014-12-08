@@ -22,10 +22,11 @@
         <!-- Start of external bundle version declarations -->        
         <log4jVersion>2.0-rc1</log4jVersion>
         <guavaVersion>16.0.1</guavaVersion>
+        <gsonVersion>2.3.1</gsonVersion>
         <commonsLangVersion>3.1</commonsLangVersion>
         <commonsCsvVersion>1.0</commonsCsvVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
-        <genovizVersion>1.0.7</genovizVersion>
+        <genovizVersion>1.0.9</genovizVersion>
         <felixMainVersion>4.2.2</felixMainVersion>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0.1</fusionVersion>
@@ -37,6 +38,7 @@
         <samVersion>1.110</samVersion>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
+        <bundle-info-version>1.0.0</bundle-info-version>
         <!-- End of external bundle version declarations -->
         
         <!-- Start of included core bundle version declarations -->   
@@ -561,6 +563,11 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gsonVersion}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>${commonsCompressVersion}</version>
@@ -571,6 +578,12 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commonsLangVersion}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bundle-info</artifactId>
+                <version>${bundle-info-version}</version>
+                <type>jar</type>
             </dependency>
             <!--End of additional provided dependencies-->
 
@@ -837,6 +850,7 @@
                             <includes>
                                 <include>*.jar</include>
                                 <include>repository.xml</include>
+                                <include>bundleRegistry.json</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>

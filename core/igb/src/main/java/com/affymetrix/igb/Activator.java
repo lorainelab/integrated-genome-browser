@@ -13,8 +13,6 @@ import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.operator.Operator;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genoviz.swing.AMenuItem;
@@ -89,12 +87,10 @@ import com.affymetrix.igb.shared.PreprocessorTypeReference;
 import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.swing.ScriptProcessor;
 import com.affymetrix.igb.swing.ScriptProcessorHolder;
-import com.affymetrix.igb.util.UpdateStatusAlert;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.AxisGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
@@ -103,7 +99,6 @@ import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
@@ -136,55 +131,10 @@ public class Activator implements BundleActivator {
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
         args = CommonUtils.getInstance().getArgs(bundleContext);
-        if (args != null) {
-            if (CommonUtils.getInstance().isHelp(bundleContext)) { // display all command options
-                System.out.println("-offline - set the URL caching to offline");
-                System.out.println("-" + IGBService.SCRIPTFILETAG + " - load a script file");
-                System.out.println("-convert - convert the fasta file to bnib");
-                System.out.println("-clrprf - clear the preferences");
-                System.out.println("-prefsmode - use the specified preferences mode (default \"igb\")");
-                System.out.println("-clrallprf - clear all the preferences for all preferences modes");
-                System.out.println("-pntprf - print the preferences for this preferences mode in xml format");
-                System.out.println("-pntallprf - print all the preferences for all preferences modes in xml format");
-                return;
-            }
-
-            String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", args);
-            if (prefsMode != null) {
-                PreferenceUtils.setPrefsMode(prefsMode);
-            }
-            if (CommonUtils.getInstance().getArg("-convert", args) != null) {
-                String[] runArgs = Arrays.copyOfRange(args, 1, args.length);
-                NibbleResiduesParser.main(runArgs);
-                return;
-            }
-            if (CommonUtils.getInstance().getArg("-clrprf", args) != null) {
-                PreferenceUtils.clearPreferences();
-                XmlStylesheetParser.removeUserStylesheetFile();
-                System.out.println("preferences cleared");
-            }
-            if (CommonUtils.getInstance().getArg("-clrallprf", args) != null) {
-                PreferenceUtils.clearAllPreferences();
-                XmlStylesheetParser.removeUserStylesheetFile();
-                System.out.println("all preferences cleared");
-            }
-            if (CommonUtils.getInstance().getArg("-pntprf", args) != null) {
-                PreferenceUtils.printPreferences();
-            }
-            if (CommonUtils.getInstance().getArg("-pntallprf", args) != null) {
-                PreferenceUtils.printAllPreferences();
-            }
-            if (CommonUtils.getInstance().getArg("-updateAvailable", args) != null) {
-                bundleContext.registerService(StatusAlert.class, new UpdateStatusAlert(), null);
-            }
-            String offline = CommonUtils.getInstance().getArg("-offline", args);
-            if (offline != null) {
-                LocalUrlCacher.setOffLine("true".equals(offline));
-            }
+        if (args != null) {       
             if (CommonUtils.getInstance().isExit(bundleContext)) {
                 return;
             }
-
             scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
             commandLineBatchFileStr = CommonUtils.getInstance().getArg(
                     "-" + IGBService.SCRIPTFILETAG, args);
@@ -202,7 +152,6 @@ public class Activator implements BundleActivator {
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
         
         logger.info("Getting IWindowService from ");
-        Thread.sleep(2000);
         ServiceReference<IWindowService> windowServiceReference
                 = bundleContext.getServiceReference(IWindowService.class);
 

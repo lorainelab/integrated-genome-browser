@@ -10,9 +10,6 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
-        if (CommonUtils.getInstance().isHelp(bundleContext)) {
-            System.out.println("-exit - exit the program after completing above functions");
-        }
         if (CommonUtils.getInstance().isExit(bundleContext)) {
             bundleContext.addBundleListener(
                     new BundleListener() {

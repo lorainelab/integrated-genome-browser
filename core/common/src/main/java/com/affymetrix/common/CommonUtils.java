@@ -1,13 +1,26 @@
 package com.affymetrix.common;
 
+import com.lorainelab.osgi.bundle.BundleInfo;
+import com.lorainelab.osgi.bundle.BundleInfoParser;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
@@ -28,6 +41,8 @@ public class CommonUtils {
     private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
     private static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
+    private static final String BUNDLE_REGISTRY_FILE_NAME = "bundleRegistry.json";
+    private static final Logger LOG = Logger.getLogger(CommonUtils.class.getName());
 
     private CommonUtils() {
     }
@@ -82,23 +97,23 @@ public class CommonUtils {
      * returns null.
      */
     public String getArg(String label, String[] args) {
-        String to_return = null;
-        boolean got_it = false;
+        String arg = null;
+        boolean argExist = false;
         if (label != null && args != null) {
             for (String item : args) {
-                if (got_it) {
-                    to_return = item;
+                if (argExist) {
+                    arg = item;
                     break;
                 }
                 if (item.equals(label)) {
-                    got_it = true;
+                    argExist = true;
                 }
             }
         }
-        if (got_it && to_return == null) {
-            to_return = "true";
+        if (argExist && arg == null) {
+            arg = "true";
         }
-        return to_return;
+        return arg;
     }
 
     public String[] getArgs(BundleContext bundleContext) {
@@ -108,18 +123,9 @@ public class CommonUtils {
         return bundleContext.getProperty("args").split(", ");
     }
 
-    public boolean isHelp(BundleContext bundleContext) {
-        String[] args = getArgs(bundleContext);
-        return (getArg("-h", args) != null || getArg("-help", args) != null); // display all command options
-    }
-
     public boolean isExit(BundleContext bundleContext) {
         String[] args = getArgs(bundleContext);
-        return (getArg("-h", args) != null
-                || getArg("-help", args) != null
-                || getArg("-exit", args) != null
-                || getArg("-convert", args) != null
-                || getArg("-cbc", args) != null); // exit program
+        return (getArg("-cbc", args) != null); // exit program
     }
 
     /**
@@ -213,4 +219,87 @@ public class CommonUtils {
         }
         return null;
     }
+
+    public String getBundleRegistryFileName() {
+        return BUNDLE_REGISTRY_FILE_NAME;
+    }
+
+    public List<BundleInfo> getCurrentBundleInfo() {
+        Reader reader = null;
+        List<BundleInfo> bundleInfo = null;
+        try {
+            reader = new InputStreamReader(CommonUtils.class.getClassLoader().getResourceAsStream(BUNDLE_REGISTRY_FILE_NAME));
+            bundleInfo = BundleInfoParser.fromJson(reader);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    LOG.log(Level.SEVERE, "Error closing reader", ex);
+                }
+            }
+        }
+        return bundleInfo;
+    }
+
+    public List<BundleInfo> getCachedBundleInfo() {
+        File cachedBundleInfoFile = new File(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
+        Reader reader = null;
+        List<BundleInfo> cacheBundleInfo = null;
+        if (cachedBundleInfoFile.exists()) {
+            try {
+                reader = new BufferedReader(new FileReader(cachedBundleInfoFile));
+                cacheBundleInfo = BundleInfoParser.fromJson(reader);
+            } catch (Exception ex) {
+                LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ex) {
+                        LOG.log(Level.SEVERE, "Error closing reader", ex);
+                    }
+                }
+            }
+        } else {
+            return Collections.<BundleInfo>emptyList();
+        }
+        return cacheBundleInfo;
+    }
+
+    public void exportBundleInfo() {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
+            out.print(BundleInfoParser.toJson(getCurrentBundleInfo()));
+        } catch (FileNotFoundException ex) {
+            LOG.log(Level.SEVERE, "Could not write bundle registry file to app data directory", ex);
+        } finally {
+            out.close();
+        }
+    }
+
+    public static boolean isBlank(final CharSequence cs) {
+        int strLen;
+        if (cs == null || (strLen = cs.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (Character.isWhitespace(cs.charAt(i)) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNotBlank(final CharSequence cs) {
+        return !isBlank(cs);
+    }
+
+    public static boolean equals(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equals(str2);
+    }
+
 }

@@ -181,6 +181,10 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
             return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
+    
+    public static boolean isBedChildSingletonSeqSymClass (SeqSymmetry seq) {
+        return (seq instanceof BedChildSingletonSeqSym);
+    }
 
     public float getScore() {
         return score;

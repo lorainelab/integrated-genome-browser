@@ -5,6 +5,13 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
 import java.awt.BorderLayout;
@@ -90,9 +97,9 @@ public class SeqMapToolTips extends JWindow {
         return output;
     }
 
-    public void setToolTip(Point point, Map<String, Object> properties) {
+    public void setToolTip(Point point, Map<String, Object> properties, SeqSymmetry sym) {
         List<ToolTipCategory> propList = null;
-        if (isVisible() && properties == null) {
+        if (isVisible() && (properties == null || properties.isEmpty())) {
             setVisible(false);
         }
         timer.stop();
@@ -100,8 +107,16 @@ public class SeqMapToolTips extends JWindow {
             return;
         }
         tooltip.setText(null);
-        if (properties != null && properties.size() > 0) {
-            propList = ToolTipOperations.formatBamSymTooltip(properties);
+        if (properties != null && properties.size() > 0 && sym != null) {
+            if(isBamSym(sym)) {
+                propList = ToolTipOperations.formatBamSymTooltip(properties);
+            } else if (isBedSym(sym)) {
+                propList = ToolTipOperations.formatBED14SymTooltip(properties);
+            } else if (isLinkPSL(sym)) {
+                propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
+            } else {
+                propList = ToolTipOperations.formatBamSymTooltip(properties);
+            }
             formatCategoryToolTip(propList);
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
@@ -115,6 +130,22 @@ public class SeqMapToolTips extends JWindow {
             tooltip.setText(null);
         }
     }
+    
+    private boolean isBamSym(SeqSymmetry sym) {
+        return (sym instanceof BAMSym);
+    }
+    
+    private boolean isBedSym(SeqSymmetry sym) {
+        return (sym instanceof UcscBedSym
+                || sym instanceof UcscBedDetailSym
+                || UcscBedSym.isBedChildSingletonSeqSymClass(sym)
+                || sym instanceof CdsSeqSymmetry);
+    }
+    
+    private boolean isLinkPSL(SeqSymmetry sym) {
+        return (sym instanceof EfficientPairSeqSymmetry
+                || sym instanceof UcscPslSym);
+    }
 
     private void formatCategoryToolTip(List<ToolTipCategory> properties) {
         Map<String, String> toolTipProps = null;
@@ -126,7 +157,8 @@ public class SeqMapToolTips extends JWindow {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
                 }
                 count = 1;
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
+                // Uncomment following line for category labels
+                //tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
                 toolTipProps = category.getProperties();
                 for (String propKey : toolTipProps.keySet()) {
                     propValue = toolTipProps.get(propKey);

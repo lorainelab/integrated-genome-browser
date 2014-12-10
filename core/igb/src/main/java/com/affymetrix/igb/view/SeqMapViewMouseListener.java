@@ -104,6 +104,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
     }
 
     public void mouseClicked(MouseEvent evt) {
+        smv.disableToolTip();
         showGraphProperties(false, evt);
     }
 

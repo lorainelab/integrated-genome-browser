@@ -284,7 +284,7 @@ public final class GeneralLoadUtils {
                         // Change serverObj for Quickload to apply mirror site
                         // Currently only Quickload has mirror
                         if (gServer.serverType == ServerTypeI.QuickLoad) {
-                            logger.info("Using mirror site: {0}", gServer.mirrorURL);
+                            logger.info("Using mirror site: {}", gServer.mirrorURL);
                             gServer.serverObj = gServer.mirrorURL;
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
                             discoverServer(gServer);
@@ -750,7 +750,7 @@ public final class GeneralLoadUtils {
                                     "Error while loading feature", ex);
                             return null;
                         } finally {
-                            logger.info("Loaded {0} in {1} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
+                            logger.info("Loaded {} in {} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
                         }
                     }
 
@@ -878,7 +878,7 @@ public final class GeneralLoadUtils {
 
     private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            logger.info("All of new query covered by previous queries for feature {0}", feature.featureName);
+            logger.info("All of new query covered by previous queries for feature {}", feature.featureName);
             return;
         }
 
@@ -1095,7 +1095,7 @@ public final class GeneralLoadUtils {
 
         if (aseq.isAvailable(min, max)) {
             logger.info(
-                    "All residues in range are already loaded on sequence {0}", new Object[]{aseq});
+                    "All residues in range are already loaded on sequence {}", new Object[]{aseq});
             return true;
         }
 
@@ -1143,11 +1143,11 @@ public final class GeneralLoadUtils {
             try {
                 istr = LocalUrlCacher.getInputStream(primaryServer.getFriendlyURL() + SERVER_MAPPING);
             } catch (Exception e) {
-                logger.error("Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
+                logger.error("Couldn''t open ''{}" + SERVER_MAPPING + "\n:  {}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
                 istr = null; // dealt with below
             }
             if (istr == null) {
-                logger.info("Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
+                logger.info("Could not load server mapping contents from\n{}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
                 return;
             }
             ireader = new InputStreamReader(istr);
@@ -1466,7 +1466,7 @@ public final class GeneralLoadUtils {
 
             //TODO: What if there are more than one seq group ?
             if (groups.size() > 1) {
-                logger.warn("File {0} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
+                logger.warn("File {} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
                 //First look for the selected group in the groups
                 for (AnnotatedSeqGroup gr : groups) {
                     if (gr == group) {

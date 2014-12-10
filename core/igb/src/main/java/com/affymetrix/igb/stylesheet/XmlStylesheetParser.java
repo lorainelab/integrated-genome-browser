@@ -57,7 +57,7 @@ public final class XmlStylesheetParser {
         if (system_stylesheet == null) {
             InputStream istr = null;
             try {
-                Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+                logger.info(
                         "Loading system stylesheet from resource:" + system_stylesheet_resource_name);
                 XmlStylesheetParser parser = new XmlStylesheetParser();
                 // If using class.getResource... use name beginning with "/"
@@ -65,7 +65,7 @@ public final class XmlStylesheetParser {
                 // If using getContextClassLoader... use name NOT beginning with "/"
                 system_stylesheet = parser.parse(istr);
             } catch (Exception e) {
-                System.out.println("ERROR: Couldn't initialize system stylesheet.");
+                logger.error("Couldn't initialize system stylesheet.");
                 e.printStackTrace();
                 system_stylesheet = null;
             } finally {
@@ -110,12 +110,12 @@ public final class XmlStylesheetParser {
 
                 if (f.exists()) {
                     istr = new FileInputStream(f);
-                    Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO,
+                    logger.info(
                             "Loading user stylesheet from resource: " + user_stylesheet_resource_name);
                     user_stylesheet = parser.parse(istr);
                 }
             } catch (Exception e) {
-                System.out.println("ERROR: Couldn't initialize user stylesheet.");
+                logger.error("Couldn't initialize user stylesheet.");
                 e.printStackTrace();
             } finally {
                 GeneralUtils.safeClose(istr);
@@ -174,9 +174,7 @@ public final class XmlStylesheetParser {
         } catch (IOException ioe) {
             throw ioe;
         } catch (Exception ex) {
-            IOException ioe = new IOException("Error processing stylesheet file");
-            ioe.initCause(ex);
-            throw ioe;
+            throw new IOException("Error processing stylesheet file", ex);
         }
         return stylesheet;
     }
@@ -210,16 +208,16 @@ public final class XmlStylesheetParser {
     }
 
     private static void cantParse(Element n) {
-        System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
+        logger.warn(" Stylesheet: Cannot parse element: " + n.getNodeName());
     }
 
     private static void cantParse(Element n, String msg) {
-        System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
+        logger.warn(" Stylesheet: Cannot parse element: " + n.getNodeName());
         System.out.println("        " + msg);
     }
 
     private static void notImplemented(String s) {
-        System.out.println("WARNING: Stylesheet: Not yet implemented: " + s);
+        logger.warn(" Stylesheet: Not yet implemented: " + s);
     }
 
     private static boolean isBlank(String s) {
@@ -349,7 +347,7 @@ public final class XmlStylesheetParser {
 
         if (top_level) {
             if (isBlank(se.getName())) {
-                System.out.println("WARNING: Stylesheet: All top-level styles must have a name!");
+                logger.warn(" Stylesheet: All top-level styles must have a name!");
             } else {
                 stylesheet.addToIndex(se);
             }
@@ -357,7 +355,7 @@ public final class XmlStylesheetParser {
 
         NodeList children = styleel.getChildNodes();
 
-		// there can be multiple <PROPERTY> children
+        // there can be multiple <PROPERTY> children
         // There should only be one child <GLYPH> OR one or more <MATCH> and <ELSE> elements
         // <COPY_STYLE> is not supposed to have <PROPERTIES>, but it is allowed to here
         for (int i = 0; i < children.getLength(); i++) {
@@ -390,7 +388,7 @@ public final class XmlStylesheetParser {
         if (GlyphElement.knownGlyphType(type)) {
             ge.setType(type);
         } else {
-            System.out.println("STYLESHEET WARNING: <GLYPH type='" + type + "'> not understood");
+            logger.warn("<GLYPH type='" + type + "'> not understood");
             ge.setType(GlyphElement.TYPE_BOX);
         }
 
@@ -473,17 +471,15 @@ public final class XmlStylesheetParser {
                         try {
                             me.match_regex = Pattern.compile(param);
                         } catch (PatternSyntaxException pse) {
-                            IOException ioe = new IOException("ERROR in stylesheet: Regular Expression not valid: '"
-                                    + param + "'");
-                            ioe.initCause(pse);
-                            throw ioe;
+                            throw new IOException("ERROR in stylesheet: Regular Expression not valid: '"
+                                    + param + "'", pse);
                         }
                     }
                 }
             }
 
         } else if (ElseElement.NAME.equalsIgnoreCase(matchel.getNodeName())) {
-			// an "ELSE" element is just like MATCH,
+            // an "ELSE" element is just like MATCH,
             //  except that it always matches as true
             me = new ElseElement();
         } else {
@@ -543,11 +539,10 @@ public final class XmlStylesheetParser {
         Stylesheet stylesheet = null;
         XmlStylesheetParser parser = new XmlStylesheetParser();
         try {
-            Logger.getLogger(XmlStylesheetParser.class.getName()).log(Level.INFO, "Loading stylesheet: {0}", name);
+            logger.info("Loading stylesheet: {}", name);
             stylesheet = parser.parse(istr);
-        } catch (Exception e) {
-            System.out.println("ERROR: Couldn't initialize stylesheet " + name);
-            e.printStackTrace();
+        } catch (Exception ex) {
+            logger.error(" Couldn't initialize stylesheet " + name, ex);
         } finally {
             GeneralUtils.safeClose(istr);
         }

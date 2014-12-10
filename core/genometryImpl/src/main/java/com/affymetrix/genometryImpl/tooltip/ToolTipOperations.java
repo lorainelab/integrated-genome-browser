@@ -21,16 +21,12 @@ public class ToolTipOperations {
     public static List<ToolTipCategory> formatBamSymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
-        // Populating BASIC Category
         populateCategory(props, BAM_INFO_CATEGORY, categories);
 
-        // Populating BAM Category
         populateCategory(props, BAM_LOCATION_CATEGORY, categories);
 
-        // Populating CIGAR Category
         populateCategory(props, BAM_CIGAR_CATEGORY, categories);
 
-        // Populating MISC category
         populateMisc(props, categories, BAM_IGNORE_LIST);
 
         return categories;
@@ -39,16 +35,12 @@ public class ToolTipOperations {
     public static List<ToolTipCategory> formatBED14SymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
-        // Populating BASIC Category
         populateCategory(props, BED14_INFO_CATEGORY, categories);
 
-        // Populating BAM Category
         populateCategory(props, BED14_LOCATION_CATEGORY, categories);
 
-        // Populating CIGAR Category
         populateCategory(props, BED14_CIGAR_CATEGORY, categories);
 
-        // Populating MISC category
         populateMisc(props, categories, BED14_IGNORE_LIST);
 
         return categories;
@@ -57,14 +49,25 @@ public class ToolTipOperations {
     public static List<ToolTipCategory> formatLinkPSLSymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
-        // Populating BASIC Category
         populateCategory(props, PSL_INFO_CATEGORY, categories);
 
-        // Populating BAM Category
         populateCategory(props, PSL_LOCATION_CATEGORY, categories);
 
-        // Populating MISC category
         populateMisc(props, categories, PSL_IGNORE_LIST);
+
+        return categories;
+    }
+    
+    public static List<ToolTipCategory> formatDefaultSymTooltip(Map<String, Object> props) {
+        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+
+        populateCategory(props, DEFAULT_INFO_CATEGORY, categories);
+
+        populateCategory(props, DEFAULT_LOCATION_CATEGORY, categories);
+
+        populateCategory(props, DEFAULT_CIGAR_CATEGORY, categories);
+
+        populateMisc(props, categories, DEFAULT_IGNORE_LIST);
 
         return categories;
     }

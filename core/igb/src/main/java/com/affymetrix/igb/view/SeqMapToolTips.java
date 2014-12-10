@@ -20,8 +20,6 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -98,7 +96,7 @@ public class SeqMapToolTips extends JWindow {
     }
 
     public void setToolTip(Point point, Map<String, Object> properties, SeqSymmetry sym) {
-        List<ToolTipCategory> propList = null;
+        List<ToolTipCategory> propList;
         if (isVisible() && (properties == null || properties.isEmpty())) {
             setVisible(false);
         }
@@ -115,7 +113,7 @@ public class SeqMapToolTips extends JWindow {
             } else if (isLinkPSL(sym)) {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
             } else {
-                propList = ToolTipOperations.formatBamSymTooltip(properties);
+                propList = ToolTipOperations.formatDefaultSymTooltip(properties);
             }
             formatCategoryToolTip(propList);
             tooltip.setCaretPosition(0);
@@ -148,8 +146,8 @@ public class SeqMapToolTips extends JWindow {
     }
 
     private void formatCategoryToolTip(List<ToolTipCategory> properties) {
-        Map<String, String> toolTipProps = null;
-        String propValue = null;
+        Map<String, String> toolTipProps;
+        String propValue;
         int count = 0;
         try {
             for (ToolTipCategory category : properties) {

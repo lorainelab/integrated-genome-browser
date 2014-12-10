@@ -75,6 +75,17 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> PSL_INFO_CATEGORY = ImmutableMap.of("Basic Info", PSL_INFO_GRP);
     public static final Map<String, List<String>> PSL_LOCATION_CATEGORY = ImmutableMap.of("PSL Info", PSL_LOC_GRP);
     
+     // DEFAULT
+    public static final List<String> DEFAULT_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
+    public static final List<String> DEFAULT_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
+    public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(CIGAR, VN, NH, XS, NM);
+    public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);
+    
+    public static final Map<String, List<String>> DEFAULT_INFO_CATEGORY = ImmutableMap.of("Basic Info", DEFAULT_INFO_GRP);
+    public static final Map<String, List<String>> DEFAULT_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", DEFAULT_LOC_GRP);
+    public static final Map<String, List<String>> DEFAULT_CIGAR_CATEGORY = ImmutableMap.of("Cigar", DEFAULT_CIGAR_GRP);
+    
+    
     private ToolTipConstants() {
 
     }

@@ -39,7 +39,6 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.util.MainMenuUtil;
-import com.affymetrix.igb.util.StatusBarOutput;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqGroupViewGUI;
@@ -64,7 +63,6 @@ import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -213,8 +211,6 @@ public final class IGB extends Application
         ConsoleLoggerGUI.getInstance();
         printDetails(args);
         logger.debug("Done setting up ConsoleView");
-        // Initialize statusbar output logger.
-        StatusBarOutput.initStatusBarOutput();
 
         loadSynonyms("/" + Constants.synonymsTxt, SynonymLookup.getDefaultLookup());
         loadSynonyms("/" + Constants.chromosomesTxt, SynonymLookup.getChromosomeLookup());

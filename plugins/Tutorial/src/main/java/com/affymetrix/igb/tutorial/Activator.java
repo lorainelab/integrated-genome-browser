@@ -37,7 +37,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 
         InputStream default_prefs_stream = null;
         try {
-            logger.debug("loading default tutorial preferences from: {0}",
+            logger.debug("loading default tutorial preferences from: {}",
                     DEFAULT_PREFS_TUTORIAL_RESOURCE);
             default_prefs_stream = Activator.class.getResourceAsStream(DEFAULT_PREFS_TUTORIAL_RESOURCE);
             Preferences.importPreferences(default_prefs_stream);

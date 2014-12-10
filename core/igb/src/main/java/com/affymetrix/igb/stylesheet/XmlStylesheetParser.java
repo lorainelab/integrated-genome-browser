@@ -539,7 +539,7 @@ public final class XmlStylesheetParser {
         Stylesheet stylesheet = null;
         XmlStylesheetParser parser = new XmlStylesheetParser();
         try {
-            logger.info("Loading stylesheet: {}", name);
+            logger.debug("Loading stylesheet: {}", name);
             stylesheet = parser.parse(istr);
         } catch (Exception ex) {
             logger.error(" Couldn't initialize stylesheet " + name, ex);

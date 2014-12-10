@@ -48,7 +48,7 @@ public class WebLinkUtils {
         }
         String filename = f.getAbsolutePath();
         try {
-            logger.info(
+            logger.debug(
                     "Loading web links from file \"{}\"", filename);
 
             importWebLinks(f);

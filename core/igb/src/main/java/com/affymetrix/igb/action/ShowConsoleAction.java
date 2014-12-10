@@ -2,9 +2,8 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.ConsoleView;
-import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.lorainelab.logging.console.ConsoleLoggerGUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -37,6 +36,6 @@ public class ShowConsoleAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        ConsoleView.showConsole(IGBConstants.APP_NAME);
+        ConsoleLoggerGUI.getInstance().showConsole();
     }
 }

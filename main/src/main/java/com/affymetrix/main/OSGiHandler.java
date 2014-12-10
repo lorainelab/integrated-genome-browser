@@ -7,8 +7,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.JFrame;
@@ -19,6 +17,9 @@ import org.osgi.framework.BundleContext;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.osgi.framework.wiring.BundleRevision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * all OSGi functionality is handled here. Singleton pattern.
@@ -26,7 +27,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 public class OSGiHandler {
 
     private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
-    private static final Logger logger = Logger.getLogger(OSGiHandler.class.getPackage().getName());
+    private static final Logger log = LoggerFactory.getLogger(OSGiHandler.class);
     private Framework framework;
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
@@ -37,6 +38,8 @@ public class OSGiHandler {
             = System.getProperty("os.name").toLowerCase().contains("mac");
     public static final boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
+
+    public static final String WINDOW_SERVICE_DEF_NAME = "windowsServiceDef";
 
     private final CommonUtils commonUtils;
 
@@ -87,33 +90,47 @@ public class OSGiHandler {
             clearCache();
             return;
         }
-        logger.log(Level.INFO, "Starting OSGi");
         setLaf();
 
-        logger.log(Level.INFO, "Loading OSGi framework");
+        log.info("Loading OSGi framework");
         String argArray = Arrays.toString(args);
         loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try {
             BundleContext bundleContext = framework.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
-                logger.log(Level.INFO, "Loading embedded OSGi bundles");
+                log.info("Loading embedded OSGi bundles");
                 loadEmbeddedBundles(bundleContext);
             }
-
+            Bundle windowServiceDefBundle = null;
             for (Bundle bundle : bundleContext.getBundles()) {
                 if (true) {
-                    logger.log(Level.INFO, "Starting Bundle: " + bundle.getSymbolicName());
+                    log.info("Starting Bundle: " + bundle.getSymbolicName());
                 }
-                bundle.start();
+                //fyi bundle fragments cannot be started
+                if (!bundleIsFragment(bundle)) {
+                    //sad window service hack
+                    if (bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
+                        windowServiceDefBundle = bundle;
+                    } else {
+                        bundle.start();
+                    }
+                }
             }
-            logger.log(Level.INFO, "OSGi is started with {0} version {1}",
+            Thread.sleep(200); //idk
+            if (windowServiceDefBundle != null) {
+                windowServiceDefBundle.start();
+            }
+            log.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
-            logger.log(Level.WARNING,
-                    "Could not create framework, plugins disabled: {0}", ex.getMessage());
+            log.warn("Could not create framework, plugins disabled: {}", ex.getMessage());
         }
+    }
+
+    private boolean bundleIsFragment(Bundle bundle) {
+        return (bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) != 0;
     }
 
     private boolean isDevelopmentMode() {
@@ -208,13 +225,13 @@ public class OSGiHandler {
             if (locationURL != null) {
                 try {
                     bundleContext.installBundle(locationURL.toString());
-                    logger.log(Level.INFO, "loading {0}", new Object[]{fileName});
+                    log.info("loading {}", new Object[]{fileName});
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);
-                    logger.log(Level.WARNING, "Could not install {0}", new Object[]{fileName});
+                    log.warn("Could not install {}", new Object[]{fileName});
                 }
             } else {
-                logger.log(Level.WARNING, "Could not find {0}", new Object[]{fileName});
+                log.warn("Could not find {}", new Object[]{fileName});
             }
         }
     }
@@ -329,11 +346,11 @@ public class OSGiHandler {
                 bundle = bundleContext.installBundle(filePath);
                 bundle.start();
             } catch (Exception x) {
-                logger.log(Level.SEVERE, "error installing bundle", x);
+                log.error("error installing bundle", x);
                 bundle = null;
             }
             if (bundle != null) {
-                logger.log(Level.INFO, "installed bundle: {0}", filePath);
+                log.info("installed bundle: {}", filePath);
             }
         }
         return bundle != null;
@@ -351,10 +368,10 @@ public class OSGiHandler {
                 if (symbolicName.equals(bundle.getSymbolicName())) {
                     try {
                         bundle.uninstall();
-                        logger.log(Level.INFO, "uninstalled bundle: {0}", symbolicName);
+                        log.info("uninstalled bundle: {}", symbolicName);
                         found = true;
                     } catch (Exception x) {
-                        logger.log(Level.SEVERE, "error uninstalling bundle", x);
+                        log.error("error uninstalling bundle", x);
                         found = false;
                     }
                 }

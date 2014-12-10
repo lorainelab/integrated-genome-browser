@@ -205,3 +205,5 @@ www/release_notes/images/Thumbs.db
 .ant-targets-build.xml
 /plugins/IGBR/target/
 extbundles/*
+/plugins/ConsoleGui/target/
+/core/LoggingConfig/target/

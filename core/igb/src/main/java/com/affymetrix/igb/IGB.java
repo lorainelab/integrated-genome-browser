@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.util.ConsoleView;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -53,6 +52,7 @@ import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
+import com.lorainelab.logging.console.ConsoleLoggerGUI;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
@@ -68,8 +68,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -84,6 +82,8 @@ import javax.swing.SwingWorker;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -92,6 +92,8 @@ import javax.swing.WindowConstants;
  */
 public final class IGB extends Application
         implements GroupSelectionListener, SeqSelectionListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(IGB.class);
 
     private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
@@ -105,7 +107,6 @@ public final class IGB extends Application
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
     private IWindowService windowService;
     private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
-    private static final Logger ourLogger = Logger.getLogger(IGB.class.getPackage().getName());
     final public static boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
     final public static boolean IS_MAC
@@ -133,7 +134,7 @@ public final class IGB extends Application
             istr = IGB.class.getResourceAsStream(file);
             lookup.loadSynonyms(IGB.class.getResourceAsStream(file), true);
         } catch (IOException ex) {
-            ourLogger.log(Level.FINE,
+            logger.info(
                     "Problem loading default synonyms file " + file, ex);
         } finally {
             GeneralUtils.safeClose(istr);
@@ -196,18 +197,22 @@ public final class IGB extends Application
     }
 
     public void init(String[] args) {
+        logger.info("Setting look and feel");
+
         setLaf();
 
         // Set up a custom trust manager so that user is prompted
         // to accept or reject untrusted (self-signed) certificates
         // when connecting to server over HTTPS
+        logger.info("installTrustManager");
         IGBTrustManager.installTrustManager();
 
         // Initialize the ConsoleView right off, so that ALL output will
         // be captured there.
-        ConsoleView.init(APP_NAME);
+        logger.info("Setting up ConsoleView");
+        ConsoleLoggerGUI.getInstance();
         printDetails(args);
-
+        logger.info("Done setting up ConsoleView");
         // Initialize statusbar output logger.
         StatusBarOutput.initStatusBarOutput();
 
@@ -324,20 +329,20 @@ public final class IGB extends Application
     }
 
     private void printDetails(String[] args) {
-        System.out.println("Starting: " + APP_NAME + " " + APP_VERSION);
-        System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+        logger.info("Starting: " + APP_NAME + " " + APP_VERSION);
+        logger.info("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
         Runtime runtime = Runtime.getRuntime();
-        System.out.println("Locale: " + Locale.getDefault());
-        System.out.println("System memory: " + runtime.maxMemory() / 1024);
+        logger.info("Locale: " + Locale.getDefault());
+        logger.info("System memory: " + runtime.maxMemory() / 1024);
         if (args != null) {
-            System.out.print("arguments: ");
+            StringBuilder builder = new StringBuilder("arguments: ");
             for (String arg : args) {
-                System.out.print(" " + arg);
+                builder.append(arg);
+                builder.append(" ");
             }
-            System.out.println();
+            logger.info(builder.toString());
         }
 
-        System.out.println();
     }
 
     private void notifyCounter() {
@@ -347,12 +352,12 @@ public final class IGB extends Application
 
             @Override
             public void logError(String error) {
-                ourLogger.log(Level.FINE, "Google Analytics Error Message: {0}", error);
+                logger.info("Google Analytics Error Message: {}", error);
             }
 
             @Override
             public void logMessage(String message) {
-                ourLogger.log(Level.FINE, "Google Analytics Response Message: {0}", message);
+                logger.info("Google Analytics Response Message: {}", message);
             }
         };
         tracker.setLoggingAdapter(loggingAdapter);
@@ -514,7 +519,7 @@ public final class IGB extends Application
             }
         }
         String message = getClass().getName() + ".getView() failed for " + viewName;
-        ourLogger.severe(message);
+        logger.error(message);
         return null;
     }
 
@@ -534,7 +539,7 @@ public final class IGB extends Application
         }
         String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
         try {
-            ourLogger.severe(message);
+            logger.error(message);
         } catch (Exception x) {
             System.err.println(message);
         }
@@ -569,9 +574,8 @@ public final class IGB extends Application
                 im.remove(ks);
                 Action existingAction = am.get(existingObject);
                 if (existingAction != null) {
-                    Logger.getLogger(IGB.class.getName()).log(
-                            Level.SEVERE, "Trying to add set keystroke for action {0}."
-                            + " But action {1} exists with same keystroke \"{2}\"."
+                    logger.error("Trying to add set keystroke for action {}."
+                            + " But action {} exists with same keystroke \"{}\"."
                             + "\nUsing keystroke with latest action.",
                             new Object[]{theAction.getId(), existingAction.getClass(), ks});
                     existingAction.putValue(Action.ACCELERATOR_KEY, null);
@@ -623,7 +627,7 @@ public final class IGB extends Application
             } else {
                 version_info = group.getID();
             }
-        }        
+        }
         if ("hg17".equals(version_info)) {
             version_info = "hg17 = NCBI35";
         } else if ("hg18".equals(version_info)) {

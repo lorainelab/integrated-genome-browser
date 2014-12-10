@@ -17,10 +17,12 @@ import javax.swing.FocusManager;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Application {
 
-    public final static boolean DEBUG_EVENTS = false;
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final int delay = 2; //delay in seconds
 
     private final LinkedList<StatusAlert> statusAlertList = new LinkedList<StatusAlert>(); // list of status alert messages.
@@ -115,7 +117,7 @@ public abstract class Application {
     public final void setStatus(final String s, final boolean echo) {
         status_bar.setStatus(s);
         if (echo && s != null && !s.isEmpty()) {
-            System.out.println(s);
+            logger.info(s);
         }
     }
 

@@ -39,6 +39,7 @@
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <bundle-info-version>1.0.0</bundle-info-version>
+        <slf4j-version>1.7.7</slf4j-version>
         <!-- End of external bundle version declarations -->
         
         <!-- Start of included core bundle version declarations -->   
@@ -50,6 +51,7 @@
         <igb-service-version>2.0.0</igb-service-version>
         <windows-service-version>2.0.0</windows-service-version>
         <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
+        <logging-config-version>1.0.0</logging-config-version>
         <!-- End of included core bundle version declarations -->      
         
         <!-- Start of included plugin version declarations -->
@@ -76,7 +78,8 @@
         <pluginsPage-version>2.0.0</pluginsPage-version>
         <windowsServiceDef-version>2.0.0</windowsServiceDef-version>
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>
-        <igbr-version>2.0.0</igbr-version>        
+        <igbr-version>2.0.0</igbr-version>
+        <console-gui-version>1.0.0</console-gui-version>        
         <main-version>2.0.0</main-version>
         <!-- End of included plugin version declarations -->
         
@@ -160,6 +163,7 @@
         <module>core/igb_service</module>
         <module>core/window_service</module>
         <module>core/sharedLibWrapper</module>
+        <module>core/LoggingConfig</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/BigBedHandler</module>
@@ -184,6 +188,7 @@
         <module>plugins/window_service_def</module>
         <module>plugins/PairedEndDataPreprocessor</module>
         <module>plugins/IGBR</module>
+        <module>plugins/ConsoleGui</module>
         <module>main</module>
     </modules>
 
@@ -226,6 +231,7 @@
                 <module>core/igb_service</module>
                 <module>core/window_service</module>
                 <module>core/sharedLibWrapper</module>
+                <module>core/LoggingConfig</module>
                 <module>plugins/ApolloLibrary</module>
                 <module>plugins/AnnotationTab</module>
                 <module>plugins/BigBedHandler</module>
@@ -472,6 +478,12 @@
                 <version>${igbr-version}</version>
                 <scope>provided</scope>
             </dependency>
+              <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>console-gui</artifactId>
+                <version>${console-gui-version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!--End of plugin module dependencies-->
             
             <!-- Start of development plugins -->
@@ -560,17 +572,22 @@
                 <scope>provided</scope>
             </dependency> 
             <!-- End of development plugins -->
-
+  
             <!--Start of logging dependencies-->
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4jVersion}</version>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.7</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4jVersion}</version>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.1.2</version>
             </dependency>
             <!--End of logging dependencies-->
 
@@ -609,7 +626,7 @@
                 <artifactId>bundle-info</artifactId>
                 <version>${bundle-info-version}</version>
                 <type>jar</type>
-            </dependency>
+            </dependency>           
             <!--End of additional provided dependencies-->
 
 
@@ -634,6 +651,11 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
                 <version>${felixMainVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>4.3.1</version>
             </dependency>
 
             <dependency>

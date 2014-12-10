@@ -99,8 +99,6 @@ import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.factories.ScoredContainerGlyphFactory;
 import com.affymetrix.igb.view.factories.SequenceGlyphFactory;
 import com.affymetrix.igb.window.service.IWindowService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -116,22 +114,24 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OSGi Activator for igb bundle
  */
 public class Activator implements BundleActivator {
 
+    private static final Logger logger = LoggerFactory.getLogger(Activator.class);
+
     private String commandLineBatchFileStr;
     String[] args;
     private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
 
-    private static final Logger logger = Logger.getLogger(Activator.class.getPackage().getName());
-
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
         args = CommonUtils.getInstance().getArgs(bundleContext);
-        if (args != null) {       
+        if (args != null) {
             if (CommonUtils.getInstance().isExit(bundleContext)) {
                 return;
             }
@@ -147,10 +147,10 @@ public class Activator implements BundleActivator {
         }
         // Verify jidesoft license.
         logger.info("Verifying Jidesoft license");
-        
+
         com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-        
+
         logger.info("Getting IWindowService from ");
         ServiceReference<IWindowService> windowServiceReference
                 = bundleContext.getServiceReference(IWindowService.class);
@@ -178,7 +178,7 @@ public class Activator implements BundleActivator {
         initOperators(bundleContext);
         initColorProvider(bundleContext);
         initFilter(bundleContext);
-    }   
+    }
 
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
@@ -197,6 +197,7 @@ public class Activator implements BundleActivator {
      * service
      */
     private void run(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference) {
+        logger.info("Running IGB");
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
@@ -223,11 +224,12 @@ public class Activator implements BundleActivator {
         addStatusAlertListener(bundleContext);
         addSearchListener(bundleContext);
         addServerInitListener(bundleContext);
-
+        logger.trace("commandlinebatchFileStr....");
         if (IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0) {
             ScriptExecutor se = new ScriptExecutor();
             se.start();
         }
+        logger.trace("settingFrame visibile");
         igb.getFrame().setVisible(true);
     }
 
@@ -246,7 +248,7 @@ public class Activator implements BundleActivator {
                 if (null == a) { // A keystroke in the preferences has no known action.
                     String message = "key stroke \"" + k
                             + "\" is not among our generic actions.";
-                    logger.config(message);
+                    logger.trace(message);
                     try { // to load the missing class.
                         ClassLoader l = this.getClass().getClassLoader();
                         Class<?> type = l.loadClass(k);
@@ -257,11 +259,11 @@ public class Activator implements BundleActivator {
                         continue;
                     } catch (ClassNotFoundException cnfe) {
                         message = "Class " + cnfe.getMessage() + " not found.";
-                        logger.config(message);
+                        logger.trace(message);
                         continue; // Skip this one.
                     } finally {
                         message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
-                        logger.config(message);
+                        logger.trace(message);
                     }
                 }
                 InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
@@ -271,15 +273,15 @@ public class Activator implements BundleActivator {
                 if (null == ks) { // nothing we can do.
                     String message = "Could not find preferred key stroke: "
                             + preferredKeyStroke;
-                    logger.config(message);
+                    logger.info(message);
                     continue; // Skip this one.
                 }
                 im.put(ks, actionIdentifier);
                 am.put(actionIdentifier, a);
             }
         } catch (BackingStoreException bse) {
-            logger.config(bse.getMessage());
-            logger.config("Some keyboard shortcuts may not be set.");
+            logger.trace(bse.getMessage());
+            logger.trace("Some keyboard shortcuts may not be set.");
         }
     }
 
@@ -408,16 +410,16 @@ public class Activator implements BundleActivator {
         ExtensionPointHandler<SeqSymmetryPreprocessorI> annotationSeqSymmetryPreprocessorExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SeqSymmetryPreprocessorI.class);
 
         annotationSeqSymmetryPreprocessorExtensionPoint.addListener(new ExtensionPointListener<SeqSymmetryPreprocessorI>() {
-                    @Override
-                    public void removeService(SeqSymmetryPreprocessorI factory) {
-                        PreprocessorTypeReference.getInstance().removePreprocessor(factory, FileTypeCategory.Annotation);
-                    }
+            @Override
+            public void removeService(SeqSymmetryPreprocessorI factory) {
+                PreprocessorTypeReference.getInstance().removePreprocessor(factory, FileTypeCategory.Annotation);
+            }
 
-                    @Override
-                    public void addService(SeqSymmetryPreprocessorI factory) {
-                        PreprocessorTypeReference.getInstance().addPreprocessor(FileTypeCategory.Annotation, factory);
-                    }
-                }
+            @Override
+            public void addService(SeqSymmetryPreprocessorI factory) {
+                PreprocessorTypeReference.getInstance().addPreprocessor(FileTypeCategory.Annotation, factory);
+            }
+        }
         );
     }
 
@@ -583,7 +585,7 @@ public class Activator implements BundleActivator {
             public void addService(AMenuItem amenuItem) {
                 JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
                 if (parent == null) {
-                    logger.log(Level.WARNING, "No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+                    logger.warn("No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
                     return;
                 }
                 if (amenuItem.getLocation() == -1) {
@@ -598,7 +600,7 @@ public class Activator implements BundleActivator {
             public void removeService(AMenuItem amenuItem) {
                 JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
                 if (parent == null) {
-                    logger.log(Level.WARNING, "No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
+                    logger.warn("No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
                     return;
                 }
                 MenuUtil.removeFromMenu(parent, amenuItem.getMenuItem());

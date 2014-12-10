@@ -183,6 +183,21 @@
                                     <artifactId>gson</artifactId>
                                     <version>${gsonVersion}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.slf4j</groupId>
+                                    <artifactId>slf4j-api</artifactId>
+                                    <version>1.7.7</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-core</artifactId>
+                                    <version>1.1.2</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-classic</artifactId>
+                                    <version>1.1.2</version>
+                                </artifactItem>                        
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
@@ -197,6 +212,7 @@
                 <extensions>true</extensions>
                 <configuration>                    
                     <instructions>
+                        <!-- Too bad embed ignore by artifactId doesn't work... big pain to not use dependency inheritance from parent pom for logging libs ect..-->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>*;resolution:=optional</Import-Package>

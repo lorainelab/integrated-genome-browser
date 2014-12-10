@@ -20,10 +20,11 @@ import fi.iki.elonen.NanoHTTPD;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BookmarkHttpRequestHandler extends NanoHTTPD {
 
@@ -33,8 +34,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_HEADER = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-    private static final Logger ourLogger
-            = Logger.getLogger(BookmarkHttpRequestHandler.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(BookmarkHttpRequestHandler.class);    
 
     public BookmarkHttpRequestHandler(IGBService igbService, int port) {
         super(port);
@@ -188,7 +188,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 
     private void parseAndGoToBookmark(final IHTTPSession session, boolean isGalaxyBookmark) throws NumberFormatException {
         String params = session.getQueryParameterString();
-        ourLogger.log(Level.FINE, "Command = {0}", params);
+        logger.trace("Command = {}", params);
         //TODO refactor all of this code... there is no need to manually parse the request
         ListMultimap<String, String> paramMap = Bookmark.parseParametersFromQuery(params);
         if (paramMap.containsKey(FOCUS_IGB_COMMAND)) {

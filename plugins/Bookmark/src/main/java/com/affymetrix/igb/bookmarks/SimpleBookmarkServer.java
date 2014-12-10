@@ -16,8 +16,9 @@ import java.net.Socket;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A very simple servlet that listens for bookmark commands as http GET
@@ -29,8 +30,7 @@ public final class SimpleBookmarkServer {
     private static final int NO_PORT = -1;
     private static final int PORTS_TO_TRY = 1;
     private static int server_port = NO_PORT;
-    private static final Logger ourLogger
-            = Logger.getLogger(SimpleBookmarkServer.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(SimpleBookmarkServer.class);
 
     static {
         try {
@@ -45,11 +45,10 @@ public final class SimpleBookmarkServer {
             if (port > 0 && port <= 65535) {
                 server_port = port;
             } else {
-                ourLogger.log(Level.SEVERE,
-                        "Invalid port number {0}, must be between 0 and 65535", Integer.toString(port));
+                logger.error("Invalid port number {}, must be between 0 and 65535", Integer.toString(port));
             }
         } catch (NumberFormatException x) {
-            ourLogger.log(Level.SEVERE, "Invalid number {0} for server_port", portString);
+            logger.error("Invalid number {} for server_port", portString);
         }
     }
 
@@ -69,8 +68,8 @@ public final class SimpleBookmarkServer {
             final int serverPort = findAvailablePort(startPort);
 
             if (serverPort == NO_PORT) {
-                ourLogger.log(Level.SEVERE,
-                        "Couldn't find an available port for IGB to listen to control requests on port {0}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
+                logger.error(
+                        "Couldn't find an available port for IGB to listen to control requests on port {}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
             } else {
 
                 Runnable r = new Runnable() {
@@ -80,7 +79,7 @@ public final class SimpleBookmarkServer {
                         try {
                             handler.start();
                         } catch (IOException ex) {
-                            ourLogger.log(Level.SEVERE, "Could not start bookmark server, turning off IGB's URL-based control features.");
+                            logger.error("Could not start bookmark server, turning off IGB's URL-based control features.");
                         }
                     }
                 };
@@ -97,7 +96,7 @@ public final class SimpleBookmarkServer {
             }
 
         } catch (Exception ex) {
-            ourLogger.log(Level.SEVERE, "I/O Problem", ex);
+            logger.error("I/O Problem", ex);
         }
     }
 
@@ -124,14 +123,14 @@ public final class SimpleBookmarkServer {
      * @return boolean
      */
     private static boolean isPortAvailable(int port) {
-        ourLogger.log(Level.INFO, "Testing port {0}", Integer.toString(port));
+        logger.debug("Testing port {}", Integer.toString(port));
         Socket s = null;
         try {
             s = new Socket("localhost", port);
-            ourLogger.log(Level.INFO, "Port {0} is not available", Integer.toString(port));
+            logger.debug("Port {} is not available", Integer.toString(port));
             return false;
         } catch (IOException e) {
-            ourLogger.log(Level.INFO, "Port {0} is available", Integer.toString(port));
+            logger.debug("Port {} is available", Integer.toString(port));
             return true;
         } finally {
             if (s != null) {

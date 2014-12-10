@@ -5,11 +5,10 @@ import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,8 +20,7 @@ public class BookMarkCommandLine {
     private ServiceRegistration registration;
     private final String url;
     private final boolean force;
-    private static final Logger ourLogger
-            = Logger.getLogger(BookMarkCommandLine.class.getPackage().getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BookMarkCommandLine.class);
 
     BookMarkCommandLine(final BundleContext bundleContext, final IGBService igbService, final String url, final boolean force) {
         this.igbService = igbService;
@@ -47,15 +45,14 @@ public class BookMarkCommandLine {
         }
     }
 
-	// If the command line contains a parameter "-href http://..." where
+    // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     private void gotoBookmark() {
         GenometryModel gmodel = GenometryModel.getGenometryModel();
 
         // If it is -home then do not force to switch unless no species is selected.
         if (!force && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeq() != null) {
-            ourLogger.log(Level.WARNING,
-                    "Previous species already loaded. Home {0} will be not loaded", url);
+            logger.warn("Previous species already loaded. Home {0} will be not loaded", url);
             return;
         }
 
@@ -68,16 +65,15 @@ public class BookMarkCommandLine {
                         try {
                             //sleep thread to allow time for osgi bundles to completely load
                             Thread.sleep(5000);
-                            ourLogger.log(Level.INFO, "Loading bookmark: {0}", url);
+                            logger.info("Loading bookmark: {0}", url);
                             BookmarkController.viewBookmark(igbService, bm);
                         } catch (InterruptedException ex) {
-                            ourLogger.log(Level.SEVERE, "Thread Interrupted", ex.getMessage());
+                            logger.error("Thread Interrupted", ex.getMessage());
                         }
                     }
                 });
             } else {
-                ourLogger.log(Level.SEVERE,
-                        "Invalid bookmark given with -href argument: \n{0}", url);
+                logger.error("Invalid bookmark given with -href argument: \n{0}", url);
             }
         } catch (MalformedURLException mue) {
             mue.printStackTrace(System.err);

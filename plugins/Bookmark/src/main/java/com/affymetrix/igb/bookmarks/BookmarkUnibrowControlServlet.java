@@ -47,6 +47,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * A way of allowing IGB to be controlled via hyperlinks. (This used to be an
@@ -67,8 +68,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class BookmarkUnibrowControlServlet {
 
-    private static final Logger ourLogger
-            = Logger.getLogger(BookmarkUnibrowControlServlet.class.getPackage().getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BookmarkUnibrowControlServlet.class);
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
     private BookmarkUnibrowControlServlet() {
@@ -293,7 +293,7 @@ public final class BookmarkUnibrowControlServlet {
                     }
                 } catch (Throwable t) {
                     //Catch all to ensure thread does not continue indefinitely
-                    ourLogger.log(Level.SEVERE, "Error while loading bookmark.", t);
+                    logger.error("Error while loading bookmark.", t);
                     return null;
                 }
 
@@ -475,7 +475,7 @@ public final class BookmarkUnibrowControlServlet {
 
         if (feature == null) {
             Logger.getLogger(GeneralUtils.class.getName()).log(
-                    Level.SEVERE, "Couldn''t find feature for bookmark url {0}", query_url);
+                    Level.SEVERE, "Couldn''t find feature for bookmark url {}", query_url);
         }
 
         return feature;
@@ -571,7 +571,7 @@ public final class BookmarkUnibrowControlServlet {
         try {
             book_group = igbService.determineAndSetGroup(version).orNull();
         } catch (Throwable ex) {
-            ourLogger.log(Level.SEVERE, "info", ex);
+            logger.error("info", ex);
         }
 
         if (book_group == null) {
@@ -624,7 +624,7 @@ public final class BookmarkUnibrowControlServlet {
                 AnnotatedSeqGroup loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
                 LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", true);
             } catch (URISyntaxException ex) {
-                ourLogger.log(Level.SEVERE, "Invalid bookmark syntax.", ex);
+                logger.error("Invalid bookmark syntax.", ex);
             }
         }
     }

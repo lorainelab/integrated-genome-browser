@@ -35,10 +35,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -49,8 +50,7 @@ import org.xml.sax.SAXException;
 public final class UrlLoaderThread extends Thread {
 
     private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-    private static final Logger ourLogger
-            = Logger.getLogger(UrlLoaderThread.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(UrlLoaderThread.class);
 
     private final URL[] urls;
     private final String[] tier_names;
@@ -86,7 +86,7 @@ public final class UrlLoaderThread extends Thread {
         BioSeq aseq = gmodel.getSelectedSeq();
         AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
         try {
-			// should really move to using gmodel's currently selected  _group_ of sequences rather than
+            // should really move to using gmodel's currently selected  _group_ of sequences rather than
             //    a single sequence...
             if (aseq == null) {
                 throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq");
@@ -113,7 +113,7 @@ public final class UrlLoaderThread extends Thread {
                     file_extension = file_extensions[i];
                 }
 
-                ourLogger.log(Level.INFO, "Attempting to load data from URL: {0}",
+                logger.info("Attempting to load data from URL: {}",
                         url.toExternalForm());
                 try {
                     try {
@@ -137,7 +137,7 @@ public final class UrlLoaderThread extends Thread {
                 handleException(e);
             }
         } finally {
-			//if (monitor != null) {monitor.closeDialogEventually();}
+            //if (monitor != null) {monitor.closeDialogEventually();}
             // update the view again, mainly in case the thread was interrupted
             updateViewer(aseq);
         }
@@ -187,7 +187,7 @@ public final class UrlLoaderThread extends Thread {
      * QuickLoad GUI needs to be followed by a file load.
      */
     public void runEventually() {
-		// Note: we do NOT want to simply call SwingUtilities.invokeLater(this)
+        // Note: we do NOT want to simply call SwingUtilities.invokeLater(this)
         // because that would cause this thread to actually run ON the Swing thread
         // (potentially freezing the GUI)
         SwingUtilities.invokeLater(new Runnable() {
@@ -199,7 +199,7 @@ public final class UrlLoaderThread extends Thread {
         });
     }
 
-	// Parses term names from a "type" string.
+    // Parses term names from a "type" string.
     // Returns default_value if parsing fails, or there is no "type" string.
     // Example:  "type=one;two;three"  -> {"one", "two", "three"}
     private static String parseTermName(URL url, String default_value) {
@@ -271,9 +271,9 @@ public final class UrlLoaderThread extends Thread {
         BioSeq aseq = gmodel.getSelectedSeq();
         AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
         if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
-            ourLogger.log(Level.INFO, "Attempting to load data from file: {0}", url.toExternalForm());
+            logger.info("Attempting to load data from file: {}", url.toExternalForm());
 
-			// Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
+            // Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
             // url.getPath() is OK for this purpose, url.getFile() is not because
             // url.getFile() = url.getPath() + url.getQuery()
             String filename = url.getPath();
@@ -282,8 +282,8 @@ public final class UrlLoaderThread extends Thread {
                 || content_type.startsWith("content/unknown")
                 || content_type.startsWith("application/zip")
                 || content_type.startsWith("application/octet-stream")) {
-            ourLogger.log(Level.INFO, "Attempting to load data from: {0}", url.toExternalForm());
-            ourLogger.log(Level.INFO, "Using file extension: {0}", file_extension);
+            logger.info("Attempting to load data from: {}", url.toExternalForm());
+            logger.info("Using file extension: {}", file_extension);
 
             String filename = url.getPath();
             if (file_extension != null && !"".equals(file_extension.trim())) {
@@ -320,7 +320,7 @@ public final class UrlLoaderThread extends Thread {
         } else if (content_type.startsWith("text/plain")
                 || content_type.startsWith("text/html")
                 || content_type.startsWith("text/xml")) {
-			// Note that some http servers will return "text/html" even when that is untrue.
+            // Note that some http servers will return "text/html" even when that is untrue.
             // we could try testing whether the filename extension is a recognized extension, like ".psl"
             // and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
             BufferedInputStream bis = null;
@@ -329,7 +329,7 @@ public final class UrlLoaderThread extends Thread {
                 DASFeatureParser das_parser = new DASFeatureParser();
                 das_parser.parse(bis, group);
             } catch (XMLStreamException ex) {
-                ourLogger.log(Level.SEVERE, "Unable to parse DAS response", ex);
+                logger.error("Unable to parse DAS response", ex);
             } finally {
                 GeneralUtils.safeClose(bis);
             }
@@ -359,7 +359,7 @@ public final class UrlLoaderThread extends Thread {
             throw new IOException("Must select a genome before loading a file");
         }
 
-        ourLogger.log(Level.INFO, "loading file: {0}", stream_name);
+        logger.info("loading file: {}", stream_name);
 
         Exception the_exception = null;
         InputStream str = null;
@@ -382,7 +382,7 @@ public final class UrlLoaderThread extends Thread {
             GeneralUtils.safeClose(str);
         }
 
-		// The purpose of calling setSelectedSeqGroup, even if identity of
+        // The purpose of calling setSelectedSeqGroup, even if identity of
         // the seq group has not changed, is to make sure that
         // the DataLoadView and the AnnotBrowserView update their displays.
         // (Because the contents of the seq group may have changed.)
@@ -410,8 +410,8 @@ public final class UrlLoaderThread extends Thread {
         String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
         FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name);
         if (fileTypeHandler == null) {
-            ourLogger.log(Level.WARNING,
-                    "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {0}", stream_name);
+            logger.warn(
+                    "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {}", stream_name);
         } else {
             fileTypeHandler.getParser().parse(str, group, annot_type, stream_name, true);
         }

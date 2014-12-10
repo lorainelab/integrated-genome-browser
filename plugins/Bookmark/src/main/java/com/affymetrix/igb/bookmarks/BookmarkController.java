@@ -34,7 +34,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.awt.Color;
@@ -52,6 +51,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Allows creation of bookmarks based on a SeqSymmetry, and viewing of a
@@ -60,7 +61,8 @@ import org.apache.commons.lang3.StringUtils;
  * @version $Id: BookmarkController.java 7007 2010-10-11 14:26:55Z hiralv $
  */
 public abstract class BookmarkController {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(BookmarkController.class);
     public static final String DEFAULT_BOOKMARK_NAME_FORMAT = "{0}, {1} : {2} - {3}";
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -71,6 +73,7 @@ public abstract class BookmarkController {
      * is an external bookmark, it will be opened in an external browser.
      */
     public static void viewBookmark(IGBService igbService, Bookmark bm) {
+        logger.debug("Loading bookmark");
         if (bm.isValidBookmarkFormat()) {
             try {
                 ListMultimap<String, String> props = Bookmark.parseParameters(bm.getURL());

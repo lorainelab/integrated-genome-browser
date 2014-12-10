@@ -29,10 +29,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JSeparator;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
@@ -42,8 +43,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
     private final BookmarkList main_bookmark_list;
     private IGBService igbService;
     private static BookmarkActionManager instance;
-    private static final Logger ourLogger
-            = Logger.getLogger("com.affymetrix.igb.bookmarks");
+    private static final Logger logger = LoggerFactory.getLogger(BookmarkActionManager.class);
 
     public static void init(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
         if (instance == null) {
@@ -84,13 +84,13 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 
         String filename = f.getAbsolutePath();
         try {
-            ourLogger.log(Level.INFO, "Loading bookmarks from file {0}", filename);
+            logger.info("Loading bookmarks from file {0}", filename);
             BookmarksParser.parse(main_bookmark_list, f);
             saveBookmarks(new File(filename + "~"));
         } catch (FileNotFoundException fnfe) {
-            ourLogger.log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
+            logger.error("Could not auto-save bookmarks to {0}", filename);
         } catch (IOException ioe) {
-            ourLogger.log(Level.SEVERE, "Error while saving bookmarks to {0}", filename);
+            logger.error("Error while saving bookmarks to {0}", filename);
         }
     }
 
@@ -106,15 +106,15 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         try {
             saveBookmarks(f);
         } catch (FileNotFoundException fnfe) {
-            ourLogger.log(Level.SEVERE, "Could not auto-save bookmarks to {0}", filename);
+            logger.error("Could not auto-save bookmarks to {0}", filename);
         } catch (IOException ioe) {
-            ourLogger.log(Level.SEVERE, "Error while saving bookmarks to {0}", filename);
+            logger.error("Error while saving bookmarks to {0}", filename);
         }
     }
 
     private void saveBookmarks(File f) throws FileNotFoundException, IOException {
         if (f == null) {
-            ourLogger.log(Level.SEVERE, "File variable null");
+            logger.error("File variable null");
             return;
         }
 
@@ -124,7 +124,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             if (parent_dir != null) {
                 parent_dir.mkdirs();
             }
-            ourLogger.log(Level.INFO, "Saving bookmarks to file {0}", filename);
+            logger.info("Saving bookmarks to file {0}", filename);
             BookmarkList.exportAsHTML(main_bookmark_list, f);
         }
     }
@@ -139,9 +139,9 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             } catch (Exception e) {
                 ErrorHandler.errorPanel("Problem viewing bookmark", e, Level.WARNING);
             }
-        } else if (DEBUG) {
-            System.out.println("Got an action event from an unknown source: " + src);
-            System.out.println("command: " + evt.getActionCommand());
+        } else if (logger.isDebugEnabled()) {
+            logger.debug("Got an action event from an unknown source: " + src);
+            logger.debug("command: " + evt.getActionCommand());
         }
     }
 
@@ -150,7 +150,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         while (iter.hasNext()) {
             Component comp = iter.next();
             if (comp == main_bm_menu) {
-				// component_hash contains a mapping of main_bookmark_list to main_bm_menu.
+                // component_hash contains a mapping of main_bookmark_list to main_bm_menu.
                 // That is the only JRPMenu we do not want to remove from its parent.
                 continue;
             }

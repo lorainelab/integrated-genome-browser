@@ -18,16 +18,16 @@ import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
-    private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(Activator.class);
     private static final String WILDCARD = "*";
 
     public Activator() {
@@ -65,12 +65,12 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
             url = null;
         }
         if (StringUtils.isNotBlank(url)) {
-            ourLogger.log(Level.INFO, "Loading bookmark {0}", url);
+            logger.info("Loading bookmark {0}", url);
             new BookMarkCommandLine(bundleContext, igbService, url, true);
         } else {
             url = CommonUtils.getInstance().getArg("-home", args);
             if (StringUtils.isNotBlank(url)) {
-                ourLogger.log(Level.INFO, "Loading home {0}", url);
+                logger.info("Loading home {0}", url);
                 new BookMarkCommandLine(bundleContext, igbService, url, false);
             }
         }

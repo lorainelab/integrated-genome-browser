@@ -25,13 +25,15 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for reading and parsing a file of Bookmarks. Accepts several formats.
  */
 public final class BookmarksParser {
 
-    private static final boolean DEBUG = false;
+    private static final Logger logger = LoggerFactory.getLogger(BookmarksParser.class);
     public static final int SIMPLE_HTML_FORMAT = 0;
     public static final int NETSCAPE_FORMAT = 1;
     public static final int BED_FORMAT = 2;
@@ -39,8 +41,8 @@ public final class BookmarksParser {
     public static void parse(BookmarkList bookmarks, File f)
             throws FileNotFoundException, IOException {
         int format = getFormat(f);
-        if (DEBUG) {
-            System.out.println("Format of '" + f.getAbsolutePath() + "' is " + format);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Format of '" + f.getAbsolutePath() + "' is " + format);
         }
         if (format == BED_FORMAT) {
             GenometryModel gmodel = GenometryModel.getGenometryModel();
@@ -152,8 +154,8 @@ public final class BookmarksParser {
             try {
                 bm = new Bookmark(name, comment, url);
             } catch (MalformedURLException mfe) {
-                if (DEBUG) {
-                    System.out.println("Couldn't make bookmark for '" + url + "'");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Couldn't make bookmark for '" + url + "'");
                 }
             }
         }
@@ -166,8 +168,8 @@ public final class BookmarksParser {
     }
 
     public static void parseNetscapeBookmarks(BookmarkList bookmarks, BufferedReader br) throws IOException {
-        if (DEBUG) {
-            System.out.println("loading bookmarks in Netscape format from a BufferedReader");
+        if (logger.isDebugEnabled()) {
+            logger.debug("loading bookmarks in Netscape format from a BufferedReader");
         }
 
         BookmarkList current_list = bookmarks;
@@ -177,40 +179,39 @@ public final class BookmarksParser {
             line = line.trim();
             String str = line.trim().toUpperCase();
             if (str.startsWith("<DT><H3")) { // Start and name a new list
-                //if (DEBUG) System.out.println("FOLDER:   "+line);
                 BookmarkList new_list = new BookmarkList(parseNetscapeBookmarkListName(line), parseNetscapeBookmarkListComment(line));
                 current_list.addSublist(new_list);
-                if (DEBUG) {
-                    System.out.println("Made new list: " + new_list.getName() + ", with parent: " + current_list.getName());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Made new list: " + new_list.getName() + ", with parent: " + current_list.getName());
                 }
                 parents.push(current_list);
                 current_list = new_list;
             } else if (str.startsWith("<DL><P>")) { // Second part of starting a new list
-                if (DEBUG) {
-                    System.out.println("IGNORE:   " + line);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("IGNORE:   " + line);
                 }
             } else if (str.startsWith("</DL>")) { // Finish that list
-                if (DEBUG) {
-                    System.out.println("END LIST: " + line);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("END LIST: " + line);
                 }
                 if (current_list != null && !parents.isEmpty()) {
                     current_list = parents.pop();
                     if (current_list == null) {
-                        if (DEBUG) {
-                            System.out.println("parent list is null");
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("parent list is null");
                         }
                     } else {
-                        if (DEBUG) {
-                            System.out.println("went back to parent list: " + current_list.getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("went back to parent list: " + current_list.getName());
                         }
                     }
-                } else if (DEBUG) {
-                    System.out.println("Still in null list");
+                } else if (logger.isDebugEnabled()) {
+                    logger.debug("Still in null list");
                 }
             } else if (str.startsWith("<DT>")) { // Add a bookmark to current list
                 Bookmark b = parseNetscapeFormatBookmark(line);
-                if (DEBUG) {
-                    System.out.println("BOOKMARK: " + b);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("BOOKMARK: " + b);
                 }
                 if (b != null) {
                     current_list.addBookmark(b);
@@ -218,8 +219,8 @@ public final class BookmarksParser {
             } else if (str.startsWith("<HR>")) { // Add divider to current list
                 current_list.addSeparator();
             } else {
-                if (DEBUG) {
-                    System.out.println("????:     " + line);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("????:     " + line);
                 }
             }
         }
@@ -230,8 +231,8 @@ public final class BookmarksParser {
      * format) and adds them to the given BookmarkList.
      */
     public static void parseNetscapeBookmarks(BookmarkList bookmarks, File f) throws FileNotFoundException, IOException {
-        if (DEBUG) {
-            System.out.println("loading bookmarks in Netscape format from '" + f.getAbsolutePath() + "'");
+        if (logger.isDebugEnabled()) {
+            logger.debug("loading bookmarks in Netscape format from '" + f.getAbsolutePath() + "'");
         }
         FileInputStream fis = new FileInputStream(f);
         InputStreamReader isr = new InputStreamReader(fis);
@@ -250,8 +251,8 @@ public final class BookmarksParser {
      * them to the given BookmarkList.
      */
     public static void parseBEDFormat(BookmarkList bookmarks, File f, GenometryModel gmodel) throws IOException {
-        if (DEBUG) {
-            System.out.println("loading bookmarks in BED format from '" + f.getAbsolutePath() + "'");
+        if (logger.isDebugEnabled()) {
+            logger.debug("loading bookmarks in BED format from '" + f.getAbsolutePath() + "'");
         }
         FileInputStream fis = new FileInputStream(f);
         BufferedInputStream bis = new BufferedInputStream(fis);
@@ -288,12 +289,12 @@ public final class BookmarksParser {
                     sub_list = bookmarks.getSubListByPath(path, "/", true);
                 }
                 try {
-                    if (DEBUG) {
-                        System.out.println("Bookmark: " + annotname);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Bookmark: " + annotname);
                     }
                     Bookmark bm = BookmarkController.makeBookmark(annot, annotname);
-                    if (DEBUG) {
-                        System.out.println("Adding bookmark " + bm + " to list " + sub_list.getName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Adding bookmark " + bm + " to list " + sub_list.getName());
                     }
                     sub_list.addBookmark(bm);
                 } catch (MalformedURLException mfe) {
@@ -346,14 +347,14 @@ public final class BookmarksParser {
                         commentString = formatComment(line.substring(ind_c + 1, ind_d));
                     }
 
-                    if (DEBUG) {
-                        System.out.println("bookmark query_string = " + query_string);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("bookmark query_string = " + query_string);
                     }
                     int cstart = line.indexOf('>', qend) + 1;
                     int cend = line.indexOf("</A>", cstart);
                     String label_string = line.substring(cstart, cend);
-                    if (DEBUG) {
-                        System.out.println("bookmark label_string = " + label_string);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("bookmark label_string = " + label_string);
                     }
                     try { // if a MalformedURLExcption occurs, the bookmark won't be loaded
                         Bookmark bm = new Bookmark(label_string, commentString, query_string);

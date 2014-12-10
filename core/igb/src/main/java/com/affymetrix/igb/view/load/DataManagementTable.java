@@ -101,8 +101,7 @@ public final class DataManagementTable {
             if (vFeature.getStyle() != null) {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
-            } else {
-                Logger.getLogger(DataManagementTable.class.getName()).log(Level.WARNING, "Found a feature with null style", vFeature.getFeature().featureName);
+            } else {               
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
             }

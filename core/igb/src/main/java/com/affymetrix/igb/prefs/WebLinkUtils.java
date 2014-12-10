@@ -49,12 +49,12 @@ public class WebLinkUtils {
         String filename = f.getAbsolutePath();
         try {
             logger.info(
-                    "Loading web links from file \"{0}\"", filename);
+                    "Loading web links from file \"{}\"", filename);
 
             importWebLinks(f);
         } catch (Exception ioe) {
             logger.error(
-                    "Could not load web links from file \"{0}\"", filename);
+                    "Could not load web links from file \"{}\"", filename);
         }
     }
 
@@ -69,7 +69,7 @@ public class WebLinkUtils {
         String filename = f.getAbsolutePath();
         try {
             logger.info(
-                    "Saving web links to file \"{0}\"", filename);
+                    "Saving web links to file \"{}\"", filename);
             File parent_dir = f.getParentFile();
             if (parent_dir != null) {
                 parent_dir.mkdirs();
@@ -78,7 +78,7 @@ public class WebLinkUtils {
             return true;
         } catch (IOException ioe) {
             logger.error(
-                    "Error while saving web links to \"{0}\"", filename);
+                    "Error while saving web links to \"{}\"", filename);
         }
         return false;
     }

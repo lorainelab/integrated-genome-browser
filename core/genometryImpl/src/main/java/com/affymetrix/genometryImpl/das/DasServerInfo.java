@@ -185,9 +185,9 @@ public final class DasServerInfo {
         } catch (MalformedURLException ex) {
             logger.warn("MalformedURLException in DasServerInfo.parseDSNElement() {0}", ex.getMessage());
         }
-        
-            logger.debug("sourceid = " + sourceid + ", mapmaster = " + master_url);
-     
+
+        logger.debug("sourceid = " + sourceid + ", mapmaster = " + master_url);
+
     }
 
     public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws MalformedURLException, IOException {

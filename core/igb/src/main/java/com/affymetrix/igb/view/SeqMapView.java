@@ -2411,15 +2411,15 @@ public class SeqMapView extends JPanel
 //			seqmap.getNeoCanvas().setToolTipText(toolTip);
             if (evt != null) {
                 Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
-                seqMapToolTips.setToolTip(point, properties);
+                seqMapToolTips.setToolTip(point, properties, sym);
             } else {
-                seqMapToolTips.setToolTip(null, properties);
+                seqMapToolTips.setToolTip(null, properties, sym);
             }
         }
     }
 
     public void disableToolTip() {
-        seqMapToolTips.setToolTip(null, new HashMap<String, Object>());
+        seqMapToolTips.setToolTip(null, new HashMap<String, Object>(), null);
     }
 
     public void showProperties(int x, GraphGlyph glyph) {

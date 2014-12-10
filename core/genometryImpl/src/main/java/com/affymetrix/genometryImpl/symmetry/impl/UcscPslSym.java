@@ -431,12 +431,12 @@ public class UcscPslSym
         tprops.put("id", getQuerySeq().getID());
         tprops.put("type", "Pairwise Alignment");
         tprops.put("same orientation", getSameOrientation());
-        tprops.put("# matches", Integer.valueOf(getMatches()));
+        tprops.put("matches", Integer.valueOf(getMatches()));
         tprops.put("query length", Integer.valueOf(queryseq.getLength()));
-        tprops.put("# query inserts", Integer.valueOf(getQueryNumInserts()));
-        tprops.put("# query bases inserted", Integer.valueOf(getQueryBaseInserts()));
-        tprops.put("# target inserts", Integer.valueOf(getTargetNumInserts()));
-        tprops.put("# target bases inserted", Integer.valueOf(getTargetBaseInserts()));
+        tprops.put("query inserts", Integer.valueOf(getQueryNumInserts()));
+        tprops.put("query bases inserted", Integer.valueOf(getQueryBaseInserts()));
+        tprops.put("target inserts", Integer.valueOf(getTargetNumInserts()));
+        tprops.put("target bases inserted", Integer.valueOf(getTargetBaseInserts()));
 		//tprops.put("query seq", getQuerySeq().getID());
         //tprops.put("target seq", getTargetSeq().getID());
         if (props != null) {
@@ -459,17 +459,17 @@ public class UcscPslSym
             return "Pairwise Alignment";
         } else if (key.equals("same orientation")) {
             return getSameOrientation() ? "true" : "false";
-        } else if (key.equals("# matches")) {
+        } else if (key.equals("matches")) {
             return Integer.toString(getMatches());
         } else if (key.equals("query length")) {
             return Integer.toString(queryseq.getLength());
-        } else if (key.equals("# query inserts")) {
+        } else if (key.equals("query inserts")) {
             return Integer.toString(getQueryNumInserts());
-        } else if (key.equals("# query bases inserted")) {
+        } else if (key.equals("query bases inserted")) {
             return Integer.toString(getQueryBaseInserts());
-        } else if (key.equals("# target inserts")) {
+        } else if (key.equals("target inserts")) {
             return Integer.toString(getTargetNumInserts());
-        } else if (key.equals("# target bases inserted")) {
+        } else if (key.equals("target bases inserted")) {
             return Integer.toString(getTargetBaseInserts());
         } else if (key.equals("residues") && target_res_arr != null) {
             return getResidue(target_res_arr);

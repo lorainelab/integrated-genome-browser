@@ -36,7 +36,7 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 
     public Map<String, Object> cloneProperties() {
         Map<String, Object> tprops = super.cloneProperties();
-        tprops.put("gene name", geneName);
+        tprops.put("title", geneName);
         tprops.put("description", description);
         return tprops;
     }

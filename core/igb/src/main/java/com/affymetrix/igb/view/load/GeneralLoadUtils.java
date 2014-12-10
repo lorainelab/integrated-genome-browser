@@ -84,9 +84,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -94,7 +95,7 @@ import java.util.zip.ZipInputStream;
  */
 public final class GeneralLoadUtils {
 
-    private static final boolean DEBUG = false;
+    private static final Logger logger = LoggerFactory.getLogger(GeneralLoadUtils.class);
     private static final int MAX_INTERNAL_THREAD = Runtime.getRuntime().availableProcessors() + 1;
     private static final Pattern tab_regex = Pattern.compile("\t");
     /**
@@ -143,7 +144,7 @@ public final class GeneralLoadUtils {
         try {
             SpeciesLookup.load(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
         } catch (IOException ex) {
-            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error("Error retrieving Species synonym file", ex);
         } finally {
             GeneralUtils.safeClose(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
         }
@@ -283,7 +284,7 @@ public final class GeneralLoadUtils {
                         // Change serverObj for Quickload to apply mirror site
                         // Currently only Quickload has mirror
                         if (gServer.serverType == ServerTypeI.QuickLoad) {
-                            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Using mirror site: {0}", gServer.mirrorURL);
+                            logger.info("Using mirror site: {0}", gServer.mirrorURL);
                             gServer.serverObj = gServer.mirrorURL;
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
                             discoverServer(gServer);
@@ -308,7 +309,7 @@ public final class GeneralLoadUtils {
         } catch (IllegalStateException ex) {
             ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
             return false;
         }
         return true;
@@ -456,13 +457,11 @@ public final class GeneralLoadUtils {
         boolean autoload = PreferenceUtils.getBooleanParam(
                 PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
         if (!gVersion.getFeatures().isEmpty()) {
-            if (DEBUG) {
-                System.out.println("Feature names are already loaded.");
-            }
+            logger.debug("Feature names are already loaded.");
             return;
         }
         if (gVersion.gServer.serverType == null) {
-            System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
+            logger.warn("WARNING: Unknown server class " + gVersion.gServer.serverType);
         } else {
             gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
         }
@@ -529,7 +528,7 @@ public final class GeneralLoadUtils {
         } catch (IllegalStateException ex) {
             // due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
             // we can safely return in this case.
-            Logger.getLogger(GeneralLoadUtils.class.getName()).fine("Ignoring multithreading illegal state exception.");
+            logger.trace("Ignoring multithreading illegal state exception.");
             return;
         }
 
@@ -747,11 +746,11 @@ public final class GeneralLoadUtils {
                             }
                             return singleThreadedLoad(chrList);
                         } catch (Throwable ex) {
-                            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE,
+                            logger.error(
                                     "Error while loading feature", ex);
                             return null;
                         } finally {
-                            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO, "Loaded {0} in {1} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
+                            logger.info("Loaded {0} in {1} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
                         }
                     }
 
@@ -812,7 +811,7 @@ public final class GeneralLoadUtils {
                         try {
                             internalExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.WARNING, "Internal executor exception", ex);
+                            logger.warn("Internal executor exception", ex);
                         }
 
                         return null;
@@ -866,7 +865,7 @@ public final class GeneralLoadUtils {
                                 loadFeaturesForSym(feature, optimized_sym);
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error("Error in loadOnSequence", ex);
                             if (ex instanceof FileNotFoundException) {
                                 ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                             }
@@ -879,8 +878,7 @@ public final class GeneralLoadUtils {
 
     private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-                    Level.INFO, "All of new query covered by previous queries for feature {0}", feature.featureName);
+            logger.info("All of new query covered by previous queries for feature {0}", feature.featureName);
             return;
         }
 
@@ -1083,7 +1081,7 @@ public final class GeneralLoadUtils {
          * This test does not work properly, so it's being commented out for
          * now.
          *
-         * if (aseq.isComplete()) { if (DEBUG) { System.out.println("already
+         * if (aseq.isComplete()) {  if (logger.isDebugEnabled()) { System.out.println("already
          * have residues for " + seq_name); } return false; }
          */
         // Determine list of servers that might have this chromosome sequence.
@@ -1096,7 +1094,7 @@ public final class GeneralLoadUtils {
         }
 
         if (aseq.isAvailable(min, max)) {
-            Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.INFO,
+            logger.info(
                     "All residues in range are already loaded on sequence {0}", new Object[]{aseq});
             return true;
         }
@@ -1145,13 +1143,11 @@ public final class GeneralLoadUtils {
             try {
                 istr = LocalUrlCacher.getInputStream(primaryServer.getFriendlyURL() + SERVER_MAPPING);
             } catch (Exception e) {
-                Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-                        Level.SEVERE, "Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
+                logger.error("Couldn''t open ''{0}" + SERVER_MAPPING + "\n:  {1}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
                 istr = null; // dealt with below
             }
             if (istr == null) {
-                Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-                        Level.INFO, "Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
+                logger.info("Could not load server mapping contents from\n{0}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
                 return;
             }
             ireader = new InputStreamReader(istr);
@@ -1194,7 +1190,7 @@ public final class GeneralLoadUtils {
                 try {
                     return new URL(primary.getValue());
                 } catch (MalformedURLException ex) {
-                    Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(null, ex);
                     return null;
                 }
             }
@@ -1327,7 +1323,7 @@ public final class GeneralLoadUtils {
                         result = false;
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(null, ex);
                 }
                 if (result) {
                     GeneralLoadView.addFeatureTier(gFeature);
@@ -1470,8 +1466,7 @@ public final class GeneralLoadUtils {
 
             //TODO: What if there are more than one seq group ?
             if (groups.size() > 1) {
-                Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-                        Level.WARNING, "File {0} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
+                logger.warn("File {0} has more than one group. Looking for the closest match to existing", new Object[]{uri.toString()});
                 //First look for the selected group in the groups
                 for (AnnotatedSeqGroup gr : groups) {
                     if (gr == group) {
@@ -1501,7 +1496,7 @@ public final class GeneralLoadUtils {
             //Return the first one
             return groups.get(0);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -1525,7 +1520,7 @@ public final class GeneralLoadUtils {
                 return gr;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Exception in handleUseq method", ex);
         } finally {
             GeneralUtils.safeClose(istr);
             GeneralUtils.safeClose(zis);
@@ -1543,7 +1538,7 @@ public final class GeneralLoadUtils {
                 return gr;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -1587,7 +1582,7 @@ public final class GeneralLoadUtils {
                     SeqGroupView.getInstance().refreshTable();
                     GeneralLoadView.getLoadView().refreshDataManagementView();
                 } catch (Exception ex) {
-                    Logger.getLogger(QuickLoadSymLoader.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error("Exception occurred while loading symmetries", ex);
                 }
             }
         };

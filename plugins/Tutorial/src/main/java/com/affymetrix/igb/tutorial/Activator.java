@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 import javax.swing.JMenuItem;
@@ -24,11 +22,12 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
 import com.affymetrix.igb.osgi.service.XServiceRegistrar;
 import com.affymetrix.igb.window.service.IWindowService;
+import org.slf4j.LoggerFactory;
 
 public class Activator extends SimpleServiceRegistrar implements BundleActivator {
 
     private static final String DEFAULT_PREFS_TUTORIAL_RESOURCE = "/tutorial_default_prefs.xml";
-    private static final Logger ourLogger = Logger.getLogger(Activator.class.getPackage().getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Activator.class);
 
     /**
      * Load default prefs from jar (with Preferences API). This will be the
@@ -38,16 +37,15 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 
         InputStream default_prefs_stream = null;
         try {
-            ourLogger.log(Level.INFO, "loading default tutorial preferences from: {0}",
+            logger.debug("loading default tutorial preferences from: {0}",
                     DEFAULT_PREFS_TUTORIAL_RESOURCE);
             default_prefs_stream = Activator.class.getResourceAsStream(DEFAULT_PREFS_TUTORIAL_RESOURCE);
             Preferences.importPreferences(default_prefs_stream);
             //prefs_parser.parse(default_prefs_stream, "", prefs_hash);
         } catch (InvalidPreferencesFormatException ex) {
-            ourLogger.log(Level.SEVERE, DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
+            logger.error( DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
         } catch (IOException ex) {
-            ourLogger.log(Level.SEVERE, DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
-            ourLogger.log(Level.INFO, "          continuing...");
+            logger.error( DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
         } finally {
             GeneralUtils.safeClose(default_prefs_stream);
         }
@@ -93,11 +91,11 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
             return new ServiceRegistration[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(tutorialMenu, "help"), null)};
 
         } catch (FileNotFoundException fnfe) {
-            ourLogger.log(Level.WARNING, "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
+            logger.error( "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
         } catch (java.net.ConnectException ce) {
-            ourLogger.log(Level.WARNING, "Could not connect: {0}.\n          coninuing...", ce.getMessage());
+            logger.error( "Could not connect: {0}.\n          coninuing...", ce.getMessage());
         } catch (Exception ex) {
-            ourLogger.log(Level.WARNING, "Could not connect: {0}.\n          coninuing...", ex.getMessage());
+            logger.error( "Could not connect: {0}.\n          coninuing...", ex.getMessage());
         }
 
         return null;

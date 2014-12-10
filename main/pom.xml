@@ -481,6 +481,11 @@
             <artifactId>logback-classic</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>logging-config</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -576,6 +581,7 @@
                                         <include name="bundle-info-*.jar"/>
                                         <include name="gson-*.jar"/>
                                         <include name="slf4j-api-*.jar"/>
+                                        <include name="logback-*.jar"/> 
                                     </zipgroupfileset>
                                     <fileset dir="${basedir}/target/lib">
                                         <include name="*.jar"/>

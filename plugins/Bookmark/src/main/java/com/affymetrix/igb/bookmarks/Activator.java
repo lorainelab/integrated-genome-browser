@@ -65,12 +65,12 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
             url = null;
         }
         if (StringUtils.isNotBlank(url)) {
-            logger.info("Loading bookmark {0}", url);
+            logger.info("Loading bookmark {}", url);
             new BookMarkCommandLine(bundleContext, igbService, url, true);
         } else {
             url = CommonUtils.getInstance().getArg("-home", args);
             if (StringUtils.isNotBlank(url)) {
-                logger.info("Loading home {0}", url);
+                logger.info("Loading home {}", url);
                 new BookMarkCommandLine(bundleContext, igbService, url, false);
             }
         }

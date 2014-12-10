@@ -84,13 +84,13 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 
         String filename = f.getAbsolutePath();
         try {
-            logger.info("Loading bookmarks from file {0}", filename);
+            logger.info("Loading bookmarks from file {}", filename);
             BookmarksParser.parse(main_bookmark_list, f);
             saveBookmarks(new File(filename + "~"));
         } catch (FileNotFoundException fnfe) {
-            logger.error("Could not auto-save bookmarks to {0}", filename);
+            logger.error("Could not auto-save bookmarks to {}", filename);
         } catch (IOException ioe) {
-            logger.error("Error while saving bookmarks to {0}", filename);
+            logger.error("Error while saving bookmarks to {}", filename);
         }
     }
 
@@ -106,9 +106,9 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         try {
             saveBookmarks(f);
         } catch (FileNotFoundException fnfe) {
-            logger.error("Could not auto-save bookmarks to {0}", filename);
+            logger.error("Could not auto-save bookmarks to {}", filename);
         } catch (IOException ioe) {
-            logger.error("Error while saving bookmarks to {0}", filename);
+            logger.error("Error while saving bookmarks to {}", filename);
         }
     }
 
@@ -124,7 +124,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             if (parent_dir != null) {
                 parent_dir.mkdirs();
             }
-            logger.info("Saving bookmarks to file {0}", filename);
+            logger.info("Saving bookmarks to file {}", filename);
             BookmarkList.exportAsHTML(main_bookmark_list, f);
         }
     }

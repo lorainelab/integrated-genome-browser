@@ -57,7 +57,7 @@ public final class XmlStylesheetParser {
         if (system_stylesheet == null) {
             InputStream istr = null;
             try {
-                logger.info(
+                logger.debug(
                         "Loading system stylesheet from resource:" + system_stylesheet_resource_name);
                 XmlStylesheetParser parser = new XmlStylesheetParser();
                 // If using class.getResource... use name beginning with "/"
@@ -110,7 +110,7 @@ public final class XmlStylesheetParser {
 
                 if (f.exists()) {
                     istr = new FileInputStream(f);
-                    logger.info(
+                    logger.debug(
                             "Loading user stylesheet from resource: " + user_stylesheet_resource_name);
                     user_stylesheet = parser.parse(istr);
                 }

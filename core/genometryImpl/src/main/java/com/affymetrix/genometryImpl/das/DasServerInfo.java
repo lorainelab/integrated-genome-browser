@@ -94,7 +94,7 @@ public final class DasServerInfo {
             Map<String, List<String>> headers = new HashMap<String, List<String>>();
             stream = getInputStream(headers, "Das Request");
             if (stream == null) {
-                logger.error("Could not find URL {0}", serverURL);
+                logger.error("Could not find URL {}", serverURL);
                 return false;
             }
 
@@ -123,7 +123,7 @@ public final class DasServerInfo {
 
             NodeList dsns = doc.getElementsByTagName("DSN");
             int dsnLength = dsns.getLength();
-            logger.debug("dsn count: {0}", dsnLength);
+            logger.debug("dsn count: {}", dsnLength);
             for (int i = 0; i < dsnLength; i++) {
                 Element dsn = (Element) dsns.item(i);
                 try {
@@ -170,8 +170,7 @@ public final class DasServerInfo {
         try {
             URL masterURL = new URL(master_url);
             if (DasSource.getID(masterURL).isEmpty()) {
-                Logger.getLogger(this.getClass().getName()).log(
-                        Level.WARNING, "Skipping {0} as MAPMASTER could not be parsed", sourceid);
+                logger.warn("Skipping {} as MAPMASTER could not be parsed", sourceid);
                 return;
             }
             DasSource das_source = sources.get(DasSource.getID(masterURL));
@@ -183,7 +182,7 @@ public final class DasServerInfo {
                 das_source.add(sourceid);
             }
         } catch (MalformedURLException ex) {
-            logger.warn("MalformedURLException in DasServerInfo.parseDSNElement() {0}", ex.getMessage());
+            logger.warn("MalformedURLException in DasServerInfo.parseDSNElement() {}", ex);
         }
 
         logger.debug("sourceid = " + sourceid + ", mapmaster = " + master_url);
@@ -200,16 +199,14 @@ public final class DasServerInfo {
          */
         if (istr == null && isLoadingFromPrimary()) {
 
-            Logger.getLogger(DasServerInfo.class.getName()).log(
-                    Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.serverName);
             primaryServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getLoadURL();
             istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
         }
 
-        Logger.getLogger(DasServerInfo.class.getName()).log(
-                Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
+        logger.debug( "{} : {}", new Object[]{log_string, load_url});
         return istr;
     }
 

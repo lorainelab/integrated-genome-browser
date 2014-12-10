@@ -44,14 +44,9 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
             System.setErr(new PrintStream(new JTextAreaOutputStream(consoleTextArea, System.err), false, "UTF-8"));
             final ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
             final LoggerContext loggerContext = rootLogger.getLoggerContext();
-            final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
-            encoder.setContext(loggerContext);
-            encoder.setPattern("%-5level [%thread]: %message%n");
-            encoder.start();
             OutputStreamAppender<ILoggingEvent> outputStreamAppender = new OutputStreamAppender<ILoggingEvent>();
             outputStreamAppender.setName("OutputStream Appender");
             outputStreamAppender.setContext(loggerContext);
-            outputStreamAppender.setEncoder(encoder);
             outputStreamAppender.setOutputStream(tout);
             outputStreamAppender.start();
             rootLogger.addAppender(outputStreamAppender);

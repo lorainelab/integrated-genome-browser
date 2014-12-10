@@ -197,22 +197,22 @@ public final class IGB extends Application
     }
 
     public void init(String[] args) {
-        logger.info("Setting look and feel");
+        logger.debug("Setting look and feel");
 
         setLaf();
 
         // Set up a custom trust manager so that user is prompted
         // to accept or reject untrusted (self-signed) certificates
         // when connecting to server over HTTPS
-        logger.info("installTrustManager");
+        logger.debug("installTrustManager");
         IGBTrustManager.installTrustManager();
 
         // Initialize the ConsoleView right off, so that ALL output will
         // be captured there.
-        logger.info("Setting up ConsoleView");
+        logger.debug("Setting up ConsoleView");
         ConsoleLoggerGUI.getInstance();
         printDetails(args);
-        logger.info("Done setting up ConsoleView");
+        logger.debug("Done setting up ConsoleView");
         // Initialize statusbar output logger.
         StatusBarOutput.initStatusBarOutput();
 
@@ -332,17 +332,19 @@ public final class IGB extends Application
         logger.info("Starting: " + APP_NAME + " " + APP_VERSION);
         logger.info("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
         Runtime runtime = Runtime.getRuntime();
-        logger.info("Locale: " + Locale.getDefault());
-        logger.info("System memory: " + runtime.maxMemory() / 1024);
-        if (args != null) {
-            StringBuilder builder = new StringBuilder("arguments: ");
-            for (String arg : args) {
-                builder.append(arg);
-                builder.append(" ");
-            }
-            logger.info(builder.toString());
-        }
+        logger.info("System memory: " + humanReadableByteCount(runtime.maxMemory(), true));
 
+    }
+
+    //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
+    private static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     private void notifyCounter() {
@@ -352,12 +354,12 @@ public final class IGB extends Application
 
             @Override
             public void logError(String error) {
-                logger.info("Google Analytics Error Message: {}", error);
+                logger.debug("Google Analytics Error Message: {}", error);
             }
 
             @Override
             public void logMessage(String message) {
-                logger.info("Google Analytics Response Message: {}", message);
+                logger.debug("Google Analytics Response Message: {}", message);
             }
         };
         tracker.setLoggingAdapter(loggingAdapter);

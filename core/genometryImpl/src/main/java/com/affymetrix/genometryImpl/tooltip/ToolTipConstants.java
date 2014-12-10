@@ -85,7 +85,7 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> DEFAULT_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", DEFAULT_LOC_GRP);
     public static final Map<String, List<String>> DEFAULT_CIGAR_CATEGORY = ImmutableMap.of("Cigar", DEFAULT_CIGAR_GRP);
     
-    //GFFd
+    //GFF
     public static final List<String> GFF_INFO_GRP = Arrays.asList(TITLE, ID, DESCRIPTION);
     public static final List<String> GFF_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CDS_START, CDS_END, CHROMOSOME);
     public static final List<String> GFF_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);

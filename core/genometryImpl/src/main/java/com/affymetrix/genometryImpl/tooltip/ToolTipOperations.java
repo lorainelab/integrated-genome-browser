@@ -22,13 +22,9 @@ public class ToolTipOperations {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
         populateCategory(props, BAM_INFO_CATEGORY, categories);
-
         populateCategory(props, BAM_LOCATION_CATEGORY, categories);
-
         populateCategory(props, BAM_CIGAR_CATEGORY, categories);
-
         populateMisc(props, categories, BAM_IGNORE_LIST);
-
         return categories;
     }
     
@@ -36,13 +32,9 @@ public class ToolTipOperations {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
         populateCategory(props, BED14_INFO_CATEGORY, categories);
-
         populateCategory(props, BED14_LOCATION_CATEGORY, categories);
-
         populateCategory(props, BED14_CIGAR_CATEGORY, categories);
-
         populateMisc(props, categories, BED14_IGNORE_LIST);
-
         return categories;
     }
     
@@ -50,11 +42,8 @@ public class ToolTipOperations {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
         populateCategory(props, PSL_INFO_CATEGORY, categories);
-
         populateCategory(props, PSL_LOCATION_CATEGORY, categories);
-
         populateMisc(props, categories, PSL_IGNORE_LIST);
-
         return categories;
     }
     
@@ -62,12 +51,19 @@ public class ToolTipOperations {
         List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
 
         populateCategory(props, DEFAULT_INFO_CATEGORY, categories);
-
         populateCategory(props, DEFAULT_LOCATION_CATEGORY, categories);
-
         populateCategory(props, DEFAULT_CIGAR_CATEGORY, categories);
-
         populateMisc(props, categories, DEFAULT_IGNORE_LIST);
+        return categories;
+    }
+    
+    public static List<ToolTipCategory> formatGFFSymTooltip(Map<String, Object> props) {
+        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+
+        populateCategory(props, GFF_INFO_CATEGORY, categories);
+        populateCategory(props, GFF_LOCATION_CATEGORY, categories);
+        populateCategory(props, GFF_CIGAR_CATEGORY, categories);
+        populateMisc(props, categories, GFF_IGNORE_LIST);
 
         return categories;
     }

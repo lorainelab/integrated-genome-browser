@@ -8,6 +8,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
@@ -112,7 +113,9 @@ public class SeqMapToolTips extends JWindow {
                 propList = ToolTipOperations.formatBED14SymTooltip(properties);
             } else if (isLinkPSL(sym)) {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
-            } else {
+            }  else if (isGFFSym(sym)) {
+                propList = ToolTipOperations.formatGFFSymTooltip(properties);
+            }else {
                 propList = ToolTipOperations.formatDefaultSymTooltip(properties);
             }
             formatCategoryToolTip(propList);
@@ -143,6 +146,10 @@ public class SeqMapToolTips extends JWindow {
     private boolean isLinkPSL(SeqSymmetry sym) {
         return (sym instanceof EfficientPairSeqSymmetry
                 || sym instanceof UcscPslSym);
+    }
+    
+    private boolean isGFFSym(SeqSymmetry sym) {
+        return (sym instanceof GFF3Sym);
     }
 
     private void formatCategoryToolTip(List<ToolTipCategory> properties) {

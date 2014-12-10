@@ -878,7 +878,7 @@ public final class GeneralLoadUtils {
 
     private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            logger.info("All of new query covered by previous queries for feature {}", feature.featureName);
+            logger.debug("All of new query covered by previous queries for feature {}", feature.featureName);
             return;
         }
 

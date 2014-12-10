@@ -97,8 +97,7 @@ public final class ServiceUtils {
 	public GenericServer loadServer(String server_url) {
 		GenericServer gServer = ServerList.getServerInstance().getServer(server_url);
 		if (gServer == null) {
-			Logger.getLogger(ServiceUtils.class.getName()).log(
-					Level.SEVERE, "Couldn''t find server {0}. Creating a local server.", server_url);
+			
 
 			gServer = ServerList.getServerInstance().getLocalFilesServer();
 

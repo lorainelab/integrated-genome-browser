@@ -190,7 +190,7 @@ public abstract class XAM extends SymLoader {
             sym.setMateStart(sr.getMateAlignmentStart() - 1);
             sym.setProperty("Mate start", sr.getMateAlignmentStart() - 1);
             sym.setMateUnMapped(sr.getMateUnmappedFlag());
-            sym.setProperty("Mate is mapped", sr.getMateUnmappedFlag());
+            sym.setProperty("Mate is mapped", !sr.getMateUnmappedFlag());
             sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
             if (sr.getMateNegativeStrandFlag()) {
                 sym.setProperty("Mate strand", "-");

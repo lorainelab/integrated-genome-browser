@@ -20,10 +20,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GenometryModel {
 
-    private static GenometryModel smodel = new GenometryModel();
+    private static final Logger logger = LoggerFactory.getLogger(GenometryModel.class);
 
     /**
      * Ann's comment: There is a lot of logic related to selection of
@@ -31,8 +33,6 @@ public final class GenometryModel {
      * objects can be selected simultaneously. Why? What does selection mean in
      * this context?
      */
-    private static final boolean DEBUG = false;
-
     private final Map<String, AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String, AnnotatedSeqGroup>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
@@ -49,8 +49,8 @@ public final class GenometryModel {
     private GenometryModel() {
     }
 
-    public static GenometryModel getGenometryModel() {
-        return smodel;
+    public static GenometryModel getInstance() {
+        return GenometryModelHolder.INSTANCE;
     }
 
     /**
@@ -144,13 +144,11 @@ public final class GenometryModel {
         return selected_group;
     }
 
-	// TODO: modify so that fireGroupSelectionEvent() is only called if
+    // TODO: modify so that fireGroupSelectionEvent() is only called if
     //     group arg is different than previous selected_group
     public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
-        if (DEBUG) {
-            System.out.println("GenometryModel.setSelectedSeqGroup() called, ");
-            System.out.println("    group = " + (group == null ? null : group.getID()));
-        }
+
+        logger.debug("group = " + (group == null ? null : group.getID()));
 
         selected_group = group;
         selected_seq = null;
@@ -189,11 +187,7 @@ public final class GenometryModel {
      * important even if selected seq is same.
      */
     public void setSelectedSeq(BioSeq seq, Object src) {
-        if (DEBUG) {
-            System.out.println("GenometryModel.setSelectedSeq() called, ");
-            System.out.println("    seq = " + (seq == null ? null : seq.getID()));
-        }
-
+        logger.debug("seq = " + (seq == null ? null : seq.getID()));
         selected_seq = seq;
         ArrayList<BioSeq> slist = new ArrayList<BioSeq>();
         slist.add(selected_seq);
@@ -230,9 +224,7 @@ public final class GenometryModel {
     }
 
     private void fireSymSelectionEvent(Object src, List<RootSeqSymmetry> all_syms, List<SeqSymmetry> graph_syms) {
-        if (DEBUG) {
-            System.out.println("Firing event: " + all_syms.size() + " " + graph_syms.size());
-        }
+        logger.debug("Firing event: " + all_syms.size() + " " + graph_syms.size());
         SymSelectionEvent sevt = new SymSelectionEvent(src, all_syms, graph_syms);
         for (SymSelectionListener listener : sym_selection_listeners) {
             listener.symSelectionChanged(sevt);
@@ -291,13 +283,11 @@ public final class GenometryModel {
      */
     private List<BioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
 
-        if (DEBUG) {
-            System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
-        }
+        logger.debug("SetSelectedSymmetries called, number of syms: " + syms.size());
 
         HashMap<BioSeq, List<SeqSymmetry>> seq2GraphSymsHash = new HashMap<BioSeq, List<SeqSymmetry>>();
 
-		// for each ID found in the ID2sym hash, add it to the owning sequences
+        // for each ID found in the ID2sym hash, add it to the owning sequences
         // list of selected symmetries
         HashSet<BioSeq> all_seqs = new HashSet<BioSeq>(); // remember all seqs found
         for (SeqSymmetry sym : syms) {
@@ -327,8 +317,8 @@ public final class GenometryModel {
 
         // now perform the selections for each sequence that was matched
         for (Map.Entry<BioSeq, List<SeqSymmetry>> entry : seq2GraphSymsHash.entrySet()) {
-            if (DEBUG) {
-                System.out.println("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
             }
             setSelectedSymmetries(entry.getValue(), entry.getKey()); // do not send an event yet
         }
@@ -336,18 +326,18 @@ public final class GenometryModel {
         return new ArrayList<BioSeq>(all_seqs);
     }
 
-	// Selects a List of SeqSymmetry objects for a particular BioSeq.
+    // Selects a List of SeqSymmetry objects for a particular BioSeq.
     // Does not send a selection event.
     private void setSelectedSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
         if (seq == null) {
             return;
         }
-		// Should it complain if any of the syms are not on the specified seq?
+        // Should it complain if any of the syms are not on the specified seq?
         // (This is not an issue since this is not called from outside of this class.)
 
-        if (DEBUG) {
-            System.out.println("GenometryModel.setSelectedSymmetries() called, ");
-            System.out.println("    syms = " + syms);
+        if (logger.isDebugEnabled()) {
+            logger.debug("GenometryModel.setSelectedSymmetries() called, ");
+            logger.debug("    syms = " + syms);
         }
         // set the selected syms for the sequence
         if (syms != null && !syms.isEmpty()) {
@@ -393,5 +383,10 @@ public final class GenometryModel {
             list.clear();
         }
         seq2selectedGraphSymsHash.clear();
+    }
+
+    private static class GenometryModelHolder {
+
+        private static final GenometryModel INSTANCE = new GenometryModel();
     }
 }

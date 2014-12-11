@@ -52,7 +52,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            logger.info("No update notifications found");
         }
 
         return null;

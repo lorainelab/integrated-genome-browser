@@ -16,6 +16,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -23,6 +25,8 @@ import org.osgi.framework.Version;
  */
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
+    private static final Logger logger = LoggerFactory.getLogger(Activator.class);
+    
     public Activator() {
         super(IGBService.class);
     }
@@ -48,7 +52,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
                 }
             }
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage(), ex);
         }
 
         return null;

@@ -30,8 +30,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QuickloadServerType implements ServerTypeI {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(QuickloadServerType.class);
 
     enum QFORMAT {
 
@@ -40,7 +43,7 @@ public class QuickloadServerType implements ServerTypeI {
         TWOBIT,
         FA
     };
-    private static final boolean DEBUG = false;
+
     private static final String name = "Quickload";
     public static final int ordinal = 20;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
@@ -200,7 +203,7 @@ public class QuickloadServerType implements ServerTypeI {
         if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
             int httpIndex = featureName.toLowerCase().indexOf("http:");
             if (httpIndex > -1) {
-				// Strip off initial characters up to and including http:
+                // Strip off initial characters up to and including http:
                 // Sometimes this is necessary, as URLs can start with invalid "http:/"
                 featureName = GeneralUtils.convertStreamNameToValidURLName(featureName);
                 uri = URI.create(featureName);
@@ -251,8 +254,8 @@ public class QuickloadServerType implements ServerTypeI {
         // Discover feature names from QuickLoad
         try {
             URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
-            if (DEBUG) {
-                System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
@@ -265,11 +268,11 @@ public class QuickloadServerType implements ServerTypeI {
 
             for (String type_name : typeNames) {
                 if (type_name == null || type_name.length() == 0) {
-                    System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+                    logger.warn("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
                     continue;
                 }
-                if (DEBUG) {
-                    System.out.println("Adding feature " + type_name);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Adding feature " + type_name);
                 }
                 Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
                 gVersion.addFeature(
@@ -314,18 +317,18 @@ public class QuickloadServerType implements ServerTypeI {
         QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
 
         if (quickloadServer == null) {
-            System.out.println("ERROR: No quickload server model found for server: " + gServer);
+            logger.error("ERROR: No quickload server model found for server: " + gServer);
             return false;
         }
         if (!ping(quickloadURL, 3000)) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not reach url:", quickloadURL);
+            logger.warn( "Could not reach url:", quickloadURL);
             return false;
         }
 
         quickloadServer.loadGenomeNames();
         List<String> genomeList = quickloadServer.getGenomeNames();
         if (genomeList == null || genomeList.isEmpty()) {
-            System.out.println("WARNING: No species found in server: " + gServer);
+            logger.warn("WARNING: No species found in server: " + gServer);
             return false;
         }
 
@@ -334,7 +337,7 @@ public class QuickloadServerType implements ServerTypeI {
             try {
                 SpeciesLookup.load(quickloadServer.getSpeciesTxt());
             } catch (IOException ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "No species.txt found at this quickload server.", ex);
+                logger.warn( "No species.txt found at this quickload server.", ex);
             }
         }
         for (String genomeID : genomeList) {

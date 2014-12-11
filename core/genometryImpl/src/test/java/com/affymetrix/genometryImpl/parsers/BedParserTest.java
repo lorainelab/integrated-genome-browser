@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class BedParserTest {
 
-    static GenometryModel gmodel = GenometryModel.getGenometryModel();
+    static GenometryModel gmodel = GenometryModel.getInstance();
 
     @Test
     public void testParseFromFile() throws IOException, Exception {

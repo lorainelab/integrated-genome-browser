@@ -375,7 +375,7 @@ public final class NibbleResiduesParser implements Parser {
 		boolean annotate_seq) throws Exception {
 		// only annotate_seq = true processed here
 		BioSeq aseq = NibbleResiduesParser.parse(is, group);
-		if (aseq != GenometryModel.getGenometryModel().getSelectedSeq()) {
+		if (aseq != GenometryModel.getInstance().getSelectedSeq()) {
 			//TODO: maybe set the current seq to this seq
 			Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.WARNING,
 				"This is not the currently-selected sequence.");

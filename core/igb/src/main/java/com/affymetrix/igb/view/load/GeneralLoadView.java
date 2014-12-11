@@ -62,7 +62,7 @@ import javax.swing.JTree;
 public final class GeneralLoadView {
 
     private static final boolean DEBUG_EVENTS = false;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static SeqMapView gviewer;
     private static GenericAction refreshDataAction;
     private static JRPButton partial_residuesB;
@@ -504,7 +504,7 @@ public final class GeneralLoadView {
     }
 
     public GenericFeature createFeature(String featureName, SymLoader loader) {
-        GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), getSelectedSpecies());
+        GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), getSelectedSpecies());
         GenericFeature feature = new GenericFeature(featureName, null, version, loader, null, false);
         version.addFeature(feature);
         feature.setVisible(); // this should be automatically checked in the feature tree
@@ -573,7 +573,7 @@ public final class GeneralLoadView {
     public void clearTrack(final ITrackStyleExtended style) {
         final String method = style.getMethodName();
         if (method != null) {
-            final BioSeq bioseq = GenometryModel.getGenometryModel().getSelectedSeq();
+            final BioSeq bioseq = GenometryModel.getInstance().getSelectedSeq();
             final GenericFeature feature = style.getFeature();
 
             // If genome is selected then delete all syms on the all seqs.

@@ -34,7 +34,7 @@ public abstract class AbstractExportFileAction
         extends GenericAction implements SymSelectionListener {
 
     private static final long serialVersionUID = 1l;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private final ExportFileModel model;
     private final Map<FileTypeCategory, UniFileFilter> preferredFilters;
 

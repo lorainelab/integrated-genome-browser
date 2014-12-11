@@ -234,7 +234,7 @@ public final class BrptParser implements Parser {
 				System.out.println("parsing in rpt data from .brpt file: " + binfile);
 				File ifil = new File(binfile);
 				InputStream istr = new FileInputStream(ifil);
-				GenometryModel gmodel = GenometryModel.getGenometryModel();
+				GenometryModel gmodel = GenometryModel.getInstance();
 				AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 				parse(istr, "rpt", seq_group, true);
 				System.out.println("finished parsing in rpt data from .brpt file");

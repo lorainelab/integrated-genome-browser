@@ -284,7 +284,7 @@ public abstract class BookmarkController {
     }
 
     public static void addSymmetries(Bookmarks bookmark) {
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         if (seq != null) {
             AnnotatedSeqGroup group = seq.getSeqGroup();
 
@@ -300,7 +300,7 @@ public abstract class BookmarkController {
     }
 
     public static void addProperties(SymWithProps mark_sym) {
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 
         Map<ITrackStyle, Integer> combo_styles = new HashMap<ITrackStyle, Integer>();
 

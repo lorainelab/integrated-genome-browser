@@ -51,7 +51,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener{
 	public MainWorkspaceManager(String id){
 		super(id);
 		this.setLayout( new CardLayout());
-		gmodel = GenometryModel.getGenometryModel();
+		gmodel = GenometryModel.getInstance();
 	}
 	
 	public void setSeqMapViewObj( SeqMapView obj){

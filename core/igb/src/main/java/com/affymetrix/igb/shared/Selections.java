@@ -53,7 +53,7 @@ public abstract class Selections {
     }
 
     private static void addListeners(Listeners listeners) {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addSeqSelectionListener(listeners);
         gmodel.addSymSelectionListener(listeners);
         smv.addToRefreshList(listeners);

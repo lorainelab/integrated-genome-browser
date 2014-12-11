@@ -291,7 +291,7 @@ public final class ChpParser {
 	 */
 	private static List<LazyChpSym> makeLazyChpSyms(
 			String file_name, String chp_array_type, List<?> int_entries, boolean annotate_seq) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
 		GenericServer gServer = ServerList.getServerInstance().getServer(LazyChpSym.PROBESET_SERVER_NAME);
@@ -350,7 +350,7 @@ public final class ChpParser {
 	 *  empty for Exon results.
 	 */
 	private static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp, boolean annotate_seq) throws Exception {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
 		String file_name = chp.getFileName();
@@ -521,7 +521,7 @@ public final class ChpParser {
 	}
 
 	private static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) throws Exception  {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		List<GraphSym> results = new ArrayList<GraphSym>();
 		int seq_count = tchp.getNumberSequences();
 		String alg_name = tchp.getAlgName();

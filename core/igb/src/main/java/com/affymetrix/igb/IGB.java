@@ -238,7 +238,7 @@ public final class IGB extends Application
             frm.setIconImage(icon);
         }
 
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addGroupSelectionListener(this);
         gmodel.addSeqSelectionListener(this);
         // WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,

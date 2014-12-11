@@ -68,7 +68,7 @@ public class UseqParserTest {
 		String stream_name = "chr17";
 		InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
 		gmodel.addSeqGroup(group);
 		gmodel.setSelectedSeqGroup(group);

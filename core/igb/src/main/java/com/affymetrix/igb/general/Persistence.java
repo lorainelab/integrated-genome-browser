@@ -18,7 +18,7 @@ public final class Persistence {
 	private final static String SELECTED_SEQ_PREF = "SELECTED_SEQ_PREF";
 	private final static String SEQ_MIN_PREF = "SEQ_MIN_PREF";
 	private final static String SEQ_MAX_PREF = "SEQ_MAX_PREF";
-	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private final static GenometryModel gmodel = GenometryModel.getInstance();
 
 	/**
 	 *  Saves information on current group

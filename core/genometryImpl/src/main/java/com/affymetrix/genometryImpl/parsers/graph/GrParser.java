@@ -174,7 +174,7 @@ public final class GrParser implements GraphParser {
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
 		if (seq == null) {
-			seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			seq = GenometryModel.getInstance().getSelectedSeq();
 		}
 		// If this is a newly-created seq group, then go ahead and add a new 
 		// unnamed seq to it if necessary.

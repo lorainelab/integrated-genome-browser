@@ -11,7 +11,7 @@ public class CollapseAction extends CollapseExpandActionA {
 
     static {
         GenericActionHolder.getInstance().addGenericActionSilently(ACTION);
-        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+        GenometryModel.getInstance().addSymSelectionListener(ACTION);
     }
 
     public static CollapseAction getAction() {

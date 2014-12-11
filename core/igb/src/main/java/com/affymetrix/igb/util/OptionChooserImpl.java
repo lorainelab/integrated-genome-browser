@@ -57,7 +57,7 @@ public class OptionChooserImpl extends OptionChooser {
             getSpeciesCB().setSelectedIndex(0);
         }
 
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         if (group != null) {
             getVersionCB().setSelectedItem(group.getID());
         } else {

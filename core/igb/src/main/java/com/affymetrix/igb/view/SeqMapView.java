@@ -300,7 +300,7 @@ public class SeqMapView extends JPanel
     private final static int[] default_offset = new int[]{0, 100};
     private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
     private TierGlyph axis_tier;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     //private final PopupInfo popupInfo;
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;

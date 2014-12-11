@@ -89,7 +89,7 @@ public class USeq extends SymLoader {
             //is it a graph dataset?
             if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
                 USeqGraphParser gp = new USeqGraphParser();
-                return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri.toString(), archiveInfo);
+                return gp.parseGraphSyms(zis, GenometryModel.getInstance(), uri.toString(), archiveInfo);
                 //must be a region dataset
             } else {
                 USeqRegionParser rp = new USeqRegionParser();
@@ -122,7 +122,7 @@ public class USeq extends SymLoader {
             //is it a graph dataset?
             if (useqArchive.getArchiveInfo().getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
                 USeqGraphParser gp = new USeqGraphParser();
-                return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getGenometryModel(), uri.toString());
+                return gp.parseGraphSyms(useqArchive, useqData, GenometryModel.getInstance(), uri.toString());
                 //must be a region dataset
             } else {
                 USeqRegionParser rp = new USeqRegionParser();

@@ -451,7 +451,7 @@ public final class TierLabelManager implements PropertyHolder {
             return;
         }
 
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         Set<SeqSymmetry> graph_symmetries = new LinkedHashSet<SeqSymmetry>();
         Set<RootSeqSymmetry> all_symmetries = new HashSet<RootSeqSymmetry>();
         graph_symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));

@@ -32,7 +32,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 			smv.addToRefreshList(this);
 		}
 
-		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
+		GenometryModel.getInstance().addGroupSelectionListener(this);
 		initComponents();
 		validate();
 	}

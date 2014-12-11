@@ -39,7 +39,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 
         if (IGB.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()),
                 PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {

@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
  */
 public final class UrlLoaderThread extends Thread {
 
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(UrlLoaderThread.class);
 
     private final URL[] urls;

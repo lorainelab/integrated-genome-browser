@@ -48,7 +48,7 @@ public class BookMarkCommandLine {
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     private void gotoBookmark() {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
 
         // If it is -home then do not force to switch unless no species is selected.
         if (!force && gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeq() != null) {

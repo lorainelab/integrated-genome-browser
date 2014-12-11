@@ -46,7 +46,7 @@ public final class Bar extends SymLoader {
         InputStream dis = null;
         try {
             dis = LocalUrlCacher.getInputStream(uri.toURL());
-            seqs = BarParser.getSeqs(uri.toString(), dis, group, GenometryModel.getGenometryModel(), true);
+            seqs = BarParser.getSeqs(uri.toString(), dis, group, GenometryModel.getInstance(), true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -66,7 +66,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -80,7 +80,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, seq, 0, seq.getMax() + 1, uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, seq, 0, seq.getMax() + 1, uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -94,7 +94,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getGenometryModel(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {

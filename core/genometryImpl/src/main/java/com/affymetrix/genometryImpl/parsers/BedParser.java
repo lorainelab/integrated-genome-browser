@@ -607,7 +607,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, GenometryModel.getGenometryModel(), group, false, annot_type, false);
+			return this.parse(dis, GenometryModel.getInstance(), group, false, annot_type, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BedParser.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -640,7 +640,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType,
 		String uri, boolean annotate_seq) throws Exception {
 		// really need to switch create_container (last argument) to true soon!
-		return parse(is, GenometryModel.getGenometryModel(), group, annotate_seq, uri, false);
+		return parse(is, GenometryModel.getInstance(), group, annotate_seq, uri, false);
 	}
 }
 

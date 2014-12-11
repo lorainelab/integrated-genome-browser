@@ -47,7 +47,7 @@ public class DasServerType implements ServerTypeI {
 	private static final String dsn = "dsn.xml";
 	private static final String name = "DAS";
 	public static final int ordinal = 30;
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final GenometryModel gmodel = GenometryModel.getInstance();
 	/**
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()
@@ -337,7 +337,7 @@ public class DasServerType implements ServerTypeI {
 				// Note that some http servers will return "text/html" even when that is untrue.
 				// we could try testing whether the filename extension is a recognized extension, like ".psl"
 				// and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-				AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+				AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 				DASFeatureParser das_parser = new DASFeatureParser();
 				das_parser.setAnnotateSeq(false);
 				

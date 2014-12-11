@@ -47,7 +47,7 @@ public final class MismatchPileupType extends MismatchGraphType {
 			int draw_end_index, double offset, double yscale, ViewI view,
 			Point curr_x_plus_width, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
 		MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		if (!mmgs.hasReferenceSequence()) {
 			seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
 		}
@@ -64,7 +64,7 @@ public final class MismatchPileupType extends MismatchGraphType {
 //		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
 		final int width = curr_x_plus_width.x;
 		
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		// need to draw coverage first, then mismatches so that the mismatches are not covered up
 		g.setColor(MATCH_COLOR);
 		super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, offset, yscale, view, i);

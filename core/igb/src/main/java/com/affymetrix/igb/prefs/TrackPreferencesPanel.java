@@ -42,7 +42,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 			smv.addToRefreshList(this);
 		}
 		tracknametype = tdv.getTrackDefaultTextField();
-		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
+		GenometryModel.getInstance().addGroupSelectionListener(this);
 		initComponents();
 		enableSpecificComponents();
 	}

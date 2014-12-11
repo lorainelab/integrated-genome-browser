@@ -87,7 +87,7 @@ public final class DasSource {
 	public AnnotatedSeqGroup getGenome() {
 		if (genome == null) {
 			// cache, otherwise we potentially are doing thousands of synonym lookups
-			genome = GenometryModel.getGenometryModel().addSeqGroup(this.getID());
+			genome = GenometryModel.getInstance().addSeqGroup(this.getID());
 		}
 		return genome;
 	}

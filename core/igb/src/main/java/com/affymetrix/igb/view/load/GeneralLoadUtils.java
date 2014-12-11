@@ -105,7 +105,7 @@ public final class GeneralLoadUtils {
      */
 //    final double default_genome_min = -2100200300;
     private static final double default_genome_min = -2100200300;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     // File name storing directory name associated with server on a cached server.
     public static final String SERVER_MAPPING = "/serverMapping.txt";
     private static final String LOADING_FEATURE_MESSAGE = IGBConstants.BUNDLE.getString("loadFeature");
@@ -409,9 +409,10 @@ public final class GeneralLoadUtils {
      * @return list of visible features
      */
     public static List<GenericFeature> getVisibleFeatures() {
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
-
         List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
+
+        
         for (GenericFeature gFeature : getFeatures(group)) {
             if (gFeature.isVisible() && gFeature.loadAsTrack()) {
                 visibleFeatures.add(gFeature);
@@ -425,7 +426,7 @@ public final class GeneralLoadUtils {
      * Returns the list of features for currently selected group.
      */
     public static List<GenericFeature> getSelectedVersionFeatures() {
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         return getFeatures(group);
     }
 
@@ -1435,7 +1436,7 @@ public final class GeneralLoadUtils {
 
         if (getNewVersion) {
             GenericVersion newVersion = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
-            if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null
+            if (GenometryModel.getInstance().getSelectedSeqGroup() == null
                     || version == newVersion
                     || Application.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
                                     version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
@@ -1571,12 +1572,12 @@ public final class GeneralLoadUtils {
             @Override
             protected void finished() {
                 try {
-                    BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+                    BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
                     if (aseq != null) {
                         gviewer.setAnnotatedSeq(aseq, true, true);
-                    } else if (GenometryModel.getGenometryModel().getSelectedSeq() == null && quickLoad.getAnnotatedSeqGroup() != null) {
+                    } else if (GenometryModel.getInstance().getSelectedSeq() == null && quickLoad.getAnnotatedSeqGroup() != null) {
                         // This can happen when loading a brand-new genome
-                        GenometryModel.getGenometryModel().setSelectedSeq(quickLoad.getAnnotatedSeqGroup().getSeq(0));
+                        GenometryModel.getInstance().setSelectedSeq(quickLoad.getAnnotatedSeqGroup().getSeq(0));
                     }
 
                     SeqGroupView.getInstance().refreshTable();

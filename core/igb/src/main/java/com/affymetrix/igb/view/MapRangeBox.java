@@ -126,7 +126,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			catch (ParseException x) {
 				return super.findSpans(search_text, visibleSpan);
 			}
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			if(seq != null){
@@ -158,7 +158,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			catch (ParseException x) {
 				return super.findSpans(search_text, visibleSpan);
 			}
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			if(seq != null){
@@ -193,7 +193,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			int width = (visibleSpan.getEnd() - visibleSpan.getStart());
 			int start = Math.max(0, position - width / 2);
 			int end = start + width;
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+			AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 			BioSeq seq = group.getSeq(chrom_text);
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			if (seq != null) {
@@ -241,7 +241,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			catch (ParseException x) {
 				return super.findSpans(search_text, visibleSpan);
 			}
-			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			spans.add(new SimpleSeqSpan(start, end, seq));
 			return spans;
@@ -269,7 +269,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			catch (ParseException x) {
 				return super.findSpans(search_text, visibleSpan);
 			}
-			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			spans.add(new SimpleSeqSpan(start, end, seq));
 			return spans;
@@ -299,7 +299,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			int width = end - start;
 			start = (center - width / 2);
 			end = (center + width / 2);
-			BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+			BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 			List<SeqSpan> spans = new ArrayList<SeqSpan>();
 			spans.add(new SimpleSeqSpan(start, end, seq));
 			return spans;
@@ -337,8 +337,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 		
 		SearchHints hints = new SearchHints(range_box);
 	
-		GenometryModel.getGenometryModel().addGroupSelectionListener(this);
-		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
+		GenometryModel.getInstance().addGroupSelectionListener(this);
+		GenometryModel.getInstance().addSeqSelectionListener(this);
 	}
 
 	public String getText() {
@@ -366,7 +366,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	}
 
 	public void setRangeText(double start, double end) {
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		range_box.setText((seq == null ? "" : seq.getID() + ":") + nformat.format(start) + "-" + nformat.format(end));
 	}
 
@@ -543,7 +543,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 	}
 
 	public void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
-		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 		if (group == null) {
 			Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");
 			return;
@@ -555,11 +555,11 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 			return;
 		}
 
-		if (newSeq != GenometryModel.getGenometryModel().getSelectedSeq()) {
+		if (newSeq != GenometryModel.getInstance().getSelectedSeq()) {
 			// set the chromosome, and sleep until it's set.
-			GenometryModel.getGenometryModel().setSelectedSeq(newSeq);
+			GenometryModel.getInstance().setSelectedSeq(newSeq);
 			for (int i = 0; i < 100; i++) {
-				if (GenometryModel.getGenometryModel().getSelectedSeq() != newSeq) {
+				if (GenometryModel.getInstance().getSelectedSeq() != newSeq) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException ex) {
@@ -603,7 +603,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         @Override
 		public boolean updateHints(Object context) {
 			String search_term = (String) context;
-			if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_term.length() <= 1) {
+			if (GenometryModel.getInstance().getSelectedSeqGroup() == null || search_term.length() <= 1) {
 				return false;
 			} else {
 				List<ISearchHints> modes = new ArrayList<ISearchHints>();

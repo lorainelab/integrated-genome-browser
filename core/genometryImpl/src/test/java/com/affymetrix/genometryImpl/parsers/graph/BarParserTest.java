@@ -45,7 +45,7 @@ public class BarParserTest {
 		InputStream istr = this.getClass().getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		String stream_name = "chr15_random";
 

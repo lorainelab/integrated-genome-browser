@@ -20,7 +20,7 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
     static {
 //		GenericActionHolder.getInstance().addGenericAction(ACTION);
         ACTION.setEnabled(false);
-        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+        GenometryModel.getInstance().addSymSelectionListener(ACTION);
     }
 
     public static ExportSelectedAnnotationFileAction getAction() {

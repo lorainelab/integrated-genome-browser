@@ -45,7 +45,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
     }
 
     private void redraw(SeqMapViewI seqMapView) {
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         seqMapView.setAnnotatedSeq(seq, true, true, true);
     }
 }

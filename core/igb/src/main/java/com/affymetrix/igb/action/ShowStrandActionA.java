@@ -21,7 +21,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA
     protected boolean separateStrands;
 
     protected final void listenUp() {
-        GenometryModel.getGenometryModel().addSymSelectionListener(this);
+        GenometryModel.getInstance().addSymSelectionListener(this);
         TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
     }
 

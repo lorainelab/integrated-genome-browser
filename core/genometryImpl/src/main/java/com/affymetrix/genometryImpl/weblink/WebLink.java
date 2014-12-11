@@ -189,7 +189,7 @@ public final class WebLink implements Comparable<WebLink> {
         if (url == null) {
             return url;
         }
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
         if (group != null) {
             String encoded_id = "";

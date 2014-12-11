@@ -86,7 +86,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     }
 
     private void addNonUpdateableTier(List<? extends GlyphI> vgs) {
-        BioSeq aseq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
         ITrackStyleExtended preferredStyle = null;
         List<SeqSymmetry> seqSymList = new ArrayList<SeqSymmetry>();
         for (GlyphI gl : vgs) {
@@ -149,7 +149,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             uri = java.net.URI.create(GeneralUtils.URLEncode(method));
         }
 
-        GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getGenometryModel().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
+        GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
         GenericFeature feature = GeneralLoadView.getLoadView().createFeature(featureName, new Delegate(uri, featureName, version.group, operator, dps));
 
         ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, featureName, Delegate.EXT, null);

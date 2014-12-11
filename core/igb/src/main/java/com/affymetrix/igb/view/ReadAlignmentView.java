@@ -31,7 +31,7 @@ public class ReadAlignmentView implements ContextualPopupListener{
 				if (selected_items.size() == 1) {
 					if (Boolean.parseBoolean(prop.toString())) {
 						JMenuItem menu = new JMenuItem(ViewReadAlignmentAction.getReadRestoreAction(selected_items));
-						BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+						BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 						SeqSpan span = selected_items.get(0).getSpan(seq);
 						menu.setEnabled(seq.isComplete(span.getMin(), span.getMax()));
 						popup.add(menu);

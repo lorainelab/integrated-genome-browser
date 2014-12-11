@@ -27,7 +27,7 @@ public class RemoveFeatureAction extends SeqMapViewActionA implements SymSelecti
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
         ACTION.setEnabled(false);
-        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+        GenometryModel.getInstance().addSymSelectionListener(ACTION);
     }
 
     public static RemoveFeatureAction getAction() {

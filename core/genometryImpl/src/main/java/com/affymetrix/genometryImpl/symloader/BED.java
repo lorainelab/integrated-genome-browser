@@ -206,7 +206,7 @@ public class BED extends SymLoader implements LineProcessor {
         String line;
         String type = default_type;
         boolean use_item_rgb = true;
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         Thread thread = Thread.currentThread();
 
         while ((line = it.next()) != null && (!thread.isInterrupted())) {
@@ -837,7 +837,7 @@ public class BED extends SymLoader implements LineProcessor {
 
     @Override
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String seq_name = bioseq.getKey();
             BioSeq seq = group.getSeq(seq_name);

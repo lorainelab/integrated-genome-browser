@@ -281,7 +281,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	}
 
 	public static void main(String[] args) {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		try {
 			if (args.length >= 2) {
 				String genome_version = args[0];

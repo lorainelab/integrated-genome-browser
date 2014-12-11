@@ -37,7 +37,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     public static int unknown_group_count = 1;
     public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("customSpecies");
     public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
-    protected static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    protected static final GenometryModel gmodel = GenometryModel.getInstance();
     protected final IGBService igbService;
 
     public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {

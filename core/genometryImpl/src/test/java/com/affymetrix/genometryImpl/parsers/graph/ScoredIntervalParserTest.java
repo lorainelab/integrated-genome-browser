@@ -25,7 +25,7 @@ public class ScoredIntervalParserTest {
 		InputStream istr = ScoredIntervalParserTest.class.getClassLoader().getResourceAsStream(filename);
 		assertNotNull(istr);
 		String stream_name = "chr1";
-		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+		AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
 
 		ScoredIntervalParser tester = new ScoredIntervalParser();
 		tester.parse(istr, stream_name, seq_group, true);
@@ -39,7 +39,7 @@ public class ScoredIntervalParserTest {
 	@Test
 	public void testMakeNewSeq() {
 
-		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+		AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
 		String seqid = "chr1";
 
 		BioSeq aseq = seq_group.getSeq(seqid);
@@ -61,7 +61,7 @@ public class ScoredIntervalParserTest {
 				+ "chr1	100207533	100208700	.	230.0\n";
 
 		InputStream istr = new ByteArrayInputStream(string.getBytes());
-		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+		AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
 		String stream_name = "chr1";
 		ScoredIntervalParser tester = new ScoredIntervalParser();
 		tester.parse(istr, stream_name, seq_group, true);

@@ -111,7 +111,7 @@ public final class ServiceUtils {
 
 	public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
 		final AnnotatedSeqGroup group;
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		if (StringUtils.isBlank(version) || UNKNOWN_GENOME_VERSION.equals(version)) {
 			group = gmodel.getSelectedSeqGroup();
 		} else {
@@ -146,13 +146,13 @@ public final class ServiceUtils {
 			return;
 		}
 
-		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 		List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
 		for (String id : ids) {
 			sym_list.addAll(group.findSyms(id));
 		}
 
-		GenometryModel.getGenometryModel().setSelectedSymmetriesAndSeq(sym_list, ServiceUtils.class);
+		GenometryModel.getInstance().setSelectedSymmetriesAndSeq(sym_list, ServiceUtils.class);
 	}
 
 	public void selectFeatureAndCenterZoomStripe(String selectParam) {
@@ -168,7 +168,7 @@ public final class ServiceUtils {
 			return;
 		}
 
-		AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+		AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 		List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
 		SeqSpan span;
 		double midpoint = -1;
@@ -184,7 +184,7 @@ public final class ServiceUtils {
 			
 		}
 
-		GenometryModel.getGenometryModel().setSelectedSymmetriesAndSeq(sym_list, IGB.getSingleton().getMapView().getSeqMap());
+		GenometryModel.getInstance().setSelectedSymmetriesAndSeq(sym_list, IGB.getSingleton().getMapView().getSeqMap());
 		IGB.getSingleton().getMapView().setZoomSpotX(midpoint);
 		IGB.getSingleton().getMapView().setZoomSpotY(0);
 	}

@@ -461,7 +461,7 @@ public final class USeqRegionParser implements GraphParser {
 			ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
 			if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) {
 				USeqGraphParser gp = new USeqGraphParser();
-				return gp.parseGraphSyms(zis, GenometryModel.getGenometryModel(), uri, archiveInfo);
+				return gp.parseGraphSyms(zis, GenometryModel.getInstance(), uri, archiveInfo);
 			}
 			return parse(zis, group, uri, false, archiveInfo);
 		}
@@ -470,7 +470,7 @@ public final class USeqRegionParser implements GraphParser {
 	@Override
 	public List<GraphSym> readGraphs(InputStream istr, String stream_name,
 			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
-		return new USeqGraphParser().parseGraphSyms(istr, GenometryModel.getGenometryModel(), stream_name, null);
+		return new USeqGraphParser().parseGraphSyms(istr, GenometryModel.getInstance(), stream_name, null);
 	}
 
 	@Override

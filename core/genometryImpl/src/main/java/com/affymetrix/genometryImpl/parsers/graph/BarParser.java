@@ -92,7 +92,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	 *  be used only inside a CompositeGraphSym.
 	 */
 	public static GraphSym getRegion(String file_name, SeqSpan span) throws IOException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		Timer tim = new Timer();
 		tim.start();
 		BioSeq aseq = span.getBioSeq();
@@ -950,7 +950,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup group, String nameType, String uri,
 			boolean annotate_seq) throws Exception {
 		// only annotate_seq = false processed here
-		return parse(uri, is, GenometryModel.getGenometryModel(), group, null, 0, Integer.MAX_VALUE, uri, false, false);
+		return parse(uri, is, GenometryModel.getInstance(), group, null, 0, Integer.MAX_VALUE, uri, false, false);
 	}
 
 	@Override
@@ -958,7 +958,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
-		return parse(stream_name, newstr, GenometryModel.getGenometryModel(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true, false);
+		return parse(stream_name, newstr, GenometryModel.getInstance(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true, false);
 	}
 
 	@Override

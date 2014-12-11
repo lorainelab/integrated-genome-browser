@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 
 public class NibbleBioSeqTest {
-	static GenometryModel gmodel = GenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getInstance();
 
 	public NibbleBioSeqTest() {
 	}

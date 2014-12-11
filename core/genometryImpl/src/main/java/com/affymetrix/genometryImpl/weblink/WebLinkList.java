@@ -124,7 +124,7 @@ public class WebLinkList {
 				continue;
 			}
 			if (link.getSpeciesName().length() > 0) {
-				String current_version = GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+				String current_version = GenometryModel.getInstance().getSelectedSeqGroup().getID();
 				String current_species = SpeciesLookup.getSpeciesName(current_version);
 				boolean isSynonym = SpeciesLookup.isSynonym(current_species, link.getSpeciesName());
 				if (!isSynonym) {

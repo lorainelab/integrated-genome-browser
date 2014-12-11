@@ -55,7 +55,7 @@ public class Das2ServerType implements ServerTypeI {
 	};
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
-	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final GenometryModel gmodel = GenometryModel.getInstance();
 	/**
 	 * Private copy of the default Synonym lookup
 	 * @see SynonymLookup#getDefaultLookup()

@@ -115,9 +115,9 @@ public class AltSpliceView extends IGBTabPanel
 		buffer_sizeTF.addActionListener(this);
 		slice_by_selectionCB.addItemListener(this);
 
-		spliced_view.setAnnotatedSeq(GenometryModel.getGenometryModel().getSelectedSeq());
-		GenometryModel.getGenometryModel().addSeqSelectionListener(this);
-		GenometryModel.getGenometryModel().addSymSelectionListener(this);
+		spliced_view.setAnnotatedSeq(GenometryModel.getInstance().getSelectedSeq());
+		GenometryModel.getInstance().addSeqSelectionListener(this);
+		GenometryModel.getInstance().addSymSelectionListener(this);
 		PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
 
 		TierLabelManager tlman = spliced_view.getTierManager();
@@ -180,7 +180,7 @@ public class AltSpliceView extends IGBTabPanel
 		if (IGBService.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
-		BioSeq newseq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq newseq = GenometryModel.getInstance().getSelectedSeq();
 		if (last_seq_changed != newseq) {
 			last_seq_changed = newseq;
 			if (this.isShowing() && slice_by_selection_on) {

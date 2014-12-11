@@ -242,7 +242,7 @@ public class WiggleParserTest {
 		boolean written = Wiggle.writeBarFormat(results, seq_group.getID(), outstream);
 		assertTrue(written);
 
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 
 		InputStream istr = new ByteArrayInputStream(outstream.toByteArray());
 		results = BarParser.parse(url.getFile(), istr,gmodel,seq_group,null,0,Integer.MAX_VALUE,"chr19",true,false);

@@ -46,7 +46,7 @@ public final class Das2VersionedSource {
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
     static String NAME = Das2FeatureSaxParser.NAME;
     static String TITLE = Das2FeatureSaxParser.TITLE;
-    static GenometryModel gmodel = GenometryModel.getGenometryModel();
+    static GenometryModel gmodel = GenometryModel.getInstance();
     private final URI version_uri;
     private final URI coords_uri;
 	private final URI primary_uri; // Cached primary server.

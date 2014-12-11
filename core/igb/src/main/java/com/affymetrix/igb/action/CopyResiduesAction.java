@@ -33,7 +33,7 @@ public class CopyResiduesAction extends GenericAction {
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
-        GenometryModel.getGenometryModel().addSymSelectionListener(
+        GenometryModel.getInstance().addSymSelectionListener(
                 new SymSelectionListener() {
                     public void symSelectionChanged(SymSelectionEvent evt) {
                         boolean enabled = (IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1);

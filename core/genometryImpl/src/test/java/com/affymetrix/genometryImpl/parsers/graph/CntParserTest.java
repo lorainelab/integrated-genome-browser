@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class CntParserTest {
 
-	static GenometryModel gmodel = GenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getInstance();
 
 	@Test
 	public void testParseFromFile() throws IOException {

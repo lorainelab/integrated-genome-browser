@@ -91,7 +91,7 @@ public final class ScoredMapParser implements Parser {
 			AnnotatedSeqGroup group, String nameType, String uri,
 			boolean annotate_seq) throws Exception {
 		// only annotate_seq = true processed here
-		parse(is, uri, GenometryModel.getGenometryModel().getSelectedSeq(), group);
+		parse(is, uri, GenometryModel.getInstance().getSelectedSeq(), group);
 		return null;
 	}
 }

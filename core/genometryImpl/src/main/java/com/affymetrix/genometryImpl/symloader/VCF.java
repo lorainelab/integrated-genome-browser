@@ -667,7 +667,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         String ref = fields[3];
         int width = ref.length();
         int end = start + width;
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeqGroup().getSeq(seq_name);
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeqGroup().getSeq(seq_name);
         if (seq == null) {
             seq = new BioSeq(seq_name, 0);
         }

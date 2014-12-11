@@ -25,7 +25,7 @@ public class ExportFileAction
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
         ACTION.setEnabled(false);
-        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+        GenometryModel.getInstance().addSymSelectionListener(ACTION);
     }
 
     public static ExportFileAction getAction() {

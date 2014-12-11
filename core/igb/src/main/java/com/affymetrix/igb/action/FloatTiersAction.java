@@ -50,7 +50,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
-        GenometryModel.getGenometryModel().addSymSelectionListener(ACTION.enabler);
+        GenometryModel.getInstance().addSymSelectionListener(ACTION.enabler);
         ACTION.setEnabled(false);
     }
 
@@ -93,7 +93,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
             @Override
             public void run() {
                 SeqMapView v = getSeqMapView();
-                GenometryModel m = GenometryModel.getGenometryModel();
+                GenometryModel m = GenometryModel.getInstance();
                 BioSeq s = m.getSelectedSeq();
                 v.setAnnotatedSeq(s, true, true);
                 v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table

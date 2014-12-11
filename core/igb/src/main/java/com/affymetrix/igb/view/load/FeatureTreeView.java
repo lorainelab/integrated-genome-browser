@@ -171,7 +171,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param features
      */
     void initOrRefreshTree(final List<GenericFeature> features) {
-        final TreeModel tmodel = new DefaultTreeModel(CreateTree(features), true);
+        final TreeModel tmodel = new DefaultTreeModel(createTree(features), true);
         tree.setModel(tmodel);
 
         if (tree.getRowCount() > 0) {
@@ -235,7 +235,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param features
      * @return root which is of the type DefaultMutableTreeNode
      */
-    private static DefaultMutableTreeNode CreateTree(List<GenericFeature> features) {
+    private static DefaultMutableTreeNode createTree(List<GenericFeature> features) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
         if (features == null || features.isEmpty()) {

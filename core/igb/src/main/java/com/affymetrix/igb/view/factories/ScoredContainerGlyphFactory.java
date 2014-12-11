@@ -56,7 +56,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
     private static GraphIntervalSym[] determineGraphSyms(SeqMapViewExtendedI smv, BioSeq aseq, ScoredContainerSym original_container) {
         BioSeq vseq = smv.getViewSeq();
-        AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup seq_group = GenometryModel.getInstance().getSelectedSeqGroup();
         if (aseq != vseq) {
             DerivedSeqSymmetry derived_sym = SeqUtils.copyToDerived(original_container);
             SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());

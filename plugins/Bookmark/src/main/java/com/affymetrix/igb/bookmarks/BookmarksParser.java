@@ -45,7 +45,7 @@ public final class BookmarksParser {
             logger.debug("Format of '" + f.getAbsolutePath() + "' is " + format);
         }
         if (format == BED_FORMAT) {
-            GenometryModel gmodel = GenometryModel.getGenometryModel();
+            GenometryModel gmodel = GenometryModel.getInstance();
             parseBEDFormat(bookmarks, f, gmodel);
         } else if (format == NETSCAPE_FORMAT) {
             parseNetscapeBookmarks(bookmarks, f);

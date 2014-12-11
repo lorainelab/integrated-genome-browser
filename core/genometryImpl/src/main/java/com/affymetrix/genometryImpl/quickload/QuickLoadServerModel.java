@@ -143,8 +143,8 @@ public final class QuickLoadServerModel {
 	}
 
 	private AnnotatedSeqGroup getSeqGroup(String genome_name) {
-		return GenometryModel.getGenometryModel().addSeqGroup(LOOKUP.findMatchingSynonym(
-				GenometryModel.getGenometryModel().getSeqGroupNames(), genome_name));
+		return GenometryModel.getInstance().addSeqGroup(LOOKUP.findMatchingSynonym(
+				GenometryModel.getInstance().getSeqGroupNames(), genome_name));
 	}
 
 	public List<AnnotMapElt> getAnnotsMap(String genomeName) {
@@ -373,7 +373,7 @@ public final class QuickLoadServerModel {
 			}
 
 			boolean annot_contigs = false;
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().addSeqGroup(genome_name);
+			AnnotatedSeqGroup group = GenometryModel.getInstance().addSeqGroup(genome_name);
 			
 			try {
 				String chromosome_path = getPath(genome_name, chromosomeTxt);
@@ -558,7 +558,7 @@ public final class QuickLoadServerModel {
 	
 	private void clean() {
 		for (String genome : getGenomeNames()) {
-			AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSeqGroup(genome);
+			AnnotatedSeqGroup group = GenometryModel.getInstance().getSeqGroup(genome);
 			if (group != null) {
 				group.removeSeqsForUri(root_url);
 			}

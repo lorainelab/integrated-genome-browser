@@ -43,7 +43,7 @@ public class QuickloadServerType implements ServerTypeI {
     private static final boolean DEBUG = false;
     private static final String name = "Quickload";
     public static final int ordinal = 20;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<QuickLoadSymLoaderHook>();
     /**
      * Private copy of the default Synonym lookup

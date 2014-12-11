@@ -500,7 +500,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 	 *</pre>
 	 */
 	public static void main(String[] args) throws IOException {
-		GenometryModel gmodel = GenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getInstance();
 		boolean WRITE = false;
 		boolean READ = true;
 		String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";

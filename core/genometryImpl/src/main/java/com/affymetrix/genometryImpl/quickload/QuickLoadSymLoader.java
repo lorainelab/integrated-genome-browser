@@ -38,7 +38,7 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 public class QuickLoadSymLoader extends SymLoader {
 
 	protected SymLoader symL;	// parser factory
-	protected GenometryModel gmodel = GenometryModel.getGenometryModel();
+	protected GenometryModel gmodel = GenometryModel.getInstance();
 	protected boolean loadResidueAsTrack = false;
 	
 	public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group, boolean loadResidueAsTrack) {

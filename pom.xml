@@ -34,8 +34,9 @@
         <commonsCompressVersion>1.2</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <tribbleVersion>1.110</tribbleVersion>
-        <samVersion>1.110</samVersion>
+        <tribbleVersion>1.111</tribbleVersion>
+        <igb-picard-version>1.111</igb-picard-version>
+        <samVersion>1.111</samVersion>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <bundle-info-version>1.0.0</bundle-info-version>
@@ -704,7 +705,7 @@
             <dependency>
                 <groupId>net.sf</groupId>
                 <artifactId>igb-picard</artifactId>
-                <version>1.10</version>
+                <version>${igb-picard-version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf</groupId>

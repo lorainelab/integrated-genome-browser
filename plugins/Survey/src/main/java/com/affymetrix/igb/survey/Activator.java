@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
-    private static final Logger LOG = Logger.getLogger(Activator.class.getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Activator.class);
 
     public Activator() {
         super(IGBService.class);
@@ -102,10 +103,10 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
                 return new ServiceRegistration<?>[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(surveysMenu, "help"), null)};
             }
         } catch (FileNotFoundException ex) {
-            LOG.info("There are currently no surveys available.");
+            logger.info("There are currently no surveys available.");
         }
         catch (IOException ex) {
-            LOG.info("Error reading survey.xml");
+            logger.info("Error reading survey.xml");
         }
 
         return null;

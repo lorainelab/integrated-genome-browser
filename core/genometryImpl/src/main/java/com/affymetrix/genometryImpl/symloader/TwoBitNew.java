@@ -130,7 +130,7 @@ public class TwoBitNew extends SymLoader {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
         }
-        System.out.println(">" + cur_seq_name + " pos=" + cur_seq_pos + ", len=" + len);
+        //System.out.println(">" + cur_seq_name + " pos=" + cur_seq_pos + ", len=" + len);
 
         char[] residues = new char[len];
         int ch;

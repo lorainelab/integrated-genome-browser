@@ -65,7 +65,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         java.io.FileWriter fw = null;
         java.io.BufferedWriter bw = null;
         try {
-            Logger.getLogger(TrackStyle.class.getName()).log(Level.INFO, "Saving user stylesheet to file {0}", filename);
+            logger.info("Saving user stylesheet to file {}", filename);
             File parent_dir = f.getParentFile();
             if (parent_dir != null) {
                 parent_dir.mkdirs();
@@ -79,9 +79,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
             return true;
         } catch (java.io.FileNotFoundException fnfe) {
-            logger.error("Could not auto-save user stylesheet to {0}", filename);
+            logger.error("Could not auto-save user stylesheet to {}", filename);
         } catch (java.io.IOException ioe) {
-            logger.error("Error while saving user stylesheet to {0}", filename);
+            logger.error("Error while saving user stylesheet to {}", filename);
         } finally {
             GeneralUtils.safeClose(bw);
             GeneralUtils.safeClose(fw);

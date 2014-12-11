@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class IGBStateProvider extends DefaultStateProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(IGBStateProvider.class);
     private static boolean draw_collapse_icon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_DRAW_COLLAPSE_ICON, TrackConstants.default_draw_collapse_icon);
     private static boolean showIGBTracks = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_IGB_TRACK_MARK, TrackConstants.default_show_igb_track_mark);
     private static boolean showFilterMark = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FILTER_MARK, TrackConstants.default_show_filter_mark);
@@ -127,8 +130,8 @@ public final class IGBStateProvider extends DefaultStateProvider {
     public ITrackStyleExtended getAnnotStyle(String unique_name, String track_name, String file_type, java.util.Map<String, String> props) {
         TrackStyle style = static_map.get(unique_name.toLowerCase());
         if (style == null) {
-            if (TrackStyle.DEBUG) {
-                System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
+            if (logger.isDebugEnabled()) {
+                logger.debug("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
             }
             TrackStyle template = getDefaultInstance();
 

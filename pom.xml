@@ -532,12 +532,6 @@
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>overlapAnnotationOperator</artifactId>
-                <version>${overlapAnnotationOperator-version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>com.affymetrix</groupId>
                 <artifactId>sampleSelection</artifactId>
                 <version>${sampleSelection-version}</version>
                 <scope>provided</scope>

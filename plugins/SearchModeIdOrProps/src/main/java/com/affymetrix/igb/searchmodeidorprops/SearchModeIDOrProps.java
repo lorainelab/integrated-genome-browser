@@ -99,7 +99,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
     }
 
     protected SearchResults<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
         String text = search_text;
 
@@ -178,7 +178,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
     }
 
     protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
         String text = search_text;
         Pattern regex = null;

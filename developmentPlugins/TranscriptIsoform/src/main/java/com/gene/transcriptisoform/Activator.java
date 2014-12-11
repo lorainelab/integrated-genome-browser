@@ -34,7 +34,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         igbService.getSeqMapView().addToRefreshList(tievListener);
         igbService.getSeqMap().addMouseListener(tievListener);
         igbService.getSeqMap().addMouseMotionListener(tievListener);
-        GenometryModel.getGenometryModel().addSeqSelectionListener(tievListener);
+        GenometryModel.getInstance().addSeqSelectionListener(tievListener);
         JMenu transcriptIsoformMenu = new JMenu("Transcript Isoform");
         final JMenuItem selectRefTiersMenuItem = new JMenuItem("Select reference tiers");
         selectRefTiersMenuItem.addActionListener(

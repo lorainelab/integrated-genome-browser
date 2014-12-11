@@ -41,10 +41,10 @@ public class SearchModeLucene implements IKeyWordSearch {
             // load span
             String seqName = doc.get("seq");
             BioSeq seq;
-            if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null) {
+            if (GenometryModel.getInstance().getSelectedSeqGroup() == null) {
                 seq = new BioSeq(seqName, 0);
             } else {
-                seq = GenometryModel.getGenometryModel().getSelectedSeqGroup().getSeq(seqName);
+                seq = GenometryModel.getInstance().getSelectedSeqGroup().getSeq(seqName);
             }
             int start = Integer.parseInt(doc.get("start"));
             int end = Integer.parseInt(doc.get("end"));
@@ -105,7 +105,7 @@ public class SearchModeLucene implements IKeyWordSearch {
     public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
         List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
         if (search_text != null && !search_text.isEmpty()) {
-            AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+            AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             if (group != null) {
                 for (GenericVersion gVersion : group.getEnabledVersions()) {
                     if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {

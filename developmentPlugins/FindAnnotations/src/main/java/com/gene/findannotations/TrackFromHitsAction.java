@@ -32,7 +32,7 @@ public class TrackFromHitsAction extends GenericAction {
         super.actionPerformed(e);
         String type = MessageFormat.format(TYPE, textField.getText());
         TypeContainerAnnot containerSym = new TypeContainerAnnot(type);
-        BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         // copy children
         for (SeqSymmetry sym : tableModel.getResults()) {
             if (sym.getSpan(seq) != null) {

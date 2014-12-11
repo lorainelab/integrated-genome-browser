@@ -62,7 +62,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     private NeoSeq seqview;
     private JFrame mapframe;
     private int COMMA = 0;
-    private GenometryModel gm = GenometryModel.getGenometryModel();
+    private GenometryModel gm = GenometryModel.getInstance();
     private String version = "";
     public SeqSymmetry residues_sym;
     BioSeq aseq;

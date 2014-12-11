@@ -44,8 +44,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
         new PropertyViewHelper(table);
         this.setPreferredSize(new java.awt.Dimension(100, 250));
         this.setMinimumSize(new java.awt.Dimension(100, 250));
-        GenometryModel.getGenometryModel().addSymSelectionListener(this);
-        GenometryModel.getGenometryModel().addGroupSelectionListener(this);
+        GenometryModel.getInstance().addSymSelectionListener(this);
+        GenometryModel.getInstance().addGroupSelectionListener(this);
         propertyListeners.add((PropertyListener) igbService.getSeqMapView().getMouseListener());
     }
 

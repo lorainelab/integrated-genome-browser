@@ -23,7 +23,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
 	//static{
     //	GenericActionHolder.getInstance().addGenericAction(ACTION);
     //	ACTION.setEnabled(false);
-    //	GenometryModel.getGenometryModel().addSymSelectionListener(ACTION);
+    //	GenometryModel.getInstance().addSymSelectionListener(ACTION);
     //}
     public static CloseTracksAction getAction() {
         return ACTION;

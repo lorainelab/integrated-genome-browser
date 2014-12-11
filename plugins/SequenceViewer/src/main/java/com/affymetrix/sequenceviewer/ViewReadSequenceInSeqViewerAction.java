@@ -23,7 +23,7 @@ public class ViewReadSequenceInSeqViewerAction extends GenericAction implements 
     public ViewReadSequenceInSeqViewerAction(IGBService igbService) {
         super(AbstractSequenceViewer.BUNDLE.getString("ViewReadSequenceInSeqViewer"), null, "16x16/actions/Genome_Viewer_reads.png", "22x22/actions/Genome_Viewer_reads.png", KeyEvent.VK_UNDEFINED, null, false);
         this.setEnabled(false);
-        GenometryModel.getGenometryModel().addSymSelectionListener(this);
+        GenometryModel.getInstance().addSymSelectionListener(this);
         this.igbService = igbService;
     }
 

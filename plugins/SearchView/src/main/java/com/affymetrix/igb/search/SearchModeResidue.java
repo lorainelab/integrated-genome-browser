@@ -54,7 +54,7 @@ public class SearchModeResidue implements ISearchModeExtended,
     private static final String SEPARATOR = "\\|";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
     private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final Color hitcolors[] = {
         Color.magenta,
         new Color(0x00cd00),
@@ -99,7 +99,7 @@ public class SearchModeResidue implements ISearchModeExtended,
                         style.setLabelField("match");
                         style.setSeparate(false);
 
-                        GenericFeature feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getGenometryModel().getSelectedSeqGroup()));
+                        GenericFeature feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getInstance().getSelectedSeqGroup()));
                         igbService.loadAndDisplayAnnotations(feature);
                     } catch (URISyntaxException ex) {
                         Logger.getLogger(SearchModeResidue.class.getName()).log(Level.SEVERE, null, ex);

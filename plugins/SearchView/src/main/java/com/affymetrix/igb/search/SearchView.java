@@ -221,7 +221,7 @@ public final class SearchView extends IGBTabPanel implements
     private ClearAction clearAction = new ClearAction();
     // A maximum number of hits that can be found in a search.
     // This helps protect against out-of-memory errors.
-    private static GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static GenometryModel gmodel = GenometryModel.getInstance();
     private static final String CHOOSESEARCH = BUNDLE.getString("searchChooseSearch");
     private static final String FINDANNOTS = BUNDLE.getString("findAnnots");
     private static final String FINDANNOTSNULL = BUNDLE.getString("pleaseSelectGenome");
@@ -260,7 +260,7 @@ public final class SearchView extends IGBTabPanel implements
         @Override
         public boolean updateHints(Object context) {
             String search_term = (String) context;
-            if (GenometryModel.getGenometryModel().getSelectedSeqGroup() == null || search_term.length() <= 1) {
+            if (GenometryModel.getInstance().getSelectedSeqGroup() == null || search_term.length() <= 1) {
                 return false;
             } else {
                 if (!(selectedSearchMode instanceof ISearchHints)) {
@@ -530,7 +530,7 @@ public final class SearchView extends IGBTabPanel implements
     private void zoomToSym(SeqSymmetry sym) {
         if (sym != null) {
             if (igbService.getSeqMapView().getItemFromTier(sym) == null) {
-                GenometryModel gmodel = GenometryModel.getGenometryModel();
+                GenometryModel gmodel = GenometryModel.getInstance();
                 AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
                 if (group == null) {
                     return;
@@ -548,7 +548,7 @@ public final class SearchView extends IGBTabPanel implements
     }
 
     private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
-        GenometryModel gmodel = GenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getInstance();
         AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
         String seqID = sym.getSpanSeq(0).getID();
         BioSeq seq = group.getSeq(seqID);

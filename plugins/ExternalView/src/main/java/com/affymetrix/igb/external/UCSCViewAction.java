@@ -41,7 +41,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public UCSCViewAction(IGBService igbService) {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
         this.igbService = igbService;
-        GenometryModel model = GenometryModel.getGenometryModel();
+        GenometryModel model = GenometryModel.getInstance();
         model.addSeqSelectionListener(this);
         this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
     }

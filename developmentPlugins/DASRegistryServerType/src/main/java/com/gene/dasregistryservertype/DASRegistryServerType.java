@@ -78,7 +78,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
     public DASRegistryServerType(IGBService igbService) {
         super();
         this.igbService = igbService;
-        GenometryModel.getGenometryModel().addGroupSelectionListener(this);
+        GenometryModel.getInstance().addGroupSelectionListener(this);
     }
 
     @Override

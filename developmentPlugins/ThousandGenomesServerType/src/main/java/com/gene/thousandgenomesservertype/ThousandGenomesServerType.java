@@ -35,7 +35,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
     private static final int MAX_DIRS = 12;
     private static final boolean DEBUG = false;
     public static final int ordinal = Integer.MAX_VALUE;
-    private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final ThousandGenomesServerType instance = new ThousandGenomesServerType();
 

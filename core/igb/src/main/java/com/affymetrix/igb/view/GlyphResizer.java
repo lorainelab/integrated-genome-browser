@@ -167,7 +167,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			// It doesn't work.
 			// It seems to snap the axis back to the center.
 			// It also wants to enforce vertical symetry.
-			//this.gviewer.setAnnotatedSeq(com.affymetrix.genometryImpl.GenometryModel.getGenometryModel().getSelectedSeq(), true, true, true);
+			//this.gviewer.setAnnotatedSeq(com.affymetrix.genometryImpl.GenometryModel.getInstance().getSelectedSeq(), true, true, true);
 
 			// This is also resizing and repositioning the labels and the tiers.
 			// After a few resizings things get pretty confused.

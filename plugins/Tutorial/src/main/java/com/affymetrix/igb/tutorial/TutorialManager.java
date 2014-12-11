@@ -75,12 +75,12 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     }
 
     private void initListeners() {
-        GenometryModel.getGenometryModel().addGroupSelectionListener(
+        GenometryModel.getInstance().addGroupSelectionListener(
                 new GroupSelectionListener() {
 
                     @Override
                     public void groupSelectionChanged(GroupSelectionEvent evt) {
-                        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+                        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
                         String species = "";
                         if (group != null && group.getOrganism() != null) {
                             species = "." + group.getOrganism();

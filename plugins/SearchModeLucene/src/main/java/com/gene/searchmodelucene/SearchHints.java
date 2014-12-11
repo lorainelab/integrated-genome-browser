@@ -41,7 +41,7 @@ public class SearchHints implements ISearchHints {
 
     public Set<String> search(String search_term) {
         Set<String> syms = new HashSet<String>();
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         for (GenericVersion gVersion : group.getEnabledVersions()) {
             if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
                 for (GenericFeature feature : gVersion.getFeatures()) {

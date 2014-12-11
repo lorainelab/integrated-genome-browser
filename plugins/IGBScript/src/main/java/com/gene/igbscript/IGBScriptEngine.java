@@ -329,8 +329,8 @@ public class IGBScriptEngine implements ScriptEngine {
                 snapShot(exportMode, new File(join(fields, 1)));	// second field and possibly others are a single filename
             } else {
                 // base filename upon organism and timestamp
-                String id = GenometryModel.getGenometryModel().getSelectedSeqGroup() == null ? "default"
-                        : GenometryModel.getGenometryModel().getSelectedSeqGroup().getID();
+                String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
+                        : GenometryModel.getInstance().getSelectedSeqGroup().getID();
                 snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
             }
             return;
@@ -400,7 +400,7 @@ public class IGBScriptEngine implements ScriptEngine {
             // sleep until versions are initialized
             for (GenericVersion version : group.getEnabledVersions()) {
                 if (version.isInitialized()
-                        && group == GenometryModel.getGenometryModel().getSelectedSeqGroup()) {
+                        && group == GenometryModel.getInstance().getSelectedSeqGroup()) {
                     continue;
                 }
                 try {
@@ -419,7 +419,7 @@ public class IGBScriptEngine implements ScriptEngine {
     private void loadData(String serverURIorName, String feature_url) {
         GenericServer server = igbService.loadServer(serverURIorName);
         GenericFeature feature = igbService.getFeature(
-                GenometryModel.getGenometryModel().getSelectedSeqGroup(),
+                GenometryModel.getInstance().getSelectedSeqGroup(),
                 server, feature_url, true);
 
         if (feature != null) {
@@ -443,7 +443,7 @@ public class IGBScriptEngine implements ScriptEngine {
         } else {
             uri = f.toURI();
         }
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         igbService.openURI(uri, fileName, group, group.getOrganism(), true);
     }
 
@@ -486,7 +486,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
 
         // First try to look up for feature in current group.
-        AnnotatedSeqGroup seqGroup = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup seqGroup = GenometryModel.getInstance().getSelectedSeqGroup();
         GenericFeature feature = null;
 
         // If feature is not found in current group then look up all groups.
@@ -495,7 +495,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
 
         if (feature == null) {
-            for (AnnotatedSeqGroup group : GenometryModel.getGenometryModel().getSeqGroups().values()) {
+            for (AnnotatedSeqGroup group : GenometryModel.getInstance().getSeqGroups().values()) {
                 feature = findFeatureInGroup(group, featureURI);
                 if (feature != null) {
                     break;

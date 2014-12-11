@@ -46,7 +46,7 @@ import javax.imageio.ImageIO;
 public class GeneConfiguration extends Configuration {
 
 //	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-//	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+//	private static final GenometryModel gmodel = GenometryModel.getInstance();
 //	private static final Color COLOR_1 = Color.WHITE;
 	private static final Color COLOR_2 = new Color(0xfffb86);//Color.YELLOW;
 //	private static final float FONT_SIZE_1 = 36.0f;

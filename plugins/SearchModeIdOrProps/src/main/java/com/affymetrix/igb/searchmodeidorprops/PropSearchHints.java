@@ -25,6 +25,6 @@ public class PropSearchHints implements ISearchHints {
         }catch(Exception e){
             regex =  Pattern.compile("");
         }
-        return SearchUtils.findLocalSyms(GenometryModel.getGenometryModel().getSelectedSeqGroup(), regex, true, 20);
+        return SearchUtils.findLocalSyms(GenometryModel.getInstance().getSelectedSeqGroup(), regex, true, 20);
     }
 }

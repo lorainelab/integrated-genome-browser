@@ -64,7 +64,7 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+                        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
                         if (group != null) {
                             Set<GenericVersion> versions = group.getEnabledVersions();
                             if (versions != null) {
@@ -94,7 +94,7 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
 
     @Override
     public void select(String name, boolean separateTracks, Map<String, List<String>> selections) { // callback from SampleSelectionView
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         if (group != null) {
             Set<GenericVersion> versions = group.getEnabledVersions();
             if (versions != null) {

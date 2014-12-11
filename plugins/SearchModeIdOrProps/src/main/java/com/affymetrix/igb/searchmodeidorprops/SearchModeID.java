@@ -98,7 +98,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 
         Set<String> results = new HashSet<String>();
 
-        GenometryModel.getGenometryModel().getSelectedSeqGroup().searchHints(results, regex, 20);
+        GenometryModel.getInstance().getSelectedSeqGroup().searchHints(results, regex, 20);
 
         return results;
     }
@@ -109,7 +109,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
     }
 
     private int getRemoteServerCount() {
-        AnnotatedSeqGroup group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
+        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         if (group == null) {
             return 0;
         }

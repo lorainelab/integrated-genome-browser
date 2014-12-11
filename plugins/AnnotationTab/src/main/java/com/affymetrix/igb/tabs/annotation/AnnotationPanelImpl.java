@@ -239,7 +239,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 				}
 			}
 			Set<String> fields = getFields(style);
-			SeqSymmetry sym = GenometryModel.getGenometryModel().getSelectedSeq().getAnnotation(style.getMethodName());
+			SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
 			if (sym instanceof SeqSymmetry) {
 				if (allFields == null) {
 					allFields = new TreeSet<String>(fields);
@@ -377,7 +377,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	
 	private Set<String> getFields(ITrackStyleExtended style) {
 		Set<String> fields = new TreeSet<String>();
-		BioSeq seq = GenometryModel.getGenometryModel().getSelectedSeq();
+		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(style.getMethodName());
 			if (sym != null && sym.getChildCount() > 0) {

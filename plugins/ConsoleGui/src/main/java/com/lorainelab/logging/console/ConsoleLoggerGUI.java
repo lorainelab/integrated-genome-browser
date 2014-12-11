@@ -1,18 +1,14 @@
 package com.lorainelab.logging.console;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.InputEvent;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import javax.swing.text.DefaultCaret;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +35,8 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
     private void setupLogging() {
         try {
             consoleTextArea.getDocument().addDocumentListener(new ConsoleLogDocumentListener(MAX_CONSOLE_LENGTH));
+            DefaultCaret caret = (DefaultCaret) consoleTextArea.getCaret();
+            caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
             final JTextAreaOutputStream tout = new JTextAreaOutputStream(consoleTextArea, System.out);
             System.setOut(new PrintStream(tout, false, "UTF-8"));
             System.setErr(new PrintStream(new JTextAreaOutputStream(consoleTextArea, System.err), false, "UTF-8"));
@@ -97,7 +95,6 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
 //            }
 //        }
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

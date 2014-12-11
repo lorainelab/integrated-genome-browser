@@ -1,12 +1,11 @@
 package com.lorainelab.igbr;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.google.common.io.Closeables;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,6 +13,7 @@ import java.util.logging.Logger;
  */
 public class SocketCommandListener implements Runnable {
 
+    private static final Logger logger = LoggerFactory.getLogger(SocketCommandListener.class);
     private static final int IGBR_PORT = 7084;
 
     @Override
@@ -22,14 +22,14 @@ public class SocketCommandListener implements Runnable {
         try {
             socket = new ServerSocket(IGBR_PORT);
             while (true) {
-                Logger.getLogger(SocketCommandListener.class.getName()).log(Level.INFO, "Opening IGB command socket");
+                logger.info("Opening IGB command socket");
                 Socket connection = socket.accept();
                 CommandProcessor commandProcessor = new CommandProcessor(connection);
                 commandProcessor.run();
-                Logger.getLogger(SocketCommandListener.class.getName()).log(Level.INFO, "IGB socket connection started");
+                logger.info("IGB socket connection started");
             }
         } catch (IOException ex) {
-            Logger.getLogger(SocketCommandListener.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.closeQuietly(socket);
         }

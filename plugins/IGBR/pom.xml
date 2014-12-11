@@ -35,6 +35,13 @@
             <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--Start of logging dependencies-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
     </dependencies>
 
     <build>

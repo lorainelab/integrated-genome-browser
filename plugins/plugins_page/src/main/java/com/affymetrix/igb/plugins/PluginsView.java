@@ -55,6 +55,7 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tab Panel for managing plugins / bundles.
@@ -62,7 +63,7 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = Logger.getLogger(PluginsView.class.getName());
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PluginsView.class);
     
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
@@ -201,7 +202,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
             if (bundle.getBundleId() == 0) { // system bundle
                 return false;
             }
-            try {                
+            try {     
+                //will automate soon
+                logger.debug(bundle.getSymbolicName() + ";" + bundle.getVersion());
                 BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
             } catch (MissingResourceException x) {
                 return true;

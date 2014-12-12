@@ -269,7 +269,7 @@ public final class BookmarkManagerView {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {                   
+                if (e.getButton() == MouseEvent.BUTTON3) {                   
                     TreePath path = tree.getPathForLocation(e.getX(), e.getY());
                     
                     if (path != null) {

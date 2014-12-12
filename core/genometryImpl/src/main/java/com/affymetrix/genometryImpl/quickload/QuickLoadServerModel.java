@@ -232,13 +232,13 @@ public final class QuickLoadServerModel {
             try {
                 annots_found = processAnnotsXml(istr, validationIstr, annotList);
             } catch (SAXParseException x) {
-                String errorMessage = "QuickLoad Server {} has an invalid annotations (annots.xml) file for {}: {}. Please contact the server administrators or the IGB development team to let us know about the problem.";
+                String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}: {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
                 String errorText = MessageFormat.format(errorMessage, root_url, genome_name, x.getMessage());
                 String title = "Invalid annots.xml file";
                 ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
                 return false;
             } catch (JDOMException x) {
-                String errorMessage = "QuickLoad Server {} has an invalid annotations (annots.xml) file for {}. Please contact the server administrators or the IGB development team to let us know about the problem.";
+                String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
                 String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
                 String title = "Invalid annots.xml file";
                 ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
@@ -257,8 +257,8 @@ public final class QuickLoadServerModel {
             annots_found = processAnnotsTxt(istr, annotList);
 
             if (!annots_found) {
-                ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {} does not contain required annots.xml/annots.txt metadata "
-                        + "file for requested genome version {}. "
+                ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
+                        + "file for requested genome version {1}. "
                         + "IGB may not be able to display this genome.", new Object[]{root_url, genome_name}), Level.SEVERE);
             } else {
                 logger.debug("Found {} files in {} on server {}.", new Object[]{annotList.size(), genome_name, root_url});
@@ -392,8 +392,8 @@ public final class QuickLoadServerModel {
             GeneralUtils.safeClose(chrom_stream);
         }
 //		if(!success){
-//			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {} does not contain required sequence metadata "
-//					+ "file for requested genome version {}. "
+//			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "
+//					+ "file for requested genome version {1}. "
 //					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
 //		}
         return success;
@@ -419,7 +419,7 @@ public final class QuickLoadServerModel {
             }
 
             if (istr == null) {
-                throw new FileNotFoundException(MessageFormat.format("Could not load QuickLoad contents from\n{}{}", new Object[]{getLoadURL(), contentsTxt}));
+                throw new FileNotFoundException(MessageFormat.format("Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt}));
             }
 
             ireader = new InputStreamReader(istr);

@@ -330,7 +330,6 @@ public final class LocalUrlCacher {
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setReadTimeout(READ_TIMEOUT);
         conn.setRequestProperty("Accept-Encoding", "gzip");
-        conn.setUseCaches(false);
         //set sessionId?
         if (sessionId != null) {
             conn.setRequestProperty("Cookie", sessionId);
@@ -814,7 +813,6 @@ public final class LocalUrlCacher {
             try {
 
                 URLConnection conn = connectToUrl(urlString, null, -1);
-                conn.setUseCaches(false);
                 if (conn instanceof HttpURLConnection) {
                     String reachable_url = urlString;
                     HttpURLConnection hcon = (HttpURLConnection) conn;

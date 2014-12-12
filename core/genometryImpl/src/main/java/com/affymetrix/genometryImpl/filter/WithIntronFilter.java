@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 
 /**
  * This is a filter which is used to filter out the symmetries with no children
+ *
  * @author Anuj
  */
 public class WithIntronFilter extends SymmetryFilter {
@@ -13,13 +14,13 @@ public class WithIntronFilter extends SymmetryFilter {
     public String getName() {
         return "intron";
     }
-	
+
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
-		if(ss.getChildCount() > 1) {
-			return true;
-		}
+        if (ss.getChildCount() > 1) {
+            return true;
+        }
         return false;
     }
-    
+
 }

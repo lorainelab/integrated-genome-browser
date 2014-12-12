@@ -9,6 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -20,7 +21,6 @@ import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
-
 
 //TODO this is a terribly written class which should be trashed and replaced
 public final class LocalUrlCacher {
@@ -999,10 +999,14 @@ public final class LocalUrlCacher {
         String host = url.getHost();
         String path = StringUtils.substringBeforeLast(url.getPath(), "/");
         if (path.contains("/")) {
-            path = StringUtils.substringAfter(path, "/");
+            List<String> pathTokens = Splitter.on("/").omitEmptyStrings().trimResults().splitToList(path);
+            path = pathTokens.get(pathTokens.size() - 1);
         }
         String originalFileName = StringUtils.substringAfterLast(url.getPath(), "/");
-        String fileName = host + "-" + path + "-" + originalFileName;
+        String fileName = path + "-" + originalFileName;
+        if (StringUtils.isNotBlank(host)) {
+            fileName = host + "-" + fileName;
+        }
         return fileName;
     }
 

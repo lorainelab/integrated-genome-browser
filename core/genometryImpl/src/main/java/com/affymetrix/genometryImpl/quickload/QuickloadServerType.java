@@ -316,10 +316,6 @@ public class QuickloadServerType implements ServerTypeI {
             logger.error("ERROR: No quickload server model found for server: " + gServer);
             return false;
         }
-        if (!ping(quickloadURL, 3000)) {
-            logger.warn( "Could not reach url:", quickloadURL);
-            return false;
-        }
 
         quickloadServer.loadGenomeNames();
         List<String> genomeList = quickloadServer.getGenomeNames();

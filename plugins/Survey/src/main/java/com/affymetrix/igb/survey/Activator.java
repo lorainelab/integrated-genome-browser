@@ -30,7 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Activator.class);
+    private static final Logger logger = LoggerFactory.getLogger(Activator.class);
 
     public Activator() {
         super(IGBService.class);

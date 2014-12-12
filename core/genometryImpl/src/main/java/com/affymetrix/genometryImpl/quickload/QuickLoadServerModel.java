@@ -25,6 +25,9 @@ import com.affymetrix.genometryImpl.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 import java.io.*;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -412,6 +415,7 @@ public final class QuickLoadServerModel {
 
         try {
             try {
+                logger.debug("Checking quickload server for contents.txt");
                 istr = getInputStream(contentsTxt, getCacheAnnots(), false, false); // Html is not allowed for requesting contents.txt
             } catch (Exception e) {
                 logger.error("ERROR: Couldn''t open ''{}{}\n:  {}", new Object[]{getLoadURL(), contentsTxt, e.toString()});
@@ -487,6 +491,19 @@ public final class QuickLoadServerModel {
 
     private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist, boolean allowHtml) throws IOException {
         String load_url = getLoadURL() + append_url;
+        if (logger.isDebugEnabled()) {
+            if (append_url.equals(Constants.contentsTxt)) {
+                try {
+                    logger.debug("Contents.txt from server");
+                    logger.debug(Resources.toString(new URL(load_url), Charsets.UTF_8));
+                    logger.debug("Contents.txt from LocalUrlCacher");
+                    String content = CharStreams.toString(new InputStreamReader(LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml), Charsets.UTF_8));
+                    logger.debug(content);
+                } catch (FileNotFoundException ex) {
+                    //do nothing
+                }
+            }
+        }
         InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
 
         /**
@@ -502,7 +519,7 @@ public final class QuickLoadServerModel {
             istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
         }
 
-        logger.debug( "Load URL: {}", load_url);
+        logger.debug("Load URL: {}", load_url);
         return istr;
     }
 

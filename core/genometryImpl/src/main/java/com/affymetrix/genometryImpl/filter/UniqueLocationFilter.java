@@ -33,10 +33,7 @@ public class UniqueLocationFilter extends SymmetryFilter {
             return false;
         }
         int currentNH = (Integer) (((BAMSym) ss).getProperty("NH"));
-        if (currentNH != 1) {
-            return false;
-        }
-        return true;
+        return currentNH == 1;
     }
 
 }

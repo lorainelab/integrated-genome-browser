@@ -36,10 +36,7 @@ public class ChildThresholdFilter extends SymmetryFilter {
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
         SeqSpan span = ss.getSpan(bioseq);
-        if ((span.getMax() - span.getMin()) < threshold.get()) {
-            return false;
-        } else {
-            return true;
-        }
+        int spanLength = span.getMax() - span.getMin();
+        return spanLength >= threshold.get();
     }
 }

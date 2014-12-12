@@ -14,24 +14,26 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.samtools.seekablestream.SeekableFileStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO this is a terribly written class which should be trashed and replaced
 public final class LocalUrlCacher {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(LocalUrlCacher.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalUrlCacher.class);
     private static final String CACHE_CONTENT_ROOT = PreferenceUtils.getAppDataDirectory() + "cache/";
     private static final String CACHE_HEADER_ROOT = CACHE_CONTENT_ROOT + "headers/";
     private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
     private static final String HTTP_LOCATION_HEADER = "Location";
     private static final int HTTP_TEMP_REDIRECT = 307;
-    private static final boolean DEBUG_CONNECTION = false;
+    private static final boolean logger
+
+    .isTraceEnabled()
+    = false;
     private static final boolean CACHE_FILE_URLS = false;
     public static final int IGNORE_CACHE = 100;
     public static final int ONLY_CACHE = 101;
@@ -224,7 +226,7 @@ public final class LocalUrlCacher {
             try {
                 conn = connectToUrl(url, sessionId, local_timestamp);
 
-                if (DEBUG_CONNECTION) {
+                if (logger.isTraceEnabled()) {
                     reportHeaders(conn);
                 }
 
@@ -268,21 +270,19 @@ public final class LocalUrlCacher {
             } catch (IOException ioe) {
                 url_reachable = false;
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 url_reachable = false;
             }
             if (!url_reachable) {
                 if (!fileMayNotExist) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                            "URL not reachable, status code = {0}: {1}", new Object[]{http_status, url});
+                    logger.warn("URL not reachable, status code = {}: {}", new Object[]{http_status, url});
                 }
                 if (rqstHeaders != null) {
                     rqstHeaders.put("LocalUrlCacher", URL_NOT_REACHABLE);
                 }
                 if (!cache_file.exists()) {
                     if (!fileMayNotExist) {
-                        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                                "URL {0} is not reachable, and is not cached!", url);
+                        logger.warn("URL {} is not reachable, and is not cached!", url);
                     }
                     return null;
                 }
@@ -302,12 +302,12 @@ public final class LocalUrlCacher {
             result_stream = RetrieveFromURL(conn, rqstHeaders, write_to_cache, cache_file, header_cache_file);
         }
 
-        if (rqstHeaders != null && DEBUG_CONNECTION) {
+        if (rqstHeaders != null && logger.isTraceEnabled()) {
             reportHeaders(url, rqstHeaders);
         }
         if (result_stream == null) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                    "couldn''t get content for: {0}", url);
+            logger.warn(
+                    "couldn''t get content for: {}", url);
         }
         return result_stream;
     }
@@ -316,12 +316,12 @@ public final class LocalUrlCacher {
 
         String redirect_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
         if (redirect_url == null) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                    "Url {0} moved temporarily. But no redirect url provided", url);
+            logger.warn(
+                    "Url {} moved temporarily. But no redirect url provided", url);
             return conn;
         }
-        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                "Url {0} moved temporarily. \n Using redirect \nurl {1}", new Object[]{url, redirect_url});
+        logger.warn(
+                "Url {} moved temporarily. \n Using redirect \nurl {}", new Object[]{url, redirect_url});
 
         conn = connectToUrl(redirect_url, sessionId, local_timestamp);
 
@@ -362,8 +362,8 @@ public final class LocalUrlCacher {
             fstr = huc.getInputStream();
         } catch (FileNotFoundException ex) {
             if (fileMayNotExist) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                        "Couldn''t find file {0}, but it''s optional.", url);
+                logger.info(
+                        "Couldn''t find file {}, but it''s optional.", url);
                 return null; // We don't care if the file doesn't exist.
             }
         }
@@ -385,9 +385,9 @@ public final class LocalUrlCacher {
     private static File getCacheFile(String root, String url) {
         File fil = new File(root);
         if (!fil.exists()) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Creating new cache directory: {0}", fil.getAbsolutePath());
+            logger.info("Creating new cache directory: {}", fil.getAbsolutePath());
             if (!fil.mkdirs()) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, "Could not create directory: {0}", fil.toString());
+                logger.error("Could not create directory: {}", fil.toString());
             }
         }
         String encoded_url = UrlToFileName.encode(url);
@@ -430,39 +430,33 @@ public final class LocalUrlCacher {
         if (url_reachable) {
             //  has a timestamp and response contents not modified since local cached copy last modified, so use local
             if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                if (DEBUG_CONNECTION) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-                            "Received HTTP_NOT_MODIFIED status for URL, using cache: {0}", cache_file);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Received HTTP_NOT_MODIFIED status for URL, using cache: {}", cache_file);
                 }
             } else if (remote_timestamp > 0 && remote_timestamp <= local_timestamp) {
-                if (DEBUG_CONNECTION) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-                            "Cache exists and is more recent, using cache: {0}", cache_file);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Cache exists and is more recent, using cache: {}", cache_file);
                 }
             } else {
-                if (DEBUG_CONNECTION) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-                            "cached file exists, but URL is more recent, so reloading cache: {0}", url);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("cached file exists, but URL is more recent, so reloading cache: {}", url);
                 }
                 return null;
             }
         } else {
             // url is not reachable
             if (cache_option != ONLY_CACHE) {
-                if (DEBUG_CONNECTION) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                            "Remote URL not reachable: {0}", url);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Remote URL not reachable: {}", url);
                 }
 
                 if (cache_file.exists()) { // If cache file exists and url is not reacheable then probably site is down.
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING,
-                            "Remote URL {0} not reachable to compare to local cache. So ignoring the cache.", url);
+                    logger.warn("Remote URL {} not reachable to compare to local cache. So ignoring the cache.", url);
                     return null;
                 }
             }
-            if (DEBUG_CONNECTION) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                        "Loading cached file for URL: {0}", url);
+            if (logger.isTraceEnabled()) {
+                logger.trace("Loading cached file for URL: {}", url);
             }
 
         }
@@ -497,9 +491,9 @@ public final class LocalUrlCacher {
         boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
         if (isGZipped) {
             connstr = GeneralUtils.getGZipInputStream(conn.getURL().toString(), conn.getInputStream());
-            if (DEBUG_CONNECTION) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.FINE,
-                        "gzipped stream, so ignoring reported content length of {0}", conn.getContentLength());
+            if (logger.isTraceEnabled()) {
+                logger.trace(
+                        "gzipped stream, so ignoring reported content length of {}", conn.getContentLength());
             }
         } else {
             connstr = conn.getInputStream();
@@ -538,11 +532,9 @@ public final class LocalUrlCacher {
     }
 
     private static void reportHeaders(String url, Map<String, String> headers) {
-        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                "   HEADERS for URL: {0}", url);
+        logger.info("HEADERS for URL: {}", url);
         for (Map.Entry<String, String> ent : headers.entrySet()) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                    "   key: {0}, val: {1}", new Object[]{ent.getKey(), ent.getValue()});
+            logger.info("key: {}, val: {}", new Object[]{ent.getKey(), ent.getValue()});
         }
     }
 
@@ -550,7 +542,7 @@ public final class LocalUrlCacher {
      * Forces flushing of entire cache. Simply removes all cached files.
      */
     public static void clearCache() {
-        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Clearing cache");
+        logger.info("Clearing cache");
         DeleteFilesInDirectory(CACHE_HEADER_ROOT);
         DeleteFilesInDirectory(CACHE_CONTENT_ROOT);
     }
@@ -580,14 +572,14 @@ public final class LocalUrlCacher {
     }
 
     public static void setPreferredCacheUsage(int usage) {
-        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Setting Caching mode to {0}", getCacheUsage(usage));
+        logger.info("Setting Caching mode to {}", getCacheUsage(usage));
         PreferenceUtils.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
     }
 
     public static void reportHeaders(URLConnection query_con) {
         try {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                    "URL: {0}", query_con.getURL().toString());
+            logger.info(
+                    "URL: {}", query_con.getURL().toString());
             int hindex = 0;
             while (true) {
                 String val = query_con.getHeaderField(hindex);
@@ -595,8 +587,8 @@ public final class LocalUrlCacher {
                 if (val == null && key == null) {
                     break;
                 }
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                        "   header:   key = {0}, val = {1}", new Object[]{key, val});
+                logger.info(
+                        "   header:   key = {}, val = {}", new Object[]{key, val});
                 hindex++;
             }
         } catch (Exception ex) {
@@ -612,11 +604,11 @@ public final class LocalUrlCacher {
             if (syn_stream == null) {
                 return;
             }
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                    "Synonyms found at: {0}", synonym_loc);
+            logger.info(
+                    "Synonyms found at: {}", synonym_loc);
             lookup.loadSynonyms(syn_stream);
         } catch (IOException ioe) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Unable to load synonyms from '" + synonym_loc + "'", ioe);
+            logger.warn("Unable to load synonyms from '" + synonym_loc + "'", ioe);
         } finally {
             GeneralUtils.safeClose(syn_stream);
         }
@@ -624,9 +616,9 @@ public final class LocalUrlCacher {
 
     private static void writeHeadersToCache(File header_cache_file, Properties headerprops) throws IOException {
         // cache headers also -- in [cache_dir]/headers ?
-        if (DEBUG_CONNECTION) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO,
-                    "writing headers to cache: {0}", header_cache_file.getPath());
+        if (logger.isTraceEnabled()) {
+            logger.info(
+                    "writing headers to cache: {}", header_cache_file.getPath());
         }
         BufferedOutputStream hbos = null;
         try {
@@ -664,7 +656,7 @@ public final class LocalUrlCacher {
                     GeneralUtils.unzipFile(f, f2);
                     return f2;
                 } catch (IOException ex) {
-                    Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(null, ex);
                     return null;
                 }
             }
@@ -690,13 +682,13 @@ public final class LocalUrlCacher {
                 }
                 return GeneralUtils.convertStreamToFile(str, stream_name.substring(stream_name.lastIndexOf('/')));
             } catch (IOException ex) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(null, ex);
             } finally {
                 GeneralUtils.safeClose(istr);
             }
         }
-        Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
-                "URL scheme: {0} not recognized", scheme);
+        logger.error(
+                "URL scheme: {} not recognized", scheme);
         return null;
     }
 
@@ -713,8 +705,8 @@ public final class LocalUrlCacher {
         } else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
             is = LocalUrlCacher.getInputStream(uri.toString());
         } else {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
-                    "URL scheme: {0} not recognized", scheme);
+            logger.error(
+                    "URL scheme: {} not recognized", scheme);
             return null;
         }
 
@@ -738,8 +730,8 @@ public final class LocalUrlCacher {
             } else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
                 is = LocalUrlCacher.getInputStream(uri.toString());
             } else {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE,
-                        "URL scheme: {0} not recognized", scheme);
+                logger.error(
+                        "URL scheme: {} not recognized", scheme);
                 return null;
             }
 
@@ -766,7 +758,7 @@ public final class LocalUrlCacher {
             URI uri = new URI(url);
             return isValidURI(uri);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, null, "Invalid url :" + url);
+            logger.warn("Invalid url {}:", url, ex);
         }
 
         return false;
@@ -777,7 +769,7 @@ public final class LocalUrlCacher {
         try {
             scheme = uri.getScheme().toLowerCase();
         } catch (NullPointerException ex) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Check if Url {0} is proper. No schema found", uri.toString());
+            logger.warn("Check if Url {} is proper. No schema found", uri.toString());
             return false;
         }
         if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
@@ -802,7 +794,7 @@ public final class LocalUrlCacher {
                 return (bytesRead != -1);
 
             } catch (MalformedURLException ex) {
-                Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.WARNING, "Malformed Invalid uri :{0}", uri.toString());
+                logger.warn("Malformed Invalid uri :{}", uri.toString());
             } catch (IOException ex) {
                 //do nothing
             } finally {
@@ -872,8 +864,7 @@ public final class LocalUrlCacher {
         }
 
         if (DEBUG) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(
-                    Level.INFO, "Response: {0} {1}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
+            logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
         }
 
         // Buffer the result into a string
@@ -888,7 +879,7 @@ public final class LocalUrlCacher {
         conn.disconnect();
 
         if (DEBUG) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Result {0}", sb.toString());
+            logger.info("Result {}", sb.toString());
         }
 
         return sb.toString();
@@ -896,7 +887,7 @@ public final class LocalUrlCacher {
 
     public static String httpPost(String urlStr, Map<String, String> params) throws IOException {
 
-        System.out.println("URL :" + urlStr);
+        logger.debug("URL :" + urlStr);
         URL url = new URL(urlStr);
         HttpURLConnection conn
                 = (HttpURLConnection) url.openConnection();
@@ -922,7 +913,7 @@ public final class LocalUrlCacher {
         }
         String content = sb.toString();
         if (DEBUG) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Content :{0}", content.toString());
+            logger.info("Content :{}", content.toString());
         }
 
         // Create the form content
@@ -932,8 +923,7 @@ public final class LocalUrlCacher {
         out.close();
 
         if (DEBUG) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(
-                    Level.INFO, "Response: {0} {1}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
+            logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
         }
 
         if (conn.getResponseCode() != 200) {
@@ -952,7 +942,7 @@ public final class LocalUrlCacher {
         conn.disconnect();
 
         if (DEBUG) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Result {0}", sb.toString());
+            logger.info("Result {}", sb.toString());
         }
 
         return sb.toString();
@@ -964,7 +954,7 @@ public final class LocalUrlCacher {
                 return false;
             }
         } catch (IOException ex) {
-            Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(null, ex);
             return false;
         }
 

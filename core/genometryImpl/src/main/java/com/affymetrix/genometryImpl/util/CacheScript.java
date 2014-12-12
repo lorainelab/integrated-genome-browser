@@ -96,7 +96,7 @@ public class CacheScript extends Thread {
 		FileOutputStream fos = null;
 		PrintStream out = null;
 		try {
-			File mapping = new File(path + "/" + Constants.serverMapping);
+			File mapping = new File(path + "/" + Constants.SERVER_MAPPING);
 			mapping.createNewFile();
 			fos = new FileOutputStream(mapping);
 			out = new PrintStream(fos);
@@ -130,7 +130,7 @@ public class CacheScript extends Thread {
 	 * @return true if file may not exist else false.
 	 */
 	public static boolean getFileAvailability(String fileName) {
-		if (fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
+		if (fileName.equals(Constants.ANNOTS_TXT) || fileName.equals(Constants.ANNOTS_XML) || fileName.equals(Constants.LIFT_ALL_LFT)) {
 			return true;
 		}
 

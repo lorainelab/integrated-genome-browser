@@ -26,9 +26,13 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
+import com.google.common.base.Optional;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
@@ -107,7 +111,7 @@ public final class QuickLoadServerModel {
 
         QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
         if (ql_server == null) {
-            LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + Constants.synonymsTxt);
+            LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + Constants.SYNONYMS_TXT);
             ql_server = new QuickLoadServerModel(ql_http_root, primary_root, primaryServer);
             url2quickload.put(ql_http_root, ql_server);
         }
@@ -228,7 +232,7 @@ public final class QuickLoadServerModel {
         InputStream validationIstr = null;
         String filename = null;
         try {
-            filename = getPath(genome_name, Constants.annotsXml);
+            filename = getPath(genome_name, Constants.ANNOTS_XML);
             istr = getInputStream(filename, false, true);
             validationIstr = getInputStream(filename, false, true);
             boolean annots_found = false;;
@@ -254,7 +258,7 @@ public final class QuickLoadServerModel {
             }
 
             logger.debug("Couldn''t found annots.xml for {}. Looking for annots.txt now.", genome_name);
-            filename = getPath(genome_name, Constants.annotsTxt);
+            filename = getPath(genome_name, Constants.ANNOTS_TXT);
             istr = getInputStream(filename, getCacheAnnots(), false);
 
             annots_found = processAnnotsTxt(istr, annotList);
@@ -324,10 +328,10 @@ public final class QuickLoadServerModel {
     }
 
     private boolean loadSeqInfo(String genome_name) {
-        String liftAll = Constants.liftAllLft;
-        String modChromInfo = Constants.modChromInfoTxt;
-        String genomeTxt = Constants.genomeTxt;
-        String chromosomeTxt = Constants.chromosomesTxt;
+        String liftAll = Constants.LIFT_ALL_LFT;
+        String modChromInfo = Constants.MOD_CHROM_INFO_TXT;
+        String genomeTxt = Constants.GENOME_TXT;
+        String chromosomeTxt = Constants.CHROMOSOMES_TXT;
 
         genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
         boolean success = false;
@@ -402,64 +406,46 @@ public final class QuickLoadServerModel {
         return success;
     }
 
-    /**
-     *
-     * loads data sets from contents.txt into the data structure genome_names.
-     *
-     */
-    synchronized void loadGenomeNames() {
-        String contentsTxt = Constants.contentsTxt;
-        InputStream istr = null;
-        InputStreamReader ireader = null;
-        BufferedReader br = null;
-
+    void loadGenomeNames() {
+        URL contentsTextUrl = null;
         try {
-            try {
-                logger.debug("Checking quickload server for contents.txt");
-                istr = getInputStream(contentsTxt, getCacheAnnots(), false, false); // Html is not allowed for requesting contents.txt
-            } catch (Exception e) {
-                logger.error("ERROR: Couldn''t open ''{}{}\n:  {}", new Object[]{getLoadURL(), contentsTxt, e.toString()});
-                istr = null; // dealt with below
+            contentsTextUrl = new URL(getLoadURL() + Constants.CONTENTS_TXT);
+            String contents = Resources.toString(contentsTextUrl, Charsets.UTF_8);
+            LocalUrlCacher.writeToCache(contentsTextUrl, contents);
+            processContentsTextFile(contents);
+        } catch (MalformedURLException ex) {
+            logger.error("Invalid url", ex);
+        } catch (IOException ex) {
+            logger.warn("Unable to obtaint {} from the server", contentsTextUrl.toString());
+            Optional<String> cachedContent = LocalUrlCacher.retrieveFileAsStringFromCache(contentsTextUrl);
+            if (cachedContent.isPresent()) {
+                logger.info("Loading {} from cache", contentsTextUrl);
+                processContentsTextFile(cachedContent.get());
             }
+        }
+    }
 
-            if (istr == null) {
-                throw new FileNotFoundException(MessageFormat.format("Could not load QuickLoad contents from\n{0}{1}", new Object[]{getLoadURL(), contentsTxt}));
+    private boolean isCommentLine(String line) {
+        return line.startsWith("#") || (line.startsWith("<") && line.endsWith(">"));
+    }
+
+    private void processContentsTextFile(String contents) {
+        List<String> lines = Splitter.on("\n").omitEmptyStrings().trimResults().splitToList(contents);
+        for (String line : lines) {
+            if (Strings.isNullOrEmpty(line) || isCommentLine(line)) {
+                continue;
             }
-
-            ireader = new InputStreamReader(istr);
-            br = new BufferedReader(ireader);
-            String line;
-            while ((line = br.readLine()) != null) {
-                if ((line.length() == 0) || line.startsWith("#") || (line.startsWith("<") && line.endsWith(">"))) {
-                    continue;
-                }
-                AnnotatedSeqGroup group = null;
-                String[] fields = tab_regex.split(line);
-
-                String genome_name = "";
-                if (fields.length >= 1) {
-                    genome_name = fields[0];
-                    genome_name = genome_name.trim();
-                    if (genome_name.length() == 0) {
-                        logger.info("Found blank QuickLoad genome -- skipping");
-                        continue;
-                    }
-                    group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
-                    genome_names.add(genome_name);
-                }
+            List<String> fields = Splitter.on("\t").omitEmptyStrings().trimResults().splitToList(line);
+            if (fields.size() >= 1) {
+                String genomeName = fields.get(0);
+                AnnotatedSeqGroup group = this.getSeqGroup(genomeName);  // returns existing group if found, otherwise creates a new group
+                genome_names.add(genomeName);
                 // if quickload server has description, and group is new or doesn't yet have description, add description to group
-                if ((fields.length >= 2) && (group.getDescription() == null)) {
-                    group.setDescription(fields[1]);
+                if ((fields.size() >= 2) && (group.getDescription() == null)) {
+                    group.setDescription(fields.get(1));
                 }
-
             }
 
-        } catch (Exception ex) {
-            ErrorHandler.errorPanel("Error loading genome names", ex, Level.SEVERE);
-        } finally {
-            GeneralUtils.safeClose(istr);
-            GeneralUtils.safeClose(ireader);
-            GeneralUtils.safeClose(br);
         }
     }
 
@@ -492,7 +478,7 @@ public final class QuickLoadServerModel {
     private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist, boolean allowHtml) throws IOException {
         String load_url = getLoadURL() + append_url;
         if (logger.isDebugEnabled()) {
-            if (append_url.equals(Constants.contentsTxt)) {
+            if (append_url.equals(Constants.CONTENTS_TXT)) {
                 try {
                     logger.debug("Contents.txt from server");
                     logger.debug(Resources.toString(new URL(load_url), Charsets.UTF_8));
@@ -536,7 +522,7 @@ public final class QuickLoadServerModel {
     public InputStream getSpeciesTxt() {
         InputStream stream = null;
         try {
-            stream = getInputStream(Constants.speciesTxt, false, true);
+            stream = getInputStream(Constants.SPECIES_TXT, false, true);
         } catch (IOException ex) {
             logger.error(null, ex);
         }
@@ -552,7 +538,7 @@ public final class QuickLoadServerModel {
     public boolean hasSpeciesTxt() {
         InputStream stream;
         try {
-            stream = getInputStream(Constants.speciesTxt, false, true);
+            stream = getInputStream(Constants.SPECIES_TXT, false, true);
         } catch (IOException ex) {
             return false;
         }

@@ -113,8 +113,8 @@ public class DasServerType implements ServerTypeI {
 		
 		String types = getPath(id,server,DasSource.TYPES);
 
-		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.xml_ext);
-		DasFilePath.put(types, DasSource.TYPES + Constants.xml_ext);
+		DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.XML_EXTENSION);
+		DasFilePath.put(types, DasSource.TYPES + Constants.XML_EXTENSION);
 
 		for(Entry<String, String> fileDet : DasFilePath.entrySet()){
 			file = GeneralUtils.getFile(fileDet.getKey(), false);

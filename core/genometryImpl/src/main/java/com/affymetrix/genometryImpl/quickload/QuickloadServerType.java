@@ -63,11 +63,11 @@ public class QuickloadServerType implements ServerTypeI {
      * Add files to be looked up. *
      */
     static {
-        quickloadFiles.add(Constants.annotsTxt);
-        quickloadFiles.add(Constants.annotsXml);
-        quickloadFiles.add(Constants.modChromInfoTxt);
-        quickloadFiles.add(Constants.liftAllLft);
-        quickloadFiles.add(Constants.genomeTxt);
+        quickloadFiles.add(Constants.ANNOTS_TXT);
+        quickloadFiles.add(Constants.ANNOTS_XML);
+        quickloadFiles.add(Constants.MOD_CHROM_INFO_TXT);
+        quickloadFiles.add(Constants.LIFT_ALL_LFT);
+        quickloadFiles.add(Constants.GENOME_TXT);
     }
     private static final QuickloadServerType instance = new QuickloadServerType();
 
@@ -103,11 +103,7 @@ public class QuickloadServerType implements ServerTypeI {
      * @return true if file may not exist else false.
      */
     private boolean getFileAvailability(String fileName) {
-        if (fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
-            return true;
-        }
-
-        return false;
+        return fileName.equals(Constants.ANNOTS_TXT) || fileName.equals(Constants.ANNOTS_XML) || fileName.equals(Constants.LIFT_ALL_LFT);
     }
 
     /**
@@ -142,7 +138,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.URL + Constants.contentsTxt, false);
+        File file = GeneralUtils.getFile(gServer.URL + Constants.CONTENTS_TXT, false);
 
         String quickloadStr = null;
         quickloadStr = (String) gServer.serverObj;
@@ -150,7 +146,7 @@ public class QuickloadServerType implements ServerTypeI {
         QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
         List<String> genome_names = quickloadServer.getGenomeNames();
-        if (!GeneralUtils.moveFileTo(file, Constants.contentsTxt, path)) {
+        if (!GeneralUtils.moveFileTo(file, Constants.CONTENTS_TXT, path)) {
             return false;
         }
 

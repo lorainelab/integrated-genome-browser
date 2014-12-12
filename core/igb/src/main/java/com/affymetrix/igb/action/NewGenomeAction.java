@@ -63,7 +63,7 @@ public class NewGenomeAction extends OpenURIAction {
 
             if (refSeqPath != null && refSeqPath.length() > 0) {
                 String fileName = getFriendlyName(refSeqPath);
-                if (Constants.genomeTxt.equals(fileName) || Constants.modChromInfoTxt.equals(fileName)) {
+                if (Constants.GENOME_TXT.equals(fileName) || Constants.MOD_CHROM_INFO_TXT.equals(fileName)) {
                     try {
                         ChromInfoParser.parse(getInputStream(refSeqPath), group, refSeqPath);
                         GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);

@@ -102,7 +102,7 @@ public class Das2ServerType implements ServerTypeI {
 	 * @return true if file may not exist else false.
 	 */
 	private boolean getFileAvailability(String fileName){
-		if(fileName.equals(Constants.annotsTxt) || fileName.equals(Constants.annotsXml) || fileName.equals(Constants.liftAllLft)) {
+		if(fileName.equals(Constants.ANNOTS_TXT) || fileName.equals(Constants.ANNOTS_XML) || fileName.equals(Constants.LIFT_ALL_LFT)) {
 			return true;
 		}
 
@@ -126,7 +126,7 @@ public class Das2ServerType implements ServerTypeI {
 
 			file = GeneralUtils.getFile(server_path+"/"+fileName, fileMayNotExist);
 
-			fileName += Constants.xml_ext;
+			fileName += Constants.XML_EXTENSION;
 
 			if((file == null && !fileMayNotExist)) {
 				return false;
@@ -143,7 +143,7 @@ public class Das2ServerType implements ServerTypeI {
 	@Override
 	public boolean processServer(GenericServer gServer, String path) {
 		File file = GeneralUtils.getFile(gServer.URL, false);
-		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.xml_ext, path)) {
+		if(!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID+ Constants.XML_EXTENSION, path)) {
 			return false;
 		}
 		

@@ -212,8 +212,8 @@ public final class IGB extends Application
         printDetails(args);
         logger.debug("Done setting up ConsoleView");
 
-        loadSynonyms("/" + Constants.synonymsTxt, SynonymLookup.getDefaultLookup());
-        loadSynonyms("/" + Constants.chromosomesTxt, SynonymLookup.getChromosomeLookup());
+        loadSynonyms("/" + Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
+        loadSynonyms("/" + Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
 
         if ("Mac OS X".equals(System.getProperty("os.name"))) {
             MacIntegration mi = MacIntegration.getInstance();

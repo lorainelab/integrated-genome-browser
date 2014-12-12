@@ -13,16 +13,16 @@ public class Constants {
 	public final static String GENOME_SEQ_ID = "genome";
 
 	//QuickLoad filenames
-	public static final String contentsTxt = "contents.txt";
-	public static final String annotsTxt = "annots.txt";
-	public static final String annotsXml = "annots.xml";
-	public static final String liftAllLft = "liftAll.lft";
-	public static final String modChromInfoTxt = "mod_chromInfo.txt";
-	public static final String genomeTxt = "genome.txt";
+	public static final String CONTENTS_TXT = "contents.txt";
+	public static final String ANNOTS_TXT = "annots.txt";
+	public static final String ANNOTS_XML = "annots.xml";
+	public static final String LIFT_ALL_LFT = "liftAll.lft";
+	public static final String MOD_CHROM_INFO_TXT = "mod_chromInfo.txt";
+	public static final String GENOME_TXT = "genome.txt";
 
 	//Cached Server filenames
-	public static final String serverMapping = "serverMapping.txt";
-	public static final String xml_ext = ".xml";
+	public static final String SERVER_MAPPING = "serverMapping.txt";
+	public static final String XML_EXTENSION = ".xml";
 	/**
 	 * The species.txt file maps the scientific name to the data set name and
 	 * other data set synonyms<br>
@@ -35,9 +35,9 @@ public class Constants {
 	 * Example:<br>
 	 * [Arabidopsis thaliana]->[Thale cress] -> A_thaliana
 	 */
-	public static final String speciesTxt = "species.txt";
+	public static final String SPECIES_TXT = "species.txt";
 
 	// Synonym filenames
-	public static final String chromosomesTxt = "chromosomes.txt";
-	public static final String synonymsTxt = "synonyms.txt";
+	public static final String CHROMOSOMES_TXT = "chromosomes.txt";
+	public static final String SYNONYMS_TXT = "synonyms.txt";
 }

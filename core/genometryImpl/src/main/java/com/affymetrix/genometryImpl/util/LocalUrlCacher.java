@@ -30,7 +30,6 @@ public final class LocalUrlCacher {
     private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
     private static final String HTTP_LOCATION_HEADER = "Location";
     private static final int HTTP_TEMP_REDIRECT = 307;
-    private static final boolean DEBUG_CONNECTION = false;
     private static final boolean CACHE_FILE_URLS = false;
     public static final int IGNORE_CACHE = 100;
     public static final int ONLY_CACHE = 101;

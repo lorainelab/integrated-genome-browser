@@ -126,6 +126,8 @@ report-test
 reports
 temp
 tools/FindJunctions/build
+tools/FindJunctions/nbproject/*
+tools/FindJunctions/nbproject/private/private.properties
 tools/LuceneIndexing/.classpath
 www/images/Thumbs.db
 www/release_notes/images/Thumbs.db

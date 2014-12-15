@@ -36,9 +36,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -47,7 +48,7 @@ import org.w3c.dom.Element;
  */
 public final class ServerList {
 
-    private static final boolean DEBUG = false;
+    private static final Logger logger = LoggerFactory.getLogger(ServerList.class);
     private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
     private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
     private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
@@ -246,7 +247,7 @@ public final class ServerList {
      * Load server preferences from the Java preferences subsystem.
      */
     public void loadServerPrefs() {
-        Logger.getLogger(ServerList.class.getName()).log(Level.INFO, "Loading server preferences from the Java preferences subsystem");
+        logger.info("Loading server preferences from the Java preferences subsystem");
         ServerTypeI serverType;
         Preferences node;
 
@@ -254,7 +255,7 @@ public final class ServerList {
             //serverURL not an actual url now, it is a long hash instead.
             for (String serverURL : getPreferencesNode().childrenNames()) {
                 node = getPreferencesNode().node(serverURL);
-				//this check for the old preference format which used the url as the key
+                //this check for the old preference format which used the url as the key
                 //the new one uses a long integer hash, so if the key is not a long
                 //we have the old format.  We can convert the old format to the new one
                 //without loss of data.
@@ -288,9 +289,9 @@ public final class ServerList {
 
                 addServer(node);
             }
-            Logger.getLogger(ServerList.class.getName()).log(Level.INFO, "Completed loading server preferences from the Java preferences subsystem");
+            logger.info("Completed loading server preferences from the Java preferences subsystem");
         } catch (BackingStoreException ex) {
-            Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -332,7 +333,7 @@ public final class ServerList {
                     prefServers.removeNode();
                 }
             } catch (BackingStoreException ex) {
-                Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
     }
@@ -354,15 +355,14 @@ public final class ServerList {
                     decodedURL = GeneralUtils.URLDecode(encodedURL);
                     String serverType = currentServer.get("type", "Unknown");
                     if (serverType.equals("Unknown")) {
-                        Logger.getLogger(ServerList.class.getName()).log(
-                                Level.WARNING, "server URL: {0} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
+                        logger.warn("server URL: {} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
                         continue;
                     }
 
                     normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
 
                     if (!decodedURL.equals(normalizedURL)) {
-                        Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading " + textName + " URL: ''{0}'' in preferences", decodedURL);
+                        logger.debug("upgrading " + textName + " URL: ''{}'' in preferences", decodedURL);
                         Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
                         for (String key : currentServer.keys()) {
                             normalizedServer.put(key, currentServer.get(key, ""));
@@ -371,12 +371,12 @@ public final class ServerList {
                     }
                 } catch (Exception ex) {
                     // Allow preferences loading to continue if an exception is encountered.
-                    Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(ex.getMessage(), ex);
                     continue;
                 }
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -399,7 +399,7 @@ public final class ServerList {
             node.put(SERVER_NAME, name);
             node.put(SERVER_TYPE, type.getName());
             node.putInt(SERVER_ORDER, order);
-			//Added url to preferences.
+            //Added url to preferences.
             //long url was bugging the node name since it only accepts 80 char names
             node.put(SERVER_URL, GeneralUtils.URLEncode(url));
 
@@ -454,7 +454,7 @@ public final class ServerList {
         try {
             getPreferencesNode().node(GenericServer.getHash(url)).removeNode();
         } catch (BackingStoreException ex) {
-            Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -484,7 +484,7 @@ public final class ServerList {
                     return url2server.get(url);
                 }
             } catch (URISyntaxException ex) {
-                Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         throw new IllegalArgumentException("URL " + u.toString() + " is not a valid " + textName + ".");
@@ -508,13 +508,13 @@ public final class ServerList {
             if (!removedManually) {
                 String errorText;
                 if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
-                    
+
                     server.setEnabled(false);
 
                     //If the server was previously not available give the user the option to disable permanently
                     if (previouslyUnavailable(node)) {
                         if (Application.confirmPanel("The Quickload site named: " + server.serverName + " is still not responding. Would you like to ignore this site from now on?")) {
-                             setEnableIfAvailable(node, false);
+                            setEnableIfAvailable(node, false);
                         }
                     } else {
                         ErrorHandler.errorPanelWithReportBug(server.serverName, MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName), Level.SEVERE);
@@ -528,7 +528,7 @@ public final class ServerList {
                     if (server.serverType != null && server.serverType.isSaveServersInPrefs()) {
                         ErrorHandler.errorPanel(server.serverName, errorText, Level.SEVERE);
                     } else {
-                        Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, errorText);
+                        logger.error(errorText);
                     }
                 }
             }
@@ -543,9 +543,9 @@ public final class ServerList {
         // Fire event whenever server status in set to initialized 
         // or server status does not match previous status
         if (status == ServerStatus.Initialized || server.getServerStatus() != status) {
-            
+
             //if is initialized after programmatic disabling then we should flip the enable_if_available flag
-            if (status == ServerStatus.Initialized && node.getBoolean(ENABLE_IF_AVAILABLE, false)){
+            if (status == ServerStatus.Initialized && node.getBoolean(ENABLE_IF_AVAILABLE, false)) {
                 setEnableIfAvailable(node, false);
             }
             server.setServerStatus(status);
@@ -556,7 +556,6 @@ public final class ServerList {
         }
     }
 
-    
     private void setEnableIfAvailable(Preferences node, Boolean b) {
         //Sets the enableIfAvailable flag to true to ensure this server is checked on the next startup
         node.put(GenericServerPrefKeys.ENABLE_IF_AVAILABLE, b.toString());
@@ -591,8 +590,8 @@ public final class ServerList {
         String d = el.getAttribute("default");
         Boolean isDefault = d == null || d.isEmpty() ? false : Boolean.valueOf(d);
 
-        if (DEBUG) {
-            System.out.println("XmlPrefsParser adding " + server_type
+        if (logger.isDebugEnabled()) {
+            logger.debug("XmlPrefsParser adding " + server_type
                     + " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
                     + ", enabled: " + enabled + "default: " + isDefault);
         }

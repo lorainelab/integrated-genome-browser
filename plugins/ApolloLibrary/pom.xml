@@ -10,21 +10,34 @@
     <groupId>com.affymetrix</groupId>
     <artifactId>apollo-library</artifactId>
     <version>${apollo-library-version}</version>
-    
+
     <packaging>bundle</packaging>
 
     <name>Apollo Library</name>
-    
-    <dependencies>        
+
+    <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--Start of logging dependencies-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
     </dependencies>
 
     <build>
-        <plugins><plugin><artifactId>maven-clean-plugin</artifactId></plugin><plugin><artifactId>maven-dependency-plugin</artifactId></plugin>      
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -32,7 +45,7 @@
                 <configuration>
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package>
                             apollo.datamodel,
@@ -42,7 +55,7 @@
                         <Bundle-SymbolicName>com.affymetrix.igb.ApolloLibrary</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 </project>

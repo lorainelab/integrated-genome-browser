@@ -14,8 +14,8 @@
     <packaging>bundle</packaging>
 
     <name>Property View	</name>
-    
-    <dependencies>        
+
+    <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
@@ -56,6 +56,13 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--Start of logging dependencies-->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
     </dependencies>
 
     <build>
@@ -65,7 +72,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>    
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -73,7 +80,7 @@
                 <configuration>
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.property.Activator</Bundle-Activator>
@@ -82,7 +89,7 @@
                         <Bundle-SymbolicName>com.affymetrix.igb.PropertyView</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 

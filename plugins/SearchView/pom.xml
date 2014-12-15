@@ -15,8 +15,8 @@
 
 
     <name>searchView</name>
-    
-    <dependencies>       
+
+    <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>genoviz</artifactId>           
+            <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -56,12 +56,19 @@
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--Start of logging dependencies-->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
     </dependencies>
 
     <build>
@@ -71,7 +78,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>      
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -79,7 +86,7 @@
                 <configuration>
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.search.Activator</Bundle-Activator>
@@ -88,7 +95,7 @@
                         <Bundle-SymbolicName>com.affymetrix.igb.SearchView</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 

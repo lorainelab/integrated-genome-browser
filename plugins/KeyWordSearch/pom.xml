@@ -15,7 +15,7 @@
 
     <name>KeyWord Search</name>
 
-      <dependencies>        
+      <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
@@ -41,18 +41,25 @@
                   <artifactId>genometryImpl</artifactId>
                   <scope>provided</scope>
             </dependency>
+            <!--Start of logging dependencies-->
+            <dependency>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+              <scope>provided</scope>
+            </dependency>
+            <!--End of logging dependencies-->
       </dependencies>
 
     <build>
-        <plugins><plugin><artifactId>maven-clean-plugin</artifactId></plugin><plugin><artifactId>maven-dependency-plugin</artifactId></plugin>      
+        <plugins><plugin><artifactId>maven-clean-plugin</artifactId></plugin><plugin><artifactId>maven-dependency-plugin</artifactId></plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>                
+                <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package>
                             com.affymetrix.igb.keywordsearch
@@ -61,7 +68,7 @@
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 </project>

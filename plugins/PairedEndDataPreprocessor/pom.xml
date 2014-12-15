@@ -16,7 +16,7 @@
 
     <name>Paired End Data Preprocessor</name>
 
-    <dependencies>        
+    <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
@@ -24,8 +24,8 @@
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>	
-            <scope>provided</scope>		
+            <artifactId>guava</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
@@ -47,6 +47,13 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--Start of logging dependencies-->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
     </dependencies>
 
     <build>
@@ -56,10 +63,10 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>      
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>                
+                <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -71,8 +78,7 @@
                         <Bundle-Description>A plugin to allow a custom visualization for paired read data from sam/bam files</Bundle-Description>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 </project>
-

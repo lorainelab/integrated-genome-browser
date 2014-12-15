@@ -36,42 +36,19 @@ public final class SeqSymSummarizer {
         int[] y = new int[range];
         int[][] yR = new int[5][range];
         SeqSymmetry sym = syms.get(0);
-        SeqSpan span;
 
         byte[] seq_residues = seq.getResidues(start, end).toLowerCase().getBytes();
-        byte[] cur_residues;
-        byte ch, intron = "-".getBytes()[0];
-        int k, offset, cur_start, cur_end, length, y_offset = 0;
 
         for (int i = 0; i < sym.getChildCount(); i++) {
             SeqSymmetry childSeqSym = sym.getChild(i);
-
-            if (!(childSeqSym instanceof SymWithResidues)) {
-                continue;
+            if (childSeqSym instanceof PairedBamSymWrapper) {
+                SeqSymmetry firstMate = childSeqSym.getChild(0);
+                SeqSymmetry secondMate = childSeqSym.getChild(1);
+                processChildSeqSym(firstMate, seq, start, end, seq_residues, y, yR);
+                processChildSeqSym(secondMate, seq, start, end, seq_residues, y, yR);
+            } else {
+                processChildSeqSym(childSeqSym, seq, start, end, seq_residues, y, yR);
             }
-
-            span = childSeqSym.getSpan(seq);
-            offset = span.getMin() > start ? span.getMin() - start : 0;
-
-            // Boundary Check
-            cur_start = Math.max(start, span.getMin());
-            cur_end = Math.min(end, span.getMax());
-            length = cur_end - cur_start;
-
-            cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).toLowerCase().getBytes();
-
-            for (int j = 0; j < length; j++) {
-                ch = cur_residues[j];
-                if (seq_residues[offset + j] != ch && ch != intron) {
-                    y[offset - y_offset + j] += 1;
-                }
-
-                k = ResiduesChars.getValue((char) ch);
-                if (k > -1) {
-                    yR[k][offset - y_offset + j] += 1;
-                }
-            }
-
         }
 
         MisMatchGraphSym summary = createMisMatchGraph(range, yR, start, y, id, seq, pileup);
@@ -81,6 +58,36 @@ public final class SeqSymSummarizer {
         System.gc();
 
         return summary;
+    }
+
+    private static void processChildSeqSym(SeqSymmetry childSeqSym, BioSeq seq, int start, int end, byte[] seq_residues, int[] y, int[][] yR) {
+        if (!(childSeqSym instanceof SymWithResidues)) {
+            return;
+        }
+        byte[] cur_residues;
+        byte ch, intron = "-".getBytes()[0];
+        int k, offset, cur_start, cur_end, length, y_offset = 0;
+        SeqSpan span = childSeqSym.getSpan(seq);
+        offset = span.getMin() > start ? span.getMin() - start : 0;
+
+        // Boundary Check
+        cur_start = Math.max(start, span.getMin());
+        cur_end = Math.min(end, span.getMax());
+        length = cur_end - cur_start;
+
+        cur_residues = ((SymWithResidues) childSeqSym).getResidues(cur_start, cur_end).toLowerCase().getBytes();
+
+        for (int j = 0; j < length; j++) {
+            ch = cur_residues[j];
+            if (seq_residues[offset + j] != ch && ch != intron) {
+                y[offset - y_offset + j] += 1;
+            }
+
+            k = ResiduesChars.getValue((char) ch);
+            if (k > -1) {
+                yR[k][offset - y_offset + j] += 1;
+            }
+        }
     }
 
     private static MisMatchGraphSym createMisMatchGraph(int range, int[][] yR, int start, int[] y, String id, BioSeq seq, boolean pileup) {
@@ -207,7 +214,7 @@ public final class SeqSymSummarizer {
         int stops_index = 0;
         int depth = 0;
         int max_depth = 0;
-		// initializing capacity of sum_starts and sum_stops to max that could theoretically be
+        // initializing capacity of sum_starts and sum_stops to max that could theoretically be
         //   needed, though likely won't fill it
         IntArrayList transition_xpos = new IntArrayList(span_num * 2);
         FloatArrayList transition_ypos = new FloatArrayList(span_num * 2);
@@ -218,7 +225,7 @@ public final class SeqSymSummarizer {
             int next_start = starts[starts_index];
             int next_stop = stops[stops_index];
             int next_transition = Math.min(next_start, next_stop);
-			// note that by design, if (next_start == next_stop), then both of the following
+            // note that by design, if (next_start == next_stop), then both of the following
             //    conditionals will execute:
             if (next_start <= next_stop) {
                 while ((starts_index < span_num) && (starts[starts_index] == next_start)) {
@@ -248,7 +255,7 @@ public final class SeqSymSummarizer {
                 max_depth = Math.max(depth, max_depth);
             }
         }
-		// clean up last stops...
+        // clean up last stops...
         //    don't need to worry about "last starts", all starts will be done before last stop...
         while (stops_index < span_num) {
             int next_stop = stops[stops_index];
@@ -282,7 +289,7 @@ public final class SeqSymSummarizer {
         }
         widths[widths.length - 1] = 1;
 
-		// Originally, this returned a GraphSym with just x and y, but now has widths.
+        // Originally, this returned a GraphSym with just x and y, but now has widths.
         // Since the x and y values are not changed, all old code that relies on them
         // does not need to change.
         String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
@@ -380,7 +387,7 @@ public final class SeqSymSummarizer {
      * symB.getMin())
      */
     public static SeqSymmetry getUnion(List<SeqSymmetry> syms, BioSeq seq) {
-		//    MutableSeqSymmetry psym = new SimpleSymWithProps();
+        //    MutableSeqSymmetry psym = new SimpleSymWithProps();
         // first get the landscape as a GraphSym
         GraphSym landscape = getSymmetrySummary(syms, seq, true, "");
         // now just flatten it
@@ -392,7 +399,7 @@ public final class SeqSymSummarizer {
     }
 
     public static SeqSymmetry getUnion(List<SeqSymmetry> syms, BioSeq seq, int depth) {
-		//    MutableSeqSymmetry psym = new SimpleSymWithProps();
+        //    MutableSeqSymmetry psym = new SimpleSymWithProps();
         // first get the landscape as a GraphSym
         GraphSym landscape = getSymmetrySummary(syms, seq, true, "", depth);
         // now just flatten it
@@ -553,7 +560,7 @@ public final class SeqSymSummarizer {
         int starts_index = 0;
         int depth = 0;
 
-		// initializing capacity of sum_starts and sum_stops to max that could theoretically be
+        // initializing capacity of sum_starts and sum_stops to max that could theoretically be
         //   needed, though likely won't fill it
         IntArrayList transition_xpos = new IntArrayList(span_num * 2);
         FloatArrayList transition_ypos = new FloatArrayList(span_num * 2);
@@ -563,7 +570,7 @@ public final class SeqSymSummarizer {
             // figure out whether next position is a start, stop, or both
             int next_start = starts[starts_index];
             depth = 0;
-			// note that by design, if (next_start == next_stop), then both of the following
+            // note that by design, if (next_start == next_stop), then both of the following
             //    conditionals will execute:
             while ((starts_index < span_num) && (starts[starts_index] == next_start)) {
                 depth++;

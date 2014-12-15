@@ -76,7 +76,6 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final int BUFFER = 50;
     private static final Font default_font = NeoConstants.default_plain_font;
 
-    //private List<GlyphI> max_child_sofar = null;
     private static final int handle_width = 10;  // width of handle in pixels
     private boolean isFixedHeight;
 
@@ -107,31 +106,8 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private void initForSearching() {
         int child_count = getChildCount();
         if (child_count > 0) {
-            sortChildren(true);  // forcing sort
-            //    sortChildren(false); // not forcing sort (relying on sorted field instead...)
-
-			// now construct the max list, which is:
-            //   for each entry in min sorted children list, the maximum max
-            //     value up to (and including) that position
-            // could do max list as int array or as symmetry list, for now doing symmetry list
-            //max_child_sofar = new ArrayList<GlyphI>(child_count);
-            GlyphI curMaxChild = getChild(0);
-            Rectangle2D.Double curbox = curMaxChild.getCoordBox();
-            double max = curbox.x + curbox.width;
-            for (int i = 0; i < child_count; i++) {
-                GlyphI child = this.getChild(i);
-                curbox = child.getCoordBox();
-                double newmax = curbox.x + curbox.width;
-                if (newmax > max) {
-                    curMaxChild = child;
-                    max = newmax;
-                }
-                //max_child_sofar.add(curMaxChild);
-            }
-        } else {
-            //max_child_sofar = null;
-        }
-
+            sortChildren(true); 
+        } 
     }
 
     /**

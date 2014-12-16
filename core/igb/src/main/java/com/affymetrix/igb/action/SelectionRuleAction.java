@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.action;
 
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -14,6 +15,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -67,6 +69,8 @@ public class SelectionRuleAction extends GenericAction {
             messageFrame.setTitle("How to Select and De-select Data in IGB");
             rules_text.append(getRules());
         } else {
+            Map<String, Object> properties;
+            properties = orderProperties();
             messageFrame.setTitle(selection_info);
             if (properties != null && !properties.isEmpty()) {
                 List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
@@ -106,4 +110,38 @@ public class SelectionRuleAction extends GenericAction {
                 + "5. Control-SHIFT click to remove an item from the currently selected items.\n"
                 + "6. Click-drag the axis to zoom in on a region.\n";
     }
+
+    private Map<String, Object> orderProperties () {
+        Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
+        for(String property : DEFAULT_INFO_GRP) {
+            if(properties.containsKey(property)){
+                orderedProps.put(property, properties.get(property).toString());
+                //properties.remove(property);
+            }
+        }
+        
+        for(String property : DEFAULT_LOC_GRP) {
+            if(properties.containsKey(property)){
+                orderedProps.put(property, properties.get(property).toString());
+                //properties.remove(property);
+            }
+        }
+        
+        for(String property : DEFAULT_CIGAR_GRP) {
+            if(properties.containsKey(property)){
+                orderedProps.put(property, properties.get(property).toString());
+                //properties.remove(property);
+            }
+        }
+        
+        for(String property : properties.keySet()) {
+            if(!(DEFAULT_INFO_GRP.contains(property) ||
+                 DEFAULT_LOC_GRP.contains(property) ||
+                 DEFAULT_CIGAR_GRP.contains(property) )){
+                orderedProps.put(property, properties.get(property).toString());
+            }
+        }
+        return orderedProps;
+    }
+    
 }

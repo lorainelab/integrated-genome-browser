@@ -10,28 +10,29 @@ import static com.affymetrix.igb.update.ShowUpdate.*;
  * @author hiralv
  */
 public class UpdateStatusAlert implements StatusAlert {
-	private static final String UPDATEAVAILABLE = "Update avilable";
-	private static final String ICONPATH = "16x16/actions/warning.png";
-	
-	private final Update update;
-	
-	public UpdateStatusAlert(Update update) {
-		this.update = update;
-	}
-	
-	public Icon getIcon() {
-		return null;
-	}
 
-	public String getDisplayMessage() {
-		return UPDATEAVAILABLE;
-	}
+    public static final String UPDATE_AVAILABLE = "Update Available";
+    private static final String ICON_PATH = "16x16/actions/warning.png";
 
-	public String getToolTip() {
-		return MessageFormat.format("A new version {0} of IGB is available", update.getVersion().toString());
-	}
+    private final Update update;
 
-	public int actionPerformed() {
-		return showUpdate(update) ? StatusAlert.HIDE_ALERT : StatusAlert.KEEP_ALERT;
-	}	
+    public UpdateStatusAlert(Update update) {
+        this.update = update;
+    }
+
+    public Icon getIcon() {
+        return null;
+    }
+
+    public String getDisplayMessage() {
+        return UPDATE_AVAILABLE;
+    }
+
+    public String getToolTip() {
+        return MessageFormat.format("A new version {0} of IGB is available", update.getVersion().toString());
+    }
+
+    public int actionPerformed() {
+        return showUpdate(update) ? StatusAlert.HIDE_ALERT : StatusAlert.KEEP_ALERT;
+    }
 }

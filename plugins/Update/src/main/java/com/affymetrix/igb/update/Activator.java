@@ -37,6 +37,8 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         try {
             URL url = new URL(BUNDLE.getString("updates"));
             String updateXml = Resources.toString(url, Charsets.UTF_8);
+            //for testing only
+           // String updateXml = Resources.toString(Activator.class.getClassLoader().getResource("updates.xml"), Charsets.UTF_8);
             if (StringUtils.isNotBlank(updateXml)) {
                 final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getAppVersion());
                 final List<Update> updates = UpdateParser.parse(updateXml);

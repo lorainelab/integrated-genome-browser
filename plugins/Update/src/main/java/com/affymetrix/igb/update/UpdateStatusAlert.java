@@ -11,8 +11,8 @@ import static com.affymetrix.igb.update.ShowUpdate.*;
  */
 public class UpdateStatusAlert implements StatusAlert {
 
-    private static final String UPDATEAVAILABLE = "Update Available";
-    private static final String ICONPATH = "16x16/actions/warning.png";
+    public static final String UPDATE_AVAILABLE = "Update Available";
+    private static final String ICON_PATH = "16x16/actions/warning.png";
 
     private final Update update;
 
@@ -25,7 +25,7 @@ public class UpdateStatusAlert implements StatusAlert {
     }
 
     public String getDisplayMessage() {
-        return UPDATEAVAILABLE;
+        return UPDATE_AVAILABLE;
     }
 
     public String getToolTip() {

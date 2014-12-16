@@ -132,23 +132,23 @@ public class SeqMapToolTips extends JWindow {
         }
     }
     
-    private boolean isBamSym(SeqSymmetry sym) {
+    public static boolean isBamSym(SeqSymmetry sym) {
         return (sym instanceof BAMSym);
     }
     
-    private boolean isBedSym(SeqSymmetry sym) {
+    public static boolean isBedSym(SeqSymmetry sym) {
         return (sym instanceof UcscBedSym
                 || sym instanceof UcscBedDetailSym
                 || UcscBedSym.isBedChildSingletonSeqSymClass(sym)
                 || sym instanceof CdsSeqSymmetry);
     }
     
-    private boolean isLinkPSL(SeqSymmetry sym) {
+    public static boolean isLinkPSL(SeqSymmetry sym) {
         return (sym instanceof EfficientPairSeqSymmetry
                 || sym instanceof UcscPslSym);
     }
     
-    private boolean isGFFSym(SeqSymmetry sym) {
+    public static boolean isGFFSym(SeqSymmetry sym) {
         return (sym instanceof GFF3Sym);
     }
 

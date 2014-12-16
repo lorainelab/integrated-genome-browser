@@ -8,12 +8,15 @@ package com.affymetrix.igb.action;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.igb.view.SeqMapToolTips.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +38,7 @@ public class SelectionRuleAction extends GenericAction {
     private static final String selection_info = "Selection Info";
     private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
     private static final SelectionRuleAction ACTION = new SelectionRuleAction();
+    private SymWithProps sym;
 
     private Map<String, Object> properties;
     private String selectionText;
@@ -73,9 +77,8 @@ public class SelectionRuleAction extends GenericAction {
             properties = orderProperties();
             messageFrame.setTitle(selection_info);
             if (properties != null && !properties.isEmpty()) {
-                List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
                 int maxLength = 0;
-                for (String key : keys) {
+                for (String key : properties.keySet()) {
                     StringBuilder value = new StringBuilder();
                     if (properties.get(key) instanceof String[]) {
                         for (String obj : (String[]) properties.get(key)) {
@@ -111,37 +114,57 @@ public class SelectionRuleAction extends GenericAction {
                 + "6. Click-drag the axis to zoom in on a region.\n";
     }
 
-    private Map<String, Object> orderProperties () {
+    private Map<String, Object> orderProperties() {
+        List<String> propertyKeys = new ArrayList<String>();
+        if (isBamSym(sym)) {
+            propertyKeys.addAll(BAM_INFO_GRP);
+            propertyKeys.addAll(BAM_LOC_GRP);
+            propertyKeys.addAll(BAM_CIGAR_GRP);
+        } else if (isBedSym(sym)) {
+            propertyKeys.addAll(BED14_INFO_GRP);
+            propertyKeys.addAll(BED14_LOC_GRP);
+            propertyKeys.addAll(BED14_CIGAR_GRP);
+        } else if (isLinkPSL(sym)) {
+            propertyKeys.addAll(PSL_INFO_GRP);
+            propertyKeys.addAll(PSL_LOC_GRP);
+        } else if (isGFFSym(sym)) {
+            propertyKeys.addAll(GFF_INFO_GRP);
+            propertyKeys.addAll(GFF_LOC_GRP);
+            propertyKeys.addAll(GFF_CIGAR_GRP);
+        } else {
+            propertyKeys.addAll(DEFAULT_INFO_GRP);
+            propertyKeys.addAll(DEFAULT_LOC_GRP);
+            propertyKeys.addAll(DEFAULT_CIGAR_GRP);
+        }
+        return orderProperties(propertyKeys);
+    }
+
+    private Map<String, Object> orderProperties(List<String> propertyKeys) {
         Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
-        for(String property : DEFAULT_INFO_GRP) {
-            if(properties.containsKey(property)){
+        for (String property : propertyKeys) {
+            if (properties.containsKey(property)) {
                 orderedProps.put(property, properties.get(property).toString());
                 //properties.remove(property);
             }
         }
-        
-        for(String property : DEFAULT_LOC_GRP) {
-            if(properties.containsKey(property)){
-                orderedProps.put(property, properties.get(property).toString());
-                //properties.remove(property);
-            }
-        }
-        
-        for(String property : DEFAULT_CIGAR_GRP) {
-            if(properties.containsKey(property)){
-                orderedProps.put(property, properties.get(property).toString());
-                //properties.remove(property);
-            }
-        }
-        
-        for(String property : properties.keySet()) {
-            if(!(DEFAULT_INFO_GRP.contains(property) ||
-                 DEFAULT_LOC_GRP.contains(property) ||
-                 DEFAULT_CIGAR_GRP.contains(property) )){
+
+        for (String property : properties.keySet()) {
+            boolean test = propertyKeys.contains(property);
+            if (!test) {
                 orderedProps.put(property, properties.get(property).toString());
             }
         }
         return orderedProps;
     }
+
+    public SymWithProps getSym() {
+        return sym;
+    }
+
+    public void setSym(SymWithProps sym) {
+        this.sym = sym;
+    }
+    
+    
     
 }

@@ -147,7 +147,7 @@ public abstract class Application {
     }
 
     public abstract void setSelField(Map<String, Object> properties, String s, SeqSymmetry sym);
-    
+
     public void showError(String title, String message, List<GenericAction> actions, Level level) {
         status_bar.showError(title, message, actions, level);
     }

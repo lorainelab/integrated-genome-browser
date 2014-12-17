@@ -88,7 +88,7 @@ public class SeqMapToolTips extends JWindow {
         String input = key + " " + value;
         int size = (MAX_WIDTH / 10) - 2;
         String output = WordUtils.wrap(input, size, "\n", true);
-        output = output.substring(key.length()+1);
+        output = output.substring(key.length() + 1);
         return output;
     }
 
@@ -103,15 +103,15 @@ public class SeqMapToolTips extends JWindow {
         }
         tooltip.setText(null);
         if (properties != null && properties.size() > 0 && sym != null) {
-            if(isBamSym(sym)) {
+            if (isBamSym(sym)) {
                 propList = ToolTipOperations.formatBamSymTooltip(properties);
             } else if (isBedSym(sym)) {
                 propList = ToolTipOperations.formatBED14SymTooltip(properties);
             } else if (isLinkPSL(sym)) {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
-            }  else if (isGFFSym(sym)) {
+            } else if (isGFFSym(sym)) {
                 propList = ToolTipOperations.formatGFFSymTooltip(properties);
-            }else {
+            } else {
                 logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
                 propList = ToolTipOperations.formatDefaultSymTooltip(properties);
             }

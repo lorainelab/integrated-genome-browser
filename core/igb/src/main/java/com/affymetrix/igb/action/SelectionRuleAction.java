@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author tkanapar
  */
 public class SelectionRuleAction extends GenericAction {
-    
+
     private static final long serialVersionUID = 1L;
 
     private static final String no_selection_text = "Click the map below to select annotations";
@@ -134,13 +134,13 @@ public class SelectionRuleAction extends GenericAction {
             boolean test = propertyKeys.contains(key);
             if (!test) {
                 Object property = properties.get(key);
-                if(property instanceof String[]) {
+                if (property instanceof String[]) {
                     StringBuilder value = new StringBuilder();
                     for (String str : (String[]) property) {
                         value.append(str);
                     }
                     orderedProps.put(key, value.toString());
-                } else if(property instanceof String) {
+                } else if (property instanceof String) {
                     orderedProps.put(key, properties.get(key).toString());
                 }
             }
@@ -155,5 +155,5 @@ public class SelectionRuleAction extends GenericAction {
     public void setSym(SymWithProps sym) {
         this.sym = sym;
     }
-    
+
 }

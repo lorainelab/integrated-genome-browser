@@ -185,7 +185,9 @@ public abstract class XAM extends SymLoader {
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
         sym.setReadPairedFlag(sr.getReadPairedFlag());
         if (sym.getReadPairedFlag()) {
-            sym.setProperty(MATE_START, sym.getMateStart());
+            sym.setProperty(MATE_START, sr.getMateAlignmentStart() - 1);
+            sym.setMateStart(sr.getMateAlignmentStart() - 1);
+            sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
             sym.setProperty(BAM_FLAG, sym.getFlags());
             SamRecordFlag srf = new SamRecordFlag(sym.getFlags());
             for (Map.Entry<String, String> entry : srf.getFlagProperties().entrySet()) {

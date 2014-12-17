@@ -46,7 +46,7 @@ public class ToolTipConstants {
     public static final String CDS_START = "cds start";
     public static final String CDS_END = "cds end";
 
-    public static final String BAM_FLAG = "flags";
+    public static final String BAM_FLAG = "raw sam record flag";
     public static final String PAIRED_READ = "paired read";
     public static final String MATE_START = "mate start";
     public static final String PROPER_PAIR_READ = "mapped in proper pair";

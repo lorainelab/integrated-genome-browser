@@ -1,6 +1,8 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
@@ -144,7 +146,7 @@ public abstract class Application {
         status_bar.setStatusAlert(s);
     }
 
-    public abstract void setSelField(Map<String, Object> properties, String s);
+    public abstract void setSelField(Map<String, Object> properties, String s, SeqSymmetry sym);
 
     public void showError(String title, String message, List<GenericAction> actions, Level level) {
         status_bar.showError(title, message, actions, level);

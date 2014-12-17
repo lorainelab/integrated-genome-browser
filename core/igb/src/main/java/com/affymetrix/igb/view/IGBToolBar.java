@@ -2,6 +2,8 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.ContinuousAction;
 import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
@@ -71,7 +73,7 @@ public class IGBToolBar extends JToolBar {
             public void dragDropEnd(DragSourceDropEvent dsde) {
                 triggerMouseReleasedEvent();
             }
-            
+
         });
         ((DragAndDropJPanel) toolbarItemPanel).addDropTargetListener(new DropTargetAdapter() {
             @Override
@@ -80,7 +82,7 @@ public class IGBToolBar extends JToolBar {
             }
 
             @Override
-            public void dragEnter(DropTargetDragEvent dtde) {                
+            public void dragEnter(DropTargetDragEvent dtde) {
                 triggerMouseReleasedEvent();
             }
         });
@@ -127,11 +129,11 @@ public class IGBToolBar extends JToolBar {
 
         super.validate();
 
-        setSelectionText(null, null);
+        setSelectionText(null, null, null);
 
         Selections.addRefreshSelectionListener(refreshSelectionListener);
     }
-    
+
     private void triggerMouseReleasedEvent() {
         for (Component c : toolbarItemPanel.getComponents()) {
             if (c instanceof JRPButtonTLP) {
@@ -142,8 +144,8 @@ public class IGBToolBar extends JToolBar {
             }
         }
     }
-    
-    public void setSelectionText(Map<String, Object> properties, String selectionText) {
+
+    public void setSelectionText(Map<String, Object> properties, String selectionText, SeqSymmetry sym) {
         if (selectionText == null || selectionText.length() == 0) {
             selectionInfoTextField.setForeground(Color.LIGHT_GRAY);
             selectionInfoTextField.setFont(noSelectionFont);
@@ -156,6 +158,9 @@ public class IGBToolBar extends JToolBar {
             selectionInfoTextField.setEnabled(true);
         }
         SELECTION_RULE_ACTION.setProperties(properties);
+        if (sym instanceof SymWithProps) {
+            SELECTION_RULE_ACTION.setSym((SymWithProps) sym);
+        }
         SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
 

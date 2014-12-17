@@ -6,6 +6,7 @@
 package com.affymetrix.genometryImpl.tooltip;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -40,29 +41,30 @@ public class ToolTipConstants {
     public static final String NH = "NH";
     public static final String XS = "XS";
     public static final String NM = "NM";
-    
+
     public static final String DESCRIPTION = "description";
     public static final String CDS_START = "cds start";
     public static final String CDS_END = "cds end";
-    
-    
+
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> BAM_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
     public static final List<String> BAM_CIGAR_GRP = Arrays.asList(CIGAR, VN, NH, XS, NM);
     public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL);
-    
+    public static final List<String> BAM_PROP_LIST = new ArrayList<String>();
+
     public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INFO_GRP);
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
     public static final Map<String, List<String>> BAM_CIGAR_CATEGORY = ImmutableMap.of("Cigar", BAM_CIGAR_GRP);
     public static final String MISC_CATEGORY = "Misc";
-    
+
     // BED-14
     public static final List<String> BED14_INFO_GRP = Arrays.asList(TITLE, ID, DESCRIPTION);
     public static final List<String> BED14_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CDS_START, CDS_END, CHROMOSOME);
     public static final List<String> BED14_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
     public static final List<String> BED14_IGNORE_LIST = Arrays.asList(CL, NAME);
-    
+    public static final List<String> BED14_PROP_LIST = new ArrayList<String>();
+
     public static final Map<String, List<String>> BED14_INFO_CATEGORY = ImmutableMap.of("Basic Info", BED14_INFO_GRP);
     public static final Map<String, List<String>> BED14_LOCATION_CATEGORY = ImmutableMap.of("BED14 Info", BED14_LOC_GRP);
     public static final Map<String, List<String>> BED14_CIGAR_CATEGORY = ImmutableMap.of("Cigar", BED14_CIGAR_GRP);
@@ -71,30 +73,54 @@ public class ToolTipConstants {
     public static final List<String> PSL_INFO_GRP = Arrays.asList(ID, DESCRIPTION);
     public static final List<String> PSL_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CHROMOSOME);
     public static final List<String> PSL_IGNORE_LIST = Arrays.asList(CL, NAME);
-    
+    public static final List<String> PSL_PROP_LIST = new ArrayList<String>();
+
     public static final Map<String, List<String>> PSL_INFO_CATEGORY = ImmutableMap.of("Basic Info", PSL_INFO_GRP);
     public static final Map<String, List<String>> PSL_LOCATION_CATEGORY = ImmutableMap.of("PSL Info", PSL_LOC_GRP);
-    
-     // DEFAULT
+
+    // DEFAULT
     public static final List<String> DEFAULT_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> DEFAULT_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
     public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(CIGAR, VN, NH, XS, NM);
     public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);
-    
+    public static final List<String> DEFAULT_PROP_LIST = new ArrayList<String>();
+
     public static final Map<String, List<String>> DEFAULT_INFO_CATEGORY = ImmutableMap.of("Basic Info", DEFAULT_INFO_GRP);
     public static final Map<String, List<String>> DEFAULT_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", DEFAULT_LOC_GRP);
     public static final Map<String, List<String>> DEFAULT_CIGAR_CATEGORY = ImmutableMap.of("Cigar", DEFAULT_CIGAR_GRP);
-    
+
     //GFF
     public static final List<String> GFF_INFO_GRP = Arrays.asList(TITLE, ID, DESCRIPTION);
     public static final List<String> GFF_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CDS_START, CDS_END, CHROMOSOME);
     public static final List<String> GFF_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
     public static final List<String> GFF_IGNORE_LIST = Arrays.asList(CL);
-    
+    public static final List<String> GFF_PROP_LIST = new ArrayList<String>();
+
     public static final Map<String, List<String>> GFF_INFO_CATEGORY = ImmutableMap.of("Basic Info", GFF_INFO_GRP);
     public static final Map<String, List<String>> GFF_LOCATION_CATEGORY = ImmutableMap.of("GFF Info", GFF_LOC_GRP);
     public static final Map<String, List<String>> GFF_CIGAR_CATEGORY = ImmutableMap.of("Cigar", GFF_CIGAR_GRP);
-    
+
+    static {
+        BAM_PROP_LIST.addAll(BAM_INFO_GRP);
+        BAM_PROP_LIST.addAll(BAM_LOC_GRP);
+        BAM_PROP_LIST.addAll(BAM_CIGAR_GRP);
+
+        BED14_PROP_LIST.addAll(BED14_INFO_GRP);
+        BED14_PROP_LIST.addAll(BED14_LOC_GRP);
+        BED14_PROP_LIST.addAll(BED14_CIGAR_GRP);
+
+        PSL_PROP_LIST.addAll(PSL_INFO_GRP);
+        PSL_PROP_LIST.addAll(PSL_LOC_GRP);
+
+        DEFAULT_PROP_LIST.addAll(DEFAULT_INFO_GRP);
+        DEFAULT_PROP_LIST.addAll(DEFAULT_LOC_GRP);
+        DEFAULT_PROP_LIST.addAll(DEFAULT_CIGAR_GRP);
+
+        GFF_PROP_LIST.addAll(GFF_INFO_GRP);
+        GFF_PROP_LIST.addAll(GFF_LOC_GRP);
+        GFF_PROP_LIST.addAll(GFF_CIGAR_GRP);
+    }
+
     private ToolTipConstants() {
 
     }

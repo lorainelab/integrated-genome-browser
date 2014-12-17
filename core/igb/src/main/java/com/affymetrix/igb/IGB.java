@@ -20,6 +20,8 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -503,8 +505,8 @@ public final class IGB extends Application
     }
 
     @Override
-    public void setSelField(Map<String, Object> properties, String message) {
-        tool_bar.setSelectionText(properties, message);
+    public void setSelField(Map<String, Object> properties, String message, SeqSymmetry sym) {
+        tool_bar.setSelectionText(properties, message, sym);
     }
 
     /**

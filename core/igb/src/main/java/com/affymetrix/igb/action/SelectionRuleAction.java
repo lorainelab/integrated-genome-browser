@@ -5,35 +5,41 @@
  */
 package com.affymetrix.igb.action;
 
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.genometryImpl.util.SeqUtils.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author tkanapar
  */
 public class SelectionRuleAction extends GenericAction {
-    
+
     private static final long serialVersionUID = 1L;
 
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
     private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
     private static final SelectionRuleAction ACTION = new SelectionRuleAction();
-
+    private SymWithProps sym;
+    private static final Logger logger = LoggerFactory.getLogger(SelectionRuleAction.class);
     private Map<String, Object> properties;
     private String selectionText;
 
@@ -67,20 +73,12 @@ public class SelectionRuleAction extends GenericAction {
             messageFrame.setTitle("How to Select and De-select Data in IGB");
             rules_text.append(getRules());
         } else {
+            Map<String, Object> properties = orderProperties();
             messageFrame.setTitle(selection_info);
             if (properties != null && !properties.isEmpty()) {
-                List<String> keys = GeneralUtils.asSortedList(properties.keySet(), comparator);
                 int maxLength = 0;
-                for (String key : keys) {
-                    StringBuilder value = new StringBuilder();
-                    if (properties.get(key) instanceof String[]) {
-                        for (String obj : (String[]) properties.get(key)) {
-                            value.append(obj);
-                        }
-                    } else {
-                        value.append(properties.get(key));
-                    }
-                    rules_text.append(key + ": " + value + "\n");
+                for (String key : properties.keySet()) {
+                    rules_text.append(key + ": " + properties.get(key) + "\n");
                     if (properties.get(key).toString().length() > maxLength) {
                         maxLength = properties.get(key).toString().length();
                     }
@@ -106,4 +104,56 @@ public class SelectionRuleAction extends GenericAction {
                 + "5. Control-SHIFT click to remove an item from the currently selected items.\n"
                 + "6. Click-drag the axis to zoom in on a region.\n";
     }
+
+    private Map<String, Object> orderProperties() {
+        List<String> propertyKeys;
+        if (isBamSym(sym)) {
+            propertyKeys = BAM_PROP_LIST;
+        } else if (isBedSym(sym)) {
+            propertyKeys = BED14_PROP_LIST;
+        } else if (isLinkPSL(sym)) {
+            propertyKeys = PSL_PROP_LIST;
+        } else if (isGFFSym(sym)) {
+            propertyKeys = GFF_PROP_LIST;
+        } else {
+            logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
+            propertyKeys = DEFAULT_PROP_LIST;
+        }
+        return orderProperties(propertyKeys);
+    }
+
+    private Map<String, Object> orderProperties(List<String> propertyKeys) {
+        Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
+        for (String property : propertyKeys) {
+            if (properties.containsKey(property)) {
+                orderedProps.put(property, properties.get(property).toString());
+            }
+        }
+
+        for (String key : properties.keySet()) {
+            boolean test = propertyKeys.contains(key);
+            if (!test) {
+                Object property = properties.get(key);
+                if (property instanceof String[]) {
+                    StringBuilder value = new StringBuilder();
+                    for (String str : (String[]) property) {
+                        value.append(str);
+                    }
+                    orderedProps.put(key, value.toString());
+                } else if (property instanceof String) {
+                    orderedProps.put(key, properties.get(key).toString());
+                }
+            }
+        }
+        return orderedProps;
+    }
+
+    public SymWithProps getSym() {
+        return sym;
+    }
+
+    public void setSym(SymWithProps sym) {
+        this.sym = sym;
+    }
+
 }

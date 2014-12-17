@@ -161,7 +161,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             //clear selections
             NeoMouseEvent nevt = (NeoMouseEvent) evt;
             if (nevt.getItems().isEmpty()) {
-               smv.clearSelection();
+                smv.clearSelection();
             }
             smv.showPopup((NeoMouseEvent) evt);
         }
@@ -341,7 +341,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             }
         }
 
-		// If drag began in the axis tier, then do NOT do normal selection stuff,
+        // If drag began in the axis tier, then do NOT do normal selection stuff,
         // because we are selecting sequence instead.
         // (This only really matters when SELECT_ON_MOUSE_PRESSED is false.
         //  If SELECT_ON_MOUSE_PRESSED is true, topgl will already be null

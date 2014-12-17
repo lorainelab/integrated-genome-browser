@@ -1850,7 +1850,7 @@ public class SeqMapView extends JPanel
         } else {
             props = determineProps(sym_used_for_title);
         }
-        Application.getSingleton().setSelField(props, title);
+        Application.getSingleton().setSelField(props, title, sym_used_for_title);
     }
 
     private void setStatus(String title) {

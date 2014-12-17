@@ -5,14 +5,7 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
-import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
-import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
 import java.awt.BorderLayout;
@@ -32,6 +25,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
+import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,6 +36,7 @@ public class SeqMapToolTips extends JWindow {
 
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -92,7 +88,7 @@ public class SeqMapToolTips extends JWindow {
         String input = key + " " + value;
         int size = (MAX_WIDTH / 10) - 2;
         String output = WordUtils.wrap(input, size, "\n", true);
-        output = output.substring(key.length()+1);
+        output = output.substring(key.length() + 1);
         return output;
     }
 
@@ -107,15 +103,16 @@ public class SeqMapToolTips extends JWindow {
         }
         tooltip.setText(null);
         if (properties != null && properties.size() > 0 && sym != null) {
-            if(isBamSym(sym)) {
+            if (isBamSym(sym)) {
                 propList = ToolTipOperations.formatBamSymTooltip(properties);
             } else if (isBedSym(sym)) {
                 propList = ToolTipOperations.formatBED14SymTooltip(properties);
             } else if (isLinkPSL(sym)) {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
-            }  else if (isGFFSym(sym)) {
+            } else if (isGFFSym(sym)) {
                 propList = ToolTipOperations.formatGFFSymTooltip(properties);
-            }else {
+            } else {
+                logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
                 propList = ToolTipOperations.formatDefaultSymTooltip(properties);
             }
             formatCategoryToolTip(propList);
@@ -130,26 +127,6 @@ public class SeqMapToolTips extends JWindow {
         } else {
             tooltip.setText(null);
         }
-    }
-    
-    private boolean isBamSym(SeqSymmetry sym) {
-        return (sym instanceof BAMSym);
-    }
-    
-    private boolean isBedSym(SeqSymmetry sym) {
-        return (sym instanceof UcscBedSym
-                || sym instanceof UcscBedDetailSym
-                || UcscBedSym.isBedChildSingletonSeqSymClass(sym)
-                || sym instanceof CdsSeqSymmetry);
-    }
-    
-    private boolean isLinkPSL(SeqSymmetry sym) {
-        return (sym instanceof EfficientPairSeqSymmetry
-                || sym instanceof UcscPslSym);
-    }
-    
-    private boolean isGFFSym(SeqSymmetry sym) {
-        return (sym instanceof GFF3Sym);
     }
 
     private void formatCategoryToolTip(List<ToolTipCategory> properties) {

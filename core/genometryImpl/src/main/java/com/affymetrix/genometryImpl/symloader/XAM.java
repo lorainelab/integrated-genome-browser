@@ -184,20 +184,8 @@ public abstract class XAM extends SymLoader {
         sym.setReadPairedFlag(sr.getReadPairedFlag());
         sym.setProperty("Location", seq.getID());
         if (sym.getReadPairedFlag()) {
-            sym.setFirstOfPairFlag(sr.getFirstOfPairFlag());
-            sym.setSecondOfPairFlag(sr.getSecondOfPairFlag());
-            //1-based inclusive leftmost position of the clippped mate sequence, or 0 if there is no position.
-            sym.setMateStart(sr.getMateAlignmentStart() - 1);
-            sym.setProperty("Mate start", sr.getMateAlignmentStart() - 1);
-            sym.setMateUnMapped(sr.getMateUnmappedFlag());
-            sym.setProperty("Mate is mapped", !sr.getMateUnmappedFlag());
-            sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
-            if (sr.getMateNegativeStrandFlag()) {
-                sym.setProperty("Mate strand", "-");
-            } else {
-                sym.setProperty("Mate strand", "+");
-            }
-            
+           
+
         }
 
         return sym;

@@ -7,6 +7,8 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.BAM_FLAG;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MATE_START;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 import java.net.URI;
@@ -182,9 +184,13 @@ public abstract class XAM extends SymLoader {
         sym.setFlags(sr.getFlags());
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
         sym.setReadPairedFlag(sr.getReadPairedFlag());
-        sym.setProperty("Location", seq.getID());
         if (sym.getReadPairedFlag()) {
-           
+            sym.setProperty(MATE_START, sym.getMateStart());
+            sym.setProperty(BAM_FLAG, sym.getFlags());
+            SamRecordFlag srf = new SamRecordFlag(sym.getFlags());
+            for (Map.Entry<String, String> entry : srf.getFlagProperties().entrySet()) {
+                sym.setProperty(entry.getKey(), entry.getValue());
+            }
 
         }
 

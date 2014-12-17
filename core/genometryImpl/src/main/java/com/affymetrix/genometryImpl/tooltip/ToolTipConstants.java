@@ -46,16 +46,31 @@ public class ToolTipConstants {
     public static final String CDS_START = "cds start";
     public static final String CDS_END = "cds end";
 
+    public static final String BAM_FLAG = "flags";
+    public static final String PAIRED_READ = "paired read";
+    public static final String MATE_START = "mate start";
+    public static final String PROPER_PAIR_READ = "mapped in proper pair";
+    public static final String UNMAPPED_READ = "unmapped";
+    public static final String READ_REVERSE_STRAND = "strand";
+    public static final String MATE_REVERSE_STRAND = "mate on reverse strand";
+    public static final String FIRST_IN_PAIR = "first in pair";
+    public static final String SECOND_IN_PAIR = "second in pair";
+    public static final String DUPLICATE = "duplicate";
+    public static final String SUPPLEMENTARY = "supplementary";
+    public static final String FAILED_QC = "failed qc";
+    
+
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> BAM_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
-    public static final List<String> BAM_CIGAR_GRP = Arrays.asList(CIGAR, VN, NH, XS, NM);
-    public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL);
+    public static final List<String> BAM_DETAILS_GRP = Arrays.asList(PAIRED_READ, MATE_START, PROPER_PAIR_READ, UNMAPPED_READ, READ_REVERSE_STRAND, MATE_REVERSE_STRAND, FIRST_IN_PAIR, 
+            SECOND_IN_PAIR, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, NH, XS, NM);
+    public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL, BAM_FLAG);
     public static final List<String> BAM_PROP_LIST = new ArrayList<String>();
 
     public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INFO_GRP);
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
-    public static final Map<String, List<String>> BAM_CIGAR_CATEGORY = ImmutableMap.of("Cigar", BAM_CIGAR_GRP);
+    public static final Map<String, List<String>> BAM_CIGAR_CATEGORY = ImmutableMap.of("Details", BAM_DETAILS_GRP);
     public static final String MISC_CATEGORY = "Misc";
 
     // BED-14
@@ -81,7 +96,7 @@ public class ToolTipConstants {
     // DEFAULT
     public static final List<String> DEFAULT_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> DEFAULT_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
-    public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(CIGAR, VN, NH, XS, NM);
+    public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(PAIRED_READ, CIGAR, VN, NH, XS, NM);
     public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);
     public static final List<String> DEFAULT_PROP_LIST = new ArrayList<String>();
 
@@ -103,7 +118,7 @@ public class ToolTipConstants {
     static {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);
         BAM_PROP_LIST.addAll(BAM_LOC_GRP);
-        BAM_PROP_LIST.addAll(BAM_CIGAR_GRP);
+        BAM_PROP_LIST.addAll(BAM_DETAILS_GRP);
 
         BED14_PROP_LIST.addAll(BED14_INFO_GRP);
         BED14_PROP_LIST.addAll(BED14_LOC_GRP);

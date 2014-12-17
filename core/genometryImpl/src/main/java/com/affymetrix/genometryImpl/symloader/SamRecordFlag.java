@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.symloader;
 
-import com.affymetrix.genometryImpl.tooltip.ToolTipConstants;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,6 +108,19 @@ public class SamRecordFlag {
         return (flag & SUPPLEMENTARY_ALIGNMENT_FLAG) != 0;
     }
 
-
+    public Map<String, String> getFlagProperties() {
+        Map<String, String> props = new HashMap<String, String>();
+        props.put(PAIRED_READ, isPaired() ? "yes" : "no");
+        props.put(PROPER_PAIR_READ, isProperPair() ? "yes" : "no");
+        props.put(UNMAPPED_READ, isMapped() ? "no" : "yes");
+        props.put(READ_REVERSE_STRAND, isReverseStrand() ? "yes" : "no");
+        props.put(MATE_REVERSE_STRAND, isMateReverseStrand() ? "yes" : "no");
+        props.put(FIRST_IN_PAIR, isFirstOfPair() ? "yes" : "no");
+        props.put(SECOND_IN_PAIR, isSecondOfPair() ? "yes" : "no");
+        props.put(DUPLICATE, isDuplicate() ? "yes" : "no");
+        props.put(SUPPLEMENTARY, isSupplementary() ? "yes" : "no");
+        props.put(FAILED_QC, isSecondOfPair() ? "yes" : "no");
+        return props;
+    }
 
 }

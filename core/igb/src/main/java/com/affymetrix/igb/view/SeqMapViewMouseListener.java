@@ -2,7 +2,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.event.PropertyListener;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -12,7 +11,6 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.action.StopAutoScrollAction;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.TierGlyph;
@@ -173,17 +171,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         // then there needs to be code here to prevent both this and that from
         // trying to do a popup at the same time.  But it is tricky.  So for
         // now we let ONLY this class trigger the pop-up.
-        
-        //Setting SeqSymmetry to SelectionRuleAction
-        SelectionRuleAction selRuleAction = SelectionRuleAction.getAction();
-        NeoMouseEvent nevt = (NeoMouseEvent) evt;
-        GlyphI topgl = nevt.getItems().get(nevt.getItems().size() - 1);
-        SymWithProps sym;
-        if(topgl.getInfo() instanceof SymWithProps) {
-            sym = (SymWithProps) topgl.getInfo();
-            selRuleAction.setSym(sym);
         }
-    }
 
     public void mouseDragged(MouseEvent evt) {
         if (PROCESS_SUB_SELECTION) {

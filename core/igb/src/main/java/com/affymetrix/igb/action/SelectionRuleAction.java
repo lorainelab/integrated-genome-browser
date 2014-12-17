@@ -9,14 +9,12 @@ import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.igb.view.SeqMapToolTips.*;
+import static com.affymetrix.genometryImpl.util.SeqUtils.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +23,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -39,7 +39,7 @@ public class SelectionRuleAction extends GenericAction {
     private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
     private static final SelectionRuleAction ACTION = new SelectionRuleAction();
     private SymWithProps sym;
-
+    private static final Logger logger = LoggerFactory.getLogger(SelectionRuleAction.class);
     private Map<String, Object> properties;
     private String selectionText;
 
@@ -73,21 +73,12 @@ public class SelectionRuleAction extends GenericAction {
             messageFrame.setTitle("How to Select and De-select Data in IGB");
             rules_text.append(getRules());
         } else {
-            Map<String, Object> properties;
-            properties = orderProperties();
+            Map<String, Object> properties = orderProperties();
             messageFrame.setTitle(selection_info);
             if (properties != null && !properties.isEmpty()) {
                 int maxLength = 0;
                 for (String key : properties.keySet()) {
-                    StringBuilder value = new StringBuilder();
-                    if (properties.get(key) instanceof String[]) {
-                        for (String obj : (String[]) properties.get(key)) {
-                            value.append(obj);
-                        }
-                    } else {
-                        value.append(properties.get(key));
-                    }
-                    rules_text.append(key + ": " + value + "\n");
+                    rules_text.append(key + ": " + properties.get(key) + "\n");
                     if (properties.get(key).toString().length() > maxLength) {
                         maxLength = properties.get(key).toString().length();
                     }
@@ -115,26 +106,18 @@ public class SelectionRuleAction extends GenericAction {
     }
 
     private Map<String, Object> orderProperties() {
-        List<String> propertyKeys = new ArrayList<String>();
+        List<String> propertyKeys;
         if (isBamSym(sym)) {
-            propertyKeys.addAll(BAM_INFO_GRP);
-            propertyKeys.addAll(BAM_LOC_GRP);
-            propertyKeys.addAll(BAM_CIGAR_GRP);
+            propertyKeys = BAM_PROP_LIST;
         } else if (isBedSym(sym)) {
-            propertyKeys.addAll(BED14_INFO_GRP);
-            propertyKeys.addAll(BED14_LOC_GRP);
-            propertyKeys.addAll(BED14_CIGAR_GRP);
+            propertyKeys = BED14_PROP_LIST;
         } else if (isLinkPSL(sym)) {
-            propertyKeys.addAll(PSL_INFO_GRP);
-            propertyKeys.addAll(PSL_LOC_GRP);
+            propertyKeys = PSL_PROP_LIST;
         } else if (isGFFSym(sym)) {
-            propertyKeys.addAll(GFF_INFO_GRP);
-            propertyKeys.addAll(GFF_LOC_GRP);
-            propertyKeys.addAll(GFF_CIGAR_GRP);
+            propertyKeys = GFF_PROP_LIST;
         } else {
-            propertyKeys.addAll(DEFAULT_INFO_GRP);
-            propertyKeys.addAll(DEFAULT_LOC_GRP);
-            propertyKeys.addAll(DEFAULT_CIGAR_GRP);
+            logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
+            propertyKeys = DEFAULT_PROP_LIST;
         }
         return orderProperties(propertyKeys);
     }
@@ -144,14 +127,22 @@ public class SelectionRuleAction extends GenericAction {
         for (String property : propertyKeys) {
             if (properties.containsKey(property)) {
                 orderedProps.put(property, properties.get(property).toString());
-                //properties.remove(property);
             }
         }
 
-        for (String property : properties.keySet()) {
-            boolean test = propertyKeys.contains(property);
+        for (String key : properties.keySet()) {
+            boolean test = propertyKeys.contains(key);
             if (!test) {
-                orderedProps.put(property, properties.get(property).toString());
+                Object property = properties.get(key);
+                if(property instanceof String[]) {
+                    StringBuilder value = new StringBuilder();
+                    for (String str : (String[]) property) {
+                        value.append(str);
+                    }
+                    orderedProps.put(key, value.toString());
+                } else if(property instanceof String) {
+                    orderedProps.put(key, properties.get(key).toString());
+                }
             }
         }
         return orderedProps;
@@ -164,7 +155,5 @@ public class SelectionRuleAction extends GenericAction {
     public void setSym(SymWithProps sym) {
         this.sym = sym;
     }
-    
-    
     
 }

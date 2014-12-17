@@ -19,7 +19,13 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
+import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 
 import java.util.*;
@@ -28,7 +34,7 @@ import java.util.*;
  *  Holds many static methods for manipulating BioSeqs, SeqSpans, and SeqSymmetries
  *
  */
-public abstract class SeqUtils {
+public class SeqUtils {
 	/**
 	 * Get depth of the symmetry. (Longest number of recursive calls to getChild()
 	 *  required to reach deepest descendant)
@@ -1468,4 +1474,25 @@ public static boolean areResiduesComplete(String residues) {
 		
 		return resultsym;
 	}
+        
+            
+    public static boolean isBamSym(SeqSymmetry sym) {
+        return (sym instanceof BAMSym);
+    }
+    
+    public static boolean isBedSym(SeqSymmetry sym) {
+        return (sym instanceof UcscBedSym
+                || sym instanceof UcscBedDetailSym
+                || UcscBedSym.isBedChildSingletonSeqSymClass(sym)
+                || sym instanceof CdsSeqSymmetry);
+    }
+    
+    public static boolean isLinkPSL(SeqSymmetry sym) {
+        return (sym instanceof EfficientPairSeqSymmetry
+                || sym instanceof UcscPslSym);
+    }
+    
+    public static boolean isGFFSym(SeqSymmetry sym) {
+        return (sym instanceof GFF3Sym);
+    }
 }

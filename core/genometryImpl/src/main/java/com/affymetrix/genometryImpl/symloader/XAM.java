@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.BAM_FLAG;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MATE_START;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NA;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
@@ -186,16 +187,31 @@ public abstract class XAM extends SymLoader {
         sym.setFlags(sr.getFlags());
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
         sym.setReadPairedFlag(sr.getReadPairedFlag());
+        SamRecordFlag srf = new SamRecordFlag(sym.getFlags());
+        for (Map.Entry<String, String> entry : srf.getFlagProperties().entrySet()) {
+
+            if (sr.getMateAlignmentStart() > 0) {
+                sym.setProperty(entry.getKey(), entry.getValue());
+            } else {
+                //unfortunately, we need to filter out some properties in this scenario
+                if (!SamRecordFlag.MATE_PROPS.contains(entry.getKey())) {
+                    sym.setProperty(entry.getKey(), entry.getValue());
+                }
+            }
+
+        }
+
         if (sym.getReadPairedFlag()) {
             int mateStart = sr.getMateAlignmentStart() - 1;
-            sym.setProperty(MATE_START, GeneralUtils.applyCommaFormatting(mateStart));
+            if (mateStart == -1) {
+                mateStart = 0;
+                sym.setProperty(MATE_START, NA);
+            } else {
+                sym.setProperty(MATE_START, GeneralUtils.applyCommaFormatting(mateStart));
+            }
             sym.setMateStart(mateStart);
             sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
             sym.setProperty(BAM_FLAG, sym.getFlags());
-            SamRecordFlag srf = new SamRecordFlag(sym.getFlags());
-            for (Map.Entry<String, String> entry : srf.getFlagProperties().entrySet()) {
-                sym.setProperty(entry.getKey(), entry.getValue());
-            }
 
         }
 

@@ -5,19 +5,16 @@
  */
 package com.affymetrix.igb.action;
 
-import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.*;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.PropertyHandler;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.OrderComparator;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import static com.affymetrix.genometryImpl.util.SelectionInfoUtils.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -73,7 +70,7 @@ public class SelectionRuleAction extends GenericAction {
             messageFrame.setTitle("How to Select and De-select Data in IGB");
             rules_text.append(getRules());
         } else {
-            Map<String, Object> properties = orderProperties();
+            Map<String, Object> properties = orderProperties(this.properties, sym);
             messageFrame.setTitle(selection_info);
             if (properties != null && !properties.isEmpty()) {
                 int maxLength = 0;
@@ -105,48 +102,7 @@ public class SelectionRuleAction extends GenericAction {
                 + "6. Click-drag the axis to zoom in on a region.\n";
     }
 
-    private Map<String, Object> orderProperties() {
-        List<String> propertyKeys;
-        if (isBamSym(sym)) {
-            propertyKeys = BAM_PROP_LIST;
-        } else if (isBedSym(sym)) {
-            propertyKeys = BED14_PROP_LIST;
-        } else if (isLinkPSL(sym)) {
-            propertyKeys = PSL_PROP_LIST;
-        } else if (isGFFSym(sym)) {
-            propertyKeys = GFF_PROP_LIST;
-        } else {
-            logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
-            propertyKeys = DEFAULT_PROP_LIST;
-        }
-        return orderProperties(propertyKeys);
-    }
-
-    private Map<String, Object> orderProperties(List<String> propertyKeys) {
-        Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
-        for (String property : propertyKeys) {
-            if (properties.containsKey(property)) {
-                orderedProps.put(property, properties.get(property).toString());
-            }
-        }
-
-        for (String key : properties.keySet()) {
-            boolean test = propertyKeys.contains(key);
-            if (!test) {
-                Object property = properties.get(key);
-                if (property instanceof String[]) {
-                    StringBuilder value = new StringBuilder();
-                    for (String str : (String[]) property) {
-                        value.append(str);
-                    }
-                    orderedProps.put(key, value.toString());
-                } else if (property instanceof String) {
-                    orderedProps.put(key, properties.get(key).toString());
-                }
-            }
-        }
-        return orderedProps;
-    }
+    
 
     public SymWithProps getSym() {
         return sym;

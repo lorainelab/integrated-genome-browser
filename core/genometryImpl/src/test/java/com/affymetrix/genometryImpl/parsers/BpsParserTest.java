@@ -9,11 +9,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import org.junit.Ignore;
 
 /**
  *
@@ -25,6 +25,7 @@ public class BpsParserTest {
      * Verify that converting to a Bps file always works the same. (This doesn't
      * mean it's correct, just that its behavior hasn't changed.)
      */
+    @Ignore
     @Test
     public void testConvertToBps() {
         InputStream istr = null;
@@ -84,14 +85,4 @@ public class BpsParserTest {
 
     }
 
-    /**
-     * Test of getMimeType method.
-     */
-    @Test
-    public void testGetMimeType() {
-        BpsParser instance = new BpsParser();
-
-        String result = instance.getMimeType();
-        assertTrue("binary/bps".equals(result));
-    }
 }

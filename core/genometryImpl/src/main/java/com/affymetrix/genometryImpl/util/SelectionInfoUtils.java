@@ -26,10 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author tarun
  */
 public class SelectionInfoUtils {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(SelectionInfoUtils.class);
 
-    
     public static Map<String, Object> orderProperties(Map<String, Object> properties, SymWithProps sym) {
         List<String> propertyKeys;
         if (isBamSym(sym)) {
@@ -65,7 +64,7 @@ public class SelectionInfoUtils {
                         value.append(str);
                     }
                     orderedProps.put(key, value.toString());
-                } else if (property instanceof String) {
+                } else {
                     orderedProps.put(key, properties.get(key).toString());
                 }
             }

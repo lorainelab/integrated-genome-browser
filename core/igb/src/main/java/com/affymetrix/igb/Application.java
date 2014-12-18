@@ -8,6 +8,7 @@ import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javax.swing.FocusManager;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import org.slf4j.Logger;
@@ -248,6 +250,11 @@ public abstract class Application {
 
     public static void infoPanel(String message) {
         JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void infoPanel(JLabel label) {
+        label.setFont(new Font("serif", Font.PLAIN, 14));
+        JOptionPane.showMessageDialog(null, label);
     }
 
     private static Component getActiveWindow() {

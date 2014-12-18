@@ -339,8 +339,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     }
 
     @Override
-    public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean isTrack) {
-        GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, isTrack);
+    public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean isReferenceSequence) {
+        GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
     }
 
     @Override

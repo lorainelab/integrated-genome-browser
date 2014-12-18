@@ -622,7 +622,7 @@ public final class BookmarkUnibrowControlServlet {
             try {
                 String urlToLoad = query_urls.get(0);
                 AnnotatedSeqGroup loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", true);
+                LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", false);
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
             }

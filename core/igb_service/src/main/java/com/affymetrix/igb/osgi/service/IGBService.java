@@ -151,7 +151,7 @@ public interface IGBService {
 	public GenericServer getServer(String URLorName);
 
 	// Open Uri
-	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean isTrack);
+	public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean isReferenceSequence);
 	public String getSelectedSpecies();
 
 	public void addStyleSheet(String name, InputStream istr);

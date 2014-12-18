@@ -72,7 +72,7 @@ public class NewGenomeAction extends OpenURIAction {
                         Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    igbService.openURI(new File(refSeqPath).toURI(), fileName, group, speciesName, false);
+                    igbService.openURI(new File(refSeqPath).toURI(), fileName, group, speciesName, true);
                 }
             } else {
                 GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);

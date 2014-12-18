@@ -27,7 +27,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
-import java.awt.Font;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -58,36 +57,8 @@ public class SeqMapToolTips extends JWindow {
         init();
     }
 
-    public void setToolTip(Point point, String[][] properties) {
-        if (isVisible() && properties == null) {
-            setVisible(false);
-        }
-        timer.stop();
-        if (!getOwner().isActive()) {
-            return;
-        }
-
-        if (properties != null && properties.length > 1) {
-            timer.stop();
-
-            this.properties = properties;
-            formatTooltip();
-            tooltip.setCaretPosition(0);
-            setLocation(determineBestLocation(point));
-            pack();
-            setSize(MAX_WIDTH, getSize().height);
-            timer.setInitialDelay(500);
-            timer.start();
-
-        } else if (isVisible()) {
-        } else {
-            this.properties = properties;
-            tooltip.setText(null);
-        }
-    }
-
     private String wrappedString(String key, String value) {
-        String input = key + " " + value;
+        String input = key +"*"+ value;
         int size = MAX_WIDTH / 10;
         String output = WordUtils.wrap(input, size, "\n", true);
         output = output.substring(key.length() + 1);

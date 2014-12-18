@@ -125,6 +125,10 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public int indexOf(String searchstring, int offset) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    public static boolean isBamChildType(SeqSymmetry sym) {
+        return sym instanceof BamChildSingletonSeqSym;
+    }
 
     class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 

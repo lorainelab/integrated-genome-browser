@@ -7,6 +7,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.STRAND;
 import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -111,6 +112,10 @@ public class SeqMapToolTips extends JWindow {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
             } else if (isGFFSym(sym)) {
                 propList = ToolTipOperations.formatGFFSymTooltip(properties);
+            } else if (isMultiStrandWrapperType(sym)) {
+                //for now manually remove strand information since it is added for everything
+                properties.remove(STRAND);
+                propList = ToolTipOperations.formatBamSymTooltip(properties);
             } else {
                 logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
                 propList = ToolTipOperations.formatDefaultSymTooltip(properties);

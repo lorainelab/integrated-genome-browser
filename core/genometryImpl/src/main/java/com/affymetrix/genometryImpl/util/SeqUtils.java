@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
@@ -229,7 +230,7 @@ public class SeqUtils {
         // order them based on start
         Collections.sort(mergedSpans, new SeqSpanComparator());
 
-		// invert and add to new SeqSymmetry
+        // invert and add to new SeqSymmetry
         //   for now ignoring the ends...
         MutableSeqSymmetry invertedSym = new SimpleMutableSeqSymmetry();
 
@@ -366,7 +367,7 @@ public class SeqUtils {
      */
     public static boolean intersection(SeqSymmetry symA, SeqSymmetry symB,
             MutableSeqSymmetry resultSym, BioSeq seq, boolean forward) {
-		// Need to merge spans of symA with each other
+        // Need to merge spans of symA with each other
         // and symB with each other (in case symA has overlapping
         // spans within itself, for example)
         List<SeqSpan> tempA = getLeafSpans(symA, seq);
@@ -397,7 +398,7 @@ public class SeqUtils {
                 }
             }
         }
-		// if above didn't add any children to resultSym, then there is _no_
+        // if above didn't add any children to resultSym, then there is _no_
         //      intersection between symA and symB,     //      so return false
         if (resultSym.getChildCount() == 0) {
             return false;
@@ -422,7 +423,7 @@ public class SeqUtils {
     private static void spanMerger(List<SeqSpan> spans, MutableSeqSymmetry resultSym) {
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
-		// will probably be smaller, but specifying an initial capacity
+        // will probably be smaller, but specifying an initial capacity
         //   that won't be exceeded can be more efficient
         List<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
 
@@ -559,7 +560,7 @@ public class SeqUtils {
             return true;
         } // is mapSym leaf?  yes
 
-		// GAH 2006-03-28
+        // GAH 2006-03-28
         // changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even
         //   if they are already present in result sym.  This fixes bug encountered with shallow transforms
         //   (result depth = 1, mapping depth = 1)
@@ -567,7 +568,7 @@ public class SeqUtils {
         int spanCount = mapSym.getSpanCount();
 
 		// WARNING: still need to switch to using mutable SeqSpan args for efficiency
-		// find a linker span first -- a span in resSym that has same BioSeq as
+        // find a linker span first -- a span in resSym that has same BioSeq as
         //    a span in mapSym
         SeqSpan linkSpan = null;
         SeqSpan mapSpan = null;
@@ -583,7 +584,7 @@ public class SeqUtils {
 
         // if can't find a linker span, then there's a problem...
         if (linkSpan == null) {
-			//System.out.println("Warning: Can't find a linker span...");
+            //System.out.println("Warning: Can't find a linker span...");
             // what should happen???
             return false;
         }
@@ -595,7 +596,7 @@ public class SeqUtils {
         for (int index = 0; index < map_childcount; index++) {
             SeqSymmetry map_child_sym = mapSym.getChild(index);
 
-			// "sit still"
+            // "sit still"
             // find the subset of BioSeqs that are pointed to by SeqSpans in both
             //    the map_child_sym (spanX) and the resultSym (spanY)
             // for each seqA of these BioSeqs, calculate SeqSpan spanZ, the intersection of
@@ -607,7 +608,7 @@ public class SeqUtils {
                 continue;
             }
 
-			// "roll back"
+            // "roll back"
             // find the subset of BioSeqs that are pointed to by a SeqSpan spanX in resultSym
             //      but not by any SeqSpan in childResult
             // for each seqA of these BioSeqs, calculate spanY by using resultSym as a mapping
@@ -616,7 +617,7 @@ public class SeqUtils {
             //      (which will fall through to STEP 3??)
             transformSymmetry(childResult, resultSym, false);
 
-			// "roll forward"
+            // "roll forward"
             //  find the subset of BioSeqs that are pointed to by a SeqSpan spanX in
             //     subMapSym but not by any SeqSpan in childResult (subResSym)
             //  for each SeqA of these BioSeqs, calculate spanY by using subMapSym as
@@ -646,7 +647,7 @@ public class SeqUtils {
             //     on respan orientation anyway...
             MutableSeqSpan interSpan = (MutableSeqSpan) intersection(respan, mapspan);
             if (interSpan != null) {
-				// GAH 6-12-2003
+                // GAH 6-12-2003
                 // ensuring that orientation of intersectSpan is same as respan
                 // (regardless of behavior of intersection());
                 if (respan.isForward()) {
@@ -655,7 +656,7 @@ public class SeqUtils {
                     interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
                 }
                 if (childResult == null) {
-					// special-casing derived seq symmetries to preserve derivation info...
+                    // special-casing derived seq symmetries to preserve derivation info...
                     // hmm, maybe should just make this the normal case and always preserve
                     //    derivation info (if available...)
                     // NOT YET TESTED!!!
@@ -676,7 +677,7 @@ public class SeqUtils {
     private static boolean transformLeafSymmetry(int spanCount, SeqSymmetry mapSym, MutableSeqSymmetry resultSym, SeqSpan linkSpan, SeqSpan mapSpan) {
         MutableSeqSpan interSpan = null;
         for (int spandex = 0; spandex < spanCount; spandex++) {
-			// GAH 5-17-2003
+            // GAH 5-17-2003
             // problem here when linkSpan is not contained within mapSym.getSpan(linkSpan.getBioSeq())!!!
             // transformSpan will transform _as if_ above were the case, therefore giving incorrect results
             // trying to fix by always calculating intersection: (interSpan) of
@@ -688,7 +689,7 @@ public class SeqUtils {
                 if (interSpan == null) {
                     return false;
                 }
-				// GAH 6-12-2003
+                // GAH 6-12-2003
                 // problem with using intersection!
                 // since intersection() obliterates orientation (span returned is _always_ forward),
                 //   need to set intersect_span orientation afterwards to be same as linkSpan
@@ -740,13 +741,13 @@ public class SeqUtils {
     // breaking out STEP 2
     private static void addParentSpans(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
         int resultChildCount = resultSym.getChildCount();
-		// possibly want to add another branch here if resultSym has only one child --
+        // possibly want to add another branch here if resultSym has only one child --
         //      could "collapse up" by moving any spans in child that aren't in
         //      parent up to parent, and removing child
         if (resultChildCount == 0) {
             return;
         }
-		// for now, only worry about SeqSpans corresponding to (having same BioSeq as)
+        // for now, only worry about SeqSpans corresponding to (having same BioSeq as)
         //    SeqSpans in _mapSym_ (rather than subMapSyms or subResSyms)
         int mapSpanCount = mapSym.getSpanCount();
         for (int spandex = 0; spandex < mapSpanCount; spandex++) {
@@ -757,11 +758,11 @@ public class SeqUtils {
             if (resSpan != null) {
                 continue;
             }
-			// if no span in resultSym with same BioSeq, then need to create one based
+            // if no span in resultSym with same BioSeq, then need to create one based
             //    on encompass() of childResSym spans (if there are any...)
 
             int forCount = 0;
-			// need to use NEGATIVE_INFINITY for doubles, since Double.MIN_VALUE is really smallest
+            // need to use NEGATIVE_INFINITY for doubles, since Double.MIN_VALUE is really smallest
             //   _positive_ value, and may be transforming into negative coords...
             double min = Double.POSITIVE_INFINITY;
             double max = Double.NEGATIVE_INFINITY;
@@ -818,7 +819,7 @@ public class SeqUtils {
     public static boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpan,
             BioSeq dstSeq, SeqSymmetry sym) {
 
-	// to increase efficiency of "compressed" SeqSymmetry implementations,
+        // to increase efficiency of "compressed" SeqSymmetry implementations,
         //    should probably really do span = sym.getSpan(seq, scratch_mutable_span)...
         SeqSpan span1 = sym.getSpan(srcSpan.getBioSeq());
         SeqSpan span2 = sym.getSpan(dstSeq);
@@ -828,7 +829,7 @@ public class SeqUtils {
             return false;
         }
 
-	// check to see that the span being transformed overlaps the span with
+        // check to see that the span being transformed overlaps the span with
         //   same BioSeq in the given SeqSymmetry
         if (!strictOverlap(srcSpan, span1)) {
             return false;
@@ -1095,7 +1096,7 @@ public class SeqUtils {
         int spanCount = sym.getSpanCount();
         for (int i = 0; i < spanCount; i++) {
             SeqSpan span = sym.getSpan(i);
-		// probably can just point to spans instead of create new ones ???
+            // probably can just point to spans instead of create new ones ???
             //    maybe make this an option...
             SeqSpan newspan = new SimpleMutableSeqSpan(span);
             der.addSpan(newspan);
@@ -1132,7 +1133,7 @@ public class SeqUtils {
             }
         }
         if (bounds_set) {
-		// if majority of children are forward, then childBounds is forward,
+            // if majority of children are forward, then childBounds is forward,
             // if majority of children are reverse, then childBounds is reverse,
             if (for_count >= rev_count) {
                 cbSpan = new SimpleSeqSpan(min, max, seq);
@@ -1171,7 +1172,7 @@ public class SeqUtils {
     public static String determineSelectedResidues(SeqSymmetry residues_sym, BioSeq seq) {
         int child_count = residues_sym.getChildCount();
         if (child_count > 0) {
-			// make new resorted sym to fix any problems with orientation
+            // make new resorted sym to fix any problems with orientation
             //   within the original sym...
             //
             // GAH 12-15-2003  should really do some sort of recursive sort, but for
@@ -1466,7 +1467,12 @@ public class SeqUtils {
     }
 
     public static boolean isBamSym(SeqSymmetry sym) {
-        return (sym instanceof BAMSym);
+        return (sym instanceof BAMSym
+                || BAMSym.isBamChildType(sym));
+    }
+
+    public static boolean isMultiStrandWrapperType(SeqSymmetry sym) {
+        return (sym instanceof PairedBamSymWrapper);
     }
 
     public static boolean isBedSym(SeqSymmetry sym) {

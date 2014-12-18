@@ -45,6 +45,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.net.ServerSocket;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import net.sf.samtools.seekablestream.SeekableStream;
 import net.sf.samtools.seekablestream.SeekableStreamFactory;
@@ -57,6 +58,7 @@ public final class GeneralUtils {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GeneralUtils.class);
     public static final String UTF8 = "UTF-8";
     private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
+    private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###.###");
 
     /**
      * Safely close a Closeable object. If it doesn't exist, return.
@@ -303,7 +305,7 @@ public final class GeneralUtils {
         try {
             return URLEncoder.encode(s, UTF8);
         } catch (UnsupportedEncodingException ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
             throw new IllegalArgumentException(ex);
         }
     }
@@ -312,7 +314,7 @@ public final class GeneralUtils {
         try {
             return URLDecoder.decode(s, UTF8);
         } catch (UnsupportedEncodingException ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
             throw new IllegalArgumentException(ex);
         }
     }
@@ -328,9 +330,9 @@ public final class GeneralUtils {
 
             Desktop.getDesktop().browse(u);
         } catch (IOException ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
         } catch (URISyntaxException ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
         } catch (IllegalArgumentException ex) {
             ErrorHandler.errorPanel("Invalid address or path for information page:\n\n" + s);
         }
@@ -352,7 +354,7 @@ public final class GeneralUtils {
                 dos.write(buffer, 0, len);
             }
         } catch (Exception ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
         } finally {
             GeneralUtils.safeClose(is);
 
@@ -385,7 +387,7 @@ public final class GeneralUtils {
         boolean sucess = file.renameTo(newLocation);
 
         if (!sucess) {
-            logger.error( "Could not find move file {0} to {1} !!!", new Object[]{fileName, path});
+            logger.error("Could not find move file {0} to {1} !!!", new Object[]{fileName, path});
         }
 
         return sucess;
@@ -412,7 +414,7 @@ public final class GeneralUtils {
 
             return true;
         } catch (IOException ex) {
-            logger.error( null, ex);
+            logger.error(null, ex);
         }
         return false;
     }
@@ -445,7 +447,7 @@ public final class GeneralUtils {
         }
 
         if (file == null && !fileMayNotExist) {
-            logger.error( "Invalid path : {0} !!!", path);
+            logger.error("Invalid path : {0} !!!", path);
         }
 
         return file;
@@ -560,7 +562,7 @@ public final class GeneralUtils {
                 uriLength = (long) (uriLength * COMPRESSION_RATIO);
             }
         } catch (IOException x) {
-            logger.error( "can''t get length of uri {0}", uri);
+            logger.error("can''t get length of uri {0}", uri);
         }
         return uriLength;
     }
@@ -649,5 +651,13 @@ public final class GeneralUtils {
         } else {
             return "";
         }
+    }
+
+    public static String applyCommaFormatting(int input) {
+        return COMMA_FORMAT.format(input);
+    }
+
+    public static String applyCommaFormatting(String input) {
+        return COMMA_FORMAT.format(input);
     }
 }

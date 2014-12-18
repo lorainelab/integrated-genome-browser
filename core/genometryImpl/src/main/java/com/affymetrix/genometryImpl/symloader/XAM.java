@@ -9,9 +9,11 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.BAM_FLAG;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MATE_START;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -185,8 +187,9 @@ public abstract class XAM extends SymLoader {
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
         sym.setReadPairedFlag(sr.getReadPairedFlag());
         if (sym.getReadPairedFlag()) {
-            sym.setProperty(MATE_START, sr.getMateAlignmentStart() - 1);
-            sym.setMateStart(sr.getMateAlignmentStart() - 1);
+            int mateStart = sr.getMateAlignmentStart() - 1;
+            sym.setProperty(MATE_START, GeneralUtils.applyCommaFormatting(mateStart));
+            sym.setMateStart(mateStart);
             sym.setMateNegativeStrandFlag(sr.getMateNegativeStrandFlag());
             sym.setProperty(BAM_FLAG, sym.getFlags());
             SamRecordFlag srf = new SamRecordFlag(sym.getFlags());

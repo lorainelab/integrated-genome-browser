@@ -70,7 +70,7 @@ public class ToolTipConstants {
 
     public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INFO_GRP);
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
-    public static final Map<String, List<String>> BAM_CIGAR_CATEGORY = ImmutableMap.of("Details", BAM_DETAILS_GRP);
+    public static final Map<String, List<String>> BAM_DETAILS_CATEGORY = ImmutableMap.of("Details", BAM_DETAILS_GRP);
     public static final String MISC_CATEGORY = "Misc";
 
     // BED-14

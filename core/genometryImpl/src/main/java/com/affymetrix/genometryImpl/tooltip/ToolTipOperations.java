@@ -23,7 +23,7 @@ public class ToolTipOperations {
 
         populateCategory(props, BAM_INFO_CATEGORY, categories);
         populateCategory(props, BAM_LOCATION_CATEGORY, categories);
-        populateCategory(props, BAM_CIGAR_CATEGORY, categories);
+        populateCategory(props, BAM_DETAILS_CATEGORY, categories);
         populateMisc(props, categories, BAM_IGNORE_LIST);
         return categories;
     }

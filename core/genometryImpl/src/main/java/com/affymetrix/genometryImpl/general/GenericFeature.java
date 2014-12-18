@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 public final class GenericFeature {
 
     public static final String LOAD_WARNING_MESSAGE = GenometryConstants.BUNDLE.getString("howtoloadmessage");
+    public static final String REFERENCE_SEQUENCE_LOAD_MESSAGE = GenometryConstants.BUNDLE.getString("howToLoadReferenceSequence");
     public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
     public static final boolean default_show_how_to_load = true;
 

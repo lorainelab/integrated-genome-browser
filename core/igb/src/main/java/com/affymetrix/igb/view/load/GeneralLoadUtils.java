@@ -1336,10 +1336,13 @@ public final class GeneralLoadUtils {
                     gmodel.setSelectedSeq(gmodel.getSelectedSeq());
                 }
                 ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
-                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved && gFeature.isTrack()) {
-                    
-                    Application.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
-                            GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved) {
+                    if (gFeature.isTrack()) {
+                        Application.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+                                GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
+                    } else {
+                        Application.infoPanel(GenericFeature.REFERENCE_SEQUENCE_LOAD_MESSAGE);
+                    }
                 }
             }
         };

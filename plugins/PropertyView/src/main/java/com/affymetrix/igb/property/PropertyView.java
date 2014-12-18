@@ -11,13 +11,15 @@ import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
+import static com.affymetrix.genometryImpl.util.SelectionInfoUtils.*;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
+import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.JRPStyledTable;
@@ -70,6 +72,9 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
             PropertyHolder propertyHolder = (PropertyHolder) src;
             for (int i = 0; i < size; i++) {
                 Map<String, Object> props = propertyHolder.determineProps(selected_syms.get(i));
+                if (selected_syms.get(i) instanceof SymWithProps) {
+                    props = orderProperties(props, (SymWithProps) selected_syms.get(i));
+                }
                 if (props != null) {
                     propList.add(props);
                 }
@@ -83,7 +88,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
         @SuppressWarnings("unchecked")
         Map<String, Object>[] prop_array = propList.toArray(new Map[propList.size()]);
 
-        this.showProperties(prop_array, prop_order, "", false);
+        this.showProperties(prop_array, null, "", false);
     }
 
     @Override
@@ -296,7 +301,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
         List<String[]> result = new ArrayList<String[]>();
         // collect all possible names from the given Properties
         int num_props = props.length;
-        Map<String, String[]> rows_thus_far = new HashMap<String, String[]>();
+        Map<String, String[]> rows_thus_far = new LinkedHashMap<String, String[]>();
         for (int i = 0; i < num_props; i++) {
             for (String name : props[i].keySet()) {
                 if (name != null && rows_thus_far.containsKey(name)) {

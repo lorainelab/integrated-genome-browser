@@ -58,12 +58,13 @@ public class ToolTipConstants {
     public static final String DUPLICATE = "duplicate";
     public static final String SUPPLEMENTARY = "supplementary";
     public static final String FAILED_QC = "failed qc";
-    
+
+    public static final String NA = "na";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> BAM_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
-    public static final List<String> BAM_DETAILS_GRP = Arrays.asList(PAIRED_READ, MATE_START, PROPER_PAIR_READ, UNMAPPED_READ, READ_REVERSE_STRAND, MATE_REVERSE_STRAND, FIRST_IN_PAIR, 
+    public static final List<String> BAM_DETAILS_GRP = Arrays.asList(PAIRED_READ, MATE_START, PROPER_PAIR_READ, UNMAPPED_READ, READ_REVERSE_STRAND, MATE_REVERSE_STRAND, FIRST_IN_PAIR,
             SECOND_IN_PAIR, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, NH, XS, NM);
     public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL, BAM_FLAG);
     public static final List<String> BAM_PROP_LIST = new ArrayList<String>();

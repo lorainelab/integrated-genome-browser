@@ -127,7 +127,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     }
     
     public static boolean isBamChildType(SeqSymmetry sym) {
-        return sym instanceof BamChildSingletonSeqSym;
+        return sym instanceof BamChildSingletonSeqSym || sym instanceof BamInsChildSingletonSeqSym;
     }
 
     class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {

@@ -46,6 +46,9 @@ public class ToggleShowAsPairedAction extends SeqMapViewActionA {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         for (StyledGlyph glyph : allGlyphs) {
+            if (glyph.getInfo() == null || ((RootSeqSymmetry) glyph.getInfo()).getCategory() == null || glyph.getAnnotStyle() == null) {
+                return;
+            }
             if (((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
                 glyph.getAnnotStyle().setShowAsPaired(isSelected());
             }

@@ -444,7 +444,7 @@ public class IGBScriptEngine implements ScriptEngine {
             uri = f.toURI();
         }
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        igbService.openURI(uri, fileName, group, group.getOrganism(), true);
+        igbService.openURI(uri, fileName, group, group.getOrganism(), false);
     }
 
     private void hideTrack(String fileName) {

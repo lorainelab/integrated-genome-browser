@@ -96,7 +96,7 @@ public final class LoadFileAction extends OpenURIAction {
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
-        openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, true);//Always load as track
+        openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, false);//Always load as track
 
         return true;
     }
@@ -158,7 +158,7 @@ public final class LoadFileAction extends OpenURIAction {
 
         for (File file : fils) {
             URI uri = file.toURI();
-            openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), !fileChooser.optionChooser.getLoadAsSeqCB().isSelected());
+            openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), fileChooser.optionChooser.getLoadAsSeqCB().isSelected());
         }
     }
 

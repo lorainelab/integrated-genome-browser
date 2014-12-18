@@ -56,7 +56,7 @@ public final class GenericFeature {
     public final SymLoader symL;
     private final Set<String> methods = new HashSet<String>();
 
-    private final boolean isTrack;
+    private final boolean isReferenceSequence;
 
     private static final List<LoadStrategy> standardLoadChoices;
 
@@ -74,7 +74,7 @@ public final class GenericFeature {
 
     public GenericFeature(
             String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload) {
-        this(featureName, featureProps, gVersion, gsr, typeObj, autoload, true);
+        this(featureName, featureProps, gVersion, gsr, typeObj, autoload, false);
     }
 
     /**
@@ -84,7 +84,7 @@ public final class GenericFeature {
      * @param typeObj
      */
     public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean isTrack) {
+            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean isReferenceSequence) {
         this.featureName = featureName;
         this.featureProps = featureProps;
         this.gVersion = gVersion;
@@ -98,7 +98,7 @@ public final class GenericFeature {
 
         this.setAutoload(autoload);
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
-        this.isTrack = isTrack;
+        this.isReferenceSequence = isReferenceSequence;
         //methods.add(featureName);
     }
 
@@ -146,8 +146,8 @@ public final class GenericFeature {
         return this.visible;
     }
 
-    public boolean isTrack() {
-        return isTrack;
+    public boolean isReferenceSequence() {
+        return isReferenceSequence;
     }
 
     public LoadStrategy getLoadStrategy() {

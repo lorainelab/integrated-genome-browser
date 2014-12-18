@@ -166,6 +166,15 @@ public abstract class Selections {
     public static boolean isAllAnnot() {
         return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
     }
+    
+    public static boolean isAnyShowAsPaired(){
+     for (ITrackStyleExtended style : allStyles) {
+            if (style.isShowAsPaired()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean isAnyJoined() {
         for (GraphState state : graphStates) {

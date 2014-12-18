@@ -267,7 +267,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	@Override
 	protected void strands2TracksCheckBoxReset() {
 		JCheckBox strands2TracksCheckBox = getStrands2TracksCheckBox();
-		strands2TracksCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack());
+		strands2TracksCheckBox.setEnabled(isAllAnnot() && isAllSupportTwoTrack() && !isAnyShowAsPaired());
 		boolean all2Tracks = isAllAnnot();
 		for (ITrackStyleExtended style : annotStyles) {
 			if (!style.getSeparate()) {

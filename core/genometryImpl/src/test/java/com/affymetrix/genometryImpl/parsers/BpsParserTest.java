@@ -25,7 +25,6 @@ public class BpsParserTest {
      * Verify that converting to a Bps file always works the same. (This doesn't
      * mean it's correct, just that its behavior hasn't changed.)
      */
-    @Ignore
     @Test
     public void testConvertToBps() {
         InputStream istr = null;

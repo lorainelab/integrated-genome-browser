@@ -20,7 +20,7 @@ public class SamRecordFlagTest {
 
     @Test
     public void isProperPair() {
-        SamRecordFlag flag = new SamRecordFlag(2);
+        SamRecordFlag flag = new SamRecordFlag(3);
         assertTrue(flag.isProperPair());
         flag = new SamRecordFlag(3203);
         assertTrue(flag.isProperPair());

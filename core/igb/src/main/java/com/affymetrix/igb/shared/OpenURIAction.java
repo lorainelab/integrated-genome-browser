@@ -46,7 +46,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     }
 
     public void openURI(URI uri, final String fileName, final boolean mergeSelected,
-            final AnnotatedSeqGroup loadGroup, final String speciesName, boolean loadAsTrack) {
+            final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isTrack) {
 
         if (ScriptManager.getInstance().isScript(uri.toString())) {
             int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
@@ -56,7 +56,7 @@ public class OpenURIAction extends SeqMapViewActionA {
             return;
         }
 
-        igbService.openURI(uri, fileName, loadGroup, speciesName, loadAsTrack);
+        igbService.openURI(uri, fileName, loadGroup, speciesName, isTrack);
 
         if (!mergeSelected) {
             unknown_group_count++;

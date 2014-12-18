@@ -55,7 +55,7 @@ public final class GenericFeature {
     public final SymLoader symL;
     private final Set<String> methods = new HashSet<String>();
 
-    private final boolean loadAsTrack;
+    private final boolean isTrack;
 
     private static final List<LoadStrategy> standardLoadChoices;
 
@@ -83,7 +83,7 @@ public final class GenericFeature {
      * @param typeObj
      */
     public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean loadAsTrack) {
+            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean isTrack) {
         this.featureName = featureName;
         this.featureProps = featureProps;
         this.gVersion = gVersion;
@@ -97,7 +97,7 @@ public final class GenericFeature {
 
         this.setAutoload(autoload);
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
-        this.loadAsTrack = loadAsTrack;
+        this.isTrack = isTrack;
         //methods.add(featureName);
     }
 
@@ -145,8 +145,8 @@ public final class GenericFeature {
         return this.visible;
     }
 
-    public boolean loadAsTrack() {
-        return loadAsTrack;
+    public boolean isTrack() {
+        return isTrack;
     }
 
     public LoadStrategy getLoadStrategy() {

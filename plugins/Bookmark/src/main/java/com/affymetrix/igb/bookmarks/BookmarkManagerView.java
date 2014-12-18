@@ -95,7 +95,7 @@ public final class BookmarkManagerView {
     private final BookmarkPropertiesGUI bpGUI;
     private BookmarkList selected_bl = null;
     public final IGBService igbService;
-    private static final CopyBookmarkAction COPY_ACTION = CopyBookmarkAction.getInstance();
+    private static final CopyBookmarkAction COPY_ACTION = CopyBookmarkAction.getAction();
 
     private KeyAdapter kl = new KeyAdapter() {
 

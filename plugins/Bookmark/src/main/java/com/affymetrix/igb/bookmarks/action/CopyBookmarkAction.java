@@ -28,13 +28,8 @@ public class CopyBookmarkAction extends GenericAction {
                 "22x22/actions/edit-paste.png");
     }
 
-    public static CopyBookmarkAction getInstance() {
+    public static CopyBookmarkAction getAction() {
         return CopyBookmarkHolder.INSTANCE;
-    }
-
-    private static class CopyBookmarkHolder {
-
-        private static final CopyBookmarkAction INSTANCE = new CopyBookmarkAction();
     }
 
     @Override
@@ -48,6 +43,10 @@ public class CopyBookmarkAction extends GenericAction {
         } else {
             ErrorHandler.errorPanel("No bookmark to copy");
         }
+    }
+
+    private static class CopyBookmarkHolder {
+        private static final CopyBookmarkAction INSTANCE = new CopyBookmarkAction();
     }
 
 }

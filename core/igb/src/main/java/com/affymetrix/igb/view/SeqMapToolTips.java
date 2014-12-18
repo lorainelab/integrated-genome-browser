@@ -27,6 +27,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import java.awt.Font;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -87,7 +88,7 @@ public class SeqMapToolTips extends JWindow {
 
     private String wrappedString(String key, String value) {
         String input = key + " " + value;
-        int size = (MAX_WIDTH / 10) - 2;
+        int size = MAX_WIDTH / 10;
         String output = WordUtils.wrap(input, size, "\n", true);
         output = output.substring(key.length() + 1);
         return output;
@@ -124,7 +125,6 @@ public class SeqMapToolTips extends JWindow {
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
             pack();
-            setSize(MAX_WIDTH, getSize().height);
             timer.setInitialDelay(500);
             timer.start();
         } else if (isVisible()) {
@@ -138,19 +138,25 @@ public class SeqMapToolTips extends JWindow {
         Map<String, String> toolTipProps;
         String propValue;
         int count = 0;
+        int propCount = 0;
         try {
             for (ToolTipCategory category : properties) {
                 if (count > 0) {
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n----------\n", null);
                 }
                 count = 1;
                 // Uncomment following line for category labels
                 //tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
                 toolTipProps = category.getProperties();
+                propCount = 0;
                 for (String propKey : toolTipProps.keySet()) {
+                    if(propCount > 0){
+                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n", null);
+                    }
+                    propCount = 1;
                     propValue = toolTipProps.get(propKey);
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue) + "\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue), null);
                 }
 
             }

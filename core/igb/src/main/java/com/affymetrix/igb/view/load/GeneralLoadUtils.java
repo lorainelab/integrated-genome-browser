@@ -414,7 +414,7 @@ public final class GeneralLoadUtils {
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 
         for (GenericFeature gFeature : getFeatures(group)) {
-            if (gFeature.isVisible() && gFeature.isReferenceSequence()) {
+            if (gFeature.isVisible() && !gFeature.isReferenceSequence()) {
                 visibleFeatures.add(gFeature);
             }
         }

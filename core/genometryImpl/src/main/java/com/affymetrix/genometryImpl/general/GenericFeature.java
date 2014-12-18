@@ -73,8 +73,8 @@ public final class GenericFeature {
     private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
 
     public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload) {
-        this(featureName, featureProps, gVersion, gsr, typeObj, autoload, false);
+            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader symLoader, Object typeObj, boolean autoload) {
+        this(featureName, featureProps, gVersion, symLoader, typeObj, autoload, false);
     }
 
     /**
@@ -84,11 +84,11 @@ public final class GenericFeature {
      * @param typeObj
      */
     public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader gsr, Object typeObj, boolean autoload, boolean isReferenceSequence) {
+            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader symLoader, Object typeObj, boolean autoload, boolean isReferenceSequence) {
         this.featureName = featureName;
         this.featureProps = featureProps;
         this.gVersion = gVersion;
-        this.symL = gsr;
+        this.symL = symLoader;
         this.typeObj = typeObj;
         if (typeObj instanceof Das2Type) {
             ((Das2Type) typeObj).setFeature(this);

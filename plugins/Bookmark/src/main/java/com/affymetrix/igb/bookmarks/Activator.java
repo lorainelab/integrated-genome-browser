@@ -9,7 +9,6 @@ import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
-import com.affymetrix.igb.bookmarks.action.CopyBookmarkToClipboardAction;
 import com.affymetrix.igb.bookmarks.action.ExportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
@@ -83,7 +82,6 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         SimpleBookmarkServer.init(igbService);
 
         AddBookmarkAction.createAction(igbService);
-        CopyBookmarkToClipboardAction.createAction(igbService);
 
         BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
         JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));

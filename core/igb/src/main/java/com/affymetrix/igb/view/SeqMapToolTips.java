@@ -51,6 +51,7 @@ public class SeqMapToolTips extends JWindow {
     private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
     private static final int MIN_HEIGHT = 200;
     private static final int MAX_WIDTH = 300;
+    private static final int MAX_CHAR_PER_LINE = 30;
     private final JTextPane tooltip;
     private final Color backgroundColor;
 
@@ -78,8 +79,7 @@ public class SeqMapToolTips extends JWindow {
         if(maxLength < input.length()){
             maxLength = input.length();
         }
-        int size = MAX_WIDTH / 10;
-        String output = WordUtils.wrap(input, size, "\n", true);
+        String output = WordUtils.wrap(input, MAX_CHAR_PER_LINE, "\n", true);
         output = output.substring(key.length() + 1);
         return output;
     }
@@ -199,31 +199,12 @@ public class SeqMapToolTips extends JWindow {
     
     private int obtainOptimumWidth() {
         int widths[] = fontMetrics.getWidths();
-        int totalChars = tooltip.getText().length();
-        String text = tooltip.getText();
-        int maxLineWidth = 0;
-        try {
-            int rowStart = totalChars;
-            int rowEnd;
-            String line;
-            while (rowStart > 0) {
-                int lineWidth = 0;
-                rowStart = Utilities.getRowStart(tooltip, rowStart);
-                rowEnd = Utilities.getRowEnd(tooltip, rowStart);
-                line = text.substring(rowStart, rowEnd);
-                for(int i = 0 ; i < line.length() ; i++){
-                    int charASCII = (int)line.charAt(i);
-                    lineWidth += widths[charASCII - 1];
-                }
-                if(maxLineWidth < lineWidth) {
-                    maxLineWidth = lineWidth;
-                }
-                rowStart--;
-            }
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        int charWidth = widths[65];
+        if(maxLength > MAX_CHAR_PER_LINE) {
+            maxLength = MAX_CHAR_PER_LINE;
         }
-        return maxLineWidth + TOOLTIP_RIGHT_PADDING;
+        int maxWidth = charWidth * maxLength;
+        return maxWidth + TOOLTIP_RIGHT_PADDING;
     }
 
 }

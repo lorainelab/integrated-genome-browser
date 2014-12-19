@@ -45,6 +45,9 @@ public class SeqMapToolTips extends JWindow {
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
     private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
     private static final int TOOLTIP_BOTTOM_PADDING = 6;
+    private static final int TOOLTIP_RIGHT_PADDING = 10;
+    private int maxLength = 0;
+    FontMetrics fontMetrics;
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -69,12 +72,16 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
+        fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();
     }
 
     private String wrappedString(String key, String value) {
         String input = key + "*" + value;
+        if(maxLength < input.length()){
+            maxLength = input.length();
+        }
         int size = MAX_WIDTH / 10;
         String output = WordUtils.wrap(input, size, "\n", true);
         output = output.substring(key.length() + 1);
@@ -116,7 +123,7 @@ public class SeqMapToolTips extends JWindow {
             } else {
                 timer.setInitialDelay(500);
             }
-            setSize(MAX_WIDTH, obtainOptimumHeight());
+            setSize(obtainOptimumWidth(), obtainOptimumHeight());
             timer.setRepeats(false);
             timer.start();
         } else {
@@ -158,21 +165,6 @@ public class SeqMapToolTips extends JWindow {
         }
     }
 
-    private void formatTooltip() {
-        tooltip.setText(null);
-        for (String[] propertie : properties) {
-            try {
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
-                tooltip.getDocument().insertString(
-                        tooltip.getDocument().getLength(), " ", null);
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[0], propertie[1]), null);
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
     private Point determineBestLocation(Point currentPoint) {
         Point bestLocation = new Point(currentPoint.x + 10, currentPoint.y + 10);
         return bestLocation;
@@ -204,11 +196,38 @@ public class SeqMapToolTips extends JWindow {
             e.printStackTrace();
         }
 
-        FontMetrics fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
-        
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
+    }
+    
+    private int obtainOptimumWidth() {
+        int widths[] = fontMetrics.getWidths();
+        int totalChars = tooltip.getText().length();
+        String text = tooltip.getText();
+        int maxLineWidth = 0;
+        try {
+            int rowStart = totalChars;
+            int rowEnd;
+            String line;
+            while (rowStart > 0) {
+                int lineWidth = 0;
+                rowStart = Utilities.getRowStart(tooltip, rowStart);
+                rowEnd = Utilities.getRowEnd(tooltip, rowStart);
+                line = text.substring(rowStart, rowEnd);
+                for(int i = 0 ; i < line.length() ; i++){
+                    int charASCII = (int)line.charAt(i);
+                    lineWidth += widths[charASCII - 1];
+                }
+                if(maxLineWidth < lineWidth) {
+                    maxLineWidth = lineWidth;
+                }
+                rowStart--;
+            }
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        return maxLineWidth + TOOLTIP_RIGHT_PADDING;
     }
 
 }

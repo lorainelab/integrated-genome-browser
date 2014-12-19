@@ -53,6 +53,7 @@ public class SeqMapToolTips extends JWindow {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            pack();
             setVisible(true);
         }
 
@@ -104,9 +105,8 @@ public class SeqMapToolTips extends JWindow {
             formatCategoryToolTip(propList);
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
-            pack();
             if(isVisible()){
-                timer.setInitialDelay(0);
+                timer.setInitialDelay(50);
             } else {
                 timer.setInitialDelay(500);
             }

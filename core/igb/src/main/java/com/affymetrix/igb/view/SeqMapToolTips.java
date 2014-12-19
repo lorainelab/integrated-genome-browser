@@ -44,6 +44,7 @@ public class SeqMapToolTips extends JWindow {
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
     private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
+    private static final int TOOLTIP_BOTTOM_PADDING = 6;
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -207,7 +208,7 @@ public class SeqMapToolTips extends JWindow {
         
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
-        return totalHeight + 6;
+        return totalHeight + TOOLTIP_BOTTOM_PADDING;
     }
 
 }

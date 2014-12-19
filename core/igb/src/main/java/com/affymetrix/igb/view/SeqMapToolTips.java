@@ -40,7 +40,8 @@ public class SeqMapToolTips extends JWindow {
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
     private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
-    private static final int TOOLTIP_PADDING = 6;
+    private static final int TOOLTIP_BOTTOM_PADDING = 6;
+    private static final int TOOLTIP_RIGHT_PADDING = 10;
     private int maxLength = 0;
     FontMetrics fontMetrics;
 
@@ -66,7 +67,7 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
-        tooltip.setFont(new Font("serif", Font.PLAIN, 12));
+        tooltip.setFont(new Font("monospaced", Font.PLAIN, 12));
         fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();
@@ -193,7 +194,7 @@ public class SeqMapToolTips extends JWindow {
 
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
-        return totalHeight + TOOLTIP_PADDING;
+        return totalHeight + TOOLTIP_BOTTOM_PADDING;
     }
     
     private int obtainOptimumWidth() {
@@ -222,7 +223,7 @@ public class SeqMapToolTips extends JWindow {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-        return maxLineWidth + TOOLTIP_PADDING;
+        return maxLineWidth + TOOLTIP_RIGHT_PADDING;
     }
 
 }

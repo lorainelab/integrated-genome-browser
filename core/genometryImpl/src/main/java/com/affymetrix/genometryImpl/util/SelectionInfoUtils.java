@@ -55,8 +55,7 @@ public class SelectionInfoUtils {
         }
 
         for (String key : properties.keySet()) {
-            boolean test = propertyKeys.contains(key);
-            if (!test) {
+            if (!propertyKeys.contains(key)) {
                 Object property = properties.get(key);
                 if (property instanceof String[]) {
                     StringBuilder value = new StringBuilder();

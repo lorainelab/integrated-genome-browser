@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.parsers.useq.data.Region;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.STRAND;
@@ -27,6 +28,11 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import javax.swing.text.Utilities;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -37,7 +43,8 @@ public class SeqMapToolTips extends JWindow {
 
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
+    private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
+    private static final int TOOLTIP_BOTTOM_PADDING = 6;
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -49,6 +56,15 @@ public class SeqMapToolTips extends JWindow {
     private final Color backgroundColor;
     private String[][] properties;
 
+    private Timer timer = new Timer(100, new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setVisible(true);
+        }
+
+    });
+
     public SeqMapToolTips(Window owner) {
         super(owner);
         tooltip = new JTextPane();
@@ -58,7 +74,7 @@ public class SeqMapToolTips extends JWindow {
     }
 
     private String wrappedString(String key, String value) {
-        String input = key +"*"+ value;
+        String input = key + "*" + value;
         int size = MAX_WIDTH / 10;
         String output = WordUtils.wrap(input, size, "\n", true);
         output = output.substring(key.length() + 1);
@@ -95,12 +111,16 @@ public class SeqMapToolTips extends JWindow {
             formatCategoryToolTip(propList);
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
-            pack();
-            timer.setInitialDelay(500);
+            if (isVisible()) {
+                timer.setInitialDelay(0);
+            } else {
+                timer.setInitialDelay(500);
+            }
+            setSize(MAX_WIDTH, obtainOptimumHeight());
+            timer.setRepeats(false);
             timer.start();
-        } else if (isVisible()) {
-
         } else {
+            setVisible(false);
             tooltip.setText(null);
         }
     }
@@ -112,6 +132,7 @@ public class SeqMapToolTips extends JWindow {
         int propCount = 0;
         try {
             for (ToolTipCategory category : properties) {
+                // Added to avoid an extra "--------------" in tooltip
                 if (count > 0) {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n----------\n", null);
                 }
@@ -121,7 +142,8 @@ public class SeqMapToolTips extends JWindow {
                 toolTipProps = category.getProperties();
                 propCount = 0;
                 for (String propKey : toolTipProps.keySet()) {
-                    if(propCount > 0){
+                    // Added to avoid an extra line at the end of tooltip
+                    if (propCount > 0) {
                         tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n", null);
                     }
                     propCount = 1;
@@ -163,26 +185,30 @@ public class SeqMapToolTips extends JWindow {
         tooltip.setBackground(backgroundColor);
         tooltip.setDisabledTextColor(tooltip.getForeground());
 
-        JScrollPane scrollPane = new JScrollPane(tooltip);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.setBackground(backgroundColor);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-        setLayout(new BorderLayout(0, 0));
-        add(scrollPane);
-
+        tooltip.setLayout(new BorderLayout(0, 0));
+        add(tooltip);
         pack();
         setSize(MAX_WIDTH, MIN_HEIGHT);
     }
 
-    Timer timer = new Timer(100, new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setVisible(true);
-
+    private int obtainOptimumHeight() {
+        int totalChars = tooltip.getText().length();
+        int noOfLines = (totalChars == 0) ? 1 : 0;
+        try {
+            int rowStart = totalChars;
+            while (rowStart > 0) {
+                rowStart = Utilities.getRowStart(tooltip, rowStart) - 1;
+                noOfLines++;
+            }
+        } catch (BadLocationException e) {
+            e.printStackTrace();
         }
-    });
+
+        FontMetrics fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
+        
+        int lineHeight = fontMetrics.getHeight();
+        int totalHeight = lineHeight * noOfLines;
+        return totalHeight + TOOLTIP_BOTTOM_PADDING;
+    }
 
 }

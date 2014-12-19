@@ -5,7 +5,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.parsers.useq.data.Region;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.STRAND;
@@ -18,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.Timer;
@@ -28,8 +25,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import javax.swing.text.Utilities;
 import org.slf4j.Logger;
@@ -44,8 +39,7 @@ public class SeqMapToolTips extends JWindow {
     private static final long serialVersionUID = 1L;
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
     private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
-    private static final int TOOLTIP_BOTTOM_PADDING = 6;
-    private static final int TOOLTIP_RIGHT_PADDING = 10;
+    private static final int TOOLTIP_PADDING = 6;
     private int maxLength = 0;
     FontMetrics fontMetrics;
 
@@ -198,7 +192,7 @@ public class SeqMapToolTips extends JWindow {
 
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
-        return totalHeight + TOOLTIP_BOTTOM_PADDING;
+        return totalHeight + TOOLTIP_PADDING;
     }
     
     private int obtainOptimumWidth() {
@@ -227,7 +221,7 @@ public class SeqMapToolTips extends JWindow {
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
-        return maxLineWidth + TOOLTIP_RIGHT_PADDING;
+        return maxLineWidth + TOOLTIP_PADDING;
     }
 
 }

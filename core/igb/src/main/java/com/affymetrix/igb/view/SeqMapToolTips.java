@@ -112,9 +112,6 @@ public class SeqMapToolTips extends JWindow {
             }
             timer.setRepeats(false);
             timer.start();
-        } else if (isVisible()) {
-            setVisible(false);
-            tooltip.setText(null);
         } else {
             setVisible(false);
             tooltip.setText(null);
@@ -128,6 +125,7 @@ public class SeqMapToolTips extends JWindow {
         int propCount = 0;
         try {
             for (ToolTipCategory category : properties) {
+                // Added to avoid an extra "--------------" in tooltip
                 if (count > 0) {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n----------\n", null);
                 }
@@ -137,6 +135,7 @@ public class SeqMapToolTips extends JWindow {
                 toolTipProps = category.getProperties();
                 propCount = 0;
                 for (String propKey : toolTipProps.keySet()) {
+                    // Added to avoid an extra line at the end of tooltip
                     if (propCount > 0) {
                         tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n", null);
                     }

@@ -2402,7 +2402,6 @@ public class SeqMapView extends JPanel
                 || toolTipSym != sym
                 || x != -1) {
             toolTipSym = sym;
-//			String toolTip = null;
             Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
@@ -2410,10 +2409,7 @@ public class SeqMapView extends JPanel
                 } else {
                     properties = propertyHandler.getPropertiesRow(toolTipSym, this);
                 }
-            logger.info("Number of properties fetched: " + properties.size());
-//				toolTip = convertPropsToString(properties);
             }
-//			seqmap.getNeoCanvas().setToolTipText(toolTip);
             if (evt != null && properties != null) {
                 Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
                 seqMapToolTips.setToolTip(point, properties, sym);

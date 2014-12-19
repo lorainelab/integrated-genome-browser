@@ -37,6 +37,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SelectionInfoUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -153,6 +154,8 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A panel hosting a labeled tier map. Despite it's name this is actually a
@@ -162,6 +165,7 @@ public class SeqMapView extends JPanel
         implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, com.affymetrix.igb.swing.JRPWidget {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(SelectionInfoUtils.class);
 
     public static enum MapMode {
 
@@ -2406,10 +2410,11 @@ public class SeqMapView extends JPanel
                 } else {
                     properties = propertyHandler.getPropertiesRow(toolTipSym, this);
                 }
+            logger.info("Number of properties fetched: " + properties.size());
 //				toolTip = convertPropsToString(properties);
             }
 //			seqmap.getNeoCanvas().setToolTipText(toolTip);
-            if (evt != null) {
+            if (evt != null && properties != null) {
                 Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
                 seqMapToolTips.setToolTip(point, properties, sym);
             } else {
@@ -2419,7 +2424,7 @@ public class SeqMapView extends JPanel
     }
 
     public void disableToolTip() {
-        seqMapToolTips.setToolTip(null, new HashMap<String, Object>(), null);
+        seqMapToolTips.setVisible(false);
     }
 
     public void showProperties(int x, GraphGlyph glyph) {

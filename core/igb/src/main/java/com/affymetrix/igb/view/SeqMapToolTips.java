@@ -25,6 +25,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import javax.swing.text.Utilities;
 import org.slf4j.Logger;
@@ -51,7 +52,6 @@ public class SeqMapToolTips extends JWindow {
     private static final int MAX_WIDTH = 300;
     private final JTextPane tooltip;
     private final Color backgroundColor;
-    private String[][] properties;
 
     private Timer timer = new Timer(100, new ActionListener() {
 
@@ -66,6 +66,7 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
+        tooltip.setFont(new Font("serif", Font.PLAIN, 12));
         fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();

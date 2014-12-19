@@ -57,37 +57,9 @@ public class SeqMapToolTips extends JWindow {
         init();
     }
 
-    public void setToolTip(Point point, String[][] properties) {
-        if (isVisible() && properties == null) {
-            setVisible(false);
-        }
-        timer.stop();
-        if (!getOwner().isActive()) {
-            return;
-        }
-
-        if (properties != null && properties.length > 1) {
-            timer.stop();
-
-            this.properties = properties;
-            formatTooltip();
-            tooltip.setCaretPosition(0);
-            setLocation(determineBestLocation(point));
-            pack();
-            setSize(MAX_WIDTH, getSize().height);
-            timer.setInitialDelay(500);
-            timer.start();
-
-        } else if (isVisible()) {
-        } else {
-            this.properties = properties;
-            tooltip.setText(null);
-        }
-    }
-
     private String wrappedString(String key, String value) {
-        String input = key + " " + value;
-        int size = (MAX_WIDTH / 10) - 2;
+        String input = key +"*"+ value;
+        int size = MAX_WIDTH / 10;
         String output = WordUtils.wrap(input, size, "\n", true);
         output = output.substring(key.length() + 1);
         return output;
@@ -124,7 +96,6 @@ public class SeqMapToolTips extends JWindow {
             tooltip.setCaretPosition(0);
             setLocation(determineBestLocation(point));
             pack();
-            setSize(MAX_WIDTH, getSize().height);
             timer.setInitialDelay(500);
             timer.start();
         } else if (isVisible()) {
@@ -138,19 +109,25 @@ public class SeqMapToolTips extends JWindow {
         Map<String, String> toolTipProps;
         String propValue;
         int count = 0;
+        int propCount = 0;
         try {
             for (ToolTipCategory category : properties) {
                 if (count > 0) {
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "----------\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n----------\n", null);
                 }
                 count = 1;
                 // Uncomment following line for category labels
                 //tooltip.getDocument().insertString(tooltip.getDocument().getLength(), category.getCategory() + ":\n", NAME);
                 toolTipProps = category.getProperties();
+                propCount = 0;
                 for (String propKey : toolTipProps.keySet()) {
+                    if(propCount > 0){
+                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n", null);
+                    }
+                    propCount = 1;
                     propValue = toolTipProps.get(propKey);
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue) + "\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue), null);
                 }
 
             }

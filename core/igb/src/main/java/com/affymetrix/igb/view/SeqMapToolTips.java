@@ -27,6 +27,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
 import javax.swing.text.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class SeqMapToolTips extends JWindow {
     }
     private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
     private static final int MIN_HEIGHT = 200;
-    private static final int MAX_WIDTH = 300;
+    private static final int MAX_WIDTH = 230;
     private static final int MAX_CHAR_PER_LINE = 30;
     private final JTextPane tooltip;
     private final Color backgroundColor;
@@ -119,7 +121,7 @@ public class SeqMapToolTips extends JWindow {
             } else {
                 timer.setInitialDelay(500);
             }
-            setSize(obtainOptimumWidth(), obtainOptimumHeight());
+            setSize(MAX_WIDTH, obtainOptimumHeight());
             timer.setRepeats(false);
             timer.start();
         } else {
@@ -172,7 +174,7 @@ public class SeqMapToolTips extends JWindow {
         setForeground(backgroundColor);
         tooltip.setBackground(backgroundColor);
         tooltip.setDisabledTextColor(tooltip.getForeground());
-
+        tooltip.setMargin(new Insets(5, 5, 5, 5));
         tooltip.setLayout(new BorderLayout(0, 0));
         add(tooltip);
         pack();

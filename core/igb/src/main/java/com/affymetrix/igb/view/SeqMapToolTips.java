@@ -183,6 +183,7 @@ public class SeqMapToolTips extends JWindow {
         int totalChars = tooltip.getText().length();
         int noOfLines = (totalChars == 0) ? 1 : 0;
         try {
+            logger.info("Tooltip character Length: " + totalChars);
             int rowStart = totalChars;
             while (rowStart > 0) {
                 rowStart = Utilities.getRowStart(tooltip, rowStart) - 1;

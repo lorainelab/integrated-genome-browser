@@ -180,7 +180,8 @@ public class SeqMapToolTips extends JWindow {
     }
 
     private int obtainOptimumHeight() {
-        int totalChars = tooltip.getText().length();
+        String tooltipStr = clearText(tooltip.getText());
+        int totalChars = tooltipStr.length();
         int noOfLines = (totalChars == 0) ? 1 : 0;
         try {
             logger.info("Tooltip character Length: " + totalChars);
@@ -196,6 +197,10 @@ public class SeqMapToolTips extends JWindow {
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
+    }
+    
+    private String clearText(String tooltipStr) {
+        return tooltipStr.replaceAll("\r", "");
     }
     
     private int obtainOptimumWidth() {

@@ -52,7 +52,7 @@ public abstract class XAM extends SymLoader {
     protected SAMFileHeader header;
     protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 
-    public static final String CIGARPROP = "cigar";
+    public static final String CIGARPROP = "CIGAR";
     public static final String RESIDUESPROP = "residues";
     public static final String BASEQUALITYPROP = "baseQuality";
     public static final String SHOWMASK = "showMask";

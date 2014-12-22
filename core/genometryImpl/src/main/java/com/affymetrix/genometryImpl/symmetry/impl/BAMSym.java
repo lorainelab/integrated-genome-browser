@@ -402,7 +402,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             props = new HashMap<String, Object>();
         }
         props.put("residues", getResidues().replaceAll("-", ""));
-        props.put("mapq", mapq);
+        props.put("mapQ", mapq);
         props.put("scores",getBaseQuality());
         props.put("average quality",getAverageQuality());
         return super.cloneProperties();

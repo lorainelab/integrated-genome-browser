@@ -5,7 +5,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.parsers.useq.data.Region;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.STRAND;
@@ -18,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.Timer;
@@ -28,7 +25,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import javax.swing.text.Utilities;
@@ -45,6 +41,9 @@ public class SeqMapToolTips extends JWindow {
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
     private static final Logger logger = LoggerFactory.getLogger(SeqMapToolTips.class);
     private static final int TOOLTIP_BOTTOM_PADDING = 6;
+    private static final int TOOLTIP_RIGHT_PADDING = 10;
+    private int maxLength = 0;
+    FontMetrics fontMetrics;
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -52,9 +51,9 @@ public class SeqMapToolTips extends JWindow {
     private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
     private static final int MIN_HEIGHT = 200;
     private static final int MAX_WIDTH = 300;
+    private static final int MAX_CHAR_PER_LINE = 30;
     private final JTextPane tooltip;
     private final Color backgroundColor;
-    private String[][] properties;
 
     private Timer timer = new Timer(100, new ActionListener() {
 
@@ -69,14 +68,18 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
+        tooltip.setFont(new Font("monospaced", Font.PLAIN, 12));
+        fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();
     }
 
     private String wrappedString(String key, String value) {
         String input = key + "*" + value;
-        int size = MAX_WIDTH / 10;
-        String output = WordUtils.wrap(input, size, "\n", true);
+        if(maxLength < input.length()){
+            maxLength = input.length();
+        }
+        String output = WordUtils.wrap(input, MAX_CHAR_PER_LINE, "\n", true);
         output = output.substring(key.length() + 1);
         return output;
     }
@@ -116,7 +119,7 @@ public class SeqMapToolTips extends JWindow {
             } else {
                 timer.setInitialDelay(500);
             }
-            setSize(MAX_WIDTH, obtainOptimumHeight());
+            setSize(obtainOptimumWidth(), obtainOptimumHeight());
             timer.setRepeats(false);
             timer.start();
         } else {
@@ -158,21 +161,6 @@ public class SeqMapToolTips extends JWindow {
         }
     }
 
-    private void formatTooltip() {
-        tooltip.setText(null);
-        for (String[] propertie : properties) {
-            try {
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propertie[0], NAME);
-                tooltip.getDocument().insertString(
-                        tooltip.getDocument().getLength(), " ", null);
-                tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propertie[0], propertie[1]), null);
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
     private Point determineBestLocation(Point currentPoint) {
         Point bestLocation = new Point(currentPoint.x + 10, currentPoint.y + 10);
         return bestLocation;
@@ -204,11 +192,19 @@ public class SeqMapToolTips extends JWindow {
             e.printStackTrace();
         }
 
-        FontMetrics fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
-        
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
+    }
+    
+    private int obtainOptimumWidth() {
+        int widths[] = fontMetrics.getWidths();
+        int charWidth = widths[65];
+        if(maxLength > MAX_CHAR_PER_LINE) {
+            maxLength = MAX_CHAR_PER_LINE;
+        }
+        int maxWidth = charWidth * maxLength;
+        return maxWidth + TOOLTIP_RIGHT_PADDING;
     }
 
 }

@@ -68,7 +68,7 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
-        tooltip.setFont(new Font("monospaced", Font.PLAIN, 12));
+        tooltip.setFont(new Font("Courier", Font.PLAIN, 12));
         fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();

@@ -305,9 +305,9 @@ public class ExportDialog extends HeadLessExport {
             height /= imageInfo.getResolution();
         }
 
-        SpinnerModel sm = new SpinnerNumberModel(width, 0, 10000, 1);
+        SpinnerModel sm = new SpinnerNumberModel(width, 1, 10000, 1);
         widthSpinner.setModel(sm);
-        sm = new SpinnerNumberModel(height, 0, 10000, 1);
+        sm = new SpinnerNumberModel(height, 1, 10000, 1);
         heightSpinner.setModel(sm);
 
         resetWidthHeight(width, height);

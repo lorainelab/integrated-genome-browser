@@ -179,8 +179,13 @@ public class SeqMapToolTips extends JWindow {
         setSize(MAX_WIDTH, MIN_HEIGHT);
     }
 
+    private String clearTextForWindows(String tooltipText) {
+        return tooltipText.replace("\r", "");
+    }
+    
     private int obtainOptimumHeight() {
-        int totalChars = tooltip.getText().length();
+        String tooltipText = clearTextForWindows(tooltip.getText());
+        int totalChars = tooltipText.length();
         int noOfLines = (totalChars == 0) ? 1 : 0;
         try {
             int rowStart = totalChars;

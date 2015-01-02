@@ -14,9 +14,9 @@
         <!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
         resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- force java 1.6 compatibility -->
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <!-- force java 1.7 compatibility -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <!-- As a best pratice, all versions will be controlled via properties -->
         
         <!-- Start of external bundle version declarations -->        

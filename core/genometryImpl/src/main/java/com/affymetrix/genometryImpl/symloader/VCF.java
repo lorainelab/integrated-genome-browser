@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.tooltip.ToolTipConstants;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -482,7 +483,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         }
         BAMSym residueSym = new BAMSym(nameType, seq, start, end, id, true, new int[]{start}, new int[]{end}, iblockMins, iblockMaxs, cigar, residuesStr);
         if (cigar != null) {
-            residueSym.setProperty(BAM.CIGARPROP, cigar);
+            residueSym.setProperty(ToolTipConstants.CIGAR, cigar);
         }
         residueSym.setInsResidues(insertion ? alt.substring(1) : "");
         residueSym.setProperty(BAM.SHOWMASK, true);

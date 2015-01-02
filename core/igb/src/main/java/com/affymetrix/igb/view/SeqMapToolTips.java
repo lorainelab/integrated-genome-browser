@@ -44,6 +44,7 @@ public class SeqMapToolTips extends JWindow {
     private static final int TOOLTIP_RIGHT_PADDING = 10;
     private int maxLength = 0;
     FontMetrics fontMetrics;
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     static {
         StyleConstants.setBold(NAME, true);
@@ -137,7 +138,7 @@ public class SeqMapToolTips extends JWindow {
             for (ToolTipCategory category : properties) {
                 // Added to avoid an extra "--------------" in tooltip
                 if (count > 0) {
-                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n----------\n", null);
+                    tooltip.getDocument().insertString(tooltip.getDocument().getLength(), LINE_SEPARATOR + "----------" + LINE_SEPARATOR, null);
                 }
                 count = 1;
                 // Uncomment following line for category labels
@@ -147,7 +148,7 @@ public class SeqMapToolTips extends JWindow {
                 for (String propKey : toolTipProps.keySet()) {
                     // Added to avoid an extra line at the end of tooltip
                     if (propCount > 0) {
-                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), "\n", null);
+                        tooltip.getDocument().insertString(tooltip.getDocument().getLength(), LINE_SEPARATOR, null);
                     }
                     propCount = 1;
                     propValue = toolTipProps.get(propKey);
@@ -179,29 +180,19 @@ public class SeqMapToolTips extends JWindow {
         setSize(MAX_WIDTH, MIN_HEIGHT);
     }
 
-    private String clearTextForWindows(String tooltipText) {
-        return tooltipText.replace("\r", "");
-    }
-    
     private int obtainOptimumHeight() {
-        String tooltipText = clearTextForWindows(tooltip.getText());
-        int totalChars = tooltipText.length();
-        int noOfLines = (totalChars == 0) ? 1 : 0;
-        try {
-            int rowStart = totalChars;
-            while (rowStart > 0) {
-                rowStart = Utilities.getRowStart(tooltip, rowStart) - 1;
-                noOfLines++;
-            }
-        } catch (BadLocationException e) {
-            e.printStackTrace();
+        int start = 0;
+        int noOfLines = (tooltip.getText().length() == 0) ? 1 : 0;
+        String tooltipText = tooltip.getText();
+        while((start=tooltipText.indexOf(LINE_SEPARATOR, start)) > -1) {
+            noOfLines++;
+            start++;
         }
-
         int lineHeight = fontMetrics.getHeight();
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
     }
-    
+      
     private int obtainOptimumWidth() {
         int widths[] = fontMetrics.getWidths();
         int charWidth = widths[65];

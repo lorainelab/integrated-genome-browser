@@ -4,6 +4,7 @@ The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flex
 
 To find out more, visit:
 
-* Download site http://www.bioviz.org
-* User's Guide 
-* Developers Guide
+* [BioViz Web site](http://bioviz.org/igb) site 
+* [User's Guide](https://wiki.transvar.org/display/igbman/Home) 
+* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home)
+* [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg)

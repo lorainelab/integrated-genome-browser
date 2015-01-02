@@ -10,3 +10,5 @@ For documentation, visit:
 * [User's Guide](https://wiki.transvar.org/display/igbman/Home) 
 * [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg)
+
+For information about development plans, visit the [IGB Issue Tracker site](http://jira.transvar.org). 

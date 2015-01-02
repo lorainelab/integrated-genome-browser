@@ -6,33 +6,30 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.swing.JRPButton;
-import java.awt.GridLayout;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import javax.swing.BoxLayout;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
  * Open a window showing information about Integrated Genome Browser.
  *
- * @author sgblanch
+ * @author aloraine
  */
 public class AboutIGBAction extends GenericAction {
 
@@ -58,108 +55,62 @@ public class AboutIGBAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        JPanel message_pane = new JPanel();
-        message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
-        JTextArea about_text = new JTextArea();
-        about_text.setEditable(false);
-        String text = APP_NAME + ", version: " + APP_VERSION + "\n\n"
-                + "IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n"
-                + "which develops interactive visualization software for genomics.\n\n"
-                + "If you use IGB to create images for publication, please cite the IGB\n"
-                + "Applications Note:\n\n"
-                + "Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE.\n"
-                + "The Integrated Genome Browser: free software for distribution and exploration of\n"
-                + "genome-scale datasets.\n"
-                + "Bioinformatics. 2009 Oct 15;25(20):2730-1.\n\n"
-                + "For more details, including license information, see:\n"
-                + "\thttp://www.bioviz.org/igb\n"
-                + "\thttp://genoviz.sourceforge.net\n\n";
-        about_text.append(text);
+        String text = makeText();
+        final JEditorPane pane = new JEditorPane();
+        pane.setEditorKit(JEditorPane.createEditorKitForContentType("text/html"));
+        pane.setEditable(false);
+        pane.setText(text);
+        pane.addHyperlinkListener(new HyperlinkListener() {
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(e.getURL().toURI());
+                        } catch (IOException ex) {
+                            Logger.getLogger(AboutIGBAction.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (URISyntaxException ex) {
+                            Logger.getLogger(AboutIGBAction.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+        });
+        pane.setMargin(new Insets(10, 10, 10, 10));
+        JFrame j = new JFrame("About Integrated Genome Browser");
+        Component add = j.add(pane);
+        j.setSize(new Dimension(500,500));
+        j.setVisible(true);
+    }
+    
+    /**
+     * Create an HTML-formatted String containing information about IGB.
+     * @return String text  
+     */
+    public String makeText() {
+        String text = "<html><body bgcolor=\"FFFFFF\"><h1><center>About Integrated Genome Browser</center></h1>"
+                + "<p>IGB (pronounced ig-bee) is a fast, flexible, desktop genome browser"
+                + " first developed at <a href=\"http://www.affymetrix.com\">Affymetrix</a> for tiling arrays."
+                + " IGB is now open source software supported by grants and donations."
+                + " To find out more, visit <a href=\"http://www.bioviz.org/igb\">BioViz.org</a>.</p>"
+                + "<p>If you use IGB in your research, please cite "
+                + "Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE. "
+                + "<a href=\"http://www.ncbi.nlm.nih.gov/pubmed/19654113\">The Integrated Genome "
+                + " Browser: free software for distribution and exploration of"
+                + "genome-scale datasets.</a> Bioinformatics. 2009 25(20):2730-1.</p>";
         String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
         File cache_file = new File(cache_root);
         if (cache_file.exists()) {
-            about_text.append("\nCached data stored in: \n");
-            about_text.append("  " + cache_file.getAbsolutePath() + "\n");
+            text = text + "<p>Cached data are stored in " 
+                    + cache_file.getAbsolutePath() + ".</p>";
         }
         String data_dir = PreferenceUtils.getAppDataDirectory();
         if (data_dir != null) {
             File data_dir_f = new File(data_dir);
-            about_text.append("\nApplication data stored in: \n  "
-                    + data_dir_f.getAbsolutePath() + "\n");
+            text = text + "<p>Application data stored in "
+                    + data_dir_f.getAbsolutePath() + ".</p>";
         }
-
-        message_pane.add(new JScrollPane(about_text));
-        JRPButton igb_paper = new JRPButton("AboutIGBAction_igb_paper", "View IGB Paper");
-        JRPButton bioviz_org = new JRPButton("AboutIGBAction_bioviz_org", "Visit Bioviz.org");
-        JRPButton noticesButton = new JRPButton("Notices", "View Notices");
-		// vikram JButton request_feature = new JButton("Request a Feature");
-        // vikram JButton report_bug = new JButton("Report a Bug");
-        noticesButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                String contents;
-                try {
-                    contents = readFile("NOTICES.txt");
-                } catch (IOException ex) {
-                    contents = "";
-                }
-                JTextArea textBox = new javax.swing.JTextArea("", 20, 50);
-                textBox.setLineWrap(true);
-                textBox.setText(contents);
-                javax.swing.JScrollPane scrollpane = new javax.swing.JScrollPane(textBox);
-                scrollpane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                Object[] msg = {"Details:", scrollpane};
-                javax.swing.JOptionPane op = new javax.swing.JOptionPane(
-                        msg,
-                        javax.swing.JOptionPane.PLAIN_MESSAGE,
-                        javax.swing.JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        null);
-                javax.swing.JDialog dialog = op.createDialog("Notices.txt");
-                dialog.setVisible(true);
-                dialog.setPreferredSize(new java.awt.Dimension(650, 650));
-                dialog.setDefaultCloseOperation(javax.swing.JDialog.HIDE_ON_CLOSE);
-                dialog.setAlwaysOnTop(true);
-                dialog.setResizable(true);
-                dialog.pack();
-            }
-        });
-
-        igb_paper.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                GeneralUtils.browse("http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2759552/?tool=pubmed");
-            }
-        });
-        bioviz_org.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                GeneralUtils.browse("http://www.bioviz.org");
-            }
-        });
-
-        JPanel buttonP = new JPanel(new GridLayout(1, 3));
-        buttonP.add(igb_paper);
-        buttonP.add(bioviz_org);
-        buttonP.add(noticesButton);
-
-        message_pane.add(buttonP);
-
-        final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
-                JOptionPane.DEFAULT_OPTION);
-        final JDialog dialog = pane.createDialog(IGB.getSingleton().getFrame(), MessageFormat.format(BUNDLE.getString("about"), APP_NAME));
-        dialog.setVisible(true);
+        text = text + "</body></html>";
+        return text;
     }
 
-    private String readFile(String file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        String ls = System.getProperty("line.separator");
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line);
-            stringBuilder.append(ls);
-        }
-        return stringBuilder.toString();
-    }
 }

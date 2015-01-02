@@ -74,13 +74,14 @@ public class AboutIGBAction extends GenericAction {
         pane.setMargin(new Insets(10, 10, 10, 10));
         JFrame j = new JFrame("About Integrated Genome Browser");
         Component add = j.add(pane);
-        j.setSize(new Dimension(500,500));
+        j.setSize(new Dimension(500, 500));
         j.setVisible(true);
     }
-    
+
     /**
      * Create an HTML-formatted String containing information about IGB.
-     * @return String text  
+     *
+     * @return String text
      */
     public String makeText() {
         String text = "<html><body bgcolor=\"FFFFFF\"><h1><center>About Integrated Genome Browser</center></h1>"
@@ -96,7 +97,7 @@ public class AboutIGBAction extends GenericAction {
         String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
         File cache_file = new File(cache_root);
         if (cache_file.exists()) {
-            text = text + "<p>Cached data are stored in " 
+            text = text + "<p>Cached data are stored in "
                     + cache_file.getAbsolutePath() + ".</p>";
         }
         String data_dir = PreferenceUtils.getAppDataDirectory();

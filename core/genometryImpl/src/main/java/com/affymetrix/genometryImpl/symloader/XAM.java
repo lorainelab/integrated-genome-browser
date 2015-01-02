@@ -12,6 +12,7 @@ import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MATE_START;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NA;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NH;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.CIGAR;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
@@ -52,7 +53,6 @@ public abstract class XAM extends SymLoader {
     protected SAMFileHeader header;
     protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
 
-    public static final String CIGARPROP = "cigar";
     public static final String RESIDUESPROP = "residues";
     public static final String BASEQUALITYPROP = "baseQuality";
     public static final String SHOWMASK = "showMask";
@@ -222,7 +222,7 @@ public abstract class XAM extends SymLoader {
         for (SAMTagAndValue tv : sr.getAttributes()) {
             sym.setProperty(tv.tag, tv.value);
         }
-        sym.setProperty(CIGARPROP, sr.getCigar());
+        sym.setProperty(CIGAR, sr.getCigar());
         sym.setProperty(SHOWMASK, true);
 
 //		Not using "SEQ" anywhere. So commenting out for now.

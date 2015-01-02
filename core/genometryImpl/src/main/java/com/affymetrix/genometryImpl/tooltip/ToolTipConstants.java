@@ -32,11 +32,11 @@ public class ToolTipConstants {
     public static final String SHOW_MASK = "showMask";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
-    public static final String MAPQ = "mapq";
+    public static final String MAPQ = "mapQ";
     public static final String FLAGS = "flags";
 
     public static final String CL = "CL";
-    public static final String CIGAR = "cigar";
+    public static final String CIGAR = "CIGAR";
     public static final String VN = "VN";
     public static final String NH = "NH";
     public static final String XS = "XS";

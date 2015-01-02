@@ -12,6 +12,13 @@ import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
 
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MAPQ;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.RESIDUES;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.FORWARD;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.SCORES;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.AVERAGE_QUALITY;
+
 /**
  *
  * @author hiralv
@@ -203,11 +210,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         public Map<String, Object> cloneProperties() {
             HashMap<String, Object> tprops = new HashMap<String, Object>();
             tprops.putAll(BAMSym.this.cloneProperties());
-            tprops.put("id", name);
-            tprops.put("residues", getResidues());
-            tprops.put("forward", this.isForward());
-            tprops.put("scores",getBaseQuality());
-            tprops.put("average quality",getAverageQuality());
+            tprops.put(ID, name);
+            tprops.put(RESIDUES, getResidues());
+            tprops.put(FORWARD, this.isForward());
+            tprops.put(SCORES,getBaseQuality());
+            tprops.put(AVERAGE_QUALITY,getAverageQuality());
             return tprops;
         }
 
@@ -292,11 +299,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         public Map<String, Object> cloneProperties() {
             HashMap<String, Object> tprops = new HashMap<String, Object>();
             tprops.putAll(BAMSym.this.cloneProperties());
-            tprops.put("id", name);
-            tprops.put("residues", getResidues());
-            tprops.put("forward", this.isForward());
+            tprops.put(ID, name);
+            tprops.put(RESIDUES, getResidues());
+            tprops.put(FORWARD, this.isForward());
             tprops.put("feature_type", "insertion");
-            tprops.put("average quality",getAverageQuality());
+            tprops.put(AVERAGE_QUALITY,getAverageQuality());
             return tprops;
         }
 
@@ -401,16 +408,16 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (props == null) {
             props = new HashMap<String, Object>();
         }
-        props.put("residues", getResidues().replaceAll("-", ""));
-        props.put("mapQ", mapq);
-        props.put("scores",getBaseQuality());
-        props.put("average quality",getAverageQuality());
+        props.put(RESIDUES, getResidues().replaceAll("-", ""));
+        props.put(MAPQ, mapq);
+        props.put(SCORES,getBaseQuality());
+        props.put(AVERAGE_QUALITY,getAverageQuality());
         return super.cloneProperties();
     }
 
     @Override
     public Object getProperty(String key) {
-        if ("residues".equalsIgnoreCase(key)) {
+        if (RESIDUES.equalsIgnoreCase(key)) {
             return getResidues();
         }
         return super.getProperty(key);

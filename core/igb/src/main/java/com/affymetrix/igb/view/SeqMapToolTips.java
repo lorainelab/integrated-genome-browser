@@ -155,10 +155,10 @@ public class SeqMapToolTips extends JWindow {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue), null);
                 }
-
+                
             }
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.debug(e.getClass().getSimpleName(), e);
         }
     }
 
@@ -182,7 +182,7 @@ public class SeqMapToolTips extends JWindow {
 
     private int obtainOptimumHeight() {
         int start = 0;
-        int noOfLines = (tooltip.getText().length() == 0) ? 1 : 0;
+        int noOfLines = 1;
         String tooltipText = tooltip.getText();
         while((start=tooltipText.indexOf(LINE_SEPARATOR, start)) > -1) {
             noOfLines++;

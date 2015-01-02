@@ -158,7 +158,7 @@ public class SeqMapToolTips extends JWindow {
                 
             }
         } catch (BadLocationException e) {
-            logger.debug(e.getClass().getSimpleName(), e);
+            logger.debug("Accessing invalid location in tooltip text: ", e);
         }
     }
 

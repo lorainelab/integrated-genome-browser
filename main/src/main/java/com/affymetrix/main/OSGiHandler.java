@@ -109,8 +109,8 @@ public class OSGiHandler {
                 }
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
-                    //sad window service hack
-                    if (bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
+                    //window service hack
+                    if (!isNullOrEmpty(bundle.getSymbolicName()) && bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
                         windowServiceDefBundle = bundle;
                     } else {
                         bundle.start();
@@ -378,5 +378,9 @@ public class OSGiHandler {
             }
         }
         return found;
+    }
+
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.length() == 0;
     }
 }

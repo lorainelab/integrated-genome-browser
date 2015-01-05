@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.util.List;

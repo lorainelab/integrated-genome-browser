@@ -28,6 +28,9 @@
         <commonsIoVersion>2.4</commonsIoVersion>
         <genovizVersion>1.0.9</genovizVersion>
         <felixMainVersion>4.2.2</felixMainVersion>
+        <felix-scr-version>1.8.2</felix-scr-version>
+        <org.osgi.compendium-version>4.3.1</org.osgi.compendium-version>
+        <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0.1</fusionVersion>
         <bigWigVersion>1.0</bigWigVersion>
@@ -52,7 +55,8 @@
         <igb-service-version>2.0.0</igb-service-version>
         <windows-service-version>2.0.0</windows-service-version>
         <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
-        <logging-config-version>1.0.0</logging-config-version>
+        <logging-config-version>1.0.0</logging-config-version>        
+        <igb-genoviz-extensions-api-version>1.0.0</igb-genoviz-extensions-api-version>
         <!-- End of included core bundle version declarations -->      
         
         <!-- Start of included plugin version declarations -->
@@ -165,6 +169,7 @@
         <module>core/window_service</module>
         <module>core/sharedLibWrapper</module>
         <module>core/LoggingConfig</module>
+        <module>core/igbGenovizExtensionsApi</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/BigBedHandler</module>
@@ -233,6 +238,7 @@
                 <module>core/window_service</module>
                 <module>core/sharedLibWrapper</module>
                 <module>core/LoggingConfig</module>
+                <module>core/igbGenovizExtensionsApi</module>
                 <module>plugins/ApolloLibrary</module>
                 <module>plugins/AnnotationTab</module>
                 <module>plugins/BigBedHandler</module>
@@ -473,6 +479,12 @@
                 <version>${logging-config-version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency> 
+                <groupId>com.lorainelab</groupId>
+                <artifactId>igb-genoviz-extensions-api</artifactId>
+                <version>${igb-genoviz-extensions-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>paired-data-preprocessor</artifactId>
@@ -485,7 +497,7 @@
                 <version>${igbr-version}</version>
                 <scope>provided</scope>
             </dependency>
-              <dependency>
+            <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>console-gui</artifactId>
                 <version>${console-gui-version}</version>
@@ -642,7 +654,13 @@
                 <artifactId>jackson-mapper-lgpl</artifactId>
                 <version>1.7.9</version>
             </dependency>
-
+            
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr</artifactId>
+                <version>${felix-scr-version}</version>
+            </dependency>
+            
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
@@ -656,7 +674,13 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.compendium</artifactId>
-                <version>4.3.1</version>
+                <version>${org.osgi.compendium-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bndlib</artifactId>
+                <version>${bindlib-version}</version>
             </dependency>
 
             <dependency>

@@ -1,7 +1,9 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -19,14 +21,21 @@ import com.affymetrix.igb.graphTypes.MinMaxAvgGraphType;
 import com.affymetrix.igb.graphTypes.StairStepGraphType;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Component(name = GraphGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class GraphGlyphFactory extends MapTierGlyphFactoryA {
+
+    public static final String COMPONENT_NAME = "GraphGlyphFactory";
 
     private static final Logger ourLogger
             = Logger.getLogger(GraphGlyphFactory.class.getPackage().getName());
@@ -91,12 +100,12 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
             return null;
         }
 
-		// GAH 2006-03-26
+        // GAH 2006-03-26
         //    want to add code here to handle situation where a "virtual" seq is being display on SeqMapView,
         //       and it is composed of GraphSym's from multiple annotated seqs, but they're really from the
         //       same data source (or they're the "same" data on different chromosomes for example)
         //       In this case want these displayed as a single graph
-		//   match these up based on identical graph names / ids, then:
+        //   match these up based on identical graph names / ids, then:
         //    Approach 1)
         //       build a CompositeGraphSym on the virtual seq
         //       make a single GraphGlyph
@@ -107,7 +116,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
         //       ???
         GraphSym newgraf = graf;
         if (check_same_seq && graph_seq != vseq) {
-			// The new graph doesn't need a new GraphState or a new ID.
+            // The new graph doesn't need a new GraphState or a new ID.
             // Changing any graph properties will thus apply to the original graph.
             SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
             newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
@@ -172,11 +181,11 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
         //	smv.addToPixelFloaterGlyph(graph_glyph);
         //} else {
 			/*
-         TierGlyph.Direction direction = TierGlyph.Direction.NONE;
+         StyledGlyph.Direction direction = StyledGlyph.Direction.NONE;
          if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-         direction = TierGlyph.Direction.REVERSE;
+         direction = StyledGlyph.Direction.REVERSE;
          }else if(GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-         direction = TierGlyph.Direction.FORWARD;
+         direction = StyledGlyph.Direction.FORWARD;
          }
          TierGlyph tglyph = smv.getGraphTrack(tier_style, direction);
          if(gstate.getComboStyle() != null && !(tglyph.getPacker() instanceof GraphFasterExpandPacker)){
@@ -196,11 +205,11 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
         }
         //}
         graphGlyph.setInfo(newgraf);
-        TierGlyph.Direction direction = TierGlyph.Direction.NONE;
+        StyledGlyph.Direction direction = StyledGlyph.Direction.NONE;
         if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-            direction = TierGlyph.Direction.REVERSE;
+            direction = StyledGlyph.Direction.REVERSE;
         } else if (GraphSym.GRAPH_STRAND_PLUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-            direction = TierGlyph.Direction.FORWARD;
+            direction = StyledGlyph.Direction.FORWARD;
         }
         graphGlyph.setDirection(direction);
 
@@ -256,6 +265,12 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public String getName() {
-        return "Graph";
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.Graph).build();
     }
 }

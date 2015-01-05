@@ -35,7 +35,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -43,6 +43,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -592,12 +593,12 @@ public final class GeneralLoadView {
 
                 @Override
                 protected void finished() {
-                    TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+                    TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
                     if (tier != null) {
                         tier.removeAllChildren();
                         tier.setInfo(null);
                     }
-                    tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+                    tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
                     if (tier != null) {
                         tier.removeAllChildren();
                         tier.setInfo(null);
@@ -671,11 +672,11 @@ public final class GeneralLoadView {
 
             private void removeTier(String method) {
                 ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-                TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+                TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
                 if (tier != null) {
                     gviewer.getSeqMap().removeTier(tier);
                 }
-                tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+                tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
                 if (tier != null) {
                     gviewer.getSeqMap().removeTier(tier);
                 }

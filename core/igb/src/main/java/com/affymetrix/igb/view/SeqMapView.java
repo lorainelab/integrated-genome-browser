@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -79,9 +80,8 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPPopupMenu;
@@ -96,9 +96,9 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.awt.AWTEvent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -165,6 +165,7 @@ public class SeqMapView extends JPanel
         implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, com.affymetrix.igb.swing.JRPWidget {
 
     private static final long serialVersionUID = 1L;
+    public static final String COMPONENT_NAME = "SeqMapView";
     private static final Logger logger = LoggerFactory.getLogger(SelectionInfoUtils.class);
 
     public static enum MapMode {
@@ -991,7 +992,7 @@ public class SeqMapView extends JPanel
      * @param tier_direction the direction of the track (FORWARD, REVERSE, or
      * BOTH)
      */
-    public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+    public TierGlyph getTrack(ITrackStyleExtended style, StyledGlyph.Direction tier_direction) {
         return TrackView.getInstance().getTrack(this, style, tier_direction);
     }
 
@@ -1032,7 +1033,7 @@ public class SeqMapView extends JPanel
     //   (and thus modifying map.getTiers() list -- could probably deal with this
     //    via iterators, but feels safer this way...)
     private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
-        List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
+        List<TierGlyph> temp_tiers = new ArrayList<>();
         for (TierGlyph tg : cur_tiers) {
             temp_tiers.add(tg);
             if (DEBUG_TIERS) {
@@ -1058,11 +1059,11 @@ public class SeqMapView extends JPanel
 
         // Since axis has to added only one, add it here instead of annotation track.
         axis_tier = this.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
-        MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Axis);
+        MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(FileTypeCategory.Axis);
         factory.createGlyphs(null, CoordinateStyle.coordinate_annot_style, this, aseq);
 
         addAnnotationTracks();
-        removeEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+        removeEmptyTierGlyphs(new ArrayList<>(seqmap.getTiers()));
     }
 
     private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -2970,4 +2971,5 @@ public class SeqMapView extends JPanel
             }
         }
     }
+
 }

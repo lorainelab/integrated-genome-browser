@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.lorainelab.igb.genoviz.extensions.api;
 
 import java.util.List;
 

@@ -12,7 +12,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.JRPButton;
 import java.awt.BorderLayout;

@@ -19,13 +19,14 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -186,7 +187,7 @@ public final class OrfAnalyzer extends JComponent
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(bgcol);
 		fortier.setBackgroundColor(bgcol);
-		fortier.setDirection(TierGlyph.Direction.FORWARD);
+		fortier.setDirection(StyledGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
 		map.addTier(fortier, true);  // put forward tier above axis
@@ -206,7 +207,7 @@ public final class OrfAnalyzer extends JComponent
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
 		revtier.setBackgroundColor(bgcol);
-		revtier.setDirection(TierGlyph.Direction.REVERSE);
+		revtier.setDirection(StyledGlyph.Direction.REVERSE);
 		map.addTier(revtier, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PREF_STOP_CODON_COLOR, default_stop_codon_color);

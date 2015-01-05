@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 
 /**

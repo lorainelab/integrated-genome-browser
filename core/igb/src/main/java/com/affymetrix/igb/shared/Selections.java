@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -29,17 +31,17 @@ import javax.swing.event.EventListenerList;
  */
 public abstract class Selections {
 
-    public static final List<ITrackStyleExtended> allStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
-    public static final List<ITrackStyleExtended> annotStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
-    public static final List<ITrackStyleExtended> graphStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
-    public static final List<StyledGlyph> allGlyphs = new CopyOnWriteArrayList<StyledGlyph>();
-    public static final List<GraphState> graphStates = new CopyOnWriteArrayList<GraphState>();
-    public static final List<GraphGlyph> graphGlyphs = new CopyOnWriteArrayList<GraphGlyph>();
-    public static final List<RootSeqSymmetry> rootSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
-    public static final List<RootSeqSymmetry> annotSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
-    public static final List<RootSeqSymmetry> graphSyms = new CopyOnWriteArrayList<RootSeqSymmetry>();
-    public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<ITrackStyleExtended>();
-
+    public static final List<ITrackStyleExtended> allStyles = new CopyOnWriteArrayList<>();
+    public static final List<ITrackStyleExtended> annotStyles = new CopyOnWriteArrayList<>();
+    public static final List<ITrackStyleExtended> graphStyles = new CopyOnWriteArrayList<>();
+    public static final List<StyledGlyph> allGlyphs = new CopyOnWriteArrayList<>();
+    public static final List<GraphState> graphStates = new CopyOnWriteArrayList<>();
+    public static final List<GraphGlyph> graphGlyphs = new CopyOnWriteArrayList<>();
+    public static final List<RootSeqSymmetry> rootSyms = new CopyOnWriteArrayList<>();
+    public static final List<RootSeqSymmetry> annotSyms = new CopyOnWriteArrayList<>();
+    public static final List<RootSeqSymmetry> graphSyms = new CopyOnWriteArrayList<>();
+    public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<>();
+    
     private static final SeqMapView smv;
     private static final EventListenerList listenerList;
 
@@ -215,7 +217,7 @@ public abstract class Selections {
 
     public static boolean isAllSupportTwoTrack() {
         for (StyledGlyph glyph : allGlyphs) {
-            if (!MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory())) {
+            if (!MapTierTypeHolder.supportsTwoTrack(glyph.getFileTypeCategory())) {
                 return false;
             }
         }

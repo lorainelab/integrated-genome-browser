@@ -1,23 +1,24 @@
 /**
  * Copyright (c) 2001-2004 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import java.util.Set;
 
 /**
- * Factory to create a specific type of ViewModeGlyph. MapViewGlyphFactoryI
- * instances can be registered in the igb bundle Activator
- * initMapViewGlyphFactorys() method.
+ * Factory to create a specific type of ViewModeGlyph.
  */
 public interface MapTierGlyphFactoryI {
 
@@ -70,4 +71,6 @@ public interface MapTierGlyphFactoryI {
      * @return supports two track
      */
     public boolean supportsTwoTrack();
+
+    public Set<FileTypeCategory> getSupportedCategories();
 }

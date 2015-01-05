@@ -10,8 +10,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -170,7 +170,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
 //				ITrackStyleExtended style = tg.getAnnotStyle();
 //				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
 //					continue;
 //				}
 //
@@ -207,7 +207,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //
 //				ITrackStyleExtended style = tg.getAnnotStyle();
 //				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
 //					continue;
 //				}
 //
@@ -530,7 +530,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             for (TierGlyph tier : new CopyOnWriteArrayList<TierGlyph>(smv.getSeqMap().getTiers())) {
                 ITrackStyle style = tier.getAnnotStyle();
                 if (style instanceof TrackStyle) {
-                    if (tier.getDirection() != TierGlyph.Direction.AXIS) {
+                    if (tier.getDirection() != StyledGlyph.Direction.AXIS) {
                         stylemap.put((TrackStyle) style, (TrackStyle) style);
                     } else if (CytobandParser.CYTOBAND_TIER_NAME.equals(style.getMethodName())) {
                         stylemap.put((TrackStyle) style, (TrackStyle) style);

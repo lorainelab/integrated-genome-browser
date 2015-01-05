@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Component;
 import java.awt.Font;
@@ -68,7 +69,7 @@ public abstract class Application {
 
     abstract public javax.swing.JFrame getFrame();
 
-    abstract public com.affymetrix.igb.view.SeqMapView getMapView();
+    abstract public SeqMapView getMapView();
 
     public final void addNotLockedUpMsg(final String s) {
         synchronized (progressStringList) {

@@ -1,5 +1,7 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -30,12 +32,12 @@ import com.affymetrix.igb.shared.GraphFasterExpandPacker;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.shared.SearchUtils;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -49,18 +51,22 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 
 /**
  * This is the glyph that displays the contents of a Tier/Track.
  */
+@Component
 public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph {
 
-    private static final Map<String, Class<?>> NONE_PREFERENCES = new HashMap<String, Class<?>>();
+    private static final Map<String, Class<?>> NONE_PREFERENCES = new HashMap<>();
     SwingWorker previousWorker, worker;
     protected ITrackStyleExtended style;
-    protected TierGlyph.Direction direction = TierGlyph.Direction.NONE;
+    protected StyledGlyph.Direction direction = StyledGlyph.Direction.NONE;
     private static final int handle_width = 10;  // width of handle in pixels
     private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
+    private MapTierTypeHolder mapTierTypeHolder;
+
     /**
      * glyphs to be drawn in the "middleground" -- in front of the solid
      * background, but behind the child glyphs For example, to indicate how much
@@ -216,7 +222,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     /**
      * Sets direction.
      */
-    public void setDirection(TierGlyph.Direction d) {
+    public void setDirection(StyledGlyph.Direction d) {
         direction = d;
     }
 
@@ -455,7 +461,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     protected void rangeChanged(SeqMapViewExtendedI smv) {
         if (isAutoLoadMode() /* && isDetail(smv.getSeqMap().getView())*/) {
             try {
-                MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(getFileTypeCategory());
+                MapTierGlyphFactoryI factory = mapTierTypeHolder.getDefaultFactoryFor(getFileTypeCategory());
                 if (factory != null) {
                     loadAndDisplayRegion(smv, factory);
                 }
@@ -495,7 +501,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         return style;
     }
 
-    public final TierGlyph.Direction getDirection() {
+    public final StyledGlyph.Direction getDirection() {
         return direction;
     }
 
@@ -795,13 +801,22 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
             if (previous instanceof List) {
                 ((List<GlyphI>) previous).add(glyph);
             } else {
-                List<GlyphI> glyphs = new ArrayList<GlyphI>();
+                List<GlyphI> glyphs = new ArrayList<>();
                 glyphs.add((GlyphI) previous);
                 glyphs.add(glyph);
                 model_hash.put(datamodel, glyphs);
             }
         }
         glyph.setInfo(datamodel);
+    }
+
+    public MapTierTypeHolder getMapTierTypeHolder() {
+        return mapTierTypeHolder;
+    }
+
+    @Reference
+    public void setMapTierTypeHolder(MapTierTypeHolder mapTierTypeHolder) {
+        this.mapTierTypeHolder = mapTierTypeHolder;
     }
 
 }

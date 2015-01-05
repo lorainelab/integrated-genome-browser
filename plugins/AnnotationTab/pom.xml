@@ -67,6 +67,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -82,14 +87,13 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.jidesoft.combobox,*;resolution:=optional</Import-Package>
+                        <Bundle-SymbolicName>com.affymetrix.igb.tabs.annotation.AnnotationTrackPanel</Bundle-SymbolicName>
+                        <Import-Package>com.jidesoft.combobox,com.affymetrix.igb.window.service,*</Import-Package>
                         <Bundle-Activator>com.affymetrix.igb.tabs.annotation.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.tabs.annotation.AnnotationTrackPanel</Bundle-Category>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.tabs.annotation.AnnotationTrackPanel</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

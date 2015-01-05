@@ -5,7 +5,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.affymetrix.igb.shared.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

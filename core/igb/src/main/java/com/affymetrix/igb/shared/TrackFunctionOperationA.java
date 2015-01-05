@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -123,11 +125,11 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             return null;
         }
 
-        if (vg.getDirection() == TierGlyph.Direction.BOTH || vg.getDirection() == TierGlyph.Direction.NONE) {
+        if (vg.getDirection() == StyledGlyph.Direction.BOTH || vg.getDirection() == StyledGlyph.Direction.NONE) {
             return null;
         }
 
-        return vg.getDirection() == TierGlyph.Direction.FORWARD;
+        return vg.getDirection() == StyledGlyph.Direction.FORWARD;
     }
 
     private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {

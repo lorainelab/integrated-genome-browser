@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions.api;
 
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 
@@ -15,12 +11,9 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
  */
 public interface SeqSymmetryPreprocessorI {
 
-    /**
-     * unique identifier
-     *
-     * @return name of the preprocessor
-     */
     public String getName();
+    
+    public FileTypeCategory getCategory();
 
     public void process(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq);
 

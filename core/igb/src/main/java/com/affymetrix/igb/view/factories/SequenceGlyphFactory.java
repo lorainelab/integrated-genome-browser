@@ -1,24 +1,33 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithResidues;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import java.util.Set;
 
+@Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
+
+    public static final String COMPONENT_NAME = "SequenceGlyphFactory";
 
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
         if (sym != null) {
-            TierGlyph tierGlyph = smv.getTrack(style, TierGlyph.Direction.NONE);
+            TierGlyph tierGlyph = smv.getTrack(style, StyledGlyph.Direction.NONE);
             tierGlyph.setTierType(TierGlyph.TierType.SEQUENCE);
-            tierGlyph.setDirection(TierGlyph.Direction.NONE);
+            tierGlyph.setDirection(StyledGlyph.Direction.NONE);
             tierGlyph.setInfo(sym);
             for (int i = 0; i < sym.getChildCount(); i++) {
                 if (!(sym.getChild(i) instanceof SimpleSymWithResidues)) {
@@ -46,7 +55,12 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public String getName() {
-        return "sequence";
+        return COMPONENT_NAME;
     }
 
+    @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.Sequence).build();
+    }
 }

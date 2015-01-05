@@ -6,8 +6,8 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -149,7 +149,7 @@ public class NewTierResizer extends MouseInputAdapter {
                 this.upperGl.resizeHeight(y, height);
                 this.upperGl.getReferenceTier().resizeHeight(-delta, height);
                 if (this.upperGl.getReferenceTier() instanceof ITransformableTierGlyph) {
-                    if (this.upperGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE) {
+                    if (this.upperGl.getReferenceTier().getDirection() != StyledGlyph.Direction.REVERSE) {
                         ((ITransformableTierGlyph) this.upperGl.getReferenceTier()).setOffset(
                                 ((ITransformableTierGlyph) this.upperGl.getReferenceTier()).getOffset() + (int) delta);
                     }

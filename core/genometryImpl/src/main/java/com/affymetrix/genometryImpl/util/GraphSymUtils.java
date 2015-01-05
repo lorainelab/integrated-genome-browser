@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.symmetry.*;
 
 public final class GraphSymUtils {
 
@@ -469,4 +468,6 @@ public final class GraphSymUtils {
 		}
 		return name;
 	}
+        
+ 
 }

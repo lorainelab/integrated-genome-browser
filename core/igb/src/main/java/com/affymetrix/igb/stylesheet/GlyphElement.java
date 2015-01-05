@@ -34,8 +34,9 @@ import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.shared.ExpandPacker;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -327,7 +328,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     lgl.getCoordBox().height *= 2;
     if (the_label != null) {
       lgl.setLabel(the_label);
-      if (tier_glyph.getDirection() == TierGlyph.Direction.REVERSE) {
+      if (tier_glyph.getDirection() == StyledGlyph.Direction.REVERSE) {
         lgl.setLabelLocation(GlyphI.SOUTH);
       } else {
         lgl.setLabelLocation(GlyphI.NORTH);

@@ -29,8 +29,8 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.util.EnumMap;
 
 public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefreshed, SeqSelectionListener, MouseListener, MouseMotionListener {
@@ -46,8 +46,8 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
     public TranscriptIsoformEvidenceVisualizationManager(IGBService igbService) {
         super();
         this.igbService = igbService;
-        this.refSeqTiers = new ArrayList<TierGlyph>();
-        intronSpan2Glyphs = new EnumMap<StyledGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>>(StyledGlyph.Direction.class);
+        this.refSeqTiers = new ArrayList<>();
+        intronSpan2Glyphs = new EnumMap<>(StyledGlyph.Direction.class);
         intronSpan2Glyphs.put(StyledGlyph.Direction.FORWARD, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
         intronSpan2Glyphs.put(StyledGlyph.Direction.REVERSE, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
     }

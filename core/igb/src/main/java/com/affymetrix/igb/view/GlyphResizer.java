@@ -151,12 +151,12 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 		boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 		
 		if (this.upperGl != null) {
-			com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
+			com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.upperGl.getReferenceTier();
 			gl.setPreferredHeight(this.upperGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
 		}
 		
 		if (this.lowerGl != null) {
-			com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
+			com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.lowerGl.getReferenceTier();
 			gl.setPreferredHeight(this.lowerGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
 		}
 		

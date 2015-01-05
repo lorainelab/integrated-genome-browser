@@ -149,6 +149,11 @@
                                     <destFileName>felix.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.scr</artifactId>
+                                    <version>${felix-scr-version}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.broad</groupId>
                                     <artifactId>bigwig</artifactId>
                                     <version>${bigWigVersion}</version>

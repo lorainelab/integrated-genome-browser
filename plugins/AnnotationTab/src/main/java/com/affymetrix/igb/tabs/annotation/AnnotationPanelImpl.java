@@ -24,6 +24,10 @@ import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.REVERSE;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 /**
  *

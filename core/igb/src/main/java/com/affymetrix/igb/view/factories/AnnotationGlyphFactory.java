@@ -9,6 +9,8 @@
  */
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
@@ -43,20 +45,25 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.CodonGlyphProcessor;
 import com.affymetrix.igb.shared.DeletionGlyph;
-import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
+
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
 import com.affymetrix.igb.shared.PreprocessorTypeReference;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqSymmetryPreprocessorI;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +73,10 @@ import org.apache.commons.lang3.StringUtils;
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman
  * $
  */
+@Component(name = AnnotationGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
+
+    public static final String COMPONENT_NAME = "AnnotationGlyphFactory";
 
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###.###");
 
@@ -384,9 +394,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 return Optional.<GlyphI>fromNullable(new PointedGlyph());
             }
             return Optional.<GlyphI>fromNullable((GlyphI) CHILD_GLYPH_CLASS.newInstance());
-        } catch (InstantiationException ex) {
-            Logger.getLogger(AnnotationGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(AnnotationGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Optional.<GlyphI>fromNullable(null);
@@ -506,18 +514,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         checkNotNull(seq);
         checkNotNull(gviewer);
         //apply preprocessors
-        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorTypeReference.getInstance().getPreprocessorsForType(FileTypeCategory.Annotation)) {
+        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorTypeReference.getPreprocessorsForType(FileTypeCategory.Annotation)) {
             preprocessor.process(sym, style, gviewer, seq);
         }
         setSeqMap(gviewer);
         if (sym != null) {
             int glyphDepth = style.getGlyphDepth();
-            TierGlyph.Direction tierDirection = !style.getSeparable() ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+            StyledGlyph.Direction tierDirection = !style.getSeparable() ? StyledGlyph.Direction.BOTH : StyledGlyph.Direction.FORWARD;
             TierGlyph forwardTier = gviewer.getTrack(style, tierDirection);
             forwardTier.setTierType(TierGlyph.TierType.ANNOTATION);
             forwardTier.setInfo(sym);
             if (style.getSeparate()) {
-                TierGlyph reverse_tier = (tierDirection == TierGlyph.Direction.BOTH) ? forwardTier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+                TierGlyph reverse_tier = (tierDirection == StyledGlyph.Direction.BOTH) ? forwardTier : gviewer.getTrack(style, StyledGlyph.Direction.REVERSE);
                 reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
                 reverse_tier.setInfo(sym);
                 setTrack(new Track(forwardTier, reverse_tier));
@@ -539,12 +547,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         checkNotNull(seq);
         checkNotNull(gviewer);
         setSeqMap(gviewer);
-        TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+        StyledGlyph.Direction useDirection = (!style.getSeparable()) ? StyledGlyph.Direction.BOTH : StyledGlyph.Direction.FORWARD;
         TierGlyph forward_tier = gviewer.getTrack(style, useDirection);
         forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         forward_tier.setInfo(rootSym);
 
-        TierGlyph reverse_tier = (useDirection == TierGlyph.Direction.BOTH) ? forward_tier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+        TierGlyph reverse_tier = (useDirection == StyledGlyph.Direction.BOTH) ? forward_tier : gviewer.getTrack(style, StyledGlyph.Direction.REVERSE);
         reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         forward_tier.setInfo(rootSym);
         setTrack(new Track(forward_tier, reverse_tier));
@@ -562,21 +570,16 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             return;
         }
         ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-        TierGlyph.Direction useDirection = (!style.getSeparable()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+        StyledGlyph.Direction useDirection = (!style.getSeparable()) ? StyledGlyph.Direction.BOTH : StyledGlyph.Direction.FORWARD;
         TierGlyph forward_tier = seqMap.getTrack(style, useDirection);
         forward_tier.setTierType(TierGlyph.TierType.ANNOTATION);
 
-        TierGlyph reverse_tier = (useDirection == TierGlyph.Direction.BOTH) ? forward_tier : seqMap.getTrack(style, TierGlyph.Direction.REVERSE);
+        TierGlyph reverse_tier = (useDirection == StyledGlyph.Direction.BOTH) ? forward_tier : seqMap.getTrack(style, StyledGlyph.Direction.REVERSE);
         reverse_tier.setTierType(TierGlyph.TierType.ANNOTATION);
         setTrack(new Track(forward_tier, reverse_tier));
         int depth = SeqUtils.getDepthFor(sym);
         drawChildren = (depth >= 2);
         addTopChild(sym);
-    }
-
-    @Override
-    public String getName() {
-        return "annotation/alignment";
     }
 
     private void updateAnnotSeq() {
@@ -619,6 +622,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     private void setSeqMap(SeqMapViewExtendedI seqMap) {
         this.seqMap = seqMap;
+    }
+
+    @Override
+    public String getName() {
+        return COMPONENT_NAME;
+    }
+
+    @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.Alignment)
+                .add(FileTypeCategory.Annotation).build();
     }
 
 }

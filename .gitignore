@@ -209,3 +209,8 @@ www/release_notes/images/Thumbs.db
 extbundles/*
 /plugins/ConsoleGui/target/
 /core/LoggingConfig/target/
+/core/TierGlyphApi/target/
+/core/SeqMapViewExtendedApi/target/
+/core/SeqSymmetryPreprocessorApi/target/
+/core/igbGenovizExtensions/target/
+/core/igbGenovizExtensionsApi/target/

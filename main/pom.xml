@@ -486,6 +486,17 @@
             <artifactId>logging-config</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency> 
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions-api</artifactId>
+            <version>${igb-genoviz-extensions-api-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

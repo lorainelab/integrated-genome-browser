@@ -11,7 +11,7 @@ import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
 import com.affymetrix.igb.shared.ScrollableFasterExpandPacker;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -239,7 +239,7 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
         int coord_offset = 0;
         if (isScrollingAllowed()) {
             coord_offset = (int) (BUFFER * 1.5);
-            if (getDirection() != TierGlyph.Direction.REVERSE) {
+            if (getDirection() != StyledGlyph.Direction.REVERSE) {
                 if (getInitialRowsToScroll() > 0) {
                     coord_offset = (int) getChildHeight() * (getInitialRowsToScroll() - 1) + coord_offset;
                 }

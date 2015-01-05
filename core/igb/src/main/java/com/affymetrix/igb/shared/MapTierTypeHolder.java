@@ -1,66 +1,67 @@
 package com.affymetrix.igb.shared;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import java.util.EnumMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import java.util.Collection;
+import java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * All implementation of map view mode are stored here.
  *
  * @author hiralv
  */
+@Component
 public class MapTierTypeHolder {
 
-    java.util.LinkedHashMap<String, MapTierGlyphFactoryI> view2Factory = new java.util.LinkedHashMap<String, MapTierGlyphFactoryI>();
-    EnumMap<FileTypeCategory, MapTierGlyphFactoryI> defaultView = new EnumMap<FileTypeCategory, MapTierGlyphFactoryI>(FileTypeCategory.class);
-    private static final MapTierTypeHolder instance = new MapTierTypeHolder();
+    private static final Table<String, FileTypeCategory, MapTierGlyphFactoryI> mapTierTypeReferenceTable = HashBasedTable.create();
 
-    public static MapTierTypeHolder getInstance() {
-        return instance;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(MapTierTypeHolder.class);
 
-    private MapTierTypeHolder() {
-    }
-
-    public MapTierGlyphFactoryI getViewFactory(String view) {
-        if (view == null) {
-            return null;
-        }
-        return view2Factory.get(view);
-    }
-
+    @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
     public final void addViewFactory(MapTierGlyphFactoryI factory) {
-        if (factory == null) {
-            Logger.getLogger(MapTierTypeHolder.class.getName()).log(Level.WARNING, "Trying to add null factory");
-            return;
+        checkNotNull(factory);
+        for (FileTypeCategory category : factory.getSupportedCategories()) {
+            if (!mapTierTypeReferenceTable.contains(factory.getName(), category)) {
+                mapTierTypeReferenceTable.put(factory.getName(), category, factory);
+            }
         }
-        String view = factory.getName();
-        if (view2Factory.get(view) != null) {
-            Logger.getLogger(MapTierTypeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate factory for {0}", view);
-            return;
-        }
-        view2Factory.put(view, factory);
     }
 
     public final void removeViewFactory(MapTierGlyphFactoryI factory) {
-        view2Factory.remove(factory.getName());
+        checkNotNull(factory);
+        if (mapTierTypeReferenceTable.containsValue(factory)) {
+            for (FileTypeCategory category : factory.getSupportedCategories()) {
+                mapTierTypeReferenceTable.remove(factory.getName(), category);
+            }
+        }
     }
 
-    public final void addDefaultFactory(FileTypeCategory category, MapTierGlyphFactoryI factory) {
-        if (factory == null) {
-            Logger.getLogger(MapTierTypeHolder.class.getName()).log(Level.WARNING, "Trying to add null factory for default view");
-            return;
+    public static Collection<MapTierGlyphFactoryI> getPreprocessorsForType(FileTypeCategory category) {
+        checkNotNull(category);
+        if (mapTierTypeReferenceTable.columnMap().containsKey(category)) {
+            return mapTierTypeReferenceTable.columnMap().get(category).values();
         }
-
-        if (defaultView.get(category) != null) {
-            Logger.getLogger(MapTierTypeHolder.class.getName()).log(Level.WARNING, "Trying to add duplicate factory for {0}", category);
-            return;
-        }
-        defaultView.put(category, factory);
+        return Collections.<MapTierGlyphFactoryI>emptyList();
     }
 
-    public boolean supportsTwoTrack(FileTypeCategory category) {
+    //TODO: remove this method when there is time to refactor
+    public static MapTierGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
+        //assume only 1 since this was the existing implementation
+        for (MapTierGlyphFactoryI factory : getPreprocessorsForType(category)) {
+            return factory;
+        }
+        logger.error("No factory registered with FileTypeCategory {}", category);
+        throw new IllegalStateException("No factory registered for provided category");
+    }
+
+    //TODO: remove this method when there is time to refactor
+    public static boolean supportsTwoTrack(FileTypeCategory category) {
         MapTierGlyphFactoryI factory = getDefaultFactoryFor(category);
         if (factory == null) {
             return false;
@@ -69,10 +70,4 @@ public class MapTierTypeHolder {
         }
     }
 
-    public MapTierGlyphFactoryI getDefaultFactoryFor(FileTypeCategory category) {
-        if (defaultView.get(category) != null) {
-            return defaultView.get(category);
-        }
-        return defaultView.get(FileTypeCategory.Annotation);
-    }
 }

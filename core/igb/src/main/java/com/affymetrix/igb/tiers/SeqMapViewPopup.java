@@ -46,8 +46,8 @@ import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackOperationWithParametersAction;
@@ -241,7 +241,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         for (TierLabelGlyph label : tiervec) {
             TierGlyph tier = (TierGlyph) label.getInfo();
             final ITrackStyleExtended style = tier.getAnnotStyle();
-            if (style != null && !style.getShow() && tier.getDirection() != TierGlyph.Direction.REVERSE) {
+            if (style != null && !style.getShow() && tier.getDirection() != StyledGlyph.Direction.REVERSE) {
                 final JMenuItem show_tier = new JMenuItem() {
 
                     private static final long serialVersionUID = 1L;
@@ -434,7 +434,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //		popup.add(repack_selected_tiers);
         popup.add(new JSeparator());
 //		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
-//		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != TierGlyph.Direction.AXIS) {
+//		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != StyledGlyph.Direction.AXIS) {
 //			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
 //			popup.add(maximize_track);
 //		}

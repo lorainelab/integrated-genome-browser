@@ -21,10 +21,11 @@ import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMixedStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -190,11 +191,11 @@ public class AffyTieredMap extends NeoMap {
         for (TierGlyph mtg : tiersCopy) {
             if (mtg.getChildCount() == 0) {
                 mtg.setVisibility(false);
-            } else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
+            } else if ((!show_plus) && mtg.getDirection() == StyledGlyph.Direction.FORWARD) {
                 mtg.setVisibility(false);
-            } else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
+            } else if ((!show_minus) && mtg.getDirection() == StyledGlyph.Direction.REVERSE) {
                 mtg.setVisibility(false);
-            } else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {
+            } else if ((!show_mixed) && (mtg.getDirection() == StyledGlyph.Direction.BOTH)) {
                 mtg.setVisibility(false);
             } else {
                 mtg.setVisibility(mtg.getAnnotStyle().getShow());

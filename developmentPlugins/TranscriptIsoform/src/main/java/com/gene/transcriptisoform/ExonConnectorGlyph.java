@@ -18,8 +18,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
-
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 /**
  * A glyph to connect exons to display isoforms.
  */

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions.api;
 
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;

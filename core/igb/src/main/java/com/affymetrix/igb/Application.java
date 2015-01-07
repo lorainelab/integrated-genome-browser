@@ -8,6 +8,10 @@ import com.affymetrix.genometryImpl.util.StatusAlert;
 import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -185,7 +189,9 @@ public abstract class Application {
             return JOptionPane.YES_OPTION == showConfirmDialog(comp, params);
         }
         //Large key does not work in preferences. So convert key into md5 value.
-        final String md5_check = UrlToFileName.toMd5(check);
+        HashFunction hf = Hashing.md5();
+        HashCode hc = hf.newHasher().putString(check, Charsets.UTF_8).hash();
+        final String md5_check = hc.toString();
         //If all parameters are provided then look up for boolean value from preference.
         final boolean b = node.getBoolean(md5_check, def_val);
 

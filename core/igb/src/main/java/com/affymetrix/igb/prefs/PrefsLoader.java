@@ -252,7 +252,7 @@ public abstract class PrefsLoader {
             files = default_user_prefs_files;
         }
         StringTokenizer st = new StringTokenizer(files, ";");
-        Set<String> result = new HashSet<>();
+        Set<String> result = new HashSet<String>();
         result.add(st.nextToken());
         while (st.hasMoreTokens()) {
             result.add(st.nextToken());

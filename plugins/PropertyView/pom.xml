@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services-api</artifactId>
+            <artifactId>igb-service</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

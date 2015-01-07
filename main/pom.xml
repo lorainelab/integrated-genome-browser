@@ -42,7 +42,7 @@
         </dependency>   
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services-api</artifactId>
+            <artifactId>igb-service</artifactId>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -110,7 +110,7 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services-api</artifactId>
+            <artifactId>igb-service</artifactId>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>

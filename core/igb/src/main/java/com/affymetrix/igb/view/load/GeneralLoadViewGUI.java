@@ -10,16 +10,11 @@
  */
 package com.affymetrix.igb.view.load;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IGBTabPanelI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import static com.affymetrix.igb.view.SeqMapView.COMPONENT_NAME;
 import java.awt.Cursor;
 import java.awt.Rectangle;
 
@@ -27,15 +22,13 @@ import java.awt.Rectangle;
  *
  * @author dcnorris
  */
-@Component(name = COMPONENT_NAME, provide = IGBTabPanelI.class)
 public final class GeneralLoadViewGUI extends IGBTabPanel {
 
-    public static final String COMPONENT_NAME = "GeneralLoadViewGUI";
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = Integer.MIN_VALUE;
     private static DataManagementTableModel dataManagementTableModel;
+    private static GeneralLoadViewGUI singleton;
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;
-    private IGBService igbService;
 
     static {
         defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -43,12 +36,20 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
         closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
     }
 
+    public static void init(IGBService _igbService) {
+        GeneralLoadView.init(_igbService);
+        singleton = new GeneralLoadViewGUI(_igbService);
+    }
+
+    public static synchronized GeneralLoadViewGUI getLoadView() {
+        return singleton;
+    }
+
     /**
      * Creates new form GeneralLoadView
      */
-    @Activate
-    public void activate() {
-        super.activate(BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
+    public GeneralLoadViewGUI(IGBService _igbService) {
+        super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
         initComponents();
     }
 
@@ -165,14 +166,4 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
     public boolean isEmbedded() {
         return true;
     }
-
-    public IGBService getIgbService() {
-        return igbService;
-    }
-
-    @Reference
-    public void setIgbService(IGBService igbService) {
-        this.igbService = igbService;
-    }
-
 }

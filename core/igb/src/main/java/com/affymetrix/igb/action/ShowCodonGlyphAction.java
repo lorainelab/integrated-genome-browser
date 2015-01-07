@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewBaseI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.CodonGlyph;
 import java.awt.event.ActionEvent;
 
@@ -41,10 +41,10 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         PreferenceUtils.getTopNode().putInt(CodonGlyph.CODON_GLYPH_CODE_SIZE, size);
-        redraw((SeqMapViewBaseI) getSeqMapView());
+        redraw((SeqMapViewI) getSeqMapView());
     }
 
-    private void redraw(SeqMapViewBaseI seqMapView) {
+    private void redraw(SeqMapViewI seqMapView) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         seqMapView.setAnnotatedSeq(seq, true, true, true);
     }

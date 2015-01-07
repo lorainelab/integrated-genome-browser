@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Activate;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -30,10 +29,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingWorker;
 
-@aQute.bnd.annotation.component.Component(name = AltSpliceSeqMapView.COMPONENT_NAME, provide = SeqMapViewI.class, properties = ("isAltSpliceSeqMapView=true"))
-public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
+final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 
-    public static final String COMPONENT_NAME = "AltSpliceSeqMapView";
     private static final long serialVersionUID = 1l;
     private boolean slicing_in_effect = false;
     /**
@@ -48,9 +45,8 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
     private CThreadWorker<Void, Void> slice_thread = null;
     private Map<ITrackStyleExtended, ITrackStyleExtended> style2Style;
 
-    @Activate
-    public void activate() {
-        super.activate(false, "AltSpliceSeqMapView", Application.getSingleton().getFrame());
+    AltSpliceSeqMapView(boolean b) {
+        super(b, "AltSpliceSeqMapView", Application.getSingleton().getFrame());
         if (tierLabelManager != null) {
             tierLabelManager.setDoGraphSelections(false);
         }
@@ -76,7 +72,7 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
     @Override
     public TierGlyph getTrack(final ITrackStyleExtended style, final StyledGlyph.Direction tier_direction) {
         ITrackStyleExtended style_copy = getStyle(style);
-        // super.getTrack() may have created a brand new tier, in which case
+		// super.getTrack() may have created a brand new tier, in which case
         // the style is already set to "style_copy", or it may have re-used
         // a tier, in which case it may still have an old copy of the style
         // associated with it.  Reset the style to be certain.
@@ -125,7 +121,7 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
         return style_copy;
     }
 
-    //@Override
+	//@Override
     //protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
     //popup.add(CenterAtHairlineAction.getAction());
     //}
@@ -253,7 +249,7 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
             seq2viewSym.clear();
         }
 
-        // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
+		// rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
         //    mapped to viewseq
         int prev_max = 0;
         int slice_offset = 0;
@@ -281,7 +277,7 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
                     = new SimpleMutableSeqSpan(slice_offset, slice_offset + slice_length, viewseq);
 
             if (prev_seq_slice != null && SeqUtils.looseOverlap(prev_seq_slice, seq_slice_span)) {
-                // if new seq slice span abuts the old one, then just
+				// if new seq slice span abuts the old one, then just
                 // lengthen existing spans (seq and view) rather than adding new ones
                 SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
                 SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);
@@ -327,7 +323,7 @@ public final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefre
         if (prev_seq_slice != null) {
             SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), seq_slice_span.getMin(), aseq);
             SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
-            // SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
+			// SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
             // since there will be frequent calls to getSpan(BioSeq)
             seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
         }

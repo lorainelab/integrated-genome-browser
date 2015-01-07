@@ -32,7 +32,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewBaseI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
@@ -233,8 +233,8 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     }
 
     @Override
-    public SeqMapViewBaseI getSeqMapView() {
-        return (SeqMapViewBaseI) Application.getSingleton().getMapView();
+    public SeqMapViewI getSeqMapView() {
+        return (SeqMapViewI) Application.getSingleton().getMapView();
     }
 
     @Override

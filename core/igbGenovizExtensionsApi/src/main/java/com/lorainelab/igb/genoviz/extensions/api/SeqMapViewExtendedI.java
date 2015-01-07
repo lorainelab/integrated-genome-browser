@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
  *
  * @author hiralv
  */
-public interface SeqMapViewExtendedI extends SeqMapViewBaseI {
+public interface SeqMapViewExtendedI extends SeqMapViewI {
 
     public TierGlyph getTrack(ITrackStyleExtended style, StyledGlyph.Direction tier_direction);
 

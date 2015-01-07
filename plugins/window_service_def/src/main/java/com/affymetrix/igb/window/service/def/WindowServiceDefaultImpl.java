@@ -39,13 +39,9 @@ import com.affymetrix.igb.osgi.service.IWindowRoutine;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
-import static com.affymetrix.igb.window.service.def.WindowServiceDefaultImpl.COMPONENT_NAME;
 import java.util.EnumMap;
 
-@aQute.bnd.annotation.component.Component(name = COMPONENT_NAME, provide = IWindowService.class)
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
-    
-    public static final String COMPONENT_NAME = "WindowServiceDefaultImpl";
 
     private class TabStateMenuItem extends JRPRadioButtonMenuItem {
 

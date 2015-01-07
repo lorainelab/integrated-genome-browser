@@ -1,7 +1,5 @@
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -35,16 +33,17 @@ import java.util.Map;
  *
  * @author jnicol
  */
-@Component(name = TrackView.COMPONENT_NAME)
 public class TrackView {
 
-//    public static final String COMPONENT_NAME = "TrackView";
-    
-    private GeneralLoadUtils generalLoadUtils;
-    
-//    @Activate
-//    public void activate(){}
+    private static final TrackView instance = new TrackView();
 
+    private TrackView() {
+        super();
+    }
+
+    public static TrackView getInstance() {
+        return instance;
+    }
 
     /**
      * Hash of ITrackStyle to forward TierGlyph
@@ -151,7 +150,7 @@ public class TrackView {
     }
 
     void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
-        for (GenericFeature feature : generalLoadUtils.getVisibleFeatures()) {
+        for (GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()) {
             addEmptyTierFor(feature, smv);
         }
     }
@@ -197,7 +196,7 @@ public class TrackView {
         }
     }
 
-    public void addEmptyTierFor(GenericFeature feature, SeqMapViewI gviewer) {
+    public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer) {
 
         // No sequence selected or if it is cytoband or it is residue file. Then return
         if (gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND)

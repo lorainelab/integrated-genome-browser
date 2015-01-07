@@ -20,6 +20,7 @@ import com.affymetrix.igb.window.service.IWindowService;
 public class Activator implements BundleActivator {
 
     private static final String SERVICE_FILTER = "(objectClass=" + IGBTabPanel.class.getName() + ")";
+    private static final String TAB_PANEL_CATEGORY = "IGBTabPanel-";
 
     private void addTab(BundleContext bundleContext, ServiceReference<IGBTabPanel> serviceReference, WindowServiceDefaultImpl windowServiceDefaultImpl) {
         IGBTabPanel panel = bundleContext.getService(serviceReference);

@@ -1,11 +1,9 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
-import com.affymetrix.genometryImpl.util.UrlToFileName;
 import com.affymetrix.igb.view.StatusBar;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;

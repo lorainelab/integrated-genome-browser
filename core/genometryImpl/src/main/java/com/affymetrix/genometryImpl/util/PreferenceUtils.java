@@ -43,6 +43,10 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.affymetrix.common.CommonUtils;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.OutputStream;
@@ -64,7 +68,8 @@ public abstract class PreferenceUtils {
     public static final String PREFS_MAIN = "/com/affymetrix";
     public static final String MENU_NODE_NAME = "main_menu";
     /**
-     * The name of a boolean preference. Setting to true to be sure to save bookmarks.
+     * The name of a boolean preference. Setting to true to be sure to save
+     * bookmarks.
      */
     public static final String ASK_BEFORE_EXITING = "Ask before exiting";
     public static final String CONFIRM_BEFORE_DELETE = "Confirm before delete";
@@ -464,7 +469,7 @@ public abstract class PreferenceUtils {
                 System.out.println("Bad format accelerator set for '" + action_command + "':");
                 System.out.println("  invalid '" + str + "'");
             }
-			// put a blank value in the keystroke so that the user will be able to
+            // put a blank value in the keystroke so that the user will be able to
             // see which preferences are settable
             // (actually, this is no longer necessary now that the keystroke_node_names
             // Set is being used to keep track of these.)
@@ -597,7 +602,7 @@ public abstract class PreferenceUtils {
 
         final JComboBox combo_box = new JComboBox(interned_options);
 
-		// Note that no check is made that the given default_value is
+        // Note that no check is made that the given default_value is
         // actually one of the given options.  The combo_box will ignore
         // an attempt to set itself to a value that isn't in its option list.
         String current_stored_value = node.get(pref_name, default_value).intern();
@@ -630,7 +635,9 @@ public abstract class PreferenceUtils {
     private static String shortNodeName(String s, boolean remove_slash) {
         String short_s;
         if (s.length() >= Preferences.MAX_NAME_LENGTH) {
-            short_s = UrlToFileName.toMd5(s);
+            HashFunction hf = Hashing.md5();
+            HashCode hc = hf.newHasher().putString(s, Charsets.UTF_8).hash();
+            short_s = hc.toString();
         } else {
             short_s = s;
         }
@@ -681,7 +688,7 @@ public abstract class PreferenceUtils {
 
             @Override
             public void windowClosing(WindowEvent evt) {
-				// save the current size into the preferences, so the window
+                // save the current size into the preferences, so the window
                 // will re-open with this size next time
                 PreferenceUtils.saveWindowLocation(frame, frame.getTitle());
             }

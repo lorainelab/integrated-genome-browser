@@ -61,9 +61,9 @@ public class PairedFilter extends SymmetryFilter {
     @Override
     public boolean filterSymmetry(BioSeq bioseq, SeqSymmetry ss) {
 		if (ss instanceof BAMSym) {
-			return comparator.get().value() == ((BAMSym)ss).getReadPairedFlag() && ((BAMSym)ss).getMateStart() > 0;
+			return comparator.get().value() == ((BAMSym)ss).getReadPairedFlag();
 		}
-		return false;
+		return true;
     }
 
 }

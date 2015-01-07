@@ -87,6 +87,7 @@ import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.swing.ScriptProcessor;
 import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.google.common.base.Strings;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -124,8 +125,7 @@ public class Activator implements BundleActivator {
                 return;
             }
             scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
-            commandLineBatchFileStr = CommonUtils.getInstance().getArg(
-                    "-" + IGBService.SCRIPTFILETAG, args);
+            commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IGBService.SCRIPTFILETAG, args);
             // Force loading of prefs if hasn't happened yet.
             // Usually, since IGB.main() is called first,
             // prefs will have already been loaded via loadIGBPrefs() call in main().
@@ -187,8 +187,7 @@ public class Activator implements BundleActivator {
     private void run(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference) {
         logger.info("Running IGB");
         final IGB igb = new IGB();
-        IGB.commandLineBatchFileStr = commandLineBatchFileStr;
-
+       
         igb.init(args);
 
         addGenericActionListener();
@@ -209,7 +208,7 @@ public class Activator implements BundleActivator {
         addSearchListener(bundleContext);
         addServerInitListener(bundleContext);
         logger.trace("commandlinebatchFileStr....");
-        if (IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0) {
+        if (!Strings.isNullOrEmpty(commandLineBatchFileStr)) {
             ScriptExecutor se = new ScriptExecutor();
             se.start();
         }
@@ -389,7 +388,7 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.PairedByRunNoFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.DuplicateFilter(), null);
     }
-    
+
     private void addGenericActionListener() {
         //TODO: Probably should implement using extension point listener.
         GenericActionHolder.getInstance().addGenericActionListener(
@@ -644,8 +643,8 @@ public class Activator implements BundleActivator {
                     boolean shouldRun = check();
                     if (shouldRun || timeup) {
                         if (shouldRun) {
-                            ScriptManager.getInstance().runScript(IGB.commandLineBatchFileStr);
-                            IGB.commandLineBatchFileStr = null;
+                            ScriptManager.getInstance().runScript(commandLineBatchFileStr);
+                            commandLineBatchFileStr = null;
                         }
                         break;
                     }

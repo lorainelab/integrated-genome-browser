@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 
@@ -11,16 +10,16 @@ import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelectionListener {
 
     private boolean is_listening = true;
-    private final javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
-    private final javax.swing.GroupLayout.ParallelGroup verticalGroup;
+    private javax.swing.GroupLayout.SequentialGroup horizonatalGroup;
+    private javax.swing.GroupLayout.ParallelGroup verticalGroup;
 
     /**
      * Creates new form TrackViewPanel
      */
-    public TrackViewPanel(IGBService igbService, String displayName, String title, String tooltip, boolean focus, int position) {
-        super(igbService, displayName, title, tooltip, focus, position);
+    @Override
+    public void activate(String displayName, String title, String tooltip, boolean focus, int position) {
+        super.activate(displayName, title, tooltip, focus, position);
         initComponents();
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(componentPanel);
         componentPanel.setLayout(layout);
         horizonatalGroup = layout.createSequentialGroup();

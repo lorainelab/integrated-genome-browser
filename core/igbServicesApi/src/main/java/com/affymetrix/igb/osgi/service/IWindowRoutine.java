@@ -8,13 +8,14 @@ package com.affymetrix.igb.osgi.service;
  * be run in any specified order.
  */
 public interface IWindowRoutine {
-	/**
-	 * the routine to run at IGB exit.
-	 */
-	public void stop();
-	
-	/**
-	 * the routine to run when IGB start and frame is made visible.
-	 */
-	public void start();
+
+    /**
+     * the routine to run at IGB exit.
+     */
+    public void stop();
+
+    /**
+     * the routine to run when IGB start and frame is made visible.
+     */
+    public void start();
 }

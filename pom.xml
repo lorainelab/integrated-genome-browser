@@ -52,7 +52,7 @@
         <genomitryImpl-version>2.0.0</genomitryImpl-version>
         <igb-version>2.0.0</igb-version>
         <igbSwingExt-version>2.0.0</igbSwingExt-version>
-        <igb-service-version>2.0.0</igb-service-version>
+        <igb-services-api-version>2.0.0</igb-services-api-version>
         <windows-service-version>2.0.0</windows-service-version>
         <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
         <logging-config-version>1.0.0</logging-config-version>        
@@ -165,7 +165,7 @@
         <module>core/genometryImpl</module>
         <module>core/igb</module>
         <module>core/igbSwingExt</module>
-        <module>core/igb_service</module>
+        <module>core/igbServicesApi</module>
         <module>core/window_service</module>
         <module>core/sharedLibWrapper</module>
         <module>core/LoggingConfig</module>
@@ -316,8 +316,8 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>igb-service</artifactId>
-                <version>${igb-service-version}</version>
+                <artifactId>igb-services-api</artifactId>
+                <version>${igb-services-api-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

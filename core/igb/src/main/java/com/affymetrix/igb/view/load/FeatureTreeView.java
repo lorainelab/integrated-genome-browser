@@ -745,7 +745,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                 ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
                                 tn.setChecked(false);
                             } else {
-                                GeneralLoadView.getLoadView().addFeature(feature);
+                                GeneralLoadUtils.addViewFeature(feature);
                             }
                         } else {
                             message = "Unchecking " + feature.featureName

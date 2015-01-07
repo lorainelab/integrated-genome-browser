@@ -45,6 +45,7 @@ import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqGroupViewGUI;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IMenuCreator;
@@ -104,7 +105,6 @@ public final class IGB extends Application
     private SeqMapView map_view;
     private AnnotatedSeqGroup prev_selected_group = null;
     private BioSeq prev_selected_seq = null;
-    public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
     private IWindowService windowService;
     private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
     final public static boolean IS_WINDOWS
@@ -317,7 +317,8 @@ public final class IGB extends Application
 
         WebLinkUtils.autoLoad();
 
-        GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
+         GeneralLoadView.init(IGBServiceImpl.getInstance());
+
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
         SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
         checkInternetConnection();

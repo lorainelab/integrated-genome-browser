@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
-public interface SeqMapViewI {
+public interface SeqMapViewBaseI {
 
 	public BioSeq getAnnotatedSeq();
 

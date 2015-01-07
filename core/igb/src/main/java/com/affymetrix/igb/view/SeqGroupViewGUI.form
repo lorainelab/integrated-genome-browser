@@ -93,7 +93,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesCBActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="speciesCB = seqGroupModel.getSpeciesCB()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="speciesCB = seqGroupView.getSpeciesCB()"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -122,7 +122,7 @@
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="versionCB">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="seqGroupModel.getVersionCB()"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="seqGroupView.getVersionCB()"/>
           </AuxValues>
         </Component>
       </SubComponents>

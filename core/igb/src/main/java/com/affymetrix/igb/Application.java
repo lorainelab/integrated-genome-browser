@@ -1,7 +1,6 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
@@ -30,17 +29,19 @@ public abstract class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final int delay = 2; //delay in seconds
 
-    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<StatusAlert>(); // list of status alert messages.
-    private ActionListener status_alert_listener = new ActionListener() {
+    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
+    private final ActionListener status_alert_listener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
                 removeStatusAlert((StatusAlert) e.getSource());
             }
         }
     };
-    private final LinkedList<String> progressStringList = new LinkedList<String>(); // list of progress bar messages.
+    private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
     ActionListener update_status_bar = new ActionListener() {
 
+        @Override
         public void actionPerformed(java.awt.event.ActionEvent ae) {
             synchronized (progressStringList) {
                 String s = progressStringList.pop();

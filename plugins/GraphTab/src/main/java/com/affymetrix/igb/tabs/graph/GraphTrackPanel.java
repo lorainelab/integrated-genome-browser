@@ -1,6 +1,8 @@
 package com.affymetrix.igb.tabs.graph;
 
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.TrackViewPanel;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
@@ -26,6 +28,11 @@ public class GraphTrackPanel extends TrackViewPanel {
     @Override
     protected void selectAllButtonReset() {
 
+    }
+
+    @Override
+    protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
+        SelectAllAction.getAction().execute(FileTypeCategory.Graph, FileTypeCategory.Mismatch);
     }
 
     @Override

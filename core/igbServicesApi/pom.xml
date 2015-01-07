@@ -9,12 +9,12 @@
     </parent>
     
     <groupId>com.affymetrix</groupId>
-    <artifactId>igb-service</artifactId>
-    <version>${igb-service-version}</version>
+    <artifactId>igb-services-api</artifactId>
+    <version>${igb-services-api-version}</version>
     
     <packaging>bundle</packaging>
 
-    <name>igb service</name>
+    <name>igb services api</name>
 
     <dependencies>
         <dependency>

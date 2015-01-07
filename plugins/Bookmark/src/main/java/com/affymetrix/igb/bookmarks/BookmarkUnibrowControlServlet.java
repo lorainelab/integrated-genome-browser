@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewBaseI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.google.common.base.Optional;
@@ -144,7 +144,7 @@ public final class BookmarkUnibrowControlServlet {
                         AnnotatedSeqGroup bookMarkGroup = gmodel.getSeqGroup(preferredVersionName);
                         if (bookMarkGroup != null) {
                             //same genome version as that in view?
-                            SeqMapViewI currentSeqMap = igbService.getSeqMapView();
+                            SeqMapViewBaseI currentSeqMap = igbService.getSeqMapView();
                             if (currentSeqMap != null) {
                                 //get visible span
                                 SeqSpan currentSpan = currentSeqMap.getVisibleSpan();

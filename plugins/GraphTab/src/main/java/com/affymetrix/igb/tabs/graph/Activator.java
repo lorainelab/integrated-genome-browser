@@ -12,19 +12,14 @@ import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.window.service.WindowActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends WindowActivator implements org.osgi.framework.BundleActivator {
+public class Activator implements org.osgi.framework.BundleActivator {
 
     static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Graph, FileTypeCategory.Mismatch};
 
     @Override
     protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 
-        GraphTrackPanel tabPanel = new GraphTrackPanel(igbService) {
-            @Override
-            protected void selectAllButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-                SelectAllAction.getAction().execute(FileTypeCategory.Graph, FileTypeCategory.Mismatch);
-            }
-        };
+      
 
         StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
 

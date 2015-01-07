@@ -148,6 +148,8 @@ public class CommonUtils {
         if (!app_dir.endsWith("/")) {
             app_dir += "/";
         }
+        File appDataDir = new File(app_dir);
+        appDataDir.mkdir();
         return app_dir;
     }
 

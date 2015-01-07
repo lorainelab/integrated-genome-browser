@@ -9,7 +9,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.base.Optional;
-import com.google.common.base.Splitter;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -25,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public final class LocalUrlCacher {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalUrlCacher.class);
-    private static final String CACHE_CONTENT_ROOT = PreferenceUtils.getAppDataDirectory() + "cache/";
+    public static final String CACHE_CONTENT_ROOT = PreferenceUtils.getAppDataDirectory() + "cache/";
     private static final String CACHE_HEADER_ROOT = CACHE_CONTENT_ROOT + "headers/";
     private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
     private static final String HTTP_LOCATION_HEADER = "Location";
@@ -365,19 +367,7 @@ public final class LocalUrlCacher {
         return fstr;
     }
 
-    /**
-     * Returns the local File object for the given URL; you must check
-     * File.exists() to determine if the file exists in the cache.
-     *
-     * For long URLs, the file may be contained in additional subdirectories of
-     * the the cache root directory in order to ensure that each path segment is
-     * within the file name limits of the OS If additional subdirectories are
-     * needed, getCacheFileForURL automatically creates these directories The
-     * File object returned is created by getCacheFileForURL, but the actual
-     * on-disk file is not created -- that is up to other methods in
-     * LocalUrlCacher
-     */
-    private static File getCacheFile(String root, String url) {
+    public static File getCacheFile(String root, String url) {
         File fil = new File(root);
         if (!fil.exists()) {
             logger.info("Creating new cache directory: {}", fil.getAbsolutePath());
@@ -385,16 +375,15 @@ public final class LocalUrlCacher {
                 logger.error("Could not create directory: {}", fil.toString());
             }
         }
-        String encoded_url = UrlToFileName.encode(url);
-        String cache_file_name = root + encoded_url;
-        // Need to make sure that full path of file is < 255 characters to ensure
-        //    cross-platform compatibility (some OS allow any length, some only restrict file name
-        //    length (last path segment), but there are some that restrict full path to <= 255 characters
-        if (cache_file_name.length() > 255) {
-            cache_file_name = root + UrlToFileName.toMd5(encoded_url);
-        }
-        File cache_file = new File(cache_file_name);
+        String cache_file_name = getCacheFileName(url);
+        File cache_file = new File(root, cache_file_name);
         return cache_file;
+    }
+
+    private static String getCacheFileName(String url) {
+        HashFunction hf = Hashing.md5();
+        HashCode hc = hf.newHasher().putString(url, Charsets.UTF_8).hash();
+        return hc.toString();
     }
 
     /**
@@ -956,7 +945,7 @@ public final class LocalUrlCacher {
     }
 
     public static Optional<String> retrieveFileAsStringFromCache(URL url) {
-        String fileName = getCacheFileName(url);
+        String fileName = getCacheFileName(url.toString());
         File file = new File(fileName);
         if (file.exists()) {
             try {
@@ -972,26 +961,11 @@ public final class LocalUrlCacher {
 
     public static void writeToCache(URL url, String content) {
         try {
-            String fileName = getCacheFileName(url);
-            Files.write(content, new File(LocalUrlCacher.CACHE_CONTENT_ROOT, fileName), Charsets.UTF_8);
+            String fileName = getCacheFileName(url.toString());
+            Files.write(content, new File(CACHE_CONTENT_ROOT, fileName), Charsets.UTF_8);
         } catch (IOException ex) {
             logger.error("Error writing {} to cache", url, ex);
         }
-    }
-
-    public static String getCacheFileName(URL url) {
-        String host = url.getHost();
-        String path = StringUtils.substringBeforeLast(url.getPath(), "/");
-        if (path.contains("/")) {
-            List<String> pathTokens = Splitter.on("/").omitEmptyStrings().trimResults().splitToList(path);
-            path = pathTokens.get(pathTokens.size() - 1);
-        }
-        String originalFileName = StringUtils.substringAfterLast(url.getPath(), "/");
-        String fileName = path + "-" + originalFileName;
-        if (StringUtils.isNotBlank(host)) {
-            fileName = host + "-" + fileName;
-        }
-        return fileName;
     }
 
 }

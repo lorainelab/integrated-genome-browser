@@ -214,3 +214,4 @@ extbundles/*
 /core/SeqSymmetryPreprocessorApi/target/
 /core/igbGenovizExtensions/target/
 /core/igbGenovizExtensionsApi/target/
+/distribution/build/

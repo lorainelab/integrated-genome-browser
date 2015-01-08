@@ -12,6 +12,7 @@ libsDirName = '../main/target/webstart'
 def mavenTargetDir = 'main/target'
 def webStartDir = mavenTargetDir + '/webstart'
 def resourceDir = 'main/src/main/resources'
+def buildDir = 'distribution/build'
 
 //Load common properties to read version
 ext.commonProps = new Properties() 
@@ -36,24 +37,43 @@ ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
 
 def felixVersion = '4.2.2'
 
+ buildscript {
 repositories {
     mavenLocal()
     maven { url "http://eos.transvar.org/nexus/content/repositories/releases" }
     maven { url "http://eos.transvar.org/nexus/content/repositories/freehep-maven/" }
     maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
+    maven {
+              url 'http://maven.ej-technologies.com/repository'
+          }
 }
 
+
 dependencies {
-    compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
-        exclude(module: '*')
-    }
-    compile(group: 'org.apache.felix', name: 'org.apache.felix.main', version:felixVersion) {
-        exclude(module: '*')
-    }    
+ classpath group: 'com.install4j',
+                     name: 'gradle-plugin',
+                     version: '6.0'
 }
+}
+apply plugin: 'install4j'
+
+install4j {
+    installDir = file('/opt/install4j')
+}
+
+task cleanOldBuild(type: Delete){
+delete buildDir
+}
+
+task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {
+    projectFile = file('distribution/igb.install4j')
+    variables = [projectHomeDirectory: projectDir]
+}
+
 
 clean{
     delete webStartDir
+    delete buildDir
 }
 
 task checkOS() {

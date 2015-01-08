@@ -55,6 +55,7 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -64,7 +65,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
     private static final long serialVersionUID = 1L;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PluginsView.class);
-    
+
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
     private static final int TAB_POSITION = 7;
@@ -202,7 +203,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
             if (bundle.getBundleId() == 0) { // system bundle
                 return false;
             }
-            try {     
+            try {
                 //will automate soon
                 logger.debug(bundle.getSymbolicName() + ";" + bundle.getVersion());
                 BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
@@ -460,7 +461,6 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 //        }
 //        return checked;
 //    }
-
     /**
      * gets the full set of all bundles in all the bundle repositories in the
      * Preferences tab, filter by IGB version
@@ -470,7 +470,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         List< Bundle> repositoryBundles = new ArrayList< Bundle>();
         for (Resource resource : allResourceArray) {
 //            if (checkRequirements(resource.getRequirements())) {
-                repositoryBundles.add(new ResourceWrapper(resource));
+            repositoryBundles.add(new ResourceWrapper(resource));
 //            }
         }
         setRepositoryBundles(repositoryBundles);
@@ -605,6 +605,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      */
     private synchronized void addBundle(Bundle bundle) {
         String symbolicName = bundle.getSymbolicName();
+        if (StringUtils.isBlank(symbolicName)) {
+            return;
+        }
         Version version = bundle.getVersion();
         for (Bundle unfilteredBundle : unfilteredBundles) {
             if (symbolicName.equals(unfilteredBundle.getSymbolicName()) && version.equals(unfilteredBundle.getVersion())) {

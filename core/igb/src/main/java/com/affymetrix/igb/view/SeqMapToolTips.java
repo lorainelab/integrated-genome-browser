@@ -27,7 +27,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import static com.affymetrix.genometryImpl.util.SeqUtils.*;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import javax.swing.text.Utilities;
+import java.awt.Insets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +51,9 @@ public class SeqMapToolTips extends JWindow {
     }
     private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(253, 254, 196);
     private static final int MIN_HEIGHT = 200;
-    private static final int MAX_WIDTH = 300;
+    private static final int MAX_WIDTH = 230;
     private static final int MAX_CHAR_PER_LINE = 30;
+    private static final int MARGIN = 5;
     private final JTextPane tooltip;
     private final Color backgroundColor;
 
@@ -69,7 +70,7 @@ public class SeqMapToolTips extends JWindow {
         super(owner);
         tooltip = new JTextPane();
         tooltip.setEditable(false);
-        tooltip.setFont(new Font("monospaced", Font.PLAIN, 12));
+        tooltip.setFont(new Font("Courier", Font.PLAIN, 12));
         fontMetrics = tooltip.getFontMetrics(tooltip.getFont());
         this.backgroundColor = DEFAULT_BACKGROUNDCOLOR;
         init();
@@ -120,7 +121,7 @@ public class SeqMapToolTips extends JWindow {
             } else {
                 timer.setInitialDelay(500);
             }
-            setSize(obtainOptimumWidth(), obtainOptimumHeight());
+            setSize(MAX_WIDTH, obtainOptimumHeight());
             timer.setRepeats(false);
             timer.start();
         } else {
@@ -174,6 +175,7 @@ public class SeqMapToolTips extends JWindow {
         tooltip.setBackground(backgroundColor);
         tooltip.setDisabledTextColor(tooltip.getForeground());
 
+        tooltip.setMargin(new Insets(MARGIN, MARGIN, MARGIN, MARGIN));
         tooltip.setLayout(new BorderLayout(0, 0));
         add(tooltip);
         pack();
@@ -192,15 +194,4 @@ public class SeqMapToolTips extends JWindow {
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
     }
-      
-    private int obtainOptimumWidth() {
-        int widths[] = fontMetrics.getWidths();
-        int charWidth = widths[65];
-        if(maxLength > MAX_CHAR_PER_LINE) {
-            maxLength = MAX_CHAR_PER_LINE;
-        }
-        int maxWidth = charWidth * maxLength;
-        return maxWidth + TOOLTIP_RIGHT_PADDING;
-    }
-
 }

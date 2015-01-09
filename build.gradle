@@ -5,8 +5,6 @@ import org.gradle.api.file.FileCollection
 apply plugin: 'java'
 apply plugin: 'maven'
 
-group = 'com.affymetrix'
-
 //Location to store webstart jars
 libsDirName = '../main/target/webstart'
 def mavenTargetDir = 'main/target'
@@ -26,16 +24,9 @@ ext.props = new Properties()
 ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
 project.setProperty('props', ext.props) 
 
-description = "Small Project to bootstrap IGB's OSGI runtime"
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
 ext.mainClassName = "com.affymetrix.main.Main"
 ext.applicationDefaultJvmArgs = ["-Xmx1g", "-DdevelopmentMode=true"]
 ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
-
-def felixVersion = '4.2.2'
 
  buildscript {
 repositories {
@@ -74,43 +65,6 @@ task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {
 clean{
     delete webStartDir
     delete buildDir
-}
-
-task checkOS() {
-    ext.osName = System.properties['os.name'].toLowerCase()
-    if (osName.contains('mac')) {
-        applicationDefaultJvmArgs.addAll(appleJvmArgs)
-    } 
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'main/src/main/java'
-        }
-        resources {
-            srcDir resourceDir
-            exclude '**/JNLP-INF/*'
-        }
-    }
-}
-
-task run(dependsOn: classes, type: JavaExec) {
-    main = mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    jvmArgs = applicationDefaultJvmArgs
-}
-
-task(runDebug, dependsOn: 'classes', type: JavaExec) {
-    main = mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787"]
-}
-
-task cbc(dependsOn: classes, type: JavaExec) {
-    main = "com.affymetrix.main.ClearBundleCache" 
-    classpath = sourceSets.main.runtimeClasspath
 }
 
 task generateSmallJnlp(type: Copy){
@@ -255,9 +209,12 @@ task generateWebstart(dependsOn: [webstartSmallJar, webstartMediumJar, webstartL
     println 'Generating Webstart Artifacts'
 }
 
-task packageRelease(type: Zip){
+task packageRelease(dependsOn: media, type: Zip){
     archiveName 'igb.zip'
     from '.'
     fileMode 0755
-    include 'NOTICES.txt', 'LICENSE.html', 'README.txt', 'run_*', 'igb_exe.jar'
+    include 'NOTICES.txt', 'LICENSE.html', 'README.md', 'igb_exe.jar'
+    from 'distribution/build/'
+    fileMode 0755
+    include 'IGB_*', 'md5sums'
 }

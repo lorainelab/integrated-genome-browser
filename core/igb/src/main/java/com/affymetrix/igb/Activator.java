@@ -26,7 +26,6 @@ import com.affymetrix.igb.action.ChangeLabelColorAction;
 import com.affymetrix.igb.action.ChangeReverseColorAction;
 import com.affymetrix.igb.action.ChangeTierHeightAction;
 import com.affymetrix.igb.action.CollapseAction;
-import com.affymetrix.igb.action.CustomizeAction;
 import com.affymetrix.igb.action.ExpandAction;
 import com.affymetrix.igb.action.ExportFileAction;
 import com.affymetrix.igb.action.ExportSelectedAnnotationFileAction;
@@ -338,7 +337,6 @@ public class Activator implements BundleActivator {
         ExportFileAction.getAction();
         ExportSelectedAnnotationFileAction.getAction();
         UseAsReferenceSeqAction.getAction();
-        CustomizeAction.getAction();
         HideAction.getAction();
         ShowAllAction.getAction();
         //CenterAtHairlineAction.getAction();

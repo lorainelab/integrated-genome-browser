@@ -559,5 +559,5 @@
     </windows>
   </mediaSets>
   <buildIds buildAll="true" />
-  <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
+  <buildOptions verbose="false" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
 </install4j>

@@ -451,23 +451,6 @@ public class Activator implements BundleActivator {
             bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
         }
 
-//		bundleContext.registerService(GeneralLoadView.class, GeneralLoadView.getLoadView(), null);
-//		// Redisplay FeatureTreeView when FileTypeHandler added or removed.
-//		ExtensionPointHandler<FileTypeHandler> extensionPoint
-//				= ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, FileTypeHandler.class);
-//		extensionPoint.addListener(new ExtensionPointListener<FileTypeHandler>() {
-//			// note - the FileTypeHolder calls may happen before or after
-//			// these, but the refreshTreeView() is a separate thread
-//			@Override
-//			public void removeService(FileTypeHandler fileTypeHandler) {
-//				GeneralLoadView.getLoadView().refreshTreeView();
-//			}
-//			
-//			@Override
-//			public void addService(FileTypeHandler fileTypeHandler) {
-//				GeneralLoadView.getLoadView().refreshTreeView();
-//			}
-//		});
         bundleContext.registerService(IWindowRoutine.class,
                 new IWindowRoutine() {
                     @Override

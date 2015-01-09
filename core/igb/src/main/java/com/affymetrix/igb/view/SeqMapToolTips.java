@@ -194,7 +194,7 @@ public class SeqMapToolTips extends JWindow {
         int totalHeight = lineHeight * noOfLines;
         return totalHeight + TOOLTIP_BOTTOM_PADDING;
     }
-     
+
     private int obtainOptimumWidth() {
         int widths[] = fontMetrics.getWidths();
         int charWidth = widths[65];

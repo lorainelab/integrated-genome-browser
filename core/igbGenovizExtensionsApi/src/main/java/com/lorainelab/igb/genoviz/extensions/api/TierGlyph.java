@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 

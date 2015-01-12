@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.general.NewInstance;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;

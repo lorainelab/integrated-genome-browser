@@ -23,8 +23,6 @@ import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -201,7 +199,8 @@ public final class LoadFileAction extends OpenURIAction {
         });
 
         filters = getSupportedFiles(null);
-        filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
+        List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
+        filters.add(new UniFileFilter(var.toArray(new String[var.size()]), "Script File"));
 
         all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {

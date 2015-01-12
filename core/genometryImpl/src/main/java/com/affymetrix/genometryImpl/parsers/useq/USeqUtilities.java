@@ -208,7 +208,7 @@ public class USeqUtilities {
 	/**Fetches all files with a given extension in a directory recursing through sub directories.
 	 * Will return a file if a file is given with the appropriate extension, or null.*/
 	public static File[] fetchFilesRecursively (File directory, String extension){
-		if (directory.isDirectory() == false){
+		if (!directory.isDirectory()){
 			return extractFiles(directory, extension);
 		}
 		ArrayList<File> al = fetchAllFilesRecursively (directory, extension);
@@ -299,14 +299,14 @@ public class USeqUtilities {
 		int num = files.length;
 		for (File file : files) {
 			if (file.isDirectory()) {
-				if (deleteDirectory(file) == false) {
+				if (!deleteDirectory(file)) {
 					return false;
 				}
-			} else if (file.delete() == false) {
+			} else if (!file.delete()) {
 				return false;
 			}
 		}
-		if (directory.delete() == false) {
+		if (!directory.delete()) {
 			return false;
 		}
 		return true;
@@ -344,9 +344,7 @@ public class USeqUtilities {
 		ArrayList<File> al = new ArrayList<>();
 		for (File[] aF : f) {
 			if (aF != null) {
-				for (int j = 0; j < aF.length; j++) {
-					al.add(aF[j]);
-				}
+				Collections.addAll(al, aF);
 			}
 		}
 		File[] files = new File[al.size()];

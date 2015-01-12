@@ -8,8 +8,6 @@ import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.ScriptManager;
 import java.util.Vector;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 

@@ -182,7 +182,7 @@ public final class LocalUrlCacher {
         }
 
         // if url is a file url, and not caching files, then just directly return stream
-        if ((!CACHE_FILE_URLS) && isFile(url)) {
+        if (isFile(url)) {
             //Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
             return getUncachedFileStream(url, sessionId, fileMayNotExist);
         }
@@ -472,7 +472,7 @@ public final class LocalUrlCacher {
             URLConnection conn, Map<String, String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException {
         final InputStream connstr;
         String contentEncoding = conn.getHeaderField("Content-Encoding");
-        boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
+        boolean isGZipped = contentEncoding != null && "gzip".equalsIgnoreCase(contentEncoding);
         if (isGZipped) {
             connstr = GeneralUtils.getGZipInputStream(conn.getURL().toString(), conn.getInputStream());
             if (logger.isTraceEnabled()) {
@@ -897,7 +897,7 @@ public final class LocalUrlCacher {
         }
         String content = sb.toString();
         if (DEBUG) {
-            logger.info("Content :{}", content.toString());
+            logger.info("Content :{}", content);
         }
 
         try ( // Create the form content

@@ -270,7 +270,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 
 		// check to make sure elements are in DAS/2 namespace for standard handling
-		if ((REQUIRE_DAS2_NAMESPACE) && !uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
+		if (false) {
 			// element is not in DAS/2 namespace
 			// this may be some arbitrary XML mixed in with feature XML
 			// if within the feature XML, should make a subtree of this XML and any subnodes, and attach
@@ -537,7 +537,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
 		if (feat_parent_id == null) {
-			if (REPORT_MULTI_LOC && loc_count > 2) {
+			if (loc_count > 2) {
 				System.out.println("loc count: " + loc_count);
 			}
 			for (SeqSpan span : feat_locs) {

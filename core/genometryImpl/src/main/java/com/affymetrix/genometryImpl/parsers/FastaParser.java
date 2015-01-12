@@ -323,7 +323,7 @@ public final class FastaParser implements Parser {
 			//  internal char array -- then can garbage collect temp_residues later,
 			//  and hopefully will save space...
 			String temp_residues = new String(buf);
-			residues = new String(temp_residues);
+			residues = temp_residues;
 			temp_residues = null;
 		
 			System.out.println("done constructing residues via array");

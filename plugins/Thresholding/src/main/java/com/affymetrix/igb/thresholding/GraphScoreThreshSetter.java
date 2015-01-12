@@ -603,7 +603,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
     private void setScoreThreshold(float val, int direction) {
         int gcount = graphs.size();
-        if (force_change || (gcount > 0 && (val != prev_thresh_val))) {
+        if ((gcount > 0 && (val != prev_thresh_val))) {
             turnOffListening();
             float min_per = Float.POSITIVE_INFINITY;
             float max_per = Float.NEGATIVE_INFINITY;
@@ -660,7 +660,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
     private void setScoreThresholdByPercent(float percent, int direction) {
         int gcount = graphs.size();
-        if (force_change || (gcount > 0 && (percent != prev_thresh_per))) {
+        if ((gcount > 0 && (percent != prev_thresh_per))) {
             turnOffListening();
             float min_val = Float.POSITIVE_INFINITY;
             float max_val = Float.NEGATIVE_INFINITY;

@@ -25,7 +25,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -144,7 +143,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         }
 
         // process selections in mousePressed() or mouseReleased()
-        if (!SELECT_ON_MOUSE_PRESSED) {
+        if (true) {
             // if rubber-banding is going on, don't post selections now,
             // because that will be handled in rubberBandChanged().
             // Still need to call processSelections, though, to set

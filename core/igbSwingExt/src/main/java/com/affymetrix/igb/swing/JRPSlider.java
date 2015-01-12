@@ -2,8 +2,6 @@ package com.affymetrix.igb.swing;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class JRPSlider extends JSlider implements JRPWidget {
 

@@ -78,18 +78,18 @@ public class ArchiveInfo {
 		//set versioned genome
 		keyValues.put(VERSIONED_GENOME_KEY, versionedGenome);
 		//check to see if verisonedGenome follows form 
-		if (DAS2_VERSIONED_GENOME_FORM.matcher(versionedGenome).matches() == false) {
+		if (!DAS2_VERSIONED_GENOME_FORM.matcher(versionedGenome).matches()) {
 			System.err.println("WARNING: Versioned genome does not follow recommended form (e.g. H_sapiens_Mar_2006) correct -> "+versionedGenome);
 		}
 	}
 	public ArchiveInfo(File readMeTxtFile) throws IOException{
 		loadTextArchiveReadMeFile(readMeTxtFile);
 		//look for required fields
-		if (keyValues.containsKey(ARCHIVE_VERSION_KEY) == false || keyValues.containsKey(VERSIONED_GENOME_KEY) == false || keyValues.containsKey(DATA_TYPE_KEY) == false){
+		if (!keyValues.containsKey(ARCHIVE_VERSION_KEY) || !keyValues.containsKey(VERSIONED_GENOME_KEY) || !keyValues.containsKey(DATA_TYPE_KEY)){
 			throw new IOException ("Error: text archiveReadMe.txt file does not contain required keys.  Add '"+ARCHIVE_VERSION_KEY+"' and or '"+VERSIONED_GENOME_KEY+"' and or '"+DATA_TYPE_KEY+"' to "+readMeTxtFile);
 		}
 		//check archive version
-		if (keyValues.get(ARCHIVE_VERSION_KEY).equals(ARCHIVE_VERSION_VALUE_ONE) == false ){
+		if (!keyValues.get(ARCHIVE_VERSION_KEY).equals(ARCHIVE_VERSION_VALUE_ONE)){
 			throw new IOException ("Error: this ArchiveInfo parser only supports "+ARCHIVE_VERSION_KEY+" = "+ARCHIVE_VERSION_VALUE_ONE);
 		}
 	}
@@ -118,7 +118,7 @@ public class ArchiveInfo {
 		InputStream is = null;
 		ArchiveInfo ai = null;
 		try {
-			if (USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches() == false) {
+			if (!USeqUtilities.USEQ_ARCHIVE.matcher(useqArchive.getName()).matches()) {
 				return null;
 			}
 			ZipFile zf = new ZipFile(useqArchive);
@@ -199,7 +199,7 @@ public class ArchiveInfo {
 				else {
 					//split line
 					Matcher mat = KEY_VALUE_SPLITTER.matcher(line);
-					if (mat.matches() == false) {
+					if (!mat.matches()) {
 						throw new IOException("Error in parsing archiveReadMe.txt file. Found a non comment and non key = value line. Bad line -> '"+line);
 					}
 					keyValues.put(mat.group(1), mat.group(2));
@@ -242,13 +242,13 @@ public class ArchiveInfo {
 		keyValues.put(GRAPH_STYLE_KEY, initialGraphStyle);
 	}
 	public void setInitialColor(String initialColor) throws IOException{
-		if (COLOR_HEX_FORM.matcher(initialColor).matches()== false) {
+		if (!COLOR_HEX_FORM.matcher(initialColor).matches()) {
 			throw new IOException ("Error: initial color does not follow hex form (e.g. #B2B300)! "+initialColor);
 		}
 		keyValues.put(COLOR_KEY, initialColor);
 	}
 	public void setInitialBackgroundColor(String initialBackgroundColor) throws IOException{
-		if (COLOR_HEX_FORM.matcher(initialBackgroundColor).matches()== false) {
+		if (!COLOR_HEX_FORM.matcher(initialBackgroundColor).matches()) {
 			throw new IOException ("Error: initial background color does not follow hex form (e.g. #B2B300)! "+initialBackgroundColor);
 		}
 		keyValues.put(BACKGROUND_COLOR_KEY, initialBackgroundColor);
@@ -282,7 +282,7 @@ public class ArchiveInfo {
 	}
 	/**Must contain ARCHIVE_VERSION_KEY, VERSIONED_GENOME_KEY, and DATA_TYPE_KEY .*/
 	public void setKeyValues (LinkedHashMap<String,String> keyValues) throws IOException {
-		if (keyValues.containsKey(ARCHIVE_VERSION_KEY) == false || keyValues.containsKey(VERSIONED_GENOME_KEY) == false || keyValues.containsKey(DATA_TYPE_KEY) == false){
+		if (!keyValues.containsKey(ARCHIVE_VERSION_KEY) || !keyValues.containsKey(VERSIONED_GENOME_KEY) || !keyValues.containsKey(DATA_TYPE_KEY)){
 			throw new IOException ("Error: keyValues do not contain required keys.  Add '"+ARCHIVE_VERSION_KEY+"' and or '"+VERSIONED_GENOME_KEY+"' and or '"+DATA_TYPE_KEY+"'");
 		}
 		this.keyValues = keyValues;

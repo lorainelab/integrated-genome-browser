@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -367,7 +366,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 String frame_str = fields[7].intern();
                 String last_field = null;
                 if (fields.length >= 9) {
-                    last_field = new String(fields[8]);
+                    last_field = fields[8];
                 } // creating a new String saves memory
                 // last_field is "group" in GFF1 or "attributes" in GFF2 and GFF3
 

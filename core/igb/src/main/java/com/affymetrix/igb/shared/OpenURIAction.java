@@ -88,7 +88,8 @@ public class OpenURIAction extends SeqMapViewActionA {
         List<UniFileFilter> filters = new ArrayList<>(nameToExtensionMap.keySet().size() + 1);
 
         for (String name : nameToExtensionMap.keySet()) {
-            UniFileFilter uff = new UniFileFilter(nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files");
+            List<String> var = nameToExtensionMap.get(name);
+            UniFileFilter uff = new UniFileFilter(var.toArray(new String[var.size()]), name + " Files");
             uff.addCompressionEndings(GeneralUtils.compression_endings);
             filters.add(uff);
         }

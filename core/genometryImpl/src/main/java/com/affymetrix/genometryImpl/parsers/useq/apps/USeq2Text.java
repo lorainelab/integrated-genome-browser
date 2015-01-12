@@ -68,7 +68,7 @@ public class USeq2Text {
                         Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
                         //make an ArchiveInfo object on the first element in the zip archive
                         ZipEntry ze = e.nextElement();
-                        if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+                        if (!ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME)) {
                             throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
                         }
                         ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
@@ -236,7 +236,7 @@ public class USeq2Text {
                         Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
                         //make an ArchiveInfo object on the first element in the zip archive
                         ZipEntry ze = e.nextElement();
-                        if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+                        if (!ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME)) {
                             throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
                         }
                         ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
@@ -267,11 +267,11 @@ public class USeq2Text {
                                 try (DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)))) {
                                     String extension = si.getBinaryType();
                                     //correct strand?
-                                    if (strand != null && strand.equals(si.getStrand()) == false) {
+                                    if (strand != null && !strand.equals(si.getStrand())) {
                                         continue;
                                     }
                                     //add new chromosome line?
-                                    if (si.getChromosome().equals(chromosome) == false) {
+                                    if (!si.getChromosome().equals(chromosome)) {
                                         chromosome = si.getChromosome();
                                         out.println("variableStep chrom="+chromosome);
                                     }
@@ -318,14 +318,14 @@ public class USeq2Text {
                     try (DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)))) {
                         String extension = si.getBinaryType();
                         //correct strand?
-                        if (strand != null && strand.equals(si.getStrand()) == false) {
+                        if (strand != null && !strand.equals(si.getStrand())) {
                             continue;
                         }
                         //new chromosome line?
                         if (chromosome == null) {
                             chromosome = si.getChromosome();
                         }
-                        else if (si.getChromosome().equals(chromosome) == false) {
+                        else if (!si.getChromosome().equals(chromosome)) {
                             //merge
                             PositionScoreData merged = PositionScoreData.merge(psAL);
                             int[] positions = merged.getBasePositions();

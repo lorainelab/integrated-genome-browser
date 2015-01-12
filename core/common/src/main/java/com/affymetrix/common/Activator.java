@@ -3,8 +3,6 @@ package com.affymetrix.common;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 
 public class Activator implements BundleActivator {
 

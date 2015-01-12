@@ -67,8 +67,9 @@ public final class RunScriptAction extends GenericAction {
     private JRPFileChooser getFileChooser(String id) {
         chooser = new JRPFileChooser(id);
         chooser.setMultiSelectionEnabled(false);
+        java.util.List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
         chooser.addChoosableFileFilter(new UniFileFilter(
-                ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}),
+                var.toArray(new String[var.size()]),
                 "Script File"));
 
         Set<String> all_known_endings = new HashSet<>();

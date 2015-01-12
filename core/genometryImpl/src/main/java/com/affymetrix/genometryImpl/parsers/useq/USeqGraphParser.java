@@ -63,7 +63,7 @@ public class USeqGraphParser {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
-			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
+			if (asg!= null && !asg.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
@@ -156,7 +156,7 @@ public class USeqGraphParser {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
-			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
+			if (asg!= null && !asg.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
@@ -210,7 +210,7 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//make GraphSym changing stream name if needed for strand
 		String id = stream_name;
-		if (strand.equals(".") == false) {
+		if (!strand.equals(".")) {
 			id += strand;
 		}
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
@@ -229,7 +229,7 @@ public class USeqGraphParser {
                     break;
             }
 		//check if an initialGraphStyle has been set, hate to hard code this 
-		if (graf.getProperties().containsKey("initialGraphStyle") == false) {
+		if (!graf.getProperties().containsKey("initialGraphStyle")) {
 			graf.getProperties().put("initialGraphStyle", "Bar");
 		}
 		return graf;

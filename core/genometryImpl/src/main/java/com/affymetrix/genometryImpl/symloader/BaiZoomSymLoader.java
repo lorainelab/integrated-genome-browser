@@ -67,7 +67,7 @@ public class BaiZoomSymLoader extends IndexZoomSymLoader {
             SeekableStream ssIndex = getSeekableStream(uri);
             SAMFileReader sfr = new SAMFileReader(ssData, false);
             SAMSequenceDictionary ssd = sfr.getFileHeader().getSequenceDictionary();
-            int refno = getRefNo(seq.toString(), ssd);
+            int refno = getRefNo(seq, ssd);
             if (refno == -1) {
                 return null;
             } else {

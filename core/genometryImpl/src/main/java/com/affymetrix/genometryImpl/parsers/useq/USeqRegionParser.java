@@ -57,7 +57,7 @@ public final class USeqRegionParser implements GraphParser {
 		try {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
-			if (!group.getAllVersions().isEmpty() && group.isSynonymous(genomeVersion) == false){
+			if (!group.getAllVersions().isEmpty() && !group.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
@@ -164,7 +164,7 @@ public final class USeqRegionParser implements GraphParser {
 
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
-			if (!group.getAllVersions().isEmpty() && group.isSynonymous(genomeVersion) == false){
+			if (!group.getAllVersions().isEmpty() && !group.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 

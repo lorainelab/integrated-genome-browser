@@ -54,7 +54,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
             } else {
                 uriString = GeneralUtils.fixFileName(uri.toString());
             }
-            uriString = uriString.substring(0, uriString.toString().length() - ".tbi".length());
+            uriString = uriString.substring(0, uriString.length() - ".tbi".length());
             tabixReader = new TabixReader(uriString);
             tabixReader.readIndex();
         } catch (Exception x) {
@@ -152,7 +152,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
     }
 
     private Iterator<Map<Integer, List<List<Long>>>> getBinIter(Map<String, String> synonymMap, String seq) {
-        int refno = getRefNo(synonymMap, seq.toString());
+        int refno = getRefNo(synonymMap, seq);
         if (refno != -1) {
             try {
                 Field privateReaderField = tabixReader.getClass().getDeclaredField("mIndex");

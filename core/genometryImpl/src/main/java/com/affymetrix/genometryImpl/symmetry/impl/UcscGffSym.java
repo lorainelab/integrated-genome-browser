@@ -97,7 +97,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
         } else {
             Matcher gff1_matcher = gff1_regex.matcher(group_field);
             if (gff1_matcher.matches()) {
-                this.group = new String(gff1_matcher.group(1)); // creating a new String can save Memory
+                this.group = gff1_matcher.group(1); // creating a new String can save Memory
                 this.is_gff1 = true;
             } else {
                 this.group = group_field;

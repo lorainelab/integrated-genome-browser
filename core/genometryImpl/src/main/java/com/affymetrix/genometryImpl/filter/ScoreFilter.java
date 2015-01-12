@@ -52,9 +52,7 @@ public class ScoreFilter extends SymmetryFilter {
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(SCORE).append(" ").append(comparator.get().getDisplay()).append(" ").append(score.get());
-		return sb.toString();
+		return SCORE + " " + comparator.get().getDisplay() + " " + score.get();
 	}
 }
 

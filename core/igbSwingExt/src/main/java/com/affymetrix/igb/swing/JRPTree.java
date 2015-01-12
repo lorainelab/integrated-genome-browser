@@ -1,15 +1,13 @@
 package com.affymetrix.igb.swing;
 
 import com.affymetrix.igb.swing.util.Idable;
-import java.awt.Rectangle;
+
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;

@@ -220,7 +220,7 @@ public class Wig2USeq {
 				continue;
 			}
 			//check chrom, if different then close and write chrom to file
-			if (tokens[0].equals(currentChromosome) == false){
+			if (!tokens[0].equals(currentChromosome)){
 				//check if it exists
 				if (chroms.contains(tokens[0])) {
 					throw new IOException("This file is not sorted by chromosome! "+tokens[0]+" has been parsed before! Aborting");
@@ -426,7 +426,7 @@ public class Wig2USeq {
                         }
                         if (chromosome != null) {
                             //different chromosome?
-                            if (chromosome.equals(chromTokens[1]) == false){
+                            if (!chromosome.equals(chromTokens[1])){
                                 //close old and start new
                                 System.out.println("\t\t"+chromosome+"\t"+ps.size());
                                 PositionScore[] psArray = new PositionScore[ps.size()];
@@ -437,7 +437,7 @@ public class Wig2USeq {
                                 PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
                                 PositionScoreData.updateSliceInfo(psArray, sliceInfo);
                                 data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-                                if (chroms.contains(chromosome) == false) {
+                                if (!chroms.contains(chromosome)) {
                                     chroms.add(chromosome);
                                 }
                                 else {

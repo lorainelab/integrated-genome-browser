@@ -17,7 +17,6 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  * An adapter to add Excel-like cut and paste facilities to JTable. Started with

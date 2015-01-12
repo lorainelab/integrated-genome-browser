@@ -8,8 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.weblink.WebLink;
 import com.affymetrix.igb.prefs.WebLinkUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

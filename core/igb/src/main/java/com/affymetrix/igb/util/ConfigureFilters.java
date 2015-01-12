@@ -231,11 +231,8 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
             if (filter instanceof IParameters && ((IParameters) filter).getParametersType() != null
                     && !((IParameters) filter).getParametersType().isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("  ");
-                sb.append("(").append(((IParameters) filter).getPrintableString()).append(")");
 
-                javax.swing.JLabel paramComp = (javax.swing.JLabel) parameterRenderer.getListCellRendererComponent(list, sb.toString(), index, isSelected, cellHasFocus);
+                javax.swing.JLabel paramComp = (javax.swing.JLabel) parameterRenderer.getListCellRendererComponent(list, "  (" + ((IParameters) filter).getPrintableString() + ")", index, isSelected, cellHasFocus);
                 paramComp.setFont(paramComp.getFont().deriveFont(parameterAttrMap));
                 panel.add(paramComp);
             }

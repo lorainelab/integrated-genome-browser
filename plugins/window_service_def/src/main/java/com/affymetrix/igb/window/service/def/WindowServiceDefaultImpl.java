@@ -1,7 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;

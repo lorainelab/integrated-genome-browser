@@ -4,8 +4,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;

@@ -214,7 +214,7 @@ public final class GFF3Parser implements Parser {
 			String attributes_field = null;
 			// last_field is "attributes" in both GFF2 and GFF3, but uses different format.
 			if (fields.length >= 9) {
-				attributes_field = new String(fields[8]);
+				attributes_field = fields[8];
 			} // creating a new String saves memory
 
 			float score = GFF3Sym.UNKNOWN_SCORE;
@@ -452,7 +452,7 @@ public final class GFF3Parser implements Parser {
 	private static GFF3Sym createSym(String source, String feature_type, float score, char frame_char, String attributes_field, SimpleSeqSpan span, String track_name) {
 		GFF3Sym sym = new GFF3Sym(source, feature_type, score, frame_char, attributes_field);
 		sym.addSpan(span);
-		if (use_track_lines && track_name != null) {
+		if (track_name != null) {
 			sym.setProperty("method", track_name);
 		} else {
 			sym.setProperty("method", source);

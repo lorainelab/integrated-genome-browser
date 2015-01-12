@@ -5,7 +5,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.awt.Color;
-import java.util.logging.Logger;
 
 /**
  *

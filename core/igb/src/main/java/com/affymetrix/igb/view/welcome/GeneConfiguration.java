@@ -127,7 +127,7 @@ public class GeneConfiguration extends Configuration {
 					g.setFont(f);
 					version = version.split(".png")[0];
 					String species = SpeciesLookup.getSpeciesName(version);
-					String speciesName = new String(species);
+					String speciesName = species;
 					//If name is very long shorten the name by abbreviating the first name.
 					if (species.length() > 8) {
 						String delims = "[ ]+";

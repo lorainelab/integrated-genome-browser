@@ -76,7 +76,7 @@ public class Text2USeq {
 
 			//split slice and write data to binary file
 			System.out.println("\tParsing, slicing, and writing binary data...");
-			if (sliceWriteSplitData() == false){
+			if (!sliceWriteSplitData()){
 				USeqUtilities.deleteDirectory(tempSplitTextDirectory);
 				USeqUtilities.deleteDirectory(workingBinarySaveDirectory);
 				USeqUtilities.printErrAndExit("\nFailed to convert split data to binary, aborting!\n");
@@ -107,7 +107,7 @@ public class Text2USeq {
 			return false;
 		}
 		String name = chromStrandFileHash.keySet().iterator().next();
-		if (PATTERN_STRAND.matcher(name).matches() == true) {
+		if (PATTERN_STRAND.matcher(name).matches()) {
 			return false;
 		}
 		return true;
@@ -202,7 +202,7 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			Region[] reg = makeRegions(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
+			if (!Region.checkStartStops(reg)) {
 				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
@@ -257,7 +257,7 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScore[] reg = makeRegionScores(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
+			if (!Region.checkStartStops(reg)) {
 				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
@@ -312,7 +312,7 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScoreText[] reg = makeRegionScoreTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
+			if (!Region.checkStartStops(reg)) {
 				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
@@ -367,7 +367,7 @@ public class Text2USeq {
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionText[] reg = makeRegionTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
+			if (!Region.checkStartStops(reg)) {
 				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
@@ -829,7 +829,7 @@ public class Text2USeq {
                                 String chromStrand = chromosome+strand;
                                 
                                 //get PrintWriter
-                                if (currentChrom.equals(chromStrand) == false){
+                                if (!currentChrom.equals(chromStrand)){
                                     currentChrom = chromStrand;
                                     if (chromOut.containsKey(chromStrand)) {
                                         out = chromOut.get(chromStrand);
@@ -952,7 +952,7 @@ public class Text2USeq {
 
 		//check color
 		if (color !=null){
-			if (ArchiveInfo.COLOR_HEX_FORM.matcher(color).matches() == false){
+			if (!ArchiveInfo.COLOR_HEX_FORM.matcher(color).matches()){
 				USeqUtilities.printErrAndExit("\nCannot parse a hexidecimal color code (e.g. #CCFF33) from your color choice?! -> "+color);
 			}
 		}

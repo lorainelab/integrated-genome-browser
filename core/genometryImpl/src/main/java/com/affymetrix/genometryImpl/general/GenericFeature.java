@@ -217,7 +217,7 @@ public final class GenericFeature {
             }
         } else {
             if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                return friendlyURLString.replaceAll(this.gVersion.gServer.URL.toString(), (String) this.gVersion.gServer.serverObj);
+                return friendlyURLString.replaceAll(this.gVersion.gServer.URL, (String) this.gVersion.gServer.serverObj);
             }
             return friendlyURLString;
         }

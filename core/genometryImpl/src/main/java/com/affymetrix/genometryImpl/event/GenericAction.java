@@ -3,8 +3,6 @@ package com.affymetrix.genometryImpl.event;
 import com.affymetrix.common.CommonUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;

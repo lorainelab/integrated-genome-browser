@@ -90,10 +90,10 @@ public final class CytobandParser implements AnnotationWriter, Parser {
 
             int beg = Integer.parseInt(fields[1]);  // start field
             int end = Integer.parseInt(fields[2]);  // stop field
-            String annot_name = new String(fields[3]);
+            String annot_name = fields[3];
             String band = null;
             if (field_count >= 5) {
-                band = new String(fields[4]);
+                band = fields[4];
             } else {
                 if (band_alternator > 0) {
                     band = "gpos25";

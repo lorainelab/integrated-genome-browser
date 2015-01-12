@@ -104,9 +104,7 @@ public class OSGiHandler {
             }
             Bundle windowServiceDefBundle = null;
             for (Bundle bundle : bundleContext.getBundles()) {
-                if (true) {
-                    log.info("Starting Bundle: " + bundle.getSymbolicName());
-                }
+                log.info("Starting Bundle: " + bundle.getSymbolicName());
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
                     //window service hack

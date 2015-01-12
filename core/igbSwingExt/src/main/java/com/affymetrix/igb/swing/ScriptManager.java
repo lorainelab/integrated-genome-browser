@@ -2,7 +2,6 @@ package com.affymetrix.igb.swing;
 
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;

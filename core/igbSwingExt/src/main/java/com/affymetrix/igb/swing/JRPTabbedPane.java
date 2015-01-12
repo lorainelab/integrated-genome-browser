@@ -2,11 +2,8 @@ package com.affymetrix.igb.swing;
 
 import com.affymetrix.igb.swing.util.Idable;
 import java.awt.Component;
-import java.awt.Rectangle;
 
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget {
 

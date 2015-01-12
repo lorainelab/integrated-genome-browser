@@ -128,7 +128,7 @@ public class BED extends SymLoader implements LineProcessor {
         InputStream istr = null;
         try {
             File file = chrList.get(seq);
-            boolean isSorted = chrSort.get(seq) == true;
+            boolean isSorted = chrSort.get(seq);
             if (file == null) {
                 Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
                 return Collections.<SeqSymmetry>emptyList();
@@ -470,7 +470,7 @@ public class BED extends SymLoader implements LineProcessor {
      * @return annot_name
      */
     private static String parseName(String s) {
-        String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
+        String annot_name = s; // create a new String so the entire input line doesn't get preserved
         return annot_name;
     }
 

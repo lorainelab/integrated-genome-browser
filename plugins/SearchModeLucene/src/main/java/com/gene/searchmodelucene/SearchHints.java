@@ -3,7 +3,6 @@ package com.gene.searchmodelucene;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.HashSet;

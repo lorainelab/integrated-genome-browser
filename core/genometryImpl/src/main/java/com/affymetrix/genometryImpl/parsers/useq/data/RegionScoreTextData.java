@@ -160,7 +160,7 @@ public class RegionScoreTextData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
 					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
@@ -198,7 +198,7 @@ public class RegionScoreTextData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
 					workingDOS.writeFloat(sortedRegionScoreTexts[0].score);
@@ -339,7 +339,7 @@ public class RegionScoreTextData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
 					dos.writeFloat(sortedRegionScoreTexts[0].score);
@@ -377,7 +377,7 @@ public class RegionScoreTextData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionScoreTexts[0].stop- sortedRegionScoreTexts[0].start);
 					dos.writeFloat(sortedRegionScoreTexts[0].score);

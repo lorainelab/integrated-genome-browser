@@ -125,7 +125,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
         if (this.id == null) {
             return null;
         } else {
-            return this.id.toString();
+            return this.id;
         }
     }
 

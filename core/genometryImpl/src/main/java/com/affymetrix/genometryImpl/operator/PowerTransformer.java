@@ -100,8 +100,6 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getParamPrompt()).append(":").append(getParameterValue(getParamPrompt()));
-		return sb.toString();
+		return getParamPrompt() + ":" + getParameterValue(getParamPrompt());
 	}
 }

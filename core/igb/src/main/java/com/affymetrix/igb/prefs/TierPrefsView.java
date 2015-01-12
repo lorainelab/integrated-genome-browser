@@ -19,8 +19,6 @@ import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
@@ -456,7 +454,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
     }
 
     private Boolean check2Tracks(TrackStyle style, TrackStyle temp) {
-        Boolean value = (style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate();
+        Boolean value = (!(style.isGraphTier() || !style.getSeparable())) && style.getSeparate();
         if (value != temp.getSeparate()) {
             return null;
         }
@@ -516,7 +514,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         labelFieldComboBox.setSelectedItem(style.getLabelField());
         maxDepthTextField.setText((style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || style.isGraphTier()) ? "" : String.valueOf(style.getMaxDepth()));
 
-        show2TracksCheckBox.setSelected(!(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || ((style.isGraphTier() || !style.getSeparable()) ? false : style.getSeparate())));
+        show2TracksCheckBox.setSelected(!(style.getTrackName().equalsIgnoreCase(TrackConstants.NAME_OF_COORDINATE_INSTANCE) || ((!(style.isGraphTier() || !style.getSeparable())) && style.getSeparate())));
 
         collapsedCheckBox.setSelected(style.getCollapsed());
 

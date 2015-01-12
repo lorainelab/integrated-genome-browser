@@ -149,7 +149,7 @@ public final class TrackLineParser {
     }
 
     private static String appendTrackName(Map<String, String> track_hash, String default_track_name) {
-        String human_name = new String(track_hash.get(NAME));
+        String human_name = track_hash.get(NAME);
         String name = track_hash.get(NAME);
 
         //this will create the correct track name for IGB to display the track correctly

@@ -52,7 +52,7 @@ public abstract class LuceneSearch<T> {
             for (FieldInfo fieldInfo : ReaderUtil.getMergedFieldInfos(ir)) {
                 fieldInfoList.add(fieldInfo.name);
             }
-            String[] fields = fieldInfoList.toArray(new String[]{});
+            String[] fields = fieldInfoList.toArray(new String[fieldInfoList.size()]);
             QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, fields, analyzer);
             parser.setLowercaseExpandedTerms(false);
             Query query = parser.parse(massageSearchTerm(searchTerm));

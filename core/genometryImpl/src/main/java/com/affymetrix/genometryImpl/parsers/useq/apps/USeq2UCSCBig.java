@@ -240,11 +240,11 @@ public class USeq2UCSCBig extends Thread{
 			for (String c : results) {
 				sb.append("\n");
 				sb.append(c);
-				if (c.contains("millis") == false) {
+				if (!c.contains("millis")) {
 					ok = false;
 				}
 			}
-			if (ok != true) {
+			if (!ok) {
 				deleteAllFiles();
 				throw new Exception (sb.toString());
 			}
@@ -317,7 +317,7 @@ public class USeq2UCSCBig extends Thread{
 			}
 		}
 		//make files
-		if (ucscDir == null || ucscDir.isDirectory() == false) {
+		if (ucscDir == null || !ucscDir.isDirectory()) {
 			USeqUtilities.printExit("\nCannot find your directory containing the UCSC wig2BigWig and bed2BigBed apps -> "+ucscDir);
 		}
 		ucscWig2BigWig = new File( ucscDir, "wigToBigWig");
@@ -327,10 +327,10 @@ public class USeq2UCSCBig extends Thread{
 		if (useqArchives == null || useqArchives.length == 0) {
 			USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
 		}
-		if (ucscWig2BigWig.canExecute() == false) {
+		if (!ucscWig2BigWig.canExecute()) {
 			USeqUtilities.printExit("\nCannot find or execute -> "+ucscWig2BigWig+"\n");
 		}
-		if (ucscBed2BigBed.canExecute() == false) {
+		if (!ucscBed2BigBed.canExecute()) {
 			USeqUtilities.printExit("\nCannot find or execute -> "+ucscBed2BigBed+"\n");
 		}
 

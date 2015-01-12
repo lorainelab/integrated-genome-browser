@@ -58,8 +58,6 @@ public class MappingQualityFilter extends SymmetryFilter {
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(QUALITY_SCORE).append(" ").append(comparator.get().getDisplay()).append(" ").append(qualityScore.get());
-		return sb.toString();
+		return QUALITY_SCORE + " " + comparator.get().getDisplay() + " " + qualityScore.get();
 	}
 }

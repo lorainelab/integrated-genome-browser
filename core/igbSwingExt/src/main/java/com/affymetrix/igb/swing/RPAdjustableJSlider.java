@@ -1,7 +1,5 @@
 package com.affymetrix.igb.swing;
 
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
 public class RPAdjustableJSlider extends AdjustableJSlider implements JRPWidget {

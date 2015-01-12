@@ -344,9 +344,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 
 		int skip = isFirst ? (temp.length - size) : 0;
 
-			for(int i=0; i<size; i++){
-				newTemp[i] = temp[skip+i];
-			}
+		System.arraycopy(temp, skip + 0, newTemp, 0, size);
 
 		return newTemp;
 	}
@@ -362,9 +360,7 @@ public final class TwoBitIterator implements SearchableCharIterator {
 		char temp[] = parseByte(valueBuffer);
 		char newTemp[] = new char[length];
 
-		for(int i=0; i<length; i++){
-			newTemp[i] = temp[position+i];
-		}
+		System.arraycopy(temp, position + 0, newTemp, 0, length);
 
 		return newTemp;
 	}

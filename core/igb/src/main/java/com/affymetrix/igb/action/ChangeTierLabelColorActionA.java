@@ -6,7 +6,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static com.affymetrix.igb.shared.Selections.allStyles;
-import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;

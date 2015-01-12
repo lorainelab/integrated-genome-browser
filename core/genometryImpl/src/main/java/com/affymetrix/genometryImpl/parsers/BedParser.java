@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleScoredSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -361,7 +360,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	 * @return annot_name
 	 */
 	private static String parseName(String s) {
-		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
+		String annot_name = s; // create a new String so the entire input line doesn't get preserved
 		return annot_name;
 	}
 

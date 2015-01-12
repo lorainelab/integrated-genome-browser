@@ -293,7 +293,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 			//    an array of Strings may use same underlying character array, so essentially
 			//    end up holding a pointer to a character array containing the whole input file ???
 			//
-			qseq = query_group.addSeq(new String(qname), qsize);
+			qseq = query_group.addSeq(qname, qsize);
 		}
 		if (qseq.getLength() < qsize) {
 			qseq.setLength(qsize);
@@ -316,12 +316,12 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 					// If we are in the bottom section of a ".link.psl" file,
 					// then add sequences only to the query sequence, never the target sequence.
 					if (in_bottom_of_link_psl) {
-						tseq = query_group.addSeq(new String(tname), qsize);
+						tseq = query_group.addSeq(tname, qsize);
 					} else {
-						tseq = target_group.addSeq(new String(tname), qsize);
+						tseq = target_group.addSeq(tname, qsize);
 					}
 				} else {
-					tseq = target_group.addSeq(new String(tname), qsize);
+					tseq = target_group.addSeq(tname, qsize);
 				}
 			}
 		}

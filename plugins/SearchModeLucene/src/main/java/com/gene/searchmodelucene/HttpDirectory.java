@@ -53,7 +53,7 @@ public class HttpDirectory extends Directory {
                                 flist.add(line);
                             }
                         }
-                        fileList = flist.toArray(new String[]{});
+                        fileList = flist.toArray(new String[flist.size()]);
                     } else {
                         File file = new File(httpURL);
                         fileList = file.list();

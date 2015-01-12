@@ -141,7 +141,7 @@ public final class Das2ServerInfo  {
 		InputStream response = null;
 		String das_query = server_uri.toString();
 		try {		
-			if (login() == false) {
+			if (!login()) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
 			}

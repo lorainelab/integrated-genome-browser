@@ -6,7 +6,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.SwingUtilities;
@@ -125,18 +124,16 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel {
 			}
 		});
 
-		if (true) {
-			int no_of_points = 0;
-			if (no_of_points != 0) {
-				//below = (Color) allPoints.get(0).getRange().lesserValue;
-				//above = (Color) allPoints.get(allPoints.size() - 1).getRange().greaterValue;
-			} else {
-				//below = Color.black;
-				//above = Color.white;
-			}
+		int no_of_points = 0;
+		if (no_of_points != 0) {
+            //below = (Color) allPoints.get(0).getRange().lesserValue;
+            //above = (Color) allPoints.get(allPoints.size() - 1).getRange().greaterValue;
+        } else {
+            //below = Color.black;
+            //above = Color.white;
+        }
 
-			setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
-		}
+		setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
 
 		TriangleThumbRenderer thumbRend = new TriangleThumbRenderer();
 

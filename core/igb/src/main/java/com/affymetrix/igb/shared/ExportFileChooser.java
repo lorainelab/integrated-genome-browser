@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;

@@ -198,9 +198,9 @@ public class USeqArchive {
 			if (USeqUtilities.POSITION.matcher(binaryDataType).matches()) {
 				d = new PositionData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -209,9 +209,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_SCORE.matcher(binaryDataType).matches()) {
 				d = new PositionScoreData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionScoreData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -220,9 +220,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_TEXT.matcher(binaryDataType).matches()) {
 				d = new PositionTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -231,9 +231,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(binaryDataType).matches()) {
 				d = new PositionScoreTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionScoreTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -242,9 +242,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION.matcher(binaryDataType).matches()) {
 				d = new RegionData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -253,9 +253,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_SCORE.matcher(binaryDataType).matches()) {
 				d = new RegionScoreData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionScoreData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -264,9 +264,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_TEXT.matcher(binaryDataType).matches()) {
 				d = new RegionTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -275,9 +275,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(binaryDataType).matches()) {
 				d = new RegionScoreTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionScoreTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -434,7 +434,7 @@ public class USeqArchive {
 		InputStream is = null;
 		try {
 			//make ArchiveInfo, it's always the first entry
-			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) {
+			if (!USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches()) {
 				throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
 			}
 			zipArchive = new ZipFile(zipFile);
@@ -461,7 +461,7 @@ public class USeqArchive {
 					chromName = sliceInfo.getChromosome();
 				}
 				//stranded?
-				if (sliceInfo.getStrand().equals(".") == false) {
+				if (!sliceInfo.getStrand().equals(".")) {
 					stranded = true;
 				}
 				//get/make ArrayList

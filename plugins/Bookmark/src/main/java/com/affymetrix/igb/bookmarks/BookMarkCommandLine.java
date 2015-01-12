@@ -1,7 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.igb.osgi.service.IGBService;
 import java.net.MalformedURLException;

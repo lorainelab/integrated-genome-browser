@@ -13,8 +13,6 @@ import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;

@@ -298,7 +298,7 @@ public final class WiggleParser implements GraphParser {
 			graph_id = stream_name;
 		}
 
-		String graph_name = new String(graph_id);
+		String graph_name = graph_id;
 
 		if (ensure_unique_id) {
 			graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);

@@ -150,7 +150,7 @@ public class RegionTextData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionTexts[0].stop- sortedRegionTexts[0].start);
 					workingDOS.writeUTF(sortedRegionTexts[0].text);
@@ -184,7 +184,7 @@ public class RegionTextData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionTexts[0].stop- sortedRegionTexts[0].start);
 					workingDOS.writeUTF(sortedRegionTexts[0].text);
@@ -320,7 +320,7 @@ public class RegionTextData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionTexts[0].stop- sortedRegionTexts[0].start);
 					dos.writeUTF(sortedRegionTexts[0].text);
@@ -354,7 +354,7 @@ public class RegionTextData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionTexts[0].stop- sortedRegionTexts[0].start);
 					dos.writeUTF(sortedRegionTexts[0].text);

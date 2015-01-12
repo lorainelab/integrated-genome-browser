@@ -296,7 +296,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			for (Entry<String, AssociationElement> entries : file2types) {
 				element = entries.getValue();
 
-				addElement(entries.getKey().toString(), element);
+				addElement(entries.getKey(), element);
 			}
 			fireTableDataChanged();
 		}

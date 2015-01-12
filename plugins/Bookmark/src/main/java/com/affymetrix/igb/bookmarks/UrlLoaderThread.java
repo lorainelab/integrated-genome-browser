@@ -34,7 +34,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
@@ -356,7 +355,7 @@ public final class UrlLoaderThread extends Thread {
             stream_name = stripped_name.toString();
 
             if (str instanceof BufferedInputStream) {
-                str = str;
+
             } else {
                 str = new BufferedInputStream(str);
             }

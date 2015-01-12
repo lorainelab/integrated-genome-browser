@@ -8,7 +8,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.jidesoft.hints.ListDataIntelliHints;
-import java.awt.Font;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;

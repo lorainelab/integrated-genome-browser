@@ -61,7 +61,7 @@ public class ExpandSymPacker {
                 }
             }
             if (!child_placed) {
-                if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
+                if (slot_maxes.size() >= max_slots_allowed) {
                     int slot_index = slot_maxes.size() - 1;
                     prev_slot_index = slot_index;
                 } else {

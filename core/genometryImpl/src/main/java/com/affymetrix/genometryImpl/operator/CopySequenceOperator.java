@@ -29,7 +29,7 @@ public final class CopySequenceOperator implements Operator, ICopy {
 				residueSym.getMax(), residueSym.getName(), residueSym.getScore(), residueSym.isForward(),
 				residueSym.hasCdsSpan() ? residueSym.getCdsSpan().getMin() : Integer.MIN_VALUE,
 				residueSym.hasCdsSpan() ? residueSym.getCdsSpan().getMax() : Integer.MAX_VALUE,
-				ArrayUtils.clone(residueSym.getBlockMins()), ArrayUtils.clone(residueSym.getBlockMaxs()), new String(residueSym.getResidues()));
+				ArrayUtils.clone(residueSym.getBlockMins()), ArrayUtils.clone(residueSym.getBlockMaxs()), residueSym.getResidues());
 	}
 
 	@Override

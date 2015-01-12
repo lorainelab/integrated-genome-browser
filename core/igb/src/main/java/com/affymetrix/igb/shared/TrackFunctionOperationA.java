@@ -1,7 +1,6 @@
 package com.affymetrix.igb.shared;
 
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;

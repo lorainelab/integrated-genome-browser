@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -385,10 +384,7 @@ public class RemoteBlastNCBI {
     }
 
     private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws IOException {
-        StringBuilder deleteBuf = new StringBuilder(BLAST_URL);
-        deleteBuf.append("RID=").append(req.rid).append("&");
-        deleteBuf.append("CMD=Delete");
-        URL deleteUrl = new URL(deleteBuf.toString());
+        URL deleteUrl = new URL(BLAST_URL + "RID=" + req.rid + "&" + "CMD=Delete");
         deleteUrl.openConnection();
     }
 

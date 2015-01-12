@@ -17,8 +17,6 @@ import static com.affymetrix.igb.shared.Selections.isAllRootSeqSymmetrySame;
 import static com.affymetrix.igb.shared.Selections.rootSyms;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;

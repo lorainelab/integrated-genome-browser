@@ -252,10 +252,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
             return !thread.isInterrupted();
         } catch (Exception e) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Error parsing PSL file\n");
-            sb.append("line count: ").append(line_count).append("\n");
-            throw new Exception(sb.toString(), e);
+            throw new Exception("Error parsing PSL file\n" + "line count: " + line_count + "\n", e);
         } finally {
             for (BufferedWriter b : chrs.values()) {
                 try {
@@ -745,7 +742,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
             //    an array of Strings may use same underlying character array, so essentially
             //    end up holding a pointer to a character array containing the whole input file ???
             //
-            qseq = query_group.addSeq(new String(qname), qsize, uri.toString());
+            qseq = query_group.addSeq(qname, qsize, uri.toString());
         }
         if (qseq.getLength() < qsize) {
             qseq.setLength(qsize);
@@ -778,12 +775,12 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 					// If we are in the bottom section of a ".link.psl" file,
                     // then add sequences only to the query sequence, never the target sequence.
                     if (in_bottom_of_link_psl) {
-                        tseq = query_group.addSeq(new String(tname), qsize);
+                        tseq = query_group.addSeq(tname, qsize);
                     } else {
-                        tseq = target_group.addSeq(new String(tname), qsize);
+                        tseq = target_group.addSeq(tname, qsize);
                     }
                 } else {
-                    tseq = target_group.addSeq(new String(tname), qsize);
+                    tseq = target_group.addSeq(tname, qsize);
                 }
             }
         }

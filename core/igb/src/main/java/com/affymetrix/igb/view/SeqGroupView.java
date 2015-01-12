@@ -36,7 +36,6 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.ScriptManager;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;

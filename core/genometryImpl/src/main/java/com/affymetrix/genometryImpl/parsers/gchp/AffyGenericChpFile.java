@@ -115,7 +115,7 @@ public final class AffyGenericChpFile {
 		}
 		int index = s.indexOf('\0');
 		if (index >= 0) {
-			s = new String(s.substring(0, index)); // new String() potentially saves memory
+			s = s.substring(0, index); // new String() potentially saves memory
 		}
 		return s;
 	}

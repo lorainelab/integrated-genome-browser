@@ -1,8 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import static com.affymetrix.igb.shared.Selections.graphStates;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;

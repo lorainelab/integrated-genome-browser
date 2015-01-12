@@ -85,7 +85,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSequenceTable = seqtable;
         speciesPanel = new javax.swing.JPanel();
-        speciesCB = speciesCB = seqGroupModel.getSpeciesCB();
+        speciesCB = seqGroupModel.getSpeciesCB();
         genomeVersionPanel = new javax.swing.JPanel();
         versionCB = seqGroupModel.getVersionCB();
 

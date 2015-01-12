@@ -58,8 +58,6 @@ public class QualityScoreFilter extends SymmetryFilter {
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(AVG_QUALITY_SCORE).append(" ").append(comparator.get().getDisplay()).append(" ").append(averageQuality.get());
-		return sb.toString();
+		return AVG_QUALITY_SCORE + " " + comparator.get().getDisplay() + " " + averageQuality.get();
 	}
 }

@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.JSeparator;

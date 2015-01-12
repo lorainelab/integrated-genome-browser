@@ -446,9 +446,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             graph_id = stream_name;
         }
 
-        String graph_name = new String(graph_id);
+        String graph_name = graph_id;
 
-        if (ensure_unique_id && !stream_name.equals(graph_id)) {
+        if (!stream_name.equals(graph_id)) {
             graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
         }
 //		track_hash.put(TrackLineParser.NAME, graph_id);

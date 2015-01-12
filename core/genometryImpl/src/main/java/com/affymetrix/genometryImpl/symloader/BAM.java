@@ -281,7 +281,7 @@ public final class BAM extends XAM {
         try {
             iter = reader.query(seq.getID(), min, max, false);
             //check for any records
-            if (iter.hasNext() == false) {
+            if (!iter.hasNext()) {
                 Logger.getLogger(BAM.class.getName()).log(Level.INFO, "No overlapping bam alignments.", "Min-Max: " + min + "-" + max);
                 return;
             }

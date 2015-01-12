@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
@@ -360,7 +359,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 					String strand_str = fields[6].intern();
 					String frame_str = fields[7].intern();
 					String last_field = null;
-					if (fields.length>=9) { last_field = new String(fields[8]); } // creating a new String saves memory
+					if (fields.length>=9) { last_field = fields[8]; } // creating a new String saves memory
 					// last_field is "group" in GFF1 or "attributes" in GFF2 and GFF3
 
 					float score = UcscGffSym.UNKNOWN_SCORE;

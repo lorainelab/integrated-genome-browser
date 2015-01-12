@@ -24,9 +24,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     public void setFilter(SymmetryFilterI filter) {
         if (filter instanceof ChainFilter) {
             ChainFilter chainFilter = (ChainFilter) filter;
-            for (SymmetryFilterI f : chainFilter.getFilters()) {
-                ((javax.swing.DefaultListModel) filterList.getModel()).addElement(f);
-            }
+            chainFilter.getFilters().forEach(((javax.swing.DefaultListModel) filterList.getModel())::addElement);
         } else if (filter != null) {
             ((javax.swing.DefaultListModel) filterList.getModel()).addElement(filter);
         }
@@ -82,35 +80,19 @@ public class ConfigureFilters extends javax.swing.JPanel {
                 filterListMouseClicked(evt);
             }
         });
-        filterList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                filterListValueChanged(evt);
-            }
-        });
+        filterList.addListSelectionListener(this::filterListValueChanged);
         filterListScrollPane.setViewportView(filterList);
 
         addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(this::addButtonActionPerformed);
 
         removeButton.setText("Remove");
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
+        removeButton.addActionListener(this::removeButtonActionPerformed);
 
         editButton.setText("Edit");
         editButton.setEnabled(false);
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        editButton.addActionListener(this::editButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

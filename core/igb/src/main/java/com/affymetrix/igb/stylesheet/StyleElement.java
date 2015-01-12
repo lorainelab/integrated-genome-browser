@@ -137,10 +137,8 @@ class StyleElement implements DrawableElement {
     sb.append(">\n");
     this.propertyMap.appendXML(indent + "  ", sb);
     if (matchElements != null) {
-      Iterator<MatchElement> iter = matchElements.iterator();
-      while (iter.hasNext()) {
-       MatchElement kid = iter.next();
-       kid.appendXML(indent + "  ", sb);
+      for (MatchElement kid : matchElements) {
+        kid.appendXML(indent + "  ", sb);
       }
     }
     if (glyphElement != null) {

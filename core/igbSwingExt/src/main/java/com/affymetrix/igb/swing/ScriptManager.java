@@ -46,16 +46,14 @@ public class ScriptManager {
 		mouseDown = false;
 		long eventMask = AWTEvent.MOUSE_EVENT_MASK;
 
-		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-			public void eventDispatched(AWTEvent e) {
-				if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-					mouseDown = true;
-				}
-				if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-					mouseDown = false;
-				}
-			}
-		}, eventMask);
+		Toolkit.getDefaultToolkit().addAWTEventListener(e -> {
+            if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+                mouseDown = true;
+            }
+            if (e.getID() == MouseEvent.MOUSE_RELEASED) {
+                mouseDown = false;
+            }
+        }, eventMask);
 	}
 
 	public boolean isMouseDown() {
@@ -199,8 +197,6 @@ public class ScriptManager {
 	}
 
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
-		for (JRPWidget widget : widgets.values()) {
-			decorator.widgetAdded(widget);
-		}
+		widgets.values().forEach(decorator::widgetAdded);
 	}
 }

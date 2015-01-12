@@ -120,9 +120,9 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
             GraphSym graph = (GraphSym) tg.getInfo();
             float[] y = graph.getGraphYCoords();
             float m = Float.MIN_VALUE;
-            for (int i = 0; i < y.length; i++) {
-                if (m < y[i]) {
-                    m = y[i];
+            for (float aY : y) {
+                if (m < aY) {
+                    m = aY;
                 }
             }
             maxMax = Math.max(maxMax, m);

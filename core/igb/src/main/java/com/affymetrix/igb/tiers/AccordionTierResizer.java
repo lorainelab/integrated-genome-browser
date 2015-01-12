@@ -114,7 +114,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-        assert m != (AffyTieredMap) src; // This seems odd.
+        assert m != src; // This seems odd.
         // Seems both cursors are the same, but you never know...
         if (atResizeTop(nevt)) {
             m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
@@ -306,16 +306,14 @@ public class AccordionTierResizer extends MouseInputAdapter {
         this.dragStarted = false;
         boolean needRepacking = (1 < this.resizeRegion.size());
 
-        for (TierLabelGlyph g : this.resizeRegion) {
-            if (g.isManuallyResizable()) {
-                TierGlyph tg = g.getReferenceTier();
-                tg.setPreferredHeight(
-                        g.getCoordBox().height,
-                        this.gviewer.getSeqMap().getView()
-                );
+        this.resizeRegion.stream().filter(g -> g.isManuallyResizable()).forEach(g -> {
+            TierGlyph tg = g.getReferenceTier();
+            tg.setPreferredHeight(
+                    g.getCoordBox().height,
+                    this.gviewer.getSeqMap().getView()
+            );
 
-            }
-        }
+        });
 
         if (needRepacking) {
             com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();

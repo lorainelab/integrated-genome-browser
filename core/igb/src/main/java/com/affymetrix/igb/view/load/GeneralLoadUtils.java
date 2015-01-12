@@ -160,16 +160,11 @@ public final class GeneralLoadUtils {
      *
      */
 //	private static RegionFinder regionFinder = new DefaultRegionFinder();
-    private static GenericServerInitListener genericServerInitListener = new GenericServerInitListener() {
-
-        @Override
-        public void genericServerInit(GenericServerInitEvent evt) {
-            GenericServer server = (GenericServer) evt.getSource();
-            if (server.getServerStatus() == ServerStatus.NotResponding) {
-                removeServer(server);
-            }
+    private static GenericServerInitListener genericServerInitListener = evt -> {
+        GenericServer server = (GenericServer) evt.getSource();
+        if (server.getServerStatus() == ServerStatus.NotResponding) {
+            removeServer(server);
         }
-
     };
 
     static {
@@ -438,11 +433,9 @@ public final class GeneralLoadUtils {
      */
     public static List<GenericServer> getServersWithAssociatedFeatures(List<GenericFeature> features) {
         List<GenericServer> serverList = new ArrayList<>();
-        for (GenericFeature gFeature : features) {
-            if (!serverList.contains(gFeature.gVersion.gServer)) {
-                serverList.add(gFeature.gVersion.gServer);
-            }
-        }
+        features.stream().filter(gFeature -> !serverList.contains(gFeature.gVersion.gServer)).forEach(gFeature -> {
+            serverList.add(gFeature.gVersion.gServer);
+        });
         // make sure these servers always have the same order
         Collections.sort(serverList, ServerList.getServerInstance().getServerOrderComparator());
         return serverList;
@@ -478,12 +471,10 @@ public final class GeneralLoadUtils {
             return;
         }
         AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
-        for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (!gVersion.isInitialized()) {
-                loadFeatureNames(gVersion);
-                gVersion.setInitialized();
-            }
-        }
+        group.getEnabledVersions().stream().filter(gVersion -> !gVersion.isInitialized()).forEach(gVersion -> {
+            loadFeatureNames(gVersion);
+            gVersion.setInitialized();
+        });
         if (group.getSeqCount() == 0) {
             loadChromInfo(group);
         }
@@ -783,12 +774,9 @@ public final class GeneralLoadUtils {
                         final BioSeq current_seq = gmodel.getSelectedSeq();
 
                         if (current_seq != null) {
-                            internalExecutor.submit(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadOnSequence(current_seq);
-                                    publish(current_seq);
-                                }
+                            internalExecutor.submit(() -> {
+                                loadOnSequence(current_seq);
+                                publish(current_seq);
                             });
                         }
 
@@ -801,12 +789,7 @@ public final class GeneralLoadUtils {
                                 break;
                             }
 
-                            internalExecutor.submit(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadOnSequence(seq);
-                                }
-                            });
+                            internalExecutor.submit(() -> loadOnSequence(seq));
                         }
                         internalExecutor.shutdown();
                         try {
@@ -1207,11 +1190,9 @@ public final class GeneralLoadUtils {
      */
     public static void setFeatureAutoLoad(boolean autoload) {
         for (GenericVersion genericVersion : species2genericVersionList.values()) {
-            for (GenericFeature genericFeature : genericVersion.getFeatures()) {
-                if (autoload) {
-                    genericFeature.setAutoload(autoload);
-                }
-            }
+            genericVersion.getFeatures().stream().filter(genericFeature -> autoload).forEach(genericFeature -> {
+                genericFeature.setAutoload(autoload);
+            });
         }
 
         //It autoload data is selected then load.

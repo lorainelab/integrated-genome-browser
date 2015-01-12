@@ -420,7 +420,7 @@ public final class Das2VersionedSource {
 		return feature_query;
 	}
 
-	private InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws MalformedURLException, IOException {
+	private InputStream getInputStream(String query_type, int cache_opt, boolean write_to_cache, Map<String, String> headers, String log_string) throws IOException {
 		String load_url = getRegionString(query_type);
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, cache_opt, write_to_cache, headers);
 

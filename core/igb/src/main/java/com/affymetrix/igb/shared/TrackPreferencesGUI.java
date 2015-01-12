@@ -46,25 +46,22 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
     }
 
     private ColorSchemeComboBox createColorSchemeComboBox() {
-        final ItemListener itemListener = new ItemListener() {
-
-            public void itemStateChanged(ItemEvent ie) {
-                switch (ie.getStateChange()) {
-                    case ItemEvent.DESELECTED:
-                        break;
-                    case ItemEvent.SELECTED:
-                        Object o = ie.getSource();
-                        if (o instanceof ColorSchemeComboBox) {
-                            ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
-                            ColorScheme s = (ColorScheme) csb.getSelectedItem();
-                            ColorSchemeAction.getAction().tempAction(s);
-                        }
-                        break;
-                    default:
-                        System.err.println(
-                                "SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
-                                + ie.getStateChange());
-                }
+        final ItemListener itemListener = ie -> {
+            switch (ie.getStateChange()) {
+                case ItemEvent.DESELECTED:
+                    break;
+                case ItemEvent.SELECTED:
+                    Object o = ie.getSource();
+                    if (o instanceof ColorSchemeComboBox) {
+                        ColorSchemeComboBox csb = (ColorSchemeComboBox) o;
+                        ColorScheme s = (ColorScheme) csb.getSelectedItem();
+                        ColorSchemeAction.getAction().tempAction(s);
+                    }
+                    break;
+                default:
+                    System.err.println(
+                            "SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
+                            + ie.getStateChange());
             }
         };
         ColorSchemeComboBox colorSchemeBox = new ColorSchemeComboBox() {
@@ -155,91 +152,51 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         buttonGroup1.add(graphStyleLineRadioButton);
         graphStyleLineRadioButton.setText("Line");
         graphStyleLineRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleLineRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleLineRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleLineRadioButton.addActionListener(this::graphStyleLineRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleBarRadioButton);
         graphStyleBarRadioButton.setText("Bar");
         graphStyleBarRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleBarRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleBarRadioButton.addActionListener(this::graphStyleBarRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleStairStepRadioButton);
         graphStyleStairStepRadioButton.setText("StairStep");
         graphStyleStairStepRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleStairStepRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleStairStepRadioButton.addActionListener(this::graphStyleStairStepRadioButtonActionPerformed);
 
         floatCheckBox.setText("Float");
         floatCheckBox.setIconTextGap(2);
         floatCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         floatCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                floatCheckBoxActionPerformed(evt);
-            }
-        });
+        floatCheckBox.addActionListener(this::floatCheckBoxActionPerformed);
 
         YAxisCheckBox.setText("Y-axis");
         YAxisCheckBox.setIconTextGap(2);
         YAxisCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         YAxisCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        YAxisCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                YAxisCheckBoxActionPerformed(evt);
-            }
-        });
+        YAxisCheckBox.addActionListener(this::YAxisCheckBoxActionPerformed);
 
         buttonGroup1.add(graphStyleHeatMapRadioButton);
         graphStyleHeatMapRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleHeatMapRadioButton.addActionListener(this::graphStyleHeatMapRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleDotRadioButton);
         graphStyleDotRadioButton.setText("Dot");
         graphStyleDotRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleDotRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleDotRadioButton.addActionListener(this::graphStyleDotRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
         graphStyleMinMaxAvgRadioButton.setText("Min/Max/Mean");
         graphStyleMinMaxAvgRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleMinMaxAvgRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleMinMaxAvgRadioButton.addActionListener(this::graphStyleMinMaxAvgRadioButtonActionPerformed);
 
         graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
         graphStyleHeatMapComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapComboBoxActionPerformed(evt);
-            }
-        });
+        graphStyleHeatMapComboBox.addActionListener(this::graphStyleHeatMapComboBoxActionPerformed);
 
         labelCheckBox.setText("Label");
         labelCheckBox.setIconTextGap(2);
-        labelCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelCheckBoxActionPerformed(evt);
-            }
-        });
+        labelCheckBox.addActionListener(this::labelCheckBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
         graphPanel.setLayout(graphPanelLayout);
@@ -300,53 +257,33 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
 
         labelSizeComboBox.setModel(new DefaultComboBoxModel(SUPPORTED_SIZE));
         labelSizeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelSizeComboBoxActionPerformed(evt);
-            }
-        });
+        labelSizeComboBox.addActionListener(this::labelSizeComboBoxActionPerformed);
 
         colorSchemeLabel.setText("Scheme");
 
         colorSchemeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        colorSchemeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorSchemeComboBoxActionPerformed(evt);
-            }
-        });
+        colorSchemeComboBox.addActionListener(this::colorSchemeComboBoxActionPerformed);
 
         foregroundColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         foregroundColorComboBox.setButtonVisible(false);
         foregroundColorComboBox.setColorValueVisible(false);
         foregroundColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         foregroundColorComboBox.setStretchToFit(true);
-        foregroundColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                foregroundColorComboBoxActionPerformed(evt);
-            }
-        });
+        foregroundColorComboBox.addActionListener(this::foregroundColorComboBoxActionPerformed);
 
         backgroundColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         backgroundColorComboBox.setButtonVisible(false);
         backgroundColorComboBox.setColorValueVisible(false);
         backgroundColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         backgroundColorComboBox.setStretchToFit(true);
-        backgroundColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backgroundColorComboBoxActionPerformed(evt);
-            }
-        });
+        backgroundColorComboBox.addActionListener(this::backgroundColorComboBoxActionPerformed);
 
         labelColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         labelColorComboBox.setButtonVisible(false);
         labelColorComboBox.setColorValueVisible(false);
         labelColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         labelColorComboBox.setStretchToFit(true);
-        labelColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelColorComboBoxActionPerformed(evt);
-            }
-        });
+        labelColorComboBox.addActionListener(this::labelColorComboBoxActionPerformed);
 
         foregroundColorLabel.setText("Foreground Color");
 
@@ -410,50 +347,26 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
                 .add(16, 16, 16))
         );
 
-        trackNameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trackNameTextFieldActionPerformed(evt);
-            }
-        });
+        trackNameTextField.addActionListener(this::trackNameTextFieldActionPerformed);
 
         annotationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Annotations"));
 
         stackDepthLabel.setText("Depth");
 
-        stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthTextFieldActionPerformed(evt);
-            }
-        });
+        stackDepthTextField.addActionListener(this::stackDepthTextFieldActionPerformed);
 
         labelFieldLabel.setText("Label Field");
 
-        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelFieldComboBoxActionPerformed(evt);
-            }
-        });
+        labelFieldComboBox.addActionListener(this::labelFieldComboBoxActionPerformed);
 
         strands2TracksCheckBox.setText("2 track");
-        strands2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strands2TracksCheckBoxActionPerformed(evt);
-            }
-        });
+        strands2TracksCheckBox.addActionListener(this::strands2TracksCheckBoxActionPerformed);
 
         strandsArrowCheckBox.setText("Arrow");
-        strandsArrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsArrowCheckBoxActionPerformed(evt);
-            }
-        });
+        strandsArrowCheckBox.addActionListener(this::strandsArrowCheckBoxActionPerformed);
 
         strandsColorCheckBox.setText("Color:");
-        strandsColorCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsColorCheckBoxActionPerformed(evt);
-            }
-        });
+        strandsColorCheckBox.addActionListener(this::strandsColorCheckBoxActionPerformed);
 
         strandsLabel.setText("+/- Strand Options:");
 
@@ -466,37 +379,21 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         strandsReverseColorComboBox.setColorValueVisible(false);
         strandsReverseColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         strandsReverseColorComboBox.setStretchToFit(true);
-        strandsReverseColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsReverseColorComboBoxActionPerformed(evt);
-            }
-        });
+        strandsReverseColorComboBox.addActionListener(this::strandsReverseColorComboBoxActionPerformed);
 
         strandsForwardColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         strandsForwardColorComboBox.setButtonVisible(false);
         strandsForwardColorComboBox.setColorValueVisible(false);
         strandsForwardColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         strandsForwardColorComboBox.setStretchToFit(true);
-        strandsForwardColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsForwardColorComboBoxActionPerformed(evt);
-            }
-        });
+        strandsForwardColorComboBox.addActionListener(this::strandsForwardColorComboBoxActionPerformed);
 
         stackDepthGoButton.setText("Go");
         stackDepthGoButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthGoButtonActionPerformed(evt);
-            }
-        });
+        stackDepthGoButton.addActionListener(this::stackDepthGoButtonActionPerformed);
 
         stackDepthAllButton.setText("All");
-        stackDepthAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthAllButtonActionPerformed(evt);
-            }
-        });
+        stackDepthAllButton.addActionListener(this::stackDepthAllButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout annotationsPanelLayout = new org.jdesktop.layout.GroupLayout(annotationsPanel);
         annotationsPanel.setLayout(annotationsPanelLayout);
@@ -562,34 +459,18 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         );
 
         selectAllButton.setText("Select All");
-        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectAllButtonActionPerformed(evt);
-            }
-        });
+        selectAllButton.addActionListener(this::selectAllButtonActionPerformed);
 
-        hideButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hideButtonActionPerformed(evt);
-            }
-        });
+        hideButton.addActionListener(this::hideButtonActionPerformed);
 
         clearButton.setMaximumSize(new java.awt.Dimension(29, 29));
         clearButton.setMinimumSize(new java.awt.Dimension(29, 29));
         clearButton.setPreferredSize(new java.awt.Dimension(29, 29));
         clearButton.setRequestFocusEnabled(false);
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
+        clearButton.addActionListener(this::clearButtonActionPerformed);
 
         restoreToDefaultButton.setText("Restore Default");
-        restoreToDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreToDefaultButtonActionPerformed(evt);
-            }
-        });
+        restoreToDefaultButton.addActionListener(this::restoreToDefaultButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

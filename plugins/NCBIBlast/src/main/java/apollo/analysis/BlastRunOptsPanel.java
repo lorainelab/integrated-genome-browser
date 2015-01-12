@@ -72,15 +72,13 @@ public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunO
         numOfHits = new JTextField("100", 6);
 
         types = new JComboBox(RemoteBlastNCBI.BlastType.values());
-        types.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getItem() == RemoteBlastNCBI.BlastType.blastn) {
-                    gapOpenCost.setText("5");
-                    gapExtendCost.setText("2");
-                } else {
-                    gapOpenCost.setText("11");
-                    gapExtendCost.setText("1");
-                }
+        types.addItemListener(e -> {
+            if (e.getItem() == RemoteBlastNCBI.BlastType.blastn) {
+                gapOpenCost.setText("5");
+                gapExtendCost.setText("2");
+            } else {
+                gapOpenCost.setText("11");
+                gapExtendCost.setText("1");
             }
         });
         types.setSelectedIndex(1);

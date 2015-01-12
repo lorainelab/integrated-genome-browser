@@ -30,23 +30,16 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
     }
 
     private void updateDisplay(final boolean preserveX, final boolean preserveY) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
+        ThreadUtils.runOnEventQueue(() -> {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-                igbService.getSeqMapView().updatePanel(preserveX, preserveY);
-            }
+            igbService.getSeqMapView().updatePanel(preserveX, preserveY);
         });
     }
 
     private void refreshView() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-            public void run() {
-                igbService.getSeqMap().updateWidget();
-            }
-        });
+        ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
     }
 
     @Override

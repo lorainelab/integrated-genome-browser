@@ -59,23 +59,17 @@ public class JRPTable extends JTable implements JRPWidget {
 
 	private void addSelectionListener(ListSelectionModel newModel) {
 		newModel.addListSelectionListener(
-				new ListSelectionListener() {
-					@Override
-					public void valueChanged(ListSelectionEvent e) {
+				e -> {
 //					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
-					}
-				}
+                }
 		);
 	}
 
 	private void addColumnSelectionListener(ListSelectionModel newModel) {
 		newModel.addListSelectionListener(
-				new ListSelectionListener() {
-					@Override
-					public void valueChanged(ListSelectionEvent e) {
+				e -> {
 //					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
-					}
-				}
+                }
 		);
 	}
 

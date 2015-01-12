@@ -165,9 +165,7 @@ public class Delegate extends QuickLoadSymLoader {
         }
 
         if (notUpdatable) {
-            for (DelegateParent dp : dps) {
-                dp.clear();
-            }
+            dps.forEach(Delegate.DelegateParent::clear);
             dps = null;
             operator = null;
             strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
@@ -210,16 +208,14 @@ public class Delegate extends QuickLoadSymLoader {
                 addWholeGraph(graphSym, feature);
             } else {
                 // We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-                for (SeqSymmetry feat : results) {
-                    //grafs.add((GraphSym)feat);
-                    if (feat instanceof GraphSym) {
-                        addWholeGraph((GraphSym) feat, feature);
-                    }
+                //grafs.add((GraphSym)feat);
 //					if (feat instanceof GraphSym) {
 //						GraphSymUtils.addChildGraph((GraphSym) feat, uri.toString(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
 //						feature.addMethod(uri.toString());
 //					}
-                }
+                results.stream().filter(feat -> feat instanceof GraphSym).forEach(feat -> {
+                    addWholeGraph((GraphSym) feat, feature);
+                });
             }
 
             return added;
@@ -232,9 +228,7 @@ public class Delegate extends QuickLoadSymLoader {
             sym.clear();
         }
 
-        for (SeqSymmetry feat : results) {
-            seq.addAnnotation(feat);
-        }
+        results.forEach(seq::addAnnotation);
 
         feature.addMethod(uri.toString());
 

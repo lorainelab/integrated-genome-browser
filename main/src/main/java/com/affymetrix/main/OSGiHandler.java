@@ -197,9 +197,7 @@ public class OSGiHandler {
         try {
             Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
-            CONFIG_BUNDLE.keySet().stream().forEach((key) -> {
-                configProps.put(key, CONFIG_BUNDLE.getString(key));
-            });
+            CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
             configProps.put("args", argArray);
             FrameworkFactory factory = getFrameworkFactory();
             framework = factory.newFramework(configProps);

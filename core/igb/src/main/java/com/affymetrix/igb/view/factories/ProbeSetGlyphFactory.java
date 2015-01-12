@@ -350,7 +350,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_site_color);
-        } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
+        } else if (meth != null && meth.contains(POLY_A_STACK_METHOD)) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
         } else {
             drawProbeSetGlyph(gviewer, the_tier, probeset_sym, parent_glyph, y, height);

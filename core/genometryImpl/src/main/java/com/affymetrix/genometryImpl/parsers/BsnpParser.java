@@ -104,33 +104,31 @@ public class BsnpParser implements Parser {
 			int pcount = parents.size();
 			dos.writeUTF(genome_version);
 			dos.writeInt(pcount);  // how many seqs there are
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
-				String seqid = seq.getID();
-				int snp_count = parent.getChildCount();
-				dos.writeUTF(seqid);
-				dos.writeInt(snp_count);
-			}
+		for (SeqSymmetry parent : parents) {
+			BioSeq seq = parent.getSpanSeq(0);
+			String seqid = seq.getID();
+			int snp_count = parent.getChildCount();
+			dos.writeUTF(seqid);
+			dos.writeInt(snp_count);
+		}
 
 			int total_snp_count = 0;
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
-				int snp_count = parent.getChildCount();
-				List<SeqSymmetry> snps = new ArrayList<>(snp_count);
-				for (int k=0; k<snp_count; k++) {
-					// need to make sure SNPs are written out in sorted order!
-					snps.add(parent.getChild(k));
-				}
-				Collections.sort(snps, new SeqSymMinComparator(seq));
-				for (int k=0; k<snp_count; k++) {
-					EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
-					int base_coord = snp.getSpan(0).getMin();
-					dos.writeInt(base_coord);
-					total_snp_count++;
-				}
+		for (SeqSymmetry parent : parents) {
+			BioSeq seq = parent.getSpanSeq(0);
+			int snp_count = parent.getChildCount();
+			List<SeqSymmetry> snps = new ArrayList<>(snp_count);
+			for (int k = 0; k < snp_count; k++) {
+				// need to make sure SNPs are written out in sorted order!
+				snps.add(parent.getChild(k));
 			}
+			Collections.sort(snps, new SeqSymMinComparator(seq));
+			for (int k = 0; k < snp_count; k++) {
+				EfficientSnpSym snp = (EfficientSnpSym) snps.get(k);
+				int base_coord = snp.getSpan(0).getMin();
+				dos.writeInt(base_coord);
+				total_snp_count++;
+			}
+		}
 			System.out.println("total snps output to bsnp file: " + total_snp_count);
 	}
 

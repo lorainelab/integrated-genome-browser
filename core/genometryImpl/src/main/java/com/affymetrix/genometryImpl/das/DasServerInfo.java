@@ -189,7 +189,7 @@ public final class DasServerInfo {
 
     }
 
-    public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws MalformedURLException, IOException {
+    public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws IOException {
         URL load_url = getLoadURL();
         InputStream istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
 

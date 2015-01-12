@@ -103,14 +103,14 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
 
     private void setSpacer(double spacer) {
         this.spacer = spacer;
-        ((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
-        ((PaddedPackerI) expand_packer).setParentSpacer(spacer);
+        collapse_packer.setParentSpacer(spacer);
+        expand_packer.setParentSpacer(spacer);
     }
 
     private void setSpacing(double spacing) {
         this.spacing = spacing;
-        ((PaddedPackerI) collapse_packer).setSpacing(spacing);
-        ((PaddedPackerI) expand_packer).setSpacing(spacing);
+        collapse_packer.setSpacing(spacing);
+        expand_packer.setSpacing(spacing);
     }
 
     protected void updateParent(TierGlyph vmg) {
@@ -386,20 +386,16 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
             return pickList;
         }
 
-        Comparator<GlyphI> x_comparator = new Comparator<GlyphI>() {
-            public int compare(GlyphI g1, GlyphI g2) {
-                int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
-                int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
-                return Math.max(startComp, widthComp);
-            }
+        Comparator<GlyphI> x_comparator = (g1, g2) -> {
+            int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
+            int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
+            return Math.max(startComp, widthComp);
         };
 
-        Comparator<GlyphI> w_comparator = new Comparator<GlyphI>() {
-            public int compare(GlyphI g1, GlyphI g2) {
-                int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
-                int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
-                return Math.min(startComp, widthComp);
-            }
+        Comparator<GlyphI> w_comparator = (g1, g2) -> {
+            int startComp = Double.compare(g1.getCoordBox().x, g2.getCoordBox().x);
+            int widthComp = Double.compare(g1.getCoordBox().x + g1.getCoordBox().width, g2.getCoordBox().x);
+            return Math.min(startComp, widthComp);
         };
 
         // Determine the start position
@@ -461,7 +457,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     protected void rangeChanged(SeqMapViewExtendedI smv) {
         if (isAutoLoadMode() /* && isDetail(smv.getSeqMap().getView())*/) {
             try {
-                MapTierGlyphFactoryI factory = mapTierTypeHolder.getDefaultFactoryFor(getFileTypeCategory());
+                MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(getFileTypeCategory());
                 if (factory != null) {
                     loadAndDisplayRegion(smv, factory);
                 }
@@ -471,9 +467,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         }
     }
 
-    ;
-	
-	/** Returns the color used to draw the tier background, or null
+    /** Returns the color used to draw the tier background, or null
 	if there is no background. */
 	public final Color getFillColor() {
         return style.getBackground();
@@ -513,15 +507,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         List<GlyphI> childrens = new ArrayList<>();
         childrens.addAll(temp.getChildren());
 
-        for (GlyphI children : childrens) {
-            addChild(children);
-        }
+        childrens.forEach(this::addChild);
 
         childrens.clear();
 //		childrens.addAll(temp.getMiddleGlyphs());
-        for (GlyphI children : childrens) {
-            addMiddleGlyph(children);
-        }
+        childrens.forEach(this::addMiddleGlyph);
         //TODO: Set list of all getInfo
 //		if(!(getInfo() instanceof List)){
 //			List<Object> info = new ArrayList<Object>();
@@ -608,9 +598,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         //return factory.getViewModeGlyph(rootSym, style, direction, smv);
     }
 
-    ;
-	
-	protected final void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapTierGlyphFactoryI factory) throws Exception {
+    protected final void loadAndDisplayRegion(final SeqMapViewExtendedI smv, final MapTierGlyphFactoryI factory) throws Exception {
         if (previousWorker != null && !previousWorker.isCancelled() && !previousWorker.isDone()) {
             previousWorker.cancel(true);
             previousWorker = null;
@@ -623,18 +611,15 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                 RootSeqSymmetry rootSym = loadRegion(smv.getVisibleSpan());
                 if (rootSym.getChildCount() > 0) {
                     final TierGlyph tg = createGlyphs(rootSym, factory, smv);
-                    ThreadUtils.runOnEventQueue(new Runnable() {
-
-                        public void run() {
-                            updateParent(tg);
-                            GeneralLoadView.getLoadView().refreshDataManagementView();
-                            //TODO: Find a way to avoid this
-                            //if (lastUsedGlyph == saveDetailGlyph) {
-                            smv.repackTheTiers(true, true);
-                            smv.getSeqMap().updateWidget();
-                            Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
-                            //}
-                        }
+                    ThreadUtils.runOnEventQueue(() -> {
+                        updateParent(tg);
+                        GeneralLoadView.getLoadView().refreshDataManagementView();
+                        //TODO: Find a way to avoid this
+                        //if (lastUsedGlyph == saveDetailGlyph) {
+                        smv.repackTheTiers(true, true);
+                        smv.getSeqMap().updateWidget();
+                        Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
+                        //}
                     });
                 } else {
                     Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
@@ -648,9 +633,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         worker = null;
     }
 
-    ;
-	
-	public boolean isManuallyResizable() {
+    public boolean isManuallyResizable() {
         if (this.getPacker() instanceof CollapsePacker) {
             return false;
         }
@@ -704,8 +687,8 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         GlyphI child;
         Rectangle2D.Double coordbox;
         boolean isForward = true, isDirectedGlyph;
-        for (int i = 0; i < numberOfSiblings; i++) {
-            child = theSiblings.get(i);
+        for (GlyphI theSibling : theSiblings) {
+            child = theSibling;
             coordbox = child.getCoordBox();
             isDirectedGlyph = child instanceof DirectedGlyph;
             if (isDirectedGlyph) {
@@ -737,15 +720,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         return NONE_PREFERENCES;
     }
 
-    ;
-
-	public void setPreferences(Map<String, Object> preferences) {
+    public void setPreferences(Map<String, Object> preferences) {
 
     }
 
-    ;
-
-	/**
+    /**
 	 * Changes the maximum depth of the expanded packer.
 	 * This does not call pack() afterwards.
 	 */

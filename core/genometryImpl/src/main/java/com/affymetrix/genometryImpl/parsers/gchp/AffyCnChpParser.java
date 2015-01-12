@@ -50,9 +50,7 @@ public final class AffyCnChpParser implements Parser {
 				BioSeq seq = getSeq(seq_group, data.displayName);
 				List<SeqSymmetry> syms = data.makeGraphs(seq);
 				if (annotateSeq) {
-					for (SeqSymmetry sym : syms) {
-						seq.addAnnotation(sym);
-					}
+					syms.forEach(seq::addAnnotation);
 				}
 				results.addAll(syms);
 			}

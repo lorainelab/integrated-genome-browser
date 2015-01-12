@@ -165,8 +165,8 @@ public final class RestrictionControlView extends IGBTabPanel
         Iterator<JLabel> it = labelList.iterator();
         while (it.hasNext()) {
             JLabel label = it.next();
-            for (int i = 0; i < selected_names.length; i++) {
-                if (label.getText().equals(selected_names[i].toString())) {
+            for (Object selected_name : selected_names) {
+                if (label.getText().equals(selected_name.toString())) {
                     isContained = true;
                     break;
                 } else {
@@ -188,9 +188,9 @@ public final class RestrictionControlView extends IGBTabPanel
     private void addSelectedItem(Object[] selected_names) {
         boolean isContained = false;
 
-        for (int i = 0; i < selected_names.length; i++) {
+        for (Object selected_name : selected_names) {
             for (JLabel label : labelList) {
-                if (label.getText().equals(selected_names[i].toString())) {
+                if (label.getText().equals(selected_name.toString())) {
                     isContained = true;
                     break;
                 } else {
@@ -205,7 +205,7 @@ public final class RestrictionControlView extends IGBTabPanel
                     index = labelList.size() % colors.length;
                 }
                 label.setForeground(colors[index]);//We're repeating the colors..deal with it, users.
-                label.setText(selected_names[i].toString());
+                label.setText(selected_name.toString());
                 labelP.add(label);
                 labelList.add(label);
             }

@@ -180,25 +180,23 @@ public final class LoadFileAction extends OpenURIAction {
 
         final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
 
-        chooser.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
-                    File[] files = chooser.getSelectedFiles();
-                    if (files.length == 1) {
-                        if (files[0] != null) {
-                            boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
-                            chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+        chooser.addPropertyChangeListener(evt -> {
+            if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
+                File[] files = chooser.getSelectedFiles();
+                if (files.length == 1) {
+                    if (files[0] != null) {
+                        boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
+                        chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
 
-                            if (!enableLoadAsSeqCB) {
-                                chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
-                            }
+                        if (!enableLoadAsSeqCB) {
+                            chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
                         }
-                    } else if (files.length > 1) {
-                        chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
-                        chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
                     }
-
+                } else if (files.length > 1) {
+                    chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
+                    chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
                 }
+
             }
         });
 

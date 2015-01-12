@@ -182,7 +182,7 @@ public final class Das2ServerInfo  {
 	}
 
 
-	private InputStream getInputStream(Map<String, String> headers) throws MalformedURLException, IOException {
+	private InputStream getInputStream(Map<String, String> headers) throws IOException {
 		String load_url = getLoadURL();
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, true, headers);
 
@@ -353,9 +353,7 @@ public final class Das2ServerInfo  {
 			}
 
 			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri, primaryServer);
-			Iterator<Das2Capability> capiter = caps.values().iterator();
-			while (capiter.hasNext()) {
-				Das2Capability cap = capiter.next();
+			for (Das2Capability cap : caps.values()) {
 				vsource.addCapability(cap);
 			}
 			dasSource.addVersion(vsource);

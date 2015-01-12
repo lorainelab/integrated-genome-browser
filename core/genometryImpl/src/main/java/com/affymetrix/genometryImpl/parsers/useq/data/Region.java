@@ -33,8 +33,8 @@ public class Region implements Comparable<Region>, Serializable {
 
 	/**Checks to see if each start is <= the stop*/
 	public static boolean checkStartStops(Region[] ss){
-		for (int i=0; i< ss.length; i++){
-			if (ss[i].start> ss[i].stop) {
+		for (Region s : ss) {
+			if (s.start > s.stop) {
 				return false;
 			}
 		}
@@ -99,8 +99,8 @@ public class Region implements Comparable<Region>, Serializable {
 	/**Returns the total number of bases, assumes interbase coordinates.*/
 	public static int totalBP (Region[] ss){
 		int total = 0;
-		for (int i=0; i< ss.length; i++) {
-			total += ss[i].getLength();
+		for (Region s : ss) {
+			total += s.getLength();
 		}
 		return total;
 	}
@@ -190,9 +190,7 @@ public class Region implements Comparable<Region>, Serializable {
 		}
 		//make hashmap
 		HashMap<String,Region[]> ssReal = new HashMap<>();
-		Iterator<String> it = ss.keySet().iterator();
-		while (it.hasNext()){
-			String chrom = it.next();
+		for (String chrom : ss.keySet()) {
 			ArrayList<Region> al = ss.get(chrom);
 			Region[] array = new Region[al.size()];
 			al.toArray(array);
@@ -214,9 +212,9 @@ public class Region implements Comparable<Region>, Serializable {
 	
 	public static int findLastBase(Region[] r){
 		int lastBase = -1;
-		for (int i=0; i< r.length; i++){
-			if (r[i].stop> lastBase) {
-				lastBase = r[i].stop;
+		for (Region aR : r) {
+			if (aR.stop > lastBase) {
+				lastBase = aR.stop;
 			}
 		}
 		return lastBase;

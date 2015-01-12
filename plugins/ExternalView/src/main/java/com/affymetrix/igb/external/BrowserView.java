@@ -149,16 +149,13 @@ public abstract class BrowserView extends JPanel {
         });
 
         settingsButton.setToolTipText(ExternalViewer.BUNDLE.getString("personalViewTT"));
-        settingsButton.addActionListener(new ActionListener() {
+        settingsButton.addActionListener(e -> {
+            final Window window = SwingUtilities.getWindowAncestor(BrowserView.this);
+            final JDialog helper = getViewHelper(window);
+            helper.setSize(500, 400);
+            helper.setModalityType(ModalityType.DOCUMENT_MODAL);
 
-            public void actionPerformed(ActionEvent e) {
-                final Window window = SwingUtilities.getWindowAncestor(BrowserView.this);
-                final JDialog helper = getViewHelper(window);
-                helper.setSize(500, 400);
-                helper.setModalityType(ModalityType.DOCUMENT_MODAL);
-
-                helper.setVisible(true);
-            }
+            helper.setVisible(true);
         });
     }
 }

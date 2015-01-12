@@ -133,20 +133,18 @@ public abstract class Selections {
         }
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
         List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
-        for (GlyphI glyph : selectedGraphs) {
-            if (glyph instanceof GraphGlyph) {
-                GraphGlyph gg = (GraphGlyph) glyph;
-                graphStates.add(gg.getGraphState());
-                graphStyles.add(gg.getGraphState().getTierStyle());
-                allStyles.add(gg.getGraphState().getTierStyle());
-                graphGlyphs.add(gg);
-                allGlyphs.add(gg);
-                if (gg.getInfo() != null) {
-                    rootSyms.add((RootSeqSymmetry) gg.getInfo());
-                    graphSyms.add((RootSeqSymmetry) gg.getInfo());
-                }
+        selectedGraphs.stream().filter(glyph -> glyph instanceof GraphGlyph).forEach(glyph -> {
+            GraphGlyph gg = (GraphGlyph) glyph;
+            graphStates.add(gg.getGraphState());
+            graphStyles.add(gg.getGraphState().getTierStyle());
+            allStyles.add(gg.getGraphState().getTierStyle());
+            graphGlyphs.add(gg);
+            allGlyphs.add(gg);
+            if (gg.getInfo() != null) {
+                rootSyms.add((RootSeqSymmetry) gg.getInfo());
+                graphSyms.add((RootSeqSymmetry) gg.getInfo());
             }
-        }
+        });
         notifyRefreshListener();
 //		rootSyms.clear();
 //		rootSyms.addAll(TrackUtils.getInstance().getSymsFromViewModeGlyphs(allGlyphs));

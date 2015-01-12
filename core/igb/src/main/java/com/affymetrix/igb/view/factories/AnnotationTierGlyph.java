@@ -80,9 +80,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
         RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());
 
         for (Entry<String, List<? extends SeqSymmetry>> entry : loadData(span).entrySet()) {
-            for (SeqSymmetry sym : entry.getValue()) {
-                detailSym.addChild(sym);
-            }
+            entry.getValue().forEach(detailSym::addChild);
         }
 
         return detailSym;

@@ -29,9 +29,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
     private static final int MAX_HITS = 100000;
     protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");
     protected IGBService igbService;
-    protected static final IStatus DUMMY_STATUS = new IStatus() {
-        public void setStatus(String s) {
-        }
+    protected static final IStatus DUMMY_STATUS = s -> {
     };
 
     protected SearchModeIDOrProps(IGBService igbService) {

@@ -54,7 +54,7 @@ public class XMLUtils {
 	 * @throws SAXException
 	 * @throws IOException 
 	 */
-	public static Document getDocument(String url) throws ParserConfigurationException, MalformedURLException, SAXException, IOException {
+	public static Document getDocument(String url) throws ParserConfigurationException, SAXException, IOException {
 		Document doc = null;
 		URL request_url = new URL(url);
 		URLConnection request_con = request_url.openConnection();

@@ -29,7 +29,6 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -248,15 +247,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
             serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
-            for (GenericFeature feature : features) {
-                if (/*
-                         * !feature.visible &&
-                         */feature.gVersion.gServer.equals(server) /*
-                         * && canHandleFeature(feature)
-                         */) {
-                    addOrFindNode(serverRoot, feature, feature.featureName);
-                }
-            }
+            /*
+                     * !feature.visible &&
+                     *//*
+                     * && canHandleFeature(feature)
+                     */
+            features.stream().filter(feature -> feature.gVersion.gServer.equals(server)).forEach(feature -> {
+                addOrFindNode(serverRoot, feature, feature.featureName);
+            });
             if (serverRoot.getChildCount() > 0) {
                 root.add(serverRoot);
             }
@@ -539,10 +537,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             textBackground = UIManager.getColor("Tree.textBackground");
 
             Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
-            focusPainted = (drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue());
+            focusPainted = (drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon);
 
             String osName = System.getProperty("os.name");
-            if (osName != null && osName.indexOf("Windows") != -1) {
+            if (osName != null && osName.contains("Windows")) {
                 borderPaintedFlat = true;
                 border = new DashedBorder(selectionBorderColor);
             } else {
@@ -722,13 +720,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                 GenericServer gServer = feature.gVersion.gServer;
                                 if (gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
                                     gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
-                                    for (GenericFeature gFeature : feature.gVersion.getFeatures()) {
-                                        if (!gFeature.isVisible() && gFeature.getMethods().isEmpty()) {
-                                            URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL.toString(), gServer.mirrorURL.toString()));
-                                            gFeature.symL.setURI(newURI);
-                                            ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
-                                        }
-                                    }
+                                    feature.gVersion.getFeatures().stream().filter(gFeature -> !gFeature.isVisible() && gFeature.getMethods().isEmpty()).forEach(gFeature -> {
+                                        URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL.toString(), gServer.mirrorURL.toString()));
+                                        gFeature.symL.setURI(newURI);
+                                        ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
+                                    });
                                     tn.setChecked(true);
                                 } else {
                                     //qlmirror
@@ -831,12 +827,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf,
                     row, true);
 
-            ItemListener itemListener = new ItemListener() {
-
-                public void itemStateChanged(ItemEvent itemEvent) {
-                    tree.repaint();
-                    fireEditingStopped();
-                }
+            ItemListener itemListener = itemEvent -> {
+                tree.repaint();
+                fireEditingStopped();
             };
 
             if (editor instanceof FeatureCheckBox) {

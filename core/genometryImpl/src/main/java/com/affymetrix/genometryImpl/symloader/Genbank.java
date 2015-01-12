@@ -494,7 +494,7 @@ public final class Genbank extends SymLoader {
             within_html = (html1 >= 0 && html2 > 0 && html2 > html1);
 			// Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
             // (don't want to get rid of those!!)
-            within_html = within_html && (current_line.indexOf("   gene   ") < 0) && (current_line.indexOf("   mRNA   ") < 0);
+            within_html = within_html && (!current_line.contains("   gene   ")) && (!current_line.contains("   mRNA   "));
             if (within_html) {
                 String prefix = current_line.substring(0, html1);
                 String suffix = html2 < current_line.length() ? current_line.substring(html2) : "";

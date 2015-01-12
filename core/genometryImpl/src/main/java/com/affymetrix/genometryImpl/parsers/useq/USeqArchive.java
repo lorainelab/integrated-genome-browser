@@ -43,21 +43,18 @@ public class USeqArchive {
 		try {
 			int numEntries = entries.size();
 			//for each entry
-			for (int i=0; i< numEntries; i++){
+			for (ZipEntry entry : entries) {
 				//get input stream to read entry
-				ZipEntry entry = entries.get(i);			
-				bis = new BufferedInputStream (zipArchive.getInputStream(entry));
+				bis = new BufferedInputStream(zipArchive.getInputStream(entry));
 				SliceInfo sliceInfo = new SliceInfo(entry.getName());
 				//load it, this will trim too thus might remove everything.
 				USeqData d = loadSlice(beginningBP, endingBP, sliceInfo, bis);
 				if (d != null) {
 					if (sliceInfo.getStrand().equals("+")) {
 						useqDataALPlus.add(d);
-					}
-					else if (sliceInfo.getStrand().equals("+")) {
+					} else if (sliceInfo.getStrand().equals("+")) {
 						useqDataALMinus.add(d);
-					}
-					else {
+					} else {
 						useqDataALNone.add(d);
 					}
 				}
@@ -390,13 +387,12 @@ public class USeqArchive {
 			byte data[] = new byte[2048];
 			int numEntries = entries.size();
 			//for each entry
-			for (int i=0; i< numEntries; i++){
+			for (ZipEntry entry : entries) {
 				//get input stream to read entry
-				ZipEntry entry = entries.get(i);
 				out.putNextEntry(entry);
-				is = new BufferedInputStream (zipArchive.getInputStream(entry));
+				is = new BufferedInputStream(zipArchive.getInputStream(entry));
 				//read in and write out, wish there was a way of just copying it directly
-				while ((count = is.read(data, 0, 2048))!= -1) {
+				while ((count = is.read(data, 0, 2048)) != -1) {
 					out.write(data, 0, count);
 				}
 				//close streams
@@ -422,9 +418,9 @@ public class USeqArchive {
 		if (dr == null) {
 			return null;
 		}
-		for (int i=0; i< dr.length; i++){
-			if (dr[i].intersects(beginningBP, endingBP)) {
-				al.add(dr[i].zipEntry);
+		for (DataRange aDr : dr) {
+			if (aDr.intersects(beginningBP, endingBP)) {
+				al.add(aDr.zipEntry);
 			}
 		}
 		if (al.isEmpty()) {
@@ -478,9 +474,7 @@ public class USeqArchive {
 
 			}
 			//convert to arrays and sort
-			Iterator<String> it = map.keySet().iterator();
-			while (it.hasNext()){
-				String chromName = it.next();
+			for (String chromName : map.keySet()) {
 				ArrayList<DataRange> al = map.get(chromName);
 				DataRange[] dr = new DataRange[al.size()];
 				al.toArray(dr);
@@ -534,7 +528,7 @@ public class USeqArchive {
 		Random r = new Random();
 		int len = alphabet.length;
 		for (int i = 0; i < numberOfWords; i++) {
-			StringBuffer w = new StringBuffer();
+			StringBuilder w = new StringBuilder();
 			for (int j = 0; j < lengthOfWord; j++) {
 				w.append(alphabet[r.nextInt(len)]);
 			}
@@ -627,7 +621,7 @@ public class USeqArchive {
 				throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
 			}
 
-			chromBase.put(chrom, new Integer(lastBase));
+			chromBase.put(chrom, lastBase);
 		}
 		return chromBase;
 	}

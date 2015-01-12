@@ -397,14 +397,10 @@ public final class IGB extends Application
         windowService.setToolBar(tool_bar);
         windowService.setTabsMenu(mbar);
         windowService.setMenuCreator(
-                new IMenuCreator() {
-
-                    @Override
-                    public JMenuBar createMenu(String id) {
-                        JMenuBar menubar = new JMenuBar();
-                        MainMenuUtil.getInstance().loadMenu(menubar, id);
-                        return menubar;
-                    }
+                id -> {
+                    JMenuBar menubar = new JMenuBar();
+                    MainMenuUtil.getInstance().loadMenu(menubar, id);
+                    return menubar;
                 });
         return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
     }
@@ -577,7 +573,7 @@ public final class IGB extends Application
                     logger.error("Trying to add set keystroke for action {}."
                             + " But action {} exists with same keystroke \"{}\"."
                             + "\nUsing keystroke with latest action.",
-                            new Object[]{theAction.getId(), existingAction.getClass(), ks});
+                            theAction.getId(), existingAction.getClass(), ks);
                     existingAction.putValue(Action.ACCELERATOR_KEY, null);
                     am.remove(existingObject);
                 }

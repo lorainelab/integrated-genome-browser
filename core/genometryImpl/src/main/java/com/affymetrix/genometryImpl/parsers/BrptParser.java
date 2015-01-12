@@ -89,8 +89,7 @@ public final class BrptParser implements Parser {
 		int pcount = parents.size();
 		dos.writeUTF(genome_version);
 		dos.writeInt(pcount);  // how many seqs there are
-		for (int i = 0; i < pcount; i++) {
-			SeqSymmetry parent = parents.get(i);
+		for (SeqSymmetry parent : parents) {
 			BioSeq seq = parent.getSpanSeq(0);
 			String seqid = seq.getID();
 			int rpt_count = parent.getChildCount();
@@ -98,8 +97,7 @@ public final class BrptParser implements Parser {
 			dos.writeInt(rpt_count);
 		}
 
-		for (int i = 0; i < pcount; i++) {
-			SeqSymmetry parent = parents.get(i);
+		for (SeqSymmetry parent : parents) {
 			int rpt_count = parent.getChildCount();
 			for (int k = 0; k < rpt_count; k++) {
 				LeafSingletonSymmetry rpt = (LeafSingletonSymmetry) parent.getChild(k);

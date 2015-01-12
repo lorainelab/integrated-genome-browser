@@ -129,9 +129,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
         }
         HashMap<String, SeqSymmetry> map = new HashMap<>();
         applyFilters(bioseq, symList, map);
-        for (SeqSymmetry sym : map.values()) {
-            container.addChild(sym);
-        }
+        map.values().forEach(container::addChild);
         map.clear();
         symList.clear();
 
@@ -396,7 +394,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
 
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym(bioseq, name,
                     currentForward, blockMins, blockMaxs, canonical, rare, 0, 0, 0);
-            map.put(name, (SeqSymmetry) tempSym);
+            map.put(name, tempSym);
         }
     }
 

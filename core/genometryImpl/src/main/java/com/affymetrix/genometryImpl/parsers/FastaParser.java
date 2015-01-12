@@ -368,7 +368,7 @@ public final class FastaParser implements Parser {
 	 * @throws java.lang.IllegalArgumentException
 	 */
 	public static byte[] readFASTA(File seqfile, int begin_sequence, int end_sequence)
-			throws FileNotFoundException, IOException, IllegalArgumentException {
+			throws IOException, IllegalArgumentException {
 
 			if (begin_sequence < 0) {
 			throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
@@ -529,7 +529,7 @@ public final class FastaParser implements Parser {
 
 		// Parse off the header (if it exists).
 		public static byte[] skipFASTAHeader(String filename, BufferedInputStream bis)
-			throws IOException, UnsupportedEncodingException {
+			throws IOException {
 			// The header is less than 500 bytes, and if it exists, the header begins with a ">" and ends with a newline.
 			byte[] header = new byte[500];
 

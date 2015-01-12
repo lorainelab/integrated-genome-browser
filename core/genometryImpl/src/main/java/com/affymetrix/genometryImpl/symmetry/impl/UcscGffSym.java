@@ -145,9 +145,9 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
         } else if (name.equals("feature_type") || name.equals("type")) {
             return feature_type;
         } else if (name.equals("score") && score != UNKNOWN_SCORE) {
-            return new Float(score);
+            return score;
         } else if (name.equals("frame") && frame != UNKNOWN_FRAME) {
-            return Character.valueOf(frame);
+            return frame;
         } else if (name.equals("group")) {
             return getGroup();
         } else if (name.equals("id")) {
@@ -240,10 +240,10 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
             tprops.put("type", feature_type);
         }
         if (score != UNKNOWN_SCORE) {
-            tprops.put("score", new Float(getScore()));
+            tprops.put("score", getScore());
         }
         if (frame != UNKNOWN_FRAME) {
-            tprops.put("frame", Character.valueOf(frame));
+            tprops.put("frame", frame);
         }
         if (is_gff1) {
             if (group != null) {

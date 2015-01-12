@@ -19,17 +19,15 @@ public class RemoteSearchDAS2 {
             return features;
         }
 
-        for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
-                Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
-                if (version != null) {
-                    List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
-                    if (newFeatures != null) {
-                        features.addAll(newFeatures);
-                    }
+        group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.DAS2).forEach(gVersion -> {
+            Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
+            if (version != null) {
+                List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
+                if (newFeatures != null) {
+                    features.addAll(newFeatures);
                 }
             }
-        }
+        });
 
         return features;
     }

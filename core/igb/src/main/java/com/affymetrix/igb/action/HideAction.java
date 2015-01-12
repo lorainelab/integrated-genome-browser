@@ -38,17 +38,15 @@ public class HideAction extends RepackTiersAction {
      * a TierGlyph.
      */
     void hideTiers(List<TierLabelGlyph> tiers) {
-        for (TierLabelGlyph g : tiers) {
-            if (g.getInfo() instanceof TierGlyph) {
-                TierGlyph tier = (TierGlyph) g.getInfo();
-                ITrackStyleExtended style = tier.getAnnotStyle();
-                if (style != null) {
-                    style.setShow(false);
-                    tier.setVisibility(false);
-                    getSeqMapView().selectTrack(tier, false);
-                }
+        tiers.stream().filter(g -> g.getInfo() instanceof TierGlyph).forEach(g -> {
+            TierGlyph tier = (TierGlyph) g.getInfo();
+            ITrackStyleExtended style = tier.getAnnotStyle();
+            if (style != null) {
+                style.setShow(false);
+                tier.setVisibility(false);
+                getSeqMapView().selectTrack(tier, false);
             }
-        }
+        });
 
         repack(false, false);
 

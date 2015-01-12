@@ -53,14 +53,13 @@ public class RegionTextData extends USeqData{
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedRegionTexts.length; i++){
+		for (RegionText sortedRegionText : sortedRegionTexts) {
 			//bed12?
-			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionTexts[i].text);
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionText.text);
 			if (tokens.length == 7) {
-				out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ tokens[0] +"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-			}
-			else {
-				out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ sortedRegionTexts[i].text +"\t0\t"+strand);
+				out.println(chrom + "\t" + sortedRegionText.start + "\t" + sortedRegionText.stop + "\t" + tokens[0] + "\t0\t" + strand + "\t" + tokens[1] + "\t" + tokens[2] + "\t" + tokens[3] + "\t" + tokens[4] + "\t" + tokens[5] + "\t" + tokens[6]);
+			} else {
+				out.println(chrom + "\t" + sortedRegionText.start + "\t" + sortedRegionText.stop + "\t" + sortedRegionText.text + "\t0\t" + strand);
 			}
 		}
 	}
@@ -71,14 +70,14 @@ public class RegionTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tText(s)");
-			for (int i=0; i< sortedRegionTexts.length; i++) {
-				out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+sortedRegionTexts[i].text);
+			for (RegionText sortedRegionText : sortedRegionTexts) {
+				out.println(chrom + "\t" + sortedRegionText.start + "\t" + sortedRegionText.stop + "\t" + sortedRegionText.text);
 			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tText(s)\tStrand");
-			for (int i=0; i< sortedRegionTexts.length; i++) {
-				out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+sortedRegionTexts[i].text+"\t"+strand);
+			for (RegionText sortedRegionText : sortedRegionTexts) {
+				out.println(chrom + "\t" + sortedRegionText.start + "\t" + sortedRegionText.stop + "\t" + sortedRegionText.text + "\t" + strand);
 			}
 		}
 	}
@@ -107,8 +106,8 @@ public class RegionTextData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegionTexts.length; i++){
-				int diff = sortedRegionTexts[i].stop - sortedRegionTexts[i].start;
+			for (RegionText sortedRegionText : sortedRegionTexts) {
+				int diff = sortedRegionText.stop - sortedRegionText.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -231,14 +230,14 @@ public class RegionTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedRegionTexts.length;
+		for (RegionTextData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedRegionTexts.length;
 		}
 		//concatinate
 		RegionText[] concatinate = new RegionText[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			RegionText[] slice = pdArray[i].sortedRegionTexts;
+		for (RegionTextData aPdArray : pdArray) {
+			RegionText[] slice = aPdArray.sortedRegionTexts;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -253,8 +252,8 @@ public class RegionTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionTextData> a = new ArrayList<>(num);
-		for (int i=0; i< num; i++) {
-			a.add((RegionTextData) useqDataAL.get(i));
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((RegionTextData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -280,8 +279,8 @@ public class RegionTextData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegionTexts.length; i++){
-				int diff = sortedRegionTexts[i].stop - sortedRegionTexts[i].start;
+			for (RegionText sortedRegionText : sortedRegionTexts) {
+				int diff = sortedRegionText.stop - sortedRegionText.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -471,9 +470,9 @@ public class RegionTextData extends USeqData{
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<RegionText> al = new ArrayList<>();
-		for (int i=0; i< sortedRegionTexts.length; i++){
-			if (sortedRegionTexts[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedRegionTexts[i]);
+		for (RegionText sortedRegionText : sortedRegionTexts) {
+			if (sortedRegionText.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegionText);
 			}
 		}
 		if (al.isEmpty()) {

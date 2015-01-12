@@ -48,15 +48,14 @@ public class PositionTextData extends USeqData{
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedPositionTexts.length; i++){
+		for (PositionText sortedPositionText : sortedPositionTexts) {
 			//chrom start stop name score strand
 			//bed12?
-			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionTexts[i].text);
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionText.text);
 			if (tokens.length == 7) {
-				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+tokens[0]+"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-			}
-			else {
-				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
+				out.println(chrom + "\t" + sortedPositionText.position + "\t" + (sortedPositionText.position + 1) + "\t" + tokens[0] + "\t0\t" + strand + "\t" + tokens[1] + "\t" + tokens[2] + "\t" + tokens[3] + "\t" + tokens[4] + "\t" + tokens[5] + "\t" + tokens[6]);
+			} else {
+				out.println(chrom + "\t" + sortedPositionText.position + "\t" + (sortedPositionText.position + 1) + "\t" + sortedPositionText.text + "\t0\t" + strand);
 			}
 		}
 	}
@@ -67,15 +66,15 @@ public class PositionTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tText(s)");
-			for (int i=0; i< sortedPositionTexts.length; i++) {
-				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text);
+			for (PositionText sortedPositionText : sortedPositionTexts) {
+				out.println(chrom + "\t" + sortedPositionText.position + "\t" + sortedPositionText.text);
 			}
 		}
 		else {
 			out.println("#Chr\tPosition\tText(s)\tStrand");
-			for (int i=0; i< sortedPositionTexts.length; i++){
+			for (PositionText sortedPositionText : sortedPositionTexts) {
 				//chrom start stop name score strand
-				out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+sortedPositionTexts[i].text+"\t"+strand);
+				out.println(chrom + "\t" + sortedPositionText.position + "\t" + sortedPositionText.text + "\t" + strand);
 			}
 		}
 	}
@@ -83,11 +82,11 @@ public class PositionTextData extends USeqData{
 	/**Writes position score format to the PrintWriter, 1bp coor*/
 	public void writePositionScore (PrintWriter out){
 		int prior = -1;
-		for (int i=0; i< sortedPositionTexts.length; i++){
-				if (prior != sortedPositionTexts[i].position) {
-					out.println((sortedPositionTexts[i].position +1) +"\t0");
-					prior = sortedPositionTexts[i].position;
-				}
+		for (PositionText sortedPositionText : sortedPositionTexts) {
+			if (prior != sortedPositionText.position) {
+				out.println((sortedPositionText.position + 1) + "\t0");
+				prior = sortedPositionText.position;
+			}
 		}
 	}
 	
@@ -180,14 +179,14 @@ public class PositionTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of PositionText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedPositionTexts.length;
+		for (PositionTextData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedPositionTexts.length;
 		}
 		//concatinate
 		PositionText[] concatinate = new PositionText[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			PositionText[] slice = pdArray[i].sortedPositionTexts;
+		for (PositionTextData aPdArray : pdArray) {
+			PositionText[] slice = aPdArray.sortedPositionTexts;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -202,8 +201,8 @@ public class PositionTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<PositionTextData> a = new ArrayList<>(num);
-		for (int i=0; i< num; i++) {
-			a.add((PositionTextData) useqDataAL.get(i));
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((PositionTextData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -335,9 +334,9 @@ public class PositionTextData extends USeqData{
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<PositionText> al = new ArrayList<>();
-		for (int i=0; i< sortedPositionTexts.length; i++){
-			if (sortedPositionTexts[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedPositionTexts[i]);
+		for (PositionText sortedPositionText : sortedPositionTexts) {
+			if (sortedPositionText.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositionText);
 			}
 		}
 		if (al.isEmpty()) {

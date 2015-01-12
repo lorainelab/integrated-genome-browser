@@ -72,14 +72,12 @@ public final class UnibrowHairline {
     };
 */
 
-    pre_draw_listener = new NeoViewBoxListener() {
-      public void viewBoxChanged( NeoViewBoxChangeEvent e ) {
-        if (hairline.getShowHairLine()) {
-          double start = e.getCoordBox().x;
-          double end = e.getCoordBox().width + start;
-          if (focus < start) {setSpot(start);}
-          else if (focus > end) {setSpot(end);}
-        }
+    pre_draw_listener = e -> {
+      if (hairline.getShowHairLine()) {
+        double start = e.getCoordBox().x;
+        double end = e.getCoordBox().width + start;
+        if (focus < start) {setSpot(start);}
+        else if (focus > end) {setSpot(end);}
       }
     };
 

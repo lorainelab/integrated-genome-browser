@@ -41,7 +41,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         PreferenceUtils.getTopNode().putInt(CodonGlyph.CODON_GLYPH_CODE_SIZE, size);
-        redraw((SeqMapViewI) getSeqMapView());
+        redraw(getSeqMapView());
     }
 
     private void redraw(SeqMapViewI seqMapView) {

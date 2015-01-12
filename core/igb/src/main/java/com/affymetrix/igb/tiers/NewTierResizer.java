@@ -47,7 +47,7 @@ public class NewTierResizer extends MouseInputAdapter {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-        assert m != (AffyTieredMap) src; // This seems odd.
+        assert m != src; // This seems odd.
         if (atResizeBottom(nevt)) {
             m.setCursor(ourCursor);
         }

@@ -46,7 +46,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         this.type = type;
         this.ext = ext;
         this.index = index;
-        id2sym_hash = !index ? null : new TreeMap<String, Set<SeqSymmetry>>();
+        id2sym_hash = !index ? null : new TreeMap<>();
     }
 
     public String getType() {

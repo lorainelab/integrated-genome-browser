@@ -365,8 +365,8 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 
     private void setSpacer(double spacer) {
         this.spacer = spacer;
-        ((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
-        ((PaddedPackerI) expand_packer).setParentSpacer(spacer);
+        collapse_packer.setParentSpacer(spacer);
+        expand_packer.setParentSpacer(spacer);
     }
 
     // very, very deprecated

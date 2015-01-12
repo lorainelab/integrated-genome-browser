@@ -27,17 +27,15 @@ public class ThresholdXZoomer extends RPAdjustableJSlider{
 	private final SeqMapView smv;
 	public int threshold = ThresholdReader.default_threshold;
 	
-	PreferenceChangeListener prefListener = new PreferenceChangeListener() {
-		public void preferenceChange(PreferenceChangeEvent pce) {
-			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
-				return;
-			}
+	PreferenceChangeListener prefListener = pce -> {
+        if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+            return;
+        }
 
-			if (pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)) {
-				threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
-			}
-		}
-	};
+        if (pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)) {
+            threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
+        }
+    };
 	
 	TrackstylePropertyMonitor.TrackStylePropertyListener trackPropertyListener = new TrackstylePropertyMonitor.TrackStylePropertyListener() {
 		@Override

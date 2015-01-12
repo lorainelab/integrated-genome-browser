@@ -76,43 +76,29 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
     private void initListeners() {
         GenometryModel.getInstance().addGroupSelectionListener(
-                new GroupSelectionListener() {
-
-                    @Override
-                    public void groupSelectionChanged(GroupSelectionEvent evt) {
-                        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-                        String species = "";
-                        if (group != null && group.getOrganism() != null) {
-                            species = "." + group.getOrganism();
-                        }
-                        String version = "";
-                        if (group != null && group.getID() != null) {
-                            version = "." + group.getID();
-                        }
-                        doWaitFor("groupSelectionChanged" + species + version);
+                evt -> {
+                    AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
+                    String species = "";
+                    if (group != null && group.getOrganism() != null) {
+                        species = "." + group.getOrganism();
                     }
+                    String version = "";
+                    if (group != null && group.getID() != null) {
+                        version = "." + group.getID();
+                    }
+                    doWaitFor("groupSelectionChanged" + species + version);
                 });
 
-        igbService.addSpeciesItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
-                    return;
-                }
-
-                String species = "";
-                species = "." + ie.getItem().toString();
-                doWaitFor("speciesSelectionChanged" + species);
+        igbService.addSpeciesItemListener(ie -> {
+            if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
+                return;
             }
-        });
-        igbService.addPartialResiduesActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                doWaitFor("LoadResidueAction");
-            }
+            String species = "";
+            species = "." + ie.getItem().toString();
+            doWaitFor("speciesSelectionChanged" + species);
         });
+        igbService.addPartialResiduesActionListener(ae -> doWaitFor("LoadResidueAction"));
     }
 
     public void setTutorialDisplayed(boolean tutorialDisplayed) {

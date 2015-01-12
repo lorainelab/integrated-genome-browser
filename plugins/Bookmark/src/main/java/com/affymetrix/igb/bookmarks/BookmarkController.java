@@ -289,12 +289,10 @@ public abstract class BookmarkController {
             AnnotatedSeqGroup group = seq.getSeqGroup();
 
             for (GenericVersion version : group.getEnabledVersions()) {
-                for (GenericFeature feature : version.getFeatures()) {
-                    if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD
-                            && !Delegate.EXT.equals(feature.getExtension())) {
-                        bookmark.add(feature, false);
-                    }
-                }
+                version.getFeatures().stream().filter(feature -> feature.getLoadStrategy() != LoadStrategy.NO_LOAD
+                        && !Delegate.EXT.equals(feature.getExtension())).forEach(feature -> {
+                    bookmark.add(feature, false);
+                });
             }
         }
     }

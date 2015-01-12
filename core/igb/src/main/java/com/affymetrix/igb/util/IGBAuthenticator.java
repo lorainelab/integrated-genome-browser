@@ -65,7 +65,8 @@ public class IGBAuthenticator extends Authenticator {
 	private static enum AuthType {
 
 		ASK, ANONYMOUS, AUTHENTICATE
-	};
+	}
+
 	private static boolean authenticationRequestCancelled = false;
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 	private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
@@ -126,38 +127,34 @@ public class IGBAuthenticator extends Authenticator {
 
 		JOptionPane optionPane = error.getText() == null ? new JOptionPane(dialog, PLAIN_MESSAGE, OK_CANCEL_OPTION, null, OPTIONS, OPTIONS[0]) : new JOptionPane(dialog, PLAIN_MESSAGE, OK_CANCEL_OPTION, null, OPTIONS2, OPTIONS2[0]);
 
-		showPassword.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (showPassword.isSelected()) {
-					password.setEchoChar((char) 0);
-				} else {
-					password.setEchoChar('\u2022');
-				}
-			}
-		});
+		showPassword.addItemListener(e -> {
+            if (showPassword.isSelected()) {
+                password.setEchoChar((char) 0);
+            } else {
+                password.setEchoChar('\u2022');
+            }
+        });
 		
-		ActionListener radioListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				u.setEnabled(auth.isSelected());
-				p.setEnabled(auth.isSelected());
-				showPassword.setText("Display Password");
-				username.setEnabled(auth.isSelected());
-				password.setEnabled(auth.isSelected());
-				showPassword.setEnabled(auth.isSelected());
-				if (auth.isSelected() && (StringUtils.isBlank(username.getText()) || password.getPassword().length == 0)) {
-					login.setEnabled(false);
-					tryAgain.setEnabled(false);
-				}
+		ActionListener radioListener = e -> {
+            u.setEnabled(auth.isSelected());
+            p.setEnabled(auth.isSelected());
+            showPassword.setText("Display Password");
+            username.setEnabled(auth.isSelected());
+            password.setEnabled(auth.isSelected());
+            showPassword.setEnabled(auth.isSelected());
+            if (auth.isSelected() && (StringUtils.isBlank(username.getText()) || password.getPassword().length == 0)) {
+                login.setEnabled(false);
+                tryAgain.setEnabled(false);
+            }
 
-				if (anon.isSelected()) {
-					login.setEnabled(true);
-					tryAgain.setEnabled(true);
-					remember.setText(BUNDLE.getString("alwaysAnonymous"));
-				} else {
-					remember.setText(BUNDLE.getString("savePassword"));
-				}
-			}
-		};
+            if (anon.isSelected()) {
+                login.setEnabled(true);
+                tryAgain.setEnabled(true);
+                remember.setText(BUNDLE.getString("alwaysAnonymous"));
+            } else {
+                remember.setText(BUNDLE.getString("savePassword"));
+            }
+        };
 
 		anon.addActionListener(radioListener);
 		auth.addActionListener(radioListener);

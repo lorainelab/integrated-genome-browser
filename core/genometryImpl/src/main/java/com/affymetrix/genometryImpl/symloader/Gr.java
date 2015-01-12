@@ -314,23 +314,16 @@ public final class Gr extends SymLoader implements AnnotationWriter {
      * Sort xList, yList, and wList based upon xList
      */
     private static void sortXYDataOnX(final int[] xList, final float[] yList) {
-        Swapper swapper = new Swapper() {
+        Swapper swapper = (a, b) -> {
+            int swapInt = xList[a];
+            xList[a] = xList[b];
+            xList[b] = swapInt;
 
-            public void swap(int a, int b) {
-                int swapInt = xList[a];
-                xList[a] = xList[b];
-                xList[b] = swapInt;
-
-                float swapFloat = yList[a];
-                yList[a] = yList[b];
-                yList[b] = swapFloat;
-            }
+            float swapFloat = yList[a];
+            yList[a] = yList[b];
+            yList[b] = swapFloat;
         };
-        IntComparator comp = new IntComparator() {
-            public int compare(int a, int b) {
-                return ((Integer) xList[a]).compareTo(xList[b]);
-            }
-        };
+        IntComparator comp = (a, b) -> ((Integer) xList[a]).compareTo(xList[b]);
         GenericSorting.quickSort(0, xList.length, comp, swapper);
     }
 

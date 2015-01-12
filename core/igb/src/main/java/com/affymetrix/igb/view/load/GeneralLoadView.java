@@ -347,12 +347,7 @@ public final class GeneralLoadView {
 
     public void refreshTreeView() {
 
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                refreshTree();
-            }
-        });
+        ThreadUtils.runOnEventQueue(this::refreshTree);
     }
 
     private void refreshTree() {
@@ -364,25 +359,19 @@ public final class GeneralLoadView {
     }
 
     public void refreshTreeViewAndRestore() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                String state = feature_tree_view.getState();
-                refreshTree();
-                feature_tree_view.restoreState(state);
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            String state = feature_tree_view.getState();
+            refreshTree();
+            feature_tree_view.restoreState(state);
         });
     }
 
     private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures) {
 
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                table.stopCellEditing();
-                tableModel.createVirtualFeatures(visibleFeatures);
-                DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            table.stopCellEditing();
+            tableModel.createVirtualFeatures(visibleFeatures);
+            DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
         });
     }
 
@@ -465,11 +454,9 @@ public final class GeneralLoadView {
     }
 
     private void setAllButtons(final boolean enabled) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-            public void run() {
-                partial_residuesB.setEnabled(enabled);
-                refreshDataAction.setEnabled(enabled);
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            partial_residuesB.setEnabled(enabled);
+            refreshDataAction.setEnabled(enabled);
         });
     }
 
@@ -560,11 +547,9 @@ public final class GeneralLoadView {
     }
 
     void removeAllFeautres(Set<GenericFeature> features) {
-        for (GenericFeature feature : features) {
-            if (feature.isVisible()) {
-                removeFeature(feature, true);
-            }
-        }
+        features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
+            removeFeature(feature, true);
+        });
     }
 
     public void removeFeature(final GenericFeature feature, final boolean refresh) {
@@ -654,9 +639,7 @@ public final class GeneralLoadView {
                 if (refresh) {
                     removeTier(feature.getURI().toString());
                     if (!feature.getMethods().isEmpty()) {
-                        for (String method : feature.getMethods()) {
-                            removeTier(method);
-                        }
+                        feature.getMethods().forEach(this::removeTier);
                     }
                     feature.clear();
 

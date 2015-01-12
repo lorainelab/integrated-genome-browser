@@ -325,7 +325,7 @@ public class RemoteBlastNCBI {
 
     }
     
-    private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws UnsupportedEncodingException, IOException {
+    private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws IOException {
         String putBuf = getURLWithParams(seq);
         URL url = new URL(BLAST_URL);
         URLConnection conn = url.openConnection();
@@ -339,7 +339,7 @@ public class RemoteBlastNCBI {
     }
 
     private String retrieveResponse(RemoteBlastNCBI.BlastRequest req, StrandedFeatureSetI sf, int strand, int genomicLength, int offset)
-            throws MalformedURLException, IOException, InterruptedException, ParserConfigurationException, SAXException, BlastXMLParser.BlastXMLParserException {
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException, BlastXMLParser.BlastXMLParserException {
         try {
             Thread.sleep(req.rtoe * 1000);
         } catch (InterruptedException e) {
@@ -384,7 +384,7 @@ public class RemoteBlastNCBI {
         return getBuf.toString();
     }
 
-    private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws MalformedURLException, IOException {
+    private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws IOException {
         StringBuilder deleteBuf = new StringBuilder(BLAST_URL);
         deleteBuf.append("RID=").append(req.rid).append("&");
         deleteBuf.append("CMD=Delete");

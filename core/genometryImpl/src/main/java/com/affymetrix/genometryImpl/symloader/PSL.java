@@ -273,7 +273,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     private static void addToQueryTarget(Map<String, Set<String>> queryTarget, String query_seq_id, String target_seq_id) {
 
         if (!queryTarget.containsKey(query_seq_id)) {
-            queryTarget.put(query_seq_id, new HashSet<String>());
+            queryTarget.put(query_seq_id, new HashSet<>());
         }
 
         Set<String> set = queryTarget.get(query_seq_id);

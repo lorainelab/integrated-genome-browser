@@ -131,7 +131,7 @@ public final class PercentThresholder extends JPanel
         Hashtable<Integer, JLabel> decimal_labels = new Hashtable<>();
 
         for (float f = 0.0f; f <= 1000.0f; f += slider_label_offset) {
-            Integer slideval = new Integer((int) f);
+            Integer slideval = (int) f;
             int labelval = (int) (f / sliders_per_percent);
             decimal_labels.put(slideval, new JLabel(Integer.toString(labelval)));
         }
@@ -204,7 +204,7 @@ public final class PercentThresholder extends JPanel
     public void stateChanged(ChangeEvent evt) {
         Object src = evt.getSource();
         float max_val = (max_percent_slider.getValue() / sliders_per_percent);
-        float min_val = (min_percent_slider.getValue() / sliders_per_percent);;
+        float min_val = (min_percent_slider.getValue() / sliders_per_percent);
 
         if (src == max_percent_slider) {
             if (max_val <= prev_min) {

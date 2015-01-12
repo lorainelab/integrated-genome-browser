@@ -56,7 +56,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     private static enum WigFormat {
 
         BED4, VARSTEP, FIXEDSTEP
-    };
+    }
 
     private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
     private static final boolean ensure_unique_id = true;
@@ -590,7 +590,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
                     if (!previous_track_line) {
                         // Creat a dummy track only it's the same sequence
                         if (current_seq_id.equals(previous_seq_id)) {
-                            trackLine = MessageFormat.format(TRACK, new Object[]{uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++});
+                            trackLine = MessageFormat.format(TRACK, uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++);
                             Logger.getLogger(Wiggle.class.getName()).log(Level.WARNING, "Wiggle format error: line does not have a previous ''track'' line."
                                     + " Creating a dummy track line. {0}", trackLine);
                             //throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");

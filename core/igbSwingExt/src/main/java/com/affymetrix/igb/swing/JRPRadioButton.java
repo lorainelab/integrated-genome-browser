@@ -64,12 +64,7 @@ public class JRPRadioButton extends JRadioButton implements JRPWidget {
 		if (id != null) {
 			ScriptManager.getInstance().addWidget(this);
 		}
-		addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPRadioButton.this, "doClick()"));
-			}
-		});
+		addActionListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPRadioButton.this, "doClick()")));
 	}
 
 	@Override

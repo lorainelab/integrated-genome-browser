@@ -38,14 +38,11 @@ public class ColorByAction extends SeqMapViewActionA {
         ITrackStyleExtended style = tg.getAnnotStyle();
         ColorProviderI cp = style.getColorProvider();
 
-        ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = new ConfigureOptionsPanel.Filter<ColorProviderI>() {
-            @Override
-            public boolean shouldInclude(ColorProviderI colorProvider) {
-                if (colorProvider instanceof SupportsFileTypeCategory) {
-                    return ((SupportsFileTypeCategory) colorProvider).isFileTypeCategorySupported(tg.getFileTypeCategory());
-                }
-                return true;
+        ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = colorProvider -> {
+            if (colorProvider instanceof SupportsFileTypeCategory) {
+                return colorProvider.isFileTypeCategorySupported(tg.getFileTypeCategory());
             }
+            return true;
         };
 
         ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter);

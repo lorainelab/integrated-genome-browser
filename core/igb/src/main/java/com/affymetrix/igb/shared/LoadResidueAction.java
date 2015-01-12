@@ -78,12 +78,9 @@ public class LoadResidueAction extends GenericAction {
             dialog.dispose();
 
             if (new_residue_loaded) {
-                ThreadUtils.runOnEventQueue(new Runnable() {
-
-                    public void run() {
-                        final SeqMapView smv = IGB.getSingleton().getMapView();
-                        smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
-                    }
+                ThreadUtils.runOnEventQueue(() -> {
+                    final SeqMapView smv = IGB.getSingleton().getMapView();
+                    smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
                 });
             }
         }

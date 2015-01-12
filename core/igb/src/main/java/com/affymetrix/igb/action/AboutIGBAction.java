@@ -56,16 +56,13 @@ public class AboutIGBAction extends GenericAction {
         pane.setEditorKit(JEditorPane.createEditorKitForContentType("text/html"));
         pane.setEditable(false);
         pane.setText(text);
-        pane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    if (Desktop.isDesktopSupported()) {
-                        try {
-                            Desktop.getDesktop().browse(e.getURL().toURI());
-                        } catch (IOException | URISyntaxException ex) {
-                            logger.error("Error navigating to hyperlink in about IGB window", ex);
-                        }
+        pane.addHyperlinkListener(e1 -> {
+            if (e1.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(e1.getURL().toURI());
+                    } catch (IOException | URISyntaxException ex) {
+                        logger.error("Error navigating to hyperlink in about IGB window", ex);
                     }
                 }
             }

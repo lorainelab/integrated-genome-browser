@@ -419,11 +419,9 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			throws IOException {
 		
 		List<BioSeq> seqs = new ArrayList<>();
-		for (BarSeqHeader seq_header : getSeqHeaders(uri, istr, default_seq_group, gmodel, force_use_default_group)) {
-			if (!seqs.contains(seq_header.aseq)) {
-				seqs.add(seq_header.aseq);
-			}
-		}
+		getSeqHeaders(uri, istr, default_seq_group, gmodel, force_use_default_group).stream().filter(seq_header -> !seqs.contains(seq_header.aseq)).forEach(seq_header -> {
+			seqs.add(seq_header.aseq);
+		});
 		return seqs;
 	}
 		
@@ -996,8 +994,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			this.vals_per_point = val_types.length;
 			this.tagvals = tagvals;
 
-			for (int i = 0; i < val_types.length; i++) {
-				int valtype = val_types[i];
+			for (int valtype : val_types) {
 				bytes_per_point += BarParser.bytes_per_val[valtype];
 			}
 		}

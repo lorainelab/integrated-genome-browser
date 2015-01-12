@@ -22,7 +22,7 @@ public interface StyledGlyph extends GlyphI {
         public String getDisplay() {
             return display;
         }
-    };
+    }
 
     public ITrackStyleExtended getAnnotStyle();
 

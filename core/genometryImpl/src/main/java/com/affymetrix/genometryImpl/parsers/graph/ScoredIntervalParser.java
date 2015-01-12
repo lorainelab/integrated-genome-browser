@@ -312,7 +312,7 @@ public final class ScoredIntervalParser implements GraphParser {
                 if (tag.startsWith("score")) {
                     try {
                         int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
-                        index2id.put(Integer.valueOf(score_index), val);
+                        index2id.put(score_index, val);
                     } catch (NumberFormatException nfe) {
                         throw new IOException("Tag '" + tag + "' is not in the format score# where # = 0,1,2,....");
                     }
@@ -391,7 +391,7 @@ public final class ScoredIntervalParser implements GraphParser {
     private static List<String> initScoreNames(int score_count, Map<Integer, String> index2id, String stream_name) {
         List<String> names = new ArrayList<>();
         for (int i = 0; i < score_count; i++) {
-            Integer index = Integer.valueOf(i);
+            Integer index = i;
             String id = index2id.get(index);
             if (id == null) {
                 if (stream_name == null) {

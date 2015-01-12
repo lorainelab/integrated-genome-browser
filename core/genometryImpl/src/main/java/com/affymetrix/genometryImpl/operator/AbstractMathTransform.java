@@ -59,7 +59,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (paramPrompt != null && parms.size() == 1 && parms.get(paramPrompt) instanceof String) {
-			setParameterValue(paramPrompt, (String)parms.get(paramPrompt));
+			setParameterValue(paramPrompt, parms.get(paramPrompt));
 			return true;
 		}
 		return false;

@@ -219,9 +219,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 
             return !thread.isInterrupted();
         } finally {
-            for (BufferedWriter b : chrs.values()) {
-                GeneralUtils.safeClose(b);
-            }
+            chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(bw);
         }

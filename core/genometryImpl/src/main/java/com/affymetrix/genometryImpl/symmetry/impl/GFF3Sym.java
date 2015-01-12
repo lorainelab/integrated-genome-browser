@@ -58,9 +58,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
     private static final String[] EMPTY_RESULT = new String[0];
 
-    private static final List<String> bad_prop_names = Arrays.asList(new String[]{
-        "feature_type", "type", "score", "frame"
-    });
+    private static final List<String> bad_prop_names = Arrays.asList("feature_type", "type", "score", "frame");
 
     private String source;
     private String method;
@@ -160,9 +158,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
         } else if (name.equals("feature_type") || name.equals("type")) {
             return feature_type;
         } else if (name.equals("score") && score != UNKNOWN_SCORE) {
-            return new Float(score);
+            return score;
         } else if (name.equals("frame") && frame != UNKNOWN_FRAME) {
-            return Character.valueOf(frame);
+            return frame;
         } else if (name.equals("id")) {
             return getID();
         }
@@ -243,10 +241,10 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
             tprops.put("type", feature_type);
         }
         if (score != UNKNOWN_SCORE) {
-            tprops.put("score", new Float(getScore()));
+            tprops.put("score", getScore());
         }
         if (frame != UNKNOWN_FRAME) {
-            tprops.put("frame", Character.valueOf(frame));
+            tprops.put("frame", frame);
         }
         addAllAttributesFromGFF3(tprops, attributes);
 

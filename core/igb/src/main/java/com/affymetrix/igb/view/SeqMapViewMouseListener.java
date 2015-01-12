@@ -382,15 +382,15 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         if (!isSlopRowSelection) {
             if (preserve_selections) {
-                for (int i = 0; i < hcount; i++) {
-                    Object obj = hits.get(i);
+                for (GlyphI hit : hits) {
+                    Object obj = hit;
                     if (obj instanceof GraphGlyph) {
                         graphs.add((GraphGlyph) obj);
                     }
                 }
             } else if (combo_style != null) {
-                for (int i = 0; i < hcount; i++) {
-                    Object obj = hits.get(i);
+                for (GlyphI hit : hits) {
+                    Object obj = hit;
                     if (obj instanceof GraphGlyph
                             && ((GraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
                         graphs.add((GraphGlyph) obj);
@@ -426,8 +426,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             }
 
             int gcount = graphs.size();
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 if (gl != topgl) {  // if gl == topgl, already handled above...
                     if (toggle_event && gl.isSelected()) {
                         map.deselect(gl);
@@ -568,9 +567,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
     private static void toggleSelections(NeoMap map, Collection<GlyphI> glyphs) {
         List<GlyphI> current_selections = map.getSelected();
-        Iterator<GlyphI> iter = glyphs.iterator();
-        while (iter.hasNext()) {
-            GlyphI g = iter.next();
+        for (GlyphI g : glyphs) {
             if (current_selections.contains(g)) {
                 map.deselect(g);
             } else {

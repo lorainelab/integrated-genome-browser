@@ -83,8 +83,8 @@ public final class Bookmark implements Serializable {
         public String toString() {
             return name;
         }
-    };
-    
+    }
+
     public static enum GRAPH {
         
         FLOAT("graph_float_"),
@@ -110,8 +110,8 @@ public final class Bookmark implements Serializable {
         public String toString() {
             return name;
         }
-    };
-    
+    }
+
     private String name;
     private String comment;
     private URL url;
@@ -221,14 +221,10 @@ public final class Bookmark implements Serializable {
         sb.append('?');
         ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.<String, String>builder();
         Set<String> keySet = props.keySet();
-        Iterator<String> keyIterator = keySet.iterator();
-        while (keyIterator.hasNext()) {
-            String key = keyIterator.next();
+        for (String key : keySet) {
             key = URLEncoder.encode(key, Charsets.UTF_8.displayName());
             List<String> values = props.get(key);
-            Iterator<String> valueIterator = values.iterator();
-            while (valueIterator.hasNext()) {
-                String value = valueIterator.next();
+            for (String value : values) {
                 value = URLEncoder.encode(value, Charsets.UTF_8.displayName());
                 builder.put(key, value);
             }

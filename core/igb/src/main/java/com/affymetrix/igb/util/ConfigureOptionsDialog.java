@@ -68,15 +68,13 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 
     private void addListeners() {
 
-        ActionListener al = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource() == okOption) {
-                    optionPane.setValue(JOptionPane.OK_OPTION);
-                } else {
-                    optionPane.setValue(JOptionPane.CANCEL_OPTION);
-                }
-                dispose();
+        ActionListener al = ae -> {
+            if (ae.getSource() == okOption) {
+                optionPane.setValue(JOptionPane.OK_OPTION);
+            } else {
+                optionPane.setValue(JOptionPane.CANCEL_OPTION);
             }
+            dispose();
         };
         okOption.addActionListener(al);
         cancelOption.addActionListener(al);

@@ -56,12 +56,7 @@ public final class ServerList {
     private static ServerList serverInstance = new ServerList("server");
     private static ServerList repositoryInstance = new ServerList("repository");
     private final String textName;
-    private final Comparator<GenericServer> serverOrderComparator = new Comparator<GenericServer>() {
-        @Override
-        public int compare(GenericServer o1, GenericServer o2) {
-            return getServerOrder(o1) - getServerOrder(o2);
-        }
-    };
+    private final Comparator<GenericServer> serverOrderComparator = (o1, o2) -> getServerOrder(o1) - getServerOrder(o2);
 
     private ServerList(String textName) {
         this.textName = textName;
@@ -596,7 +591,7 @@ public final class ServerList {
                     + ", enabled: " + enabled + "default: " + isDefault);
         }
         serverList.addServer(server_type, server_name, server_url,
-                enabled, primary, order.intValue(), isDefault, mirror_url); //qlmirror
+                enabled, primary, order, isDefault, mirror_url); //qlmirror
     }
 
     public static class ServerElementHandler implements XmlPrefsParser.ElementHandler {

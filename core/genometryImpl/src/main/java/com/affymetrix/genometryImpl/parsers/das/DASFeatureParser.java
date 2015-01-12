@@ -27,13 +27,15 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
  */
 public final class DASFeatureParser implements Parser {
 
-	static enum Orientation { UNKNOWN, FORWARD, REVERSE };
+	static enum Orientation { UNKNOWN, FORWARD, REVERSE }
+
 	private static enum Elements {
 		DASGFF, GFF, SEGMENT, FEATURE, TYPE, METHOD, START, END, SCORE, ORIENTATION, PHASE, NOTE, LINK, TARGET, GROUP
-	};
+	}
+
 	private static enum Attr {
 		version, href, id, start, stop, type, label, category, reference
-	};
+	}
 
 	private BioSeq sequence;
 	private String note;
@@ -258,7 +260,7 @@ public final class DASFeatureParser implements Parser {
 			boolean annotate_seq) throws Exception {
 		setAnnotateSeq(annotate_seq);
 		try {
-			return (List<? extends SeqSymmetry>)parse(is, group);
+			return parse(is, group);
 		} catch (XMLStreamException ex) {
 			Logger.getLogger(DASFeatureParser.class.getName()).log(Level.SEVERE, null, ex);
 			return null;

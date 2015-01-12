@@ -169,9 +169,7 @@ public final class DasSource {
 		}
 		/* Remove any failed sources */
 		synchronized (this) {
-			for (String source : badSources) {
-				sources.remove(source);
-			}
+			badSources.forEach(sources::remove);
 			types_initialized = true;
 		}
 	}
@@ -244,7 +242,7 @@ public final class DasSource {
 				&& url1.getFile().equals(url2.getFile());
 	}
 
-	private InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws MalformedURLException, IOException {
+	private InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws IOException {
 		URL load_url = getLoadURL(server, query, pri_default);
 		InputStream istr = LocalUrlCacher.getInputStream(load_url);
 

@@ -194,7 +194,7 @@ public class TabDelimitedParser implements Parser {
 						}
 					} else {
 						MutableSeqSpan pspan = (MutableSeqSpan) parent.getSpan(seq);
-						SeqUtils.encompass(pspan, (SeqSpan) child, union_span);
+						SeqUtils.encompass(pspan, child, union_span);
 						pspan.set(union_span.getStart(), union_span.getEnd(), seq);
 					}
 					parent.addChild(child);

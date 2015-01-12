@@ -111,11 +111,7 @@ public class SeqGroupViewGUI extends IGBTabPanel {
             }
         });
 
-        speciesCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                speciesCBActionPerformed(evt);
-            }
-        });
+        speciesCB.addActionListener(this::speciesCBActionPerformed);
 
         org.jdesktop.layout.GroupLayout speciesPanelLayout = new org.jdesktop.layout.GroupLayout(speciesPanel);
         speciesPanel.setLayout(speciesPanelLayout);

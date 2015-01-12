@@ -160,7 +160,7 @@
                         <Import-Package>
                             com.jidesoft.*,
                             com.apple.eawt;resolution:=optional,
-                            com.sun.java.swing.plaf.windows;resolution:=optional,
+                            javax.swing.plaf.windows;resolution:=optional,
                             sun.reflect;resolution:=optional,
                             com.sun.awt;resolution:=optional,
                             *;resolution:=optional

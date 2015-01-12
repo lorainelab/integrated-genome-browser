@@ -62,12 +62,7 @@ public class JRPToggleButton extends JToggleButton implements JRPWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPToggleButton.this, "doClick()"));
-			}
-		});
+		addActionListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPToggleButton.this, "doClick()")));
 	}
 
 	@Override

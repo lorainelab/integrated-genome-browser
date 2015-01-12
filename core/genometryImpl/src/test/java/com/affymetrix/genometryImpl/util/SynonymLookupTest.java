@@ -26,7 +26,7 @@ public class SynonymLookupTest {
 	static SynonymLookup sl;
 
 	@Before
-	public void setUp() throws FileNotFoundException, IOException {
+	public void setUp() throws IOException {
 		sl = new SynonymLookup();
 
 		String filename = "data/synonymLookup/synonymTestData1";
@@ -37,7 +37,7 @@ public class SynonymLookupTest {
 	}
 
 	@Test
-	public void testAddSynonym() throws FileNotFoundException, IOException {
+	public void testAddSynonym() throws IOException {
 		ImmutableSet<String> synonymSet;
 
 		boolean cs = true;
@@ -70,7 +70,7 @@ public class SynonymLookupTest {
 	}
 
 	@Test
-	public void testCaseInsensitiveLookup() throws FileNotFoundException, IOException {
+	public void testCaseInsensitiveLookup() throws IOException {
 		List<String> a = new ArrayList<>();
 
 		String filename = "data/synonymLookup/synonymTestData3";

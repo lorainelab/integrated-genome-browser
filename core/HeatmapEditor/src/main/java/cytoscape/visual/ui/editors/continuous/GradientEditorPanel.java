@@ -25,26 +25,19 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel {
 	private static final Color DEF_LOWER_COLOR = Color.BLACK;
 	private static final Color DEF_UPPER_COLOR = Color.WHITE;
 	
-	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-		/**
-		 * DOCUMENT ME!
-		 *
-		 * @param e DOCUMENT ME!
-		 */
-		public void propertyChange(PropertyChangeEvent e) {
-			if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
-				String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
+	private final PropertyChangeListener propertyChangeListener = e -> {
+        if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
+            String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
 
-				if (sourceName.equals("abovePanel")) {
-					((MultiColorThumbModel) slider.getModel()).setAboveColor((Color) e.getNewValue());
-				} else {
-					((MultiColorThumbModel) slider.getModel()).setBelowColor((Color) e.getNewValue());
-				}
+            if (sourceName.equals("abovePanel")) {
+                ((MultiColorThumbModel) slider.getModel()).setAboveColor((Color) e.getNewValue());
+            } else {
+                ((MultiColorThumbModel) slider.getModel()).setBelowColor((Color) e.getNewValue());
+            }
 
-				repaint();
-			}
-		}
-	};
+            repaint();
+        }
+    };
 	
 	/**
 	 * Creates a new GradientEditorPanel object.

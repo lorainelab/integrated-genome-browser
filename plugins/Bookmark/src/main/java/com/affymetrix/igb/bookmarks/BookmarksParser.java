@@ -39,7 +39,7 @@ public final class BookmarksParser {
     public static final int BED_FORMAT = 2;
 
     public static void parse(BookmarkList bookmarks, File f)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         int format = getFormat(f);
         if (logger.isDebugEnabled()) {
             logger.debug("Format of '" + f.getAbsolutePath() + "' is " + format);
@@ -56,7 +56,7 @@ public final class BookmarksParser {
         }
     }
 
-    public static int getFormat(File f) throws FileNotFoundException, IOException {
+    public static int getFormat(File f) throws IOException {
         int result = SIMPLE_HTML_FORMAT;
         if (f.getName().endsWith(".bed")) {
             result = BED_FORMAT;
@@ -230,7 +230,7 @@ public final class BookmarksParser {
      * Parses bookmarks from a given file (formatted in Netscape bookmark
      * format) and adds them to the given BookmarkList.
      */
-    public static void parseNetscapeBookmarks(BookmarkList bookmarks, File f) throws FileNotFoundException, IOException {
+    public static void parseNetscapeBookmarks(BookmarkList bookmarks, File f) throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("loading bookmarks in Netscape format from '" + f.getAbsolutePath() + "'");
         }

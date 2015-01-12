@@ -73,18 +73,14 @@ public class NewGenome extends javax.swing.JPanel {
 
         speciesLabel.setText("Species");
 
-        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
+        ListDataIntelliHints<String> hints = new ListDataIntelliHints<>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
 
         versionLabel.setText("Genome Version");
 
         refSeqLabel.setText("Reference Sequence");
 
         refSeqBrowseButton.setText("...");
-        refSeqBrowseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refSeqBrowseButtonActionPerformed(evt);
-            }
-        });
+        refSeqBrowseButton.addActionListener(this::refSeqBrowseButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

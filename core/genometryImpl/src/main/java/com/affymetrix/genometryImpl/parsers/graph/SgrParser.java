@@ -138,8 +138,7 @@ public final class SgrParser implements GraphParser {
 			int xcount = xcoords.length;
 			boolean sorted = true;
 			int prevx = Integer.MIN_VALUE;
-			for (int i = 0; i < xcount; i++) {
-				int x = xcoords[i];
+			for (int x : xcoords) {
 				if (x < prevx) {
 					sorted = false;
 					break;

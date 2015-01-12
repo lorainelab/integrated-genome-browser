@@ -212,7 +212,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 				int probeset_count = dis.readInt();
 				SeqSymmetry[] syms = new SeqSymmetry[probeset_count];
 				seq2syms.put(seqid, syms);
-				seq2lengths.put(seqid, Integer.valueOf(seq_length));
+				seq2lengths.put(seqid, seq_length);
 			}
 			int tagval_count = dis.readInt();
 			for (int i = 0; i < tagval_count; i++) {
@@ -232,7 +232,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 				BioSeq aseq = group.getSeq(seqid);
 				SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
 				if (aseq == null) {
-					int seqlength = seq2lengths.get(seqid).intValue();
+					int seqlength = seq2lengths.get(seqid);
 					aseq = group.addSeq(seqid, seqlength);
 				}
 				SimpleSymWithProps container_sym = new SimpleSymWithProps(probeset_count);
@@ -336,7 +336,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 		}
 		catch (Exception ex) { ex.printStackTrace(); }
 		return success;
-	};
+	}
 
 	/**
 	 *  Converts a "GFF" file into a "bp1" file.

@@ -120,25 +120,15 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
         // Add a "refresh map" button, if there is an instance of IGB
         if (smv != null) {
-            refreshButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    refreshSeqMapViewAndSlicedView();
-                }
-            });
+            refreshButton.addActionListener(evt -> refreshSeqMapViewAndSlicedView());
 
             autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH, PREF_AUTO_REFRESH,
                     default_auto_refresh);
-            autoRefreshCheckBox.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    if (refreshButton != null) {
-                        refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
-                        if (autoRefreshCheckBox.isSelected()) {
-                            refreshSeqMapViewAndSlicedView();
-                        }
+            autoRefreshCheckBox.addActionListener(evt -> {
+                if (refreshButton != null) {
+                    refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
+                    if (autoRefreshCheckBox.isSelected()) {
+                        refreshSeqMapViewAndSlicedView();
                     }
                 }
             });
@@ -210,9 +200,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         if (smv != null) {
             currentTiers = smv.getSeqMap().getTiers();
             List<TrackStyle> styles = new ArrayList<>();
-            Iterator<TierGlyph> titer = currentTiers.iterator();
-            while (titer.hasNext()) {
-                TierGlyph tier = titer.next();
+            for (TierGlyph tier : currentTiers) {
                 ITrackStyle style = tier.getAnnotStyle();
 
                 if (!currentStyles.contains(style)) {
@@ -585,8 +573,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
     private void setEnableByAxisOrGraphForRows(List<TrackStyle> rows) {
 
-        for (int i = 0; i < selectedRows.length; i++) {
-            TrackStyle style = rows.get(selectedRows[i]);
+        for (int selectedRow1 : selectedRows) {
+            TrackStyle style = rows.get(selectedRow1);
             setEnabledByAxisOrGraph(style);
         }
     }
@@ -628,13 +616,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 		// if autoApplyChanges(), then the changes were already applied,
         // otherwise apply changes as needed.
         if (!autoApplyChanges()) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    refreshSeqMapViewAndSlicedView();
-                }
-            });
+            SwingUtilities.invokeLater(this::refreshSeqMapViewAndSlicedView);
         }
     }
 
@@ -677,8 +659,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
             int row;
             TrackStyle style;
             int[] previousSelectedRows = selectedRows;
-            for (int i = 0; i < selectedRows.length; i++) {
-                row = selectedRows[i];
+            for (int selectedRow1 : selectedRows) {
+                row = selectedRow1;
                 style = ((TierPrefsTableModel) model).getStyles().get(row);
                 style.restoreToDefault();
             }
@@ -842,7 +824,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
                             style.setDirectionType((TrackConstants.DirectionType) value);
                             break;
                         case COL_SHOW_2_TRACKS:
-                            style.setSeparate(!(((Boolean) value).booleanValue()));
+                            style.setSeparate(!((Boolean) value));
                             smv.getPopup().refreshMap(false, true);
                             break;
                         case COL_COLLAPSED:
@@ -912,5 +894,5 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
             }
             return fallback;
         }
-    };
+    }
 }

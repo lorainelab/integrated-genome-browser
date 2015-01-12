@@ -30,7 +30,7 @@ public final class FileTracker {
         filenames.add(OUTPUT_DIRECTORY);
         filenames.add(GENOME_DIRECTORY);
         filenames.add(EXPORT_DIRECTORY);
-        FILENAMES = Collections.<String>unmodifiableList(filenames);
+        FILENAMES = Collections.unmodifiableList(filenames);
     }
 
     private final String name;
@@ -85,7 +85,7 @@ public final class FileTracker {
         try {
             PreferenceUtils.getTopNode().flush();
         } catch (BackingStoreException bse) {
-        };
+        }
     }
 
     public File getFile() {

@@ -53,46 +53,22 @@ public abstract class TrackViewPanel extends IGBTabPanel implements RefreshSelec
         componentPanel = new javax.swing.JPanel();
 
         selectAllButton.setText("Select All");
-        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectAllButtonActionPerformed(evt);
-            }
-        });
+        selectAllButton.addActionListener(this::selectAllButtonActionPerformed);
 
         saveButton.setText("Save Track");
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
+        saveButton.addActionListener(this::saveButtonActionPerformed);
 
         deleteButton.setText("Delete Track");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         restoreButton.setText("Restore Default");
-        restoreButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreButtonActionPerformed(evt);
-            }
-        });
+        restoreButton.addActionListener(this::restoreButtonActionPerformed);
 
         clearButton.setText("Clear Track");
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
+        clearButton.addActionListener(this::clearButtonActionPerformed);
 
         customButton.setText("customButton");
-        customButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                customButtonActionPerformed(evt);
-            }
-        });
+        customButton.addActionListener(this::customButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);

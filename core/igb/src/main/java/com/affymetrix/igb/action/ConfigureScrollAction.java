@@ -158,23 +158,21 @@ public class ConfigureScrollAction extends SeqMapViewActionA {
                 }
             };
 
-            ActionListener al = new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    if (ae.getSource() == startOption) {
-                        start();
-                    } else if (ae.getSource() == stopOption) {
-                        stop();
-                    } else if (ae.getSource() == closeOption) {
-                        stop();
-                        dispose();
-                    }
+            ActionListener al = ae -> {
+                if (ae.getSource() == startOption) {
+                    start();
+                } else if (ae.getSource() == stopOption) {
+                    stop();
+                } else if (ae.getSource() == closeOption) {
+                    stop();
+                    dispose();
                 }
             };
 
             ((AbstractDocument) pix_to_scrollTF.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(-1000, 1000));
             ((AbstractDocument) time_intervalTF.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(1, 1000));
-            ((AbstractDocument) pix_to_scrollTF.getDocument()).addDocumentListener(dl);
-            ((AbstractDocument) time_intervalTF.getDocument()).addDocumentListener(dl);
+            pix_to_scrollTF.getDocument().addDocumentListener(dl);
+            time_intervalTF.getDocument().addDocumentListener(dl);
 
             startOption.addActionListener(al);
             stopOption.addActionListener(al);

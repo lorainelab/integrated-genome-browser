@@ -66,21 +66,19 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
                 });
 
                 Date today = Calendar.getInstance().getTime();
-                for (final Survey survey : surveys) {
-                    if (today.compareTo(survey.getStart()) >= 0
-                            && today.compareTo(survey.getEnd()) < 0) {
-                        JMenuItem item = new JMenuItem(
-                                new GenericAction(survey.getName(), null, null) {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        super.actionPerformed(e);
-                                        GeneralUtils.browse(survey.getLink());
-                                    }
+                surveys.stream().filter(survey -> today.compareTo(survey.getStart()) >= 0
+                        && today.compareTo(survey.getEnd()) < 0).forEach(survey -> {
+                    JMenuItem item = new JMenuItem(
+                            new GenericAction(survey.getName(), null, null) {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    super.actionPerformed(e);
+                                    GeneralUtils.browse(survey.getLink());
                                 }
-                        );
-                        surveysMenu.add(item);
-                    }
-                }
+                            }
+                    );
+                    surveysMenu.add(item);
+                });
                 for (final Survey survey : surveys) {
                     if (today.compareTo(survey.getStart()) >= 0
                             && today.compareTo(survey.getEnd()) < 0

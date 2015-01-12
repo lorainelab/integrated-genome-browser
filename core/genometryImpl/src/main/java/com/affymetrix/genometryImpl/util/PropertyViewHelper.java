@@ -70,5 +70,5 @@ public class PropertyViewHelper implements MouseListener, MouseMotionListener {
 		}
 
 			return false;
-		};
+		}
 }

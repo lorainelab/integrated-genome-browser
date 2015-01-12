@@ -88,9 +88,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());
 
         for (Entry<String, List<? extends SeqSymmetry>> entry : loadData(span).entrySet()) {
-            for (SeqSymmetry sym : entry.getValue()) {
-                detailSym.addChild(sym);
-            }
+            entry.getValue().forEach(detailSym::addChild);
         }
 
         return detailSym;
@@ -549,9 +547,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         return super.getPreferences();
     }
 
-    ;
-	
-	@Override
+    @Override
     public void setPreferences(Map<String, Object> preferences) {
         Integer maxDepth = (Integer) preferences.get("max_depth");
         setMaxExpandDepth(maxDepth);
@@ -563,9 +559,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         }
     }
 
-    ;
-	
-	/**
+    /**
 	 * Determine the extreme values of <var>y</var> in theView.
 	 * We do not need to translate between scene coordinates
 	 * to those of the graph symmetry.

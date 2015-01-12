@@ -34,14 +34,11 @@ public class SplitGraphsAction extends GenericAction {
     }
 
     private void updateDisplay() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
+        ThreadUtils.runOnEventQueue(() -> {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-                igbService.getSeqMapView().updatePanel(true, true);
-            }
+            igbService.getSeqMapView().updatePanel(true, true);
         });
     }
 

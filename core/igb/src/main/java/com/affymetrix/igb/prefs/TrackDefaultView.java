@@ -166,12 +166,10 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 				styles.add(((TrackDefaultPrefTableModel) model).tier_styles.get(i));
 			}
 
-			for (TrackStyle style : styles) {
-				if (style != default_annot_style) {
-					XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
-					((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
-				}
-			}
+			styles.stream().filter(style -> style != default_annot_style).forEach(style -> {
+				XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
+				((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
+			});
 
 			model.fireTableDataChanged();
 		}
@@ -440,7 +438,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							if (!style.equals(default_annot_style)) {
 								element.getPropertyMap().put(PROP_SEPARATE, ((Object)(!(Boolean)value)).toString());
 							}
-							style.setSeparate(!(((Boolean) value).booleanValue()));
+							style.setSeparate(!((Boolean) value));
 							break;
 						case COL_COLLAPSED:
 							if (!style.equals(default_annot_style)) {

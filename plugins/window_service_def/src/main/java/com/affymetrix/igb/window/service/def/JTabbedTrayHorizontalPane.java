@@ -41,7 +41,7 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         if (tabInsets == null) {
             tabInsets = new Insets(0, 0, 0, 0);
         }
-        UIManager.put("TabbedPane.textIconGap", new Integer(1));
+        UIManager.put("TabbedPane.textIconGap", 1);
         UIManager.put("TabbedPane.tabInsets", new Insets(tabInsets.left, tabInsets.top, tabInsets.right, tabInsets.bottom));
         JRPTabbedPane tabPane = new JRPTabbedPane(id, tabPlacement) {
             private static final long serialVersionUID = 1L;

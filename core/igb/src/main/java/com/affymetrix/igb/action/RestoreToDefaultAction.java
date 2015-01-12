@@ -33,15 +33,11 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
         if (getTierManager().getSelectedTiers() == null) {
             return;
         }
-        for (ITrackStyleExtended style : allStyles) {
-            if (style instanceof TrackStyle) {
-                ((TrackStyle) style).restoreToDefault();
-            }
-        }
+        allStyles.stream().filter(style -> style instanceof TrackStyle).forEach(style -> {
+            ((TrackStyle) style).restoreToDefault();
+        });
 
-        for (GraphState graphState : graphStates) {
-            graphState.restoreToDefault();
-        }
+        graphStates.forEach(com.affymetrix.genometryImpl.style.GraphState::restoreToDefault);
 
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
         getSeqMapView().updatePanel();

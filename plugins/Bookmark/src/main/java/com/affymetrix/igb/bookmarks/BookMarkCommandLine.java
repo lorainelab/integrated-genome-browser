@@ -30,16 +30,13 @@ public class BookMarkCommandLine {
         if (igbService.areAllServersInited()) {
             gotoBookmark();
         } else {
-            GenericServerInitListener genericServerListener = new GenericServerInitListener() {
-                @Override
-                public void genericServerInit(GenericServerInitEvent evt) {
-                    if (!igbService.areAllServersInited()) { // do this first to avoid race condition
-                        return;
-                    }
-                    registration.unregister();
-                    registration = null;
-                    gotoBookmark();
+            GenericServerInitListener genericServerListener = evt -> {
+                if (!igbService.areAllServersInited()) { // do this first to avoid race condition
+                    return;
                 }
+                registration.unregister();
+                registration = null;
+                gotoBookmark();
             };
             registration = bundleContext.registerService(GenericServerInitListener.class, genericServerListener, null);
         }
@@ -59,17 +56,14 @@ public class BookMarkCommandLine {
         try {
             final Bookmark bm = new Bookmark(null, "", url);
             if (bm.isValidBookmarkFormat()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            //sleep thread to allow time for osgi bundles to completely load
-                            Thread.sleep(5000);
-                            logger.info("Loading bookmark: {0}", url);
-                            BookmarkController.viewBookmark(igbService, bm);
-                        } catch (InterruptedException ex) {
-                            logger.error("Thread Interrupted", ex.getMessage());
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        //sleep thread to allow time for osgi bundles to completely load
+                        Thread.sleep(5000);
+                        logger.info("Loading bookmark: {0}", url);
+                        BookmarkController.viewBookmark(igbService, bm);
+                    } catch (InterruptedException ex) {
+                        logger.error("Thread Interrupted", ex.getMessage());
                     }
                 });
             } else {

@@ -93,7 +93,7 @@ public class TierResizer extends MouseInputAdapter {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-        assert m != (AffyTieredMap) src; // This seems odd.
+        assert m != src; // This seems odd.
         // Seems both cursors are the same, but you never know...
         if (atResizeTop(nevt)) {
             m.setCursor(ourCursors[0]);

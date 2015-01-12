@@ -45,16 +45,14 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
                 PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 
             // First split the graph.
-            for (StyledGlyph vg : allGlyphs) {
-				//If graphs is joined then apply color to combo style too.
-                // TODO: Use code from split graph
-                if (vg instanceof GraphGlyph) {
-                    ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
-                    if (style != null) {
-                        getSeqMapView().split((GraphGlyph) vg);
-                    }
+            //If graphs is joined then apply color to combo style too.
+// TODO: Use code from split graph
+            allGlyphs.stream().filter(vg -> vg instanceof GraphGlyph).forEach(vg -> {
+                ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+                if (style != null) {
+                    getSeqMapView().split(vg);
                 }
-            }
+            });
 
             for (ITrackStyleExtended style : allStyles) {
                 GeneralLoadView.getLoadView().clearTrack(style);

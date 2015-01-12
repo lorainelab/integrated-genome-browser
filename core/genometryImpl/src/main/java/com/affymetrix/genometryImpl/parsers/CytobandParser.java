@@ -173,9 +173,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
         boolean success = true;
         try {
             Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-            Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-            while (iterator.hasNext()) {
-                SeqSymmetry sym = (SeqSymmetry) iterator.next();
+            for (SeqSymmetry sym : syms) {
                 writeCytobandFormat(bw, sym, seq);
             }
             bw.flush();
@@ -215,7 +213,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
     public static enum Arm {
 
         SHORT, LONG, UNKNOWN
-    };
+    }
 
     public static final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 

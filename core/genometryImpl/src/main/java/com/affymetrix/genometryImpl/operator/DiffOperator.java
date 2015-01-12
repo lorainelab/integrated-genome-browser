@@ -26,7 +26,7 @@ public class DiffOperator extends AbstractGraphOperator implements Operator, Ope
 
 	@Override
 	protected float operate(List<Float> operands) {
-		return operands.get(0).floatValue() - operands.get(1).floatValue();
+		return operands.get(0) - operands.get(1);
 	}
 
 	@Override

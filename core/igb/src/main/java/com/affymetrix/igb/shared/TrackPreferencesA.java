@@ -69,23 +69,16 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
     }
 
     private void updateDisplay(final boolean preserveX, final boolean preserveY) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
+        ThreadUtils.runOnEventQueue(() -> {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-                igbService.getSeqMapView().updatePanel(preserveX, preserveY);
-            }
+            igbService.getSeqMapView().updatePanel(preserveX, preserveY);
         });
     }
 
     private void refreshView() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-            public void run() {
-                igbService.getSeqMap().updateWidget();
-            }
-        });
+        ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
     }
 
     @Override
@@ -327,23 +320,18 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
             return;
         }
         if (HeatMap.FOREGROUND_BACKGROUND.equals(name)) {
-            for (GraphState state : graphStates) {
-                if (state.getGraphStyle() == GraphType.HEAT_MAP) {
-//					gl.setShowGraph(true);
-                    if (!(state.getHeatMap() instanceof DynamicStyleHeatMap)) {
-                        state.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, state.getTierStyle(), 0.0f, 0.5f));
-                    }
-                }
-            }
+            //					gl.setShowGraph(true);
+            graphStates.stream().filter(state -> state.getGraphStyle() == GraphType.HEAT_MAP).filter(state -> !(state.getHeatMap() instanceof DynamicStyleHeatMap)).forEach(state -> {
+                state.setHeatMap(new DynamicStyleHeatMap(HeatMap.FOREGROUND_BACKGROUND, state.getTierStyle(), 0.0f, 0.5f));
+            });
         } else {
             HeatMap hm = HeatMap.getStandardHeatMap(name);
             if (hm != null) {
-                for (GraphState state : graphStates) {
-                    if (state.getGraphStyle() == GraphType.HEAT_MAP) {
+                //						gl.setShowGraph(true);
+                graphStates.stream().filter(state -> state.getGraphStyle() == GraphType.HEAT_MAP).forEach(state -> {
 //						gl.setShowGraph(true);
-                        state.setHeatMap(hm);
-                    }
-                }
+                    state.setHeatMap(hm);
+                });
             }
         }
         refreshView();
@@ -755,7 +743,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
             for (StyledGlyph glyph : allGlyphs) {
                 if (stackDepth == -1 && !stackDepthSet) {
                     if (glyph instanceof TierGlyph) {
-                        switch (((TierGlyph) glyph).getDirection()) {
+                        switch (glyph.getDirection()) {
                             case FORWARD:
                                 stackDepth = glyph.getAnnotStyle().getForwardMaxDepth();
                                 break;

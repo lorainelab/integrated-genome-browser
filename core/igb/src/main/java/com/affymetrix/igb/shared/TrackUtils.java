@@ -91,11 +91,9 @@ public class TrackUtils {
         List<RootSeqSymmetry> syms = new ArrayList<>();
         for (StyledGlyph glyph : tierGlyphs) {
             if (glyph instanceof TierGlyph && ((TierGlyph) glyph).getTierType() == TierGlyph.TierType.GRAPH) {
-                for (GlyphI g : glyph.getChildren()) {
-                    if (g instanceof GraphGlyph) {
-                        collectRootSym(g, syms);
-                    }
-                }
+                glyph.getChildren().stream().filter(g -> g instanceof GraphGlyph).forEach(g -> {
+                    collectRootSym(g, syms);
+                });
             } else {
                 collectRootSym(glyph, syms);
             }
@@ -115,15 +113,13 @@ public class TrackUtils {
 
     private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
         Map<FileTypeCategory, Integer> trackCounts = new EnumMap<>(FileTypeCategory.class);
-        for (SeqSymmetry sym : syms) {
-            if (sym != null) {
-                FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();
-                if (trackCounts.get(category) == null) {
-                    trackCounts.put(category, 0);
-                }
-                trackCounts.put(category, trackCounts.get(category) + 1);
+        syms.stream().filter(sym -> sym != null).forEach(sym -> {
+            FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();
+            if (trackCounts.get(category) == null) {
+                trackCounts.put(category, 0);
             }
-        }
+            trackCounts.put(category, trackCounts.get(category) + 1);
+        });
         return trackCounts;
     }
 

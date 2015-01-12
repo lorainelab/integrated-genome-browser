@@ -206,9 +206,9 @@ final class AffySingleChromData {
 		}
 
 		if (had_bad_values) {
-			return Arrays.<Object>asList(x_out, y_out);
+			return Arrays.asList(x_out, y_out);
 		} else {
-			return Arrays.<Object>asList(x, y);
+			return Arrays.asList(x, y);
 		}
 	}
 
@@ -239,9 +239,9 @@ final class AffySingleChromData {
 		}
 
 		if (had_bad_values) {
-			return Arrays.<Object>asList(x_out, y_out);
+			return Arrays.asList(x_out, y_out);
 		} else {
-			return Arrays.<Object>asList(x, y);
+			return Arrays.asList(x, y);
 		}
 	}
 }

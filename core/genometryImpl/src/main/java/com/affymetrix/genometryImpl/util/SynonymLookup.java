@@ -193,11 +193,9 @@ public class SynonymLookup {
 		} else {
 			Set<String> synonyms = new LinkedHashSet<>();
 
-			for (String key : thesaurus.keySet()) {
-				if (key.equalsIgnoreCase(synonym)) {
-					synonyms.addAll(thesaurus.get(key));
-				}
-			}
+			thesaurus.keySet().stream().filter(key -> key.equalsIgnoreCase(synonym)).forEach(key -> {
+				synonyms.addAll(thesaurus.get(key));
+			});
 			return new ImmutableSet.Builder<String>().addAll(synonyms).build();
 		}
 	}

@@ -79,38 +79,32 @@ public class ExportFileChooser extends JFileChooser {
 
         setFileFilter(selectedFilter);
 
-        addPropertyChangeListener(new PropertyChangeListener() {
+        addPropertyChangeListener(e -> {
+            String property = e.getPropertyName();
+            if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
 
-            public void propertyChange(PropertyChangeEvent e) {
-                String property = e.getPropertyName();
-                if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(property)) {
+                if (e.getOldValue() instanceof ExportFileFilter
+                        && e.getNewValue() instanceof ExportFileFilter) {
 
-                    if (e.getOldValue() instanceof ExportFileFilter
-                            && e.getNewValue() instanceof ExportFileFilter) {
+                    ExportFileFilter newFilter = (ExportFileFilter) e.getNewValue();
 
-                        ExportFileFilter newFilter = (ExportFileFilter) e.getNewValue();
+                    File currentDirectory = getCurrentDirectory();
+                    File previousFile1 = getPreviousFile();
+                    if (previousFile1 != null) {
 
-                        File currentDirectory = getCurrentDirectory();
-                        File previousFile = getPreviousFile();
-                        if (previousFile != null) {
-
-                            File file = null;
-                            if (currentDirectory != null) {
-                                file = new File(currentDirectory, previousFile.getName());
-                            } else {
-                                file = previousFile;
-                            }
-
-                            final File selectedFile = exportDialog.changeFileExtension(
-                                    file, newFilter.getExtension());
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                public void run() {
-                                    setPreviousFile(selectedFile);
-                                    validate();
-                                }
-                            });
+                        File file = null;
+                        if (currentDirectory != null) {
+                            file = new File(currentDirectory, previousFile1.getName());
+                        } else {
+                            file = previousFile1;
                         }
+
+                        final File selectedFile = exportDialog.changeFileExtension(
+                                file, newFilter.getExtension());
+                        SwingUtilities.invokeLater(() -> {
+                            setPreviousFile(selectedFile);
+                            validate();
+                        });
                     }
                 }
             }

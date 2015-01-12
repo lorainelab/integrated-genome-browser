@@ -107,21 +107,19 @@ public class SearchModeLucene implements IKeyWordSearch {
         if (search_text != null && !search_text.isEmpty()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             if (group != null) {
-                for (GenericVersion gVersion : group.getEnabledVersions()) {
-                    if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                        for (GenericFeature feature : gVersion.getFeatures()) {
-                            if (feature.isVisible() && feature.symL != null) {
-                                if (statusHolder != null) {
-                                    statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.symL.uri.toString(), search_text));
-                                }
-                                List<SeqSymmetry> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_text, MAX_HITS);
-                                if (results != null) {
-                                    syms.addAll(results);
-                                }
+                group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+                    for (GenericFeature feature : gVersion.getFeatures()) {
+                        if (feature.isVisible() && feature.symL != null) {
+                            if (statusHolder != null) {
+                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.symL.uri.toString(), search_text));
+                            }
+                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_text, MAX_HITS);
+                            if (results != null) {
+                                syms.addAll(results);
                             }
                         }
                     }
-                }
+                });
             }
         }
         String statusStr;

@@ -302,8 +302,8 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
         // collect all possible names from the given Properties
         int num_props = props.length;
         Map<String, String[]> rows_thus_far = new LinkedHashMap<>();
-        for (int i = 0; i < num_props; i++) {
-            for (String name : props[i].keySet()) {
+        for (Map<String, Object> prop : props) {
+            for (String name : prop.keySet()) {
                 if (name != null && rows_thus_far.containsKey(name)) {
                     continue;
                 }

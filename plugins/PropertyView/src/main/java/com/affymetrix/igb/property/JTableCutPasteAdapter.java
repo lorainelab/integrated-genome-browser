@@ -45,11 +45,9 @@ public final class JTableCutPasteAdapter {
             registerKeyStrokes();
         }
 
-        myJTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                copyAction.setEnabled(isValidSelectionForCopy());
-                pasteAction.setEnabled(true);
-            }
+        myJTable.getSelectionModel().addListSelectionListener(e -> {
+            copyAction.setEnabled(isValidSelectionForCopy());
+            pasteAction.setEnabled(true);
         });
     }
 

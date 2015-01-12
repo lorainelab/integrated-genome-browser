@@ -44,12 +44,7 @@ public class JRPButton extends JButton implements JRPWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPButton.this, "doClick()"));
-			}
-		});
+		addActionListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPButton.this, "doClick()")));
 	}
 
 	@Override

@@ -145,9 +145,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     private void addToTier(List<? extends SeqSymmetry> insyms) {
-        for (SeqSymmetry insym : insyms) {
-            addTopChild(insym);
-        }
+        insyms.forEach(this::addTopChild);
     }
 
     protected void addTopChild(SeqSymmetry sym) {
@@ -234,7 +232,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
             if ((sym instanceof PairedBamSymWrapper) && AbstractTierGlyph.useLabel(trackStyle)) {
-                pglyph = (EfficientSolidGlyph) EfficientMateJoinGlyph.class.newInstance();
+                pglyph = EfficientMateJoinGlyph.class.newInstance();
             } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
                 Optional<Object> property = getTheProperty(sym, trackStyle.getLabelField());
@@ -393,7 +391,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                     && (directionType == DirectionType.ARROW || directionType == DirectionType.BOTH)) {
                 return Optional.<GlyphI>fromNullable(new PointedGlyph());
             }
-            return Optional.<GlyphI>fromNullable((GlyphI) CHILD_GLYPH_CLASS.newInstance());
+            return Optional.fromNullable((GlyphI) CHILD_GLYPH_CLASS.newInstance());
         } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(AnnotationGlyphFactory.class.getName()).log(Level.SEVERE, null, ex);
         }

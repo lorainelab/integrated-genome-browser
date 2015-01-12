@@ -144,9 +144,8 @@ public class FasterExpandPacker extends ExpandPacker {
 //		boolean skipDraw = false;
         int row_number = 0;
 
-        for (int i = 0; i < child_count; i++) {
-            GlyphI child = children.get(i);
-//			child.setVisibility(true);
+        for (GlyphI child : children) {
+            //			child.setVisibility(true);
             child.setOverlapped(false);
 //			child.setSkipDraw(false);
             cbox = child.getCoordBox();
@@ -162,7 +161,7 @@ public class FasterExpandPacker extends ExpandPacker {
             boolean child_placed = false;
             int start_slot_index = 0;
             if (prev_min_xmax >= child_min) {
-				// no point in checking slots prior to and including prev_slot_index, so
+                // no point in checking slots prior to and including prev_slot_index, so
                 //  modify start_slot_index to be prev_slot_index++;
                 start_slot_index = prev_slot_index + 1;
             }
@@ -195,7 +194,7 @@ public class FasterExpandPacker extends ExpandPacker {
                 }
             }
             if (!child_placed) {
-				// make new slot for child (unless already have max number of slots allowed,
+                // make new slot for child (unless already have max number of slots allowed,
                 //   in which case layer at top/bottom depending on movetype
                 double new_ycoord = determineYCoord(this.getMoveType(), slot_maxes.size(), slot_height, spacing);
                 child.moveAbsolute(child_min, new_ycoord);

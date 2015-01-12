@@ -178,7 +178,7 @@ public class SeqFeature implements SeqFeatureI {
 
 	public void addScore(String name, String score) {
 		try {
-			double s = Double.valueOf(score).doubleValue();
+			double s = Double.valueOf(score);
 			addScore(name, s);
 		} catch (Exception ex) {
 		}

@@ -98,51 +98,42 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
+		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", e -> {
+            sourcesTable.stopCellEditing();
 
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
+            AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
+        });
 
-				AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
-			}
-		});
-
-		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
-				if (confirmDelete()) {
-					Object url = sourcesTable.getModel().getValueAt(
-							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-					removeDataSource(url.toString());
-					sourceTableModel.init();
-				}
-			}
-		});
+		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", e -> {
+            sourcesTable.stopCellEditing();
+            if (confirmDelete()) {
+                Object url = sourcesTable.getModel().getValueAt(
+                        sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                        ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+                removeDataSource(url.toString());
+                sourceTableModel.init();
+            }
+        });
 		removeServerButton.setEnabled(false);
 
-		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		sourcesTable.getSelectionModel().addListSelectionListener(event -> {
+            enableServerButtons(false);
 
-			public void valueChanged(ListSelectionEvent event) {
-				enableServerButtons(false);
+            if (sourcesTable.getSelectedRowCount() == 1) {
+                Object url = sourcesTable.getModel().getValueAt(
+                        sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                        ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+                GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
-				if (sourcesTable.getSelectedRowCount() == 1) {
-					Object url = sourcesTable.getModel().getValueAt(
-							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-					GenericServer server = ServerList.getServerInstance().getServer((String) url);
+                if (server == null) {
+                    server = ServerList.getRepositoryInstance().getServer((String) url);
+                }
 
-					if (server == null) {
-						server = ServerList.getRepositoryInstance().getServer((String) url);
-					}
-
-					if (!server.isDefault()) {
-						enableServerButtons(true);
-					}
-				}
-			}
-		});
+                if (!server.isDefault()) {
+                    enableServerButtons(true);
+                }
+            }
+        });
 
 		layout.setHorizontalGroup(addServerComponents(layout.createParallelGroup(TRAILING), layout.createSequentialGroup()));
 		layout.setVerticalGroup(addServerComponents(layout.createSequentialGroup(), layout.createParallelGroup(BASELINE)));

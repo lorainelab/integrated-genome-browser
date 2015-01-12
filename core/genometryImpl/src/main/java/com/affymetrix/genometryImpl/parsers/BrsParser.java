@@ -402,7 +402,7 @@ public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq s
 
 	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return BrsParser.parse((InputStream) dis, annot_type, group, false);
+			return BrsParser.parse(dis, annot_type, group, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BrsParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

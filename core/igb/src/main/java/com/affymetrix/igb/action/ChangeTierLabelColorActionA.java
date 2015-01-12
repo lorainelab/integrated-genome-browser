@@ -37,23 +37,17 @@ public class ChangeTierLabelColorActionA extends SeqMapViewActionA {
                 chooser.setColor(style_0.getLabelBackground());
             }
         }
-        ActionListener al = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (ITrackStyleExtended style : allStyles) {
-                    if (style != null) {
-                        if (fg) {
-                            style.setLabelForeground(chooser.getColor());
-                        } else {
-                            style.setLabelBackground(chooser.getColor());
-                        }
-                    }
+        ActionListener al = e -> {
+            allStyles.stream().filter(style -> style != null).forEach(style -> {
+                if (fg) {
+                    style.setLabelForeground(chooser.getColor());
+                } else {
+                    style.setLabelBackground(chooser.getColor());
                 }
-            }
+            });
         };
 
-        JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
+        JDialog dialog = JColorChooser.createDialog(null, // parent
                 "Pick a Color",
                 true, //modal
                 chooser,

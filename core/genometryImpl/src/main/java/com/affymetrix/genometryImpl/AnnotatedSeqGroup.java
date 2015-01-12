@@ -35,7 +35,7 @@ public class AnnotatedSeqGroup {
     public AnnotatedSeqGroup(String gid) {
         id = gid;
         use_synonyms = true;
-        id2seq = Collections.<String, BioSeq>synchronizedMap(new LinkedHashMap<String, BioSeq>());
+        id2seq = Collections.synchronizedMap(new LinkedHashMap<>());
         id2seq_dirty_bit = false;
         seqlist = new ArrayList<>();
     }
@@ -132,7 +132,7 @@ public class AnnotatedSeqGroup {
             seqlist = new ArrayList<>(id2seq.values());
             id2seq_dirty_bit = false;
         }
-        return Collections.<BioSeq>unmodifiableList(seqlist);
+        return Collections.unmodifiableList(seqlist);
     }
 
     /**

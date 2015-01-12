@@ -31,37 +31,37 @@ public class Wig2USeq {
 		//for each file
 		try{
 			System.out.println("\nParsing...");
-			for (int x=0; x< files.length; x++){
-				workingWigFile = files[x];
-				System.out.println("\t"+workingWigFile);
+			for (File file : files) {
+				workingWigFile = file;
+				System.out.println("\t" + workingWigFile);
 
 				//what kind of wig file?
-				String type =  parseWigFileType();
+				String type = parseWigFileType();
 				if (type == null) {
-					USeqUtilities.printExit("\nCould not parse the file type from this file, aborting. -> "+workingWigFile+"\n\t" +
-  "Looking for a line containing 'type=bedGraph' or starting with 'fixedStep' or 'variableStep'.");
+					USeqUtilities.printExit("\nCould not parse the file type from this file, aborting. -> " + workingWigFile + "\n\t" +
+							"Looking for a line containing 'type=bedGraph' or starting with 'fixedStep' or 'variableStep'.");
 				}
 
 				//make save directory
 				saveDirectory = USeqUtilities.makeDirectory(workingWigFile, ".TempDelMe");
 
-                            //parse file and write to save directory
-                            switch (type) {
-                                case "variableStep":
-                                    parseVariableStepWigFile();
-                                    break;
-                                case "fixedStep":
-                                    graphStyle =1;
-                                    parseFixedStepWigFile();
-                                    break;
-                                case "bedGraph":
-                                    graphStyle =1;
-                                    parseBedGraphFile();
-                                    break;
-                                default:
-                                    USeqUtilities.printExit("Not implemented "+type);
-                                    break;
-                            }
+				//parse file and write to save directory
+				switch (type) {
+					case "variableStep":
+						parseVariableStepWigFile();
+						break;
+					case "fixedStep":
+						graphStyle = 1;
+						parseFixedStepWigFile();
+						break;
+					case "bedGraph":
+						graphStyle = 1;
+						parseBedGraphFile();
+						break;
+					default:
+						USeqUtilities.printExit("Not implemented " + type);
+						break;
+				}
 
 				//write the read me
 				writeReadMeTxt();

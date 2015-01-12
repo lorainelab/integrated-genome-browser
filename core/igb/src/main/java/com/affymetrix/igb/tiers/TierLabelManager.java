@@ -133,9 +133,7 @@ public final class TierLabelManager implements PropertyHolder {
                     graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
                 }
             }
-            for (ViewI v : tg.getScene().getViews()) {
-                tg.pack(v);
-            }
+            tg.getScene().getViews().forEach(tg::pack);
         }
     }
 
@@ -356,15 +354,13 @@ public final class TierLabelManager implements PropertyHolder {
 
         List<Map<String, Object>> propList = new ArrayList<>();
 
-        for (TierGlyph glyph : getSelectedTiers()) {
-            if (!(glyph.getAnnotStyle().isGraphTier())) {
-                Map<String, Object> props = getTierProperties(glyph);
+        getSelectedTiers().stream().filter(glyph -> !(glyph.getAnnotStyle().isGraphTier())).forEach(glyph -> {
+            Map<String, Object> props = getTierProperties(glyph);
 
-                if (props != null) {
-                    propList.add(props);
-                }
+            if (props != null) {
+                propList.add(props);
             }
-        }
+        });
 
         return propList;
     }
@@ -418,11 +414,7 @@ public final class TierLabelManager implements PropertyHolder {
      * Selects all non-hidden tiers.
      */
     void selectAllTiers() {
-        for (TierLabelGlyph tierlabel : getAllTierLabels()) {
-            if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
-                labelmap.select(tierlabel);
-            }
-        }
+        getAllTierLabels().stream().filter(tierlabel -> tierlabel.getReferenceTier().getAnnotStyle().getShow()).forEach(labelmap::select);
         doGraphSelections(false);
         //labelmap.updateWidget();
         tiermap.updateWidget(); // make sure selections becomes visible
@@ -521,12 +513,10 @@ public final class TierLabelManager implements PropertyHolder {
      * @see #repackTheTiers(boolean, boolean)
      */
     public void showTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
-        for (TierLabelGlyph g : tier_labels) {
-            if (g.getInfo() instanceof TierGlyph) {
-                TierGlyph tier = (TierGlyph) g.getInfo();
-                tier.getAnnotStyle().setShow(true);
-            }
-        }
+        tier_labels.stream().filter(g -> g.getInfo() instanceof TierGlyph).forEach(g -> {
+            TierGlyph tier = (TierGlyph) g.getInfo();
+            tier.getAnnotStyle().setShow(true);
+        });
 
         repackTheTiers(full_repack, fit_y);
     }
@@ -539,12 +529,10 @@ public final class TierLabelManager implements PropertyHolder {
      * @param fit_y Whether to change the zoom to fit all the tiers in the view
      */
     public void hideTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
-        for (TierLabelGlyph g : tier_labels) {
-            if (g.getInfo() instanceof TierGlyph) {
-                TierGlyph tier = (TierGlyph) g.getInfo();
-                tier.getAnnotStyle().setShow(false);
-            }
-        }
+        tier_labels.stream().filter(g -> g.getInfo() instanceof TierGlyph).forEach(g -> {
+            TierGlyph tier = (TierGlyph) g.getInfo();
+            tier.getAnnotStyle().setShow(false);
+        });
 
         repackTheTiers(full_repack, fit_y);
     }
@@ -691,25 +679,15 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     public void deselectTierLabels() {
-        for (TierLabelGlyph tglyph : getAllTierLabels()) {
-            labelmap.deselect(tglyph);
-        }
+        getAllTierLabels().forEach(labelmap::deselect);
     }
 
     public void deselect(GlyphI tierGlyph) {
-        for (TierLabelGlyph tlg : tiermap.getTierLabels()) {
-            if (tlg.getReferenceTier() == tierGlyph) {
-                labelmap.deselect(tlg);
-            }
-        }
+        tiermap.getTierLabels().stream().filter(tlg -> tlg.getReferenceTier() == tierGlyph).forEach(labelmap::deselect);
     }
 
     public void select(GlyphI tierGlyph) {
-        for (TierLabelGlyph tlg : tiermap.getTierLabels()) {
-            if (tlg.getReferenceTier() == tierGlyph) {
-                labelmap.select(tlg);
-            }
-        }
+        tiermap.getTierLabels().stream().filter(tlg -> tlg.getReferenceTier() == tierGlyph).forEach(labelmap::select);
     }
 
     public void addTrackSelectionListener(TrackSelectionListener l) {

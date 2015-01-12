@@ -94,15 +94,11 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 
             final JRPButton cancelTask = new JRPButton("ThreadHandler_cancelTask", closeIcon);
             cancelTask.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 0));
-            cancelTask.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    box.setVisible(false);
-                    if (worker != null && !worker.isCancelled() && !worker.isDone()) {
-                        worker.cancelThread(true);
-                        ourLogger.log(Level.INFO, "Cancelled thread {0}", worker.getMessage());
-                    }
+            cancelTask.addActionListener(ae -> {
+                box.setVisible(false);
+                if (worker != null && !worker.isCancelled() && !worker.isDone()) {
+                    worker.cancelThread(true);
+                    ourLogger.log(Level.INFO, "Cancelled thread {0}", worker.getMessage());
                 }
             });
             final JProgressBar progressBar = new JProgressBar(0, 100);
@@ -110,14 +106,11 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
             progressBar.setMaximumSize(new Dimension(100, 25));
 
             worker.addPropertyChangeListener(
-                    new PropertyChangeListener() {
-                        @Override
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if ("progress".equals(evt.getPropertyName())) {
-                                if (runningTasks != null && runningTasks.isShowing()) {
-                                    progressBar.setValue((Integer) evt.getNewValue());
-                                    progressBar.repaint();
-                                }
+                    evt -> {
+                        if ("progress".equals(evt.getPropertyName())) {
+                            if (runningTasks != null && runningTasks.isShowing()) {
+                                progressBar.setValue((Integer) evt.getNewValue());
+                                progressBar.repaint();
                             }
                         }
                     }

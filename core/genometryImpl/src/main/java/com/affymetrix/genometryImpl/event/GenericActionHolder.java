@@ -89,9 +89,7 @@ public class GenericActionHolder {
 
 	public void addGenericActionListener(GenericActionListener listener) {
 		listeners.add(listener);
-		for (GenericAction genericAction : getGenericActions()) {
-			listener.onCreateGenericAction(genericAction);
-		}
+		getGenericActions().forEach(listener::onCreateGenericAction);
 	}
 
 	public void removeGenericActionListener(GenericActionListener listener) {

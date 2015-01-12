@@ -139,8 +139,8 @@ public class PSLParserTest {
         List<SeqSymmetry> syms1 = null;
         List<UcscPslSym> syms2 = null;
 
-        for (int i = 0; i < seqs.size(); i++) {
-            seq = seqs.get(i);
+        for (BioSeq seq1 : seqs) {
+            seq = seq1;
             syms1 = filterResultsByChromosome(syms, seq);
             syms2 = psl.getChromosome(seq);
             testSeqSymmetry(syms1, syms2);

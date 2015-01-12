@@ -87,8 +87,7 @@ public final class MismatchPileupType extends MismatchGraphType {
 			return;
 		}
 		float[] residuesY = mmgs.getAllResiduesY(i);
-		for (int j = 0; j < barOrder.length; j++) {
-			int loopIndex = barOrder[j];
+		for (int loopIndex : barOrder) {
 			float _ytemp = residuesY[loopIndex];
 			if (_ytemp == 0) {
 				continue;

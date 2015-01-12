@@ -157,7 +157,7 @@ public final class BAM extends XAM {
         long blockAddressValue = ((Long) privateBlockAddressField.get(compressedInputStreamValue));
         Field privateCurrentOffsetField = compressedInputStreamValue.getClass().getDeclaredField("mCurrentOffset");
         privateCurrentOffsetField.setAccessible(true);
-        int currentOffsetValue = ((Integer) privateCurrentOffsetField.get(compressedInputStreamValue));;
+        int currentOffsetValue = ((Integer) privateCurrentOffsetField.get(compressedInputStreamValue));
         return new BlockCompressedStreamPosition(blockAddressValue, currentOffsetValue);
     }
 

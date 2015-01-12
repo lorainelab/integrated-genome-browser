@@ -49,7 +49,7 @@ public enum ResiduesChars {
     public static int getValue(char ch) {
         Integer val = rcMap.get(ch);
         if (val != null) {
-            return val.intValue();
+            return val;
         }
         return -1;
     }

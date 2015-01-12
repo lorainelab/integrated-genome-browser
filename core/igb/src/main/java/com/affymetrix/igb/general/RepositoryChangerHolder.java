@@ -16,17 +16,14 @@ import javax.swing.JFrame;
 public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	private static RepositoryChangerHolder instance = new RepositoryChangerHolder();
 	
-	private final GenericServerInitListener genericServerListener = new GenericServerInitListener() {
-		@Override
-		public void genericServerInit(GenericServerInitEvent evt) {
-			GenericServer gServer = (GenericServer) evt.getSource();
-			if (gServer.getServerStatus() == ServerStatus.Initialized) {
-				repositoryAdded(gServer.URL);
-			} else if (gServer.getServerStatus() == ServerStatus.NotResponding) {
-				repositoryRemoved(gServer.URL);
-			}
-		}
-	};
+	private final GenericServerInitListener genericServerListener = evt -> {
+        GenericServer gServer = (GenericServer) evt.getSource();
+        if (gServer.getServerStatus() == ServerStatus.Initialized) {
+            repositoryAdded(gServer.URL);
+        } else if (gServer.getServerStatus() == ServerStatus.NotResponding) {
+            repositoryRemoved(gServer.URL);
+        }
+    };
 			
 	private RepositoryChangerHolder() {
 		super();
@@ -82,11 +79,9 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 */
 	public Map<String, String> getRepositories() {
 		Map<String, String> repositories = new HashMap<>();
-		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
-			if (repositoryServer.isEnabled()) {
-				repositories.put(repositoryServer.serverName, repositoryServer.URL);
-			}
-		}
+		ServerList.getRepositoryInstance().getAllServers().stream().filter(repositoryServer -> repositoryServer.isEnabled()).forEach(repositoryServer -> {
+			repositories.put(repositoryServer.serverName, repositoryServer.URL);
+		});
 		return repositories;
 	}
 

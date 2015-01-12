@@ -19,7 +19,7 @@ public class ComboChainOperator implements Operator, IParameters {
 	private final List<Operator> operators;
 	public ComboChainOperator(Operator ... operators_) {
 		super();
-		this.operators = (operators_ == null) ? new ArrayList<Operator>() : Arrays.asList(operators_);
+		this.operators = (operators_ == null) ? new ArrayList<>() : Arrays.asList(operators_);
 		checkAllCompatible();
 	}
 
@@ -102,11 +102,9 @@ public class ComboChainOperator implements Operator, IParameters {
 	@Override
 	public Map<String, Class<?>> getParametersType() {
 		Map<String, Class<?>> parameters = new HashMap<>();
-		for (Operator operator : operators) {
-			if(operator instanceof IParameters){
-				parameters.putAll(((IParameters)operator).getParametersType());
-			}
-		}
+		operators.stream().filter(operator -> operator instanceof IParameters).forEach(operator -> {
+			parameters.putAll(((IParameters) operator).getParametersType());
+		});
 		return parameters;
 	}
 

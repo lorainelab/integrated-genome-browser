@@ -19,17 +19,12 @@ public class LockTierHeightAction extends TierHeightAction {
     private static final long serialVersionUID = 1L;
     private final static LockTierHeightAction lockTierAction = new LockTierHeightAction();
 
-    private Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener() {
-
-        @Override
-        public void selectionRefreshed() {
-            if ((!isAllButOneLocked() && isAnyLockable())) {
-                setEnabled(true);
-            } else {
-                setEnabled(false);
-            }
+    private Selections.RefreshSelectionListener enabler = () -> {
+        if ((!isAllButOneLocked() && isAnyLockable())) {
+            setEnabled(true);
+        } else {
+            setEnabled(false);
         }
-
     };
 
     public static LockTierHeightAction getAction() {

@@ -234,9 +234,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
         } catch (Exception ex) {
             throw ex;
         } finally {
-            for (BufferedWriter b : chrs.values()) {
-                GeneralUtils.safeClose(b);
-            }
+            chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(bw);
         }

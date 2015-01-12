@@ -60,12 +60,9 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
      */
     public void showConsole() {
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setVisible(true);
-                //toggleVisible();
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            setVisible(true);
+            //toggleVisible();
         });
 
     }
@@ -116,18 +113,10 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
         jScrollPane1.setViewportView(consoleTextArea);
 
         closeBtn.setText("Close");
-        closeBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeBtnActionPerformed(evt);
-            }
-        });
+        closeBtn.addActionListener(this::closeBtnActionPerformed);
 
         copyToClipboardBtn.setText("Copy To Clipboard");
-        copyToClipboardBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyToClipboardBtnActionPerformed(evt);
-            }
-        });
+        copyToClipboardBtn.addActionListener(this::copyToClipboardBtnActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

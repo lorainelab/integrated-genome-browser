@@ -176,35 +176,15 @@ public class OtherOptionsView extends IPrefEditorComponent {
 
         otherLabel.setText("Other:");
 
-        AColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AColorComboBoxActionPerformed(evt);
-            }
-        });
+        AColorComboBox.addActionListener(this::AColorComboBoxActionPerformed);
 
-        TColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TColorComboBoxActionPerformed(evt);
-            }
-        });
+        TColorComboBox.addActionListener(this::TColorComboBoxActionPerformed);
 
-        GColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GColorComboBoxActionPerformed(evt);
-            }
-        });
+        GColorComboBox.addActionListener(this::GColorComboBoxActionPerformed);
 
-        CColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CColorComboBoxActionPerformed(evt);
-            }
-        });
+        CColorComboBox.addActionListener(this::CColorComboBoxActionPerformed);
 
-        OtherColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OtherColorComboBoxActionPerformed(evt);
-            }
-        });
+        OtherColorComboBox.addActionListener(this::OtherColorComboBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout residueColorPanelLayout = new org.jdesktop.layout.GroupLayout(residueColorPanel);
         residueColorPanel.setLayout(residueColorPanelLayout);
@@ -284,11 +264,7 @@ public class OtherOptionsView extends IPrefEditorComponent {
         com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
         else
         com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
-        displayOption.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                displayOptionStateChanged(evt);
-            }
-        });
+        displayOption.addItemListener(this::displayOptionStateChanged);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Codon Display"));
 

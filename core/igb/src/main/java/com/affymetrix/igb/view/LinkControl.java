@@ -152,12 +152,7 @@ final class LinkControl implements ContextualPopupListener {
 	private static JMenuItem makeMenuItem(String name, final String url) {
 		JMenuItem linkMI = new JMenuItem(name);
 		if (url != null) {
-			linkMI.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent evt) {
-					GeneralUtils.browse(url);
-				}
-			});
+			linkMI.addActionListener(evt -> GeneralUtils.browse(url));
 		}
 		return linkMI;
 	}

@@ -354,8 +354,8 @@ class HeatMapSliderUI extends BasicSliderUI {
         @Override
         public void stateChanged(ChangeEvent arg0) {
             boolean any_dragging = true;
-            for (int i = 0; i < thumbsDragging.length; i++) {
-                any_dragging &= thumbsDragging[i];
+            for (boolean aThumbsDragging : thumbsDragging) {
+                any_dragging &= aThumbsDragging;
             }
             if (!any_dragging) {
                 calculateThumbLocation();
@@ -447,7 +447,6 @@ class HeatMapSliderUI extends BasicSliderUI {
                     int halfThumbHeight = thumbRect.height / 2;
                     int thumbTop = currentMouseY - offset;
                     int thumbHeightMiddle = thumbTop + halfThumbHeight;
-                    ;
 
                     ((HeatMapSlider) slider).setValue(no, valueForYPosition(thumbHeightMiddle));
                     setUpperThumbLocation(no, thumbRect.x, yPositionForValue(((HeatMapSlider) slider).getValue(no)));

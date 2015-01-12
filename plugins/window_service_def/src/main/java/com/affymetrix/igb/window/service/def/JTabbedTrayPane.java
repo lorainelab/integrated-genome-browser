@@ -187,14 +187,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
                         }
                     }
                 });
-        tab_pane.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
-                if (sel != null) {
-                    GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
-                }
+        tab_pane.addChangeListener(e -> {
+            IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
+            if (sel != null) {
+                GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
             }
         });
 
@@ -400,15 +396,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         }
         frame.setVisible(true);
 
-        final Runnable return_panes_to_main_window = new Runnable() {
-
-            public void run() {
-                // save the current size into the preferences, so the window
-                // will re-open with this size next time
-                PreferenceUtils.saveWindowLocation(frame, title);
-                setDividerLocation(saveDividerProportionalLocation);
-                extendTray();
-            }
+        final Runnable return_panes_to_main_window = () -> {
+            // save the current size into the preferences, so the window
+            // will re-open with this size next time
+            PreferenceUtils.saveWindowLocation(frame, title);
+            setDividerLocation(saveDividerProportionalLocation);
+            extendTray();
         };
 
         frame.addWindowListener(new WindowAdapter() {
@@ -468,7 +461,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         String name = plugin.getName();
         boolean selectedTabRemoved = false;
         for (int i = 1; i < tab_pane.getTabCount(); i++) {
-            if (name.equals(((IGBTabPanel) tab_pane.getComponentAt(i)).getName())) {
+            if (name.equals(tab_pane.getComponentAt(i).getName())) {
                 if (tab_pane.getSelectedIndex() == i) {
                     selectedTabRemoved = true;
                 }

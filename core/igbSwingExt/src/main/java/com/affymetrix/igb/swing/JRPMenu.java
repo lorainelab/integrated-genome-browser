@@ -37,12 +37,7 @@ public class JRPMenu extends JMenu implements JRPWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPMenu.this, "doClick()"));
-			}
-		});
+		addActionListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPMenu.this, "doClick()")));
 	}
 
 	@Override

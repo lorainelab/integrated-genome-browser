@@ -570,8 +570,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 				System.out.println("processing all gff files in directory: " + in_file);
 				// process all gff files in directory
 				File[] fils = gff_file.listFiles();
-				for (int i=0; i<fils.length; i++)  {
-					File fil = fils[i];
+				for (File fil : fils) {
 					String fname = fil.getName();
 					if (fname.endsWith(".gff") || fname.endsWith(".gtf")) {
 						gfiles.add(fil);

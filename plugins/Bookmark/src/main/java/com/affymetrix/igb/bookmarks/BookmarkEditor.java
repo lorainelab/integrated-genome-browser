@@ -49,11 +49,7 @@ public class BookmarkEditor {
                 "Position and Data", PREF_BOOKMARK_TYPE, default_bookmark_type);
         useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
                 PREF_USE_DEFAULT_NAME, defaultUseDefaultName);
-        useDefaultName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setNameField();
-            }
-        });
+        useDefaultName.addActionListener(evt -> setNameField());
         ButtonGroup group = new ButtonGroup();
         group.add(positionOnlyB);
         group.add(positionDataB);
@@ -61,11 +57,7 @@ public class BookmarkEditor {
         scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         op = new JOptionPane(null, JOptionPane.PLAIN_MESSAGE,
                 JOptionPane.CANCEL_OPTION, null, null);
-        op.addPropertyChangeListener("value", new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                addBookmark();
-            }
-        });
+        op.addPropertyChangeListener("value", evt -> addBookmark());
         op.setMessage(new Object[]{"", useDefaultName, "Name:", nameField,
             "Comment:", scrollpane, positionOnlyB, positionDataB});
     }

@@ -54,7 +54,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
 
         }
 
-    };
+    }
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -98,16 +98,13 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
     }
 
     private void updateViewer() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SeqMapView v = getSeqMapView();
-                GenometryModel m = GenometryModel.getInstance();
-                BioSeq s = m.getSelectedSeq();
-                v.setAnnotatedSeq(s, true, true);
-                v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
-                v.postSelections(); // to disable partner.
-            }
+        SwingUtilities.invokeLater(() -> {
+            SeqMapView v = getSeqMapView();
+            GenometryModel m = GenometryModel.getInstance();
+            BioSeq s = m.getSelectedSeq();
+            v.setAnnotatedSeq(s, true, true);
+            v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
+            v.postSelections(); // to disable partner.
         });
     }
 }

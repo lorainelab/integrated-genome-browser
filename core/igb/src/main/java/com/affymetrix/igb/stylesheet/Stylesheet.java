@@ -189,10 +189,9 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 
     sb.append("\n");
     sb.append(indent).append("<STYLES>");
-    Iterator<StyleElement> iter = this.stylename2styleElement.values().iterator();
-    while (iter.hasNext()) {
+    for (StyleElement styleElement1 : this.stylename2styleElement.values()) {
       sb.append("\n");
-      StyleElement styleElement = iter.next();
+      StyleElement styleElement = styleElement1;
       styleElement.appendXML(indent + "  ", sb);
     }
     sb.append("\n").append(indent).append("</STYLES>\n");
@@ -205,11 +204,9 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 	associations.addAll(filetype2association.values());
     associations.addAll(regex2association.values());
     associations.addAll(type2association.values());
-	
-    Iterator<AssociationElement> a_iter = associations.iterator();
-    while (a_iter.hasNext()) {
-      AssociationElement ae = a_iter.next();
-      ae.appendXML(indent+"  ",sb);
+
+    for (AssociationElement ae : associations) {
+      ae.appendXML(indent + "  ", sb);
     }
 
     sb.append(indent).append("</ASSOCIATIONS>\n");

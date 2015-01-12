@@ -86,7 +86,7 @@ public abstract class CytobandGlyph {
                 default:
                     efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
                     efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
+                    efg.setForegroundColor(cyto_sym.getTextColor());
                     ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
                     ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
                     break;

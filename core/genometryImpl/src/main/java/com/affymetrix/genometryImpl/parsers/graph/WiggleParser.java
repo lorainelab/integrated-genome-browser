@@ -43,7 +43,7 @@ public final class WiggleParser implements GraphParser {
 	private static enum WigFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
-	};
+	}
 
 	private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
 	private static final boolean ensure_unique_id = true;

@@ -42,22 +42,19 @@ public class ExtensionPointHandler<S> {
                 }
             }
             bundleContext.addServiceListener(
-                    new ServiceListener() {
-                        @Override
-                        public void serviceChanged(ServiceEvent event) {
-                            ServiceReference<Z> serviceReference = (ServiceReference<Z>) event.getServiceReference();
-                            Z extensionPointImpl = bundleContext.getService(serviceReference);
-                            if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-                                extensionPointHandler.removeExtensionPointImpl(extensionPointImpl);
-                                for (ExtensionPointListener<Z> listener : extensionPointHandler.listeners) {
-                                    listener.removeService(extensionPointImpl);
-                                }
+                    event -> {
+                        ServiceReference<Z> serviceReference = (ServiceReference<Z>) event.getServiceReference();
+                        Z extensionPointImpl = bundleContext.getService(serviceReference);
+                        if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
+                            extensionPointHandler.removeExtensionPointImpl(extensionPointImpl);
+                            for (ExtensionPointListener<Z> listener : extensionPointHandler.listeners) {
+                                listener.removeService(extensionPointImpl);
                             }
-                            if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-                                extensionPointHandler.addExtensionPointImpl(extensionPointImpl);
-                                for (ExtensionPointListener<Z> listener : extensionPointHandler.listeners) {
-                                    listener.addService(extensionPointImpl);
-                                }
+                        }
+                        if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
+                            extensionPointHandler.addExtensionPointImpl(extensionPointImpl);
+                            for (ExtensionPointListener<Z> listener : extensionPointHandler.listeners) {
+                                listener.addService(extensionPointImpl);
                             }
                         }
                     }, "(objectClass=" + clazz.getName() + ")");
@@ -68,9 +65,7 @@ public class ExtensionPointHandler<S> {
     }
 
     public void addListener(ExtensionPointListener<S> listener) {
-        for (S s : getExtensionPointImpls()) {
-            listener.addService(s);
-        }
+        getExtensionPointImpls().forEach(listener::addService);
         listeners.add(listener);
     }
 

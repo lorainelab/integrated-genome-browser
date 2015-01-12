@@ -73,12 +73,10 @@ final public class Bookmarks {
         List<String> queries = new ArrayList<>();
         List<String> servers = new ArrayList<>();
 
-        for (SymBookmark bookmark : this.syms) {
-            if (!bookmark.isGraph()) {
-                servers.add(bookmark.getServer());
-                queries.add(bookmark.getPath());
-            }
-        }
+        this.syms.stream().filter(bookmark -> !bookmark.isGraph()).forEach(bookmark -> {
+            servers.add(bookmark.getServer());
+            queries.add(bookmark.getPath());
+        });
 
         mark_sym.setProperty(Bookmark.QUERY_URL, queries);
         mark_sym.setProperty(Bookmark.SERVER_URL, servers);

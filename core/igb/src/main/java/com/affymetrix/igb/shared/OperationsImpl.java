@@ -55,20 +55,10 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
         name2operation = new HashMap<>();
 
         initComponents(igbS);
-        getTransformationCB().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                setTransformationDisplay(true);
-            }
-        });
+        getTransformationCB().addItemListener(e -> setTransformationDisplay(true));
 
         getOperationCB().addMouseListener(new HoverEffect());
-        getOperationCB().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                setOperationDisplay(true);
-            }
-        });
+        getOperationCB().addItemListener(e -> setOperationDisplay(true));
 
 
 
@@ -109,12 +99,9 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     public void updateViewer() {
         // set selections to empty so that options get turned off
         resetAll(false);
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                igbService.getSeqMapView().updatePanel();
-                resetAll(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            igbService.getSeqMapView().updatePanel();
+            resetAll(true);
         });
     }
 
@@ -368,12 +355,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                 ((GraphSym) rootSyms.get(1)).setGraphName("B");
 
                 comp.setToolTipText(null);
-                ThreadUtils.runOnEventQueue(new Runnable() {
-
-                    public void run() {
-                        igbService.getSeqMap().updateWidget();
-                    }
-                });
+                ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
             }
         }
 
@@ -383,12 +365,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                     ((GraphSym) rootSyms.get(0)).setGraphName(A);
                     ((GraphSym) rootSyms.get(1)).setGraphName(B);
 
-                    ThreadUtils.runOnEventQueue(new Runnable() {
-
-                        public void run() {
-                            igbService.getSeqMap().updateWidget();
-                        }
-                    });
+                    ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
                     A = null;
                     B = null;
 

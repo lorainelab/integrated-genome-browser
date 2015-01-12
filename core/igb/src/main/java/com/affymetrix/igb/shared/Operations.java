@@ -41,11 +41,7 @@ public abstract class Operations extends javax.swing.JPanel {
 
         transformationGoB.setText("Go");
         transformationGoB.setToolTipText("Click to run operation on selected tracks.");
-        transformationGoB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                transformationGoBActionPerformed(evt);
-            }
-        });
+        transformationGoB.addActionListener(this::transformationGoBActionPerformed);
 
         transformationParam.setEditable(false);
         ((javax.swing.text.AbstractDocument)transformationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
@@ -93,11 +89,7 @@ public abstract class Operations extends javax.swing.JPanel {
 
         operationGoB.setText("Go");
         operationGoB.setToolTipText("Click to run operation on selected tracks.");
-        operationGoB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                operationGoBActionPerformed(evt);
-            }
-        });
+        operationGoB.addActionListener(this::operationGoBActionPerformed);
 
         operationParamLabel.setText(null);
         operationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));

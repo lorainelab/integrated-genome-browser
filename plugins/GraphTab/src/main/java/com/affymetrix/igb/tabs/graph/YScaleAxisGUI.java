@@ -71,21 +71,13 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         by_valRB_val.setText("Value");
         by_valRB_val.setToolTipText("Value is absolute Y-axis value");
         by_valRB_val.setIconTextGap(2);
-        by_valRB_val.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                by_valRB_valActionPerformed(evt);
-            }
-        });
+        by_valRB_val.addActionListener(this::by_valRB_valActionPerformed);
 
         VisibleRangeButtonGroup.add(by_percentileRB_val);
         by_percentileRB_val.setText("Percentile");
         by_percentileRB_val.setToolTipText("Sets Y-axis to show percentile of data");
         by_percentileRB_val.setIconTextGap(2);
-        by_percentileRB_val.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                by_percentileRB_valActionPerformed(evt);
-            }
-        });
+        by_percentileRB_val.addActionListener(this::by_percentileRB_valActionPerformed);
 
         rangeSlider.setToolTipText("Set left knob to minimum and right know to maxium.");
 
@@ -93,19 +85,11 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 
         minText.setColumns(5);
         minText.setToolTipText("Minimum value");
-        minText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minTextActionPerformed(evt);
-            }
-        });
+        minText.addActionListener(this::minTextActionPerformed);
 
         maxText.setColumns(8);
         maxText.setToolTipText("Maximum value");
-        maxText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxTextActionPerformed(evt);
-            }
-        });
+        maxText.addActionListener(this::maxTextActionPerformed);
 
         maxValLabel.setText("Max:");
 
@@ -153,11 +137,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         heightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Height"));
         heightPanel.setToolTipText("Changes the height for selected graph");
 
-        heightSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                heightSliderStateChanged(evt);
-            }
-        });
+        heightSlider.addChangeListener(this::heightSliderStateChanged);
 
         org.jdesktop.layout.GroupLayout heightPanelLayout = new org.jdesktop.layout.GroupLayout(heightPanel);
         heightPanel.setLayout(heightPanelLayout);

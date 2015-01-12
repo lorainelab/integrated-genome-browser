@@ -54,7 +54,7 @@ public final class RunScriptAction extends GenericAction {
                 "22x22/actions/run_script.png",
                 KeyEvent.VK_R, null, true);
 
-        this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
+        this.gviewerFrame = IGB.getSingleton().getFrame();
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
     }
 

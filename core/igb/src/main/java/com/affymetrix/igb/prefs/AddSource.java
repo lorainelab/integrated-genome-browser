@@ -153,34 +153,18 @@ public class AddSource extends JFrame {
         typeLabel.setText("Type:");
 
         typeCombo = new JComboBox(ServerUtils.getServerTypes().toArray());
-        typeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                typeComboActionPerformed(evt);
-            }
-        });
+        typeCombo.addActionListener(this::typeComboActionPerformed);
 
         urlLabelField.setText("URL:");
 
         openDir.setText("Choose local folder");
-        openDir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openDirActionPerformed(evt);
-            }
-        });
+        openDir.addActionListener(this::openDirActionPerformed);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         addServerButton.setText("Submit");
-        addServerButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addServerButtonActionPerformed(evt);
-            }
-        });
+        addServerButton.addActionListener(this::addServerButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

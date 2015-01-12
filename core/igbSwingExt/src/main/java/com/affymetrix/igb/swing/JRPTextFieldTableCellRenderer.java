@@ -23,12 +23,7 @@ public class JRPTextFieldTableCellRenderer extends DefaultCellEditor
 		this.jrpTextField.setBackground(bg);
 		this.jrpTextField.setHorizontalAlignment(JRPTextField.RIGHT);
 
-		this.jrpTextField.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				stopCellEditing();
-			}
-		});
+		this.jrpTextField.addActionListener(e -> stopCellEditing());
 
 		setClickCountToStart(1);
 	}

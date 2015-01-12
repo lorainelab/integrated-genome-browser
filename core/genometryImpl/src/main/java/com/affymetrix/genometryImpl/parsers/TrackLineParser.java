@@ -154,7 +154,7 @@ public final class TrackLineParser {
 
         //this will create the correct track name for IGB to display the track correctly
         if (name != null) {
-            if (((default_track_name.indexOf('/') > -1) || (default_track_name.indexOf("\\\\") > -1)) && !name.equals(default_track_name)) {
+            if (((default_track_name.indexOf('/') > -1) || (default_track_name.contains("\\\\"))) && !name.equals(default_track_name)) {
                 String separator = "";
                 if (default_track_name.indexOf('/') > -1) {
                     separator = "/";

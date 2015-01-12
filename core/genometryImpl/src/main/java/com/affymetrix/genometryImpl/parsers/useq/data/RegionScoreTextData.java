@@ -54,23 +54,20 @@ public class RegionScoreTextData extends USeqData{
 	public void writeBed (PrintWriter out, boolean fixScore){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedRegionScoreTexts.length; i++){
-			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreTexts[i].text);
-			if (fixScore){
-				int score = USeqUtilities.fixBedScore(sortedRegionScoreTexts[i].score);
+		for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreText.text);
+			if (fixScore) {
+				int score = USeqUtilities.fixBedScore(sortedRegionScoreText.score);
 				if (tokens.length == 7) {
-					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+					out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + tokens[0] + "\t" + score + "\t" + strand + "\t" + tokens[1] + "\t" + tokens[2] + "\t" + tokens[3] + "\t" + tokens[4] + "\t" + tokens[5] + "\t" + tokens[6]);
+				} else {
+					out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + sortedRegionScoreText.text + "\t" + score + "\t" + strand);
 				}
-				else {
-					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ score +"\t"+strand);
-				}
-			}
-			else {
+			} else {
 				if (tokens.length == 7) {
-					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
-				}
-				else {
-					out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+					out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + tokens[0] + "\t" + sortedRegionScoreText.score + "\t" + strand + "\t" + tokens[1] + "\t" + tokens[2] + "\t" + tokens[3] + "\t" + tokens[4] + "\t" + tokens[5] + "\t" + tokens[6]);
+				} else {
+					out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + sortedRegionScoreText.text + "\t" + sortedRegionScoreText.score + "\t" + strand);
 				}
 			}
 		}
@@ -82,14 +79,14 @@ public class RegionScoreTextData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tScore\t(Text(s)");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
-				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text);
+			for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+				out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + sortedRegionScoreText.score + "\t" + sortedRegionScoreText.text);
 			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tScore\tText(s)\tStrand");
-			for (int i=0; i< sortedRegionScoreTexts.length; i++) {
-				out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].score+"\t"+sortedRegionScoreTexts[i].text+"\t"+strand);
+			for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+				out.println(chrom + "\t" + sortedRegionScoreText.start + "\t" + sortedRegionScoreText.stop + "\t" + sortedRegionScoreText.score + "\t" + sortedRegionScoreText.text + "\t" + strand);
 			}
 		}
 	}
@@ -118,8 +115,8 @@ public class RegionScoreTextData extends USeqData{
 			}
 			//check to short lengths
 			useShortLength = true;
-			for (int i=0; i< sortedRegionScoreTexts.length; i++){
-				int diff = sortedRegionScoreTexts[i].stop - sortedRegionScoreTexts[i].start;
+			for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+				int diff = sortedRegionScoreText.stop - sortedRegionScoreText.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -251,14 +248,14 @@ public class RegionScoreTextData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionScoreText[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedRegionScoreTexts.length;
+		for (RegionScoreTextData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedRegionScoreTexts.length;
 		}
 		//concatinate
 		RegionScoreText[] concatinate = new RegionScoreText[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			RegionScoreText[] slice = pdArray[i].sortedRegionScoreTexts;
+		for (RegionScoreTextData aPdArray : pdArray) {
+			RegionScoreText[] slice = aPdArray.sortedRegionScoreTexts;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -273,8 +270,8 @@ public class RegionScoreTextData extends USeqData{
 		int num = useqDataAL.size();
 		//convert ArrayList
 		ArrayList<RegionScoreTextData> a = new ArrayList<>(num);
-		for (int i=0; i< num; i++) {
-			a.add((RegionScoreTextData) useqDataAL.get(i));
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((RegionScoreTextData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -300,8 +297,8 @@ public class RegionScoreTextData extends USeqData{
 			}
 			//check to short lengths
 			useShortLength = true;
-			for (int i=0; i< sortedRegionScoreTexts.length; i++){
-				int diff = sortedRegionScoreTexts[i].stop - sortedRegionScoreTexts[i].start;
+			for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+				int diff = sortedRegionScoreText.stop - sortedRegionScoreText.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -499,9 +496,9 @@ public class RegionScoreTextData extends USeqData{
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
 		ArrayList<RegionScoreText> al = new ArrayList<>();
-		for (int i=0; i< sortedRegionScoreTexts.length; i++){
-			if (sortedRegionScoreTexts[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedRegionScoreTexts[i]);
+		for (RegionScoreText sortedRegionScoreText : sortedRegionScoreTexts) {
+			if (sortedRegionScoreText.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegionScoreText);
 			}
 		}
 		if (al.isEmpty()) {

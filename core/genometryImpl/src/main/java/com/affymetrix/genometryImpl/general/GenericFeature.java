@@ -210,7 +210,7 @@ public final class GenericFeature {
                  * Concentrate that URL with server path to support relative
                  * friendly URL (documentation link in feature tree)
                  */
-                return (String) this.gVersion.gServer.serverObj + friendlyURLString;
+                return this.gVersion.gServer.serverObj + friendlyURLString;
 
             } else {
                 return friendlyURLString;
@@ -242,7 +242,7 @@ public final class GenericFeature {
     }
 
     public Set<String> getMethods() {
-        return Collections.<String>unmodifiableSet(methods);
+        return Collections.unmodifiableSet(methods);
     }
 
     /**
@@ -274,9 +274,7 @@ public final class GenericFeature {
             }
         }
 
-        for (SeqSymmetry sym : removeList) {
-            requestSym.removeChild(sym);
-        }
+        removeList.forEach(requestSym::removeChild);
 
         removeList.clear();
     }

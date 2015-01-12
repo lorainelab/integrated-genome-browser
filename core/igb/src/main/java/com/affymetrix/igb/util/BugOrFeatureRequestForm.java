@@ -55,20 +55,12 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
         buttonGroup.add(bugButton);
         bugButton.setText("Bug");
         bugButton.setSelected(!feature);
-        bugButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bugButtonActionPerformed(evt);
-            }
-        });
+        bugButton.addActionListener(this::bugButtonActionPerformed);
 
         buttonGroup.add(featureButton);
         featureButton.setText("Feature");
         featureButton.setSelected(feature);
-        featureButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                featureButtonActionPerformed(evt);
-            }
-        });
+        featureButton.addActionListener(this::featureButtonActionPerformed);
 
         summLabel.setText("Summary* :");
 
@@ -79,11 +71,7 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
         jScrollPane1.setViewportView(descArea);
 
         submit.setText("Submit");
-        submit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitActionPerformed(evt);
-            }
-        });
+        submit.addActionListener(this::submitActionPerformed);
 
         errLabel.setForeground(new java.awt.Color(255, 0, 51));
         errLabel.setText("*Summary Required");

@@ -25,7 +25,7 @@ public class SumOperator extends AbstractGraphOperator implements Operator, Oper
 	public float operate(List<Float> operands) {
 		float total = 0;
 		for (Float f : operands) {
-			total += f.floatValue();
+			total += f;
 		}
 		return total;
 	}

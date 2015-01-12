@@ -84,7 +84,7 @@ public abstract class AnnotsXmlParser {
 	 * @throws MalformedURLException
 	 * @throws IOException 
 	 */
-    private static boolean validateAnnotsXML(InputStream istr) throws SAXException, MalformedURLException, IOException {
+    private static boolean validateAnnotsXML(InputStream istr) throws SAXException, IOException {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         URL schemaURL = AnnotsXmlParser.class.getClassLoader().getResource("annots.xsd");
         Schema schema = factory.newSchema(schemaURL);

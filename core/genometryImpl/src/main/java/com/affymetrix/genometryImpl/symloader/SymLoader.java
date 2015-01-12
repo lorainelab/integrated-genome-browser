@@ -345,12 +345,10 @@ public abstract class SymLoader {
                 seq.addAnnotation(graphSym);
             } else {
                 // We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-                for (SeqSymmetry feat : filteredFeats) {
-                    //grafs.add((GraphSym)feat);
-                    if (feat instanceof GraphSym) {
-                        GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
-                    }
-                }
+                //grafs.add((GraphSym)feat);
+                filteredFeats.stream().filter(feat -> feat instanceof GraphSym).forEach(feat -> {
+                    GraphSymUtils.addChildGraph((GraphSym) feat, feat.getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+                });
             }
 
             return;

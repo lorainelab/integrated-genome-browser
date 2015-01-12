@@ -94,11 +94,9 @@ public class ToolTipOperations {
         Map<String, String> miscInfoProps = new HashMap<>();
         ToolTipCategory miscInfoCategory = new ToolTipCategory(MISC_CATEGORY, 3, miscInfoProps);
 
-        for (String key : props.keySet()) {
-            if (!ignoreList.contains(key)) {
-                miscInfoProps.put(key, props.get(key).toString());
-            }
-        }
+        props.keySet().stream().filter(key -> !ignoreList.contains(key)).forEach(key -> {
+            miscInfoProps.put(key, props.get(key).toString());
+        });
 
         if (miscInfoProps.size() > 1) {
             categories.add(miscInfoCategory);

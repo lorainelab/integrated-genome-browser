@@ -258,11 +258,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     public void select(String name, boolean separateTracks, Map<String, List<String>> selections) {
         setCombineGenotype(!separateTracks);
-        for (String dataField : new ArrayList<>(selectedFields)) {
-            if (dataField.indexOf('/') > -1) {
-                selectedFields.remove(dataField);
-            }
-        }
+        new ArrayList<>(selectedFields).stream().filter(dataField -> dataField.indexOf('/') > -1).forEach(selectedFields::remove);
         for (String type : selections.keySet()) {
             for (String sample : selections.get(type)) {
                 selectedFields.add(name + "/" + type + "/" + sample);

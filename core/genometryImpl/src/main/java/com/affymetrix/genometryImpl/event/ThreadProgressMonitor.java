@@ -42,8 +42,8 @@ public final class ThreadProgressMonitor {
     this.opt_pane = new JOptionPane(
       message,
       JOptionPane.INFORMATION_MESSAGE,
-      JOptionPane.DEFAULT_OPTION, 
-      (javax.swing.Icon) null, 
+      JOptionPane.DEFAULT_OPTION,
+            null,
       buttons
     );
     this.dialog = opt_pane.createDialog(c, title);
@@ -75,11 +75,7 @@ public final class ThreadProgressMonitor {
   }
 
   public void setMessageEventually(final Object o) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        setMessage(o);
-      }
-    });
+    SwingUtilities.invokeLater(() -> setMessage(o));
   }
   
   private void showDialog() {
@@ -91,11 +87,7 @@ public final class ThreadProgressMonitor {
   }
 
   public void showDialogEventually() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        showDialog();
-      }
-    });
+    SwingUtilities.invokeLater(this::showDialog);
   }
   
   /** Permanently closes the dialog.  The dialogs in this method are not intended
@@ -115,11 +107,7 @@ public final class ThreadProgressMonitor {
   }
 
   public void closeDialogEventually() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        closeDialog();
-      }
-    });
+    SwingUtilities.invokeLater(this::closeDialog);
   }
   
   /** This method is called when the user selects the "Cancel" button.

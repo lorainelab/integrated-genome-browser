@@ -185,7 +185,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             key_field.setText("");
             return;
         }
-        if (str.length() > 0 && (isModifierKey(ks) || (str.indexOf("unknown") >= 0))) {
+        if (str.length() > 0 && (isModifierKey(ks) || (str.contains("unknown")))) {
             ErrorHandler.errorPanel("Bad Keystroke",
                     "Illegal shortcut: \"" + str + "\"");
             key_field.setText("");

@@ -78,18 +78,15 @@ public abstract class GenericAction extends AbstractAction {
 			putValue(Action.LARGE_ICON_KEY, icon);
 			
 			if (alternateIcon != null) {
-				this.addPropertyChangeListener(new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
-							if(evt.getNewValue() == Boolean.TRUE) {
-								putValue(Action.LARGE_ICON_KEY, icon);
-							} else {
-								putValue(Action.LARGE_ICON_KEY, alternateIcon);
-							}
-						}
-					}
-				});
+				this.addPropertyChangeListener(evt -> {
+                    if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
+                        if(evt.getNewValue() == Boolean.TRUE) {
+                            putValue(Action.LARGE_ICON_KEY, icon);
+                        } else {
+                            putValue(Action.LARGE_ICON_KEY, alternateIcon);
+                        }
+                    }
+                });
 			}
 		}
 		if (mnemonic != KeyEvent.VK_UNDEFINED) {

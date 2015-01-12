@@ -35,8 +35,8 @@ public abstract class AbstractGraphOperator implements Operator {
 			index[i] = 0;
 			int[] xArray = graph.getGraphXCoords();
 			ArrayList<Integer> xCoordList = new ArrayList<>();
-			for (int j = 0; j < xArray.length; j++) {
-				xCoordList.add(xArray[j]);
+			for (int aXArray : xArray) {
+				xCoordList.add(aXArray);
 			}
 			xCoords.add(xCoordList);
 			ArrayList<Integer> wCoordList = null;
@@ -44,15 +44,15 @@ public abstract class AbstractGraphOperator implements Operator {
 			if (wArray != null) {
 				hasWidthGraphs = true;
 				wCoordList = new ArrayList<>();
-				for (int j = 0; j < wArray.length; j++) {
-					wCoordList.add(wArray[j]);
+				for (int aWArray : wArray) {
+					wCoordList.add(aWArray);
 				}
 			}
 			wCoords.add(wCoordList);
 			float[] yArray = graph.copyGraphYCoords();
 			ArrayList<Float> yCoordList = new ArrayList<>();
-			for (int j = 0; j < yArray.length; j++) {
-				yCoordList.add(yArray[j]);
+			for (float aYArray : yArray) {
+				yCoordList.add(aYArray);
 			}
 			yCoords.add(yCoordList);
 			labels.add(graph.getID());

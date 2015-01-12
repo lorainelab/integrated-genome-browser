@@ -45,9 +45,7 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
             collectBamSyms(sym, glyphDepth);
             List<SeqSymmetry> updatedList = repackageSyms();
             sym.removeChildren();
-            for (SeqSymmetry child : updatedList) {
-                sym.addChild(child);
-            }
+            updatedList.forEach(sym::addChild);
             bamSyms.clear();
         }
     }

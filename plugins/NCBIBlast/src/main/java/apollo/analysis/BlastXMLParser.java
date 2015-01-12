@@ -42,11 +42,7 @@ public class BlastXMLParser {
     public BlastXMLParser() throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         db = dbf.newDocumentBuilder();
-        db.setEntityResolver(new EntityResolver() {
-            public InputSource resolveEntity(String publicId, String systemId) {
-                return new InputSource(new StringReader(""));
-            }
-        });
+        db.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
     }
 
     public String parse(InputStream is, StrandedFeatureSetI results) throws SAXException, IOException, BlastXMLParserException {

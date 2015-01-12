@@ -122,20 +122,15 @@ public class ExportDialog extends HeadLessExport {
         }
     };
     // detect export view range changed and activate refresh button.
-    private final NeoRangeListener rangeListener = new NeoRangeListener() {
-        @Override
-        public void rangeChanged(NeoRangeEvent evt) {
-            if (isVisible()) {
-                //			enableRefreshButton();
-            }
+    private final NeoRangeListener rangeListener = evt -> {
+        if (isVisible()) {
+            //			enableRefreshButton();
         }
     };
     // detect export view changed and activate refresh button. (Just for Seq View)
-    private final AdjustmentListener adjustmentlistener = new AdjustmentListener() {
-        public void adjustmentValueChanged(AdjustmentEvent ae) {
-            if (isVisible()) {
-                //		enableRefreshButton();
-            }
+    private final AdjustmentListener adjustmentlistener = ae -> {
+        if (isVisible()) {
+            //		enableRefreshButton();
         }
     };
 
@@ -222,7 +217,7 @@ public class ExportDialog extends HeadLessExport {
         if (seqMap == null) {
             seqMap = IGB.getSingleton().getMapView().getSeqMap();
             seqMap.addComponentListener(resizelistener);
-            ((NeoMap) seqMap).addRangeListener(rangeListener);
+            seqMap.addRangeListener(rangeListener);
 
             wholeFrame = IGB.getSingleton().getFrame();
 
@@ -235,7 +230,7 @@ public class ExportDialog extends HeadLessExport {
             slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
             slicedView.addComponentListener(resizelistener);
             svseqMap = slice_view.getSplicedView().getSeqMap();
-            ((NeoMap) slice_view.getSplicedView().getSeqMap()).addRangeListener(rangeListener);
+            slice_view.getSplicedView().getSeqMap().addRangeListener(rangeListener);
         }
     }
 
@@ -657,7 +652,7 @@ public class ExportDialog extends HeadLessExport {
      */
     public void widthSpinnerStateChanged() {
         if (!isHeightSpinner) {
-            double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
+            double newWidth = (Double) widthSpinner.getValue();
             double newHeight = newWidth * imageInfo.getHeightWidthRate();
 
             isWidthSpinner = true;
@@ -673,7 +668,7 @@ public class ExportDialog extends HeadLessExport {
      */
     public void heightSpinnerStateChanged() {
         if (!isWidthSpinner) {
-            double newHeight = ((Double) heightSpinner.getValue()).doubleValue();
+            double newHeight = (Double) heightSpinner.getValue();
             double newWidth = newHeight * imageInfo.getWidthHeightRate();
 
             isHeightSpinner = true;
@@ -739,7 +734,7 @@ public class ExportDialog extends HeadLessExport {
     public void unitComboBoxActionPerformed() {
         unit = (String) unitComboBox.getSelectedItem();
 
-        double newWidth = ((Double) widthSpinner.getValue()).doubleValue();
+        double newWidth = (Double) widthSpinner.getValue();
         if (!unit.equals(currentUnit)) {
             if (unit.equals(UNIT[0])) {
                 newWidth *= imageInfo.getResolution();

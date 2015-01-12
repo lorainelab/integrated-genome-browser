@@ -37,44 +37,28 @@ public abstract class StylePanel extends javax.swing.JPanel {
 
         labelSizeComboBox.setModel(new javax.swing.DefaultComboBoxModel(SUPPORTED_SIZE));
         labelSizeComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        labelSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelSizeComboBoxActionPerformed(evt);
-            }
-        });
+        labelSizeComboBox.addActionListener(this::labelSizeComboBoxActionPerformed);
 
         foregroundColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         foregroundColorComboBox.setButtonVisible(false);
         foregroundColorComboBox.setColorValueVisible(false);
         foregroundColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         foregroundColorComboBox.setStretchToFit(true);
-        foregroundColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                foregroundColorComboBoxActionPerformed(evt);
-            }
-        });
+        foregroundColorComboBox.addActionListener(this::foregroundColorComboBoxActionPerformed);
 
         backgroundColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         backgroundColorComboBox.setButtonVisible(false);
         backgroundColorComboBox.setColorValueVisible(false);
         backgroundColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         backgroundColorComboBox.setStretchToFit(true);
-        backgroundColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backgroundColorComboBoxActionPerformed(evt);
-            }
-        });
+        backgroundColorComboBox.addActionListener(this::backgroundColorComboBoxActionPerformed);
 
         labelColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         labelColorComboBox.setButtonVisible(false);
         labelColorComboBox.setColorValueVisible(false);
         labelColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         labelColorComboBox.setStretchToFit(true);
-        labelColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelColorComboBoxActionPerformed(evt);
-            }
-        });
+        labelColorComboBox.addActionListener(this::labelColorComboBoxActionPerformed);
 
         foregroundColorLabel.setText("Foreground");
 

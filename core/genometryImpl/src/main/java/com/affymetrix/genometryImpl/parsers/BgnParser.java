@@ -398,7 +398,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
 				if (!(sym instanceof UcscGeneSym)) {
 					System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
 				}
-				writeSymmetry((UcscGeneSym) sym, null, dos);
+				writeSymmetry(sym, null, dos);
 			}
 			dos.flush();
 		} catch (Exception ex) {

@@ -215,3 +215,8 @@ extbundles/*
 /core/igbGenovizExtensions/target/
 /core/igbGenovizExtensionsApi/target/
 /distribution/build/
+
+*.iml
+*.ipr
+*.iws
+.idea/

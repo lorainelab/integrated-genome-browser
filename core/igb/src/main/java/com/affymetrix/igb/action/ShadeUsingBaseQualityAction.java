@@ -28,11 +28,9 @@ public class ShadeUsingBaseQualityAction extends SeqMapViewActionA {
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
         super.actionPerformed(e);
-        for (StyledGlyph glyph : allGlyphs) {
-            if (((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
-                glyph.getAnnotStyle().setShadeBasedOnQualityScore(isSelected());
-            }
-        }
+        allGlyphs.stream().filter(glyph -> ((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment).forEach(glyph -> {
+            glyph.getAnnotStyle().setShadeBasedOnQualityScore(isSelected());
+        });
         refreshMap(false, false);
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
     }

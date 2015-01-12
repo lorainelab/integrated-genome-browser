@@ -183,7 +183,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public void setTabsMenu(JMenuBar mbar) {
-        this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"));;
+        this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"));
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(
@@ -232,9 +232,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // Save the main window location
         PreferenceUtils.saveWindowLocation(frame, "main window");
 
-        for (TabHolder tabHolder : tabHolders.values()) {
-            tabHolder.close();
-        }
+        tabHolders.values().forEach(com.affymetrix.igb.osgi.service.TabHolder::close);
         for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getPlugins()) {
             PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
         }
@@ -320,15 +318,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // here we keep count of the embedded tabs that are added. When
         // all the embedded tabs have been added, we initialize the tab panes
         // this is to prevent the flashing of new tabs added
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            frame.setVisible(true);
 
-                // Resize all tab holder after frame is set to visible.
-                for (TabHolder tabHolder : tabHolders.values()) {
-                    tabHolder.resize();
-                }
-            }
+            // Resize all tab holder after frame is set to visible.
+            tabHolders.values().forEach(com.affymetrix.igb.osgi.service.TabHolder::resize);
         });
     }
 
@@ -357,11 +351,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         for (TabState tabState : tabHolders.keySet()) {
             tabHolders.get(tabState).removeTab(plugin);
         }
-        for (Component item : Arrays.asList(tabs_menu.getMenuComponents())) {
-            if (item instanceof JMenuItem && ((JMenuItem) item).getText().equals(plugin.getDisplayName())) {
-                tabs_menu.remove(item);
-            }
-        }
+        Arrays.asList(tabs_menu.getMenuComponents()).stream().filter(item -> item instanceof JMenuItem && ((JMenuItem) item).getText().equals(plugin.getDisplayName())).forEach(tabs_menu::remove);
         PreferenceUtils.saveComponentState(plugin.getName(), null);
     }
 
@@ -400,9 +390,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void shutdown() {
         saveWindowLocations();
-        for (IWindowRoutine stopRoutine : stopRoutines) {
-            stopRoutine.stop();
-        }
+        stopRoutines.forEach(com.affymetrix.igb.osgi.service.IWindowRoutine::stop);
     }
 
     @Override
@@ -469,11 +457,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         if (panel == null) {
             return;
         }
-        for (TabHolder tabHolder : tabHolders.values()) {
-            if (tabHolder.getPlugins().contains(panel)) {
-                ((JTabbedTrayPane) tabHolder).selectTab(panel);
-            }
-        }
+        tabHolders.values().stream().filter(tabHolder -> tabHolder.getPlugins().contains(panel)).forEach(tabHolder -> {
+            tabHolder.selectTab(panel);
+        });
     }
 
     void addStopRoutine(IWindowRoutine routine) {

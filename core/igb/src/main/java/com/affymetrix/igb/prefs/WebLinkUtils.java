@@ -83,7 +83,7 @@ public class WebLinkUtils {
         return false;
     }
 
-    public static void importWebLinks(File f) throws FileNotFoundException, IOException {
+    public static void importWebLinks(File f) throws IOException {
         XmlPrefsParser.parse(new FileInputStream(f));
     }
 

@@ -174,7 +174,7 @@ public class TrackView {
                     GlyphI glyph = smv.getSeqMap().getItemFromTier(sym);
                     if (glyph != null) {
                         if (glyph instanceof GraphGlyph) {
-                            smv.split((GraphGlyph) glyph);
+                            smv.split(glyph);
                         }
                         //map.removeItem(glyph);
                     }

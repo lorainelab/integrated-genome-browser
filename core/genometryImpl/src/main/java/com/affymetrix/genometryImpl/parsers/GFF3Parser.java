@@ -72,7 +72,7 @@ public final class GFF3Parser implements Parser {
 		//types.add("tf_binding_site");
 		types.add("protein");
 
-		IGNORABLE_TYPES = Collections.<String>unmodifiableSet(types);
+		IGNORABLE_TYPES = Collections.unmodifiableSet(types);
 	}
 
 	/**
@@ -325,8 +325,7 @@ public final class GFF3Parser implements Parser {
 			} else {
 				// Else, add this as a child to *each* parent in its parent list.
 				// It is an error if the parent doesn't exist.
-				for (int i = 0; i < parent_ids.length; i++) {
-					String parent_id = parent_ids[i];
+				for (String parent_id : parent_ids) {
 					if ("-".equals(parent_id)) {
 						throw new IOException("Parent ID cannot be '-'");
 					}
@@ -336,7 +335,8 @@ public final class GFF3Parser implements Parser {
 						 * bad_parents list contains ignored parents.  Child
 						 * ids are added to the bad_parents list since we are
 						 * ignoring them too.
-						 */ String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+						 */
+						String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
 						if (ids.length > 0) {
 							bad_parents.add(ids[0]);
 						}

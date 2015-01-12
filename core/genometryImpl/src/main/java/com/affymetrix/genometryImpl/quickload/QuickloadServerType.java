@@ -42,7 +42,7 @@ public class QuickloadServerType implements ServerTypeI {
         VTWOBIT,
         TWOBIT,
         FA
-    };
+    }
 
     private static final String name = "Quickload";
     public static final int ordinal = 20;
@@ -251,7 +251,7 @@ public class QuickloadServerType implements ServerTypeI {
         try {
             URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
             if (logger.isDebugEnabled()) {
-                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
+                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + gVersion.gServer.serverObj);
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);

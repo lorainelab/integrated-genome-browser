@@ -72,27 +72,18 @@ public final class SimpleBookmarkServer {
                         "Couldn't find an available port for IGB to listen to control requests on port {}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
             } else {
 
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        BookmarkHttpRequestHandler handler = new BookmarkHttpRequestHandler(igbService, serverPort);
-                        try {
-                            handler.start();
-                        } catch (IOException ex) {
-                            logger.error("Could not start bookmark server, turning off IGB's URL-based control features.");
-                        }
+                Runnable r = () -> {
+                    BookmarkHttpRequestHandler handler = new BookmarkHttpRequestHandler(igbService, serverPort);
+                    try {
+                        handler.start();
+                    } catch (IOException ex) {
+                        logger.error("Could not start bookmark server, turning off IGB's URL-based control features.");
                     }
                 };
 
                 final Thread t = new Thread(r);
 
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        t.start();
-                    }
-                });
+                SwingUtilities.invokeLater(t::start);
             }
 
         } catch (Exception ex) {

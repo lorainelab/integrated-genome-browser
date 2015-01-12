@@ -12,12 +12,7 @@ public class Activator implements BundleActivator {
     public void start(final BundleContext bundleContext) throws Exception {
         if (CommonUtils.getInstance().isExit(bundleContext)) {
             bundleContext.addBundleListener(
-                    new BundleListener() {
-                        @Override
-                        public void bundleChanged(BundleEvent evt) {
-                            checkAllStarted(bundleContext);
-                        }
-                    }
+                    evt -> checkAllStarted(bundleContext)
             );
         }
     }

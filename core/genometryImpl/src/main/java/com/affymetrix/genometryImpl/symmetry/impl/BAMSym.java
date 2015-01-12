@@ -517,8 +517,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (qualityStr != null) {
             int quality = 0;
             byte[] quals = qualityStr.getBytes();
-            for (int i = 0; i < quals.length; i++) {
-                quality += (quals[i] - 33);
+            for (byte qual : quals) {
+                quality += (qual - 33);
             }
             return quality / quals.length;
         }

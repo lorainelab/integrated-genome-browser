@@ -76,7 +76,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
     public void init(Map<String, Object> options) {
         Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
         if (ccs != null) {
-            check_same_seq = ccs.booleanValue();
+            check_same_seq = ccs;
         }
     }
 

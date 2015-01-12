@@ -48,26 +48,22 @@ public class SelectionInfoUtils {
 
     private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties) {
         Map<String, Object> orderedProps = new LinkedHashMap<>();
-        for (String property : propertyKeys) {
-            if (properties.containsKey(property)) {
-                orderedProps.put(property, properties.get(property).toString());
-            }
-        }
+        propertyKeys.stream().filter(property -> properties.containsKey(property)).forEach(property -> {
+            orderedProps.put(property, properties.get(property).toString());
+        });
 
-        for (String key : properties.keySet()) {
-            if (!propertyKeys.contains(key)) {
-                Object property = properties.get(key);
-                if (property instanceof String[]) {
-                    StringBuilder value = new StringBuilder();
-                    for (String str : (String[]) property) {
-                        value.append(str);
-                    }
-                    orderedProps.put(key, value.toString());
-                } else {
-                    orderedProps.put(key, properties.get(key).toString());
+        properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).forEach(key -> {
+            Object property = properties.get(key);
+            if (property instanceof String[]) {
+                StringBuilder value = new StringBuilder();
+                for (String str : (String[]) property) {
+                    value.append(str);
                 }
+                orderedProps.put(key, value.toString());
+            } else {
+                orderedProps.put(key, properties.get(key).toString());
             }
-        }
+        });
         return orderedProps;
     }
 }

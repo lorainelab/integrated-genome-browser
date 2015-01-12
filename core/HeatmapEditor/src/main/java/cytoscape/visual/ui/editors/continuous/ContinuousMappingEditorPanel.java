@@ -146,11 +146,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		colorButton = new javax.swing.JButton("");
 		colorButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
 		colorButton.setEnabled(false);
-		colorButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				colorButtonActionPerformed();
-			}
-		});
+		colorButton.addActionListener(evt -> colorButtonActionPerformed());
 		
 		propertyComponent = colorButton;
 		propertyLabel = new JLabel("Color ");
@@ -172,47 +168,27 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		addButton.setText("Add");
 		addButton.setPreferredSize(new Dimension(100, 10));
 		addButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		addButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				addButtonActionPerformed(evt);
-			}
-		});
+		addButton.addActionListener(this::addButtonActionPerformed);
 
 		deleteButton.setText("Delete");
 		deleteButton.setPreferredSize(new Dimension(100, 10));
 		deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		deleteButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				deleteButtonActionPerformed(evt);
-			}
-		});
+		deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
 		// New in 2.6
 		minMaxButton.setText("Set Range");
 		minMaxButton.setPreferredSize(new Dimension(100, 10));
 		minMaxButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		minMaxButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				minMaxButtonActionPerformed(evt);
-			}
-		});
+		minMaxButton.addActionListener(this::minMaxButtonActionPerformed);
 
 		cancelButton.setText("Cancel");
 		cancelButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		cancelButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				optionSelectedEvent(JOptionPane.CANCEL_OPTION);
-			}
-		});
+		cancelButton.addActionListener(evt -> optionSelectedEvent(JOptionPane.CANCEL_OPTION));
 
 		okButton.setText("OK");
 		// okButton.setPreferredSize(new Dimension(50, 30));
 		okButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		okButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				optionSelectedEvent(JOptionPane.OK_OPTION);
-			}
-		});
+		okButton.addActionListener(evt -> optionSelectedEvent(JOptionPane.OK_OPTION));
 
 		slider.setMaximumValue(100.0F);
 		rotaryEncoder.setMaximumValue(100.0F);
@@ -433,8 +409,8 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 			return;
 		}
 		
-		model.setVirtualMinimum(newVal[0].floatValue());
-		model.setVirtualMaximum(newVal[1].floatValue());
+		model.setVirtualMinimum(newVal[0]);
+		model.setVirtualMaximum(newVal[1]);
 		
 		this.repaint();
 	}

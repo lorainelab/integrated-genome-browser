@@ -57,7 +57,7 @@ public final class TwoBitParser implements Parser {
 	private static final boolean DEBUG = false;
 
 
-    public static List<BioSeq> parse(URI uri, AnnotatedSeqGroup seq_group) throws FileNotFoundException, IOException {
+    public static List<BioSeq> parse(URI uri, AnnotatedSeqGroup seq_group) throws IOException {
 		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(bistr, buffer);
@@ -67,7 +67,7 @@ public final class TwoBitParser implements Parser {
 		return seqs;
     }
 
-	public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group, String seqName) throws FileNotFoundException, IOException {
+	public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group, String seqName) throws IOException {
 		SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 		loadBuffer(bistr, buffer);
@@ -77,26 +77,26 @@ public final class TwoBitParser implements Parser {
 		return retseq;
 	}
 	
-	public static BioSeq parse(URI uri) throws FileNotFoundException, IOException {
+	public static BioSeq parse(URI uri) throws IOException {
 		return parse(uri,new AnnotatedSeqGroup("No_Data")).get(0);
 	}
 
-	public static boolean parse(URI uri, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(URI uri, OutputStream out) throws IOException {
 		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(URI uri, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(URI uri, int start, int end, OutputStream out) throws IOException {
 		BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
 		return writeAnnotations(seq,start,end,out);
 	}
 
-	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, OutputStream out) throws IOException {
 		BioSeq seq = parse(uri, seq_group).get(0);
 		return writeAnnotations(seq,0,seq.getLength(),out);
 	}
 
-	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws FileNotFoundException, IOException {
+	public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws IOException {
 		BioSeq seq = parse(uri, seq_group).get(0);
 		return writeAnnotations(seq,start,end,out);
 	}

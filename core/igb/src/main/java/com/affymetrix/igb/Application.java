@@ -33,22 +33,17 @@ public abstract class Application {
     private static final int delay = 2; //delay in seconds
 
     private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
-    private ActionListener status_alert_listener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
-                removeStatusAlert((StatusAlert) e.getSource());
-            }
+    private ActionListener status_alert_listener = e -> {
+        if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
+            removeStatusAlert((StatusAlert) e.getSource());
         }
     };
     private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
-    ActionListener update_status_bar = new ActionListener() {
-
-        public void actionPerformed(java.awt.event.ActionEvent ae) {
-            synchronized (progressStringList) {
-                String s = progressStringList.pop();
-                progressStringList.addLast(s);
-                setNotLockedUpStatus(s);
-            }
+    ActionListener update_status_bar = ae -> {
+        synchronized (progressStringList) {
+            String s = progressStringList.pop();
+            progressStringList.addLast(s);
+            setNotLockedUpStatus(s);
         }
     };
     Timer timer = new Timer(delay * 1000, update_status_bar);

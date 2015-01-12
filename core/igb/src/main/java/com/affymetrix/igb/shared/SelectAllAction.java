@@ -12,9 +12,9 @@ public class SelectAllAction extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1L;
     private static SelectAllAction ACTION = new SelectAllAction(
-            new FileTypeCategory[]{FileTypeCategory.Alignment, FileTypeCategory.Annotation,
-                FileTypeCategory.Graph, FileTypeCategory.Mismatch, FileTypeCategory.ProbeSet,
-                FileTypeCategory.Sequence});
+            FileTypeCategory.Alignment, FileTypeCategory.Annotation,
+            FileTypeCategory.Graph, FileTypeCategory.Mismatch, FileTypeCategory.ProbeSet,
+            FileTypeCategory.Sequence);
     private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION
             = new EnumMap<>(FileTypeCategory.class);
     private FileTypeCategory[] categories;

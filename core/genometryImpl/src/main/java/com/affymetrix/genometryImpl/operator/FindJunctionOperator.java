@@ -102,9 +102,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         }
         HashMap<String, SeqSymmetry> map = new HashMap<>();
         subOperate(bioseq, symList, map);
-        for (SeqSymmetry sym : map.values()) {
-            container.addChild(sym);
-        }
+        map.values().forEach(container::addChild);
         map.clear();
         symList.clear();
 
@@ -116,11 +114,9 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
      * with the resultant symmetries.
      */
     public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map) {
-        for (SeqSymmetry sym : list) {
-            if (noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))) {
-                updateIntronHashMap(sym, bioseq, map, threshold, twoTracks, topHatStyleFlanking);
-            }
-        }
+        list.stream().filter(sym -> noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))).forEach(sym -> {
+            updateIntronHashMap(sym, bioseq, map, threshold, twoTracks, topHatStyleFlanking);
+        });
     }
 
     @Override
@@ -344,7 +340,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym(bioseq, name,
                     currentForward, blockMins, blockMaxs, canonical, rare, 0, 0, 0);
-            map.put(name, (SeqSymmetry) tempSym);
+            map.put(name, tempSym);
         }
     }
 

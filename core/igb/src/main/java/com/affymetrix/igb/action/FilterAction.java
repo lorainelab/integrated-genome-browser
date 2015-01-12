@@ -51,14 +51,11 @@ public class FilterAction extends SeqMapViewActionA {
         ITrackStyleExtended style = tg.getAnnotStyle();
         SymmetryFilterI filter = style.getFilter();
 
-        ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = new ConfigureOptionsPanel.Filter<SymmetryFilterI>() {
-            @Override
-            public boolean shouldInclude(SymmetryFilterI symmetryFilter) {
-                if (symmetryFilter instanceof SupportsFileTypeCategory) {
-                    return ((SupportsFileTypeCategory) symmetryFilter).isFileTypeCategorySupported(tg.getFileTypeCategory());
-                }
-                return true;
+        ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = symmetryFilter -> {
+            if (symmetryFilter instanceof SupportsFileTypeCategory) {
+                return symmetryFilter.isFileTypeCategorySupported(tg.getFileTypeCategory());
             }
+            return true;
         };
 
         final ConfigureFilters configurefilters = new ConfigureFilters();
@@ -71,23 +68,18 @@ public class FilterAction extends SeqMapViewActionA {
         optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
         optionPane.setIcon(new ImageIcon(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)));
 
-        optionPane.addPropertyChangeListener("value", new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue() instanceof Integer && (Integer) evt.getNewValue() == JOptionPane.OK_OPTION) {
-                    AbstractAction applyAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            for (TierGlyph tier : getTierManager().getSelectedTiers()) {
-                                applyFilter(configurefilters.getFilter(), tier);
-                            }
-                            getSeqMapView().getSeqMap().repackTheTiers(true, true);
+        optionPane.addPropertyChangeListener("value", evt -> {
+            if (evt.getNewValue() instanceof Integer && (Integer) evt.getNewValue() == JOptionPane.OK_OPTION) {
+                AbstractAction applyAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent e) {
+                        for (TierGlyph tier : getTierManager().getSelectedTiers()) {
+                            applyFilter(configurefilters.getFilter(), tier);
                         }
-                    };
-                    getSeqMapView().preserveSelectionAndPerformAction(applyAction);
-                }
+                        getSeqMapView().getSeqMap().repackTheTiers(true, true);
+                    }
+                };
+                getSeqMapView().preserveSelectionAndPerformAction(applyAction);
             }
-
         });
 
         JDialog dialog = optionPane.createDialog("Add/Remove/Edit Filters");

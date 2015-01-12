@@ -57,14 +57,7 @@ public class SeqMapToolTips extends JWindow {
     private final JTextPane tooltip;
     private final Color backgroundColor;
 
-    private Timer timer = new Timer(100, new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setVisible(true);
-        }
-
-    });
+    private Timer timer = new Timer(100, e -> setVisible(true));
 
     public SeqMapToolTips(Window owner) {
         super(owner);

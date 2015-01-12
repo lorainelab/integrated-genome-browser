@@ -379,9 +379,7 @@ public final class GenometryModel {
      * selection listeners.
      */
     private void clearSelectedSymmetries() {
-        for (List<SeqSymmetry> list : seq2selectedGraphSymsHash.values()) {
-            list.clear();
-        }
+        seq2selectedGraphSymsHash.values().forEach(List<SeqSymmetry>::clear);
         seq2selectedGraphSymsHash.clear();
     }
 

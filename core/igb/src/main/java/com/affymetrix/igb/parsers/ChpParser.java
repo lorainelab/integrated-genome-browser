@@ -184,7 +184,7 @@ public final class ChpParser {
 				name = psqData.getName();
 				try {
 					Integer nid = new Integer(name);
-					intid = nid.intValue();
+					intid = nid;
 					psqData.setId(intid);
 					psqData.setName(null);
 					int_entries.add(psqData);
@@ -244,7 +244,7 @@ public final class ChpParser {
 				name = psqData.getName();
 				try {
 					Integer nid = new Integer(name);
-					intid = nid.intValue();
+					intid = nid;
 					psqData.setId(intid);
 					psqData.setName(null);
 					int_entries.add(psqData);
@@ -429,8 +429,7 @@ public final class ChpParser {
 				int scount = syms.size();
 				if (scount > 0) {
 					match_count++;
-					for (int k = 0; k < scount; k++) {
-						SeqSymmetry prev_sym = syms.get(k);
+					for (SeqSymmetry prev_sym : syms) {
 						SeqSpan span = prev_sym.getSpan(0);
 						BioSeq aseq = span.getBioSeq();
 						IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
@@ -608,9 +607,7 @@ public final class ChpParser {
 			}
 			GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
 
-			Iterator<Map.Entry<String, String>> fiter = file_prop_hash.entrySet().iterator();
-			while (fiter.hasNext()) {
-				Map.Entry<String, String> ent = fiter.next();
+			for (Map.Entry<String, String> ent : file_prop_hash.entrySet()) {
 				gsym.setProperty(ent.getKey(), ent.getValue());
 			}
 

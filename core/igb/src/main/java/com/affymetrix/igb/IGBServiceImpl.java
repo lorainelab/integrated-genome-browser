@@ -106,12 +106,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
     @Override
     public void setStatus(final String message) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                Application.getSingleton().setStatus(message);
-            }
-        });
+        ThreadUtils.runOnEventQueue(() -> Application.getSingleton().setStatus(message));
     }
 
     @Override
@@ -210,9 +205,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     @Override
     public void mapRefresh(List<GlyphI> glyphs) {
         GlyphI axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
-        for (GlyphI glyph : new CopyOnWriteArrayList<>(glyphs)) {
-            axis_tier.addChild(glyph);
-        }
+        new CopyOnWriteArrayList<>(glyphs).forEach(axis_tier::addChild);
     }
 
     @Override
@@ -234,7 +227,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
     @Override
     public SeqMapViewI getSeqMapView() {
-        return (SeqMapViewI) Application.getSingleton().getMapView();
+        return Application.getSingleton().getMapView();
     }
 
     @Override
@@ -256,9 +249,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public void saveState() {
         ((IGB) IGB.getSingleton()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
-            panel.saveSession();
-        }
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::saveSession);
     }
 
     @Override
@@ -266,9 +257,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         ((IGB) IGB.getSingleton()).getWindowService().restoreState();
         SeqMapView mapView = Application.getSingleton().getMapView();
         mapView.loadSession();
-        for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
-            panel.loadSession();
-        }
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::loadSession);
     }
 
     @Override

@@ -64,56 +64,55 @@ public final class USeqRegionParser implements GraphParser {
 			String dataType = useqArchive.getBinaryDataType();
 
 			//for each USeqData set, +/-/.
-			for (int i=0; i< useqData.length; i++){
+			for (USeqData anUseqData : useqData) {
 				//any data?
-				if (useqData[i] == null) {
+				if (anUseqData == null) {
 					continue;
 				}
-				SliceInfo sliceInfo = useqData[i].getSliceInfo();
+				SliceInfo sliceInfo = anUseqData.getSliceInfo();
 				//set strand orientation
 				if (sliceInfo.getStrand().equals("-")) {
 					forwardStrand = false;
-				}
-				else {
+				} else {
 					forwardStrand = true;
 				}
 				//set the BioSeq
 				setBioSeq(sliceInfo.getChromosome());
 				//Region
 				if (USeqUtilities.REGION.matcher(dataType).matches()) {
-					parseRegionData((RegionData) useqData[i]);
+					parseRegionData((RegionData) anUseqData);
 				}
 				//RegionScore
 				else if (USeqUtilities.REGION_SCORE.matcher(dataType).matches()) {
-					parseRegionScoreData((RegionScoreData) useqData[i]);
+					parseRegionScoreData((RegionScoreData) anUseqData);
 				}
 				//RegionText
 				else if (USeqUtilities.REGION_TEXT.matcher(dataType).matches()) {
-					parseRegionTextData((RegionTextData) useqData[i]);
+					parseRegionTextData((RegionTextData) anUseqData);
 				}
 				//RegionScoreText
 				else if (USeqUtilities.REGION_SCORE_TEXT.matcher(dataType).matches()) {
-					parseRegionScoreTextData((RegionScoreTextData) useqData[i]);
+					parseRegionScoreTextData((RegionScoreTextData) anUseqData);
 				}
 				//Position
-				else if(USeqUtilities.POSITION.matcher(dataType).matches()) {
-					parsePositionData((PositionData) useqData[i]);
+				else if (USeqUtilities.POSITION.matcher(dataType).matches()) {
+					parsePositionData((PositionData) anUseqData);
 				}
 				//PositionScore
-				else if(USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
-					parsePositionScoreData((PositionScoreData) useqData[i]);
+				else if (USeqUtilities.POSITION_SCORE.matcher(dataType).matches()) {
+					parsePositionScoreData((PositionScoreData) anUseqData);
 				}
 				//PositionText
-				else if(USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
-					parsePositionTextData((PositionTextData) useqData[i]);
+				else if (USeqUtilities.POSITION_TEXT.matcher(dataType).matches()) {
+					parsePositionTextData((PositionTextData) anUseqData);
 				}
 				//PositionScoreText
-				else if(USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
-					parsePositionScoreTextData((PositionScoreTextData) useqData[i]);
+				else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(dataType).matches()) {
+					parsePositionScoreTextData((PositionScoreTextData) anUseqData);
 				}
 				//unknown!
 				else {
-					throw new IOException ("Unknown USeq data type, '"+dataType+"', for parsing region data from "+nameOfTrack +"\n");
+					throw new IOException("Unknown USeq data type, '" + dataType + "', for parsing region data from " + nameOfTrack + "\n");
 				}
 			}
 		} catch (IOException e) {
@@ -232,10 +231,10 @@ public final class USeqRegionParser implements GraphParser {
 	private void parsePositionData(PositionData pd){
 		Position[] r = pd.getPositions();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-		for (int i=0; i< r.length; i++){
+		for (Position aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			int start = aR.getPosition();
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start + 1, null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start + 1});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -250,10 +249,10 @@ public final class USeqRegionParser implements GraphParser {
 	private void parsePositionScoreData(PositionScoreData pd){
 		//add syms
 		PositionScore[] r = pd.getPositionScores();
-		for (int i=0; i< r.length; i++){
+		for (PositionScore aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			int start = aR.getPosition();
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start + 1, null, aR.getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start + 1});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -269,10 +268,10 @@ public final class USeqRegionParser implements GraphParser {
 		//add syms
 		PositionText[] r = pd.getPositionTexts();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-		for (int i=0; i< r.length; i++){
+		for (PositionText aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			int start = aR.getPosition();
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start + 1, aR.getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start + 1});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -287,10 +286,10 @@ public final class USeqRegionParser implements GraphParser {
 	private void parsePositionScoreTextData(PositionScoreTextData pd) {
 		//add syms
 		PositionScoreText[] r = pd.getPositionScoreTexts();
-		for (int i=0; i< r.length; i++){
+		for (PositionScoreText aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			int start = r[i].getPosition();
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start+1, r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start+1});
+			int start = aR.getPosition();
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, start, start + 1, aR.getText(), aR.getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{start}, new int[]{start + 1});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -306,9 +305,9 @@ public final class USeqRegionParser implements GraphParser {
 		//add syms
 		Region[] r = pd.getRegions();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-		for (int i=0; i< r.length; i++){
+		for (Region aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, aR.getStart(), aR.getStop(), null, score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{aR.getStart()}, new int[]{aR.getStop()});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -323,9 +322,9 @@ public final class USeqRegionParser implements GraphParser {
 	private void parseRegionScoreData(RegionScoreData pd) {
 		//add syms
 		RegionScore[] r = pd.getRegionScores();
-		for (int i=0; i< r.length; i++){
+		for (RegionScore aR : r) {
 			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), null, r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, aR.getStart(), aR.getStop(), null, aR.getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{aR.getStart()}, new int[]{aR.getStop()});
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
 				bioSeq.addAnnotation(bedline_sym);
@@ -341,15 +340,15 @@ public final class USeqRegionParser implements GraphParser {
 		//add syms
 		RegionText[] r = pd.getRegionTexts();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-		for (int i=0; i< r.length; i++){
+		for (RegionText aR : r) {
 			SymWithProps bedline_sym;
 			//check to see if this is a bed 12
 			//bed12?
-			String[] tokens = TAB.split(r[i].getText());
+			String[] tokens = TAB.split(aR.getText());
 			//yes
-			if (tokens.length == 7){
-				int min = r[i].getStart();
-				int max = r[i].getStop();
+			if (tokens.length == 7) {
+				int min = aR.getStart();
+				int max = aR.getStop();
 				String annot_name = tokens[0];
 				// thickStart field
 				int thick_min = Integer.parseInt(tokens[1]);
@@ -357,7 +356,7 @@ public final class USeqRegionParser implements GraphParser {
 				int thick_max = Integer.parseInt(tokens[2]);
 				// itemRgb skip
 				// blockCount
-				int blockCount = Integer.parseInt(tokens[4]); 
+				int blockCount = Integer.parseInt(tokens[4]);
 				// blockSizes
 				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
 				if (blockCount != blockSizes.length) {
@@ -365,7 +364,7 @@ public final class USeqRegionParser implements GraphParser {
 					return;
 				}
 				// blockStarts
-				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
+				int[] blockStarts = BedParser.parseIntArray(tokens[6]);
 				if (blockCount != blockStarts.length) {
 					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
@@ -376,7 +375,7 @@ public final class USeqRegionParser implements GraphParser {
 			}
 			//no
 			else {
-				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, aR.getStart(), aR.getStop(), aR.getText(), score, forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{aR.getStart()}, new int[]{aR.getStop()});
 			}
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {
@@ -392,14 +391,14 @@ public final class USeqRegionParser implements GraphParser {
 	private void parseRegionScoreTextData(RegionScoreTextData pd) {
 		//add syms
 		RegionScoreText[] r = pd.getRegionScoreTexts();
-		for (int i=0; i< r.length; i++){
+		for (RegionScoreText aR : r) {
 			SymWithProps bedline_sym;
 			//check to see if this is a bed 12
-			String[] tokens = TAB.split(r[i].getText());
+			String[] tokens = TAB.split(aR.getText());
 			//yes
-			if (tokens.length == 7){
-				int min = r[i].getStart();
-				int max = r[i].getStop();
+			if (tokens.length == 7) {
+				int min = aR.getStart();
+				int max = aR.getStop();
 				String annot_name = tokens[0];
 				// thickStart field
 				int thick_min = Integer.parseInt(tokens[1]);
@@ -407,7 +406,7 @@ public final class USeqRegionParser implements GraphParser {
 				int thick_max = Integer.parseInt(tokens[2]);
 				// itemRgb skip
 				// blockCount
-				int blockCount = Integer.parseInt(tokens[4]); 
+				int blockCount = Integer.parseInt(tokens[4]);
 				// blockSizes
 				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
 				if (blockCount != blockSizes.length) {
@@ -415,18 +414,18 @@ public final class USeqRegionParser implements GraphParser {
 					return;
 				}
 				// blockStarts
-				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
+				int[] blockStarts = BedParser.parseIntArray(tokens[6]);
 				if (blockCount != blockStarts.length) {
 					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
 					return;
 				}
 				int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
 				int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
-				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, r[i].getScore(), forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, aR.getScore(), forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
 			}
 			//no
 			else {
-				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+				bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, aR.getStart(), aR.getStop(), aR.getText(), aR.getScore(), forwardStrand, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{aR.getStart()}, new int[]{aR.getStop()});
 			}
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) {

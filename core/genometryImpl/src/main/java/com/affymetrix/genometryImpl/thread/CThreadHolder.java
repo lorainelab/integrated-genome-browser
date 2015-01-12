@@ -30,11 +30,9 @@ public class CThreadHolder {
 
 	public void cancelAllTasks() {
 		synchronized (RUNNING_CTHREADWORKERS) {
-			for (final CThreadWorker<?, ?> worker : RUNNING_CTHREADWORKERS) {
-				if (worker != null && !worker.isCancelled() && !worker.isDone()) {
-					worker.cancelThread(true);
-				}
-			}
+			RUNNING_CTHREADWORKERS.stream().filter(worker -> worker != null && !worker.isCancelled() && !worker.isDone()).forEach(worker -> {
+				worker.cancelThread(true);
+			});
 		}
 	}
 	

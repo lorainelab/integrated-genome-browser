@@ -405,31 +405,28 @@ public final class SearchView extends IGBTabPanel implements
     }
 
     private void initSequenceCB() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                // set up the sequence combo_box
-                sequenceCB.removeAllItems();
-                if (group != null) {
-                    if (selectedSearchMode != null && selectedSearchMode.useGenomeInSeqList()) {
-                        sequenceCB.addItem(Constants.GENOME_SEQ_ID); // put this at top of list
-                    }
-                    for (BioSeq seq : group.getSeqList()) {
-                        if (seq.getID().equals(Constants.GENOME_SEQ_ID)) {
-                            continue;
-                        }
-                        sequenceCB.addItem(seq.getID());
-                    }
-                    sequenceCB.setToolTipText(SEQUENCETOSEARCH);
-                    sequenceCB.setEnabled(true);
-                } else {
-                    sequenceCB.setToolTipText("Genome has not been selected");
-                    sequenceCB.setEnabled(false);
+        ThreadUtils.runOnEventQueue(() -> {
+            // set up the sequence combo_box
+            sequenceCB.removeAllItems();
+            if (group != null) {
+                if (selectedSearchMode != null && selectedSearchMode.useGenomeInSeqList()) {
+                    sequenceCB.addItem(Constants.GENOME_SEQ_ID); // put this at top of list
                 }
-
-                sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
-                setSequenceCBValue();
+                for (BioSeq seq : group.getSeqList()) {
+                    if (seq.getID().equals(Constants.GENOME_SEQ_ID)) {
+                        continue;
+                    }
+                    sequenceCB.addItem(seq.getID());
+                }
+                sequenceCB.setToolTipText(SEQUENCETOSEARCH);
+                sequenceCB.setEnabled(true);
+            } else {
+                sequenceCB.setToolTipText("Genome has not been selected");
+                sequenceCB.setEnabled(false);
             }
+
+            sequenceCB.setPreferredSize(new Dimension(searchCB.getPreferredSize().width, searchCB.getPreferredSize().height));
+            setSequenceCBValue();
         });
     }
 
@@ -664,7 +661,7 @@ public final class SearchView extends IGBTabPanel implements
             @Override
             public void actionPerformed(ActionEvent e) {
                 String message = MessageFormat.format("<html><b>Search Term :</b> {0}<br><b>Search Summary :</b> {1} </html>",
-                        new Object[]{unQuoteString(searchResults.getSearchTerm()), unQuoteString(searchResults.getSearchSummary())});
+                        unQuoteString(searchResults.getSearchTerm()), unQuoteString(searchResults.getSearchSummary()));
                 JOptionPane.showMessageDialog(SearchView.this, message, searchResults.getSearchType(), JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -679,12 +676,7 @@ public final class SearchView extends IGBTabPanel implements
      * Set the text in the status bar in a thread-safe way.
      */
     public void setStatus(final String text) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                status_bar.setText(unQuoteString(text));
-            }
-        });
+        ThreadUtils.runOnEventQueue(() -> status_bar.setText(unQuoteString(text)));
     }
 
     @Override

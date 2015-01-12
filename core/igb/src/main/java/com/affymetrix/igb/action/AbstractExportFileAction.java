@@ -83,15 +83,13 @@ public abstract class AbstractExportFileAction
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.setMultiSelectionEnabled(false);
             chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            for (UniFileFilter filter : filter2writers.keySet()) {
-                chooser.addChoosableFileFilter(filter);
-            }
+            filter2writers.keySet().forEach(chooser::addChoosableFileFilter);
             UniFileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
             if (preferredFilter == null) {
                 chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
             } else {
                 for (FileFilter filter : chooser.getChoosableFileFilters()) {
-                    if (((UniFileFilter) filter).getDescription().equals(preferredFilter.getDescription())) {
+                    if (filter.getDescription().equals(preferredFilter.getDescription())) {
                         chooser.setFileFilter(filter);
                         break;
                     }

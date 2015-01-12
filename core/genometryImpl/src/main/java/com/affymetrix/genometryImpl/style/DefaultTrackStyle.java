@@ -19,7 +19,7 @@ import java.util.Map;
 
 /** Basic implementation of ITrackStyle. */
 public class DefaultTrackStyle implements ITrackStyle {
-	Color fg = Color.decode("0x0247FE");;
+	Color fg = Color.decode("0x0247FE");
 	Color bg = Color.WHITE;
 	boolean show = true;
 	boolean collapsed = false;

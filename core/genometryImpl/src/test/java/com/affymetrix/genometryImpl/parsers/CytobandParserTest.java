@@ -60,7 +60,7 @@ public class CytobandParserTest {
      * Test of writeAnnotations method, of class CytobandParser.
      */
     @Test
-    public void testWriteAnnotations() throws FileNotFoundException, IOException {
+    public void testWriteAnnotations() throws IOException {
 
         String string = "chr1\t39600000\t43900000\tp34.2\tgpos25\n"
                 + "chr1\t43900000\t46500000\tp34.1\tgneg\n"

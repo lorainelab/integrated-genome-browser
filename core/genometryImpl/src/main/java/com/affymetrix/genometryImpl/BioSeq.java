@@ -297,7 +297,7 @@ public class BioSeq implements SearchableCharIterator {
         RootSeqSymmetry container = type_id2sym.get(type);
         if (container == null) {
             container = new TypeContainerAnnot(type, ext, index);
-            ((TypeContainerAnnot) container).setProperty("method", type);
+            container.setProperty("method", type);
             SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
             container.addSpan(span);
             type_id2sym.put(type, container);

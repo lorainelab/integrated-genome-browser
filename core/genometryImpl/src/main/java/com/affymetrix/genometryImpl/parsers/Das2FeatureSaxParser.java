@@ -218,9 +218,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					);
 		}
 		if (REPORT_RESULTS) {
-			for (SeqSymmetry sym : result_syms) {
-				SeqUtils.printSymmetry(sym);
-			}
+			result_syms.forEach(SeqUtils::printSymmetry);
 		}
 
 		System.out.println("feature constructor calls: " + feature_constructor_calls);
@@ -520,8 +518,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// add locations as spans...
 		int loc_count = feat_locs.size();
-		for (int i = 0; i < loc_count; i++) {
-			SeqSpan span = feat_locs.get(i);
+		for (SeqSpan span : feat_locs) {
 			featsym.addSpan(span);
 		}
 
@@ -543,8 +540,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			if (REPORT_MULTI_LOC && loc_count > 2) {
 				System.out.println("loc count: " + loc_count);
 			}
-			for (int i = 0; i < loc_count; i++) {
-				SeqSpan span = feat_locs.get(i);
+			for (SeqSpan span : feat_locs) {
 				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
 				BioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
@@ -598,9 +594,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private void addChildren(MutableSeqSymmetry parent_sym) {
 		// get parts
 		Map<String, Object> parts = parent2parts.get(parent_sym);
-		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
-		while (citer.hasNext()) {
-			Map.Entry<String, Object> keyval = citer.next();
+		for (Map.Entry<String, Object> keyval : parts.entrySet()) {
 			keyval.getKey();
 			SeqSymmetry child_sym = (SeqSymmetry) keyval.getValue();
 			if (child_sym instanceof SymWithProps) {
@@ -671,9 +665,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 
 			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
-			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry annot = iterator.next();
+			for (SeqSymmetry annot : syms) {
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
 				//	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
 				writeDasFeature(annot, null, 0, type, pw, mspan);

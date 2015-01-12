@@ -105,9 +105,8 @@ public class USeqGraphParser {
 
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
 			if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
-				Iterator<String> it = chromData.keySet().iterator();
-				while (it.hasNext()){
-					chromStrand = it.next();
+				for (String s : chromData.keySet()) {
+					chromStrand = s;
 					al = chromData.get(chromStrand);
 					//merge data
 					PositionData merged = PositionData.merge(al);
@@ -121,9 +120,8 @@ public class USeqGraphParser {
 				}
 			}
 			else if (USeqUtilities.POSITION_SCORE.matcher(si.getBinaryType()).matches()) {
-				Iterator<String> it = chromData.keySet().iterator();
-				while (it.hasNext()){
-					chromStrand = it.next();
+				for (String s : chromData.keySet()) {
+					chromStrand = s;
 					al = chromData.get(chromStrand);
 					//merge data
 					PositionScoreData merged = PositionScoreData.merge(al);
@@ -163,29 +161,29 @@ public class USeqGraphParser {
 			}
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
 			if (USeqUtilities.POSITION.matcher(useqArchive.getBinaryDataType()).matches()) {
-				for (int i=0; i< useqData.length; i++){
-					if (useqData[i] != null){
+				for (USeqData anUseqData : useqData) {
+					if (anUseqData != null) {
 						//fetch data
-						PositionData p = (PositionData) useqData[i];
+						PositionData p = (PositionData) anUseqData;
 						int xcoords[] = p.getBasePositions();
 						float ycoords[] = new float[xcoords.length];
 						//make GraphSym and add to List
 						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
 						graphs.add(graf);
-					}	
+					}
 				}
 			}
 			else if (USeqUtilities.POSITION_SCORE.matcher(useqArchive.getBinaryDataType()).matches()) {
-				for (int i=0; i< useqData.length; i++){
-					if (useqData[i] != null){
+				for (USeqData anUseqData : useqData) {
+					if (anUseqData != null) {
 						//fetch data
-						PositionScoreData p = (PositionScoreData) useqData[i];
+						PositionScoreData p = (PositionScoreData) anUseqData;
 						int xcoords[] = p.getBasePositions();
 						float ycoords[] = p.getBaseScores();
 						//make GraphSym and add to List
 						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
 						graphs.add(graf);
-					}	
+					}
 				}
 			}
 			else {
@@ -246,9 +244,7 @@ public class USeqGraphParser {
 	}
 	/**Adds all tag values to GraphSym tag values.*/
 	public static void copyProps(GraphSym graf, HashMap<String,String> tagvals) {
-		Iterator<String> iter = tagvals.keySet().iterator();
-		while (iter.hasNext()) {
-			String tag = iter.next();
+		for (String tag : tagvals.keySet()) {
 			String val = tagvals.get(tag);
 			graf.setProperty(tag, val);
 		}

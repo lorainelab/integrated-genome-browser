@@ -36,17 +36,14 @@ public class ColorUtils {
 		combobox.setButtonVisible(false);
 		combobox.setStretchToFit(true);
 		combobox.setMaximumSize(new Dimension(150,20));
-		combobox.addItemListener(new ItemListener() {
-
-			public void itemStateChanged(ItemEvent e) {
-				Color c = combobox.getSelectedColor();
-				if (c != null) {
-					PreferenceUtils.putColor(node, pref_name, c);
-				}else{
-					combobox.setSelectedColor(PreferenceUtils.getColor(pref_name, default_val));
-				}
-			}
-		});
+		combobox.addItemListener(e -> {
+            Color c = combobox.getSelectedColor();
+            if (c != null) {
+                PreferenceUtils.putColor(node, pref_name, c);
+            }else{
+                combobox.setSelectedColor(PreferenceUtils.getColor(pref_name, default_val));
+            }
+        });
 
 		node.addPreferenceChangeListener(new PreferenceChangeListener() {
 

@@ -49,25 +49,16 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	private void updateDisplay(final boolean preserveX, final boolean preserveY){
-		ThreadUtils.runOnEventQueue(new Runnable() {
-	
-                        @Override
-			public void run() {
+		ThreadUtils.runOnEventQueue(() -> {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-				igbService.getSeqMapView().updatePanel(preserveX, preserveY);
-			}
-		});
+igbService.getSeqMapView().updatePanel(preserveX, preserveY);
+});
 	}
 	
 	private void refreshView() {
-		ThreadUtils.runOnEventQueue(new Runnable() {	
-                        @Override
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
 	}
 	
 	private void setStackDepth() {
@@ -202,7 +193,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			for (StyledGlyph glyph : allGlyphs) {
 				if (stackDepth == -1 && !stackDepthSet) {
 					if (glyph instanceof TierGlyph) {
-						switch (((TierGlyph) glyph).getDirection()) {
+						switch (glyph.getDirection()) {
 							case FORWARD:
 								stackDepth = glyph.getAnnotStyle().getForwardMaxDepth();
 								break;

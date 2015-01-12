@@ -64,18 +64,15 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode nodes
-						= (DefaultMutableTreeNode) getLastSelectedPathComponent();
+		addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode nodes
+                    = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 
-				if (nodes == null) {
-				}
+            if (nodes == null) {
+            }
 
 //	            Object nodeInfos = nodes.getUserObject();
-			}
-		});
+        });
 	}
 
 	@Override
@@ -121,13 +118,9 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 			return null;
 		}
 		expandPath(path);
-		return new SubRegionFinder() {
-			@Override
-			public Rectangle getRegion() {
-				int row = getRowForPath(path);
-				return getRowBounds(row);
-			}
-
-		};
+		return () -> {
+            int row = getRowForPath(path);
+            return getRowBounds(row);
+        };
 	}
 }

@@ -199,25 +199,15 @@ public class AltSpliceView extends IGBTabPanel
 
 	public void setSliceBuffer(int buf_size) {
 		buffer_sizeTF.setText(String.valueOf(buf_size));
-		spliced_view.setSliceBuffer(buf_size, 
-				new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			}
+		spliced_view.setSliceBuffer(buf_size,
+				orf_analyzer::redoOrfs
 		);
 	}
 
 	private void sliceAndDice(List<SeqSymmetry> syms) {
 		if (syms.size() > 0) {
 			spliced_view.sliceAndDice(syms,
-				new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			});
+					orf_analyzer::redoOrfs);
 		}
 	}
 
@@ -326,12 +316,7 @@ public class AltSpliceView extends IGBTabPanel
 				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_BACKGROUND_COLOR)) {
 			// Each time changed the color, it would triger this method twice and caused a concurrent modification exception 
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			});
+			ThreadUtils.runOnEventQueue(orf_analyzer::redoOrfs);
 		}
 	}
 

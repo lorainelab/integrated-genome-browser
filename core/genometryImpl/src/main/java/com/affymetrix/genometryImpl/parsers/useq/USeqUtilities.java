@@ -123,7 +123,7 @@ public class USeqUtilities {
 		if (len==0) {
 			return "";
 		}
-		StringBuffer sb = new StringBuffer(s[0]);
+		StringBuilder sb = new StringBuilder(s[0]);
 		for (int i=1; i<len; i++){
 			sb.append(separator);
 			sb.append(s[i]);
@@ -179,11 +179,11 @@ public class USeqUtilities {
 			try{
 				String path = directory.getCanonicalPath();
 				Pattern pat = Pattern.compile("^\\w+.*");
-				Matcher mat; 
-				for (int i=0; i< num; i++)  {
-					mat = pat.matcher(fileNames[i]);
+				Matcher mat;
+				for (String fileName : fileNames) {
+					mat = pat.matcher(fileName);
 					if (mat.matches()) {
-						al.add(new File(path, fileNames[i]));
+						al.add(new File(path, fileName));
 					}
 				}
 				//convert arraylist to file[]
@@ -221,14 +221,13 @@ public class USeqUtilities {
 	public static ArrayList<File> fetchAllFilesRecursively (File directory, String extension){
 		ArrayList<File> files = new ArrayList<>(); 
 		File[] list = directory.listFiles();
-		for (int i=0; i< list.length; i++){
-			if (list[i].isDirectory()) {
-				ArrayList<File> al = fetchAllFilesRecursively (list[i], extension);
+		for (File aList : list) {
+			if (aList.isDirectory()) {
+				ArrayList<File> al = fetchAllFilesRecursively(aList, extension);
 				files.addAll(al);
-			}
-			else{
-				if (list[i].getName().endsWith(extension)) {
-					files.add(list[i]);
+			} else {
+				if (aList.getName().endsWith(extension)) {
+					files.add(aList);
 				}
 			}
 		}
@@ -249,10 +248,10 @@ public class USeqUtilities {
 			files = dirOrFile.listFiles();
 			int num = files.length;
 			ArrayList<File> chromFiles = new ArrayList<>();
-			for (int i=0; i< num; i++)  {
-				m= p.matcher(files[i].getName());
+			for (File file : files) {
+				m = p.matcher(file.getName());
 				if (m.matches()) {
-					chromFiles.add(files[i]);
+					chromFiles.add(file);
 				}
 			}
 			files = new File[chromFiles.size()];
@@ -298,13 +297,12 @@ public class USeqUtilities {
 		}
 		File[] files = directory.listFiles();
 		int num = files.length;
-		for (int i=0; i<num; i++){
-			if (files[i].isDirectory()) {
-				if (deleteDirectory(files[i]) == false) {
+		for (File file : files) {
+			if (file.isDirectory()) {
+				if (deleteDirectory(file) == false) {
 					return false;
 				}
-			}
-			else if (files[i].delete() == false) {
+			} else if (file.delete() == false) {
 				return false;
 			}
 		}
@@ -321,9 +319,9 @@ public class USeqUtilities {
 		try {
 			out = new ZipOutputStream(new FileOutputStream(zipFile));		
 			// Compress the files
-			for (int i=0; i<filesToZip.length; i++) {
-				in = new FileInputStream(filesToZip[i]);
-				out.putNextEntry(new ZipEntry(filesToZip[i].getName()));
+			for (File aFilesToZip : filesToZip) {
+				in = new FileInputStream(aFilesToZip);
+				out.putNextEntry(new ZipEntry(aFilesToZip.getName()));
 				int len;
 				while ((len = in.read(buf)) != -1) {
 					out.write(buf, 0, len);
@@ -344,10 +342,10 @@ public class USeqUtilities {
 	/**Merges all files in File[][] to a File[].*/
 	public static File[] collapseFileArray(File[][] f){
 		ArrayList<File> al = new ArrayList<>();
-		for (int i=0; i< f.length; i++){
-			if (f[i] != null){
-				for (int j=0; j< f[i].length; j++){
-					al.add(f[i][j]);
+		for (File[] aF : f) {
+			if (aF != null) {
+				for (int j = 0; j < aF.length; j++) {
+					al.add(aF[j]);
 				}
 			}
 		}

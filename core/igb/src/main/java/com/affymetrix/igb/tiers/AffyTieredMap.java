@@ -665,19 +665,11 @@ public class AffyTieredMap extends NeoMap {
     }
 
     public void removeMouseListener(Class<? extends MouseListener> clazz) {
-        for (MouseListener ml : mouse_listeners) {
-            if (ml.getClass() == clazz) {
-                removeMouseListener(ml);
-            }
-        }
+        mouse_listeners.stream().filter(ml -> ml.getClass() == clazz).forEach(this::removeMouseListener);
     }
 
     public void removeMouseMotionListener(Class<? extends MouseMotionListener> clazz) {
-        for (MouseMotionListener ml : mouse_motion_listeners) {
-            if (ml.getClass() == clazz) {
-                removeMouseMotionListener(ml);
-            }
-        }
+        mouse_motion_listeners.stream().filter(ml -> ml.getClass() == clazz).forEach(this::removeMouseMotionListener);
     }
 
     /**

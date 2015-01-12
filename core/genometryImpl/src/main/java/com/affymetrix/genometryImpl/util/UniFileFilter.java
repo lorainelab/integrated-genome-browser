@@ -64,9 +64,9 @@ public final class UniFileFilter extends FileFilter {
 	 */
 	public UniFileFilter(String[] filters, String description) {
 		this();
-		for (int i = 0; i < filters.length; i++) {
+		for (String filter : filters) {
 			// add filters one by one
-			addExtension(filters[i]);
+			addExtension(filter);
 		}
 		if (description!=null) {
 			setDescription(description);
@@ -83,9 +83,8 @@ public final class UniFileFilter extends FileFilter {
 			// but getExtension(f) can't return compound extensions like ".egr.txt"
 
 			String base_name = stripCompressionEndings(f.getName().toLowerCase());
-			Iterator<String> iter = filters.iterator();
-			while (iter.hasNext()) {
-				String ending = "." + iter.next();
+			for (String filter : filters) {
+				String ending = "." + filter;
 				if (base_name.endsWith(ending)) {
 					return true;
 				}
@@ -106,8 +105,8 @@ public final class UniFileFilter extends FileFilter {
 
 	/** Calls {@link #addCompressionEnding(String)} for each item in the list. */
 	public void addCompressionEndings(String[] endings) {
-		for (int i=0; i<endings.length; i++) {
-			addCompressionEnding(endings[i]);
+		for (String ending : endings) {
+			addCompressionEnding(ending);
 		}
 	}
 
@@ -172,7 +171,7 @@ public final class UniFileFilter extends FileFilter {
 	 * {@link #addExtension(String)}.
 	 */
 	public Set<String> getExtensions() {
-		return Collections.<String>unmodifiableSet(filters);
+		return Collections.unmodifiableSet(filters);
 	}
 
 	public String getDescription() {

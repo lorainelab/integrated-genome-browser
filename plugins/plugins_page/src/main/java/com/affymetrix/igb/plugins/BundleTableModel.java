@@ -270,15 +270,10 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
             public void formatColumn(JTable jTable, TableColumn tc) {
                 tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
                 tc.setCellRenderer(
-                        new TableCellRenderer() {
-
-                            @Override
-                            public Component getTableCellRendererComponent(JTable table, Object value,
-                                    boolean isSelected, boolean hasFocus, int row, int column) {
-                                Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                                ((JLabel) component).setToolTipText((String) value);
-                                return component;
-                            }
+                        (table, value, isSelected, hasFocus, row, column) -> {
+                            Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                            ((JLabel) component).setToolTipText((String) value);
+                            return component;
                         });
             }
         });
@@ -319,7 +314,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
         sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
         sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
 
-        SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
+        SORT_KEYS = Collections.unmodifiableList(sortKeys);
     }
 
     public BundleTableModel() {

@@ -102,16 +102,13 @@ public final class KeyStrokesView {
         }
     };
 
-    private PreferenceChangeListener pcl = new PreferenceChangeListener() {
-        @Override
-        public void preferenceChange(PreferenceChangeEvent evt) {
-            if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
-                return;
-            }
-			// Each time a keystroke preference is changed, update the whole table.
-            // Inelegant, but it works. 
-            invokeRefreshTable();
+    private PreferenceChangeListener pcl = evt -> {
+        if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
+            return;
         }
+        // Each time a keystroke preference is changed, update the whole table.
+        // Inelegant, but it works.
+        invokeRefreshTable();
     };
 
     public KeyStrokesView() {
@@ -303,15 +300,11 @@ public final class KeyStrokesView {
      * preference change.
      */
     public void invokeRefreshTable() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                refresh();
-                model.fireTableDataChanged();
-                if (selected > 0) {
-                    table.setRowSelectionInterval(selected, selected);
-                }
+        SwingUtilities.invokeLater(() -> {
+            refresh();
+            model.fireTableDataChanged();
+            if (selected > 0) {
+                table.setRowSelectionInterval(selected, selected);
             }
         });
 

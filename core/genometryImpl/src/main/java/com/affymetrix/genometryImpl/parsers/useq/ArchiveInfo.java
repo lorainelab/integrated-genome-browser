@@ -148,17 +148,15 @@ public class ArchiveInfo {
 			out = new PrintWriter (new FileWriter (readme));
 			//any comment lines?
 			if (commentLines!= null){
-				for (int i=0; i< commentLines.length; i++) {
-					out.println(commentLines[i]);
+				for (String commentLine : commentLines) {
+					out.println(commentLine);
 				}
 				out.println();
 			}
 			//print key values, spaces flanking = are permitted
-			Iterator<String> it = keyValues.keySet().iterator();
-			while (it.hasNext()){
-				String key = it.next();
+			for (String key : keyValues.keySet()) {
 				String value = keyValues.get(key);
-				out.println(key +" = "+value);
+				out.println(key + " = " + value);
 			}
 			return readme;
 		} catch (IOException e){
@@ -172,17 +170,15 @@ public class ArchiveInfo {
 	public void appendCommentedKeyValues (PrintWriter out){
 		//any comment lines?
 		if (commentLines!= null){
-			for (int i=0; i< commentLines.length; i++) {
-				out.println(commentLines[i]);
+			for (String commentLine : commentLines) {
+				out.println(commentLine);
 			}
 			out.println();
 		}
 		//print key values, spaces flanking = are permitted
-		Iterator<String> it = keyValues.keySet().iterator();
-		while (it.hasNext()){
-			String key = it.next();
+		for (String key : keyValues.keySet()) {
 			String value = keyValues.get(key);
-			out.println("# "+key +" = "+value);
+			out.println("# " + key + " = " + value);
 		}
 	}
 

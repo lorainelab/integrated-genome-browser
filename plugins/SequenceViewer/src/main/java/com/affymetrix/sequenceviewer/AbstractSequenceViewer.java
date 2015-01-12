@@ -211,12 +211,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                     return;
                 }
 
-                final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
-                    public void actionDone(GenericAction action) {
-                        mapframe = new JFrame();
-                        System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
-                        getGoing(residues_sym);//next destination to start the sequence viewer
-                    }
+                final GenericActionDoneCallback doneback = action -> {
+                    mapframe = new JFrame();
+                    System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
+                    getGoing(residues_sym);//next destination to start the sequence viewer
                 };
 
                 if (!isGenomicRequest) {
@@ -641,12 +639,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         showMenu.add(showAllNegativeTranslation);
         colorMenu.add(colorScheme1);
         colorMenu.add(colorScheme2);
-        exportRComplementFasta.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                exportSequenceFasta(true);
-            }
-        });
+        exportRComplementFasta.addActionListener(evt -> exportSequenceFasta(true));
         bg.add(colorScheme1);
         bg.add(colorScheme2);
         if (colorSwitch) {
@@ -723,10 +716,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
     public void copySelectedTransAction(int[] frameArray) {
         int frameType;
-        StringBuffer selectedTrans = new StringBuffer();
+        StringBuilder selectedTrans = new StringBuilder();
 
-        for (int i = 0; i < frameArray.length; i++) {
-            frameType = frameArray[i];
+        for (int aFrameArray : frameArray) {
+            frameType = aFrameArray;
             if (frameType < Translatable.FRAME_ONE) {
                 continue;
             }
@@ -784,7 +777,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
      * Copy the annotated sequence and replace the 'starting', 'ending' and introns with lower cases
      */
     public void copyAnnotatedSequenceAction() {
-        StringBuffer copyAnnotatedSeqStringBuffer = new StringBuffer();
+        StringBuilder copyAnnotatedSeqStringBuffer = new StringBuilder();
 
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;

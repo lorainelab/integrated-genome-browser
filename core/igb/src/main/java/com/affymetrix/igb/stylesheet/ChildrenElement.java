@@ -197,10 +197,8 @@ static String ATT_POSITIONS = "child_positions";
     }
     
     if (matchElements != null) {
-      Iterator<MatchElement> iter = matchElements.iterator();
-      while (iter.hasNext()) {
-       MatchElement kid = iter.next();
-       kid.appendXML(indent + "  ", sb);
+      for (MatchElement kid : matchElements) {
+        kid.appendXML(indent + "  ", sb);
       }
     }
     

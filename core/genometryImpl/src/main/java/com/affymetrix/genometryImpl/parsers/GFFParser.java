@@ -426,7 +426,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 		if (new_h_level_int == null) {
 			throw new RuntimeException("Hierarchy exception: unknown feature type: " + feature_type);
 		}
-		int new_h_level = new_h_level_int.intValue();
+		int new_h_level = new_h_level_int;
 		if (new_h_level - current_h_level > 1) {
 			throw new RuntimeException("Hierarchy exception: skipped a level: " + current_h_level + " -> " + new_h_level + ":\n" + line + "\n");
 		}
@@ -518,16 +518,15 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 
 	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
 		// Loop through the results List and add all Sym's to the BioSeq
-		Iterator iter = results.iterator();
-		while (iter.hasNext()) {
-			SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
+		for (Object result : results) {
+			SingletonSymWithProps sym = (SingletonSymWithProps) result;
 			BioSeq seq = sym.getBioSeq();
 			if (USE_GROUPING && sym.getChildCount() > 0) {
 				// stretch sym to bounds of all children
 				SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
 				// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
 				sym.setCoords(pspan.getStart(), pspan.getEnd());
-				resortChildren((MutableSingletonSeqSymmetry) sym, seq);
+				resortChildren(sym, seq);
 			}
 			if (create_container_annot) {
 				String meth = (String) sym.getProperty("method");
@@ -598,9 +597,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 				psym.removeChildren();
 				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
 				Collections.sort(child_list, comp);
-				for (SeqSymmetry child : child_list) {		
-					psym.addChild(child);
-				}
+				child_list.forEach(psym::addChild);
 			}
 		}
 
@@ -643,8 +640,8 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 			if (m.matches()) {
 				resetFilters();
 				String[] feature_types = m.group(2).split(" ");
-				for (int i=0;i<feature_types.length; i++) {
-					String feature_type = feature_types[i].trim();
+				for (String feature_type1 : feature_types) {
+					String feature_type = feature_type1.trim();
 					if (feature_type.length() > 0) {
 						addFeatureFilter(feature_type, "include ".equals(m.group(1)));
 					}
@@ -730,8 +727,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 		public static void processAttributes(Map<String,Object> m, String attributes) {
 			List<String> vals = new ArrayList<>();
 			String[] attarray = att_regex.split(attributes);
-			for (int i=0; i<attarray.length; i++) {
-				String att = attarray[i];
+			for (String att : attarray) {
 				Matcher tag_matcher = tag_regex.matcher(att);
 				if (tag_matcher.find()) {
 					String tag = tag_matcher.group(1);
@@ -745,8 +741,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 						String group2 = value_matcher.group(2);
 						if (group1 != null) {
 							vals.add(group1);
-						}
-						else {
+						} else {
 							vals.add(group2);
 						}
 						matches = value_matcher.find();
@@ -807,7 +802,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 			}
 		}
 
-		static final Integer TWO = Integer.valueOf(2);
+		static final Integer TWO = 2;
 
 		int number_of_duplicate_warnings = 0;
 
@@ -815,42 +810,39 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 			String groupid = null;
 			String featid = null;
 			String[] tagvals = att_regex.split(atts);
-			for (int i=0; i<tagvals.length; i++) {
-				String tagval = tagvals[i];
+			for (String tagval : tagvals) {
 				String[] tv = gff3_tagval_splitter.split(tagval);
 				String tag = tv[0];
 				String val = tv[1];
-                            //      String vals = gff3_multival_splitter.split(val);
-                            switch (tag) {
-                                case GFF3_PARENT:
-                                    groupid = val;
-                                    break;
-                                case GFF3_ID:
-                                    featid = val;
-                                    Object obj = gff3_id_hash.get(featid);
-                                    if (obj == null) {
-                                        gff3_id_hash.put(featid, featid);
-                                    }
-                                    else {
-                                        if (obj instanceof String) {
-                                            gff3_id_hash.put(featid, TWO);
-                                            featid += "_1";
-                                        }
-                                        else if (obj instanceof Integer) {
-                                            Integer iobj = (Integer)obj;
-                                            int fcount = iobj.intValue();
-                                            gff3_id_hash.put(featid, Integer.valueOf(fcount+1));
-                                            featid = featid + "_" + iobj.toString();
-                                        }
-                                        if (number_of_duplicate_warnings++ <= 10) {
-                                            System.out.println("duplicate feature id, new id: " + featid);
-                                            if (number_of_duplicate_warnings == 10) {
-                                                System.out.println("(Suppressing further warnings about duplicate ids");
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
+				//      String vals = gff3_multival_splitter.split(val);
+				switch (tag) {
+					case GFF3_PARENT:
+						groupid = val;
+						break;
+					case GFF3_ID:
+						featid = val;
+						Object obj = gff3_id_hash.get(featid);
+						if (obj == null) {
+							gff3_id_hash.put(featid, featid);
+						} else {
+							if (obj instanceof String) {
+								gff3_id_hash.put(featid, TWO);
+								featid += "_1";
+							} else if (obj instanceof Integer) {
+								Integer iobj = (Integer) obj;
+								int fcount = iobj;
+								gff3_id_hash.put(featid, fcount + 1);
+								featid = featid + "_" + iobj.toString();
+							}
+							if (number_of_duplicate_warnings++ <= 10) {
+								System.out.println("duplicate feature id, new id: " + featid);
+								if (number_of_duplicate_warnings == 10) {
+									System.out.println("(Suppressing further warnings about duplicate ids");
+								}
+							}
+						}
+						break;
+				}
 			}
 			if (groupid == null) {
 				return featid;
@@ -1008,9 +1000,7 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 		}
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry sym = (SeqSymmetry) iterator.next();
+			for (Object sym : syms) {
 				if (sym instanceof SymWithProps) {
 					outputGffFormat((SymWithProps) sym, seq, bw);
 				} else {

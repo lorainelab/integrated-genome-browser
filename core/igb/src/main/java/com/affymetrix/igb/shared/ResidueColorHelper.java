@@ -36,7 +36,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
         defaultColors.put(PREF_C_COLOR, default_C_color);
         defaultColors.put(PREF_OTHER_COLOR, default_other_color);
 
-        DEFAULT_COLORS = Collections.<String, Color>unmodifiableMap(defaultColors);
+        DEFAULT_COLORS = Collections.unmodifiableMap(defaultColors);
     }
 
     private final Color[] colors;

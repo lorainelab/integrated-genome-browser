@@ -221,9 +221,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
             return;
         }
         this.isLoading = isLoading;
-        for (ViewI view : getScene().getViews()) {
-            draw(view);
-        }
+        getScene().getViews().forEach(this::draw);
     }
 
     @Override

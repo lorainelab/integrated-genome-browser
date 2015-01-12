@@ -52,7 +52,8 @@ public class Das2ServerType implements ServerTypeI {
 		BNIB,
 		RAW,
 		FASTA
-	};
+	}
+
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
 	private static final GenometryModel gmodel = GenometryModel.getInstance();

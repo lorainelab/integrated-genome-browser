@@ -26,12 +26,7 @@ public class CodonGlyphProcessor {
                 int prevCodeSize = codeSize;
                 codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
                 if (prevCodeSize != codeSize) {
-                    ThreadUtils.runOnEventQueue(new Runnable() {
-                        @Override
-                        public void run() {
-                            Application.getSingleton().getMapView().setAnnotatedSeq(Application.getSingleton().getMapView().getAnnotatedSeq(), true, true);
-                        }
-                    });
+                    ThreadUtils.runOnEventQueue(() -> Application.getSingleton().getMapView().setAnnotatedSeq(Application.getSingleton().getMapView().getAnnotatedSeq(), true, true));
                 }
             }
         }

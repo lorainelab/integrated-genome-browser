@@ -522,8 +522,8 @@ public final class WebLinksView {
 		public int getColumnCount() {
 			return col_headings.length;
 		}
-	};
-	
+	}
+
 	class LocalListSelectionListener implements ListSelectionListener {
 		
 		private JTable table;

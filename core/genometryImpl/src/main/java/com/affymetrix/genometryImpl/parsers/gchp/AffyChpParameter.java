@@ -52,19 +52,19 @@ public final class AffyChpParameter {
 
 		switch (type) {
 			case INT8:
-				result = Integer.valueOf((int) (char) valueBytes[0]); break; // untested
+				result = (int) (char) valueBytes[0]; break; // untested
 			case UINT8:
-				result = Integer.valueOf((int) (char) valueBytes[0]); break; // untested (seems to be wrong)
+				result = (int) (char) valueBytes[0]; break; // untested (seems to be wrong)
 			case INT16:
-				result = Short.valueOf(bb.getShort()); break; // untested
+				result = bb.getShort(); break; // untested
 			case UINT16:
-				result = Integer.valueOf((int) (char) bb.getShort()); break; // untested
+				result = (int) (char) bb.getShort(); break; // untested
 			case INT32:
-				result = Integer.valueOf(bb.getInt(0)); break; //OK
+				result = bb.getInt(0); break; //OK
 			case UINT32:
 				throw new RuntimeException("Can't do type UINT32");
 			case FLOAT:
-				result = new Float(bb.getFloat(0)); break; //OK
+				result = bb.getFloat(0); break; //OK
 			case TEXT_ASCII:
 				result = AffyGenericChpFile.makeString(valueBytes, AffyDataType.UTF8); break;//OK
 			case TEXT_UTF16BE:

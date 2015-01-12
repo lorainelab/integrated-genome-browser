@@ -626,12 +626,9 @@ public class Activator implements BundleActivator {
 
         @Override
         public void run() {
-            java.awt.event.ActionListener al = new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-                    timeup = true;
-                    timer.stop();
-                }
+            java.awt.event.ActionListener al = e -> {
+                timeup = true;
+                timer.stop();
             };
             timer = new Timer(10000, al);
             timer.setRepeats(false);

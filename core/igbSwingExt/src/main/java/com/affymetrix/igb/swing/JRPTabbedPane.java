@@ -33,14 +33,11 @@ public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget 
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (ScriptManager.getInstance().isMouseDown()) {
-					ScriptManager.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
-				}
-			}
-		});
+		addChangeListener(e -> {
+            if (ScriptManager.getInstance().isMouseDown()) {
+                ScriptManager.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
+            }
+        });
 	}
 
 	@Override
@@ -62,11 +59,6 @@ public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget 
 			}
 		}
 		final int tabIndex = index;
-		return new SubRegionFinder() {
-			@Override
-			public Rectangle getRegion() {
-				return getBoundsAt(tabIndex);
-			}
-		};
+		return () -> getBoundsAt(tabIndex);
 	}
 }

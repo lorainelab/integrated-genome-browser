@@ -373,12 +373,12 @@ public class CyGradientTrackRenderer extends JComponent implements TrackRenderer
 		if (detail && (fractions != null)) {
 			String fNum = null;
 
-			for (int i = 0; i < fractions.length; i++) {
-				fNum = String.format("%.2f", (fractions[i] * range) + minValue);
+			for (float fraction : fractions) {
+				fNum = String.format("%.2f", (fraction * range) + minValue);
 
 				strWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), fNum);
 
-				g2.drawString(fNum, (fractions[i] * iconWidth) - (strWidth / 2), iconHeight - 20);
+				g2.drawString(fNum, (fraction * iconWidth) - (strWidth / 2), iconHeight - 20);
 			}
 
 			g2.drawString(minStr, 0, iconHeight);

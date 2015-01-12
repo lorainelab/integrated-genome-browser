@@ -25,34 +25,31 @@ public class USeq2Text {
 			
 		System.out.println("Processing:");
 		//for each zip archive
-		for (int i=0; i< useqArchives.length; i++){
+			for (File useqArchive : useqArchives) {
 
-			System.out.println("\t"+useqArchives[i].getName());
+				System.out.println("\t" + useqArchive.getName());
 
-			if (printWigFormat){
-				//is it stranded
-				USeqArchive ua = new USeqArchive(useqArchives[i]);
-				if (ua.isStranded()){
-					File wigFile = new File (useqArchives[i].getParentFile(), USeqUtilities.removeExtension(useqArchives[i].getName())+"Plus.wig");
-					print2WigFile(useqArchives[i], wigFile, "+");
-					wigFile = new File (useqArchives[i].getParentFile(), USeqUtilities.removeExtension(useqArchives[i].getName())+"Minus.wig");
-					print2WigFile(useqArchives[i], wigFile, "-");
-				}
-				else {
-					File wigFile = new File (useqArchives[i].getParentFile(), USeqUtilities.removeExtension(useqArchives[i].getName())+".wig");
-					print2WigFile(useqArchives[i], wigFile, null);
-				}
-			}
-
-			else {
-				String extension = ".txt";
-				if (printBedFormat) {
+				if (printWigFormat) {
+					//is it stranded
+					USeqArchive ua = new USeqArchive(useqArchive);
+					if (ua.isStranded()) {
+						File wigFile = new File(useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName()) + "Plus.wig");
+						print2WigFile(useqArchive, wigFile, "+");
+						wigFile = new File(useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName()) + "Minus.wig");
+						print2WigFile(useqArchive, wigFile, "-");
+					} else {
+						File wigFile = new File(useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName()) + ".wig");
+						print2WigFile(useqArchive, wigFile, null);
+					}
+				} else {
+					String extension = ".txt";
+					if (printBedFormat) {
 						extension = ".bed";
 					}
-				File txtFile = new File (useqArchives[i].getParentFile(), USeqUtilities.removeExtension(useqArchives[i].getName())+extension);
-				print2TextFile(useqArchives[i], txtFile, printBedFormat, convertScoresToBedFormat);
+					File txtFile = new File(useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName()) + extension);
+					print2TextFile(useqArchive, txtFile, printBedFormat, convertScoresToBedFormat);
+				}
 			}
-		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,7 +57,7 @@ public class USeq2Text {
 		System.out.println("\nDone!");
 	}
 	
-	public USeq2Text(){};
+	public USeq2Text(){}
 
 	@SuppressWarnings("unchecked")
 	/**Prints a UseqArchive binary file to a text file in either minimal native format (see comment at beginning of file for a description of the columns) or in bed6 or bed12 format.*/

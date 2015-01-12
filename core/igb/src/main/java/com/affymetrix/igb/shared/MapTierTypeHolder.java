@@ -26,11 +26,9 @@ public class MapTierTypeHolder {
     @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
     public final void addViewFactory(MapTierGlyphFactoryI factory) {
         checkNotNull(factory);
-        for (FileTypeCategory category : factory.getSupportedCategories()) {
-            if (!mapTierTypeReferenceTable.contains(factory.getName(), category)) {
-                mapTierTypeReferenceTable.put(factory.getName(), category, factory);
-            }
-        }
+        factory.getSupportedCategories().stream().filter(category -> !mapTierTypeReferenceTable.contains(factory.getName(), category)).forEach(category -> {
+            mapTierTypeReferenceTable.put(factory.getName(), category, factory);
+        });
     }
 
     public final void removeViewFactory(MapTierGlyphFactoryI factory) {

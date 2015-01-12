@@ -106,8 +106,8 @@ public final class GeneralUtils {
      * Returns the file name with all {@link #compression_endings} stripped-off.
      */
     public static String stripEndings(String name) {
-        for (int i = 0; i < compression_endings.length; i++) {
-            String ending = compression_endings[i].toLowerCase();
+        for (String compression_ending : compression_endings) {
+            String ending = compression_ending.toLowerCase();
             if (name.toLowerCase().endsWith(ending)) {
                 String stripped_name = name.substring(0, name.lastIndexOf('.'));
                 return stripEndings(stripped_name);
@@ -125,7 +125,7 @@ public final class GeneralUtils {
      * compression endings (like ".zip") removed, and converted to lower case.
      */
     public static InputStream getInputStream(File f, StringBuffer sb) throws
-            FileNotFoundException, IOException {
+            IOException {
 
         String infile_name = "file:" + f.getAbsolutePath();
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));

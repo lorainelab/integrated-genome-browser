@@ -150,6 +150,6 @@ public class SeekableFTPStream extends SeekableStream{
 	
 	public String getSource(){
 		return path;
-	};
+	}
 }
 

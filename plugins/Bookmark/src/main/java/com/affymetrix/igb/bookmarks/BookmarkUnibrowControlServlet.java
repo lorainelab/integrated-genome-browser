@@ -259,17 +259,9 @@ public final class BookmarkUnibrowControlServlet {
                                 }
                             }
 
-                            for (final GenericFeature feature : gFeatures) {
-                                if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-                                    ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            BookmarkController.applyProperties(igbService, seq, parameters, feature, combos);
-                                        }
-                                    });
-                                }
-                            }
+                            gFeatures.stream().filter(feature -> feature != null && graph_urls.contains(feature.getURI().toString())).forEach(feature -> {
+                                ThreadUtils.getPrimaryExecutor(feature).execute(() -> BookmarkController.applyProperties(igbService, seq, parameters, feature, combos));
+                            });
                         }
                     }
 
@@ -344,8 +336,7 @@ public final class BookmarkUnibrowControlServlet {
             if (qindex > -1) {
                 String query = das2_query_url.substring(qindex + 1);
                 String[] query_array = query_splitter.split(query);
-                for (int k = -0; k < query_array.length; k++) {
-                    String tagval = query_array[k];
+                for (String tagval : query_array) {
                     int eqindex = tagval.indexOf('=');
                     String tag = tagval.substring(0, eqindex);
                     String val = tagval.substring(eqindex + 1);
@@ -422,11 +413,7 @@ public final class BookmarkUnibrowControlServlet {
 
     private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
         List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
-        for (GenericFeature gFeature : gFeatures) {
-            if (gFeature != null) {
-                igbService.loadChromosomes(gFeature);
-            }
-        }
+        gFeatures.stream().filter(gFeature -> gFeature != null).forEach(igbService::loadChromosomes);
     }
 
     private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {

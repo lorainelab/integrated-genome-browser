@@ -431,12 +431,12 @@ public class UcscPslSym
         tprops.put("id", getQuerySeq().getID());
         tprops.put("type", "Pairwise Alignment");
         tprops.put("same orientation", getSameOrientation());
-        tprops.put("matches", Integer.valueOf(getMatches()));
-        tprops.put("query length", Integer.valueOf(queryseq.getLength()));
-        tprops.put("query inserts", Integer.valueOf(getQueryNumInserts()));
-        tprops.put("query bases inserted", Integer.valueOf(getQueryBaseInserts()));
-        tprops.put("target inserts", Integer.valueOf(getTargetNumInserts()));
-        tprops.put("target bases inserted", Integer.valueOf(getTargetBaseInserts()));
+        tprops.put("matches", getMatches());
+        tprops.put("query length", queryseq.getLength());
+        tprops.put("query inserts", getQueryNumInserts());
+        tprops.put("query bases inserted", getQueryBaseInserts());
+        tprops.put("target inserts", getTargetNumInserts());
+        tprops.put("target bases inserted", getTargetBaseInserts());
 		//tprops.put("query seq", getQuerySeq().getID());
         //tprops.put("target seq", getTargetSeq().getID());
         if (props != null) {
@@ -585,9 +585,7 @@ public class UcscPslSym
 
     protected void outputPropTagVals(DataOutputStream out) throws IOException {
         if (props != null) {
-            Iterator<Map.Entry<String, Object>> iter = props.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, Object> entry = iter.next();
+            for (Map.Entry<String, Object> entry : props.entrySet()) {
                 out.write((entry.getKey()).getBytes());
                 out.write('=');
                 out.write(entry.getValue().toString().getBytes());

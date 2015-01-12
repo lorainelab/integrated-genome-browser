@@ -100,9 +100,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
         style2Feature.clear();
 
-        for (GenericFeature gFeature : features) {
-            createPrimaryVirtualFeatures(gFeature);
-        }
+        features.forEach(this::createPrimaryVirtualFeatures);
 
         fireTableDataChanged();
 //		sort();
@@ -432,11 +430,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
                 if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-                    for (GenericFeature gFeature : features) {
-                        if (gFeature.equals(vFeature.getFeature())) {
-                            GeneralLoadView.getLoadView().removeFeature(gFeature, true);
-                        }
-                    }
+                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(gFeature -> {
+                        GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+                    });
                     this.fireTableDataChanged(); //clear row selection
                 }
                 break;
@@ -444,11 +440,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 if (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
                         && vFeature.getLoadStrategy() != LoadStrategy.GENOME) {
                     GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
-                    for (GenericFeature gFeature : features) {
-                        if (gFeature.equals(vFeature.getFeature())) {
-                            GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-                        }
-                    }
+                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(GeneralLoadUtils::loadAndDisplayAnnotations);
                 }
                 break;
             case LOAD_STRATEGY_COLUMN:
@@ -488,7 +480,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 }
                 break;
             case TRACK_NAME_COLUMN:
-                if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals((String) value)) {//TK
+                if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals(value)) {//TK
                     vFeature.getStyle().setTrackName((String) value);
 
                 }

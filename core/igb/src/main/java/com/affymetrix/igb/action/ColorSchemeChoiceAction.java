@@ -77,34 +77,29 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
      * Listens for the choice of a color scheme. Parses the choice and stores
      * the chosen scheme for later use if the users "OK"s the dialog.
      */
-    private ItemListener middleMan = new ItemListener() {
-
-        @Override
-        public void itemStateChanged(ItemEvent ie) {
-            switch (ie.getStateChange()) {
-                case ItemEvent.DESELECTED:
-                    break;
-                case ItemEvent.SELECTED:
-                    Object o = ie.getItem();
-                    ColorScheme s = ColorScheme.ELISE;
-                    if (o instanceof ColorScheme) {
-                        s = (ColorScheme) o;
-                    } else {
-                        String str = o.toString();
-                        int i = str.lastIndexOf(' ');
-                        if (0 < i) {
-                            s = ColorScheme.valueOf(str.substring(i + 1));
-                        }
+    private ItemListener middleMan = ie -> {
+        switch (ie.getStateChange()) {
+            case ItemEvent.DESELECTED:
+                break;
+            case ItemEvent.SELECTED:
+                Object o = ie.getItem();
+                ColorScheme s = ColorScheme.ELISE;
+                if (o instanceof ColorScheme) {
+                    s = (ColorScheme) o;
+                } else {
+                    String str = o.toString();
+                    int i = str.lastIndexOf(' ');
+                    if (0 < i) {
+                        s = ColorScheme.valueOf(str.substring(i + 1));
                     }
-                    ColorSchemeChoiceAction.this.choice = s;
-                    break;
-                default:
-                    System.err.println(
-                            "SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
-                            + ie.getStateChange());
-            }
+                }
+                ColorSchemeChoiceAction.this.choice = s;
+                break;
+            default:
+                System.err.println(
+                        "SchemeChoser.$ItemListener.itemStateChanged: Unexpected state change: "
+                        + ie.getStateChange());
         }
-
     };
 
     /**

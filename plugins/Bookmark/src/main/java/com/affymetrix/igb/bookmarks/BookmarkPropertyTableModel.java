@@ -55,13 +55,9 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
         duples.clear();
 
         Set<String> keySet = multimap.keySet();
-        Iterator<String> keyIterator = keySet.iterator();
-        while (keyIterator.hasNext()) {
-            String key = keyIterator.next();
+        for (String key : keySet) {
             List<String> values = multimap.get(key);
-            Iterator<String> valueIterator = values.iterator();
-            while (valueIterator.hasNext()) {
-                String value = valueIterator.next();
+            for (String value : values) {
                 Duple duple = new Duple(key, value);
                 duples.add(duple);
             }

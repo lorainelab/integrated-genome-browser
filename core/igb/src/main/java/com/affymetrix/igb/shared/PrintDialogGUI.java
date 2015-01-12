@@ -44,27 +44,15 @@ public class PrintDialogGUI extends javax.swing.JPanel {
 
         wholeFrameRB.setText("Whole Frame");
         buttonGroup.add(wholeFrameRB);
-        wholeFrameRB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wholeFrameRBActionPerformed(evt);
-            }
-        });
+        wholeFrameRB.addActionListener(this::wholeFrameRBActionPerformed);
 
         mainViewRB.setText("Main View");
         buttonGroup.add(mainViewRB);
-        mainViewRB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mainViewRBActionPerformed(evt);
-            }
-        });
+        mainViewRB.addActionListener(this::mainViewRBActionPerformed);
 
         mainViewWithLabelRB.setText("Main View (With Labels)");
         buttonGroup.add(mainViewWithLabelRB);
-        mainViewWithLabelRB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mainViewWithLabelRBActionPerformed(evt);
-            }
-        });
+        mainViewWithLabelRB.addActionListener(this::mainViewWithLabelRBActionPerformed);
 
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
@@ -111,18 +99,10 @@ public class PrintDialogGUI extends javax.swing.JPanel {
         );
 
         Print.setText("Ok");
-        Print.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                PrintActionPerformed(evt);
-            }
-        });
+        Print.addActionListener(this::PrintActionPerformed);
 
         Cancel.setText("Cancel");
-        Cancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CancelActionPerformed(evt);
-            }
-        });
+        Cancel.addActionListener(this::CancelActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

@@ -542,12 +542,11 @@ public final class GraphScoreThreshSetter extends JPanel
                 setGraphs(new ArrayList<>(graphs));
             }
         } else if (src == tier_threshB) {
-            for (GraphGlyph sggl : graphs) {
-                if (sggl.isVisible()) {
-                    new ThresholdOperationAction(new ThresholdOperator(sggl, ((NeoWidget) widg).getView())).actionPerformed(null);
-                    //pickleThreshold(sggl);
-                }
-            }
+            //pickleThreshold(sggl);
+            graphs.stream().filter(sggl -> sggl.isVisible()).forEach(sggl -> {
+                new ThresholdOperationAction(new ThresholdOperator(sggl, ((NeoWidget) widg).getView())).actionPerformed(null);
+                //pickleThreshold(sggl);
+            });
             widg.updateWidget();
         } else if (src == threshCB) {
             String selection = (String) (threshCB).getSelectedItem();
@@ -714,9 +713,7 @@ public final class GraphScoreThreshSetter extends JPanel
      * Sets the ThreshStartShift on a collection of SmartGraphGlyphs.
      */
     private void adjustThreshStartShift(Collection<GraphGlyph> glyphs, int shift) {
-        Iterator<GraphGlyph> iter = glyphs.iterator();
-        while (iter.hasNext()) {
-            GraphGlyph sggl = iter.next();
+        for (GraphGlyph sggl : glyphs) {
             sggl.setThreshStartShift(shift);
         }
         widg.updateWidget();
@@ -726,9 +723,7 @@ public final class GraphScoreThreshSetter extends JPanel
      * Sets the ThreshEndShift on a collection of SmartGraphGlyphs.
      */
     private void adjustThreshEndShift(Collection<GraphGlyph> glyphs, int shift) {
-        Iterator<GraphGlyph> iter = glyphs.iterator();
-        while (iter.hasNext()) {
-            GraphGlyph sggl = iter.next();
+        for (GraphGlyph sggl : glyphs) {
             sggl.setThreshEndShift(shift);
         }
         widg.updateWidget();

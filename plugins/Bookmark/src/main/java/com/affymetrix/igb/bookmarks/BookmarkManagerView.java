@@ -374,8 +374,7 @@ public final class BookmarkManagerView {
             int yes = JOptionPane.showConfirmDialog(frame, params, "Delete?", JOptionPane.YES_NO_OPTION);
             doNotShowWarning = checkbox.isSelected();
             if (yes == JOptionPane.YES_OPTION) {
-                for (int i = 0; i < selectionPaths.length; i++) {
-                    TreePath path = selectionPaths[i];
+                for (TreePath path : selectionPaths) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                     if (node.getParent() != null) {
                         tree_model.removeNodeFromParent(node);
@@ -384,8 +383,7 @@ public final class BookmarkManagerView {
                 }
             }
         } else {
-            for (int i = 0; i < selectionPaths.length; i++) {
-                TreePath path = selectionPaths[i];
+            for (TreePath path : selectionPaths) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (node.getParent() != null) {
                     tree_model.removeNodeFromParent(node);
@@ -601,12 +599,12 @@ public final class BookmarkManagerView {
 
             name_text_field = new JRPTextField("BookmarkManagerView_name_text_area");
             name_text_field.getDocument().addUndoableEditListener(undoManager);
-            ((AbstractDocument) name_text_field.getDocument()).addDocumentListener(dl);
+            name_text_field.getDocument().addDocumentListener(dl);
             name_text_field.setEnabled(false);
 
             comment_text_area = new JTextArea();
             comment_text_area.getDocument().addUndoableEditListener(undoManager);
-            ((AbstractDocument) comment_text_area.getDocument()).addDocumentListener(dl);
+            comment_text_area.getDocument().addDocumentListener(dl);
             comment_text_area.setEnabled(false);
 
             final List<String> info_list = new ArrayList<>(6);
@@ -650,8 +648,8 @@ public final class BookmarkManagerView {
         public void valueChanged() {
             comment_text_area.setEnabled(false);
             name_text_field.setEnabled(false);
-            ((AbstractDocument) name_text_field.getDocument()).removeDocumentListener(dl);
-            ((AbstractDocument) comment_text_area.getDocument()).removeDocumentListener(dl);
+            name_text_field.getDocument().removeDocumentListener(dl);
+            comment_text_area.getDocument().removeDocumentListener(dl);
 
             if (selected_bl != null) {
                 Object user_object = selected_bl.getUserObject();
@@ -680,8 +678,8 @@ public final class BookmarkManagerView {
                 comment_text_area.setText("");
             }
 
-            ((AbstractDocument) name_text_field.getDocument()).addDocumentListener(dl);
-            ((AbstractDocument) comment_text_area.getDocument()).addDocumentListener(dl);
+            name_text_field.getDocument().addDocumentListener(dl);
+            comment_text_area.getDocument().addDocumentListener(dl);
         }
 
         /*

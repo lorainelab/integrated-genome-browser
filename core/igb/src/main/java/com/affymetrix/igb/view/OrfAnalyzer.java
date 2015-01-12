@@ -319,23 +319,20 @@ public final class OrfAnalyzer extends JComponent
 	}
 
 	private void adjustMap() {
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(() -> {
 
-			public void run() {
+            AbstractAction action = new AbstractAction() {
+                private static final long serialVersionUID = 1L;
 
-				AbstractAction action = new AbstractAction() {
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-						AffyTieredMap tiermap = smv.getSeqMap();
-						tiermap.repack();
-						tiermap.stretchToFit(false, true);
-						tiermap.updateWidget();
-					}
-				};
-				smv.preserveSelectionAndPerformAction(action);
-			}
-		});
+                public void actionPerformed(ActionEvent e) {
+                    AffyTieredMap tiermap = smv.getSeqMap();
+                    tiermap.repack();
+                    tiermap.stretchToFit(false, true);
+                    tiermap.updateWidget();
+                }
+            };
+            smv.preserveSelectionAndPerformAction(action);
+        });
 
 	}
 	

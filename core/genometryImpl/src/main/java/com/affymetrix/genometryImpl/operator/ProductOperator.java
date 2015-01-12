@@ -23,7 +23,7 @@ public class ProductOperator extends AbstractGraphOperator implements Operator, 
 	protected float operate(List<Float> operands) {
 		float total = 1;
 		for (Float f : operands) {
-			total *= f.floatValue();
+			total *= f;
 		}
 		return total;
 	}

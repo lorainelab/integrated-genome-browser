@@ -16,7 +16,7 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
     public static enum TierType {
 
         ANNOTATION, GRAPH, SEQUENCE, NONE
-    };
+    }
 
     public void setTierType(TierType method);
 

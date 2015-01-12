@@ -50,12 +50,10 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 		
 		Map<String, List<SeqSymmetry>> syms = SymLoader.splitResultsByTracks(results);
 		Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
-		for (Entry<String, List<SeqSymmetry>> entry : syms.entrySet()) {
-			if (entry.getKey() != null) {
-				feature.addMethod(entry.getKey());
-				added.put(entry.getKey(), entry.getValue());
-			}
-		}
+		syms.entrySet().stream().filter(entry -> entry.getKey() != null).forEach(entry -> {
+			feature.addMethod(entry.getKey());
+			added.put(entry.getKey(), entry.getValue());
+		});
 		return added;
 	}
 	

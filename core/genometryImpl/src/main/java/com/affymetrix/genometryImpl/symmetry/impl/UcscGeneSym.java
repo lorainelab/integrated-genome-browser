@@ -182,8 +182,7 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
         return emins.length;
     }
 
-    ;
-	public SeqSymmetry getChild(int index) {
+    public SeqSymmetry getChild(int index) {
         if (forward) {
             return new SingletonSeqSymmetry(emins[index], emaxs[index], seq);
         } else {
@@ -276,9 +275,9 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
         } else if (key.equals("forward")) {
             return forward;
         } else if (key.equals("cds min")) {
-            return Integer.valueOf(cdsMin);
+            return cdsMin;
         } else if (key.equals("cds max")) {
-            return Integer.valueOf(cdsMax);
+            return cdsMax;
         } else if (props != null) {
             return props.get(key);
         } else {

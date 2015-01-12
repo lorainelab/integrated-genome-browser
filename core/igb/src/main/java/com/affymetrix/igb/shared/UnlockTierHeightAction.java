@@ -22,17 +22,12 @@ public class UnlockTierHeightAction extends TierHeightAction {
         return unlockTierAction;
     }
 
-    protected Selections.RefreshSelectionListener enabler = new Selections.RefreshSelectionListener() {
-
-        @Override
-        public void selectionRefreshed() {
-            if (isAnyLocked()) {
-                setEnabled(true);
-            } else {
-                setEnabled(false);
-            }
+    protected Selections.RefreshSelectionListener enabler = () -> {
+        if (isAnyLocked()) {
+            setEnabled(true);
+        } else {
+            setEnabled(false);
         }
-
     };
 
     static {
@@ -47,11 +42,9 @@ public class UnlockTierHeightAction extends TierHeightAction {
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
         super.actionPerformed(e);
-        for (StyledGlyph glyph : allGlyphs) {
-            if (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph) glyph).getTierType() == TierType.ANNOTATION) {
-                setHeightFixed((DefaultTierGlyph) glyph);
-            }
-        }
+        allGlyphs.stream().filter(glyph -> glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph) glyph).getTierType() == TierType.ANNOTATION).forEach(glyph -> {
+            setHeightFixed((DefaultTierGlyph) glyph);
+        });
 
         getTierMap().repackTheTiers(true, true);
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

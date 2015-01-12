@@ -29,7 +29,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	public static enum SourceColumn {
 
 		Refresh, Name, Type, URL, Enabled
-	};
+	}
+
 	public static final List<SortKey> SORT_KEYS;
 	private ServerList serverList;
 	private ArrayList<SourceColumn> tableColumns;
@@ -39,7 +40,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
 		sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
 
-		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
+		SORT_KEYS = Collections.unmodifiableList(sortKeys);
 	}
 
 	public SourceTableModel(ServerList serverList) {
@@ -146,7 +147,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 				}
 				break;
 			case Enabled:
-				if (((Boolean) value).booleanValue()) {
+				if ((Boolean) value) {
 					discoverServer(server);
 					server.setEnabled(true);
 				} else {

@@ -90,12 +90,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         BASE_SEARCH_MODES.add(new CenterSearch());
     }
 
-    IStatus application_statusbar = new IStatus() {
-        @Override
-        public void setStatus(String text) {
-            Application.getSingleton().setStatus(text);
-        }
-    };
+    IStatus application_statusbar = text -> Application.getSingleton().setStatus(text);
 
     private static abstract class EmptySearch {
 

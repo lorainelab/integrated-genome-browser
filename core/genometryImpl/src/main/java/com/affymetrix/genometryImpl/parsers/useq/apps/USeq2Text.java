@@ -66,110 +66,107 @@ public class USeq2Text {
 	/**Prints a UseqArchive binary file to a text file in either minimal native format (see comment at beginning of file for a description of the columns) or in bed6 or bed12 format.*/
 	public static void print2TextFile (File inputUseqArchive, File outputTextFile, boolean printOuputInBedFormat, boolean fixBedScores){
 		try {
-			PrintWriter out = new PrintWriter (new FileWriter (outputTextFile));
-			ZipFile zf = new ZipFile(inputUseqArchive);
-			Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
-
-			//make an ArchiveInfo object on the first element in the zip archive
-			ZipEntry ze = e.nextElement();
-			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
-				throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
-			}
-			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
-
-			//write out ai info as comments
+                    try (PrintWriter out = new PrintWriter (new FileWriter (outputTextFile))) {
+                        ZipFile zf = new ZipFile(inputUseqArchive);
+                        Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
+                        //make an ArchiveInfo object on the first element in the zip archive
+                        ZipEntry ze = e.nextElement();
+                        if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+                            throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+                        }
+                        ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
+                        //write out ai info as comments
 			ai.appendCommentedKeyValues(out);
-
-			//load data slices
-			while(e.hasMoreElements()) {
-				ze = e.nextElement();
-				//make a SliceInfo object
+                        //load data slices
+                        while (e.hasMoreElements()) {
+                            ze = e.nextElement();
+                            //make a SliceInfo object
 				SliceInfo si = new SliceInfo(ze.getName());
-				DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
-				String extension = si.getBinaryType();
-
-				//print bed format
-				if (printOuputInBedFormat){
-					//call appropriate maker
-					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) {
-						new PositionData (dis, si).writeBed(out);
-					}
-					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
-						new PositionScoreData (dis, si).writeBed(out, fixBedScores);
-					}
-					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
-						new PositionTextData (dis, si).writeBed(out);
-					}
-					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
-						new PositionScoreTextData (dis, si).writeBed(out, fixBedScores);
-					}
-					//Region
-					else if (USeqUtilities.REGION.matcher(extension).matches()) {
-						new RegionData (dis, si).writeBed(out);
-					}
-					//RegionScore
-					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
-						new RegionScoreData (dis, si).writeBed(out, fixBedScores);
-					}
-					//RegionText
-					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
-						new RegionTextData (dis, si).writeBed(out);
-					}
-					//RegionScoreText
-					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
-						new RegionScoreTextData (dis, si).writeBed(out, fixBedScores);
-					}
-					else {
-						throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+                                try (DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)))) {
+                                    String extension = si.getBinaryType();
+                                    
+                                    //print bed format
+                                    if (printOuputInBedFormat){
+                                        //call appropriate maker
+                                        //Position
+                                        if (USeqUtilities.POSITION.matcher(extension).matches()) {
+                                            new PositionData (dis, si).writeBed(out);
+                                        }
+                                        //PositionScore
+                                        else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+                                            new PositionScoreData (dis, si).writeBed(out, fixBedScores);
+                                        }
+                                        //PositionText
+                                        else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+                                            new PositionTextData (dis, si).writeBed(out);
+                                        }
+                                        //PositionScoreText
+                                        else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+                                            new PositionScoreTextData (dis, si).writeBed(out, fixBedScores);
+                                        }
+                                        //Region
+                                        else if (USeqUtilities.REGION.matcher(extension).matches()) {
+                                            new RegionData (dis, si).writeBed(out);
+                                        }
+                                        //RegionScore
+                                        else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
+                                            new RegionScoreData (dis, si).writeBed(out, fixBedScores);
+                                        }
+                                        //RegionText
+                                        else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
+                                            new RegionTextData (dis, si).writeBed(out);
+                                        }
+                                        //RegionScoreText
+                                        else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
+                                            new RegionScoreTextData (dis, si).writeBed(out, fixBedScores);
+                                        }
+                                        else {
+                                            throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
+                                        }
+                                    }
+                                    
+                                    //print native minimal format
+                                    else {
+                                        //call appropriate maker
+                                        //Position
+                                        if (USeqUtilities.POSITION.matcher(extension).matches()) {
+                                            new PositionData (dis, si).writeNative(out);
+                                        }
+                                        //PositionScore
+                                        else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+                                            new PositionScoreData (dis, si).writeNative(out);
+                                        }
+                                        //PositionText
+                                        else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+                                            new PositionTextData (dis, si).writeNative(out);
+                                        }
+                                        //PositionScoreText
+                                        else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+                                            new PositionScoreTextData (dis, si).writeNative(out);
+                                        }
+                                        //Region
+                                        else if (USeqUtilities.REGION.matcher(extension).matches()) {
+                                            new RegionData (dis, si).writeNative(out);
+                                        }
+                                        //RegionScore
+                                        else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
+                                            new RegionScoreData (dis, si).writeNative(out);
+                                        }
+                                        //RegionText
+                                        else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
+                                            new RegionTextData (dis, si).writeNative(out);
+                                        }
+                                        //RegionScoreText
+                                        else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
+                                            new RegionScoreTextData (dis, si).writeNative(out);
+                                        }
+                                        else {
+                                            throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
 					}
 				}
-
-				//print native minimal format
-				else {
-					//call appropriate maker
-					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) {
-						new PositionData (dis, si).writeNative(out);
-					}
-					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
-						new PositionScoreData (dis, si).writeNative(out);
-					}
-					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
-						new PositionTextData (dis, si).writeNative(out);
-					}
-					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
-						new PositionScoreTextData (dis, si).writeNative(out);
-					}
-					//Region
-					else if (USeqUtilities.REGION.matcher(extension).matches()) {
-						new RegionData (dis, si).writeNative(out);
-					}
-					//RegionScore
-					else if (USeqUtilities.REGION_SCORE.matcher(extension).matches()) {
-						new RegionScoreData (dis, si).writeNative(out);
-					}
-					//RegionText
-					else if (USeqUtilities.REGION_TEXT.matcher(extension).matches()) {
-						new RegionTextData (dis, si).writeNative(out);
-					}
-					//RegionScoreText
-					else if (USeqUtilities.REGION_SCORE_TEXT.matcher(extension).matches()) {
-						new RegionScoreTextData (dis, si).writeNative(out);
-					}
-					else {
-						throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
-					}
-				}
-				dis.close();
-			}
-			out.close();
+                            }
+                        }
+                    }
 		} catch (IOException e) {
 			System.err.println("\nError, could not process binary archive!");
 			e.printStackTrace();
@@ -237,83 +234,75 @@ public class USeq2Text {
 	/**Prints a UseqArchive binary file to a variable step wig file. Set strand to null for all or use + or - .*/
 	public void print2WigFile (File inputUseqArchive, File outputTextFile, String strand){
 		try {
-			PrintWriter out = new PrintWriter (new FileWriter (outputTextFile));
-			ZipFile zf = new ZipFile(inputUseqArchive);
-			Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
-
-			//make an ArchiveInfo object on the first element in the zip archive
-			ZipEntry ze = e.nextElement();
-			if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
-				throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
-			}
-			ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
-
-			//graph data?
-			if (ai.isRegionData()) {
-				throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
-			}
-
-			//write out ai info as comments
-			out.println("# This wig file was generated by converting the '"+inputUseqArchive+"' archive with the USeq2Text application.");
-			ai.appendCommentedKeyValues(out);
-
-			//print header
-			out.println(buildWigHeader(inputUseqArchive, ai));
-
-			//should this be saved as a bedGraph?
-			boolean bedGraphFormat = false;
-			String graphType = ai.getValue(ArchiveInfo.GRAPH_STYLE_KEY);
-			if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP)) {
+                    try (PrintWriter out = new PrintWriter (new FileWriter (outputTextFile))) {
+                        ZipFile zf = new ZipFile(inputUseqArchive);
+                        Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
+                        //make an ArchiveInfo object on the first element in the zip archive
+                        ZipEntry ze = e.nextElement();
+                        if (ze.getName().equals(ArchiveInfo.ARCHIVE_README_NAME) == false) {
+                            throw new IOException("The first zip entry -> "+ze.getName()+", is not the "+ArchiveInfo.ARCHIVE_README_NAME+"! Aborting.");
+                        }
+                        ArchiveInfo ai = new ArchiveInfo(zf.getInputStream(ze), false);
+                        //graph data?
+                        if (ai.isRegionData()) {
+                            throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
+                        }
+                        //write out ai info as comments
+                        out.println("# This wig file was generated by converting the '"+inputUseqArchive+"' archive with the USeq2Text application.");
+                        ai.appendCommentedKeyValues(out);
+                        //print header
+                        out.println(buildWigHeader(inputUseqArchive, ai));
+                        //should this be saved as a bedGraph?
+                        boolean bedGraphFormat = false;
+                        String graphType = ai.getValue(ArchiveInfo.GRAPH_STYLE_KEY);
+                        if (graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_STAIRSTEP) || graphType.equals(ArchiveInfo.GRAPH_STYLE_VALUE_HEATMAP)) {
 				bedGraphFormat = true;
 			}
-
-			//write data slices
-			if (bedGraphFormat){
-				writeBedGraph(zf, e, out, strand);
-			}
-
-			else {
-				String chromosome = "";
-				while(e.hasMoreElements()) {
-					ze = e.nextElement();
-					//make a SliceInfo object
-					SliceInfo si = new SliceInfo(ze.getName());
-					DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
-					String extension = si.getBinaryType();
-					//correct strand?
-					if (strand != null && strand.equals(si.getStrand()) == false) {
-						continue;
-					}
-					//add new chromosome line?
-					if (si.getChromosome().equals(chromosome) == false) {
-						chromosome = si.getChromosome();
-						out.println("variableStep chrom="+chromosome);
-					}
-					//call appropriate maker
-					//Position
-					if (USeqUtilities.POSITION.matcher(extension).matches()) {
-						new PositionData (dis, si).writePositionScore(out);
-					}
-					//PositionScore
-					else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
-						new PositionScoreData (dis, si).writePositionScore(out);
-					}
-					//PositionText
-					else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
-						new PositionTextData (dis, si).writePositionScore(out);
-					}
-					//PositionScoreText
-					else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
-						new PositionScoreTextData (dis, si).writePositionScore(out);
+                        //write data slices
+                        if (bedGraphFormat) {
+                            writeBedGraph(zf, e, out, strand);
+                        } else {
+                            String chromosome = "";
+                            while (e.hasMoreElements()) {
+                                ze = e.nextElement();
+                                //make a SliceInfo object
+                                SliceInfo si = new SliceInfo(ze.getName());
+                                try (DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)))) {
+                                    String extension = si.getBinaryType();
+                                    //correct strand?
+                                    if (strand != null && strand.equals(si.getStrand()) == false) {
+                                        continue;
+                                    }
+                                    //add new chromosome line?
+                                    if (si.getChromosome().equals(chromosome) == false) {
+                                        chromosome = si.getChromosome();
+                                        out.println("variableStep chrom="+chromosome);
+                                    }
+                                    //call appropriate maker
+                                    //Position
+                                    if (USeqUtilities.POSITION.matcher(extension).matches()) {
+                                        new PositionData (dis, si).writePositionScore(out);
+                                    }
+                                    //PositionScore
+                                    else if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+                                        new PositionScoreData (dis, si).writePositionScore(out);
+                                    }
+                                    //PositionText
+                                    else if (USeqUtilities.POSITION_TEXT.matcher(extension).matches()) {
+                                        new PositionTextData (dis, si).writePositionScore(out);
+                                    }
+                                    //PositionScoreText
+                                    else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+                                        new PositionScoreTextData (dis, si).writePositionScore(out);
 					}
 					else {
 						throw new IOException("\nThis USeq archive looks like it contains region data, not graph data.  Use the native text or bed file output option. \n");
 					}
-					dis.close();
-				}
-			}
-			//close the PrintWriter
-			out.close();
+                                }
+                            }
+                        }
+                        //close the PrintWriter
+                    }
 		} catch (IOException e) {
 			System.err.println("\nError, could not process your binary archive!");
 			outputTextFile.delete();
@@ -329,75 +318,75 @@ public class USeq2Text {
 			ze = e.nextElement();
 			//make a SliceInfo object
 			SliceInfo si = new SliceInfo(ze.getName());
-			DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)));
-			String extension = si.getBinaryType();
-			//correct strand?
-			if (strand != null && strand.equals(si.getStrand()) == false) {
-				continue;
-			}
-			//new chromosome line?
-			if (chromosome == null) {
-				chromosome = si.getChromosome();
-			}
-			else if (si.getChromosome().equals(chromosome) == false) {
-				//merge
-				PositionScoreData merged = PositionScoreData.merge(psAL);
-				int[] positions = merged.getBasePositions();
-				float[] scores = merged.getBaseScores();
-
-				//write paired blocks that have the same score
-				for (int i=0; i< scores.length; i++){
-					int next = i+1;
-					if (next == scores.length) {
-						break;
-					}
-					//same score?
-					if (scores[i] == scores[next]){
-						//zero?
-						if (skipZeroBlockBedGraphs && scores[i] == 0) {
-							continue;
-						}
-						out.print(chromosome); out.print(tab); 
-						out.print(positions[i]); out.print(tab); 
-						out.print(positions[next]+1); out.print(tab); 
-						out.println(scores[i]);
-						i++;
-					}
-					//different scores
-					else {
-						//look to see if next position is one off
-						if ((positions[next]-1) == positions[i]){
-							//zero?
-							if (skipZeroBlockBedGraphs && scores[i] == 0) {
-								continue;
-							}
-							out.print(chromosome); out.print(tab); 
-							out.print(positions[i]); out.print(tab); 
-							out.print(positions[i]+1); out.print(tab); 
-							out.println(scores[i]);
-						}
-					}
-				}
-				//clear
-				psAL.clear();
-				chromosome = si.getChromosome();
-			}
-			
-			//fetch PositionScore data and add to ArrayList
-			//PositionScore
-			if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
-				psAL.add(new PositionScoreData (dis, si));
-			}
-			//PositionScoreText
-			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
-				new PositionScoreTextData (dis, si).writePositionScore(out);
-				PositionScoreTextData p = new PositionScoreTextData (dis, si);
-				psAL.add(new PositionScoreData (p.getBasePositions(), p.getBaseScores(), si));
-			}
-			else {
-				throw new IOException("\nThis USeq archive lacks score information thus it cannot be made into a bed graph!  Use the native text or bed file output option. \n");
-			}
-			dis.close();
+                    try (DataInputStream dis = new DataInputStream( new BufferedInputStream(zf.getInputStream(ze)))) {
+                        String extension = si.getBinaryType();
+                        //correct strand?
+                        if (strand != null && strand.equals(si.getStrand()) == false) {
+                            continue;
+                        }
+                        //new chromosome line?
+                        if (chromosome == null) {
+                            chromosome = si.getChromosome();
+                        }
+                        else if (si.getChromosome().equals(chromosome) == false) {
+                            //merge
+                            PositionScoreData merged = PositionScoreData.merge(psAL);
+                            int[] positions = merged.getBasePositions();
+                            float[] scores = merged.getBaseScores();
+                            
+                            //write paired blocks that have the same score
+                            for (int i=0; i< scores.length; i++){
+                                int next = i+1;
+                                if (next == scores.length) {
+                                    break;
+                                }
+                                //same score?
+                                if (scores[i] == scores[next]){
+                                    //zero?
+                                    if (skipZeroBlockBedGraphs && scores[i] == 0) {
+                                        continue;
+                                    }
+                                    out.print(chromosome); out.print(tab);
+                                    out.print(positions[i]); out.print(tab);
+                                    out.print(positions[next]+1); out.print(tab);
+                                    out.println(scores[i]);
+                                    i++;
+                                }
+                                //different scores
+                                else {
+                                    //look to see if next position is one off
+                                    if ((positions[next]-1) == positions[i]){
+                                        //zero?
+                                        if (skipZeroBlockBedGraphs && scores[i] == 0) {
+                                            continue;
+                                        }
+                                        out.print(chromosome); out.print(tab);
+                                        out.print(positions[i]); out.print(tab);
+                                        out.print(positions[i]+1); out.print(tab);
+                                        out.println(scores[i]);
+                                    }
+                                }
+                            }
+                            //clear
+                            psAL.clear();
+                            chromosome = si.getChromosome();
+                        }
+                        
+                        //fetch PositionScore data and add to ArrayList
+                        //PositionScore
+                        if (USeqUtilities.POSITION_SCORE.matcher(extension).matches()) {
+                            psAL.add(new PositionScoreData (dis, si));
+                        }
+                        //PositionScoreText
+                        else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(extension).matches()) {
+                            new PositionScoreTextData (dis, si).writePositionScore(out);
+                            PositionScoreTextData p = new PositionScoreTextData (dis, si);
+                            psAL.add(new PositionScoreData (p.getBasePositions(), p.getBaseScores(), si));
+                        }
+                        else {
+                            throw new IOException("\nThis USeq archive lacks score information thus it cannot be made into a bed graph!  Use the native text or bed file output option. \n");
+                        }
+                    }
 		}
 		
 		//write last chromosome

@@ -330,10 +330,10 @@ public class RemoteBlastNCBI {
         URL url = new URL(BLAST_URL);
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(putBuf);
-        wr.flush();
-        wr.close();
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream())) {
+            wr.write(putBuf);
+            wr.flush();
+        }
         RemoteBlastNCBI.BlastRequest req = parseRequest(conn.getInputStream());
         return req;
     }

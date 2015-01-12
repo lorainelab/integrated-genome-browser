@@ -51,6 +51,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	private void updateDisplay(final boolean preserveX, final boolean preserveY){
 		ThreadUtils.runOnEventQueue(new Runnable() {
 	
+                        @Override
 			public void run() {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
@@ -62,6 +63,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	
 	private void refreshView() {
 		ThreadUtils.runOnEventQueue(new Runnable() {	
+                        @Override
 			public void run() {
 				igbService.getSeqMap().updateWidget();
 			}
@@ -246,7 +248,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
 			if (sym instanceof SeqSymmetry) {
 				if (allFields == null) {
-					allFields = new TreeSet<String>(fields);
+					allFields = new TreeSet<>(fields);
 				}
 				else {
 					allFields.retainAll(fields);
@@ -254,7 +256,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			}
 		}
 		if (allFields == null) {
-			allFields = new TreeSet<String>();
+			allFields = new TreeSet<>();
 			allFields.add("* none *");
 			allFields.add("id");
 			if (labelField != null && labelField.trim().length() > 0) {
@@ -380,7 +382,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 	
 	private Set<String> getFields(ITrackStyleExtended style) {
-		Set<String> fields = new TreeSet<String>();
+		Set<String> fields = new TreeSet<>();
 		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(style.getMethodName());

@@ -111,34 +111,35 @@ public class Wig2USeq {
 
 	/**Looks 'fixedStep' or 'variableStep' or 'bedGraph', if none found returns null*/
 	private String parseWigFileType() throws IOException{
-		BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile);
-		String line;
-		String type = null;
-		int counter = 0;
-		while ((line=in.readLine())!=null){
-			line = line.trim();
-			if (line.length()==0) {
-				continue;
-			}
-			//bedGraph?
-			if (line.contains("type=bedGraph")){
-				type = "bedGraph";
-				break;
-			}
-			if (line.startsWith("fixedStep")) {
-				type = "fixedStep";
-				break;
-			}
-			if (line.startsWith("variableStep")) {
-				type = "variableStep";
-				break;
-			}
-			counter++;
-			if (counter > 1000) {
-				return null;
+            String type;
+            try (BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile)) {
+                String line;
+                type = null;
+                int counter = 0;
+                while ((line=in.readLine())!=null){
+                    line = line.trim();
+                    if (line.length()==0) {
+                        continue;
+                    }
+                    //bedGraph?
+                    if (line.contains("type=bedGraph")){
+                        type = "bedGraph";
+                        break;
+                    }
+                    if (line.startsWith("fixedStep")) {
+                        type = "fixedStep";
+                        break;
+                    }
+                    if (line.startsWith("variableStep")) {
+                        type = "variableStep";
+                        break;
+                    }
+                    counter++;
+                    if (counter > 1000) {
+                        return null;
 			}
 		}
-		in.close();
+            }
 		return type;
 	}
 
@@ -293,63 +294,63 @@ public class Wig2USeq {
 		String[] tokens = null;
 		String chromosome = null;
 		ArrayList<PositionScore> ps = new ArrayList<PositionScore>();
-		BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile);
-		Matcher mat;
-		//for each line
-		while ((line=in.readLine())!=null){
-			line = line.trim();
-			if (line.length()==0) {
-				continue;
-			}
-			//start with a number?
-			mat = number.matcher(line);
-			if (mat.find()){
-				tokens = space.split(line);
-				if (tokens.length !=2) {
-					throw new Exception("Problem with parsing position:value from "+workingWigFile+" line -> "+line);
-				}
-				float value = Float.parseFloat(tokens[1]);
-				if (value != Float.MIN_VALUE) {
-					ps.add(new PositionScore(Integer.parseInt(tokens[0])-1, value));
-				}
-			}
-			//variableStep
-			else if (line.startsWith("variableStep")){
-				//parse chrom
-				tokens = space.split(line);
-				tokens = equal.split(tokens[1]);
-				if (tokens.length !=2) {
-					throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
-				} 
-				//first one or old
-				if (chromosome != null) {
-					System.out.println("\t\t"+chromosome+"\t"+ps.size());
-					PositionScore[] psArray = new PositionScore[ps.size()];
-					ps.toArray(psArray);
-					ps.clear();
-					SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
-					PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
-					PositionScoreData.updateSliceInfo(psArray, sliceInfo);
-					data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-				}
-				chromosome = tokens[1];
-			}
-		}
-
-		if (chromosome == null) {
-			throw new Exception ("No 'variableStep chrom=...' line found in "+workingWigFile);
-		}
-		//save last chromosome
-		System.out.println("\t\t"+chromosome+"\t"+ps.size());
-		PositionScore[] psArray = new PositionScore[ps.size()];
-		ps.toArray(psArray);
-		SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
-		PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
-		PositionScoreData.updateSliceInfo(psArray, sliceInfo);
-		data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-		ps = null;
-		psArray = null;
-		in.close();
+            try (BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile)) {
+                Matcher mat;
+                //for each line
+                while ((line=in.readLine())!=null){
+                    line = line.trim();
+                    if (line.length()==0) {
+                        continue;
+                    }
+                    //start with a number?
+                    mat = number.matcher(line);
+                    if (mat.find()){
+                        tokens = space.split(line);
+                        if (tokens.length !=2) {
+                            throw new Exception("Problem with parsing position:value from "+workingWigFile+" line -> "+line);
+                        }
+                        float value = Float.parseFloat(tokens[1]);
+                        if (value != Float.MIN_VALUE) {
+                            ps.add(new PositionScore(Integer.parseInt(tokens[0])-1, value));
+                        }
+                    }
+                    //variableStep
+                    else if (line.startsWith("variableStep")){
+                        //parse chrom
+                        tokens = space.split(line);
+                        tokens = equal.split(tokens[1]);
+                        if (tokens.length !=2) {
+                            throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
+                        }
+                        //first one or old
+                        if (chromosome != null) {
+                            System.out.println("\t\t"+chromosome+"\t"+ps.size());
+                            PositionScore[] psArray = new PositionScore[ps.size()];
+                            ps.toArray(psArray);
+                            ps.clear();
+                            SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
+                            PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
+                            PositionScoreData.updateSliceInfo(psArray, sliceInfo);
+                            data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
+                        }
+                        chromosome = tokens[1];
+                    }
+                }
+                
+                if (chromosome == null) {
+                    throw new Exception ("No 'variableStep chrom=...' line found in "+workingWigFile);
+                }
+                //save last chromosome
+                System.out.println("\t\t"+chromosome+"\t"+ps.size());
+                PositionScore[] psArray = new PositionScore[ps.size()];
+                ps.toArray(psArray);
+                SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
+                PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
+                PositionScoreData.updateSliceInfo(psArray, sliceInfo);
+                data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
+                ps = null;
+                psArray = null;
+            }
 	}
 
 	/**Parses a fixedStep wig file, skips any track type data. 
@@ -368,128 +369,128 @@ public class Wig2USeq {
 		String line;
 		String[] tokens = null;
 		String chromosome = null;
-		BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile);
-		Matcher mat;
-		HashSet<String> chroms = new HashSet<String>();
-
-		int startPosition = 0;
-		int stepSize = 0;
-
-		//for each line
-		while ((line=in.readLine())!=null){
-			line = line.trim();
-			//empty?
-			if (line.length() == 0) {
-				continue;
-			}
-			//start with a number?
-			mat = number.matcher(line);
-			if (mat.find()){
-				float value = Float.parseFloat(line);
-				//skip it?
-				if (value != skipValue) {
-					//set to very low value so it will be displayed in stair step graph
-					if (value == 0) {
-						value = 0.0000000001f;
-					}
-					ps.add(new PositionScore(startPosition, value));
-				}
-				//increment position
-				startPosition+= stepSize;
-			}
-			//fixedStep?
-			else if (line.startsWith("fixedStep")){
-				//zero prior?
-				int sizePS = ps.size();
-				if (sizePS!=0){
-					//get last
-					int lastPosition = ps.get(sizePS-1).getPosition();
-					//set zero
-					ps.add(new PositionScore(lastPosition+1, 0.0f));
-				}
-				//split line and check 'fixedStep chrom=chrY start=668 step=1'
-				tokens = space.split(line);
-				if (tokens.length !=4) {
-					throw new Exception("Problem with parsing fixedStep line from "+workingWigFile+" line -> "+line);
-				}
-				//parse chrom
-				String[] chromTokens = equal.split(tokens[1]);
-				if (chromTokens.length !=2) {
-					throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
-				} 
-				//first one or old
-				if (chromosome == null) {
-					chromosome = chromTokens[1];
-				}
-				if (chromosome != null) {
-					//different chromosome?
-					if (chromosome.equals(chromTokens[1]) == false){
-						//close old and start new
-						System.out.println("\t\t"+chromosome+"\t"+ps.size());
-						PositionScore[] psArray = new PositionScore[ps.size()];
-						ps.toArray(psArray);
-						ps.clear();
-						psArray = stripDuplicateValues(psArray);
-						SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
-						PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
-						PositionScoreData.updateSliceInfo(psArray, sliceInfo);
-						data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-						if (chroms.contains(chromosome) == false) {
-							chroms.add(chromosome);
-						}
-						else {
-							USeqUtilities.printExit("\nWig file is not sorted by chromosome! Aborting.\n");
-						}
-						chromosome = chromTokens[1];
-					}
-				}
-				//set start
-				String[] startTokens = equal.split(tokens[2]);
-				if (startTokens.length !=2) {
-					throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
-				}
-				startPosition = Integer.parseInt(startTokens[1]) -1;
-				//set step
-				String[] stepTokens = equal.split(tokens[3]);
-				if (stepTokens.length !=2) {
-					throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
-				}
-				stepSize = Integer.parseInt(stepTokens[1]);
-				//set zero position
-				int pos = startPosition-1;
-				//set zero?
-				if (pos > 0) {
-					ps.add(new PositionScore(pos, 0.0f));
-				}
-			}
-		}
-		if (chromosome == null) {
-			throw new Exception ("No 'fixedStep chrom=...' line found in "+workingWigFile);
-		}
-
-		//zero last position
-		int sizePS = ps.size();
-		if (sizePS!=0){
-			//get last
-			int lastPosition = ps.get(sizePS-1).getPosition();
-			//set zero
-			ps.add(new PositionScore(lastPosition+1, 0.0f));
-		}
-
-		//save last chromosome
-		System.out.println("\t\t"+chromosome+"\t"+ps.size());
-		PositionScore[] psArray = new PositionScore[ps.size()];
-		ps.toArray(psArray);
-		ps.clear();
-		psArray = stripDuplicateValues(psArray);
-		SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
-		PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
-		PositionScoreData.updateSliceInfo(psArray, sliceInfo);
-		data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
-		ps = null;
-		data = null;
-		psArray = null;
-		in.close();
+            try (BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile)) {
+                Matcher mat;
+                HashSet<String> chroms = new HashSet<String>();
+                
+                int startPosition = 0;
+                int stepSize = 0;
+                
+                //for each line
+                while ((line=in.readLine())!=null){
+                    line = line.trim();
+                    //empty?
+                    if (line.length() == 0) {
+                        continue;
+                    }
+                    //start with a number?
+                    mat = number.matcher(line);
+                    if (mat.find()){
+                        float value = Float.parseFloat(line);
+                        //skip it?
+                        if (value != skipValue) {
+                            //set to very low value so it will be displayed in stair step graph
+                            if (value == 0) {
+                                value = 0.0000000001f;
+                            }
+                            ps.add(new PositionScore(startPosition, value));
+                        }
+                        //increment position
+                        startPosition+= stepSize;
+                    }
+                    //fixedStep?
+                    else if (line.startsWith("fixedStep")){
+                        //zero prior?
+                        int sizePS = ps.size();
+                        if (sizePS!=0){
+                            //get last
+                            int lastPosition = ps.get(sizePS-1).getPosition();
+                            //set zero
+                            ps.add(new PositionScore(lastPosition+1, 0.0f));
+                        }
+                        //split line and check 'fixedStep chrom=chrY start=668 step=1'
+                        tokens = space.split(line);
+                        if (tokens.length !=4) {
+                            throw new Exception("Problem with parsing fixedStep line from "+workingWigFile+" line -> "+line);
+                        }
+                        //parse chrom
+                        String[] chromTokens = equal.split(tokens[1]);
+                        if (chromTokens.length !=2) {
+                            throw new Exception ("Problem parsing chromosome from"+workingWigFile+" line -> "+line);
+                        }
+                        //first one or old
+                        if (chromosome == null) {
+                            chromosome = chromTokens[1];
+                        }
+                        if (chromosome != null) {
+                            //different chromosome?
+                            if (chromosome.equals(chromTokens[1]) == false){
+                                //close old and start new
+                                System.out.println("\t\t"+chromosome+"\t"+ps.size());
+                                PositionScore[] psArray = new PositionScore[ps.size()];
+                                ps.toArray(psArray);
+                                ps.clear();
+                                psArray = stripDuplicateValues(psArray);
+                                SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
+                                PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
+                                PositionScoreData.updateSliceInfo(psArray, sliceInfo);
+                                data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
+                                if (chroms.contains(chromosome) == false) {
+                                    chroms.add(chromosome);
+                                }
+                                else {
+                                    USeqUtilities.printExit("\nWig file is not sorted by chromosome! Aborting.\n");
+                                }
+                                chromosome = chromTokens[1];
+                            }
+                        }
+                        //set start
+                        String[] startTokens = equal.split(tokens[2]);
+                        if (startTokens.length !=2) {
+                            throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+                        }
+                        startPosition = Integer.parseInt(startTokens[1]) -1;
+                        //set step
+                        String[] stepTokens = equal.split(tokens[3]);
+                        if (stepTokens.length !=2) {
+                            throw new Exception ("Problem parsing start position from"+workingWigFile+" line -> "+line);
+                        }
+                        stepSize = Integer.parseInt(stepTokens[1]);
+                        //set zero position
+                        int pos = startPosition-1;
+                        //set zero?
+                        if (pos > 0) {
+                            ps.add(new PositionScore(pos, 0.0f));
+                        }
+                    }
+                }
+                if (chromosome == null) {
+                    throw new Exception ("No 'fixedStep chrom=...' line found in "+workingWigFile);
+                }
+                
+                //zero last position
+                int sizePS = ps.size();
+                if (sizePS!=0){
+                    //get last
+                    int lastPosition = ps.get(sizePS-1).getPosition();
+                    //set zero
+                    ps.add(new PositionScore(lastPosition+1, 0.0f));
+                }
+                
+                //save last chromosome
+                System.out.println("\t\t"+chromosome+"\t"+ps.size());
+                PositionScore[] psArray = new PositionScore[ps.size()];
+                ps.toArray(psArray);
+                ps.clear();
+                psArray = stripDuplicateValues(psArray);
+                SliceInfo sliceInfo = new SliceInfo(chromosome, ".",0,0,0,null);
+                PositionScoreData data = new PositionScoreData(psArray, sliceInfo);
+                PositionScoreData.updateSliceInfo(psArray, sliceInfo);
+                data.sliceWritePositionScoreData(rowChunkSize, saveDirectory, files2Zip);
+                ps = null;
+                data = null;
+                psArray = null;
+            }
 	}
 
 	public static PositionScore[] stripDuplicateValues(PositionScore[] ps){

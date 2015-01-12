@@ -299,22 +299,22 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				File ifil = new File(text_infile);
 				List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
 				if (text_infile.endsWith(".txt")) {
-					BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-					System.out.println("reading in text data from: " + text_infile);
-					parent_syms = BsnpParser.readTextFormat(br);
-					br.close();
+                                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)))) {
+                                    System.out.println("reading in text data from: " + text_infile);
+                                    parent_syms = BsnpParser.readTextFormat(br);
+                                }
 				} else if (text_infile.endsWith(".gff")) {
-					InputStream istr = new FileInputStream(ifil);
-					System.out.println("reading in gff data from: " + text_infile);
-					parent_syms = BsnpParser.readGffFormat(istr, gmodel);
-					istr.close();
+                                try (InputStream istr = new FileInputStream(ifil)) {
+                                    System.out.println("reading in gff data from: " + text_infile);
+                                    parent_syms = BsnpParser.readGffFormat(istr, gmodel);
+                                }
 				}
 
 				File ofil = new File(bin_outfile);
-				DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
-				System.out.println("outputting binary data to: " + bin_outfile);
-				BsnpParser.outputBsnpFormat(parent_syms, genome_version, dos);
-				dos.close();
+                                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)))) {
+                                    System.out.println("outputting binary data to: " + bin_outfile);
+                                    BsnpParser.outputBsnpFormat(parent_syms, genome_version, dos);
+                            }
 				System.out.println("finished converting text data to binary .bsnp format");
 			} else {
 				System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");

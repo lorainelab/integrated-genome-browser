@@ -240,10 +240,8 @@ public class OSGiHandler {
         String OSGiImplFile = ResourceBundle.getBundle("main").getString("OSGiImplFile");
         List<String> entries = new ArrayList<String>();
         URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-        if (codesource.toString().endsWith(".jar")) { // ant exe or webstart
-
-            ZipInputStream zipinputstream
-                    = new ZipInputStream(codesource.openStream());
+        if (codesource.toString().endsWith(".jar")) { try ( // ant exe or webstart
+                ZipInputStream zipinputstream = new ZipInputStream(codesource.openStream())) {
             ZipEntry zipentry = zipinputstream.getNextEntry();
 
             while (zipentry != null) {
@@ -261,7 +259,7 @@ public class OSGiHandler {
                 zipinputstream.closeEntry();
                 zipentry = zipinputstream.getNextEntry();
             }//while
-            zipinputstream.close();
+            }
         } else { // ant maven gradle run
             entries = getDevelopmentModeJarFileNames();
         }

@@ -834,20 +834,20 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 
 		try {
 			BufferedOutputStream bos = new BufferedOutputStream(ostr);
-			DataOutputStream dos = new DataOutputStream(bos);
-
-			writeHeaderInfo(dos,syms.size());
-
-			Iterator<? extends SeqSymmetry> iter = syms.iterator();
-			for(GraphSym graf; iter.hasNext(); ){
-				graf = (GraphSym)iter.next();
-				writeSeqInfo(graf.getGraphSeq(), dos);
-				//write out all properties from seq and/or graphs as tag/vals
-				writeTagValuePairs(dos, graf.getProperties());
-				writeGraphPoints(graf, dos);
-			}
-
-			dos.close();  // or should responsibility for closing stream be left to the caller??
+                    try (DataOutputStream dos = new DataOutputStream(bos)) {
+                        writeHeaderInfo(dos,syms.size());
+                        
+                        Iterator<? extends SeqSymmetry> iter = syms.iterator();
+                        for(GraphSym graf; iter.hasNext(); ){
+                            graf = (GraphSym)iter.next();
+                            writeSeqInfo(graf.getGraphSeq(), dos);
+                            //write out all properties from seq and/or graphs as tag/vals
+                            writeTagValuePairs(dos, graf.getProperties());
+                            writeGraphPoints(graf, dos);
+                        }
+                        
+                        dos.close();  // or should responsibility for closing stream be left to the caller??
+                    }
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();

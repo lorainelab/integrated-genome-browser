@@ -58,17 +58,15 @@ public class BgrParserTest {
 	public void ParseFromFile() throws Exception {
 
 		String filename = "data/bgr/test1.bgr";
-		InputStream istr = BgrParserTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-
-		String stream_name = "test_file";
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
-
-		boolean ensure_unique_id = true;
-
-		GraphSym gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
-		istr.close();
+                GraphSym gr0;
+            try (InputStream istr = BgrParserTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                String stream_name = "test_file";
+                AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+                boolean annot_seq = true;
+                boolean ensure_unique_id = true;
+                gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
+            }
 
 		assertEquals("16", gr0.getGraphSeq().getID());
 		assertEquals(2, gr0.getPointCount());

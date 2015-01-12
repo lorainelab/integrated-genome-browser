@@ -272,14 +272,10 @@ public class CommonUtils {
     }
 
     public void exportBundleInfo() {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
+        try (PrintWriter out = new PrintWriter(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME)) {
             out.print(BundleInfoParser.toJson(getCurrentBundleInfo()));
         } catch (FileNotFoundException ex) {
             LOG.log(Level.SEVERE, "Could not write bundle registry file to app data directory", ex);
-        } finally {
-            out.close();
         }
     }
 

@@ -850,15 +850,16 @@ public final class LocalUrlCacher {
             logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
         }
 
-        // Buffer the result into a string
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
+        StringBuilder sb;
+        try ( // Buffer the result into a string
+                BufferedReader rd = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()))) {
+            sb = new StringBuilder();
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
         }
-        rd.close();
+        }
         conn.disconnect();
 
         if (DEBUG) {
@@ -899,11 +900,11 @@ public final class LocalUrlCacher {
             logger.info("Content :{}", content.toString());
         }
 
-        // Create the form content
-        DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-        out.writeBytes(content);
-        out.flush();
-        out.close();
+        try ( // Create the form content
+                DataOutputStream out = new DataOutputStream(conn.getOutputStream())) {
+            out.writeBytes(content);
+            out.flush();
+        }
 
         if (DEBUG) {
             logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});

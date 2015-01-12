@@ -554,9 +554,9 @@ public final class GeneralUtils {
     public static long getUriLength(URI uri) {
         long uriLength = -1;
         try {
-            SeekableStream seekableStream = SeekableStreamFactory.getInstance().getStreamFor(GeneralUtils.fixFileName(uri.toString()));
-            uriLength = seekableStream.length();
-            seekableStream.close();
+            try (SeekableStream seekableStream = SeekableStreamFactory.getInstance().getStreamFor(GeneralUtils.fixFileName(uri.toString()))) {
+                uriLength = seekableStream.length();
+            }
             // very, very gross approximation
             if (uri.toString().toLowerCase().endsWith(".gz") || uri.toString().toLowerCase().endsWith(".zip")) {
                 uriLength = (long) (uriLength * COMPRESSION_RATIO);

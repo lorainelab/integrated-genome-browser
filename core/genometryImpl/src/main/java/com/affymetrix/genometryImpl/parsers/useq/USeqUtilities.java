@@ -396,17 +396,18 @@ public class USeqUtilities {
 			rt.traceInstructions(true); //for debugging
 			rt.traceMethodCalls(true); //for debugging
 			Process p = rt.exec(command);
-			//Process p = rt.exec(Misc.stringArrayToString(command, " "));
-			BufferedReader data = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream())); //for debugging
-			String line;
-			while ((line = data.readLine()) != null){
+                        BufferedReader error;
+                        try ( //Process p = rt.exec(Misc.stringArrayToString(command, " "));
+                                BufferedReader data = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                            error = new BufferedReader(new InputStreamReader(p.getErrorStream())); //for debugging
+                            String line;
+                            while ((line = data.readLine()) != null){
+                                al.add(line);
+                            }
+                            while ((line = error.readLine()) != null){
 				al.add(line);
 			}
-			while ((line = error.readLine()) != null){
-				al.add(line);
-			}
-			data.close();
+                    } //for debugging
 			error.close();
 
 		} catch (Exception e) {
@@ -444,9 +445,9 @@ public class USeqUtilities {
 	/**Writes a String to disk. */
 	public static boolean writeString(String data, File file) {
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(file));
-			out.print(data);
-			out.close();
+                    try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
+                        out.print(data);
+                    }
 			return true;
 		} catch (IOException e) {
 			System.out.println("Problem writing String to disk!");

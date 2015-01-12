@@ -539,29 +539,29 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             String fileName = chooser.getSelectedFile().toString();
             if (null != fileName) {
                 try {
-                    FileWriter fw = new FileWriter(fileName);
-                    String firstLine = title;
-                    if (isReverse) {
-                        r = DNAUtils.getReverseComplement(seqview.getResidues());
-                        firstLine = title + "Reverse Complement";
-                    } else {
-                        r = seqview.getResidues();
-                    }
-                    if (!isGenomicRequest) {
-                        firstLine = title;
-                    }
-                    fw.write(">" + firstLine);
-                    fw.write('\n');
-                    int i;
-                    for (i = 0; i < r.length() - 50; i += 50) {
-                        fw.write(r, i, 50);
+                    try (FileWriter fw = new FileWriter(fileName)) {
+                        String firstLine = title;
+                        if (isReverse) {
+                            r = DNAUtils.getReverseComplement(seqview.getResidues());
+                            firstLine = title + "Reverse Complement";
+                        } else {
+                            r = seqview.getResidues();
+                        }
+                        if (!isGenomicRequest) {
+                            firstLine = title;
+                        }
+                        fw.write(">" + firstLine);
                         fw.write('\n');
+                        int i;
+                        for (i = 0; i < r.length() - 50; i += 50) {
+                            fw.write(r, i, 50);
+                            fw.write('\n');
+                        }
+                        if (i < r.length()) {
+                            fw.write(r.substring(i) + '\n');
+                        }
+                        fw.flush();
                     }
-                    if (i < r.length()) {
-                        fw.write(r.substring(i) + '\n');
-                    }
-                    fw.flush();
-                    fw.close();
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }

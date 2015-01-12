@@ -612,12 +612,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new Position(Integer.parseInt(tokens[beginningColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new Position(Integer.parseInt(tokens[beginningColumnIndex])));
+                        }
+                    }
 			Position[] d = new Position[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -636,12 +636,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionScore(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionScore(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
+                        }
+                    }
 			PositionScore[] d = new PositionScore[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -659,12 +659,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionText(Integer.parseInt(tokens[beginningColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionText(Integer.parseInt(tokens[beginningColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			PositionText[] d = new PositionText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -682,12 +682,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			PositionScoreText[] d = new PositionScoreText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -706,12 +706,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new Region(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new Region(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex])));
+                        }
+                    }
 			Region[] d = new Region[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -730,12 +730,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionScore(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionScore(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
+                        }
+                    }
 			RegionScore[] d = new RegionScore[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -753,12 +753,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			RegionText[] d = new RegionText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -776,12 +776,12 @@ public class Text2USeq {
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			RegionScoreText[] d = new RegionScoreText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -816,66 +816,66 @@ public class Text2USeq {
 		HashMap <String, PrintWriter> chromOut = new HashMap <String, PrintWriter>();
 		HashMap <String, File> chromFile = new HashMap <String, File>();
 		try{
-			//get reader
-			BufferedReader in = USeqUtilities.fetchBufferedReader(dataFile);
-			String line;
-			String[] tokens = null;
-			String currentChrom = "";
-			PrintWriter out = null;
-			String strand = ".";
-			int counter = 0;
-			while ((line = in.readLine()) !=null){
-				try {
-					line = line.trim();
-					if (line.length()==0) {
-						continue;
-					}
-					if (line.startsWith("#")) {
-						continue;
-					}
-					if (line.contains("chrAdapter")) {
-						continue;
-					}
-					tokens = tab.split(line);
-					trim(tokens);
-					
-					//parse chromosome
-					String chromosome = tokens[chromosomeColumnIndex];
-					//check for splice junction
-					if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) {
-						continue;
-					}
-					//parse strand
-					if (strandColumnIndex != -1) {
-						strand = tokens[strandColumnIndex];
-					}
-					String chromStrand = chromosome+strand;
-
-					//get PrintWriter
-					if (currentChrom.equals(chromStrand) == false){
-						currentChrom = chromStrand;
-						if (chromOut.containsKey(chromStrand)) {
-							out = chromOut.get(chromStrand);
-						}
-						else {
-							File f = new File(saveDirectory, chromStrand);
-							out = new PrintWriter (new FileWriter(f));
-							chromOut.put(chromStrand, out);
-							chromFile.put(chromStrand, f);
-						}
-					}
-					//save data
-					out.println(line);
-				} catch (Exception e){
-					System.out.println("\nProblem parsing line -> "+line +" Skipping!");
-					//e.printStackTrace();
-					if (counter++ == 1000) {
-						System.out.println("Too many malformed lines.  Aborting.");
-						return null;
-					}
-				}
+                    try ( //get reader
+                            BufferedReader in = USeqUtilities.fetchBufferedReader(dataFile)) {
+                        String line;
+                        String[] tokens = null;
+                        String currentChrom = "";
+                        PrintWriter out = null;
+                        String strand = ".";
+                        int counter = 0;
+                        while ((line = in.readLine()) !=null){
+                            try {
+                                line = line.trim();
+                                if (line.length()==0) {
+                                    continue;
+                                }
+                                if (line.startsWith("#")) {
+                                    continue;
+                                }
+                                if (line.contains("chrAdapter")) {
+                                    continue;
+                                }
+                                tokens = tab.split(line);
+                                trim(tokens);
+                                
+                                //parse chromosome
+                                String chromosome = tokens[chromosomeColumnIndex];
+                                //check for splice junction
+                                if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) {
+                                    continue;
+                                }
+                                //parse strand
+                                if (strandColumnIndex != -1) {
+                                    strand = tokens[strandColumnIndex];
+                                }
+                                String chromStrand = chromosome+strand;
+                                
+                                //get PrintWriter
+                                if (currentChrom.equals(chromStrand) == false){
+                                    currentChrom = chromStrand;
+                                    if (chromOut.containsKey(chromStrand)) {
+                                        out = chromOut.get(chromStrand);
+                                    }
+                                    else {
+                                        File f = new File(saveDirectory, chromStrand);
+                                        out = new PrintWriter (new FileWriter(f));
+                                        chromOut.put(chromStrand, out);
+                                        chromFile.put(chromStrand, f);
+                                    }
+                                }
+                                //save data
+                                out.println(line);
+                            } catch (Exception e){
+                                System.out.println("\nProblem parsing line -> "+line +" Skipping!");
+                                //e.printStackTrace();
+                                if (counter++ == 1000) {
+                                    System.out.println("Too many malformed lines.  Aborting.");
+                                    return null;
+                                }
+                            }
 			}
-			in.close();
+                    }
 			//close the print writers
 			Iterator<PrintWriter> it = chromOut.values().iterator();
 			while (it.hasNext()) {

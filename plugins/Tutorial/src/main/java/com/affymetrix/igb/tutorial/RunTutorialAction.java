@@ -44,14 +44,14 @@ public class RunTutorialAction extends GenericAction {
         }
         try {
             URL tutorialUrl = new URL(uri + "." + TUTORIAL_EXT);
-            BufferedReader rdr = new BufferedReader(new InputStreamReader(tutorialUrl.openStream()));
-            if (rdr != null) {
-                TutorialStep[] tutorial = loadTutorial(rdr);
-                if (tutorial != null) {
-                    tutorialManager.runTutorial(tutorial);
+            try (BufferedReader rdr = new BufferedReader(new InputStreamReader(tutorialUrl.openStream()))) {
+                if (rdr != null) {
+                    TutorialStep[] tutorial = loadTutorial(rdr);
+                    if (tutorial != null) {
+                        tutorialManager.runTutorial(tutorial);
+                    }
                 }
             }
-            rdr.close();
         } catch (Exception x) {
             ourLogger.log(Level.SEVERE, "Unable to load tutorial.", x);
             ErrorHandler.errorPanel("Tutorial Error", "Unable to load tutorial " + uri, Level.SEVERE);

@@ -54,9 +54,9 @@ public class SaveScriptAction extends GenericAction {
                 String extension = path.substring(pos + 1);
                 ScriptProcessor scriptProcessor = ScriptProcessorHolder.getInstance().getScriptProcessor(extension);
                 FileWriter fstream = new FileWriter(f);
-                BufferedWriter out = new BufferedWriter(fstream);
-                out.write(ScriptManager.getInstance().getScript(scriptProcessor));
-                out.close();
+                try (BufferedWriter out = new BufferedWriter(fstream)) {
+                    out.write(ScriptManager.getInstance().getScript(scriptProcessor));
+                }
             } catch (Exception x) {
                 ErrorHandler.errorPanel("ERROR", "Error saving script to file", x);
             }

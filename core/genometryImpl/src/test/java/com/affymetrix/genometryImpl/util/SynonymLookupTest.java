@@ -30,10 +30,10 @@ public class SynonymLookupTest {
 		sl = new SynonymLookup();
 
 		String filename = "data/synonymLookup/synonymTestData1";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 	}
 
 	@Test
@@ -43,10 +43,10 @@ public class SynonymLookupTest {
 		boolean cs = true;
 
 		String filename = "data/synonymLookup/synonymTestData2";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 
 		List<String> testSynonymValues = new ArrayList<String>();
 		testSynonymValues.add("a");
@@ -74,10 +74,10 @@ public class SynonymLookupTest {
 		List<String> a = new ArrayList<String>();
 
 		String filename = "data/synonymLookup/synonymTestData3";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 
 		a.add("aa");
 		a.add("AA");

@@ -15,9 +15,9 @@ import org.osgi.framework.ServiceReference;
 
 public class ExtensionPointHandler<S> {
 
-    private static final Map<Class<?>, ExtensionPointHandler<?>> handlerInstances = new HashMap<Class<?>, ExtensionPointHandler<?>>();
-    private final List<ExtensionPointListener<S>> listeners = new ArrayList<ExtensionPointListener<S>>();
-    private final List<S> extensionPointImpls = new ArrayList<S>();
+    private static final Map<Class<?>, ExtensionPointHandler<?>> handlerInstances = new HashMap<>();
+    private final List<ExtensionPointListener<S>> listeners = new ArrayList<>();
+    private final List<S> extensionPointImpls = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     public static <Z> ExtensionPointHandler<Z> getExtensionPoint(final Class<Z> clazz) {
@@ -30,7 +30,7 @@ public class ExtensionPointHandler<S> {
         if (existingExtensionPointHandler != null) { // alreay created, return existing
             return existingExtensionPointHandler;
         }
-        final ExtensionPointHandler<Z> extensionPointHandler = new ExtensionPointHandler<Z>();
+        final ExtensionPointHandler<Z> extensionPointHandler = new ExtensionPointHandler<>();
         handlerInstances.put(clazz, extensionPointHandler);
         // register service - an extension point
         try {

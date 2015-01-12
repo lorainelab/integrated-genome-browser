@@ -36,18 +36,16 @@ public class Bprobe1ParserTest {
         filename = Bprobe1ParserTest.class.getClassLoader().getResource(filename).getFile();
         assertTrue(new File(filename).exists());
 
-        InputStream istr = new FileInputStream(filename);
-        assertNotNull(istr);
-
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("rn4");
-
-        boolean annot_seq = true;
-        String default_type = "test_type";
-
-        boolean populate_id_hash = true;
-        Bprobe1Parser parser = new Bprobe1Parser();
-        List<SeqSymmetry> result = parser.parse(istr, group, annot_seq, default_type, populate_id_hash);
-        istr.close();
+        List<SeqSymmetry> result;
+        try (InputStream istr = new FileInputStream(filename)) {
+            assertNotNull(istr);
+            AnnotatedSeqGroup group = new AnnotatedSeqGroup("rn4");
+            boolean annot_seq = true;
+            String default_type = "test_type";
+            boolean populate_id_hash = true;
+            Bprobe1Parser parser = new Bprobe1Parser();
+            result = parser.parse(istr, group, annot_seq, default_type, populate_id_hash);
+        }
         assertEquals(5, result.size());
 
         EfficientProbesetSymA sym1, sym2, sym3, sym4, sym5;

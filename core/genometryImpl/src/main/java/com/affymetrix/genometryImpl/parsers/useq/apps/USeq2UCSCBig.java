@@ -255,14 +255,14 @@ public class USeq2UCSCBig extends Thread{
 		HashMap<String,Integer> nameBase = workingUSeqArchive.fetchChromosomesAndLastBase();
 		chromLengths = new File (workingUSeqArchive.getZipFile()+".chromLengths");
 		chromLengths.deleteOnExit();
-		PrintWriter out = new PrintWriter( new FileWriter (chromLengths));
-		for (String name: nameBase.keySet()){
-			int length = nameBase.get(name)+ lengthExtender;
-			out.print(name);
-			out.print("\t");
-			out.println(length);
-		}
-		out.close();
+            try (PrintWriter out = new PrintWriter( new FileWriter (chromLengths))) {
+                for (String name: nameBase.keySet()){
+                    int length = nameBase.get(name)+ lengthExtender;
+                    out.print(name);
+                    out.print("\t");
+                    out.println(length);
+                }
+            }
 	}
 
 	public void deleteAllFiles(){

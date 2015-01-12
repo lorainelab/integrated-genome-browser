@@ -91,7 +91,7 @@
                         <Bundle-Activator>com.affymetrix.igb.property.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.property.PropertyView</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.PropertyView</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

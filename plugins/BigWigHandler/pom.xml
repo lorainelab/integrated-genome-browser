@@ -87,7 +87,7 @@
                         <Bundle-Activator>com.gene.bigwighandler.Activator</Bundle-Activator>
                         <Bundle-Category>FileTypeHandler-com.gene.bigwighandler.BigWigHandler</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.gene.bigwighandler.BigWigHandler</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>plugin to allow the user to load BigWig files</Bundle-Description>
                     </instructions>
                 </configuration>

@@ -99,7 +99,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
+                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
                     <instructions>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.geometricmean.Activator</Bundle-Activator>

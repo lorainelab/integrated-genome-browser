@@ -97,7 +97,7 @@
                         <Bundle-Activator>com.affymetrix.igb.search.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.search.SearchView</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.SearchView</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

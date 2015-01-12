@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.ConnectException;
@@ -33,7 +31,6 @@ import javax.swing.event.ListSelectionEvent;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
@@ -106,6 +103,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
         bundleTable = new JRPStyledTable("PluginsView_bundleTable", bundleTableModel) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 super.valueChanged(e);
                 updateSelectedBundlesButton.setEnabled(isUpdateSelectedBundlesExist());

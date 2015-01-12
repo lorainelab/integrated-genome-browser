@@ -76,7 +76,7 @@
                         <Bundle-Category>FileTypeHandler-com.gene.bigbedhandler.BigBedHandler</Bundle-Category>
                         <Bundle-Activator>com.gene.bigbedhandler.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.gene.bigbedhandler.BigBedHandler</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>plugin to allow the user to load BigBed files</Bundle-Description>
                     </instructions>
                 </configuration>

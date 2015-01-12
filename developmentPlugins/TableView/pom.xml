@@ -111,9 +111,9 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
+                <configuration>                    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.tableview.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

@@ -1,8 +1,6 @@
 package com.affymetrix.igb.plugins;
 
 import com.affymetrix.common.CommonUtils;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.felix.bundlerepository.Capability;
 import org.apache.felix.bundlerepository.Property;
@@ -36,10 +34,12 @@ public class Felix implements OSGIImpl {
 
     private final org.osgi.service.obr.Capability COMMON_CAPABILITY_WRAPPER = new CapabilityWrapper(COMMON_CAPABILITY);
 
+    @Override
     public org.osgi.service.obr.Capability getCapability() {
         return COMMON_CAPABILITY_WRAPPER;
     }
 
+    @Override
     public org.osgi.service.obr.RepositoryAdmin getRepositoryAdmin(org.osgi.framework.BundleContext bundleContext) {
         return new RepositoryAdminWrapper(new RepositoryAdminImpl(bundleContext, new Logger(bundleContext)));
     }

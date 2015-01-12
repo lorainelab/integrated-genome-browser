@@ -217,6 +217,7 @@
                 <extensions>true</extensions>
                 <configuration>                    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <!-- Too bad embed ignore by artifactId doesn't work... big pain to not use dependency inheritance from parent pom for logging libs ect..-->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       

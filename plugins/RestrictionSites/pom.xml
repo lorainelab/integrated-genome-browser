@@ -86,7 +86,7 @@
                         <Bundle-Activator>com.affymetrix.igb.restrictions.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.restrictions.RestrictionControlView</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.RestrictionSites</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

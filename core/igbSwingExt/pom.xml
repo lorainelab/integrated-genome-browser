@@ -61,6 +61,7 @@
                 </executions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>*;resolution:=optional</Import-Package>

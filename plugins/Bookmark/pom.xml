@@ -110,7 +110,7 @@
                         <Bundle-Activator>com.affymetrix.igb.bookmarks.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.bookmarks.BookmarkManagerViewGUI</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.Bookmark</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>            

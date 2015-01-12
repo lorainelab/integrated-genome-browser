@@ -101,6 +101,7 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Description>plugin to allow the user to find symmetries that overlap on two selected annotation tracks</Bundle-Description>

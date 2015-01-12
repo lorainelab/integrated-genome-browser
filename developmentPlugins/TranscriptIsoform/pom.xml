@@ -105,6 +105,7 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.transcriptisoform.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

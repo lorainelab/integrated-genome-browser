@@ -121,6 +121,7 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Activator>com.gene.tallyhandler.Activator</Bundle-Activator>

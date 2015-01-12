@@ -95,7 +95,7 @@
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.tabs.graph.GraphTrackPanel</Bundle-Category>
                         <Bundle-Activator>com.affymetrix.igb.tabs.graph.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.tabs.graph.GraphTab</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

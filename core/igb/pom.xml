@@ -171,7 +171,7 @@
                         </Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView</Bundle-Category>
-                        <Bundle-SymbolicName>com.affymetrix.igb.IGB</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

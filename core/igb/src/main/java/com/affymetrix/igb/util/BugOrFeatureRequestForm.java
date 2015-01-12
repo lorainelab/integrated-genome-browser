@@ -187,7 +187,7 @@ public class BugOrFeatureRequestForm extends javax.swing.JFrame {
 
     private static String newReport(String type, String summary, String description, String version)
             throws IOException {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("type", type);
         params.put("summary", summary);
         params.put("description", description);

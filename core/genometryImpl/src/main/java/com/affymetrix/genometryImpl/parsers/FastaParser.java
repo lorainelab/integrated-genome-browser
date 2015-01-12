@@ -44,7 +44,7 @@ public final class FastaParser implements Parser {
 	 * a subset of the sequences in the group.
 	 */
 	public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		List<BioSeq> seqlist = new ArrayList<BioSeq>();
+		List<BioSeq> seqlist = new ArrayList<>();
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
 		try {

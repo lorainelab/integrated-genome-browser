@@ -66,12 +66,12 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
     protected static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 
         if (results == null || results.isEmpty()) {
-            return new ArrayList<SeqSymmetry>();
+            return new ArrayList<>();
         }
 
         int num_rows = results.size();
 
-        List<SeqSymmetry> rows = new ArrayList<SeqSymmetry>(num_rows / 10);
+        List<SeqSymmetry> rows = new ArrayList<>(num_rows / 10);
         for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
             SeqSymmetry result = results.get(j);
 
@@ -131,11 +131,11 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
             if (actualChars < 3) {
                 statusStr = MessageFormat.format(BUNDLE.getString("searchErrorShort"), friendlySearchStr);
                 ErrorHandler.errorPanel(statusStr);
-                return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+                return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
             }
 
             //remoteSearches
-            remoteSymList = new ArrayList<SeqSymmetry>();
+            remoteSymList = new ArrayList<>();
             RemoteSearchDAS2 remoteSearch = new RemoteSearchDAS2();
             statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
             List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
@@ -146,7 +146,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
         if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
             statusStr = BUNDLE.getString("searchNoResults");
             statusHolder.setStatus(statusStr);
-            return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
         }
 
         statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"),
@@ -174,7 +174,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
             }
         });
 
-        return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
     }
 
     protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {

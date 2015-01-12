@@ -195,7 +195,7 @@ public class OSGiHandler {
 
     private void loadFramework(String argArray) {
         try {
-            Map<String, String> configProps = new HashMap<String, String>();
+            Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
             for (String key : CONFIG_BUNDLE.keySet()) {
                 configProps.put(key, CONFIG_BUNDLE.getString(key));
@@ -238,7 +238,7 @@ public class OSGiHandler {
 
     private List<String> getJarFileNames() throws IOException {
         String OSGiImplFile = ResourceBundle.getBundle("main").getString("OSGiImplFile");
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
         URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
         if (codesource.toString().endsWith(".jar")) { try ( // ant exe or webstart
                 ZipInputStream zipinputstream = new ZipInputStream(codesource.openStream())) {
@@ -268,7 +268,7 @@ public class OSGiHandler {
     }
 
     private List<String> getDevelopmentModeJarFileNames() {
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
         File dir = new File("bundles");
         if (!dir.exists()) {
             dir = new File("../bundles");

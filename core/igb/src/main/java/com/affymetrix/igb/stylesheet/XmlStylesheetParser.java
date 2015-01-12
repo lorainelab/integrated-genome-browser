@@ -43,7 +43,7 @@ public final class XmlStylesheetParser {
     // This resource should in the top-level igb source directory, or top level of jar file
     private static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
     private static final String user_stylesheet_resource_name = "user_stylesheet.xml";
-    private static final Map<String, Stylesheet> added_stylesheet_map = new HashMap<String, Stylesheet>();
+    private static final Map<String, Stylesheet> added_stylesheet_map = new HashMap<>();
 
     /**
      * Set the system stylesheet to null, so that the next call to

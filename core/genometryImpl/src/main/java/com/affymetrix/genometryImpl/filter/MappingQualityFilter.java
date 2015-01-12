@@ -18,7 +18,7 @@ public class MappingQualityFilter extends SymmetryFilter {
 	private final static String QUALITY_SCORE = "quality_score";
 	private final static String COMPARATOR = "comparator";
 	private final static int DEFAULT_MIN_QUALITY_SCORE = 30;
-	private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<MathComparisonOperator>();
+	private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
 	static {
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator());
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanMathComparisonOperator());
@@ -28,8 +28,8 @@ public class MappingQualityFilter extends SymmetryFilter {
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.NotEqualMathComparisonOperator());
 	}
 	
-    private Parameter<Integer> qualityScore = new Parameter<Integer>(DEFAULT_MIN_QUALITY_SCORE);
-	private Parameter<MathComparisonOperator> comparator = new BoundedParameter<MathComparisonOperator>(COMPARATOR_VALUES);
+    private Parameter<Integer> qualityScore = new Parameter<>(DEFAULT_MIN_QUALITY_SCORE);
+	private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 	
 	public MappingQualityFilter(){
 		super();

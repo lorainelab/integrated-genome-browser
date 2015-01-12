@@ -47,7 +47,7 @@ public class SelectionInfoUtils {
     }
 
     private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties) {
-        Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
+        Map<String, Object> orderedProps = new LinkedHashMap<>();
         for (String property : propertyKeys) {
             if (properties.containsKey(property)) {
                 orderedProps.put(property, properties.get(property).toString());

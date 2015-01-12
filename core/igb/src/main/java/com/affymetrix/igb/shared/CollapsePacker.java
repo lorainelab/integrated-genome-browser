@@ -35,7 +35,7 @@ public final class CollapsePacker extends CollapsedTierPacker {
 //		boolean skipDraw = false;
         int row_number = 0;
 
-        List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
+        List<GlyphI> children = new CopyOnWriteArrayList<>(parent.getChildren());
         for (GlyphI child : children) {
             maxHeight = Math.max(maxHeight, child.getCoordBox().height);
 

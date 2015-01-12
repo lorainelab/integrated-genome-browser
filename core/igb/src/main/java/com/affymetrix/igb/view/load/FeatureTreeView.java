@@ -523,7 +523,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         private final boolean focusPainted;
         private final boolean borderPaintedFlat;
         private final Border border;
-        private final Map<GenericFeature, FeatureCheckBox> leafCheckBoxes = new HashMap<GenericFeature, FeatureCheckBox>();
+        private final Map<GenericFeature, FeatureCheckBox> leafCheckBoxes = new HashMap<>();
         private final Color selectionBorderColor, selectionForeground;
         private final Color selectionBackground, textForeground, textBackground;
 

@@ -135,7 +135,7 @@ public final class SeqSymSummarizer {
 
     public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, Boolean isForward) {
         int symcount = syms.size();
-        List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+        List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectLeafSpans(sym, seq, isForward, leaf_spans);
         }
@@ -165,7 +165,7 @@ public final class SeqSymSummarizer {
      */
     public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id) {
         int symcount = syms.size();
-        List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+        List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
         }
@@ -178,7 +178,7 @@ public final class SeqSymSummarizer {
 
     public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int desired_leaf_depth) {
         int symcount = syms.size();
-        List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+        List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectSpans(sym, seq, leaf_spans, desired_leaf_depth);
         }
@@ -307,7 +307,7 @@ public final class SeqSymSummarizer {
     }
 
     private static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {
-        List<SeqSpan> spanlist = new ArrayList<SeqSpan>();
+        List<SeqSpan> spanlist = new ArrayList<>();
         BioSeq seq = landscape.getGraphSeq();
         int num_points = landscape.getPointCount();
 
@@ -417,7 +417,7 @@ public final class SeqSymSummarizer {
         MutableSeqSymmetry psym = new SimpleSymWithProps();
         SeqSymmetry unionA = getUnion(symsA, seq);
         SeqSymmetry unionB = getUnion(symsB, seq);
-        List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symsAB = new ArrayList<>();
         symsAB.add(unionA);
         symsAB.add(unionB);
         GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, "");
@@ -475,7 +475,7 @@ public final class SeqSymSummarizer {
         MutableSeqSymmetry psym = new SimpleSymWithProps();
         SeqSymmetry unionA = getUnion(symsA, seq, depth);
         SeqSymmetry unionB = getUnion(symsB, seq, depth);
-        List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symsAB = new ArrayList<>();
         symsAB.add(unionA);
         symsAB.add(unionB);
         GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, "", depth);
@@ -528,7 +528,7 @@ public final class SeqSymSummarizer {
 
     public static GraphSym getSymmetryStartSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int desired_leaf_depth) {
         int symcount = syms.size();
-        List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
+        List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectSpans(sym, seq, leaf_spans, desired_leaf_depth);
         }

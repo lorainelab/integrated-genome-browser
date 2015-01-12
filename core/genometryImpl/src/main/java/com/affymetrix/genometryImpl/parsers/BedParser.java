@@ -87,7 +87,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-	private static List<String> pref_list = new ArrayList<String>();
+	private static List<String> pref_list = new ArrayList<>();
 	static {
 		pref_list.add("bed");
 	}
@@ -142,8 +142,8 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-		Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+		List<SeqSymmetry> symlist = new ArrayList<>();
+		Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<>();
 		String line;
 		String type = default_type;
 		String bedType = null;
@@ -374,7 +374,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 			Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
 			if (type2csym == null) {
-				type2csym = new HashMap<String, SeqSymmetry>();
+				type2csym = new HashMap<>();
 				seq2types.put(seq, type2csym);
 			}
 			SimpleSymWithProps parent_sym = (SimpleSymWithProps) type2csym.get(type);

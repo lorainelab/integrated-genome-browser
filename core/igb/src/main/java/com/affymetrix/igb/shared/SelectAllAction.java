@@ -16,7 +16,7 @@ public class SelectAllAction extends SeqMapViewActionA {
                 FileTypeCategory.Graph, FileTypeCategory.Mismatch, FileTypeCategory.ProbeSet,
                 FileTypeCategory.Sequence});
     private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION
-            = new EnumMap<FileTypeCategory, SelectAllAction>(FileTypeCategory.class);
+            = new EnumMap<>(FileTypeCategory.class);
     private FileTypeCategory[] categories;
 
     static {

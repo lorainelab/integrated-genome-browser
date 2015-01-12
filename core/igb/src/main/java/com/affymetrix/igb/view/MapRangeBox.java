@@ -72,14 +72,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     public final JRPTextField range_box;
     private List<SeqSpan> foundSpans;
     private int spanPointer;
-    private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<SearchListener>();
+    private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<>();
 //	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 
 
 	// Use the ENGLISH locale here because we want the user to be able to
     // cut and paste this text into the UCSC browser.
     // (Also, the Pattern's below were written to work for the English locale.)
     private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
-    private static final List<EmptySearch> BASE_SEARCH_MODES = new ArrayList<EmptySearch>();
+    private static final List<EmptySearch> BASE_SEARCH_MODES = new ArrayList<>();
 
     static {
         BASE_SEARCH_MODES.add(new ChromStartEndSearch());
@@ -106,7 +106,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         }
 
         public List<SeqSpan> findSpans(String search_text, SeqSpan visibleSpan) {
-            return new ArrayList<SeqSpan>();
+            return new ArrayList<>();
         }
 
         public int getZoomSpot(String search_text) {
@@ -141,7 +141,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             }
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             BioSeq seq = group.getSeq(chrom_text);
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 spans.add(new SimpleSeqSpan(start, end, seq));
             }
@@ -176,7 +176,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             }
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             BioSeq seq = group.getSeq(chrom_text);
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 spans.add(new SimpleSeqSpan(start, end, seq));
             }
@@ -214,7 +214,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             int end = start + width;
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             BioSeq seq = group.getSeq(chrom_text);
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 if (end >= seq.getLength()) {
                     end = seq.getLength() - 1;
@@ -265,7 +265,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                 return super.findSpans(search_text, visibleSpan);
             }
             BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
         }
@@ -296,7 +296,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                 return super.findSpans(search_text, visibleSpan);
             }
             BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
         }
@@ -329,7 +329,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             start = (center - width / 2);
             end = (center + width / 2);
             BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-            List<SeqSpan> spans = new ArrayList<SeqSpan>();
+            List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
         }
@@ -429,7 +429,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     };
 
     private List<SeqSpan> mergeSpans(List<SeqSpan> unmergedSpans) {
-        List<SeqSpan> mergedSpans = new ArrayList<SeqSpan>();
+        List<SeqSpan> mergedSpans = new ArrayList<>();
         for (SeqSpan rawSpan : unmergedSpans) {
             SeqSpan span = new SimpleSeqSpan(rawSpan.getMin(), rawSpan.getMax(), rawSpan.getBioSeq());
             boolean overlap = false;
@@ -450,7 +450,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private List<SeqSpan> findSpansFromSyms(List<SeqSymmetry> syms) {
-        List<SeqSpan> spans = new ArrayList<SeqSpan>();
+        List<SeqSpan> spans = new ArrayList<>();
         if (syms != null) {
             for (SeqSymmetry sym : syms) {
                 for (int i = 0; i < sym.getSpanCount(); i++) {
@@ -477,7 +477,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             }
         }
         List<TypeContainerAnnot> trackSyms = getTrackSyms();
-        List<ISearchModeSym> modes = new ArrayList<ISearchModeSym>();
+        List<ISearchModeSym> modes = new ArrayList<>();
         modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
         String search_term = search_text;
         search_term = Pattern.quote(search_term);// kTs n Tk
@@ -509,7 +509,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private List<TypeContainerAnnot> getTrackSyms() {
-        List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
+        List<TypeContainerAnnot> trackSyms = new ArrayList<>();
         List<TierGlyph> tierGlyphs = gview.getTierManager().getAllTierGlyphs(false);
         for (GlyphI selectedTierGlyph : tierGlyphs) {
             Object info = selectedTierGlyph.getInfo();

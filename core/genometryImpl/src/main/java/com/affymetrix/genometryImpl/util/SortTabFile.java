@@ -31,8 +31,8 @@ public class SortTabFile {
 		
 		BufferedReader br = null;
 		String line = null;
-		List<String> list = new ArrayList<String>(1000);
-		List<String> templist = new ArrayList<String>(1000);
+		List<String> list = new ArrayList<>(1000);
+		List<String> templist = new ArrayList<>(1000);
 		String unzippedStreamName = GeneralUtils.stripEndings(file.getName());
 		String extension = GeneralUtils.getExtension(unzippedStreamName);
 		Comparator<String> comparator = new LineComparator(extension);

@@ -151,8 +151,8 @@ public final class TwoBitParser implements Parser {
         String name;
         int name_length;
 		long offset, position;
-		List<BioSeq> seqs = new ArrayList<BioSeq>();
-		Map<String,Long> seqOffsets = new HashMap<String,Long>();
+		List<BioSeq> seqs = new ArrayList<>();
+		Map<String,Long> seqOffsets = new HashMap<>();
 		position = bistr.position();
 		for (int i = 0; i < seq_count; i++) {
 			

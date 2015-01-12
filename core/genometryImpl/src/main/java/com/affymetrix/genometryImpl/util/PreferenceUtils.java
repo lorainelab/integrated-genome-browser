@@ -732,7 +732,7 @@ public abstract class PreferenceUtils {
     }
 
     public static Map<String, Object> getEntryMapFromNode(Preferences pref) throws BackingStoreException {
-        Map<String, Object> entry = new HashMap<String, Object>();
+        Map<String, Object> entry = new HashMap<>();
         String[] keys;
 
         keys = pref.keys();

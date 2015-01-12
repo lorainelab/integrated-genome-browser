@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public class BigWigZoomSymLoader extends SymLoader {
 	private static final int SEGMENT_COUNT = 256;
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -81,14 +81,14 @@ public class BigWigZoomSymLoader extends SymLoader {
 		if (this.isInitialized) {
 			return;
 		}
-		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
+		Map<String, BioSeq> seqMap = new HashMap<>();
 		for (BioSeq seq : group.getSeqList()) {
 			seqMap.put(seq.getID(), seq);
 		}
-		chromosomeList = new ArrayList<BioSeq>();
-		igbSeq2bwSeq = new HashMap<String, String>();
-		bwSeq2igbSeq = new HashMap<String, String>();
-		Map<String, Integer> chromosomeNameMap = new HashMap<String, Integer>();
+		chromosomeList = new ArrayList<>();
+		igbSeq2bwSeq = new HashMap<>();
+		bwSeq2igbSeq = new HashMap<>();
+		Map<String, Integer> chromosomeNameMap = new HashMap<>();
 		findAllChromosomeNamesAndSizes(bbReader.getChromosomeIDTree().getRootNode(), chromosomeNameMap);
 
 		for (String bwSeqID : chromosomeNameMap.keySet()) {
@@ -121,7 +121,7 @@ public class BigWigZoomSymLoader extends SymLoader {
 	public List<? extends SeqSymmetry> getGenome() {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
-		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> retList = new ArrayList<>();
 		for(BioSeq seq : allSeq){
 			retList.addAll(getChromosome(seq));
 		}
@@ -167,9 +167,9 @@ public class BigWigZoomSymLoader extends SymLoader {
 	private GraphIntervalSym getSym(int level, SeqSpan span) {
         int nextStart = -1;
         ZoomDataRecord nextRecord = null;
-        ArrayList<Integer> xList = new ArrayList<Integer>();
-        ArrayList<Float> yList = new ArrayList<Float>();
-        ArrayList<Integer> wList = new ArrayList<Integer>();
+        ArrayList<Integer> xList = new ArrayList<>();
+        ArrayList<Float> yList = new ArrayList<>();
+        ArrayList<Integer> wList = new ArrayList<>();
         int startBase = span.getMin();
         int endBase = span.getMax();
         BioSeq igbSeq = span.getBioSeq();
@@ -221,7 +221,7 @@ public class BigWigZoomSymLoader extends SymLoader {
         }
         final int level = bestZoom.getZoomLevel();
         GraphIntervalSym gsym = getSym(level, span);
- 		List<SeqSymmetry> regions = new ArrayList<SeqSymmetry>();
+ 		List<SeqSymmetry> regions = new ArrayList<>();
         regions.add(gsym);
 		return regions;
 	}

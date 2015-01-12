@@ -28,7 +28,7 @@ public class WindowTabs implements TabHolder {
     public WindowTabs(TabStateHandler _tabStateHandler) {
         super();
         tabStateHandler = _tabStateHandler;
-        addedPlugins = new HashSet<IGBTabPanel>();
+        addedPlugins = new HashSet<>();
     }
 
     public void setMenuCreator(IMenuCreator menuCreator) {

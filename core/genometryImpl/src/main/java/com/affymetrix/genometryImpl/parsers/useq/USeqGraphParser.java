@@ -35,7 +35,7 @@ public class USeqGraphParser {
 
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		List<GraphSym> graphs = new ArrayList<>();
 
 		//open streams
 		if (istr instanceof ZipInputStream) {
@@ -70,7 +70,7 @@ public class USeqGraphParser {
 			//for each entry build appropriate arrays, may contain multiple stranded chromosome slices so first build and hash them. 
 			ZipEntry ze;
 			ArrayList al = new ArrayList();
-			HashMap<String, ArrayList> chromData = new HashMap<String, ArrayList>();
+			HashMap<String, ArrayList> chromData = new HashMap<>();
 			String chromStrand;
 			SliceInfo si = null;
 			while ((ze = zis.getNextEntry()) != null){
@@ -153,7 +153,7 @@ public class USeqGraphParser {
 		this.gmodel = gmodel;
 		this.stream_name = stream_name;
 		this.archiveInfo = useqArchive.getArchiveInfo();
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		List<GraphSym> graphs = new ArrayList<>();
 		try {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();

@@ -16,7 +16,7 @@ import java.util.List;
  */
 final public class Bookmarks {
 
-    private final List<SymBookmark> syms = new ArrayList<SymBookmark>();
+    private final List<SymBookmark> syms = new ArrayList<>();
 
     public boolean add(GenericFeature feature, boolean isGraph) {
         if (feature == null) {
@@ -70,8 +70,8 @@ final public class Bookmarks {
      * source_url.
      */
     public void set(SymWithProps mark_sym) {
-        List<String> queries = new ArrayList<String>();
-        List<String> servers = new ArrayList<String>();
+        List<String> queries = new ArrayList<>();
+        List<String> servers = new ArrayList<>();
 
         for (SymBookmark bookmark : this.syms) {
             if (!bookmark.isGraph()) {

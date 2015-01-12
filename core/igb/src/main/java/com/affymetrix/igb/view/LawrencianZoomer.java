@@ -125,7 +125,7 @@ public class LawrencianZoomer implements ChangeListener {
 	}
 
 	private List<TierLabelGlyph> justSelected(List<TierLabelGlyph> allOfThem) {
-		List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+		List<TierLabelGlyph> answer = new ArrayList<>();
 		for (TierLabelGlyph t: allOfThem) {
 			if (t.isSelected()) {
 				answer.add(t);

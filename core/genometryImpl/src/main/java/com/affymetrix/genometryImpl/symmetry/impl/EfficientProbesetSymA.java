@@ -241,7 +241,7 @@ public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId
      * getID().
      */
     public Map<String, Object> getProperties() {
-        HashMap<String, Object> properties = new HashMap<String, Object>(1);
+        HashMap<String, Object> properties = new HashMap<>(1);
         Map<String, Object> shared_props = info.getProps();
         if (shared_props != null && shared_props.get("method") != null) {
             properties.put("method", shared_props.get("method"));

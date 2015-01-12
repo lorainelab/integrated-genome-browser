@@ -37,7 +37,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final Map<String, Class<?>> ANNOT_DEFAULT_PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("collapsed", Boolean.class);
         temp.put("connected", Boolean.class);
         temp.put("arrow", Boolean.class);
@@ -49,7 +49,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final Map<String, Class<?>> GRAPH_DEFAULT_PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("y_axis", Boolean.class);
         GRAPH_DEFAULT_PREFERENCES = Collections.unmodifiableMap(temp);
     }

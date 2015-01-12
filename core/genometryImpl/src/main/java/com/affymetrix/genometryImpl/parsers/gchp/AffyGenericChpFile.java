@@ -26,7 +26,7 @@ public final class AffyGenericChpFile {
 	private int version; // version number.  Always 1.
 	private int num_groups;
 	private int group_0_pos;
-	private Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
+	private Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<>();
 	private AffyGenericDataHeader header;
 	List<AffyDataGroup> groups;
 	private final File file;
@@ -87,10 +87,10 @@ public final class AffyGenericChpFile {
 		chpFile.num_groups = dis.readInt();
 		chpFile.group_0_pos = dis.readInt(); // TODO: signed vs unsigned?
 
-		chpFile.parameterMap = new LinkedHashMap<String,AffyChpParameter>();
+		chpFile.parameterMap = new LinkedHashMap<>();
 		chpFile.header = AffyGenericDataHeader.readHeader(dis);
 
-		chpFile.groups = new ArrayList<AffyDataGroup>(chpFile.num_groups);
+		chpFile.groups = new ArrayList<>(chpFile.num_groups);
 		if (! headerOnly) {
 			for (int i=0; i<chpFile.num_groups; i++) {
 				AffyDataGroup group = AffyDataGroup.parse(chpFile, dis);

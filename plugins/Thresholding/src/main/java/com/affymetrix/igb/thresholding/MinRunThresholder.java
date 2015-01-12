@@ -31,7 +31,7 @@ public final class MinRunThresholder extends JPanel
     private static final long serialVersionUID = 1L;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
 
-    private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+    private final List<GraphGlyph> graphs = new ArrayList<>();
     private final NeoAbstractWidget widg;
     private JRPSlider tslider;
     private JRPTextField minrunTF;
@@ -137,7 +137,7 @@ public final class MinRunThresholder extends JPanel
     }
 
     public void setGraph(GraphGlyph gl) {
-        List<GraphGlyph> newgraphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> newgraphs = new ArrayList<>();
         newgraphs.add(gl);
         setGraphs(newgraphs);
     }
@@ -205,7 +205,7 @@ public final class MinRunThresholder extends JPanel
                     }
                 }
             } catch (NumberFormatException nfe) {
-                setGraphs(new ArrayList<GraphGlyph>(graphs));
+                setGraphs(new ArrayList<>(graphs));
             }
         }
     }

@@ -36,7 +36,7 @@ public abstract class BrowserView extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private SwingWorker<Image, Void> worker = null;
-    private final Map<String, String> cookieMap = new HashMap<String, String>();
+    private final Map<String, String> cookieMap = new HashMap<>();
     protected final JRPButton update_button;
     protected final JRPButton settingsButton;
     private BrowserImage browserImage = new BrowserImage();

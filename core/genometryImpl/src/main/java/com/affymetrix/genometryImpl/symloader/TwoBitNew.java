@@ -35,7 +35,7 @@ public class TwoBitNew extends SymLoader {
     //
     private SeekableBufferedStream raf;
     private boolean reverse = false;
-    private HashMap<String, Long> seq2pos = new HashMap<String, Long>();
+    private HashMap<String, Long> seq2pos = new HashMap<>();
     private String cur_seq_name;
     private long[][] cur_nn_blocks;
     private long[][] cur_mask_blocks;
@@ -54,7 +54,7 @@ public class TwoBitNew extends SymLoader {
         'T', 'C', 'A', 'G'
     };
 
-    private final Map<BioSeq, String> chrMap = new HashMap<BioSeq, String>();
+    private final Map<BioSeq, String> chrMap = new HashMap<>();
 
     public TwoBitNew(URI uri, String featureName, AnnotatedSeqGroup group) {
         super(uri, featureName, group);
@@ -110,7 +110,7 @@ public class TwoBitNew extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(chrMap.keySet());
+        return new ArrayList<>(chrMap.keySet());
     }
 
     @Override

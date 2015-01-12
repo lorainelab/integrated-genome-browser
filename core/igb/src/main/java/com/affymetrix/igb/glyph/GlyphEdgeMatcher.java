@@ -63,7 +63,7 @@ public final class GlyphEdgeMatcher {
 	 * Glyphs added for matches are collected and returned in match_glyphs.
 	 */
 	public List<GlyphI> matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs) {
-		List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+		List<GlyphI> match_glyphs = new ArrayList<>();
 		for (GlyphI query : query_glyphs) {
 			matchEdges(map, query, target_glyphs, match_glyphs);
 		}

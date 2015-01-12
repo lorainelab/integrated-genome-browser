@@ -173,7 +173,7 @@ public final class BookmarksParser {
         }
 
         BookmarkList current_list = bookmarks;
-        Stack<BookmarkList> parents = new Stack<BookmarkList>();
+        Stack<BookmarkList> parents = new Stack<>();
         String line;
         while ((line = br.readLine()) != null) {
             line = line.trim();

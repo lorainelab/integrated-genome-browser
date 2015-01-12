@@ -13,7 +13,7 @@ public class ConfigurableStreamHandlerFactory implements URLStreamHandlerFactory
     private final Map<String, URLStreamHandler> protocolHandlers;
 
     public ConfigurableStreamHandlerFactory(String protocol, URLStreamHandler urlHandler) {
-        protocolHandlers = new HashMap<String, URLStreamHandler>();
+        protocolHandlers = new HashMap<>();
         addHandler(protocol, urlHandler);
     }
 

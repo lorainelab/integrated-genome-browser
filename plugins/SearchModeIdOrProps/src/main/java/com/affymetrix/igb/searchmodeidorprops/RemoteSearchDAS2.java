@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.util.ServerTypeI;
 public class RemoteSearchDAS2 {
 
     public List<SeqSymmetry> searchFeatures(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
-        List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> features = new ArrayList<>();
 
         if (name == null || name.isEmpty()) {
             return features;

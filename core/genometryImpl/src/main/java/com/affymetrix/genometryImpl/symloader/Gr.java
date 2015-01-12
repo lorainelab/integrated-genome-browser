@@ -49,7 +49,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     private static final String UNNAMED = "unnamed";
     private BioSeq unnamed;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -113,7 +113,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
             return seqs;
         }
 
-        seqs = new ArrayList<BioSeq>();
+        seqs = new ArrayList<>();
         seqs.add(unnamed);
 
         return seqs;
@@ -134,7 +134,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     @Override
     public List<GraphSym> getChromosome(BioSeq seq) throws Exception {
         init();
-        List<GraphSym> results = new ArrayList<GraphSym>();
+        List<GraphSym> results = new ArrayList<>();
         results.add(parse(seq, seq.getMin(), seq.getMax() + 1));
         return results;
     }
@@ -142,7 +142,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     @Override
     public List<GraphSym> getRegion(SeqSpan span) throws Exception {
         init();
-        List<GraphSym> results = new ArrayList<GraphSym>();
+        List<GraphSym> results = new ArrayList<>();
         results.add(parse(span.getBioSeq(), span.getMin(), span.getMax() + 1));
         return results;
     }

@@ -36,7 +36,7 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
      */
     @Override
     protected List<TierLabelGlyph> getTiers() {
-        List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> answer = new ArrayList<>();
         List<TierLabelGlyph> theTiers = getTierManager().getSelectedTierLabels();
         for (TierLabelGlyph tlg : theTiers) {
             TierGlyph tg = tlg.getReferenceTier();

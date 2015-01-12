@@ -27,7 +27,7 @@ public class AnnotationsTableModel extends DefaultTableModel {
     private static final int ID_REGEX_RANK = 10000;
     private static final int PROPERTY_EXACT_RANK = 100;
     private static final int PROPERTY_REGEX_RANK = 1;
-    private static final List<String> IGNORE_LIST = new ArrayList<String>();
+    private static final List<String> IGNORE_LIST = new ArrayList<>();
 
     static {
         IGNORE_LIST.add("method");
@@ -45,8 +45,8 @@ public class AnnotationsTableModel extends DefaultTableModel {
 
     public AnnotationsTableModel() {
         super();
-        this.results = new ArrayList<SeqSymmetry>();
-        columnNames = new ArrayList<String>();
+        this.results = new ArrayList<>();
+        columnNames = new ArrayList<>();
     }
 
     public List<SeqSymmetry> getResults() {
@@ -56,7 +56,7 @@ public class AnnotationsTableModel extends DefaultTableModel {
     public synchronized void setResults(String searchText, List<SeqSymmetry> results) {
         this.searchText = searchText;
         this.regex = getRegex(searchText);
-        this.results = new ArrayList<SeqSymmetry>(results);
+        this.results = new ArrayList<>(results);
         Collections.sort(results,
                 new Comparator<SeqSymmetry>() {
                     @Override
@@ -103,7 +103,7 @@ public class AnnotationsTableModel extends DefaultTableModel {
 
     private int rankSymmetry(SeqSymmetry sym) {
         Matcher matcher = regex.matcher("");
-        Map<String, String> searchTerms = new HashMap<String, String>();
+        Map<String, String> searchTerms = new HashMap<>();
         int ranking = 0;
         String match = sym.getID();
         if (match != null) {

@@ -49,7 +49,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
 	private String[] sequenceFormats = {"2bit", "fa", "fasta", "bnib"};
-	private ArrayList<String> list = new ArrayList<String>();
+	private ArrayList<String> list = new ArrayList<>();
 	private String allowedTrackDefaults;
 	private String AddButtonTitle = "Add Track Default";
 	private String selectedTrackDefaultType;
@@ -161,7 +161,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
-			List<TrackStyle> styles = new ArrayList<TrackStyle>();
+			List<TrackStyle> styles = new ArrayList<>();
 			for (int i : selectedRows) {
 				styles.add(((TrackDefaultPrefTableModel) model).tier_styles.get(i));
 			}
@@ -280,7 +280,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		private Entry<String, AssociationElement> entry;
 
 		public TrackDefaultPrefTableModel() {
-			this.tier_styles = new ArrayList<TrackStyle>();
+			this.tier_styles = new ArrayList<>();
 		}
 
 		public void setStyles(List<TrackStyle> tier_styles) {

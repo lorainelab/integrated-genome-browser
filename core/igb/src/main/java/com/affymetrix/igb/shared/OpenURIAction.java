@@ -67,7 +67,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     public static UniFileFilter getAllKnowFilter() {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
 
         for (String name : nameToExtensionMap.keySet()) {
             all_known_endings.addAll(nameToExtensionMap.get(name));
@@ -85,7 +85,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     public static List<UniFileFilter> getSupportedFiles(FileTypeCategory category) {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
-        List<UniFileFilter> filters = new ArrayList<UniFileFilter>(nameToExtensionMap.keySet().size() + 1);
+        List<UniFileFilter> filters = new ArrayList<>(nameToExtensionMap.keySet().size() + 1);
 
         for (String name : nameToExtensionMap.keySet()) {
             UniFileFilter uff = new UniFileFilter(nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files");

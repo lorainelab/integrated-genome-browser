@@ -81,7 +81,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         if (key != null && key.length() > 0) {
             Set<SeqSymmetry> seq_list = id2sym_hash.get(key);
             if (seq_list == null) {
-                seq_list = new LinkedHashSet<SeqSymmetry>();
+                seq_list = new LinkedHashSet<>();
                 id2sym_hash.put(key, seq_list);
             }
             seq_list.add(sym);

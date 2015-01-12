@@ -31,7 +31,7 @@ public class WebLinkList {
 	public WebLinkList(String name, boolean allowDuplicates){
 		this.name = name;
 		this.allowDuplicates = allowDuplicates;
-		this.weblink_list	 = new ArrayList<WebLink>();
+		this.weblink_list	 = new ArrayList<>();
 	}
 	
 	public String getName(){
@@ -86,7 +86,7 @@ public class WebLinkList {
 			return Collections.<WebLink>emptyList();
 		}
 
-		List<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> results = new ArrayList<>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
@@ -101,7 +101,7 @@ public class WebLinkList {
 			System.out.println("ID is : " + sym.getID());
 		}
 
-		Set<WebLink> webLinks = new HashSet<WebLink>();
+		Set<WebLink> webLinks = new HashSet<>();
 		webLinks.addAll(getWebLink(sym, method));
 
 	//	if (webLinks.isEmpty()) {
@@ -117,7 +117,7 @@ public class WebLinkList {
 	}
 
 	private List<WebLink> getWebLink(SeqSymmetry sym, String method) {
-		List<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> results = new ArrayList<>();
 
 		for (WebLink link : weblink_list) {
 			if (link.getUrl() == null) {

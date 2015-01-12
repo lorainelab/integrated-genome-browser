@@ -33,8 +33,8 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     private TutorialStep[] tutorial = null;
     private String waitFor = null;
     private boolean isRunning = false;
-    private Map<String, TutorialStep[]> triggers = new HashMap<String, TutorialStep[]>();
-    private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<String, AbstractComponentDecorator>();
+    private Map<String, TutorialStep[]> triggers = new HashMap<>();
+    private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<>();
     private MenuListener menuListener = new MenuListener() {
 
         @Override

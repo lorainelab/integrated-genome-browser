@@ -59,7 +59,7 @@ public abstract class GenericAction extends AbstractAction {
 		this.mnemonic = mnemonic;
 		this.extraInfo = extraInfo;
 		this.popup = popup;
-		doneCallbacks = new HashSet<GenericActionDoneCallback>();
+		doneCallbacks = new HashSet<>();
 
 		putValue(Action.NAME, getDisplay());
 		if (iconPath != null) {

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
-	private static final List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<>();
 	static {
 		pref_list.add("bps");
 		pref_list.add("psl");
@@ -47,9 +47,9 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser  {
 			target_group.setUseSynonyms(false);
 		}
 
-		Map<String,SeqSymmetry> target2sym = new HashMap<String,SeqSymmetry>(); // maps target chrom name to top-level symmetry
-		Map<String,SeqSymmetry> query2sym = new HashMap<String,SeqSymmetry>(); // maps query chrom name to top-level symmetry
-		List<UcscPslSym> results = new ArrayList<UcscPslSym>(estimated_count);
+		Map<String,SeqSymmetry> target2sym = new HashMap<>(); // maps target chrom name to top-level symmetry
+		Map<String,SeqSymmetry> query2sym = new HashMap<>(); // maps query chrom name to top-level symmetry
+		List<UcscPslSym> results = new ArrayList<>(estimated_count);
 		int count = 0;
 
 		try {

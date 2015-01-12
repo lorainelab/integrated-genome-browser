@@ -117,7 +117,7 @@ public final class PairedBamSymWrapper implements SeqSymmetry, TypedSym, SymWith
 
     @Override
     public Map<String, Object> cloneProperties() {
-        HashMap<String, Object> tprops = new HashMap<String, Object>();
+        HashMap<String, Object> tprops = new HashMap<>();
         tprops.put("type", getType());
         tprops.put("name", getName());
         if (props != null) {

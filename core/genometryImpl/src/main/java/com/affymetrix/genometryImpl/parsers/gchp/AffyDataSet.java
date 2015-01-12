@@ -29,8 +29,8 @@ public final class AffyDataSet {
 	private List<AffyChpColumnType> columnTypes;
 	private long num_rows;
 
-	private final Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<Integer,AffySingleChromData>();
-	private final List<String> chromosomeNames = new ArrayList<String>();
+	private final Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<>();
+	private final List<String> chromosomeNames = new ArrayList<>();
 
 
 	/** Creates a new instance of AffyDataSet */
@@ -47,14 +47,14 @@ public final class AffyDataSet {
 		Logger.getLogger(AffyDataSet.class.getName()).log(
 				Level.FINE, "Parsing data set: name={0}", name);
 
-		params = new LinkedHashMap<String,AffyChpParameter>(param_count);
+		params = new LinkedHashMap<>(param_count);
 		for (int i=0; i<param_count; i++) {
 			AffyChpParameter param = AffyChpParameter.parse(dis);
 			params.put(param.name, param);
 		}
 
 		num_columns = dis.readInt();
-		columnTypes = new ArrayList<AffyChpColumnType>(num_columns);
+		columnTypes = new ArrayList<>(num_columns);
 		for (int i=0; i<num_columns; i++) {
 			AffyChpColumnType col = new AffyChpColumnType(
 					AffyGenericChpFile.parseWString(dis), dis.readByte(), dis.readInt());
@@ -74,7 +74,7 @@ public final class AffyDataSet {
 				String chromName = (String) params.get(chromNum + ":display").getValue();
 				chromosomeNames.add(chromName);
 
-				List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>(columnTypes.size());
+				List<AffyChpColumnData> chromDataColumns = new ArrayList<>(columnTypes.size());
 				for (AffyChpColumnType setColumn : columnTypes) {
 					chromDataColumns.add(new AffyChpColumnData(null, setColumn.name, setColumn.type, setColumn.size));
 				}
@@ -136,10 +136,10 @@ public final class AffyDataSet {
 	}
 
 	List<String> getChromosomeNames() {
-		return new ArrayList<String>(chromosomeNames);
+		return new ArrayList<>(chromosomeNames);
 	}
 
 	List<AffySingleChromData> getSingleChromData() {
-		return new ArrayList<AffySingleChromData>(num2chromData.values());
+		return new ArrayList<>(num2chromData.values());
 	}
 }

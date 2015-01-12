@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
 public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
     private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
-    private static final Map<Float, AlphaComposite> alphaCompositeCache = new WeakHashMap<Float, AlphaComposite>();
+    private static final Map<Float, AlphaComposite> alphaCompositeCache = new WeakHashMap<>();
 
     private static int minQ = 0;
     private static int maxQ = 40;

@@ -25,7 +25,7 @@ public final class Das2Source {
 
   private final URI source_uri;
   private final String name;
-  private final Map<String,Das2VersionedSource> versions = new LinkedHashMap<String,Das2VersionedSource>();
+  private final Map<String,Das2VersionedSource> versions = new LinkedHashMap<>();
  
   private final Das2ServerInfo server;
 

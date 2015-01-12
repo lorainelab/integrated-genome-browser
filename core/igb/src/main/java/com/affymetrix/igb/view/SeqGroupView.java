@@ -747,7 +747,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	public List<String> getAllVersions(final String speciesName) {
 		final Set<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
-		final List<String> versionNames = new ArrayList<String>();
+		final List<String> versionNames = new ArrayList<>();
 		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {
 				// the same versionName name may occur on multiple servers

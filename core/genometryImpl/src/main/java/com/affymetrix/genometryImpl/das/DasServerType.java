@@ -107,7 +107,7 @@ public class DasServerType implements ServerTypeI {
 		GeneralUtils.makeDir(local_path);
 
 		File file;
-		final Map<String, String> DasFilePath = new HashMap<String, String>();
+		final Map<String, String> DasFilePath = new HashMap<>();
 
 		String entry_point = getPath(master.getPath(),master, DasSource.ENTRY_POINTS);
 		
@@ -192,7 +192,7 @@ public class DasServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		DasSource version = (DasSource) gVersion.versionSourceObj;
-		List<Entry<String, String>> types = new ArrayList<Entry<String, String>>(version.getTypes().entrySet());
+		List<Entry<String, String>> types = new ArrayList<>(version.getTypes().entrySet());
 		for (Entry<String,String> type : types) {
 			String type_name = type.getKey();
 			if (type_name == null || type_name.length() == 0) {
@@ -304,7 +304,7 @@ public class DasServerType implements ServerTypeI {
 	 *  data.
 	 */
 	private List<DASSymmetry> parseData(URI uri) {
-		Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
+		Map<String, List<String>> respHeaders = new HashMap<>();
 		InputStream stream = null;
 		List<String> list;
 		String content_type = "content/unknown";

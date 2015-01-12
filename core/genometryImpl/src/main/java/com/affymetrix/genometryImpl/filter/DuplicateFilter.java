@@ -36,12 +36,12 @@ public class DuplicateFilter extends SymmetryFilter {
 	}
 	
 	private final static String COMPARATOR = "show";
-	private final static List<SHOW> COMPARATOR_VALUES = new LinkedList<SHOW>();
+	private final static List<SHOW> COMPARATOR_VALUES = new LinkedList<>();
 	static {
 		COMPARATOR_VALUES.add(SHOW.DUPLICATES);
 		COMPARATOR_VALUES.add(SHOW.NON_DUPLICATES);
 	}
-	private Parameter<SHOW> comparator = new BoundedParameter<SHOW>(COMPARATOR_VALUES);
+	private Parameter<SHOW> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 	
 	public DuplicateFilter(){
 		super();

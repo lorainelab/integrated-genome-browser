@@ -16,7 +16,7 @@ public class Duplicate extends ColorProvider {
     private final static String DUPLICATE_COLOR = "duplicate";
     private final static Color DEFAULT_DUPLICATE_COLOR = new Color(204, 255, 255);
 
-    private Parameter<Color> duplicateColor = new Parameter<Color>(DEFAULT_DUPLICATE_COLOR);
+    private Parameter<Color> duplicateColor = new Parameter<>(DEFAULT_DUPLICATE_COLOR);
 
     public Duplicate() {
         super();

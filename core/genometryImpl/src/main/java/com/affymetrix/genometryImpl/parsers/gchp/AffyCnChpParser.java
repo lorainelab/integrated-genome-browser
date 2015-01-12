@@ -33,7 +33,7 @@ public final class AffyCnChpParser implements Parser {
 		Logger.getLogger(AffyCnChpParser.class.getName()).log(
 							Level.FINE, "Parsing with {0}: {1}", new Object[]{this.getClass().getName(), stream_name});
 		ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
 		try {
 			AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);
 

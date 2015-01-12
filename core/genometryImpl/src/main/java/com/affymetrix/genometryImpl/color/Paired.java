@@ -17,8 +17,8 @@ public class Paired extends ColorProvider {
     private final static Color DEFAULT_PAIRED_COLOR = new Color(204, 255, 255);
     private final static Color DEFAULT_NOTPAIRED_COLOR = new Color(51, 255, 255);
 
-    private Parameter<Color> pairColor = new Parameter<Color>(DEFAULT_PAIRED_COLOR);
-    private Parameter<Color> notPairColor = new Parameter<Color>(DEFAULT_NOTPAIRED_COLOR);
+    private Parameter<Color> pairColor = new Parameter<>(DEFAULT_PAIRED_COLOR);
+    private Parameter<Color> notPairColor = new Parameter<>(DEFAULT_NOTPAIRED_COLOR);
 
     public Paired() {
         super();

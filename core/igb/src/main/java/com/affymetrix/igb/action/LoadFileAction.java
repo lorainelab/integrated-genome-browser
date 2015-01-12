@@ -173,7 +173,7 @@ public final class LoadFileAction extends OpenURIAction {
          *
          */
         List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {
             all_known_endings.addAll(filter.getExtensions());
         }
@@ -205,7 +205,7 @@ public final class LoadFileAction extends OpenURIAction {
         filters = getSupportedFiles(null);
         filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
 
-        all_known_endings = new HashSet<String>();
+        all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {
             chooser.addChoosableFileFilter(filter);
             all_known_endings.addAll(filter.getExtensions());

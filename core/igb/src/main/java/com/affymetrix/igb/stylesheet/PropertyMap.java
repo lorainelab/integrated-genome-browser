@@ -32,7 +32,7 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
 
   private PropertyMap parentProperties;
 
-  private final ArrayList<PropertyMap> ancestors = new ArrayList<PropertyMap>(100);
+  private final ArrayList<PropertyMap> ancestors = new ArrayList<>(100);
 
 
   private static int color_warnings = 0; // count the number of warnings about colors

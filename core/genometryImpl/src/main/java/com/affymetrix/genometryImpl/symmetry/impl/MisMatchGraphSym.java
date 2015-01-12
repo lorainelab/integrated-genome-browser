@@ -66,7 +66,7 @@ public class MisMatchGraphSym extends GraphSym {
             return super.getLocationProperties(x, span);
         }
 
-        Map<String, Object> locprops = new HashMap<String, Object>();
+        Map<String, Object> locprops = new HashMap<>();
 
         locprops.put("x coord", x);
         float ytot = 0;

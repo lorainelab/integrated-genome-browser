@@ -75,7 +75,7 @@ public class GeneConfiguration extends Configuration {
 		BufferedReader stream = null;
 		try {
 			//load the messge class from a configuration file.
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			//this is at $IGB_SRC/common/rerources and image paths are relative to $IGB_SRC/common/images/
 			URL config_file_url = CommonUtils.class.getClassLoader().getResource("display_species.txt");
 			stream = new BufferedReader(

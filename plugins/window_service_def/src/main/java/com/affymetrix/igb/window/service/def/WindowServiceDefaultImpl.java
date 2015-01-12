@@ -105,14 +105,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     public WindowServiceDefaultImpl() {
         super();
-        move_tab_to_window_items = new EnumMap<TabState, JRPMenuItem>(TabState.class);
-        move_tabbed_panel_to_window_items = new EnumMap<TabState, JRPMenuItem>(TabState.class);
-        tabHolders = new EnumMap<TabState, TabHolder>(TabState.class);
+        move_tab_to_window_items = new EnumMap<>(TabState.class);
+        move_tabbed_panel_to_window_items = new EnumMap<>(TabState.class);
+        tabHolders = new EnumMap<>(TabState.class);
         tabHolders.put(TabState.COMPONENT_STATE_WINDOW, new WindowTabs(this));
         tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
-        tabMenus = new HashMap<IGBTabPanel, JMenu>();
-        tabMenuPositions = new HashMap<JMenu, Integer>();
-        stopRoutines = new HashSet<IWindowRoutine>();
+        tabMenus = new HashMap<>();
+        tabMenuPositions = new HashMap<>();
+        stopRoutines = new HashSet<>();
     }
 
     @Override
@@ -416,7 +416,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         if (pos != null) {
             PreferenceUtils.setWindowSize(frame, pos);
         }
-        for (IGBTabPanel tabPanel : new HashSet<IGBTabPanel>(getPlugins())) {
+        for (IGBTabPanel tabPanel : new HashSet<>(getPlugins())) {
             setTabState(tabPanel, TabState.valueOf(PreferenceUtils.getComponentState(tabPanel.getName())));
         }
         for (TabState tabState : tabHolders.keySet()) {
@@ -448,7 +448,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public Set<IGBTabPanel> getPlugins() {
-        HashSet<IGBTabPanel> plugins = new HashSet<IGBTabPanel>();
+        HashSet<IGBTabPanel> plugins = new HashSet<>();
         for (TabState tabState : tabHolders.keySet()) {
             plugins.addAll(tabHolders.get(tabState).getPlugins());
         }

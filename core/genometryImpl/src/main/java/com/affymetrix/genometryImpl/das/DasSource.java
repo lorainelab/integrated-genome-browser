@@ -47,9 +47,9 @@ public final class DasSource {
 	private final URL primary;
 	private final GenericServer primaryServer;
 	private final String id;
-	private final Set<String> sources = new HashSet<String>();
-	private final Set<String> entry_points = new LinkedHashSet<String>();
-	private final Map<String, String> types = new LinkedHashMap<String, String>();
+	private final Set<String> sources = new HashSet<>();
+	private final Set<String> entry_points = new LinkedHashSet<>();
+	private final Map<String, String> types = new LinkedHashMap<>();
 	private boolean entries_initialized = false;
 	private boolean types_initialized = false;
 	private AnnotatedSeqGroup genome = null;	// lazily instantiate
@@ -160,7 +160,7 @@ public final class DasSource {
 	}
 
 	private void initTypes() {
-		Set<String> badSources = new HashSet<String>();
+		Set<String> badSources = new HashSet<>();
 		
 		for (String source : sources) {
 			if (!initType(source)) {

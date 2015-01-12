@@ -53,11 +53,11 @@ public final class Das2VersionedSource {
 	private final GenericServer primaryServer;
     private final Das2Source source;
     private final String name;
-    private final Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
-    private final Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
+    private final Map<String,Das2Capability> capabilities = new HashMap<>();
+    private final Map<String,Das2Region> regions = new LinkedHashMap<>();
     private AnnotatedSeqGroup genome = null;
-    private final Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
-	private final Map<String,List<Das2Type>> residue2types = new LinkedHashMap<String,List<Das2Type>>();
+    private final Map<String,Das2Type> types = new LinkedHashMap<>();
+	private final Map<String,List<Das2Type>> residue2types = new LinkedHashMap<>();
     private boolean regions_initialized = false;
     private boolean types_initialized = false;
     private String types_filter = null;
@@ -171,7 +171,7 @@ public final class Das2VersionedSource {
 			String tname = type.getName();
 			List<Das2Type> prevlist = residue2types.get(tname);
 			if (prevlist == null) {
-				prevlist = new ArrayList<Das2Type>();
+				prevlist = new ArrayList<>();
 				residue2types.put(tname, prevlist);
 			}
 			prevlist.add(type);
@@ -194,7 +194,7 @@ public final class Das2VersionedSource {
 			return Collections.<String>emptySet();
 		}
 
-		Set<String> formats = new HashSet<String>();
+		Set<String> formats = new HashSet<>();
 		for(Das2Type type : Localtypes){
 			for(String format : type.getFormats().keySet()) {
 				formats.add(format.toLowerCase());
@@ -282,7 +282,7 @@ public final class Das2VersionedSource {
 
 		try {
 
-			Map<String, String> headers = new LinkedHashMap<String, String>();
+			Map<String, String> headers = new LinkedHashMap<>();
 
 			//set in header a sessionId for types authentication?
 			//Also, if there is a sessionId then should ignore cache so user can get hidden types
@@ -338,8 +338,8 @@ public final class Das2VersionedSource {
 				type_name = typenode.getAttribute(TITLE);
 			}
 			NodeList flist = typenode.getElementsByTagName("FORMAT");
-			LinkedHashMap<String,String> formats = new LinkedHashMap<String,String>();
-			HashMap<String,String> props = new HashMap<String,String>();
+			LinkedHashMap<String,String> formats = new LinkedHashMap<>();
+			HashMap<String,String> props = new HashMap<>();
 			for (int k = 0; k < flist.getLength(); k++) {
 				Element fnode = (Element) flist.item(k);
 				String formatid = fnode.getAttribute(NAME);

@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.symloader.LineProcessor;
 
 public class TallyUnindexedSymLoader extends UnindexedSymLoader {
 
-    public static final List<String> pref_list = new ArrayList<String>();
+    public static final List<String> pref_list = new ArrayList<>();
 
     static {
         pref_list.add("tally");

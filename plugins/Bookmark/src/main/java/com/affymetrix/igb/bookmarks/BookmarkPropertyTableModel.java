@@ -33,7 +33,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
         }
     }
 
-    private final List<Duple> duples = new ArrayList<Duple>(20);
+    private final List<Duple> duples = new ArrayList<>(20);
     private final String[] names = {"Parameter", "Value"};
 
     /**
@@ -80,7 +80,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
      */
     ListMultimap<String, String> getValuesAsMap() {
         ListMultimap<String, String> toReturn = ArrayListMultimap.<String, String>create();
-        Map<String, String[]> m = new LinkedHashMap<String, String[]>();
+        Map<String, String[]> m = new LinkedHashMap<>();
         for (int i = 0; i < getRowCount(); i++) {
             String key = (String) getValueAt(i, 0);
             String value = (String) getValueAt(i, 1);

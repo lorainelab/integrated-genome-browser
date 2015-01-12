@@ -374,7 +374,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         // seems no longer needed
         //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
-        List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphs = new ArrayList<>();
         ITrackStyleExtended combo_style = null;
         if (topgl != null && topgl instanceof GraphGlyph) {
             combo_style = ((GraphGlyph) topgl).getGraphState().getComboStyle();

@@ -73,7 +73,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 public final class Bprobe1Parser implements AnnotationWriter, Parser {
 
 	private static final boolean DEBUG = false;
-	static List<String> pref_list = new ArrayList<String>();
+	static List<String> pref_list = new ArrayList<>();
 	static {
 		pref_list.add("bp2");
 	}
@@ -139,12 +139,12 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 			boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
 		System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
 		BufferedInputStream bis;
-		Map<String,Object> tagvals = new LinkedHashMap<String,Object>();
-		Map<String,Object> seq2syms = new LinkedHashMap<String,Object>();
-		Map<String,Integer> seq2lengths = new LinkedHashMap<String,Integer>();
+		Map<String,Object> tagvals = new LinkedHashMap<>();
+		Map<String,Object> seq2syms = new LinkedHashMap<>();
+		Map<String,Integer> seq2lengths = new LinkedHashMap<>();
 		DataInputStream dis = null;
 		String id_prefix = "";
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
 		try  {
 			if (istr instanceof BufferedInputStream) {
 				bis = (BufferedInputStream) istr;
@@ -349,11 +349,11 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
 		throws IOException {
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
 		int probe_length = 25;
-		Map<String,String> tagvals = new HashMap<String,String>();
+		Map<String,String> tagvals = new HashMap<>();
 		tagvals.put("tagval_test_1", "testing1");
 		tagvals.put("tagval_test_2", "testing2");
 
-		List<? extends SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
+		List<? extends SeqSymmetry> annots = new ArrayList<>();
 		BufferedInputStream bis = null;
 		try {
 			if (DEBUG) {

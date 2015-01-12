@@ -233,7 +233,7 @@ public final class UrlLoaderThread extends Thread {
      */
     private static void parseDataFromURL(URL url, String file_extension, String type)
             throws UnknownHostException, IOException {
-        Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
+        Map<String, List<String>> respHeaders = new HashMap<>();
         InputStream stream = null;
         List<String> list;
         String content_type = "content/unknown";

@@ -130,7 +130,7 @@ public class NewGenome extends javax.swing.JPanel {
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refSeqBrowseButtonActionPerformed
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         JRPFileChooser chooser = new JRPFileChooser("newGenome", fileTracker.getFile());
 
         List<UniFileFilter> filters = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence);

@@ -55,7 +55,7 @@ public class BioSeqUtils {
     }
 
     public static List<SingletonSymWithProps> searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, BioSeq seq) {
-        List<SingletonSymWithProps> results = new ArrayList<SingletonSymWithProps>();
+        List<SingletonSymWithProps> results = new ArrayList<>();
 
         Matcher matcher = regex.matcher(residues);
         while (matcher.find() && !Thread.currentThread().isInterrupted()) {

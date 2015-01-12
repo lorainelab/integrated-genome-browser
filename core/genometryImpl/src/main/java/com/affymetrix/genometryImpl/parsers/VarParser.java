@@ -42,7 +42,7 @@ public final class VarParser implements Parser {
 		throws IOException  {
 
 		String line;
-		List<SingletonSymWithProps> results = new ArrayList<SingletonSymWithProps>();
+		List<SingletonSymWithProps> results = new ArrayList<>();
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 

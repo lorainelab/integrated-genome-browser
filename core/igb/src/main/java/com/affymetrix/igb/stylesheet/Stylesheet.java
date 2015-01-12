@@ -26,26 +26,26 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Stylesheet implements Cloneable, XmlAppender {
-  LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<String, AssociationElement>();
-  LinkedHashMap<Pattern, AssociationElement> regex2association = new LinkedHashMap<Pattern, AssociationElement>();
-  LinkedHashMap<String, AssociationElement> type2association = new LinkedHashMap<String, AssociationElement>();
-  LinkedHashMap<String, AssociationElement> filetype2association = new LinkedHashMap<String, AssociationElement>();
-  LinkedHashMap<String,StyleElement> stylename2styleElement = new LinkedHashMap<String,StyleElement>();
+  LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<>();
+  LinkedHashMap<Pattern, AssociationElement> regex2association = new LinkedHashMap<>();
+  LinkedHashMap<String, AssociationElement> type2association = new LinkedHashMap<>();
+  LinkedHashMap<String, AssociationElement> filetype2association = new LinkedHashMap<>();
+  LinkedHashMap<String,StyleElement> stylename2styleElement = new LinkedHashMap<>();
 
   private static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
 
 	@Override
   public Object clone() throws CloneNotSupportedException {
     Stylesheet clone = (Stylesheet) super.clone();
-    clone.meth2association = new LinkedHashMap<String, AssociationElement>();
+    clone.meth2association = new LinkedHashMap<>();
     clone.meth2association.putAll(meth2association);
-    clone.regex2association = new LinkedHashMap<Pattern, AssociationElement>();
+    clone.regex2association = new LinkedHashMap<>();
     clone.regex2association.putAll(regex2association);
-    clone.type2association = new LinkedHashMap<String, AssociationElement>();
+    clone.type2association = new LinkedHashMap<>();
     clone.type2association.putAll(type2association);
-	clone.filetype2association = new LinkedHashMap<String, AssociationElement>();
+	clone.filetype2association = new LinkedHashMap<>();
     clone.filetype2association.putAll(filetype2association);
-    clone.stylename2styleElement = new LinkedHashMap<String,StyleElement>();
+    clone.stylename2styleElement = new LinkedHashMap<>();
     clone.stylename2styleElement.putAll(stylename2styleElement);
     return clone;
   }
@@ -141,7 +141,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     association = meth2association.get(meth);
     // Then try to match styleElement from regular expressions
     if (association == null) {
-      List<Pattern> keyset = new ArrayList<Pattern>(regex2association.keySet());
+      List<Pattern> keyset = new ArrayList<>(regex2association.keySet());
 
       // Look for a matching pattern, going backwards, so that the
       // patterns from the last preferences read take precedence over the
@@ -200,7 +200,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     sb.append("\n");
     sb.append(indent).append("<ASSOCIATIONS>\n");
 
-    List<AssociationElement> associations = new ArrayList<AssociationElement>();
+    List<AssociationElement> associations = new ArrayList<>();
     associations.addAll(meth2association.values());
 	associations.addAll(filetype2association.values());
     associations.addAll(regex2association.values());

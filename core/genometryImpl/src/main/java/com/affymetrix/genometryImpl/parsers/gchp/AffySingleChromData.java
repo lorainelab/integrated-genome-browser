@@ -33,7 +33,7 @@ final class AffySingleChromData {
 	private final int rowCount;
 	String displayName; // AND by a display name.
 
-	private List<AffyChpColumnData> columns = new ArrayList<AffyChpColumnData>();
+	private List<AffyChpColumnData> columns = new ArrayList<>();
 	private final AffyGenericChpFile chpFile;
 	AffyDataSet dataSet;
 
@@ -92,7 +92,7 @@ final class AffySingleChromData {
 
 	/** Creates GraphSyms that can be added as annotations to the BioSeq. */
 	public List<SeqSymmetry> makeGraphs(BioSeq seq) throws IOException {
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(columns.size());
+		List<SeqSymmetry> results = new ArrayList<>(columns.size());
 
 		ArrayList probeSetNames = (ArrayList) columns.get(0).getData();
 		probeSetNames.trimToSize();

@@ -202,14 +202,14 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
     public void refreshList() {
         if (currentStyles == null) {
-            currentStyles = new ArrayList<TrackStyle>();
+            currentStyles = new ArrayList<>();
         }
 
         boolean isContained = true; // If add a new track, its style will not contain...
 
         if (smv != null) {
             currentTiers = smv.getSeqMap().getTiers();
-            List<TrackStyle> styles = new ArrayList<TrackStyle>();
+            List<TrackStyle> styles = new ArrayList<>();
             Iterator<TierGlyph> titer = currentTiers.iterator();
             while (titer.hasNext()) {
                 TierGlyph tier = titer.next();
@@ -230,7 +230,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
             currentStyles.addAll(styles);
         }
 
-        Set<TrackStyle> customizables = new HashSet<TrackStyle>(currentStyles.size());
+        Set<TrackStyle> customizables = new HashSet<>(currentStyles.size());
         for (TrackStyle the_style : currentStyles) {
             if (the_style.getCustomizable()) {
                     // if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
@@ -601,7 +601,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
                     if (original instanceof SymWithProps) {
                         Map<String, Object> props = ((SymWithProps) original).getProperties();
 
-                        ArrayList<String> properties = new ArrayList<String>();
+                        ArrayList<String> properties = new ArrayList<>();
                         properties.add((String) TrackConstants.LABELFIELD[0]);
                         properties.addAll(props.keySet());
                         labelFieldComboBox.setModel(new DefaultComboBoxModel(properties.toArray()));
@@ -710,7 +710,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         private int tempInt;
 
         TierPrefsTableModel() {
-            this.tier_styles = new ArrayList<TrackStyle>();
+            this.tier_styles = new ArrayList<>();
         }
 
         public void setStyles(Collection<TrackStyle> tier_styles) {

@@ -40,7 +40,7 @@ public class ParentXorOperator extends AbstractAnnotationOperator implements Ope
         MutableSeqSymmetry psym = new SimpleSymWithProps();
         SeqSymmetry unionA = SeqSymSummarizer.getUnion(symsA, seq, 2);
         SeqSymmetry unionB = SeqSymSummarizer.getUnion(symsB, seq, 2);
-        List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symsAB = new ArrayList<>();
         symsAB.add(unionA);
         symsAB.add(unionB);
         GraphSym combo_graph = SeqSymSummarizer.getSymmetrySummary(symsAB, seq, false, "");

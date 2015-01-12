@@ -84,7 +84,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	 *  For indexing of base coord sets, how many point to compress into single index entry
 	 */
 	private static final int points_per_chunk = 1024;
-	private static Map<String, Object> coordset2seqs = new HashMap<String, Object>();
+	private static Map<String, Object> coordset2seqs = new HashMap<>();
 
 
 	/**
@@ -374,7 +374,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			AnnotatedSeqGroup default_seq_group, GenometryModel gmodel, boolean force_use_default_group) throws IOException {
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
-		List<BarSeqHeader> headers = new ArrayList<BarSeqHeader>(10);
+		List<BarSeqHeader> headers = new ArrayList<>(10);
 
 		try {
 			if (istr instanceof BufferedInputStream) {
@@ -405,7 +405,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	public static List<AnnotatedSeqGroup> getSeqGroups(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
 			throws IOException {
 
-		List<AnnotatedSeqGroup> groups = new ArrayList<AnnotatedSeqGroup>();
+		List<AnnotatedSeqGroup> groups = new ArrayList<>();
 		for (BarSeqHeader seq_header : getSeqHeaders(uri, istr, default_seq_group, gmodel, false)) {
 			AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
 			if (!groups.contains(group)) {
@@ -418,7 +418,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 	public static List<BioSeq> getSeqs(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel, boolean force_use_default_group)
 			throws IOException {
 		
-		List<BioSeq> seqs = new ArrayList<BioSeq>();
+		List<BioSeq> seqs = new ArrayList<>();
 		for (BarSeqHeader seq_header : getSeqHeaders(uri, istr, default_seq_group, gmodel, force_use_default_group)) {
 			if (!seqs.contains(seq_header.aseq)) {
 				seqs.add(seq_header.aseq);
@@ -434,7 +434,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 			throws IOException {
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		List<GraphSym> graphs = new ArrayList<>();
 
 		Timer tim = new Timer();
 		tim.start();
@@ -613,7 +613,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 
 
 	private static HashMap<String, String> readTagValPairs(DataInput dis, int pair_count) throws IOException {
-		HashMap<String, String> tvpairs = new HashMap<String, String>(pair_count);
+		HashMap<String, String> tvpairs = new HashMap<>(pair_count);
 		if (DEBUG) {
 			System.out.println("reading tagvals: ");
 		}

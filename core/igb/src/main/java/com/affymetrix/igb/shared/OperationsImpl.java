@@ -51,8 +51,8 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
     public OperationsImpl(IGBService igbS) {
         this.igbService = igbS;
-        name2transformation = new HashMap<String, Operator>();
-        name2operation = new HashMap<String, Operator>();
+        name2transformation = new HashMap<>();
+        name2operation = new HashMap<>();
 
         initComponents(igbS);
         getTransformationCB().addItemListener(new ItemListener() {
@@ -139,7 +139,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                 && paramField.isEnabled() && paramField.getText() != null
                 && paramField.getText().length() > 0) {
             Map<String, Class<?>> params = ((IParameters) operatorClone).getParametersType();
-            Map<String, Object> setparams = new HashMap<String, Object>();
+            Map<String, Object> setparams = new HashMap<>();
             setparams.put(params.keySet().iterator().next(), paramField.getText());
             ((IParameters) operatorClone).setParametersValue(setparams);
         }
@@ -165,9 +165,9 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
             }
         }
         boolean transformOK = transformCategory != null;
-        TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
+        TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
         operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
-        List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
+        List<RootSeqSymmetry> transformSyms = new ArrayList<>(); // fake List to test compatibility of Transform operations
         transformSyms.add(rootSyms.get(0));
         for (Operator operator : operators) {
             if (!addThisOperator(operator)) {

@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
  * @author david.nix@hci.utah.edu*/
 public final class USeqRegionParser implements GraphParser {
 
-	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+	private List<SeqSymmetry> symlist = new ArrayList<>();
 	private String nameOfTrack = null;
 	//private boolean indexNames = false;
 	private AnnotatedSeqGroup group;
@@ -50,7 +50,7 @@ public final class USeqRegionParser implements GraphParser {
 	/*chrom, useqArchive, useqData, group, featureName) */
 	public List<SeqSymmetry> parse(USeqArchive useqArchive, USeqData[] useqData, AnnotatedSeqGroup group, String stream_name) {		
 		this.group = group;
-		symlist = new ArrayList<SeqSymmetry>();
+		symlist = new ArrayList<>();
 		nameOfTrack = stream_name;
 		archiveInfo = useqArchive.getArchiveInfo();
 
@@ -124,7 +124,7 @@ public final class USeqRegionParser implements GraphParser {
 
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {		
 		this.group = group;
-		symlist = new ArrayList<SeqSymmetry>();
+		symlist = new ArrayList<>();
 		nameOfTrack = stream_name;
 		this.addAnnotationsToSeq = addAnnotationsToSeq;
 		this.archiveInfo = ai;

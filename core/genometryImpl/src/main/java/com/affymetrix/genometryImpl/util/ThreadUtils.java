@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import javax.swing.SwingUtilities;
 
 public final class ThreadUtils {
-  static Map<Object,Executor> obj2exec = new HashMap<Object,Executor>();
+  static Map<Object,Executor> obj2exec = new HashMap<>();
 
   /**
    *   Gets the primary executor for a given object key

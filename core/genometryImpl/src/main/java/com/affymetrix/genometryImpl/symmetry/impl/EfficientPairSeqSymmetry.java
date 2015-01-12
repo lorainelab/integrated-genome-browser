@@ -117,7 +117,7 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry, SymWithResid
     }
 
     public Map<String, Object> cloneProperties() {
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         if (isProbe) {
             props.put("feature type", "probe");
         } else if (residues != null) {

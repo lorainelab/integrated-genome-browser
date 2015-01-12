@@ -34,7 +34,7 @@ public final class ThreadProgressMonitor {
     if (cancel_text == null) {cancel_text = "Cancel";}
     String ok_text = UIManager.getString("OptionPane.okButtonText");
     if (ok_text == null) {ok_text = "OK";}
-    List<String> button_list = new ArrayList<String>(2);
+    List<String> button_list = new ArrayList<>(2);
     if (can_dismiss) {button_list.add(ok_text);}
     if (can_cancel) {button_list.add(cancel_text);}
     String[] buttons = button_list.toArray(new String[button_list.size()]);

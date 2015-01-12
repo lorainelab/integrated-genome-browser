@@ -144,7 +144,7 @@ public class ExpandPacker extends ExpandedTierPacker {
             return null;
         }
         if (avoid_sibs) {
-            sibsinrange = new ArrayList<GlyphI>();
+            sibsinrange = new ArrayList<>();
             int sibs_size = sibs.size();
             for (int i = 0; i < sibs_size; i++) {
                 GlyphI sibling = sibs.get(i);

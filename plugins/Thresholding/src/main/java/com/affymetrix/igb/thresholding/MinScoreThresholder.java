@@ -34,7 +34,7 @@ public final class MinScoreThresholder extends JPanel
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("thresholding");
 
     private static final NumberFormat nformat = new DecimalFormat();
-    private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+    private final List<GraphGlyph> graphs = new ArrayList<>();
     private final NeoAbstractWidget widg;
     private final JRPSlider tslider;
     private final JRPTextField minscoreTF;

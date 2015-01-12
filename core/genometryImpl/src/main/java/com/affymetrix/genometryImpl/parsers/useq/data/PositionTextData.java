@@ -201,7 +201,7 @@ public class PositionTextData extends USeqData{
 	public static PositionTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<PositionTextData> a = new ArrayList<PositionTextData>(num);
+		ArrayList<PositionTextData> a = new ArrayList<>(num);
 		for (int i=0; i< num; i++) {
 			a.add((PositionTextData) useqDataAL.get(i));
 		}
@@ -334,7 +334,7 @@ public class PositionTextData extends USeqData{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<PositionText> al = new ArrayList<PositionText>();
+		ArrayList<PositionText> al = new ArrayList<>();
 		for (int i=0; i< sortedPositionTexts.length; i++){
 			if (sortedPositionTexts[i].isContainedBy(beginningBP, endingBP)) {
 				al.add(sortedPositionTexts[i]);

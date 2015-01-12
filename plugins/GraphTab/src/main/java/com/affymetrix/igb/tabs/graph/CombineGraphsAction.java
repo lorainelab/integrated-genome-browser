@@ -42,7 +42,7 @@ public class CombineGraphsAction extends GenericAction {
         // because the glyph factory doesn't support floating combo graphs anyway.
         ITrackStyleExtended combo_style = null;
 
-        Map<Color, Integer> colorMap = new HashMap<Color, Integer>();
+        Map<Color, Integer> colorMap = new HashMap<>();
         // If any of them already has a combo style, use that one
         for (int i = 0; i < gcount && combo_style == null; i++) {
             if (rootSyms.get(i) instanceof GraphSym) {

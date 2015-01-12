@@ -18,7 +18,7 @@ public class TrackTransformAction extends TrackFunctionOperationA {
         super.actionPerformed(e);
         List<StyledGlyph> tiers;
         for (StyledGlyph glyph : Selections.allGlyphs) {
-            tiers = new ArrayList<StyledGlyph>();
+            tiers = new ArrayList<>();
             tiers.add(glyph);
             addTier(tiers);
         }

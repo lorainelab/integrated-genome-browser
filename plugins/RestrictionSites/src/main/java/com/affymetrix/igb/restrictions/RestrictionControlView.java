@@ -40,10 +40,10 @@ public final class RestrictionControlView extends IGBTabPanel
     private static final long serialVersionUID = 0;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
     private static final int TAB_POSITION = 9;
-    private final Map<String, String> site_hash = new HashMap<String, String>();
+    private final Map<String, String> site_hash = new HashMap<>();
     private JList siteList;
     private JPanel labelP;
-    private final List<String> sites = new ArrayList<String>();
+    private final List<String> sites = new ArrayList<>();
     private static Color colors[] = {
         Color.magenta,
         new Color(0x00cd00),
@@ -53,13 +53,13 @@ public final class RestrictionControlView extends IGBTabPanel
         Color.blue,
         Color.gray,
         Color.pink};//Distinct Colors for View/Print Ease
-    private ArrayList<JLabel> labelList = new ArrayList<JLabel>();
+    private ArrayList<JLabel> labelList = new ArrayList<>();
     private JRPButton actionB;
     private JRPButton clearB;
     /**
      * keep track of added glyphs
      */
-    private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
+    private final List<GlyphI> glyphs = new ArrayList<>();
 
     public RestrictionControlView(IGBService igbService) {
         super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);

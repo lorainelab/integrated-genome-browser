@@ -313,7 +313,7 @@ public class USeq2Text {
 		ZipEntry ze;
 		String tab = "\t";
 		String chromosome = null;
-		ArrayList<PositionScoreData> psAL = new ArrayList<PositionScoreData>();
+		ArrayList<PositionScoreData> psAL = new ArrayList<>();
 		while(e.hasMoreElements()) {
 			ze = e.nextElement();
 			//make a SliceInfo object

@@ -825,7 +825,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     public Map<String, Object> getTransientPropertyMap() {
         if (transient_properties == null) {
-            transient_properties = new HashMap<String, Object>();
+            transient_properties = new HashMap<>();
         }
         return transient_properties;
     }

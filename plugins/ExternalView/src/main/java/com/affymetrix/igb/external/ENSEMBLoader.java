@@ -32,7 +32,7 @@ class ENSEMBLoader extends BrowserLoader {
     }
 
     public Map<String, EnsemblURL> loadMap() {
-        Map<String, EnsemblURL> urlMap = new HashMap<String, EnsemblURL>();
+        Map<String, EnsemblURL> urlMap = new HashMap<>();
         String urlfile = "/ensemblURLs";
         InputStream file_input_str
                 = ExternalViewer.class.getResourceAsStream(urlfile);

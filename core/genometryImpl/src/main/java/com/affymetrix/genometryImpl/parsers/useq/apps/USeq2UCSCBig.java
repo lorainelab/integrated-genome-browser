@@ -113,7 +113,7 @@ public class USeq2UCSCBig extends Thread{
 	private ArrayList<File> fetchConvertRegionNames(){
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
 		File convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bb");
-		ArrayList<File> al = new ArrayList<File>();
+		ArrayList<File> al = new ArrayList<>();
 		al.add(convertedFile);
 		return al;
 	}
@@ -142,14 +142,14 @@ public class USeq2UCSCBig extends Thread{
 		executeUCSCCommand(command);
 		deleteTempFiles();
 		//return
-		ArrayList<File> al = new ArrayList<File>();
+		ArrayList<File> al = new ArrayList<>();
 		al.add(convertedFile);
 		return al;
 	}
 
 	private ArrayList<File> fetchConvertedGraphNames(){
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-		ArrayList<File> convertedFiles = new ArrayList<File>();
+		ArrayList<File> convertedFiles = new ArrayList<>();
 		//is it stranded
 		boolean stranded = workingUSeqArchive.isStranded();
 		if (stranded){
@@ -170,7 +170,7 @@ public class USeq2UCSCBig extends Thread{
 		USeq2Text useq2Text = new USeq2Text();
 		useq2Text.setPrintWigFormat(true);
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-		ArrayList<File> convertedFiles = new ArrayList<File>();
+		ArrayList<File> convertedFiles = new ArrayList<>();
 		tempFile = new File (workingUSeqArchiveFile.getCanonicalPath() + ".wig");
 		tempFile.deleteOnExit();
 

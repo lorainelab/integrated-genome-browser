@@ -18,7 +18,7 @@ public class TrackOperationWithParametersAction extends TrackOperationAction {
 
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
-        ConfigureOptionsDialog<Operator> optionDialog = new ConfigureOptionsDialog<Operator>(Operator.class, "Track Operation");
+        ConfigureOptionsDialog<Operator> optionDialog = new ConfigureOptionsDialog<>(Operator.class, "Track Operation");
         optionDialog.setTitle("Track Operation");
         optionDialog.setLocationRelativeTo(getSeqMapView());
         optionDialog.setInitialValue(getOperator());

@@ -58,14 +58,14 @@ public final class QuickLoadServerModel {
      * Stores the names of the data set name. For example A_thaliana_Jun_2008
      * populated by loadGenomeNames()
      */
-    private final List<String> genome_names = new ArrayList<String>();
+    private final List<String> genome_names = new ArrayList<>();
     /**
      * A set containing initialized genomes
      */
-    private final Set<String> initialized = new HashSet<String>();
+    private final Set<String> initialized = new HashSet<>();
     // A map from String genome name to a Map of (typeName,fileName) on the server for that group
-    private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
-    private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
+    private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<>();
+    private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<>();
     private final String primary_url;
     private final GenericServer primaryServer;
 
@@ -176,7 +176,7 @@ public final class QuickLoadServerModel {
         if (getAnnotsMap(genome_name) == null) {
             return Collections.<String>emptyList();
         }
-        List<String> typeNames = new ArrayList<String>();
+        List<String> typeNames = new ArrayList<>();
         for (AnnotMapElt annotMapElt : getAnnotsMap(genome_name)) {
             typeNames.add(annotMapElt.title);
         }
@@ -225,7 +225,7 @@ public final class QuickLoadServerModel {
 
         // Make a new list of typeNames, in case this is being re-initialized
         // If this search fails, then we're just returning an empty map.
-        List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
+        List<AnnotMapElt> annotList = new ArrayList<>();
         genome2annotsMap.put(genome_name, annotList);
 
         InputStream istr = null;

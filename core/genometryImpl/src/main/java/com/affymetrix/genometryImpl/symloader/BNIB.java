@@ -19,7 +19,7 @@ import net.sf.samtools.seekablestream.SeekableStream;
  */
 public class BNIB extends SymLoader {
 
-    private static final List<String> pref_list = new ArrayList<String>();
+    private static final List<String> pref_list = new ArrayList<>();
 
     static {
         pref_list.add("raw");
@@ -28,7 +28,7 @@ public class BNIB extends SymLoader {
 
     private List<BioSeq> chrList = null;	// at most one element here, so it can be an ArrayList
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -61,7 +61,7 @@ public class BNIB extends SymLoader {
         }
 
         init();
-        chrList = new ArrayList<BioSeq>(1);
+        chrList = new ArrayList<>(1);
         SeekableStream sis = null;
         try {
             sis = LocalUrlCacher.getSeekableStream(uri);

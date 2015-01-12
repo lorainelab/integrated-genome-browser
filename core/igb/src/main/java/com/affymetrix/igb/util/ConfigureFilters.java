@@ -46,7 +46,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
             return (SymmetryFilterI) filterList.getModel().getElementAt(0);
         } else {
             ChainFilter filter = new ChainFilter();
-            java.util.List<SymmetryFilterI> filters = new java.util.ArrayList<SymmetryFilterI>(size);
+            java.util.List<SymmetryFilterI> filters = new java.util.ArrayList<>(size);
             for (int i = 0; i < filterList.getModel().getSize(); i++) {
                 filters.add((SymmetryFilterI) filterList.getModel().getElementAt(i));
             }
@@ -178,7 +178,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }
 
     private void addNew() {
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only", optionFilter, false);
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only", optionFilter, false);
         optionDialog.setTitle("Add filter");
         optionDialog.setLocationRelativeTo(this);
         SymmetryFilterI selectedFilter = optionDialog.showDialog();
@@ -206,7 +206,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         SymmetryFilterI selectedFilter = (SymmetryFilterI) filterList.getSelectedValue();
         SymmetryFilterI selectedClone = selectedFilter.newInstance();
 
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only");
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only");
         optionDialog.setTitle("Edit filter");
         optionDialog.setLocationRelativeTo(this);
         optionDialog.setInitialValue(selectedClone);
@@ -230,10 +230,10 @@ public class ConfigureFilters extends javax.swing.JPanel {
             filterRenderer = new javax.swing.DefaultListCellRenderer();
             parameterRenderer = new javax.swing.DefaultListCellRenderer();
 
-            filterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+            filterAttrMap = new java.util.HashMap<>();
             filterAttrMap.put(java.awt.font.TextAttribute.WEIGHT, java.awt.font.TextAttribute.WEIGHT_BOLD);
 
-            parameterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+            parameterAttrMap = new java.util.HashMap<>();
             parameterAttrMap.put(java.awt.font.TextAttribute.POSTURE, java.awt.font.TextAttribute.POSTURE_OBLIQUE);
         }
 

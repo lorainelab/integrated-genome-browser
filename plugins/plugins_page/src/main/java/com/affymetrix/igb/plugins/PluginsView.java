@@ -96,7 +96,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
 
     public PluginsView(IGBService igbService) {
         super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
-        latest = new HashMap< String, Bundle>();
+        latest = new HashMap< >();
         osgiImpl = new Felix();
 
         igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
@@ -467,7 +467,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      */
     private void setRepositoryBundles() {
         Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
-        List< Bundle> repositoryBundles = new ArrayList< Bundle>();
+        List< Bundle> repositoryBundles = new ArrayList< >();
         for (Resource resource : allResourceArray) {
 //            if (checkRequirements(resource.getRequirements())) {
             repositoryBundles.add(new ResourceWrapper(resource));
@@ -624,7 +624,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      * update the set of all bundles (unfiltered) due to a change
      */
     private synchronized void setUnfilteredBundles() {
-        unfilteredBundles = new ArrayList< Bundle>();
+        unfilteredBundles = new ArrayList< >();
         latest.clear();
         if (installedBundles != null) {
             for (Bundle bundle : installedBundles) {
@@ -642,7 +642,7 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
      * filter the unfiltered bundles using the current bundle filter
      */
     private synchronized void filterBundles() {
-        filteredBundles = new ArrayList< Bundle>();
+        filteredBundles = new ArrayList< >();
         for (Bundle bundle : unfilteredBundles) {
             if (SYSTEM_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
                 filteredBundles.add(bundle);

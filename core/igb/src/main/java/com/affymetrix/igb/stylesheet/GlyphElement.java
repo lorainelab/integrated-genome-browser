@@ -123,7 +123,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
     if (this.enclosedGlyphElements != null) {
-      clone.enclosedGlyphElements = new ArrayList<GlyphElement>(enclosedGlyphElements.size());
+      clone.enclosedGlyphElements = new ArrayList<>(enclosedGlyphElements.size());
 	  for (GlyphElement ge : enclosedGlyphElements) {
         GlyphElement new_glyph_element = (GlyphElement) ge.clone();
         clone.enclosedGlyphElements.add(new_glyph_element);
@@ -156,7 +156,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   
   void addGlyphElement(GlyphElement ge) {
     if (enclosedGlyphElements == null) {
-      enclosedGlyphElements = new ArrayList<GlyphElement>();
+      enclosedGlyphElements = new ArrayList<>();
     }
     enclosedGlyphElements.add(ge);
   }

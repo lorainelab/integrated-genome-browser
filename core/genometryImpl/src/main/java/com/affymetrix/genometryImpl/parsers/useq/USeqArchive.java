@@ -16,7 +16,7 @@ public class USeqArchive {
 	private ArchiveInfo archiveInfo;
 	private ZipEntry archiveReadMeEntry;
 	private String binaryDataType;
-	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
+	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<> ();
 	//DAS2 does not support stranded requests at this time so leave false.
 	private boolean maintainStrandedness = false;
 	private boolean stranded = false;
@@ -36,9 +36,9 @@ public class USeqArchive {
 		}
 
 		//build ArrayList of USeqData to merge
-		ArrayList<USeqData> useqDataALPlus = new ArrayList<USeqData>();
-		ArrayList<USeqData> useqDataALMinus = new ArrayList<USeqData>();
-		ArrayList<USeqData> useqDataALNone = new ArrayList<USeqData>();
+		ArrayList<USeqData> useqDataALPlus = new ArrayList<>();
+		ArrayList<USeqData> useqDataALMinus = new ArrayList<>();
+		ArrayList<USeqData> useqDataALNone = new ArrayList<>();
 		BufferedInputStream bis = null;
 		try {
 			int numEntries = entries.size();
@@ -416,7 +416,7 @@ public class USeqArchive {
 	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found. 
 	 * Remember this list isn't stranded so must search entire set.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
-		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
+		ArrayList<ZipEntry> al = new ArrayList<>();
 		//fetch chromStrand
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
 		if (dr == null) {
@@ -448,7 +448,7 @@ public class USeqArchive {
 			archiveInfo = new ArchiveInfo(is, false);
 
 			//load
-			HashMap<String, ArrayList<DataRange>> map = new HashMap<String,ArrayList<DataRange>> ();
+			HashMap<String, ArrayList<DataRange>> map = new HashMap<> ();
 
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = e.nextElement();
@@ -471,7 +471,7 @@ public class USeqArchive {
 				//get/make ArrayList
 				ArrayList<DataRange> al = map.get(chromName);
 				if (al == null){
-					al = new ArrayList<DataRange>();
+					al = new ArrayList<>();
 					map.put(chromName, al);
 				}
 				al.add(new DataRange(zipEntry,sliceInfo.getFirstStartPosition(), sliceInfo.getLastStartPosition()));
@@ -530,7 +530,7 @@ public class USeqArchive {
 	 * java.util.Random class.  Indicate how long you want a particular word and
 	 * the number of words.*/
 	public static String[] createRandomWords(String[] alphabet,int lengthOfWord,int numberOfWords) {
-		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<String> words = new ArrayList<>();
 		Random r = new Random();
 		int len = alphabet.length;
 		for (int i = 0; i < numberOfWords; i++) {
@@ -562,7 +562,7 @@ public class USeqArchive {
 	/**Returns a HashMap containing chromosomes and the last base covered.*/
 	public HashMap<String,Integer> fetchChromosomesAndLastBase() throws IOException{
 		//find last DR
-		HashMap <String,DataRange> map = new HashMap<String,DataRange>();
+		HashMap <String,DataRange> map = new HashMap<>();
 		for (String chrom : chromStrandRegions.keySet()){
 			//these are sorted by first base so it's best to look at all of them.
 			DataRange[] dr = chromStrandRegions.get(chrom);
@@ -579,7 +579,7 @@ public class USeqArchive {
 
 		//now scan each for actual last base
 		ZipFile zf = new ZipFile(zipFile);
-		HashMap<String,Integer> chromBase = new HashMap<String,Integer>();
+		HashMap<String,Integer> chromBase = new HashMap<>();
 		for (String chrom: map.keySet()){
 			DataRange dr = map.get(chrom);
 			ZipEntry ze = dr.zipEntry;

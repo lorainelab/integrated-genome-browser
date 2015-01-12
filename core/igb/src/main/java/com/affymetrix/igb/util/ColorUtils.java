@@ -16,7 +16,7 @@ import java.util.prefs.Preferences;
  * @version $Id: ColorUtils.java 8371 2011-06-29 19:55:31Z dcnorris $
  */
 public class ColorUtils {
-	private static Map<String, Color> colorMap = new HashMap<String, Color>();
+	private static Map<String, Color> colorMap = new HashMap<>();
 	
 	/**
 	 *  Creates a Color chooser combo box associated with a Color preference.

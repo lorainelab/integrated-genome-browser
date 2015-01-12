@@ -607,13 +607,13 @@ public final class GeneralUtils {
      * @return
      */
     public static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> collection) {
-        List<T> list = new ArrayList<T>(collection);
+        List<T> list = new ArrayList<>(collection);
         java.util.Collections.sort(list);
         return list;
     }
 
     public static <T> List<T> asSortedList(Collection<T> collection, java.util.Comparator<T> comparator) {
-        List<T> list = new ArrayList<T>(collection);
+        List<T> list = new ArrayList<>(collection);
         java.util.Collections.sort(list, comparator);
         return list;
     }

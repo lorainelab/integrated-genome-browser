@@ -18,7 +18,7 @@ public final class Bar extends SymLoader {
 
     private List<BioSeq> seqs;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);

@@ -118,7 +118,7 @@ public class BsnpParser implements Parser {
 				SeqSymmetry parent = parents.get(i);
 				BioSeq seq = parent.getSpanSeq(0);
 				int snp_count = parent.getChildCount();
-				List<SeqSymmetry> snps = new ArrayList<SeqSymmetry>(snp_count);
+				List<SeqSymmetry> snps = new ArrayList<>(snp_count);
 				for (int k=0; k<snp_count; k++) {
 					// need to make sure SNPs are written out in sorted order!
 					snps.add(parent.getChild(k));
@@ -145,7 +145,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	private static List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
 		GFFParser gff_parser = new GFFParser();
 		gff_parser.parse(istr, seq_group, true);
 		int problem_count = 0;
@@ -186,8 +186,8 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	private static List<SeqSymmetry> readTextFormat(BufferedReader br) {
 		int snp_count = 0;
 		int weird_length_count = 0;
-		Map<String,SeqSymmetry> id2psym = new HashMap<String,SeqSymmetry>();
-		List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+		Map<String,SeqSymmetry> id2psym = new HashMap<>();
+		List<SeqSymmetry> parent_syms = new ArrayList<>();
 		try {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -249,7 +249,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			snp_counts[i] = dis.readInt();
 			total_snp_count += snp_counts[i];
 		}
-		snp_syms = new ArrayList<SeqSymmetry>(total_snp_count);
+		snp_syms = new ArrayList<>(total_snp_count);
 		for (int i=0; i<seq_count; i++) {
 			BioSeq aseq = seqs[i];
 			int snp_count = snp_counts[i];
@@ -297,7 +297,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 					bin_outfile = text_infile + ".bsnp";
 				}
 				File ifil = new File(text_infile);
-				List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+				List<SeqSymmetry> parent_syms = new ArrayList<>();
 				if (text_infile.endsWith(".txt")) {
                                 try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)))) {
                                     System.out.println("reading in text data from: " + text_infile);

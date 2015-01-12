@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class BAM extends XAM {
 
-    public final static List<String> pref_list = new ArrayList<String>();
+    public final static List<String> pref_list = new ArrayList<>();
     private SAMFileReader mateReader;
 
     static {
@@ -169,8 +169,8 @@ public final class BAM extends XAM {
         BioSeq seq = span.getBioSeq();
         int min = span.getMin();
         int max = span.getMax();
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
-        List<Throwable> errList = new ArrayList<Throwable>(10);
+        List<SeqSymmetry> symList = new ArrayList<>(1000);
+        List<Throwable> errList = new ArrayList<>(10);
         boolean contained = false;
         CloseableIterator<SAMRecord> iter = null;
         try {
@@ -232,7 +232,7 @@ public final class BAM extends XAM {
     public List<SeqSymmetry> parseAll(BioSeq seq, String method) {
         reader = new SAMFileReader(new File(uri));
         reader.setValidationStringency(ValidationStringency.SILENT);
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
+        List<SeqSymmetry> symList = new ArrayList<>(1000);
         if (reader != null) {
             for (final SAMRecord sr : reader) {
                 if (skipUnmapped && sr.getReadUnmappedFlag()) {

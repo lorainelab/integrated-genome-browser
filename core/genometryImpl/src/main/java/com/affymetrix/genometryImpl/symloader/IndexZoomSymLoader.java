@@ -114,7 +114,7 @@ public abstract class IndexZoomSymLoader extends SymLoader {
             }
             saveSeq = seq;
         }
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symList = new ArrayList<>();
         symList.add(saveSym);
         return symList;
     }

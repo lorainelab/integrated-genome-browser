@@ -45,13 +45,13 @@ import net.sf.samtools.SAMSequenceRecord;
  */
 public abstract class XAM extends SymLoader {
 
-    protected final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    protected final List<LoadStrategy> strategyList = new ArrayList<>();
 
     protected static final boolean DEBUG = false;
     protected boolean skipUnmapped = true;
     protected SAMFileReader reader;
     protected SAMFileHeader header;
-    protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
+    protected final Map<BioSeq, String> seqs = new HashMap<>();
 
     public static final String RESIDUESPROP = "residues";
     public static final String BASEQUALITYPROP = "baseQuality";
@@ -98,13 +98,13 @@ public abstract class XAM extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(seqs.keySet());
+        return new ArrayList<>(seqs.keySet());
     }
 
     @Override
     public List<SeqSymmetry> getGenome() throws Exception {
         init();
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (BioSeq seq : group.getSeqList()) {
             results.addAll(getChromosome(seq));
         }
@@ -153,7 +153,7 @@ public abstract class XAM extends SymLoader {
             span = new SimpleSeqSpan(end, start, seq);
         }
 
-        List<SeqSpan> insertChildren = new ArrayList<SeqSpan>();
+        List<SeqSpan> insertChildren = new ArrayList<>();
         List<SeqSpan> children = getChildren(seq, sr, insertChildren);
 
         int blockMins[] = new int[children.size()];
@@ -239,7 +239,7 @@ public abstract class XAM extends SymLoader {
     protected static List<SeqSpan> getChildren(BioSeq seq, SAMRecord sr, List<SeqSpan> insertChilds) {
         Cigar cigar = sr.getCigar();
         boolean isNegative = sr.getReadNegativeStrandFlag();
-        List<SeqSpan> results = new ArrayList<SeqSpan>();
+        List<SeqSpan> results = new ArrayList<>();
         if (cigar == null || cigar.numCigarElements() == 0) {
             return results;
         }

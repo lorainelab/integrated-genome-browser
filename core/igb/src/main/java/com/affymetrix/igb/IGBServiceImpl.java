@@ -210,7 +210,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     @Override
     public void mapRefresh(List<GlyphI> glyphs) {
         GlyphI axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
-        for (GlyphI glyph : new CopyOnWriteArrayList<GlyphI>(glyphs)) {
+        for (GlyphI glyph : new CopyOnWriteArrayList<>(glyphs)) {
             axis_tier.addChild(glyph);
         }
     }

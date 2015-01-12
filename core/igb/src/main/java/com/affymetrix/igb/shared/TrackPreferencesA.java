@@ -535,7 +535,7 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
     }
 
     private Set<String> getFields(ITrackStyleExtended style) {
-        Set<String> fields = new TreeSet<String>();
+        Set<String> fields = new TreeSet<>();
         SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
         if (sym != null) {
             if (sym.getChildCount() > 0) {
@@ -575,14 +575,14 @@ public abstract class TrackPreferencesA extends TrackPreferencesGUI {
             SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
             if (sym instanceof SeqSymmetry) {
                 if (allFields == null) {
-                    allFields = new TreeSet<String>(fields);
+                    allFields = new TreeSet<>(fields);
                 } else {
                     allFields.retainAll(fields);
                 }
             }
         }
         if (allFields == null) {
-            allFields = new TreeSet<String>();
+            allFields = new TreeSet<>();
         }
         labelFieldComboBox.setModel(new DefaultComboBoxModel(allFields.toArray()));
         if (labelField != null) {

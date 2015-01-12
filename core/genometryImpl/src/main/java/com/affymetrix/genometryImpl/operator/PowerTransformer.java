@@ -53,7 +53,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		if (getParamPrompt() == null) {
 			return null;
 		}
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		parameters.put(getParamPrompt(), String.class);
 		return parameters;
 	}

@@ -51,7 +51,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 		if (paramPrompt == null) {
 			return null;
 		}
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		parameters.put(paramPrompt, String.class);
 		return parameters;
 	}

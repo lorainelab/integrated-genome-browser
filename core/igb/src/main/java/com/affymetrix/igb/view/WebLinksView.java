@@ -149,7 +149,7 @@ public final class WebLinksView {
 		if (table.getSelectedRow() != -1) {
 			int[] selectedTableRows = table.getSelectedRows();
 			if (confirmDelete(table.getSelectedRowCount())) {
-				List<WebLink> links = new ArrayList<WebLink>();
+				List<WebLink> links = new ArrayList<>();
 				for (int i : selectedTableRows) {
 					links.add(((WebLinksTableModel)table.getModel()).webLinks.get(i));
 				}

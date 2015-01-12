@@ -46,13 +46,13 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     private static final Map<String, Class<?>> properties;
 
     static {
-        properties = new HashMap<String, Class<?>>();
+        properties = new HashMap<>();
         properties.put(THRESHOLD, Integer.class);
     }
     private static final Map<String, Object> style;
 
     static {
-        style = new HashMap<String, Object>();
+        style = new HashMap<>();
         style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
     }
     public static final int default_threshold = 5;
@@ -123,11 +123,11 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
             }
         }
         SeqSymmetry topSym = list.get(0);
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symList = new ArrayList<>();
         for (int i = 0; i < topSym.getChildCount(); i++) {
             symList.add(topSym.getChild(i));
         }
-        HashMap<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
+        HashMap<String, SeqSymmetry> map = new HashMap<>();
         applyFilters(bioseq, symList, map);
         for (SeqSymmetry sym : map.values()) {
             container.addChild(sym);
@@ -246,7 +246,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
      * and adds the qualified introns into map using addtoMap method
      */
     private static void updateIntronHashMap(SeqSymmetry sym, BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks, boolean topHatStyleFlanking) {
-        List<Integer> childIntronIndices = new ArrayList<Integer>();
+        List<Integer> childIntronIndices = new ArrayList<>();
         int childCount = sym.getChildCount();
         int flanksLength[] = new int[2];
         childThresholdFilter.setParameterValue(childThresholdFilter.getParametersType().entrySet().iterator().next().getKey(), threshold);

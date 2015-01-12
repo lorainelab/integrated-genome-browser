@@ -219,7 +219,7 @@ public class BioSeq implements SearchableCharIterator {
     }
 
     public List<RootSeqSymmetry> getAnnotations(Pattern regex) {
-        List<RootSeqSymmetry> results = new ArrayList<RootSeqSymmetry>();
+        List<RootSeqSymmetry> results = new ArrayList<>();
         if (type_id2sym != null) {
             Matcher match = regex.matcher("");
             for (Map.Entry<String, RootSeqSymmetry> entry : type_id2sym.entrySet()) {
@@ -261,7 +261,7 @@ public class BioSeq implements SearchableCharIterator {
                 throw new RuntimeException("sym.getID() == null && (! needsContainer(sym)), this should never happen!");
             }
             if (type_id2sym == null) {
-                type_id2sym = new LinkedHashMap<String, RootSeqSymmetry>();
+                type_id2sym = new LinkedHashMap<>();
             } else {
                 if (type_id2sym.containsKey(symID) && sym.equals(type_id2sym.get(id))) {
                     return;	// sym already in hash (and thus also annots list)
@@ -269,7 +269,7 @@ public class BioSeq implements SearchableCharIterator {
             }
             type_id2sym.put(symID, (RootSeqSymmetry) sym);
             if (annots == null) {
-                annots = new ArrayList<RootSeqSymmetry>();
+                annots = new ArrayList<>();
             }
             annots.add((RootSeqSymmetry) sym);
             return;
@@ -292,7 +292,7 @@ public class BioSeq implements SearchableCharIterator {
      */
     private synchronized void addAnnotation(SeqSymmetry sym, String type, String ext, boolean index) {
         if (type_id2sym == null) {
-            type_id2sym = new LinkedHashMap<String, RootSeqSymmetry>();
+            type_id2sym = new LinkedHashMap<>();
         }
         RootSeqSymmetry container = type_id2sym.get(type);
         if (container == null) {
@@ -302,7 +302,7 @@ public class BioSeq implements SearchableCharIterator {
             container.addSpan(span);
             type_id2sym.put(type, container);
             if (annots == null) {
-                annots = new ArrayList<RootSeqSymmetry>();
+                annots = new ArrayList<>();
             }
             annots.add(container);	// Can't be a duplicate; the container object was just created.
         }

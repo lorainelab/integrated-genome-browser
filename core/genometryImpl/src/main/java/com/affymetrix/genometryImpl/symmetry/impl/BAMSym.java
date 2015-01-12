@@ -208,7 +208,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public Map<String, Object> cloneProperties() {
-            HashMap<String, Object> tprops = new HashMap<String, Object>();
+            HashMap<String, Object> tprops = new HashMap<>();
             tprops.putAll(BAMSym.this.cloneProperties());
             tprops.put(ID, name);
             tprops.put(RESIDUES, getResidues());
@@ -297,7 +297,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public Map<String, Object> cloneProperties() {
-            HashMap<String, Object> tprops = new HashMap<String, Object>();
+            HashMap<String, Object> tprops = new HashMap<>();
             tprops.putAll(BAMSym.this.cloneProperties());
             tprops.put(ID, name);
             tprops.put(RESIDUES, getResidues());
@@ -406,7 +406,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     @Override
     public Map<String, Object> cloneProperties() {
         if (props == null) {
-            props = new HashMap<String, Object>();
+            props = new HashMap<>();
         }
         props.put(RESIDUES, getResidues().replaceAll("-", ""));
         props.put(MAPQ, mapq);

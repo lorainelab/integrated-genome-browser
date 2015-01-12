@@ -81,7 +81,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     //  Hashtable fail_filter_hash = new Hashtable();
     Map<String, String> fail_filter_hash = null;
     Map<String, String> pass_filter_hash = null;
-    Map<String, Object> gff3_id_hash = new HashMap<String, Object>();
+    Map<String, Object> gff3_id_hash = new HashMap<>();
 
     /*
      *  tag to group features on
@@ -222,12 +222,12 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     public void addFeatureFilter(String feature_type, boolean pass_filter) {
         if (pass_filter) {
             if (pass_filter_hash == null) {
-                pass_filter_hash = new HashMap<String, String>();
+                pass_filter_hash = new HashMap<>();
             }
             pass_filter_hash.put(feature_type, feature_type);
         } else {
             if (fail_filter_hash == null) {
-                fail_filter_hash = new HashMap<String, String>();
+                fail_filter_hash = new HashMap<>();
             }
             fail_filter_hash.put(feature_type, feature_type);
         }
@@ -301,10 +301,10 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         int group_count = 0;
         number_of_duplicate_warnings = 0;
 
-        Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>(); // see getContainer()
-        Map<String, SingletonSymWithProps> group_hash = new HashMap<String, SingletonSymWithProps>();
-        gff3_id_hash = new HashMap<String, Object>();
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths = new HashMap<>(); // see getContainer()
+        Map<String, SingletonSymWithProps> group_hash = new HashMap<>();
+        gff3_id_hash = new HashMap<>();
+        List<SeqSymmetry> results = new ArrayList<>();
 
         // By default, no hierarchical grouping; turned on with a directive
         use_hierarchy = false;
@@ -559,7 +559,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
         Map<String, SimpleSymWithProps> meth2csym = seq2meths.get(seq);
         if (meth2csym == null) {
-            meth2csym = new HashMap<String, SimpleSymWithProps>();
+            meth2csym = new HashMap<>();
             seq2meths.put(seq, meth2csym);
         }
         SimpleSymWithProps parent_sym = meth2csym.get(meth);
@@ -591,7 +591,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         //    SeqUtils.printSymmetry(psym);
         int child_count = psym.getChildCount();
         if (child_count > 0) {
-            List<SeqSymmetry> child_list = new ArrayList<SeqSymmetry>(child_count);
+            List<SeqSymmetry> child_list = new ArrayList<>(child_count);
             for (int i = 0; i < child_count; i++) {
                 SeqSymmetry csym = psym.getChild(i);
                 if (csym.getSpan(sortseq) != null) {
@@ -613,8 +613,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
     static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
     boolean use_hierarchy = false;
-    Map<String, Integer> hierarchy_levels = new HashMap<String, Integer>(); // Map of String to Integer
-    Map<String, String> hierarchy_id_fields = new HashMap<String, String>(); // Map of String to String
+    Map<String, Integer> hierarchy_levels = new HashMap<>(); // Map of String to Integer
+    Map<String, String> hierarchy_id_fields = new HashMap<>(); // Map of String to String
 
     /**
      * Process directive lines in the input, which are lines beginning with
@@ -727,7 +727,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
      * then hash.get(key) = List vec, and each value is an element in vec
      */
     public static void processAttributes(Map<String, Object> m, String attributes) {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         String[] attarray = att_regex.split(attributes);
         for (int i = 0; i < attarray.length; i++) {
             String att = attarray[i];
@@ -764,7 +764,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 //   and make a new List for next tag-value entry
                 else {
                     m.put(tag, vals);
-                    vals = new ArrayList<String>();
+                    vals = new ArrayList<>();
                 }
             }
         }  // end attribute processing

@@ -19,7 +19,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
     public StylePanelImpl(IGBService _igbService) {
         super();
         igbService = _igbService;
-        styles = new CopyOnWriteArrayList<ITrackStyleExtended>();
+        styles = new CopyOnWriteArrayList<>();
         setStyles();
         resetAll();
         Selections.addRefreshSelectionListener(this);

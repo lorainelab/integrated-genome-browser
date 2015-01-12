@@ -192,7 +192,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
         super.list.add(DataManagementTableModel.TRACK_NAME_COLUMN);
 
-        rmMap = new HashMap<Integer, RowEditorModel>();
+        rmMap = new HashMap<>();
 
         Application igb = Application.getSingleton();
         if (igb != null) {
@@ -352,7 +352,7 @@ class RowEditorModel {
     private final Map<Integer, TableCellEditor> row2Editor;
 
     RowEditorModel(int size) {
-        row2Editor = new HashMap<Integer, TableCellEditor>(size);
+        row2Editor = new HashMap<>(size);
     }
 
     void addEditorForRow(int row, TableCellEditor e) {

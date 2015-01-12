@@ -55,7 +55,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     private final boolean annotate_target;
     private final boolean annotate_other;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -105,7 +105,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -114,7 +114,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     public List<UcscPslSym> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<UcscPslSym> retList = new ArrayList<UcscPslSym>();
+        List<UcscPslSym> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -137,9 +137,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
         BufferedWriter bw = null;
         BufferedReader br = null;
-        Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
-        Map<String, Set<String>> queryTarget = new HashMap<String, Set<String>>();
+        Map<String, Boolean> chrTrack = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
+        Map<String, Set<String>> queryTarget = new HashMap<>();
         String trackLine = null;
 
         if (DEBUG) {
@@ -177,7 +177,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                             in_bottom_of_link_psl = true;
                         }
                     }
-                    chrTrack = new HashMap<String, Boolean>();
+                    chrTrack = new HashMap<>();
                     trackLine = line;
 
                     if (in_bottom_of_link_psl) {
@@ -388,7 +388,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         if (DEBUG) {
             System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
         }
-        List<UcscPslSym> results = new ArrayList<UcscPslSym>();
+        List<UcscPslSym> results = new ArrayList<>();
 
 		// Make temporary seq groups for any unspecified group.
         // These temporary groups do not require synonym matching, because they should
@@ -409,9 +409,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         boolean in_bottom_of_link_psl = false;
 
         // the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
-        Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-        Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-        Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<>();
 
 //		int line_count = 0;
         String line = null;
@@ -519,7 +519,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         if (DEBUG) {
             System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
         }
-        List<UcscPslSym> results = new ArrayList<UcscPslSym>();
+        List<UcscPslSym> results = new ArrayList<>();
 
 		// Make temporary seq groups for any unspecified group.
         // These temporary groups do not require synonym matching, because they should
@@ -540,9 +540,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         boolean in_bottom_of_link_psl = false;
 
         // the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
-        Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-        Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-        Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<>();
 
 //		int line_count = 0;
         String line = null;
@@ -892,7 +892,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         //    System.out.println("in createContainerAnnot, type: " + type);
         Map<String, SimpleSymWithProps> type2csym = seq2types.get(seq);
         if (type2csym == null) {
-            type2csym = new HashMap<String, SimpleSymWithProps>();
+            type2csym = new HashMap<>();
             seq2types.put(seq, type2csym);
         }
         SimpleSymWithProps parent_sym = type2csym.get(type);
@@ -975,7 +975,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                 }
             }
         }
-        List<Object> results = new ArrayList<Object>(3);
+        List<Object> results = new ArrayList<>(3);
         results.add(blocksizes);
         results.add(qmins);
         results.add(tmins);

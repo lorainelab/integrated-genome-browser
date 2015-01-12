@@ -110,15 +110,15 @@ public final class ScoredIntervalParser implements GraphParser {
             br = new BufferedReader(new InputStreamReader(istr));
             String line = null;
 
-            Map<BioSeq, List<SinEntry>> seq2sinentries = new LinkedHashMap<BioSeq, List<SinEntry>>();
-            Map<Integer, String> index2id = new HashMap<Integer, String>();
+            Map<BioSeq, List<SinEntry>> seq2sinentries = new LinkedHashMap<>();
+            Map<Integer, String> index2id = new HashMap<>();
             List<String> score_names = null;
-            Map<String, Object> props = new HashMap<String, Object>();
+            Map<String, Object> props = new HashMap<>();
 
             line = parseHeader(br, line, index2id, props);
 
             Matcher strand_matcher = strand_regex.matcher("");
-            List<IndexedSingletonSym> isyms = new ArrayList<IndexedSingletonSym>();
+            List<IndexedSingletonSym> isyms = new ArrayList<>();
 
             // There should already be a non-header line in the 'line' variable.
             // Continue reading lines until there are no more lines.
@@ -252,7 +252,7 @@ public final class ScoredIntervalParser implements GraphParser {
                     BioSeq aseq = child.getSpan(0).getBioSeq();
                     List<SinEntry> sin_entries = seq2sinentries.get(aseq);
                     if (sin_entries == null) {
-                        sin_entries = new ArrayList<SinEntry>();
+                        sin_entries = new ArrayList<>();
                         seq2sinentries.put(aseq, sin_entries);
                     }
                     SinEntry sentry = new SinEntry(child, entry_floats);
@@ -331,7 +331,7 @@ public final class ScoredIntervalParser implements GraphParser {
             int score_count,
             List<String> score_names,
             boolean annotate_seq) {
-        List<ScoredContainerSym> containerSyms = new ArrayList<ScoredContainerSym>(seq2sinentries.keySet().size());
+        List<ScoredContainerSym> containerSyms = new ArrayList<>(seq2sinentries.keySet().size());
         // now make the container syms
         for (BioSeq aseq : seq2sinentries.keySet()) {
             ScoredContainerSym container = new ScoredContainerSym();
@@ -389,7 +389,7 @@ public final class ScoredIntervalParser implements GraphParser {
     }
 
     private static List<String> initScoreNames(int score_count, Map<Integer, String> index2id, String stream_name) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (int i = 0; i < score_count; i++) {
             Integer index = Integer.valueOf(i);
             String id = index2id.get(index);

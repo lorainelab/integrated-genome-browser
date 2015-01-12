@@ -36,10 +36,10 @@ public final class CntParser implements Parser {
 	private static final String SECTION_COL_NAME = "[ColumnName]";
 	// index of the first column containing data
 	private static final int FIRST_DATA_COLUMN = 3;
-	private final Map<String, FloatArrayList[]> seq2Floats = new HashMap<String, FloatArrayList[]>();
-	private final Map<String, IntArrayList> seqToIntList = new HashMap<String, IntArrayList>();
+	private final Map<String, FloatArrayList[]> seq2Floats = new HashMap<>();
+	private final Map<String, IntArrayList> seqToIntList = new HashMap<>();
 
-	private final Map<String, String> unique_gids = new HashMap<String, String>();
+	private final Map<String, String> unique_gids = new HashMap<>();
 
 	public List<GraphSym> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotateSeq)
 			throws IOException {
@@ -52,8 +52,8 @@ public final class CntParser implements Parser {
 		Matcher section_regex_matcher = section_regex.matcher("");
 		Matcher tag_val_matcher = tag_val.matcher("");
 		String current_section = "";
-		Map<String, Object> headerData = new HashMap<String, Object>();
-		List<GraphSym> results = new ArrayList<GraphSym>();
+		Map<String, Object> headerData = new HashMap<>();
+		List<GraphSym> results = new ArrayList<>();
 
 
 		// First read the header

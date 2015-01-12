@@ -168,7 +168,7 @@ public final class BookmarkManagerView {
         tree.setTransferHandler(new TreeTransferHandler());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         tree.setModel(tree_model);
-        bookmark_history = new ArrayList<TreePath>();
+        bookmark_history = new ArrayList<>();
 
         thing = new BottomThing();
         bpGUI = new BookmarkPropertiesGUI(tml);
@@ -421,7 +421,7 @@ public final class BookmarkManagerView {
     }
 
     private static TreePath getPath(TreeNode treeNode) {
-        List<Object> nodes = new ArrayList<Object>();
+        List<Object> nodes = new ArrayList<>();
         if (treeNode != null) {
             nodes.add(treeNode);
             treeNode = treeNode.getParent();
@@ -609,7 +609,7 @@ public final class BookmarkManagerView {
             ((AbstractDocument) comment_text_area.getDocument()).addDocumentListener(dl);
             comment_text_area.setEnabled(false);
 
-            final List<String> info_list = new ArrayList<String>(6);
+            final List<String> info_list = new ArrayList<>(6);
             info_list.add("version");
             info_list.add("seqid");
             info_list.add("start");

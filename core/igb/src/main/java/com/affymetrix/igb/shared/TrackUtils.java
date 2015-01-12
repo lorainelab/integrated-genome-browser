@@ -75,7 +75,7 @@ public class TrackUtils {
     }
 
     public List<SeqSymmetry> getSymsFromLabelGlyphs(List<TierLabelGlyph> labels) {
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> syms = new ArrayList<>();
         for (TierLabelGlyph label : labels) {
             TierGlyph glyph = label.getReferenceTier();
             RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
@@ -88,7 +88,7 @@ public class TrackUtils {
     }
 
     public List<RootSeqSymmetry> getSymsTierGlyphs(List<StyledGlyph> tierGlyphs) {
-        List<RootSeqSymmetry> syms = new ArrayList<RootSeqSymmetry>();
+        List<RootSeqSymmetry> syms = new ArrayList<>();
         for (StyledGlyph glyph : tierGlyphs) {
             if (glyph instanceof TierGlyph && ((TierGlyph) glyph).getTierType() == TierGlyph.TierType.GRAPH) {
                 for (GlyphI g : glyph.getChildren()) {
@@ -114,7 +114,7 @@ public class TrackUtils {
     }
 
     private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
-        Map<FileTypeCategory, Integer> trackCounts = new EnumMap<FileTypeCategory, Integer>(FileTypeCategory.class);
+        Map<FileTypeCategory, Integer> trackCounts = new EnumMap<>(FileTypeCategory.class);
         for (SeqSymmetry sym : syms) {
             if (sym != null) {
                 FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();

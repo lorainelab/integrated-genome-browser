@@ -161,7 +161,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         this._baseComponent = _baseComponent;
         this.tabState = tabState;
         retractDividerSet = false;
-        trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
+        trayStateChangeListeners = new ArrayList<>();
         trayState = TrayState.HIDDEN;
         title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
         saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
@@ -491,7 +491,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
     @Override
     public Set<IGBTabPanel> getPlugins() {
-        Set<IGBTabPanel> plugins = new HashSet<IGBTabPanel>();
+        Set<IGBTabPanel> plugins = new HashSet<>();
         for (int i = 0; i < tab_pane.getTabCount(); i++) {
             IGBTabPanel panel = (IGBTabPanel) tab_pane.getComponentAt(i);
             if (panel != null) {

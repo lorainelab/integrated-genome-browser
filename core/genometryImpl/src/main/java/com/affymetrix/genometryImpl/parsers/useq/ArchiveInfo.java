@@ -69,7 +69,7 @@ public class ArchiveInfo {
 	//constructors
 	public ArchiveInfo(String versionedGenome, String dataType){
 		//instantiate keyValues Hash and add required fields
-		keyValues = new LinkedHashMap<String,String>();
+		keyValues = new LinkedHashMap<>();
 		keyValues.put(ARCHIVE_VERSION_KEY, ARCHIVE_VERSION_VALUE_ONE);
 		//set date
 		keyValues.put(ARCHIVE_CREATION_DATE, new Date().toString());
@@ -189,9 +189,9 @@ public class ArchiveInfo {
 	/**This does not close the BufferedReader.*/
 	public void loadTextArchiveReadMeFile (BufferedReader in) {
 		try {
-			keyValues = new LinkedHashMap<String,String>();
+			keyValues = new LinkedHashMap<>();
 			String line;
-			ArrayList<String> comments = new ArrayList<String>();
+			ArrayList<String> comments = new ArrayList<>();
 			while ((line = in.readLine()) != null){
 				line = line.trim();
 				if (line.length() == 0) {

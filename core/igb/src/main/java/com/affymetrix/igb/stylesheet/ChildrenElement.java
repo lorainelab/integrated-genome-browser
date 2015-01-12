@@ -60,7 +60,7 @@ static String ATT_POSITIONS = "child_positions";
       clone.styleElement = (StyleElement) styleElement.clone();
     }
     if (matchElements != null) {
-      clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
+      clone.matchElements = new ArrayList<>(matchElements.size());
 			for (MatchElement me : matchElements) {
         MatchElement new_me = (MatchElement) me.clone();
         clone.matchElements.add(new_me);
@@ -181,7 +181,7 @@ static String ATT_POSITIONS = "child_positions";
   
   void addMatchElement(MatchElement me) {
     if (matchElements == null) {
-      matchElements = new ArrayList<MatchElement>();
+      matchElements = new ArrayList<>();
     }
     matchElements.add(me);
   }

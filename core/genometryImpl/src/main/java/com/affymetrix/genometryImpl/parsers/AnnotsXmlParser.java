@@ -170,7 +170,7 @@ public abstract class AnnotsXmlParser {
         public String fileName;
         public String title;
         public String serverURL;
-        public Map<String, String> props = new HashMap<String, String>();
+        public Map<String, String> props = new HashMap<>();
 
         public AnnotMapElt(String fileName, String title) {
             this(fileName, title, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -253,7 +253,7 @@ public abstract class AnnotsXmlParser {
         }
 
         public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {
-            for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<AnnotMapElt>(annotList)) {
+            for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<>(annotList)) {
                 if (annotMapElt.fileName.equalsIgnoreCase(fileName)) {
                     return annotMapElt;
                 }
@@ -262,7 +262,7 @@ public abstract class AnnotsXmlParser {
         }
 
         public static AnnotMapElt findTitleElt(String title, List<AnnotMapElt> annotList) {
-            for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<AnnotMapElt>(annotList)) {
+            for (AnnotMapElt annotMapElt : new CopyOnWriteArrayList<>(annotList)) {
                 if (annotMapElt.title.equalsIgnoreCase(title)) {
                     return annotMapElt;
                 }

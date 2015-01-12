@@ -66,7 +66,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
                 BUNDLE.getString("canonicalizeTracksTooltip"));
     }
 
-    private List<TierGlyph> graphTracks = new ArrayList<TierGlyph>();
+    private List<TierGlyph> graphTracks = new ArrayList<>();
 
     /**
      * Should be enabled only if we can do something. Check that more than one

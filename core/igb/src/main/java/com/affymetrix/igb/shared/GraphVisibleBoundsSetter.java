@@ -90,7 +90,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
     //    FIX THIS!  But also need to balance between memory concerns and the
     //    desire to avoid recalculation of percent-to-score array (which requires a
     //    sort) every time a graph is selected...
-    private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+    private final List<GraphGlyph> graphs = new ArrayList<>();
 
     /*
      * Now trying to map slider values to percentages, such that each slider
@@ -114,7 +114,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
     static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
 
         GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-        List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> glist = new ArrayList<>();
         glist.add(sgg);
         thresher.setGraphs(glist);
         JFrame frm = new JFrame(BUNDLE.getString("graphPercentileAdjuster"));

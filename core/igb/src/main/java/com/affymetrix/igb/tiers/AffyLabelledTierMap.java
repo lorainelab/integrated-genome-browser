@@ -42,7 +42,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
 
     AffyTieredMap labelmap;
     JSplitPane mapsplitter;
-    final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+    final List<TierLabelGlyph> label_glyphs = new ArrayList<>();
     List<TierLabelGlyph> ordered_glyphs = null;
     JPanel can_panel;
     NeoCanvas ncan;
@@ -125,7 +125,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     }
 
     private List<TierLabelGlyph> getOrderedGlyphs() {
-        List<TierLabelGlyph> orderedGlyphs = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> orderedGlyphs = new ArrayList<>();
         for (TierLabelGlyph tierLabelGlyph : label_glyphs) {
             if (tierLabelGlyph.isVisible()) {
                 orderedGlyphs.add(tierLabelGlyph);

@@ -26,10 +26,10 @@ class FeatureBean {
 	private float score;
 	private Orientation orientation;
 	private char phase;
-	private final List<String> notes = new ArrayList<String>(2);
-	private final List<LinkBean> links = new ArrayList<LinkBean>(2);
-	private final List<TargetBean> targets = new ArrayList<TargetBean>(2);
-	private final List<GroupBean> groups = new ArrayList<GroupBean>(2);
+	private final List<String> notes = new ArrayList<>(2);
+	private final List<LinkBean> links = new ArrayList<>(2);
+	private final List<TargetBean> targets = new ArrayList<>(2);
+	private final List<GroupBean> groups = new ArrayList<>(2);
 
 	FeatureBean() { this.clear(); }
 

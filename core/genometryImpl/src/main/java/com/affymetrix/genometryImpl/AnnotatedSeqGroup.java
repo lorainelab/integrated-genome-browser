@@ -22,13 +22,13 @@ public class AnnotatedSeqGroup {
     final private String id;
     private String organism;
     private String description;
-    final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<GenericVersion>();	// list of (visible) GenericVersions associated with this group
+    final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<>();	// list of (visible) GenericVersions associated with this group
     private boolean use_synonyms;
     final private Map<String, BioSeq> id2seq;
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
-    private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
-    private HashMap<String, Set<String>> uri2Seqs = new HashMap<String, Set<String>>();
+    private HashMap<String, Integer> type_id2annot_id = new HashMap<>();
+    private HashMap<String, Set<String>> uri2Seqs = new HashMap<>();
 
     private SynonymLookup chrLookup;
 
@@ -37,7 +37,7 @@ public class AnnotatedSeqGroup {
         use_synonyms = true;
         id2seq = Collections.<String, BioSeq>synchronizedMap(new LinkedHashMap<String, BioSeq>());
         id2seq_dirty_bit = false;
-        seqlist = new ArrayList<BioSeq>();
+        seqlist = new ArrayList<>();
     }
 
     final public String getID() {
@@ -81,7 +81,7 @@ public class AnnotatedSeqGroup {
      * Only return versions that should be visible.
      */
     final public Set<GenericVersion> getEnabledVersions() {
-        Set<GenericVersion> versions = new CopyOnWriteArraySet<GenericVersion>();
+        Set<GenericVersion> versions = new CopyOnWriteArraySet<>();
         for (GenericVersion v : gVersions) {
             if (v.gServer.isEnabled()) {
                 versions.add(v);
@@ -129,7 +129,7 @@ public class AnnotatedSeqGroup {
     public List<BioSeq> getSeqList() {
         if (id2seq_dirty_bit) {
             // lazily keep the seqlist up-to-date
-            seqlist = new ArrayList<BioSeq>(id2seq.values());
+            seqlist = new ArrayList<>(id2seq.values());
             id2seq_dirty_bit = false;
         }
         return Collections.<BioSeq>unmodifiableList(seqlist);
@@ -273,7 +273,7 @@ public class AnnotatedSeqGroup {
     private void addUri2Seqs(String uri, String seqid) {
         Set<String> seqids = uri2Seqs.get(uri);
         if (seqids == null) {
-            seqids = new HashSet<String>();
+            seqids = new HashSet<>();
             uri2Seqs.put(uri, seqids);
         }
         seqids.add(seqid);
@@ -333,7 +333,7 @@ public class AnnotatedSeqGroup {
      * @return a non-null List, possibly an empty one.
      */
     final public Set<SeqSymmetry> findSyms(String id) {
-        Set<SeqSymmetry> results = new HashSet<SeqSymmetry>();
+        Set<SeqSymmetry> results = new HashSet<>();
         for (BioSeq seq : getSeqList()) {
             seq.search(results, id);
         }

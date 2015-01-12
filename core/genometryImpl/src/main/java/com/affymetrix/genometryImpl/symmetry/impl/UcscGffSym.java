@@ -220,7 +220,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
     public Map<String, Object> cloneProperties() {
         Map<String, Object> tprops = super.cloneProperties();
         if (tprops == null) {
-            tprops = new HashMap<String, Object>();
+            tprops = new HashMap<>();
         }
         if (getID() != null) {
             tprops.put("id", getID());

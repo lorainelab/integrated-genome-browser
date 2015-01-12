@@ -57,7 +57,7 @@ public final class BgrParser implements GraphParser {
                 Map<String, Object> headers = graf.getProperties();
                 
                 if (headers == null) {
-                    headers = new HashMap<String, Object>(); // use an empty map
+                    headers = new HashMap<>(); // use an empty map
                 }
                 if (headers.get("seq_name") == null) {
                     if (graf.getGraphSeq() == null) {
@@ -88,7 +88,7 @@ public final class BgrParser implements GraphParser {
 	}
 
 	public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException{
-		List<GraphSym> results = new ArrayList<GraphSym>();
+		List<GraphSym> results = new ArrayList<>();
 		results.add(parse(istr,stream_name,seq_group, true));
 		return results;
 	}
@@ -100,7 +100,7 @@ public final class BgrParser implements GraphParser {
 		int count = 0;
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		DataInputStream dis = new DataInputStream(bis);
-		HashMap<String,Object> props = new HashMap<String,Object>();
+		HashMap<String,Object> props = new HashMap<>();
 		String seq_name = dis.readUTF();
 		String release_name = dis.readUTF();
 		String analysis_group_name = dis.readUTF();

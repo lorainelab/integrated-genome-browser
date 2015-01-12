@@ -178,7 +178,7 @@ public final class SpeciesLookup {
 	}
 
 	public static String getStandardName(String version){
-		Set<Pattern> patterns = new HashSet<Pattern>();
+		Set<Pattern> patterns = new HashSet<>();
 		patterns.add(STANDARD_REGEX);
 		patterns.add(UCSC_REGEX);
 

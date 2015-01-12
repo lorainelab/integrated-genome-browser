@@ -16,7 +16,7 @@ public class ChildThresholdFilter extends SymmetryFilter {
     private final static String THRESHOLD = "threshold";
     private final static int DEFAULT_THRESHOLD = 5;
 
-    private Parameter<Integer> threshold = new Parameter<Integer>(DEFAULT_THRESHOLD);
+    private Parameter<Integer> threshold = new Parameter<>(DEFAULT_THRESHOLD);
 
     public ChildThresholdFilter() {
         super();

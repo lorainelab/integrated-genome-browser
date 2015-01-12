@@ -27,7 +27,7 @@ public class Felix implements OSGIImpl {
 
         @Override
         public java.util.Map<String, Object> getPropertiesAsMap() {
-            java.util.Map<String, Object> propertiesMap = new java.util.HashMap<String, Object>();
+            java.util.Map<String, Object> propertiesMap = new java.util.HashMap<>();
             propertiesMap.put("package", "com.affymetrix.common");
             propertiesMap.put("version", new org.osgi.framework.Version(CommonUtils.getInstance().getAppVersion()));
             return propertiesMap;

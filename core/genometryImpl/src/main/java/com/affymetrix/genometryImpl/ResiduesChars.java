@@ -15,8 +15,8 @@ public enum ResiduesChars {
     final static Map<Integer, Character> reverseRcMap;
 
     static {
-        rcMap = new HashMap<Character, Integer>(10);
-        reverseRcMap = new HashMap<Integer, Character>(5);
+        rcMap = new HashMap<>(10);
+        reverseRcMap = new HashMap<>(5);
         for (ResiduesChars rc : values()) {
             for (char ch : rc.chars) {
                 rcMap.put(ch, rc.value);

@@ -16,7 +16,7 @@ import java.util.Map;
 
 public final class MismatchPileupType extends MismatchGraphType {
 
-	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<Character, int[]>();
+	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<>();
 
 	static {
 		BAR_ORDERS.put('A', new int[]{1, 2, 3, 4});

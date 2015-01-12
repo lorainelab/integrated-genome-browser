@@ -43,7 +43,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     }
 
     protected void addTier(List<StyledGlyph> vgs) {
-        java.util.List<DelegateParent> dps = new java.util.ArrayList<DelegateParent>();
+        java.util.List<DelegateParent> dps = new java.util.ArrayList<>();
 
         for (StyledGlyph vg : vgs) {
             if (vg.getAnnotStyle().getFeature() == null) {
@@ -90,7 +90,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     private void addNonUpdateableTier(List<? extends GlyphI> vgs) {
         BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
         ITrackStyleExtended preferredStyle = null;
-        List<SeqSymmetry> seqSymList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> seqSymList = new ArrayList<>();
         for (GlyphI gl : vgs) {
             SeqSymmetry rootSym = (SeqSymmetry) gl.getInfo();
             if (rootSym == null && gl.getChildCount() > 0) {

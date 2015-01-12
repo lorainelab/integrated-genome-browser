@@ -22,7 +22,7 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
 
     public void addSpan(SeqSpan span) {
         if (spans == null) {
-            spans = new ArrayList<SeqSpan>();
+            spans = new ArrayList<>();
         }
         spans.add(span);
     }
@@ -41,7 +41,7 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
      }*/
     public void addChild(SeqSymmetry sym) {
         if (children == null) {
-            children = new ArrayList<SeqSymmetry>();
+            children = new ArrayList<>();
         }
         children.add(sym);
     }

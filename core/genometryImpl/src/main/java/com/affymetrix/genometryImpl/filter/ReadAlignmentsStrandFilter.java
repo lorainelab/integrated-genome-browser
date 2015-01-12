@@ -34,13 +34,13 @@ public class ReadAlignmentsStrandFilter extends SymmetryFilter {
 		}
 	}
 	private final static String COMPARATOR = "show";
-	private final static List<READ_ALIGNMENT> COMPARATOR_VALUES = new LinkedList<READ_ALIGNMENT>();
+	private final static List<READ_ALIGNMENT> COMPARATOR_VALUES = new LinkedList<>();
 	
 	static {
 		COMPARATOR_VALUES.add(READ_ALIGNMENT.POSITIVE);
 		COMPARATOR_VALUES.add(READ_ALIGNMENT.NEGATIVE);
 	}
-		private Parameter<READ_ALIGNMENT> comparator = new BoundedParameter<READ_ALIGNMENT>(COMPARATOR_VALUES);
+		private Parameter<READ_ALIGNMENT> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 	
 	public ReadAlignmentsStrandFilter(){
 		parameters.addParameter(COMPARATOR, READ_ALIGNMENT.class, comparator);

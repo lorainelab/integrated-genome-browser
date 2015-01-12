@@ -145,15 +145,15 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private double version = -1.0;
 //	private Date date;
     private String[] samples = new String[]{};
-    private Map<String, String> metaMap = new HashMap<String, String>();
-    private Map<String, INFO> infoMap = new HashMap<String, INFO>();
-    private Map<String, FILTER> filterMap = new HashMap<String, FILTER>();
-    private Map<String, FORMAT> formatMap = new HashMap<String, FORMAT>();
+    private Map<String, String> metaMap = new HashMap<>();
+    private Map<String, INFO> infoMap = new HashMap<>();
+    private Map<String, FILTER> filterMap = new HashMap<>();
+    private Map<String, FORMAT> formatMap = new HashMap<>();
     private boolean combineGenotype;
-    private List<String> selectedFields = new ArrayList<String>();
+    private List<String> selectedFields = new ArrayList<>();
 
     static {
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
 
         types.add("protein");
     }
@@ -176,9 +176,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         mainSym.setProperty("type", featureName);
         mainSym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
         int line_count = 0;
-        Map<String, SimpleSymWithProps> dataMap = new HashMap<String, SimpleSymWithProps>();
-        Map<String, GraphData> graphDataMap = new HashMap<String, GraphData>();
-        Map<String, SimpleSymWithProps> genotypeDataMap = new HashMap<String, SimpleSymWithProps>();
+        Map<String, SimpleSymWithProps> dataMap = new HashMap<>();
+        Map<String, GraphData> graphDataMap = new HashMap<>();
+        Map<String, SimpleSymWithProps> genotypeDataMap = new HashMap<>();
 
         String line = null;
 
@@ -197,7 +197,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                     Level.SEVERE, "failed to parse vcf file ", x);
         }
         SeqSpan span = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-        List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symlist = new ArrayList<>();
         if (mainSym.getChildCount() > 0) {
             mainSym.addSpan(span);
         }
@@ -212,7 +212,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
             container.addSpan(span);
             symlist.add(container);
         }
-        Map<String, ITrackStyle> styleMap = new HashMap<String, ITrackStyle>();
+        Map<String, ITrackStyle> styleMap = new HashMap<>();
         for (String key : graphDataMap.keySet()) {
             GraphData graphData = graphDataMap.get(key);
             int dataSize = graphData.xData.size();
@@ -258,7 +258,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     public void select(String name, boolean separateTracks, Map<String, List<String>> selections) {
         setCombineGenotype(!separateTracks);
-        for (String dataField : new ArrayList<String>(selectedFields)) {
+        for (String dataField : new ArrayList<>(selectedFields)) {
             if (dataField.indexOf('/') > -1) {
                 selectedFields.remove(dataField);
             }
@@ -280,7 +280,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     }
 
     public List<String> getAllFields() {
-        return new ArrayList<String>(infoMap.keySet());
+        return new ArrayList<>(infoMap.keySet());
     }
 
     public List<String> getSamples() {
@@ -288,7 +288,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     }
 
     public List<String> getGenotypes() {
-        return new ArrayList<String>(formatMap.keySet());
+        return new ArrayList<>(formatMap.keySet());
     }
 
     private String getID(String line) {

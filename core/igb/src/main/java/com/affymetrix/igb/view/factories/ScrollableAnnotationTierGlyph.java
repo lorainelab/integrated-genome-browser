@@ -79,7 +79,7 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
             //   for each entry in min sorted children list, the maximum max
             //     value up to (and including) that position
             // could do max list as int array or as symmetry list, for now doing symmetry list
-            max_child_sofar = new ArrayList<GlyphI>(child_count);
+            max_child_sofar = new ArrayList<>(child_count);
             GlyphI curMaxChild = getChild(0);
             Rectangle2D.Double curbox = curMaxChild.getCoordBox();
             double max = curbox.x + curbox.width;

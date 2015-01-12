@@ -252,7 +252,7 @@ public class RegionTextData extends USeqData{
 	public static RegionTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<RegionTextData> a = new ArrayList<RegionTextData>(num);
+		ArrayList<RegionTextData> a = new ArrayList<>(num);
 		for (int i=0; i< num; i++) {
 			a.add((RegionTextData) useqDataAL.get(i));
 		}
@@ -470,7 +470,7 @@ public class RegionTextData extends USeqData{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<RegionText> al = new ArrayList<RegionText>();
+		ArrayList<RegionText> al = new ArrayList<>();
 		for (int i=0; i< sortedRegionTexts.length; i++){
 			if (sortedRegionTexts[i].isContainedBy(beginningBP, endingBP)) {
 				al.add(sortedRegionTexts[i]);

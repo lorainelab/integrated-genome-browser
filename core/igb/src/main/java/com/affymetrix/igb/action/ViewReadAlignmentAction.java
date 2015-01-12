@@ -22,7 +22,7 @@ public class ViewReadAlignmentAction extends SeqMapViewActionA {
     private static final ViewReadAlignmentAction restoreRead = new ViewReadAlignmentAction(RESTOREREAD);
     private static final ViewReadAlignmentAction showMismatch = new ViewReadAlignmentAction(SHOWMISMATCH);
 
-    private final List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+    private final List<SeqSymmetry> syms = new ArrayList<>();
 
     private ViewReadAlignmentAction(String text) {
         super(text, null, null);

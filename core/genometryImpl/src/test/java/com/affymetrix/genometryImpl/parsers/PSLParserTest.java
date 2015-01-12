@@ -106,7 +106,7 @@ public class PSLParserTest {
      * @return the symmetries that match the given chromosome.
      */
     public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (SeqSymmetry sym : genomeResults) {
             BioSeq seq2 = null;
             if (sym instanceof UcscPslSym) {

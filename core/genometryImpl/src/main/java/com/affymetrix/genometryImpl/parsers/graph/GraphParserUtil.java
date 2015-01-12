@@ -15,7 +15,7 @@ public class GraphParserUtil {
 	public List<GraphSym> wrapInList(GraphSym gsym) {
 		List<GraphSym> grafs = null;
 		if (gsym != null) {
-			grafs = new ArrayList<GraphSym>();
+			grafs = new ArrayList<>();
 			grafs.add(gsym);
 		}
 		return grafs;

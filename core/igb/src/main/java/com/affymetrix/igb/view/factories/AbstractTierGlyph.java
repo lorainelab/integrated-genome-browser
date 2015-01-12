@@ -72,10 +72,10 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
      * background, but behind the child glyphs For example, to indicate how much
      * of the xcoord range has been covered by feature retrieval attempts
      */
-    private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+    private final List<GlyphI> middle_glyphs = new ArrayList<>();
 
     //TODO: This should maybe be Map<Object,List<GlyphI>>
-    protected Map<Object, Object> model_hash = new HashMap<Object, Object>();
+    protected Map<Object, Object> model_hash = new HashMap<>();
 
     /*
      * other_fill_color is derived from fill_color whenever setFillColor() is called.
@@ -377,7 +377,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
 
     @Override
     public List<GlyphI> pickTraversal(Rectangle2D.Double coordrect, ViewI view) {
-        List<GlyphI> pickList = new ArrayList<GlyphI>();
+        List<GlyphI> pickList = new ArrayList<>();
         GlyphI child, temp = new Glyph() {
         };
         List<GlyphI> children = getChildren();
@@ -510,7 +510,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
             return;
         }
 
-        List<GlyphI> childrens = new ArrayList<GlyphI>();
+        List<GlyphI> childrens = new ArrayList<>();
         childrens.addAll(temp.getChildren());
 
         for (GlyphI children : childrens) {
@@ -548,7 +548,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     public final List<SeqSymmetry> getSelected() {
 
         int childCount = getChildCount();
-        List<SeqSymmetry> selectedSyms = new ArrayList<SeqSymmetry>(childCount);
+        List<SeqSymmetry> selectedSyms = new ArrayList<>(childCount);
         for (int i = 0; i < childCount; i++) {
             if (getChild(i).isSelected()) {
                 if (getChild(i).getInfo() instanceof SeqSymmetry) {

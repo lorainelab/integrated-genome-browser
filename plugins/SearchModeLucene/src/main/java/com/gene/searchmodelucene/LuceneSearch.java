@@ -33,7 +33,7 @@ public abstract class LuceneSearch<T> {
     }
 
     public List<T> searchIndex(String uri, String searchTerm, int max_hits) {
-        List<T> searchResults = new ArrayList<T>();
+        List<T> searchResults = new ArrayList<>();
         String path = null;
         try {
             Directory directory;
@@ -47,7 +47,7 @@ public abstract class LuceneSearch<T> {
             IndexReader ir = IndexReader.open(directory);
             IndexSearcher searcher = new IndexSearcher(ir);
             Analyzer analyzer = new KeywordAnalyzer();//new StandardAnalyzer(Version.LUCENE_35);
-            List<String> fieldInfoList = new ArrayList<String>();
+            List<String> fieldInfoList = new ArrayList<>();
             ReaderUtil.getMergedFieldInfos(ir);
             for (FieldInfo fieldInfo : ReaderUtil.getMergedFieldInfos(ir)) {
                 fieldInfoList.add(fieldInfo.name);

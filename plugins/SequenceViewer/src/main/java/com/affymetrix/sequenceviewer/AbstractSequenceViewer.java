@@ -334,7 +334,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     }
 
     private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
-        bundle = new ArrayList<CreateValueSet>();
+        bundle = new ArrayList<>();
         if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
             addSequenceViewerItem(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
         } else {
@@ -347,11 +347,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             SeqSpan span = residues_sym.getSpan(aseq);
             if (!span.isForward() && shouldReverseOnNegative()) {
                 Collections.reverse(bundle);
-                workingList = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<>(bundle);
             } else {
-                workingList = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<>(bundle);
             }
-            reverseComplementList = new ArrayList<CreateValueSet>(workingList);
+            reverseComplementList = new ArrayList<>(workingList);
             Collections.reverse(reverseComplementList);
         }
     }

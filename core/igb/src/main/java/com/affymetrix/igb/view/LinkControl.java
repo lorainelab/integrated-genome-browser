@@ -30,7 +30,7 @@ final class LinkControl implements ContextualPopupListener {
 			primary_sym = ((CdsSeqSymmetry) primary_sym).getPropertySymmetry();
 		}
 		
-		Map<String, String> menu_items = new LinkedHashMap<String, String>(); // map of menu url->name, or url -> url if there is no name
+		Map<String, String> menu_items = new LinkedHashMap<>(); // map of menu url->name, or url -> url if there is no name
 
 		// DAS files can contain links for each individual feature.
 		// These are stored in the "link" property
@@ -94,7 +94,7 @@ final class LinkControl implements ContextualPopupListener {
 //	}
 
 	private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
-		List<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> results = new ArrayList<>();
 		results.addAll(WebLinkUtils.getServerList().getWebLinks(primary_sym));
 		results.addAll(WebLinkUtils.getLocalList().getWebLinks(primary_sym));
 		if (results.isEmpty()) {

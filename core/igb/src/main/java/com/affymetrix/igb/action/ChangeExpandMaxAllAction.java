@@ -30,7 +30,7 @@ public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
 
     @Override
     protected List<TierLabelGlyph> getTiers() {
-        List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> answer = new ArrayList<>();
         TierLabelManager m = getTierManager();
         List<TierLabelGlyph> allTiers = m.getAllTierLabels();
         if (null == allTiers) {

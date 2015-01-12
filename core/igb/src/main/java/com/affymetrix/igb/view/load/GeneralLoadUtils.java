@@ -123,7 +123,7 @@ public final class GeneralLoadUtils {
             = Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, GenericVersion>create());// the list of versions associated with the species
 
     static final Map<String, String> versionName2species
-            = new HashMap<String, String>();	// the species associated with the given version.
+            = new HashMap<>();	// the species associated with the given version.
 
     public static Map<String, String> getVersionName2Species() {
         return versionName2species;
@@ -154,7 +154,7 @@ public final class GeneralLoadUtils {
      * Map to store directory name associated with the server on a cached
      * server.
      */
-    private static Map<String, String> servermapping = new HashMap<String, String>();
+    private static Map<String, String> servermapping = new HashMap<>();
 
     /**
      *
@@ -392,7 +392,7 @@ public final class GeneralLoadUtils {
      */
     public static List<GenericFeature> getFeatures(AnnotatedSeqGroup group) {
         // There may be more than one server with the same versionName.  Merge all the version names.
-        List<GenericFeature> featureList = new ArrayList<GenericFeature>();
+        List<GenericFeature> featureList = new ArrayList<>();
         if (group != null) {
             Set<GenericVersion> versions = group.getEnabledVersions();
             if (versions != null) {
@@ -410,7 +410,7 @@ public final class GeneralLoadUtils {
      * @return list of visible features
      */
     public static List<GenericFeature> getVisibleFeatures() {
-        List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
+        List<GenericFeature> visibleFeatures = new ArrayList<>();
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
 
         for (GenericFeature gFeature : getFeatures(group)) {
@@ -437,7 +437,7 @@ public final class GeneralLoadUtils {
      * @return A list of servers associated with the given versions.
      */
     public static List<GenericServer> getServersWithAssociatedFeatures(List<GenericFeature> features) {
-        List<GenericServer> serverList = new ArrayList<GenericServer>();
+        List<GenericServer> serverList = new ArrayList<>();
         for (GenericFeature gFeature : features) {
             if (!serverList.contains(gFeature.gVersion.gServer)) {
                 serverList.add(gFeature.gVersion.gServer);
@@ -953,9 +953,9 @@ public final class GeneralLoadUtils {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
 
-        List<SeqSpan> optimized_spans = new ArrayList<SeqSpan>();
+        List<SeqSpan> optimized_spans = new ArrayList<>();
         SeqUtils.convertSymToSpanList(optimized_sym, optimized_spans);
-        Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
+        Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<>();
 
         for (SeqSpan optimized_span : optimized_spans) {
             Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
@@ -1040,7 +1040,7 @@ public final class GeneralLoadUtils {
         if (span == null) {
             span = new SimpleSeqSpan(min, max, aseq);
         }
-        List<GenericVersion> versions = new ArrayList<GenericVersion>(versionsWithChrom);
+        List<GenericVersion> versions = new ArrayList<>(versionsWithChrom);
         String seq_name = aseq.getID();
         boolean residuesLoaded = false;
         for (GenericVersion version : versions) {
@@ -1086,7 +1086,7 @@ public final class GeneralLoadUtils {
          * have residues for " + seq_name); } return false; }
          */
         // Determine list of servers that might have this chromosome sequence.
-        Set<GenericVersion> versionsWithChrom = new HashSet<GenericVersion>();
+        Set<GenericVersion> versionsWithChrom = new HashSet<>();
         versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());
 
         if ((min <= 0) && (max >= aseq.getLength())) {
@@ -1228,7 +1228,7 @@ public final class GeneralLoadUtils {
 
     public static List<String> getGenericVersions(final String speciesName) {
         final Set<GenericVersion> versionList = species2genericVersionList.get(speciesName);
-        final List<String> versionNames = new ArrayList<String>();
+        final List<String> versionNames = new ArrayList<>();
         if (versionList != null) {
             for (GenericVersion gVersion : versionList) {
                 // the same versionName name may occur on multiple servers
@@ -1388,7 +1388,7 @@ public final class GeneralLoadUtils {
             }
             SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
             if (symL != null && symL.isResidueLoader() && !isReferenceSequence) {
-                featureProps = new HashMap<String, String>();
+                featureProps = new HashMap<>();
                 featureProps.put("collapsed", "true");
                 featureProps.put("show2tracks", "false");
             }

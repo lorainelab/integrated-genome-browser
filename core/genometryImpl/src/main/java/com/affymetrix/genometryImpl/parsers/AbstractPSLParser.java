@@ -103,7 +103,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 		if (DEBUG) {
 			System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
 		}
-		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
+		List<UcscPslSym> results = new ArrayList<>();
 
 		// Make temporary seq groups for any unspecified group.
 		// These temporary groups do not require synonym matching, because they should
@@ -124,9 +124,9 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 		boolean in_bottom_of_link_psl = false;
 
 		// the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
-		Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-		Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
-		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<>();
 
 		int line_count = 0;
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
@@ -421,7 +421,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 		//    System.out.println("in createContainerAnnot, type: " + type);
 		Map<String, SimpleSymWithProps> type2csym = seq2types.get(seq);
 		if (type2csym == null) {
-			type2csym = new HashMap<String, SimpleSymWithProps>();
+			type2csym = new HashMap<>();
 			seq2types.put(seq, type2csym);
 		}
 		SimpleSymWithProps parent_sym = type2csym.get(type);
@@ -504,7 +504,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
 				}
 			}
 		}
-		List<Object> results = new ArrayList<Object>(3);
+		List<Object> results = new ArrayList<>(3);
 		results.add(blocksizes);
 		results.add(qmins);
 		results.add(tmins);

@@ -68,7 +68,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {
-		List<GenericAction> actions = new ArrayList<GenericAction>();
+		List<GenericAction> actions = new ArrayList<>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
 		errorPanel(title, message, new ArrayList<Throwable>(), actions, level);
@@ -104,7 +104,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 		
 	private static void errorPanel(String title, String message, Throwable e, Level level) {
-		List<Throwable> errs = new ArrayList<Throwable>();
+		List<Throwable> errs = new ArrayList<>();
 		if (e != null) {
 			errs.add(e);
 		}

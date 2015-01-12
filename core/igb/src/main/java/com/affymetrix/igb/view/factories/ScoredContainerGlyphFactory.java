@@ -76,9 +76,9 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
         int score_count = container.getScoreCount();
         List<GraphIntervalSym> results = null;
         if (separate_by_strand) {
-            results = new ArrayList<GraphIntervalSym>(score_count * 2);
+            results = new ArrayList<>(score_count * 2);
         } else {
-            results = new ArrayList<GraphIntervalSym>(score_count);
+            results = new ArrayList<>(score_count);
         }
 
         for (int i = 0; i < score_count; i++) {

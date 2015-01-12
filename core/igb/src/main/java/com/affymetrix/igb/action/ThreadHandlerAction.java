@@ -54,7 +54,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
 
     private final JPopupMenu runningTasks;
     private JPanel outerBox;
-    private final Map<CThreadWorker<?, ?>, Box> cThreadWorker2Box = new HashMap<CThreadWorker<?, ?>, Box>();
+    private final Map<CThreadWorker<?, ?>, Box> cThreadWorker2Box = new HashMap<>();
 
     private ThreadHandlerAction() {
         super("Handle Threads", null, null);

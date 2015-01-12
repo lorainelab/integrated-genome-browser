@@ -33,7 +33,7 @@ public final class UniFileFilter extends FileFilter {
 	private boolean useExtensionsInDescription = true;
 
 	public UniFileFilter() {
-		this.filters = new LinkedHashSet<String>();
+		this.filters = new LinkedHashSet<>();
 	}
 
 	public UniFileFilter(String extension) {
@@ -94,7 +94,7 @@ public final class UniFileFilter extends FileFilter {
 		return false;
 	}
 
-	List<String> compression_endings = new ArrayList<String>(4);
+	List<String> compression_endings = new ArrayList<>(4);
 
 	/** Adds a file extension that will be considered to represent
 	 *  compression types that the filter should
@@ -162,7 +162,7 @@ public final class UniFileFilter extends FileFilter {
 
 	public void addExtension(String extension) {
 		if(filters == null) {
-			filters = new LinkedHashSet<String>(5);
+			filters = new LinkedHashSet<>(5);
 		}
 		filters.add(extension.toLowerCase());
 		fullDescription = null;

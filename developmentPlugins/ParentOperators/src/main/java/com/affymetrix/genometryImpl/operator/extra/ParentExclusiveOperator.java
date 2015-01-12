@@ -24,7 +24,7 @@ public abstract class ParentExclusiveOperator extends ParentXorOperator implemen
         if (xorSym == null) {
             return null;
         }
-        List<SeqSymmetry> xorList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> xorList = new ArrayList<>();
         xorList.add(xorSym);
         SeqSymmetry a_not_b = SeqSymSummarizer.getIntersection(symsA, xorList, seq, 2);
         return a_not_b;

@@ -17,7 +17,7 @@ public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
     private final int[] colWidth = {20, 8, 10, 10, 10, 15, 50};
     private final int[] colAlign = {SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.RIGHT, SwingConstants.RIGHT, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.LEFT};
 
-    private final List<GlyphI> tableRows = new ArrayList<GlyphI>(0);
+    private final List<GlyphI> tableRows = new ArrayList<>(0);
     protected final String seq;
 
     public GlyphSearchResultsTableModel(List<GlyphI> results, String seq) {

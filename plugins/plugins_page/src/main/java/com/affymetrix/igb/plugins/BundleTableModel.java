@@ -42,7 +42,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
     public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 
         private static final long serialVersionUID = 1L;
-        private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
+        private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<>(); // kludge
         private final JLabel text;
         private final JLabel icon;
         private final String tooltip;
@@ -187,7 +187,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
                     : "" + getVersion();
         }
     }
-    private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
+    private static final ArrayList<BundleColumn> columns = new ArrayList<>();
 
     static {
         columns.add(new BundleColumn() { // install
@@ -315,7 +315,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
     public static final List<SortKey> SORT_KEYS;
 
     static {
-        List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+        List<SortKey> sortKeys = new ArrayList<>(2);
         sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
         sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
 

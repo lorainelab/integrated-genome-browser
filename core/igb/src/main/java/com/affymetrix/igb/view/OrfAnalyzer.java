@@ -72,7 +72,7 @@ public final class OrfAnalyzer extends JComponent
 	private static final int orf_thresh_max = 500;
 	private static final int max_analysis_span = 1000000;
 	private boolean show_orfs;
-	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
+	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<>();
 	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
 	private int previousBefferSize;
 

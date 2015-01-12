@@ -24,17 +24,17 @@ public abstract class AbstractGraphOperator implements Operator {
 	 */
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
 		// get the x, y, and w (width) coordinates of the graphs int Lists
-		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<ArrayList<Integer>>();
-		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<ArrayList<Integer>>();
-		ArrayList<ArrayList<Float>> yCoords = new ArrayList<ArrayList<Float>>();
+		ArrayList<ArrayList<Integer>> xCoords = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> wCoords = new ArrayList<>();
+		ArrayList<ArrayList<Float>> yCoords = new ArrayList<>();
 		boolean hasWidthGraphs = false;
 		int[] index = new int[symList.size()];
-		ArrayList<String> labels = new ArrayList<String>();
+		ArrayList<String> labels = new ArrayList<>();
 		for (int i = 0; i < symList.size(); i++) {
 			GraphSym graph = (GraphSym) symList.get(i);
 			index[i] = 0;
 			int[] xArray = graph.getGraphXCoords();
-			ArrayList<Integer> xCoordList = new ArrayList<Integer>();
+			ArrayList<Integer> xCoordList = new ArrayList<>();
 			for (int j = 0; j < xArray.length; j++) {
 				xCoordList.add(xArray[j]);
 			}
@@ -43,23 +43,23 @@ public abstract class AbstractGraphOperator implements Operator {
 			int[] wArray = graph.getGraphWidthCoords();
 			if (wArray != null) {
 				hasWidthGraphs = true;
-				wCoordList = new ArrayList<Integer>();
+				wCoordList = new ArrayList<>();
 				for (int j = 0; j < wArray.length; j++) {
 					wCoordList.add(wArray[j]);
 				}
 			}
 			wCoords.add(wCoordList);
 			float[] yArray = graph.copyGraphYCoords();
-			ArrayList<Float> yCoordList = new ArrayList<Float>();
+			ArrayList<Float> yCoordList = new ArrayList<>();
 			for (int j = 0; j < yArray.length; j++) {
 				yCoordList.add(yArray[j]);
 			}
 			yCoords.add(yCoordList);
 			labels.add(graph.getID());
 		}
-		List<Integer> xList = new ArrayList<Integer>();
-		List<Integer> wList = new ArrayList<Integer>();
-		List<Float> yList = new ArrayList<Float>();
+		List<Integer> xList = new ArrayList<>();
+		List<Integer> wList = new ArrayList<>();
+		List<Float> yList = new ArrayList<>();
 		// find the minimum x of all graphs to start with
 		int spanBeginX = Integer.MAX_VALUE;
 		for (int i = 0; i < symList.size(); i++) {
@@ -109,7 +109,7 @@ public abstract class AbstractGraphOperator implements Operator {
 						
 			// now that we have currentX and nextX (the start and end of the span)
 			// we get each y coord as an operand
-			List<Float> operands = new ArrayList<Float>();
+			List<Float> operands = new ArrayList<>();
 			for (int i = 0; i < symList.size(); i++) {
 				float value = 0;
 				int graphIndex = index[i];

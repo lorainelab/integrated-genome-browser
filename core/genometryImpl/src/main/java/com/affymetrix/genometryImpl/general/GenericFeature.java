@@ -54,7 +54,7 @@ public final class GenericFeature {
     private RefreshStatus lastRefresh;
     public final Object typeObj;    // Das2Type, ...?
     public final SymLoader symL;
-    private final Set<String> methods = new HashSet<String>();
+    private final Set<String> methods = new HashSet<>();
 
     private final boolean isReferenceSequence;
 
@@ -265,7 +265,7 @@ public final class GenericFeature {
     }
 
     public void clear(BioSeq seq) {
-        List<SeqSymmetry> removeList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> removeList = new ArrayList<>();
 
         for (int i = 0; i < requestSym.getChildCount(); i++) {
             SeqSymmetry sym = requestSym.getChild(i);

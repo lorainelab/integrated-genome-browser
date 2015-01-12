@@ -7,7 +7,7 @@ import java.util.Map;
 public final class Das2Capability {
   private final String type;
   private final URI root_uri;
-  private static final Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
+  private static final Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<>();
 
   Das2Capability(String cap_type, URI cap_root) {
     type = cap_type;

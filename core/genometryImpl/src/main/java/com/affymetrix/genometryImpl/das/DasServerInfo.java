@@ -36,7 +36,7 @@ public final class DasServerInfo {
     private static final boolean REPORT_CAPS = true;
     private URL serverURL;
     private URL primaryURL = null;
-    private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
+    private final Map<String, DasSource> sources = new LinkedHashMap<>();  // using LinkedHashMap for predictable iteration
     private boolean initialized = false;
     private GenericServer primaryServer = null;
 
@@ -91,7 +91,7 @@ public final class DasServerInfo {
     private boolean initialize() {
         InputStream stream = null;
         try {
-            Map<String, List<String>> headers = new HashMap<String, List<String>>();
+            Map<String, List<String>> headers = new HashMap<>();
             stream = getInputStream(headers, "Das Request");
             if (stream == null) {
                 logger.error("Could not find URL {}", serverURL);

@@ -95,8 +95,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private boolean add_annots_to_seq = false;
 	private static final boolean add_to_sym_hash = true;
 	private String current_elem = null;  // current element
-	private final Stack<String> elemstack = new Stack<String>();
-	private final Stack<URI> base_uri_stack = new Stack<URI>();
+	private final Stack<String> elemstack = new Stack<>();
+	private final Stack<URI> base_uri_stack = new Stack<>();
 	private URI current_base_uri = null;
 	private String feat_id = null;
 	private String feat_type = null;
@@ -108,14 +108,14 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private String feat_prop_key = null;
 	private String feat_prop_val = null;
 	/**  list of SeqSpans specifying feature locations */
-	private final List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
+	private final List<SeqSpan> feat_locs = new ArrayList<>();
 	
 	/**
 	 *  map of child feature id to either:
 	 *      itself  (if child feature not parsed yet), or
 	 *      child feature object (if child feature already parsed)
 	 */
-	private Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
+	private Map<String, Object> feat_parts = new LinkedHashMap<>();
 	private Map<String, Object> feat_props = null;
 
 	/**
@@ -125,11 +125,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  Need mapping so can connect parents and children after sym has already been created
 	 */
-	private final Map<String,MutableSeqSymmetry> id2sym = new HashMap<String,MutableSeqSymmetry>();
+	private final Map<String,MutableSeqSymmetry> id2sym = new HashMap<>();
 	/**
 	 *  Mapping of parent sym to map of child ids to connect parents and children.
 	 */
-	private final Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<SeqSymmetry,Map<String, Object>>();
+	private final Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<>();
 
 	private int dup_count = 0;
 	private int feature_constructor_calls = 0;
@@ -188,7 +188,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *  result_syms get populated via callbacks from reader.parse(),
 		 *    eventually leading to result_syms.add() calls in addFeatue();
 		 */
-		result_syms = new ArrayList<SeqSymmetry>();
+		result_syms = new ArrayList<>();
 
 		seqgroup = group;
 
@@ -423,7 +423,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		feat_locs.clear();
 		// making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
-		feat_parts = new LinkedHashMap<String, Object>();
+		feat_parts = new LinkedHashMap<>();
 
 
 		feat_props = null;
@@ -454,7 +454,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			//   should probably move this stuff up to the startElement() conditional for clarity,
 			//   then can make feat_prop_key and feat_prop_val local to method
 			if (feat_props == null) {
-				feat_props = new HashMap<String, Object>();
+				feat_props = new HashMap<>();
 			}
 			Object prev = feat_props.get(feat_prop_key);
 			if (prev == null) {

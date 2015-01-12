@@ -367,7 +367,7 @@ public class BAMIndexer {
         //////////////////////
         //INIT
         //create options hash map so we can ask all the questions to the user before doing indexes
-        HashMap<String, EnumMap<opt, Object>> options = new HashMap<String, EnumMap<opt, Object>>();
+        HashMap<String, EnumMap<opt, Object>> options = new HashMap<>();
         EnumMap<opt, Object> option = null; //option map per file
         // location for our .bai file
         File indexFile = null; //index output file object
@@ -385,7 +385,7 @@ public class BAMIndexer {
             if (option != null) { //skip the first iteration
                 options.put(bamFile.getName(), option);
             }
-            option = new EnumMap<opt, Object>(opt.class);
+            option = new EnumMap<>(opt.class);
 
             //default options
             option.put(opt.DoesIndexExist, false); //boolean

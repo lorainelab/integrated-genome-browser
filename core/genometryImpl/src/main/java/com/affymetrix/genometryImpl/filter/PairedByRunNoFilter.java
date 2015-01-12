@@ -29,13 +29,13 @@ public class PairedByRunNoFilter extends SymmetryFilter {
 	}
 	
 	private final static String COMPARATOR = "run_number";
-	private final static List<RUN_NO> COMPARATOR_VALUES = new LinkedList<RUN_NO>();
+	private final static List<RUN_NO> COMPARATOR_VALUES = new LinkedList<>();
 	
 	static {
 		COMPARATOR_VALUES.add(RUN_NO.FIRST);
 		COMPARATOR_VALUES.add(RUN_NO.SECOND);
 	}
-	private Parameter<RUN_NO> comparator = new BoundedParameter<RUN_NO>(COMPARATOR_VALUES);
+	private Parameter<RUN_NO> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 	
 	public PairedByRunNoFilter(){
 		parameters.addParameter(COMPARATOR, RUN_NO.class, comparator);

@@ -74,7 +74,7 @@ public abstract class FileDropHandler extends TransferHandler {
 	}
 
 	private static List<URL> textURLList(String data) {
-        List<URL> list = new ArrayList<URL>();
+        List<URL> list = new ArrayList<>();
         for (StringTokenizer st = new StringTokenizer(data, "\r\n"); st.hasMoreTokens();) {
             String s = st.nextToken();
             if (s.charAt(0) == '#') {

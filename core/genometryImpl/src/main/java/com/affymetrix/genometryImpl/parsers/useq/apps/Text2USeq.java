@@ -31,7 +31,7 @@ public class Text2USeq {
 	private File[] outputDirectories;
 	private File workingBinarySaveDirectory;
 	private HashMap<String, File> chromStrandFileHash;
-	private ArrayList<File> files2Zip = new ArrayList<File>();
+	private ArrayList<File> files2Zip = new ArrayList<>();
 	public static final Pattern PATTERN_TAB = Pattern.compile("\\t");
 	public static final Pattern PATTERN_STRAND = Pattern.compile(".*[+-\\.]$");
 
@@ -608,7 +608,7 @@ public class Text2USeq {
 
 	/**Parses a Position[]*/
 	private Position[] makePositions(File file){
-		ArrayList<Position> al = new ArrayList<Position>();
+		ArrayList<Position> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -632,7 +632,7 @@ public class Text2USeq {
 
 	/**Parses a PositionScore[]*/
 	private PositionScore[] makePositionScores(File file){
-		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
+		ArrayList<PositionScore> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -655,7 +655,7 @@ public class Text2USeq {
 
 	/**Parses a PositionText[]*/
 	private PositionText[] makePositionTexts(File file){
-		ArrayList<PositionText> al = new ArrayList<PositionText>();
+		ArrayList<PositionText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -678,7 +678,7 @@ public class Text2USeq {
 
 	/**Parses a PositionScoreText[]*/
 	private PositionScoreText[] makePositionScoreTexts(File file){
-		ArrayList<PositionScoreText> al = new ArrayList<PositionScoreText>();
+		ArrayList<PositionScoreText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -702,7 +702,7 @@ public class Text2USeq {
 
 	/**Parses a Region[]*/
 	private Region[] makeRegions(File file){
-		ArrayList<Region> al = new ArrayList<Region>();
+		ArrayList<Region> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -726,7 +726,7 @@ public class Text2USeq {
 
 	/**Parses a RegionScore[]*/
 	private RegionScore[] makeRegionScores(File file){
-		ArrayList<RegionScore> al = new ArrayList<RegionScore>();
+		ArrayList<RegionScore> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -749,7 +749,7 @@ public class Text2USeq {
 
 	/**Parses a RegionText[]*/
 	private RegionText[] makeRegionTexts(File file){
-		ArrayList<RegionText> al = new ArrayList<RegionText>();
+		ArrayList<RegionText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -772,7 +772,7 @@ public class Text2USeq {
 
 	/**Parses a RegionScoreText[]*/
 	private RegionScoreText[] makeRegionScoreTexts(File file){
-		ArrayList<RegionScoreText> al = new ArrayList<RegionScoreText>();
+		ArrayList<RegionScoreText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
@@ -813,8 +813,8 @@ public class Text2USeq {
 	public static HashMap <String, File> splitFileByChromosomeAndStrand(File dataFile, File saveDirectory, int chromosomeColumnIndex, int strandColumnIndex, boolean skipSpliceJunctions ){
 		Pattern tab = Pattern.compile("\\t");
 		Pattern spliceJunction = Pattern.compile(".+_\\d+_\\d+");
-		HashMap <String, PrintWriter> chromOut = new HashMap <String, PrintWriter>();
-		HashMap <String, File> chromFile = new HashMap <String, File>();
+		HashMap <String, PrintWriter> chromOut = new HashMap <>();
+		HashMap <String, File> chromFile = new HashMap <>();
 		try{
                     try ( //get reader
                             BufferedReader in = USeqUtilities.fetchBufferedReader(dataFile)) {

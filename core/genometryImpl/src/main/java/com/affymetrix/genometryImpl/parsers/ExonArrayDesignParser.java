@@ -123,9 +123,9 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type) throws IOException {
 		BufferedInputStream bis;
-		Map<String,Object> tagvals = new LinkedHashMap<String,Object>();
+		Map<String,Object> tagvals = new LinkedHashMap<>();
 		DataInputStream dis = null;
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
 		try  {
 			if (istr instanceof BufferedInputStream) {
 				bis = (BufferedInputStream) istr;
@@ -328,7 +328,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 			//     Genometry DAS/2 servlet
 			//     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
 			else { dos = new DataOutputStream(outstream); }
-			List<BioSeq> oneseq = new ArrayList<BioSeq>();
+			List<BioSeq> oneseq = new ArrayList<>();
 			oneseq.add(aseq);
 			SeqSymmetry tcluster_exemplar = null;
 
@@ -565,7 +565,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 		int probe_length = 25;
 		try {
 			File gff_file = new File(in_file);
-			List<File> gfiles = new ArrayList<File>();
+			List<File> gfiles = new ArrayList<>();
 			if (gff_file.isDirectory()) {
 				System.out.println("processing all gff files in directory: " + in_file);
 				// process all gff files in directory
@@ -582,8 +582,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 				gfiles.add(gff_file);
 			}
 			int printcount = 0;
-			Map<BioSeq,SimpleSymWithProps> seq2container = new HashMap<BioSeq,SimpleSymWithProps>();
-			Map<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
+			Map<BioSeq,SimpleSymWithProps> seq2container = new HashMap<>();
+			Map<BioSeq,SharedProbesetInfo> seq2info = new HashMap<>();
 
 			for (File gfile : gfiles) {
 
@@ -758,7 +758,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 				//    1) type container
 				//    2) intermediate container
 				//    3) transcript cluster
-				List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+				List<SeqSymmetry> syms = new ArrayList<>();
 				int container_count = typesym.getChildCount();
 				for (int k=0; k<container_count; k++) {
 					SeqSymmetry csym = typesym.getChild(k);

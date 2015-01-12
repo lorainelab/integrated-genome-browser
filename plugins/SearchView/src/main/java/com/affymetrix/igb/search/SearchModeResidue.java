@@ -65,7 +65,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         Color.gray,
         Color.pink};//Distinct Colors for View/Print Ease
 
-    private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
+    private final List<GlyphI> glyphs = new ArrayList<>();
     private IGBService igbService;
     private int color = 0;
     private boolean optionSelected;
@@ -254,7 +254,7 @@ public class SearchModeResidue implements ISearchModeExtended,
                 searchSummary.append(st).append(" : ").append("Search skipped because character length is less than 4.");
             }
         }
-        return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);
+        return new SearchResults<>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);
     }
 
     private SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
@@ -271,7 +271,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         try {
             regex = Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
         } catch (Exception ex) { // should not happen already checked above
-            return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), ex.getLocalizedMessage(), null);
+            return new SearchResults<>(getName(), search_text, chrFilter.getID(), ex.getLocalizedMessage(), null);
         }
 
         statusHolder.setStatus(friendlySearchStr);
@@ -313,7 +313,7 @@ public class SearchModeResidue implements ISearchModeExtended,
             }
         });
         color++;
-        return new SearchResults<GlyphI>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
+        return new SearchResults<>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
     }
 
     @Override
@@ -323,7 +323,7 @@ public class SearchModeResidue implements ISearchModeExtended,
 
     static class DummySymLoader extends QuickLoadSymLoader {
 
-        private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<LoadUtils.LoadStrategy>();
+        private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<>();
 
         static {
             strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);

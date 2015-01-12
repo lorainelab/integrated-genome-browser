@@ -191,7 +191,7 @@ public class SynonymLookup {
 				return new ImmutableSet.Builder<String>().build();
 			}
 		} else {
-			Set<String> synonyms = new LinkedHashSet<String>();
+			Set<String> synonyms = new LinkedHashSet<>();
 
 			for (String key : thesaurus.keySet()) {
 				if (key.equalsIgnoreCase(synonym)) {

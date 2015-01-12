@@ -140,7 +140,7 @@ public class ExportDialog extends HeadLessExport {
     };
 
     public ExportDialog() {
-        FILTER_LIST = new LinkedHashMap<ExportFileType, ExportFileFilter>();
+        FILTER_LIST = new LinkedHashMap<>();
         FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
         FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
         FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));

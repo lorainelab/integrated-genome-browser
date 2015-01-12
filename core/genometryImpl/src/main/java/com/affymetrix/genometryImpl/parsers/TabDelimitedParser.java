@@ -99,8 +99,8 @@ public class TabDelimitedParser implements Parser {
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group, boolean annotateSeq) {
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		Map<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
+		Map<String,SeqSymmetry> group_hash = new HashMap<>();
 		MutableSeqSpan union_span = new SimpleMutableSeqSpan();
 		List<String> col_names = null;
 		try {
@@ -110,7 +110,7 @@ public class TabDelimitedParser implements Parser {
 			if (has_header) {
 				line = br.readLine();
 				String[] cols = line_splitter.split(line);
-				col_names = new ArrayList<String>(cols.length);
+				col_names = new ArrayList<>(cols.length);
 				col_names.addAll(Arrays.asList(cols));
 			}
 			while ((line = br.readLine()) != null && (!Thread.currentThread().isInterrupted())) {

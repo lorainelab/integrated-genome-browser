@@ -302,10 +302,10 @@ public abstract class BookmarkController {
     public static void addProperties(SymWithProps mark_sym) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 
-        Map<ITrackStyle, Integer> combo_styles = new HashMap<ITrackStyle, Integer>();
+        Map<ITrackStyle, Integer> combo_styles = new HashMap<>();
 
         // Holds a list of labels of graphs for which no url could be found.
-        Set<String> unfound_labels = new LinkedHashSet<String>();
+        Set<String> unfound_labels = new LinkedHashSet<>();
 
         // "j" loops throug all graphs, while "i" counts only the ones
         // that are actually book-markable (thus i <= j)
@@ -451,7 +451,7 @@ public abstract class BookmarkController {
 
         public BookmarkSymmetry() {
             super();
-            props = new LinkedHashMap<String, Object>();
+            props = new LinkedHashMap<>();
         }
     }
 

@@ -12,7 +12,7 @@ public class Wig2USeq {
 	private File[] files;
 	private float skipValue = Float.MIN_VALUE;
 	private float negativeSkipValue;
-	private ArrayList<File> files2Zip = new ArrayList<File>();
+	private ArrayList<File> files2Zip = new ArrayList<>();
 	private int rowChunkSize = 100000;
 	private File saveDirectory;
 	private String versionedGenome = null;
@@ -155,10 +155,10 @@ public class Wig2USeq {
 		BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile);
 		String line;
 		Pattern space = Pattern.compile("\\s+");
-		ArrayList <PositionScore> al = new ArrayList <PositionScore>();
+		ArrayList <PositionScore> al = new ArrayList <>();
 		String currentChromosome = "";
 		String[] tokens = null;
-		HashSet<String> chroms = new HashSet<String>();
+		HashSet<String> chroms = new HashSet<>();
 		int start;
 		int stop;
 		float score = 0;
@@ -293,7 +293,7 @@ public class Wig2USeq {
 		String line;
 		String[] tokens = null;
 		String chromosome = null;
-		ArrayList<PositionScore> ps = new ArrayList<PositionScore>();
+		ArrayList<PositionScore> ps = new ArrayList<>();
             try (BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile)) {
                 Matcher mat;
                 //for each line
@@ -364,14 +364,14 @@ public class Wig2USeq {
 	 * Subtracts 1 from each position to convert from 1-relative coordinates specified from UCSC Wig format
 	 * to interbase coordinates. */
 	public void parseFixedStepWigFile() throws Exception{
-		ArrayList<PositionScore> ps = new ArrayList<PositionScore>();
+		ArrayList<PositionScore> ps = new ArrayList<>();
 		//load file
 		String line;
 		String[] tokens = null;
 		String chromosome = null;
             try (BufferedReader in = USeqUtilities.fetchBufferedReader(workingWigFile)) {
                 Matcher mat;
-                HashSet<String> chroms = new HashSet<String>();
+                HashSet<String> chroms = new HashSet<>();
                 
                 int startPosition = 0;
                 int stepSize = 0;
@@ -494,7 +494,7 @@ public class Wig2USeq {
 	}
 
 	public static PositionScore[] stripDuplicateValues(PositionScore[] ps){
-		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
+		ArrayList<PositionScore> al = new ArrayList<>();
 		float value = Float.MIN_VALUE;
 		int lastSetIndex = -1;
 		for (int i=0; i<ps.length; i++){

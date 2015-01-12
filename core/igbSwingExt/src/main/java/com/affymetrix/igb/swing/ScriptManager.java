@@ -27,8 +27,8 @@ public class ScriptManager {
 	public final static String SCRIPTING = "scripting";
 	private final static String WILDCARD = "*";
 	private static final ScriptManager instance = new ScriptManager();
-	private List<Operation> operations = new ArrayList<Operation>();
-	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
+	private List<Operation> operations = new ArrayList<>();
+	private Map<String, JRPWidget> widgets = new HashMap<>();
 	private boolean mouseDown;
 	private InputHandler inputHandler;
 

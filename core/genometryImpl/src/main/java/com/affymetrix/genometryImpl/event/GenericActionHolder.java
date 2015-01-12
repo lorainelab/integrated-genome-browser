@@ -14,7 +14,7 @@ import javax.swing.KeyStroke;
 
 public class GenericActionHolder {
 	private static GenericActionHolder instance = new GenericActionHolder();
-	private final List<GenericActionListener> listeners = new ArrayList<GenericActionListener>();
+	private final List<GenericActionListener> listeners = new ArrayList<>();
 	
 	private GenericActionHolder() {
 		super();
@@ -24,7 +24,7 @@ public class GenericActionHolder {
 		return instance;
 	}
 
-	private Map<String, GenericAction> genericActions = new HashMap<String, GenericAction>();
+	private Map<String, GenericAction> genericActions = new HashMap<>();
 
 	/**
 	 * Add one to the collection and let everyone know.
@@ -77,13 +77,13 @@ public class GenericActionHolder {
 
 	public Set<String> getGenericActionIds() {
 		synchronized(genericActions) {
-			return new CopyOnWriteArraySet<String>(genericActions.keySet());
+			return new CopyOnWriteArraySet<>(genericActions.keySet());
 		}
 	}
 
 	public Set<GenericAction> getGenericActions() {
 		synchronized(genericActions) {
-			return new CopyOnWriteArraySet<GenericAction>(genericActions.values());
+			return new CopyOnWriteArraySet<>(genericActions.values());
 		}
 	}
 
@@ -99,7 +99,7 @@ public class GenericActionHolder {
 	}
 
 	public void notifyActionPerformed(GenericAction action) {
-		for (GenericActionListener listener : new CopyOnWriteArrayList<GenericActionListener>(listeners)) {
+		for (GenericActionListener listener : new CopyOnWriteArrayList<>(listeners)) {
 			listener.notifyGenericAction(action);
 		}
 	}

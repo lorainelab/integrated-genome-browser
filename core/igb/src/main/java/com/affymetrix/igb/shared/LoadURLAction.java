@@ -63,7 +63,7 @@ public final class LoadURLAction extends OpenURIAction {
         final JTextField urlTextField = new JTextField();
 
         List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {
             all_known_endings.addAll(filter.getExtensions());
         }

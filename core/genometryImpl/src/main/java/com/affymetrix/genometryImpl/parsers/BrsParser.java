@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  */
 public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 
-	private static final List<String> pref_list = new ArrayList<String>();
+	private static final List<String> pref_list = new ArrayList<>();
 	static {
 		pref_list.add("brs");
 	}
@@ -103,13 +103,13 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser  {
 		// annots is list of top-level parent syms (max 1 per seq in seq_group) that get
 		//    added as annotations to the annotated BioSeqs -- their children
 		//    are then actual transcript annotations
-		List<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> annots = new ArrayList<>();
 		// results is list actual transcript annotations
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
+		List<SeqSymmetry> results = new ArrayList<>(15000);
 		// chrom2sym is temporary hash to put top-level parent syms in to map
 		//     seq id to top-level symmetry, prior to adding these parent syms
 		//     to the actual annotated seqs
-		Map<String,SeqSymmetry> chrom2sym = new HashMap<String,SeqSymmetry>(); // maps chrom name to top-level symmetry
+		Map<String,SeqSymmetry> chrom2sym = new HashMap<>(); // maps chrom name to top-level symmetry
 
 		int total_exon_count = 0;
 		int count = 0;

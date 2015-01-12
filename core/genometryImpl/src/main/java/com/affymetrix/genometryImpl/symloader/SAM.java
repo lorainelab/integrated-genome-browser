@@ -90,8 +90,8 @@ public class SAM extends XAM implements LineProcessor {
         BioSeq seq = span.getBioSeq();
         int min = span.getMin();
         int max = span.getMax();
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>(1000);
-        List<Throwable> errList = new ArrayList<Throwable>();
+        List<SeqSymmetry> symList = new ArrayList<>(1000);
+        List<Throwable> errList = new ArrayList<>();
         int maximum;
         String seqId = seqs.get(seq);
         SAMRecord sr = null;

@@ -131,7 +131,7 @@ public class FasterExpandPacker extends ExpandPacker {
          *  was placed in), as well as the index of the slot the prev child was placed in
          *  (prev_slot_index)
          */
-        List<GlyphI> children = new CopyOnWriteArrayList<GlyphI>(parent.getChildren());
+        List<GlyphI> children = new CopyOnWriteArrayList<>(parent.getChildren());
         DoubleArrayList slot_maxes = new DoubleArrayList(1000);
         double slot_height = getMaxChildHeight(parent) + 2 * spacing;
         double ymin = Double.POSITIVE_INFINITY;

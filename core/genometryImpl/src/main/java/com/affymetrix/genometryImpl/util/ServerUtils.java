@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class ServerUtils {
 
-	private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = new ArrayList<ServerTypeI>();
+	private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = new ArrayList<>();
 	static {
 		DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS2);
 		DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS);

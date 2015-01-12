@@ -32,7 +32,7 @@ public abstract class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final int delay = 2; //delay in seconds
 
-    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<StatusAlert>(); // list of status alert messages.
+    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
     private ActionListener status_alert_listener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
@@ -40,7 +40,7 @@ public abstract class Application {
             }
         }
     };
-    private final LinkedList<String> progressStringList = new LinkedList<String>(); // list of progress bar messages.
+    private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
     ActionListener update_status_bar = new ActionListener() {
 
         public void actionPerformed(java.awt.event.ActionEvent ae) {

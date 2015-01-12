@@ -57,7 +57,7 @@ public final class TrackLineParser {
             + "(?:\\S+)" // Any non-whitespace characters
             + ")");               //    ... end of group 2
 
-    private final Map<String, String> track_hash = new TreeMap<String, String>();
+    private final Map<String, String> track_hash = new TreeMap<>();
 
     public Map<String, String> getCurrentTrackHash() {
         return track_hash;
@@ -208,7 +208,7 @@ public final class TrackLineParser {
      * non-graph, it will be an instance of TrackStyle.)
      */
     private static Map<String, String> getTrackProperties(Map<String, String> track_hash) {
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         String visibility = track_hash.get(VISIBILITY);
         String color_string = track_hash.get(COLOR);
         if (color_string != null) {

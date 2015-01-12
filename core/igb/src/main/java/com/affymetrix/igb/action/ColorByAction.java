@@ -48,7 +48,7 @@ public class ColorByAction extends SeqMapViewActionA {
             }
         };
 
-        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<ColorProviderI>(ColorProviderI.class, "Color By", configureFilter);
+        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter);
         colorByDialog.setTitle("Color By");
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);

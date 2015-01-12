@@ -77,7 +77,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 	public static PositionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<PositionData> a = new ArrayList<PositionData>(num);
+		ArrayList<PositionData> a = new ArrayList<>(num);
 		for (int i=0; i< num; i++) {
 			a.add((PositionData) useqDataAL.get(i));
 		}
@@ -338,7 +338,7 @@ public class PositionData extends USeqData implements Comparable <PositionData>{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<Position> al = new ArrayList<Position>();
+		ArrayList<Position> al = new ArrayList<>();
 		for (int i=0; i< sortedPositions.length; i++){
 			if (sortedPositions[i].isContainedBy(beginningBP, endingBP)) {
 				al.add(sortedPositions[i]);

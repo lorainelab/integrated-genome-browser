@@ -33,15 +33,15 @@ public final class GenometryModel {
      * objects can be selected simultaneously. Why? What does selection mean in
      * this context?
      */
-    private final Map<String, AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String, AnnotatedSeqGroup>();
+    private final Map<String, AnnotatedSeqGroup> seq_groups = new LinkedHashMap<>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
     // maps sequences to lists of selected symmetries
-    private final Map<BioSeq, List<SeqSymmetry>> seq2selectedGraphSymsHash = new HashMap<BioSeq, List<SeqSymmetry>>();
+    private final Map<BioSeq, List<SeqSymmetry>> seq2selectedGraphSymsHash = new HashMap<>();
 
-    private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
-    private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
-    private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
+    private final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<>();
+    private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<>();
+    private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<>();
 
     private AnnotatedSeqGroup selected_group = null;
     private BioSeq selected_seq = null;
@@ -80,7 +80,7 @@ public final class GenometryModel {
     }
 
     public synchronized List<String> getSeqGroupNames() {
-        List<String> list = new ArrayList<String>(seq_groups.keySet());
+        List<String> list = new ArrayList<>(seq_groups.keySet());
         Collections.sort(list);
         return Collections.unmodifiableList(list);
     }
@@ -152,7 +152,7 @@ public final class GenometryModel {
 
         selected_group = group;
         selected_seq = null;
-        List<AnnotatedSeqGroup> glist = new ArrayList<AnnotatedSeqGroup>();
+        List<AnnotatedSeqGroup> glist = new ArrayList<>();
         glist.add(selected_group);
         fireGroupSelectionEvent(this, glist);
     }
@@ -189,7 +189,7 @@ public final class GenometryModel {
     public void setSelectedSeq(BioSeq seq, Object src) {
         logger.debug("seq = " + (seq == null ? null : seq.getID()));
         selected_seq = seq;
-        ArrayList<BioSeq> slist = new ArrayList<BioSeq>();
+        ArrayList<BioSeq> slist = new ArrayList<>();
         slist.add(selected_seq);
         fireSeqSelectionEvent(src, slist);
     }
@@ -285,11 +285,11 @@ public final class GenometryModel {
 
         logger.debug("SetSelectedSymmetries called, number of syms: " + syms.size());
 
-        HashMap<BioSeq, List<SeqSymmetry>> seq2GraphSymsHash = new HashMap<BioSeq, List<SeqSymmetry>>();
+        HashMap<BioSeq, List<SeqSymmetry>> seq2GraphSymsHash = new HashMap<>();
 
         // for each ID found in the ID2sym hash, add it to the owning sequences
         // list of selected symmetries
-        HashSet<BioSeq> all_seqs = new HashSet<BioSeq>(); // remember all seqs found
+        HashSet<BioSeq> all_seqs = new HashSet<>(); // remember all seqs found
         for (SeqSymmetry sym : syms) {
             if (sym == null) {
                 continue;
@@ -304,7 +304,7 @@ public final class GenometryModel {
             // prepare the list to add the sym to based on the seq ID
             List<SeqSymmetry> symlist = seq2GraphSymsHash.get(seq);
             if (symlist == null) {
-                symlist = new ArrayList<SeqSymmetry>();
+                symlist = new ArrayList<>();
                 seq2GraphSymsHash.put(seq, symlist);
             }
             // add the sym to the list for the correct seq ID
@@ -323,7 +323,7 @@ public final class GenometryModel {
             setSelectedSymmetries(entry.getValue(), entry.getKey()); // do not send an event yet
         }
 
-        return new ArrayList<BioSeq>(all_seqs);
+        return new ArrayList<>(all_seqs);
     }
 
     // Selects a List of SeqSymmetry objects for a particular BioSeq.
@@ -356,7 +356,7 @@ public final class GenometryModel {
     public final List<SeqSymmetry> getSelectedSymmetries(BioSeq seq) {
         List<SeqSymmetry> selections = seq2selectedGraphSymsHash.get(seq);
         if (selections == null) {
-            selections = new ArrayList<SeqSymmetry>();
+            selections = new ArrayList<>();
             // NO:  This is a memory leak: seq2selectedSymsHash.put(seq, selections);
         }
         return selections;

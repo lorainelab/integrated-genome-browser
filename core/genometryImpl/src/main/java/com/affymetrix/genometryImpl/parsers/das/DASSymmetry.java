@@ -125,7 +125,7 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
 			this.setProperty("link", url);
 			this.setProperty("link_name", title == null ? url : title);
 		} else if (links.size() > 1) {
-			Map<String, String>linkMap = new HashMap<String, String>();
+			Map<String, String>linkMap = new HashMap<>();
 			for (LinkBean linkBean : links) {
 				url = linkBean.getURL();
 				title = linkBean.getTitle();

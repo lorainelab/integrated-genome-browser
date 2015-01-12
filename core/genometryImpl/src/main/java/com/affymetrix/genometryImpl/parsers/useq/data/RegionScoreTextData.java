@@ -272,7 +272,7 @@ public class RegionScoreTextData extends USeqData{
 	public static RegionScoreTextData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<RegionScoreTextData> a = new ArrayList<RegionScoreTextData>(num);
+		ArrayList<RegionScoreTextData> a = new ArrayList<>(num);
 		for (int i=0; i< num; i++) {
 			a.add((RegionScoreTextData) useqDataAL.get(i));
 		}
@@ -498,7 +498,7 @@ public class RegionScoreTextData extends USeqData{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<RegionScoreText> al = new ArrayList<RegionScoreText>();
+		ArrayList<RegionScoreText> al = new ArrayList<>();
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
 			if (sortedRegionScoreTexts[i].isContainedBy(beginningBP, endingBP)) {
 				al.add(sortedRegionScoreTexts[i]);

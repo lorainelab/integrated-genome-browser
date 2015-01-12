@@ -39,7 +39,7 @@ public class MapqScore extends ColorProvider {
 	private float range			   = max_score_color - min_score_color;
 	private Color botton_color		= DEFAULT_COLORS[0];
 	private Color top_color			= DEFAULT_COLORS[DEFAULT_COLORS.length - 1];
-	private Map<Float, Color> rangeToColor	= new HashMap<Float, Color>();
+	private Map<Float, Color> rangeToColor	= new HashMap<>();
 	
 	private Parameter<HeatMap> custom_heatmap = new Parameter<HeatMap>(DEFAULT_HEATMAP){
 		@Override

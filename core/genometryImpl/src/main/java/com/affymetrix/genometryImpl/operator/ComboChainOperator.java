@@ -81,7 +81,7 @@ public class ComboChainOperator implements Operator, IParameters {
 				resultSym = operator.operate(aseq, symList);
 			}
 			else {
-				List<SeqSymmetry> inputSymList = new ArrayList<SeqSymmetry>();
+				List<SeqSymmetry> inputSymList = new ArrayList<>();
 				inputSymList.add(resultSym);
 				resultSym = operator.operate(aseq, inputSymList);
 			}
@@ -101,7 +101,7 @@ public class ComboChainOperator implements Operator, IParameters {
 
 	@Override
 	public Map<String, Class<?>> getParametersType() {
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		for (Operator operator : operators) {
 			if(operator instanceof IParameters){
 				parameters.putAll(((IParameters)operator).getParametersType());

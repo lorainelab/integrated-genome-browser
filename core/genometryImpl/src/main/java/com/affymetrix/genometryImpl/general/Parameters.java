@@ -16,8 +16,8 @@ public class Parameters implements IParameters {
     private Map<String, Parameter> PARAMETERS_VALUE;
 
     public Parameters() {
-        PARAMETERS_TYPE = new LinkedHashMap<String, Class<?>>();
-        PARAMETERS_VALUE = new LinkedHashMap<String, Parameter>();
+        PARAMETERS_TYPE = new LinkedHashMap<>();
+        PARAMETERS_VALUE = new LinkedHashMap<>();
     }
 
     public void addParameter(String key, Class<?> clazz, Parameter parameter) {

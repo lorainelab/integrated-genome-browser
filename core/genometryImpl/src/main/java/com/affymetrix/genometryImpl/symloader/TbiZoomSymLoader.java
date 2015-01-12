@@ -76,7 +76,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
             @Override
             public List<Long> get(int index) {
                 Object chunk = chunks[index];
-                List<Long> chunkList = new ArrayList<Long>();
+                List<Long> chunkList = new ArrayList<>();
                 try {
                     Field privateReaderField = chunk.getClass().getDeclaredField("u");
                     privateReaderField.setAccessible(true);
@@ -117,9 +117,9 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
                     @Override
                     public Set<Map.Entry<Integer, List<List<Long>>>> entrySet() {
                         Set<Map.Entry<Integer, List<List<Long>>>> entrySet
-                                = new HashSet<Map.Entry<Integer, List<List<Long>>>>();
+                                = new HashSet<>();
                         final Object[] chunks = bins.get(binNo);
-                        entrySet.add(new SimpleEntry<Integer, List<List<Long>>>(binNo, getChunkList(chunks)));
+                        entrySet.add(new SimpleEntry<>(binNo, getChunkList(chunks)));
                         return entrySet;
                     }
                 };

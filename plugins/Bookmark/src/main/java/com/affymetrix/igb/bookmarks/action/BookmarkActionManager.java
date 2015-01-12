@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
     private final static boolean DEBUG = false;
-    private final Map<Object, Component> component_hash = new HashMap<Object, Component>();
+    private final Map<Object, Component> component_hash = new HashMap<>();
     private final JRPMenu main_bm_menu;
     private final BookmarkList main_bookmark_list;
     private IGBService igbService;

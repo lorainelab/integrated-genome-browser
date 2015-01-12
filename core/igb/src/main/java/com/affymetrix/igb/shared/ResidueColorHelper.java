@@ -28,7 +28,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
     public static final Color default_other_color = Color.LIGHT_GRAY;
 
     static {
-        Map<String, Color> defaultColors = new LinkedHashMap<String, Color>();
+        Map<String, Color> defaultColors = new LinkedHashMap<>();
 
         defaultColors.put(PREF_A_COLOR, default_A_color);
         defaultColors.put(PREF_T_COLOR, default_T_color);

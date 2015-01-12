@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 
 public class CThreadHolder {
 	private static final boolean DEBUG = false;
-	private final Set<CThreadWorker<?,?>> RUNNING_CTHREADWORKERS = new HashSet<CThreadWorker<?,?>>();
+	private final Set<CThreadWorker<?,?>> RUNNING_CTHREADWORKERS = new HashSet<>();
 	private static final CThreadWorker<?,?> NOOP = new CThreadWorker<Void,Void>("noop") {
 		@Override protected Void runInBackground() { return null; }
 		@Override protected void finished() {}
@@ -25,7 +25,7 @@ public class CThreadHolder {
 	
 	private CThreadHolder(){
 		super();
-		listeners = new HashSet<CThreadListener>();
+		listeners = new HashSet<>();
 	}
 
 	public void cancelAllTasks() {
@@ -55,7 +55,7 @@ public class CThreadHolder {
 
 	public Set<CThreadWorker<?,?>> getAllCThreadWorkers() {
 		synchronized(RUNNING_CTHREADWORKERS) {
-			return new CopyOnWriteArraySet<CThreadWorker<?,?>>(RUNNING_CTHREADWORKERS);
+			return new CopyOnWriteArraySet<>(RUNNING_CTHREADWORKERS);
 		}
 	}
 

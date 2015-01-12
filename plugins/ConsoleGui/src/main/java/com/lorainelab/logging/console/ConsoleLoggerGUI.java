@@ -42,7 +42,7 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
             System.setErr(new PrintStream(new JTextAreaOutputStream(consoleTextArea, System.err), false, "UTF-8"));
             final ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
             final LoggerContext loggerContext = rootLogger.getLoggerContext();
-            OutputStreamAppender<ILoggingEvent> outputStreamAppender = new OutputStreamAppender<ILoggingEvent>();
+            OutputStreamAppender<ILoggingEvent> outputStreamAppender = new OutputStreamAppender<>();
             outputStreamAppender.setName("OutputStream Appender");
             outputStreamAppender.setContext(loggerContext);
             outputStreamAppender.setOutputStream(tout);

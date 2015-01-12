@@ -37,7 +37,7 @@ public class SummaryOperator  extends AbstractAnnotationTransformer implements O
 		}
 		
 		SeqSymmetry topSym = symList.get(0);
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> syms = new ArrayList<>();
 		for(int i=0; i<topSym.getChildCount(); i++){
 			syms.add(topSym.getChild(i));
 		}
@@ -45,7 +45,7 @@ public class SummaryOperator  extends AbstractAnnotationTransformer implements O
 		Collections.sort(syms, new SeqSymMinComparator(aseq));
 		
 		SimpleSymWithProps result = new SimpleScoredSymWithProps(0);
-		List<SeqSymmetry> temp = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> temp = new ArrayList<>();
 		double lastMax = syms.get(0).getSpan(aseq).getMax();
 		
 		for(SeqSymmetry sym : syms){

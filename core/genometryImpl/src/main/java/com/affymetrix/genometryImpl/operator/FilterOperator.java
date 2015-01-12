@@ -59,7 +59,7 @@ public class FilterOperator implements Operator, IParameters {
 
 	@Override
 	public Map<String, Class<?>> getParametersType() {
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		parameters.put(filter.getName(), String.class);
 		return parameters;
 	}

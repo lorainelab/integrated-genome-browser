@@ -291,7 +291,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         double interval = Math.pow(10, Math.floor(Math.log10(range)));
         double start = Math.floor(min / interval) * interval;
 
-        List<Double> coords = new ArrayList<Double>(10);
+        List<Double> coords = new ArrayList<>(10);
         for (double d = start; d <= max; d += interval) {
             if (d >= min && d <= max) {
                 coords.add(d);
@@ -1374,7 +1374,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
             if (g instanceof Graphics2D) {
                 Graphics2D g2 = (Graphics2D) g;
                 original_render_hints = g2.getRenderingHints();
-                Map<Object, Object> my_render_hints = new HashMap<Object, Object>();
+                Map<Object, Object> my_render_hints = new HashMap<>();
                 my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
                 g2.addRenderingHints(my_render_hints);
             }

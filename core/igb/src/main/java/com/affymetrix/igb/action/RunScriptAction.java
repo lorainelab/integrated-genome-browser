@@ -71,7 +71,7 @@ public final class RunScriptAction extends GenericAction {
                 ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}),
                 "Script File"));
 
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
             if (filter instanceof UniFileFilter) {
                 UniFileFilter uff = (UniFileFilter) filter;

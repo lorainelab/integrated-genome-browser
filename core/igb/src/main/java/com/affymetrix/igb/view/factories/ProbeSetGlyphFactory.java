@@ -186,7 +186,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         the_tier.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
         int childCount = transformed_consensus_sym.getChildCount();
-        java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
+        java.util.List<SeqSymmetry> outside_children = new ArrayList<>();
 
         for (int i = 0; i < childCount; i++) {
             SeqSymmetry child = transformed_consensus_sym.getChild(i);

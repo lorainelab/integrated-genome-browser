@@ -159,7 +159,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         if (IGBConstants.GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
             return operationsMenu;
         }
-        TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
+        TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
         operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
         for (Operator operator : operators) {
             if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {

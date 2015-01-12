@@ -120,7 +120,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
         for (TierGlyph refSeqTier : refSeqTiers) {
             List<GlyphI> glyphs = refSeqTier.getChildren();
             if (glyphs != null) {
-                for (GlyphI glyph : new ArrayList<GlyphI>(glyphs)) {
+                for (GlyphI glyph : new ArrayList<>(glyphs)) {
                     if (glyph instanceof ExonConnectorGlyph) {
                         glyphs.remove(glyph);
                     }
@@ -129,16 +129,16 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
         }
     }
 
-    private static Map<StyledGlyph.Direction, List<StyledGlyph.Direction>> directionMap = new EnumMap<StyledGlyph.Direction, List<StyledGlyph.Direction>>(StyledGlyph.Direction.class);
+    private static Map<StyledGlyph.Direction, List<StyledGlyph.Direction>> directionMap = new EnumMap<>(StyledGlyph.Direction.class);
 
     static {
-        List<StyledGlyph.Direction> forward = new ArrayList<StyledGlyph.Direction>();
+        List<StyledGlyph.Direction> forward = new ArrayList<>();
         forward.add(StyledGlyph.Direction.FORWARD);
         directionMap.put(StyledGlyph.Direction.FORWARD, forward);
-        List<StyledGlyph.Direction> reverse = new ArrayList<StyledGlyph.Direction>();
+        List<StyledGlyph.Direction> reverse = new ArrayList<>();
         reverse.add(StyledGlyph.Direction.REVERSE);
         directionMap.put(StyledGlyph.Direction.REVERSE, reverse);
-        List<StyledGlyph.Direction> both = new ArrayList<StyledGlyph.Direction>();
+        List<StyledGlyph.Direction> both = new ArrayList<>();
         both.add(StyledGlyph.Direction.FORWARD);
         both.add(StyledGlyph.Direction.REVERSE);
         directionMap.put(StyledGlyph.Direction.BOTH, both);
@@ -146,13 +146,13 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 
     private Set<SimpleSeqSpan> addFoundIntrons(BioSeq seq, TierGlyph refSeqTier) {
         // add a new ExonConnectorGlyph to introns in the refseq
-        Set<SimpleSeqSpan> foundSpans = new HashSet<SimpleSeqSpan>();
+        Set<SimpleSeqSpan> foundSpans = new HashSet<>();
         SeqSymmetry mainSym = (SeqSymmetry) refSeqTier.getInfo();
         for (int i = 0; i < mainSym.getChildCount(); i++) {
             SeqSymmetry geneSym = mainSym.getChild(i);
             if (geneSym.getChildCount() > 0) {
-                Map<Integer, SeqSymmetry> startSpanMap = new HashMap<Integer, SeqSymmetry>();
-                Map<Integer, SeqSymmetry> endSpanMap = new HashMap<Integer, SeqSymmetry>();
+                Map<Integer, SeqSymmetry> startSpanMap = new HashMap<>();
+                Map<Integer, SeqSymmetry> endSpanMap = new HashMap<>();
                 for (int index = 0; index < geneSym.getChildCount(); index++) {
                     SeqSymmetry childSym = geneSym.getChild(index);
                     SeqSpan exonSpan = childSym.getSpan(seq);
@@ -193,7 +193,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
     private void addUnfoundIntrons(Set<SimpleSeqSpan> unfoundSpans, TierGlyph refSeqTier) {
         // add a new ExonConnectorGlyph for each unfound intron span
         for (SimpleSeqSpan intronSpan : unfoundSpans) {
-            Set<GlyphI> glyphs = new HashSet<GlyphI>();
+            Set<GlyphI> glyphs = new HashSet<>();
             if (refSeqTier.getDirection() == StyledGlyph.Direction.BOTH) {
                 if (intronSpan2Glyphs.get(StyledGlyph.Direction.FORWARD).get(intronSpan) != null) {
                     glyphs.addAll(intronSpan2Glyphs.get(StyledGlyph.Direction.FORWARD).get(intronSpan));
@@ -229,7 +229,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
         }
         // add found ExonConnectorGlyphs
         for (TierGlyph refSeqTier : refSeqTiers) {
-            Set<SimpleSeqSpan> foundSpans = new HashSet<SimpleSeqSpan>();
+            Set<SimpleSeqSpan> foundSpans = new HashSet<>();
             if (refSeqTier.getInfo() instanceof SeqSymmetry) {
                 foundSpans.addAll(addFoundIntrons(seq, refSeqTier));
             }
@@ -237,10 +237,10 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
                 StyledGlyph.Direction direction = refSeqTier.getDirection();
                 Set<SimpleSeqSpan> unfoundSpans;
                 if (direction == StyledGlyph.Direction.BOTH) {
-                    unfoundSpans = new HashSet<SimpleSeqSpan>(intronSpan2Glyphs.get(StyledGlyph.Direction.FORWARD).keySet());
+                    unfoundSpans = new HashSet<>(intronSpan2Glyphs.get(StyledGlyph.Direction.FORWARD).keySet());
                     unfoundSpans.addAll(intronSpan2Glyphs.get(StyledGlyph.Direction.REVERSE).keySet());
                 } else {
-                    unfoundSpans = new HashSet<SimpleSeqSpan>(intronSpan2Glyphs.get(direction).keySet());
+                    unfoundSpans = new HashSet<>(intronSpan2Glyphs.get(direction).keySet());
                 }
                 unfoundSpans.removeAll(foundSpans);
                 addUnfoundIntrons(unfoundSpans, refSeqTier);
@@ -253,7 +253,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
     private void addIntron(SimpleSeqSpan seqSpan, GlyphI glyph, StyledGlyph.Direction direction) {
         Set<GlyphI> glyphs = intronSpan2Glyphs.get(direction).get(seqSpan);
         if (glyphs == null) {
-            glyphs = new HashSet<GlyphI>();
+            glyphs = new HashSet<>();
             intronSpan2Glyphs.get(direction).put(seqSpan, glyphs);
         }
         glyphs.add(glyph);
@@ -300,7 +300,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
             return;
         }
         NeoMouseEvent e = (NeoMouseEvent) evt;
-        List<ExonConnectorGlyph> selectedEcgs = new ArrayList<ExonConnectorGlyph>();
+        List<ExonConnectorGlyph> selectedEcgs = new ArrayList<>();
         for (TierGlyph refSeqTier : refSeqTiers) {
             if (refSeqTier != null && refSeqTier.getChildren() != null) {
                 for (GlyphI glyph : refSeqTier.getChildren()) {

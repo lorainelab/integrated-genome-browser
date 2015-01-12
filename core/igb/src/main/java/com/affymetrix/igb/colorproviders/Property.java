@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Property extends ColorProvider {
 	private final static String PROPERTY = "property";
-	private final static List<String> PROPERTY_VALUES = new LinkedList<String>();
+	private final static List<String> PROPERTY_VALUES = new LinkedList<>();
 	private final static String PROPERTY_VALUE = "value";
 	public final static String DEFAULT_PROPERTY_VALUE = "";
 	private final static String MATCH_COLOR = "match";
@@ -31,7 +31,7 @@ public class Property extends ColorProvider {
 		PROPERTY_VALUES.add("gene name");
 	}
 	
-	protected Parameter<String> property = new BoundedParameter<String>(PROPERTY_VALUES);
+	protected Parameter<String> property = new BoundedParameter<>(PROPERTY_VALUES);
 	protected Parameter<String> property_value = new Parameter<String>(DEFAULT_PROPERTY_VALUE){
 		@Override
 		public boolean set(Object e){
@@ -47,8 +47,8 @@ public class Property extends ColorProvider {
 		}
 	};
 	
-	private Parameter<Color> matchColor = new Parameter<Color>(DEFAULT_MATCH_COLOR);
-	private Parameter<Color> notMatchColor = new Parameter<Color>(DEFAULT_NOT_MATCH_COLOR);
+	private Parameter<Color> matchColor = new Parameter<>(DEFAULT_MATCH_COLOR);
+	private Parameter<Color> notMatchColor = new Parameter<>(DEFAULT_NOT_MATCH_COLOR);
 	
 //	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
 	

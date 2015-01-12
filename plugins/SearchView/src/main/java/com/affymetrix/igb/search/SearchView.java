@@ -436,9 +436,9 @@ public final class SearchView extends IGBTabPanel implements
     public void initSearchCB() {
         Object saveSearchMode = searchCB.getSelectedItem();
         searchCB.removeAllItems();
-        searchModeMap = new HashMap<String, ISearchMode>();
+        searchModeMap = new HashMap<>();
         boolean saveFound = false;
-        List<ISearchMode> searchModes = new ArrayList<ISearchMode>();
+        List<ISearchMode> searchModes = new ArrayList<>();
         ExtensionPointHandler<ISearchModeSym> extensionPointHandler = ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class);
         if (extensionPointHandler != null) {
             searchModes.addAll(extensionPointHandler.getExtensionPointImpls());
@@ -504,7 +504,7 @@ public final class SearchView extends IGBTabPanel implements
     }
 
     private void setModel(SearchResultsTableModel model) {
-        sorter = new TableRowSorter<SearchResultsTableModel>(model);
+        sorter = new TableRowSorter<>(model);
         table.setModel(model);
         table.setRowSorter(sorter);
 
@@ -541,7 +541,7 @@ public final class SearchView extends IGBTabPanel implements
             }
 
             // Set selected symmetry normally
-            List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+            List<SeqSymmetry> syms = new ArrayList<>(1);
             syms.add(sym);
             igbService.getSeqMapView().select(syms, true);
         }
@@ -751,7 +751,7 @@ public final class SearchView extends IGBTabPanel implements
         private static final java.util.Map<java.awt.font.TextAttribute, Object> attrMap;
 
         static {
-            attrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+            attrMap = new java.util.HashMap<>();
             attrMap.put(java.awt.font.TextAttribute.WEIGHT, java.awt.font.TextAttribute.WEIGHT_BOLD);
             attrMap.put(java.awt.font.TextAttribute.SIZE, 12);
         }

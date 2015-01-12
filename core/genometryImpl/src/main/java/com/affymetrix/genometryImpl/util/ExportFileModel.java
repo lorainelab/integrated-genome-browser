@@ -24,28 +24,28 @@ public class ExportFileModel {
 	private final Map<FileTypeCategory, List<Class<? extends AnnotationWriter>>> annotationWriters;
 
 	public ExportFileModel(){
-		annotationWriters = new EnumMap<FileTypeCategory, List<Class<? extends AnnotationWriter>>>(FileTypeCategory.class);
+		annotationWriters = new EnumMap<>(FileTypeCategory.class);
 		init();
 	}
 	
 	private void init(){
-		List<Class<? extends AnnotationWriter>> annotationList = new ArrayList<Class<? extends AnnotationWriter>>();
+		List<Class<? extends AnnotationWriter>> annotationList = new ArrayList<>();
 		annotationList.add(BedParser.class);
 		annotationList.add(BedDetailWriter.class);
 		annotationWriters.put(FileTypeCategory.Annotation, annotationList);
 		
-		List<Class<? extends AnnotationWriter>> alignmentList = new ArrayList<Class<? extends AnnotationWriter>>();
+		List<Class<? extends AnnotationWriter>> alignmentList = new ArrayList<>();
 		alignmentList.add(BedParser.class);
 		alignmentList.add(BedDetailWriter.class);
 //		alignmentList.add(SAMWriter.class); // Disable SAMWriter as it is not completed
 		annotationWriters.put(FileTypeCategory.Alignment, alignmentList);
 				
-		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<Class<? extends AnnotationWriter>>();
+		List<Class<? extends AnnotationWriter>> graphList = new ArrayList<>();
 		graphList.add(BedGraph.class);
 		graphList.add(Gr.class);
 		annotationWriters.put(FileTypeCategory.Graph, graphList);
 		
-		List<Class<? extends AnnotationWriter>> sequenceList = new ArrayList<Class<? extends AnnotationWriter>>();
+		List<Class<? extends AnnotationWriter>> sequenceList = new ArrayList<>();
 		sequenceList.add(Fasta.class);
 		annotationWriters.put(FileTypeCategory.Sequence, sequenceList);
 	}
@@ -56,7 +56,7 @@ public class ExportFileModel {
 			return null;
 		}
 		
-		Map<UniFileFilter, AnnotationWriter> filter2writers = new HashMap<UniFileFilter, AnnotationWriter>();
+		Map<UniFileFilter, AnnotationWriter> filter2writers = new HashMap<>();
 		for (Class<? extends AnnotationWriter> clazz : availableWriters) {
 			try {
 				AnnotationWriter writer = clazz.newInstance();

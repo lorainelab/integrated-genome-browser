@@ -138,7 +138,7 @@ public class SeqFeature implements SeqFeatureI {
 	private double score;
 	public void setScore(double score) {
 		if (scores == null) {
-			scores = new HashMap<String, Score>();
+			scores = new HashMap<>();
 		}
 		Score s = scores.get("score");
 		if (s == null) {
@@ -153,7 +153,7 @@ public class SeqFeature implements SeqFeatureI {
 
 	public void addScore(Score s) {
 		if (scores == null) {
-			scores = new HashMap<String, Score>();
+			scores = new HashMap<>();
 		}
 		if (!scores.containsValue(s)) {
 			scores.put(s.getName(), s);
@@ -162,7 +162,7 @@ public class SeqFeature implements SeqFeatureI {
 
   public void addScore(double score) {
 		if (scores == null) {
-			scores = new HashMap<String, Score>();
+			scores = new HashMap<>();
 		}
 		String name = scores.isEmpty() ? "score" : "score" + scores.size() + 1;
 
@@ -187,7 +187,7 @@ public class SeqFeature implements SeqFeatureI {
 	private Map<String, String> properties;
 	public void addProperty(String name, String property) {
 		if(properties == null){
-			properties = new HashMap<String, String>();
+			properties = new HashMap<>();
 		}
 		properties.put(name, property);
 	}
@@ -299,7 +299,7 @@ public class SeqFeature implements SeqFeatureI {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	protected Vector<SeqFeatureI> features = new Vector<SeqFeatureI>(2);
+	protected Vector<SeqFeatureI> features = new Vector<>(2);
 	/**
 	 * Add feature to end of features list, recalc low and high
 	 */

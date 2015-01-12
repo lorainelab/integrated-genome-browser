@@ -59,8 +59,8 @@ public class FileTypeHolder {
 		return instance;
 	}
 	private FileTypeHolder() {
-		fileTypeHandlerMap = new HashMap<String, FileTypeHandler>();
-		dummyHandlerMap = new HashMap<String, FileTypeHandler>();
+		fileTypeHandlerMap = new HashMap<>();
+		dummyHandlerMap = new HashMap<>();
 		// load all built in FileTypeHandlers
 		addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, FileTypeCategory.Annotation, AffyCnChpParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler("BAM", new String[]{"bam"}, FileTypeCategory.Alignment, null, BAM.class);
@@ -540,15 +540,15 @@ public class FileTypeHolder {
 	 * @return the Map of file type names to their list of extensions
 	 */
 	public Map<String, List<String>> getNameToExtensionMap(FileTypeCategory category) {
-		Map<String, List<String>> nameToExtensionMap = new TreeMap<String, List<String>>();
-		for (FileTypeHandler fileTypeHandler : new HashSet<FileTypeHandler>(fileTypeHandlerMap.values())) {
+		Map<String, List<String>> nameToExtensionMap = new TreeMap<>();
+		for (FileTypeHandler fileTypeHandler : new HashSet<>(fileTypeHandlerMap.values())) {
 			if(category != null && fileTypeHandler.getFileTypeCategory() != category){
 				continue;
 			}
 			String name = fileTypeHandler.getName();
 			List<String> extensions = nameToExtensionMap.get(name);
 			if (extensions == null) {
-				extensions = new ArrayList<String>();
+				extensions = new ArrayList<>();
 				nameToExtensionMap.put(name, extensions);
 			}
 			extensions.addAll(Arrays.asList(fileTypeHandler.getExtensions()));
@@ -556,7 +556,7 @@ public class FileTypeHolder {
 		return nameToExtensionMap;
 	}
 	
-	private static final List<String> TABIX_FILE_TYPES = new ArrayList<String>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "bdg", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
+	private static final List<String> TABIX_FILE_TYPES = new ArrayList<>(Arrays.asList(new String[]{"sam", "bed", "bedgraph", "bdg", "gff", "gff3", "gtf", "psl", "psl3", "pslx", "vcf"}));
 	public List<String> getTabixFileTypes() {
 		return TABIX_FILE_TYPES;
 	}

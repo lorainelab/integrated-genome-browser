@@ -67,7 +67,7 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 
     public boolean setProperty(String name, Object val) {
         if (props == null) {
-            props = new Hashtable<String, Object>();
+            props = new Hashtable<>();
         }
         props.put(name, val);
         return true;

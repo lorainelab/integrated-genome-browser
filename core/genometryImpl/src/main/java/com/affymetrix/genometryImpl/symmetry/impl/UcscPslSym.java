@@ -345,7 +345,7 @@ public class UcscPslSym
             }
 
             if ((beg_index < qmins.length) && (qmins[beg_index] < input_max)) {
-                results = new ArrayList<SeqSymmetry>();
+                results = new ArrayList<>();
                 int index = beg_index;
                 // now scan forward till qmin[index] >= input_max and collect list of symmetries
                 while ((index < qmins.length) && (qmins[index] < input_max)) {
@@ -426,7 +426,7 @@ public class UcscPslSym
     }
 
     public Map<String, Object> cloneProperties() {
-        HashMap<String, Object> tprops = new HashMap<String, Object>();
+        HashMap<String, Object> tprops = new HashMap<>();
 
         tprops.put("id", getQuerySeq().getID());
         tprops.put("type", "Pairwise Alignment");
@@ -485,7 +485,7 @@ public class UcscPslSym
 
     public boolean setProperty(String name, Object val) {
         if (props == null) {
-            props = new Hashtable<String, Object>();
+            props = new Hashtable<>();
         }
         props.put(name, val);
         return true;

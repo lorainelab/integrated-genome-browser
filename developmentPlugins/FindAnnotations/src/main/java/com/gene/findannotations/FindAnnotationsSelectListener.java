@@ -51,7 +51,7 @@ public class FindAnnotationsSelectListener implements MouseListener {
             new SwingWorker<List<SeqSymmetry>, Void>() {
                 @Override
                 protected List<SeqSymmetry> doInBackground() throws Exception {
-                    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+                    List<SeqSymmetry> syms = new ArrayList<>();
                     for (Glyph tierGlyph : igbService.getAllTierGlyphs()) {
                         if (tierGlyph.isVisible()) {
                             for (GlyphI glyphAtSpan : getGlyphsAtSpan(tierGlyph, span)) {
@@ -122,7 +122,7 @@ public class FindAnnotationsSelectListener implements MouseListener {
     }
 
     public List<GlyphI> getGlyphsAtSpan(GlyphI glyph, SeqSpan span) {
-        List<GlyphI> glyphsAtSpan = new ArrayList<GlyphI>();
+        List<GlyphI> glyphsAtSpan = new ArrayList<>();
         if (glyphMatchesSpan(glyph, span)) {
             glyphsAtSpan.add(glyph);
         }

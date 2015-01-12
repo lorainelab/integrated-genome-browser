@@ -37,7 +37,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 		return instance;
 	}
 
-	private List<RepositoryChangeListener> repositoryChangeListeners = new ArrayList<RepositoryChangeListener>();
+	private List<RepositoryChangeListener> repositoryChangeListeners = new ArrayList<>();
 
 
 	/**
@@ -81,7 +81,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 * @return the list of bundle repositories (URLs)
 	 */
 	public Map<String, String> getRepositories() {
-		Map<String, String> repositories = new HashMap<String, String>();
+		Map<String, String> repositories = new HashMap<>();
 		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
 			if (repositoryServer.isEnabled()) {
 				repositories.put(repositoryServer.serverName, repositoryServer.URL);

@@ -24,7 +24,7 @@ import javax.swing.table.AbstractTableModel;
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
 
 	private static final long serialVersionUID = 1l;
-	private final List<GenericServer> servers = new ArrayList<GenericServer>();
+	private final List<GenericServer> servers = new ArrayList<>();
 
 	public static enum SourceColumn {
 
@@ -35,7 +35,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	private ArrayList<SourceColumn> tableColumns;
 
 	static {
-		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+		List<SortKey> sortKeys = new ArrayList<>(2);
 		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
 		sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
 
@@ -49,7 +49,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	public void init() {
-		tableColumns = new ArrayList<SourceColumn>();
+		tableColumns = new ArrayList<>();
 		for (SourceColumn sourceColumn : SourceColumn.values()) {
 			if (sourceColumn != SourceColumn.Type || serverList.hasTypes()) {
 				tableColumns.add(sourceColumn);

@@ -79,7 +79,7 @@ public class USeqUtilities {
 	public static final Pattern USEQ_ARCHIVE = Pattern.compile("(.+)\\.(useq)$");
 
 	//for GenoViz DAS/2
-	public static final List<String> USEQ_FORMATS = new ArrayList<String>();
+	public static final List<String> USEQ_FORMATS = new ArrayList<>();
 	static {
 		USEQ_FORMATS.add(USEQ_EXTENSION_NO_PERIOD);
 	}
@@ -175,7 +175,7 @@ public class USeqUtilities {
 		if (directory.isDirectory()){
 			fileNames = directory.list();
 			int num = fileNames.length;
-			ArrayList<File> al = new ArrayList<File>();
+			ArrayList<File> al = new ArrayList<>();
 			try{
 				String path = directory.getCanonicalPath();
 				Pattern pat = Pattern.compile("^\\w+.*");
@@ -219,7 +219,7 @@ public class USeqUtilities {
 	
 	/**Fetches all files with a given extension in a directory recursing through sub directories.*/
 	public static ArrayList<File> fetchAllFilesRecursively (File directory, String extension){
-		ArrayList<File> files = new ArrayList<File>(); 
+		ArrayList<File> files = new ArrayList<>(); 
 		File[] list = directory.listFiles();
 		for (int i=0; i< list.length; i++){
 			if (list[i].isDirectory()) {
@@ -248,7 +248,7 @@ public class USeqUtilities {
 		if (dirOrFile.isDirectory()){
 			files = dirOrFile.listFiles();
 			int num = files.length;
-			ArrayList<File> chromFiles = new ArrayList<File>();
+			ArrayList<File> chromFiles = new ArrayList<>();
 			for (int i=0; i< num; i++)  {
 				m= p.matcher(files[i].getName());
 				if (m.matches()) {
@@ -343,7 +343,7 @@ public class USeqUtilities {
 	}
 	/**Merges all files in File[][] to a File[].*/
 	public static File[] collapseFileArray(File[][] f){
-		ArrayList<File> al = new ArrayList<File>();
+		ArrayList<File> al = new ArrayList<>();
 		for (int i=0; i< f.length; i++){
 			if (f[i] != null){
 				for (int j=0; j< f[i].length; j++){
@@ -390,7 +390,7 @@ public class USeqUtilities {
 	 * Returns both error and data from execution.
 	 */
 	public static String[] executeCommandLineReturnAll(String[] command){
-		ArrayList<String> al = new ArrayList<String>();		
+		ArrayList<String> al = new ArrayList<>();		
 		try {
 			Runtime rt = Runtime.getRuntime();
 			rt.traceInstructions(true); //for debugging

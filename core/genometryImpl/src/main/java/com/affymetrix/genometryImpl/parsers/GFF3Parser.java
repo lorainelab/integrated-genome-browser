@@ -67,7 +67,7 @@ public final class GFF3Parser implements Parser {
 	boolean useDefaultSource = true;
 	
 	static {
-		Set<String> types = new HashSet<String>();
+		Set<String> types = new HashSet<>();
 
 		//types.add("tf_binding_site");
 		types.add("protein");
@@ -136,10 +136,10 @@ public final class GFF3Parser implements Parser {
 			BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds, 
 			int minV, int maxV)
 			throws IOException {
-		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
+		List<SeqSymmetry> symlist = new ArrayList<>();
+		Map<String, GFF3Sym> id2sym = new HashMap<>();
 		/** Contains a list of parent ids which have been ignored */
-		Set<String> bad_parents = new HashSet<String>();
+		Set<String> bad_parents = new HashSet<>();
 		
 		if (DEBUG) {
 			System.out.println("starting GFF3 parse.");
@@ -149,7 +149,7 @@ public final class GFF3Parser implements Parser {
 
 		String line = null;
 
-		List<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
+		List<GFF3Sym> all_syms = new ArrayList<>();
 		String track_name = null;
 		
 		Thread thread = Thread.currentThread();

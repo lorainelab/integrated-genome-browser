@@ -20,7 +20,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
         SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.RIGHT,
         SwingConstants.RIGHT, SwingConstants.CENTER, SwingConstants.CENTER};
 
-    protected final List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
+    protected final List<SeqSymmetry> tableRows = new ArrayList<>(0);
 
     private final String[] column_names = {
         SearchView.BUNDLE.getString("searchTableID"),

@@ -88,8 +88,8 @@ public class AffyTieredMap extends NeoMap {
     public static void setShowMixed(boolean show_mixed_) {
         show_mixed = show_mixed_;
     }
-    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
-    private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<>();
+    private final List<GlyphI> match_glyphs = new ArrayList<>();
     // the total pixel height of visible fixed pixel tiers
     //    (recalculated with every packTiers() call)
     protected int fixed_pixel_height;
@@ -180,7 +180,7 @@ public class AffyTieredMap extends NeoMap {
     private void packTiers(boolean full_repack, boolean stretch_map) {
         fixed_pixel_height = 0;
         fixed_coord_height = 0;
-        List<TierGlyph> tiersCopy = new CopyOnWriteArrayList<TierGlyph>(tiers);
+        List<TierGlyph> tiersCopy = new CopyOnWriteArrayList<>(tiers);
         if (full_repack) {
             for (TierGlyph mtg : tiersCopy) {
                 mtg.pack(getView());

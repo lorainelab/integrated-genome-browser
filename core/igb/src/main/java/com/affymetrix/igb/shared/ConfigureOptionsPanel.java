@@ -78,7 +78,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         if (includeNone) {
             comboBox.addItem(null);
         }
-        TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
+        TreeSet<T> tProviders = new TreeSet<>(new IDComparator());
         tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
         for (T cp : tProviders) {
             if (filter != null) {
@@ -118,7 +118,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     private void addOptions(final IParameters cp, final JPanel paramsPanel) {
-        paramMap = new HashMap<String, Object>();
+        paramMap = new HashMap<>();
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(new JLabel("                "));
@@ -320,7 +320,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     public void addTChangeListner(SelectionChangeListener tcl) {
         if (tChangeListeners == null) {
-            tChangeListeners = new ArrayList<SelectionChangeListener>();
+            tChangeListeners = new ArrayList<>();
         }
         tChangeListeners.add(tcl);
     }

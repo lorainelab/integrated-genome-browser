@@ -54,7 +54,7 @@ public abstract class AbstractAnnotationOperator implements Operator {
 	}
 	
 	protected static List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {
-		List<SeqSymmetry> childSyms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> childSyms = new ArrayList<>();
 		for (int i = 0; i < sym.getChildCount(); i++) {
 			childSyms.add(sym.getChild(i));
 		}

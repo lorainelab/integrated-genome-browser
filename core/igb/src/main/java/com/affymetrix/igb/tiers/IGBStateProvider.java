@@ -24,14 +24,14 @@ public final class IGBStateProvider extends DefaultStateProvider {
     private static boolean showLockIcon = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_LOCKED_TRACK_ICON, TrackConstants.default_show_locked_track_icon);
 
     private static boolean showFullFilePathInTrack = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FULL_FILE_PATH_IN_TRACK, TrackConstants.default_show_full_file_path_in_track);//TK
-    private static final Map<String, TrackStyle> static_map = new LinkedHashMap<String, TrackStyle>();
+    private static final Map<String, TrackStyle> static_map = new LinkedHashMap<>();
     private static TrackStyle default_instance = null;
 
     /**
      * Returns all (persistent and temporary) instances of AnnotStyle.
      */
     public static List<TrackStyle> getAllLoadedInstances() {
-        return new ArrayList<TrackStyle>(static_map.values());
+        return new ArrayList<>(static_map.values());
     }
 
     public static void removeInstance(String unique_name) {

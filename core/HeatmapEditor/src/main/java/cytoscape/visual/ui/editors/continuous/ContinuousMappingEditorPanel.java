@@ -134,7 +134,7 @@ public abstract class ContinuousMappingEditorPanel extends JDialog {
 		okButton = new javax.swing.JButton();
 		cancelButton = new javax.swing.JButton();
 
-		slider = new JXMultiThumbSlider<Color>();
+		slider = new JXMultiThumbSlider<>();
 		iconPanel = new YValueLegendPanel();
 
 		valueSpinner = new JSpinner();

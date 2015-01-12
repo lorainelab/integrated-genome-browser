@@ -221,7 +221,7 @@ public final class GeneralLoadView {
             SeqSpan request_span = gviewer.getVisibleSpan();
             System.out.println("Visible load request span: " + request_span.getBioSeq() + ":" + request_span.getStart() + "-" + request_span.getEnd());
         }
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadStrategies.add(LoadStrategy.VISIBLE);
 //		loadStrategies.add(LoadStrategy.CHROMOSOME);
@@ -234,7 +234,7 @@ public final class GeneralLoadView {
      * loaded.
      */
     public static void loadAutoLoadFeatures() {
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadFeatures(loadStrategies, null);
         GeneralLoadUtils.bufferDataForAutoload();
@@ -245,7 +245,7 @@ public final class GeneralLoadView {
      * loaded.
      */
     public static void loadWholeRangeFeatures(ServerTypeI serverType) {
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
         loadFeatures(loadStrategies, serverType);
     }
@@ -518,7 +518,7 @@ public final class GeneralLoadView {
     public void addFeature(final GenericFeature feature) {
         feature.setVisible();
 
-        List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new java.util.ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
 
         if (!loadFeature(loadStrategies, feature, null)) {

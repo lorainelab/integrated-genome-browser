@@ -63,7 +63,7 @@ public final class SimpleDas2Feature extends SimpleSymWithProps implements Typed
 	public Map<String,Object> cloneProperties() {
 		Map<String,Object> cprops = super.cloneProperties();
 		if (cprops == null) {
-			cprops = new LinkedHashMap<String,Object>();
+			cprops = new LinkedHashMap<>();
 		}
 		cprops.put("id", id);
 		if (name != null)  { cprops.put("name", name); }

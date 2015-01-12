@@ -296,7 +296,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         //    orginal annotation are completely outside the view
 
         int childCount = sym.getChildCount();
-        List<SeqSymmetry> outsideChildren = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> outsideChildren = new ArrayList<>();
         Color color = getSymColor(sym);
         double thinHeight = DEFAULT_CHILD_HEIGHT * 0.6;
 //		Color start_color = the_style.getStartColor();

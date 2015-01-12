@@ -36,7 +36,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     private final JScrollPane scroll_pane = new JScrollPane();
     private TableRowSorter<TableModel> sorter;
     private static final String PROPERTY = "property";
-    private Set<PropertyListener> propertyListeners = new HashSet<PropertyListener>();
+    private Set<PropertyListener> propertyListeners = new HashSet<>();
 
     PropertyView(IGBService igbService) {
         super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), BUNDLE.getString("selectionInfoTooltip"), false, TAB_POSITION);
@@ -67,7 +67,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
             skip_glyph_properties = true;
             Logger.getLogger(PropertyView.class.getName()).log(Level.INFO, "Skipping collecting properties; too many syms selected");
         }
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         if (src instanceof PropertyHolder) {
             PropertyHolder propertyHolder = (PropertyHolder) src;
             for (int i = 0; i < size; i++) {
@@ -179,7 +179,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
         TableModel model = new PropertyTableModel(rows, col_headings);
         table.setModel(model);
 
-        sorter = new TableRowSorter<TableModel>(model);
+        sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
         table.setMinimumSize(new Dimension(80000, 500));	//added by Max
         //table.setPreferredScrollableViewportSize(new Dimension(80000, 500));  //added by Max
@@ -206,7 +206,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     @Override
     // implement PropertyHandler
     public Map<String, Object> getPropertiesRow(SeqSymmetry sym, PropertyHolder propertyHolder) {
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         Map<String, Object> props = propertyHolder.determineProps(sym);
         propList.add(props);
 
@@ -218,7 +218,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     @Override
     // implement PropertyHandler
     public Map<String, Object> getGraphPropertiesRowColumn(GraphSym sym, int x, PropertyHolder propertyHolder) {
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         Map<String, Object> props = propertyHolder.determineProps(sym);
         props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
         propList.add(props);
@@ -230,7 +230,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     @SuppressWarnings("unchecked")
     @Override
     public void showGraphProperties(GraphSym sym, int x, PropertyHolder propertyHolder) {
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         Map<String, Object> props = propertyHolder.determineProps(sym);
         props.putAll(sym.getLocationProperties(x, igbService.getSeqMapView().getVisibleSpan()));
         propList.add(props);
@@ -262,7 +262,7 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
      * @return String array of re-ordered names
      */
     private static List<String[]> reorderNames(List<String[]> name_values, String[] preferred_ordering, boolean limited) {
-        List<String[]> reordered = new ArrayList<String[]>(name_values.size());
+        List<String[]> reordered = new ArrayList<>(name_values.size());
         for (String request : preferred_ordering) {
             for (int k = 0; k < name_values.size(); k++) {
                 String[] vals = name_values.get(k);
@@ -298,10 +298,10 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
      * no value of the property for a given key
      */
     private static List<String[]> getNameValues(Map<String, Object>[] props, String noData) {
-        List<String[]> result = new ArrayList<String[]>();
+        List<String[]> result = new ArrayList<>();
         // collect all possible names from the given Properties
         int num_props = props.length;
-        Map<String, String[]> rows_thus_far = new LinkedHashMap<String, String[]>();
+        Map<String, String[]> rows_thus_far = new LinkedHashMap<>();
         for (int i = 0; i < num_props; i++) {
             for (String name : props[i].keySet()) {
                 if (name != null && rows_thus_far.containsKey(name)) {

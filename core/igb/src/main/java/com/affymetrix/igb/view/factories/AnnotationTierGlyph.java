@@ -37,7 +37,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("collapsed", Boolean.class);
         temp.put("connected", Boolean.class);
         temp.put("arrow", Boolean.class);
@@ -470,7 +470,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
 
     @Override
     public Map<String, Class<?>> getPreferences() {
-        return new HashMap<String, Class<?>>(PREFERENCES);
+        return new HashMap<>(PREFERENCES);
     }
 
     @Override

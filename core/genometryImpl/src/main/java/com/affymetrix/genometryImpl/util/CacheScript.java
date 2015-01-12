@@ -144,7 +144,7 @@ public class CacheScript extends Thread {
 	 * @return	Returns a list of generic server.
 	 */
 	private static Set<GenericServer> parseServerList(InputStream istr) throws Exception {
-		Set<GenericServer> serverList = new HashSet<GenericServer>();
+		Set<GenericServer> serverList = new HashSet<>();
 
 		Document list = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(istr);
 		Element top_element = list.getDocumentElement();

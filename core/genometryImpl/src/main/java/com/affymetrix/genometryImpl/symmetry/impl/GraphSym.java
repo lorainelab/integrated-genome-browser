@@ -564,7 +564,7 @@ public class GraphSym extends RootSeqSymmetry {
     }
 
     public Map<String, Object> getLocationProperties(int x, SeqSpan span) {
-        Map<String, Object> locprops = new HashMap<String, Object>();
+        Map<String, Object> locprops = new HashMap<>();
 
         locprops.put("x coord", x);
         if (isValid()) {

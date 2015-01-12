@@ -38,7 +38,7 @@ public class XorOperator extends AbstractAnnotationOperator implements Operator 
 		MutableSeqSymmetry psym = new SimpleSymWithProps();
 		SeqSymmetry unionA = SeqSymSummarizer.getUnion(symsA, seq);
 		SeqSymmetry unionB = SeqSymSummarizer.getUnion(symsB, seq);
-		List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> symsAB = new ArrayList<>();
 		symsAB.add(unionA);
 		symsAB.add(unionB);
 		GraphSym combo_graph = SeqSymSummarizer.getSymmetrySummary(symsAB, seq, false, "");

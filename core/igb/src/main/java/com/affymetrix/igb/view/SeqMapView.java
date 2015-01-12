@@ -206,8 +206,8 @@ public class SeqMapView extends JPanel
     private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
     private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
-    private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
-    private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<AxisPopupListener>();
+    private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<>();
+    private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<>();
     /**
      * maximum number of query glyphs for edge matcher. any more than this and
      * won't attempt to edge match (edge matching is currently very inefficient
@@ -303,7 +303,7 @@ public class SeqMapView extends JPanel
     private final static int yoffset_pop = 0;
     private final static int[] default_range = new int[]{0, 100};
     private final static int[] default_offset = new int[]{0, 100};
-    private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
+    private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<>();
     private TierGlyph axis_tier;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     //private final PopupInfo popupInfo;
@@ -839,7 +839,7 @@ public class SeqMapView extends JPanel
 
         // stash annotation tiers for proper state restoration after resetting for same seq
         //    (but presumably added / deleted / modified annotations...)
-        List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
+        List<TierGlyph> cur_tiers = new ArrayList<>(seqmap.getTiers());
         TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
         int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
         List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
@@ -1121,7 +1121,7 @@ public class SeqMapView extends JPanel
      * stay behind everything else).
      */
     private static List<GlyphI> getFloatingLayers(GlyphI root_glyph) {
-        List<GlyphI> layers = new ArrayList<GlyphI>();
+        List<GlyphI> layers = new ArrayList<>();
         int gcount = root_glyph.getChildCount();
         for (int i = 0; i < gcount; i++) {
             GlyphI cgl = root_glyph.getChild(i);
@@ -1265,7 +1265,7 @@ public class SeqMapView extends JPanel
     @Override
     public final void selectAllGraphs() {
         List<GraphGlyph> glyphlist = collectGraphs();
-        List<GraphGlyph> visibleList = new ArrayList<GraphGlyph>(glyphlist.size());
+        List<GraphGlyph> visibleList = new ArrayList<>(glyphlist.size());
 
         //Remove hidden Graphs
         for (GraphGlyph g : glyphlist) {
@@ -1384,7 +1384,7 @@ public class SeqMapView extends JPanel
     }
 
     public List<GlyphI> getAllSelectedTiers() {
-        List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
+        List<GlyphI> allSelectedTiers = new ArrayList<>();
         // this adds all tracks selected on the label, including join tracks (not join children)
         for (TierGlyph tierGlyph : tierLabelManager.getSelectedTiers()) {
             allSelectedTiers.add(tierGlyph);
@@ -1408,7 +1408,7 @@ public class SeqMapView extends JPanel
 
     @Override
     public List<GraphGlyph> getSelectedFloatingGraphGlyphs() {
-        List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphGlyphs = new ArrayList<>();
         if (pixel_floater_glyph.getChildren() != null) {
             for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
                 if (floatGlyph.isSelected()) {
@@ -1420,7 +1420,7 @@ public class SeqMapView extends JPanel
     }
 
     public List<GraphGlyph> getFloatingGraphGlyphs() {
-        List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphGlyphs = new ArrayList<>();
         if (pixel_floater_glyph.getChildren() != null) {
             for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
                 graphGlyphs.add((GraphGlyph) floatGlyph);
@@ -1446,13 +1446,13 @@ public class SeqMapView extends JPanel
      * represent.
      */
     public static List<SeqSymmetry> glyphsToSyms(List<? extends GlyphI> glyphs) {
-        Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+        Set<SeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
         for (GlyphI gl : glyphs) {
             if (gl.getInfo() instanceof SeqSymmetry) {
                 symSet.add((SeqSymmetry) gl.getInfo());
             }
         }
-        return new ArrayList<SeqSymmetry>(symSet);
+        return new ArrayList<>(symSet);
     }
 
     /**
@@ -1460,13 +1460,13 @@ public class SeqMapView extends JPanel
      * represent.
      */
     public static List<RootSeqSymmetry> glyphsToRootSyms(List<? extends GlyphI> glyphs) {
-        Set<RootSeqSymmetry> symSet = new LinkedHashSet<RootSeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+        Set<RootSeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
         for (GlyphI gl : glyphs) {
             if (gl.getInfo() instanceof RootSeqSymmetry) {
                 symSet.add((RootSeqSymmetry) gl.getInfo());
             }
         }
-        return new ArrayList<RootSeqSymmetry>(symSet);
+        return new ArrayList<>(symSet);
     }
 
     @Override
@@ -1665,7 +1665,7 @@ public class SeqMapView extends JPanel
     }
 
     public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect) {
-        List<GlyphI> glyphs = new ArrayList<GlyphI>();
+        List<GlyphI> glyphs = new ArrayList<>();
 
         for (TierGlyph tg : seqmap.getTiers()) {
             // Do not perform selection on axis tier childrens
@@ -1787,7 +1787,7 @@ public class SeqMapView extends JPanel
 
         boolean top_level = seqmap.getSelected().size() > 1;
         // copy selections to a new list before starting, because list of selections will be modified
-        List<GlyphI> all_selections = new ArrayList<GlyphI>(seqmap.getSelected());
+        List<GlyphI> all_selections = new ArrayList<>(seqmap.getSelected());
         Iterator<GlyphI> iter = all_selections.iterator();
         while (iter.hasNext()) {
             GlyphI child = iter.next();
@@ -1816,12 +1816,12 @@ public class SeqMapView extends JPanel
     static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
         // linked hash set keeps parents in same order as child list so that comparison
         // like childList.equals(parentList) can be used.
-        Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
+        Set<GlyphI> results = new LinkedHashSet<>(childGlyphs.size());
         for (GlyphI child : childGlyphs) {
             GlyphI pglyph = getParent(child, true);
             results.add(pglyph);
         }
-        return new ArrayList<GlyphI>(results);
+        return new ArrayList<>(results);
     }
 
     /**
@@ -2273,7 +2273,7 @@ public class SeqMapView extends JPanel
      * GraphGlyph.
      */
     final List<GraphGlyph> collectGraphs() {
-        List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphs = new ArrayList<>();
         GlyphI root = seqmap.getScene().getGlyph();
         collectGraphs(root, graphs);
         return graphs;
@@ -2425,7 +2425,7 @@ public class SeqMapView extends JPanel
     }
 
     public void showProperties(int x, GraphGlyph glyph) {
-        List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> glyphs = new ArrayList<>();
         glyphs.add(glyph);
         List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
@@ -2566,7 +2566,7 @@ public class SeqMapView extends JPanel
     @SuppressWarnings("unchecked")
     @Override
     public List<Map<String, Object>> getProperties() {
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         List<SeqSymmetry> selected_syms = getSelectedSyms();
         for (GlyphI glyph : getSeqMap().getSelected()) {
 
@@ -2579,7 +2579,7 @@ public class SeqMapView extends JPanel
             if (glyph.getInfo() instanceof Map) {
                 props = (Map<String, Object>) glyph.getInfo();
             } else {
-                props = new HashMap<String, Object>();
+                props = new HashMap<>();
             }
 
             boolean direction = true;
@@ -2610,7 +2610,7 @@ public class SeqMapView extends JPanel
 
     @Override
     public Map<String, Object> determineProps(SeqSymmetry sym) {
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         if (sym == null) {
             return props;
         }
@@ -2713,7 +2713,7 @@ public class SeqMapView extends JPanel
         }
         GlyphI joinedParent = glyph.getParent();
         if (glyph.getParent() != null && glyph.getParent().getChildCount() == 2) {
-            List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>(2);
+            List<GraphGlyph> graphGlyphs = new ArrayList<>(2);
             for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
                 if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
                     splitGraph((GraphGlyph) glyph.getParent().getChild(i));
@@ -2747,7 +2747,7 @@ public class SeqMapView extends JPanel
     @Override
     public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex,
             String residues, int residue_offset, Color hitColor) {
-        final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
+        final List<GlyphI> resultGlyphs = new ArrayList<>();
         List<SingletonSymWithProps> results = BioSeqUtils.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
         for (SingletonSymWithProps result : results) {
             GlyphI gl = new FillRectGlyph() {
@@ -2908,7 +2908,7 @@ public class SeqMapView extends JPanel
         (new AnnotationGlyphFactory()).createGlyph(sym, this);
         getSeqMap().repackTheTiers(true, true);
         if (select) {
-            List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> selections = new ArrayList<>();
             selections.add(sym);
             this.select(selections, true);
         }
@@ -2924,7 +2924,7 @@ public class SeqMapView extends JPanel
         (new AnnotationGlyphFactory()).createGlyph(sym, this);
         getSeqMap().repackTheTiers(true, true);
         if (select) {
-            List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> selections = new ArrayList<>();
             selections.add(sym);
             this.select(selections, true);
         }

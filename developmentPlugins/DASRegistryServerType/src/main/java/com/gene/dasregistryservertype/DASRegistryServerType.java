@@ -69,9 +69,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
     private static final String name = "DAS Registry";
     private static final int ordinal = Integer.MAX_VALUE;
     // key is URL, value is gServer
-    private final Map<String, GenericServer> serverMap = new HashMap<String, GenericServer>();
+    private final Map<String, GenericServer> serverMap = new HashMap<>();
     // first key is server URL, second key is featureURL, third key is property
-    private final Map<String, Map<String, Map<String, Object>>> featuresMap = new HashMap<String, Map<String, Map<String, Object>>>();
+    private final Map<String, Map<String, Map<String, Object>>> featuresMap = new HashMap<>();
     private AnnotatedSeqGroup currentGroup;
     private final IGBService igbService;
 
@@ -211,7 +211,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
             if (dasURL.endsWith(DAS_SUFFIX) || dasURL.endsWith(DAS1_SUFFIX)) {
                 Map<String, Map<String, Object>> featureMap = featuresMap.get(serverURL);
                 if (featureMap == null) {
-                    featureMap = new HashMap<String, Map<String, Object>>();
+                    featureMap = new HashMap<>();
                     featuresMap.put(serverURL, featureMap);
                     if (DEBUG) {
                         System.out.println("!!! DAS Registry new server " + serverURL);
@@ -222,11 +222,11 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
                 }
                 List<String> typesCopy = types;
                 if (typesCopy == null) {
-                    typesCopy = new ArrayList<String>();
+                    typesCopy = new ArrayList<>();
                     typesCopy.add("");
                 }
                 for (String type : typesCopy) {
-                    Map<String, Object> featureProps = new HashMap<String, Object>();
+                    Map<String, Object> featureProps = new HashMap<>();
                     featureProps.put("url", url);
                     featureProps.put("feature_uri", feature_uri);
                     if (entry_points_uri != null) {
@@ -311,7 +311,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
                                 Node n3 = nl3.item(i3);
                                 if (n3.getNodeName().equals("TYPE") && n3.hasAttributes() && n3.getAttributes().getNamedItem("id") != null) {
                                     if (types == null) {
-                                        types = new ArrayList<String>();
+                                        types = new ArrayList<>();
                                     }
                                     types.add(n3.getAttributes().getNamedItem("id").getNodeValue());
                                 }

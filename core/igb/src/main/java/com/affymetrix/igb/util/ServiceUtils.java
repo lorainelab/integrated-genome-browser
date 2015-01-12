@@ -147,7 +147,7 @@ public final class ServiceUtils {
 		}
 
 		AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-		List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
+		List<SeqSymmetry> sym_list = new ArrayList<>(ids.length);
 		for (String id : ids) {
 			sym_list.addAll(group.findSyms(id));
 		}
@@ -169,7 +169,7 @@ public final class ServiceUtils {
 		}
 
 		AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-		List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
+		List<SeqSymmetry> sym_list = new ArrayList<>(ids.length);
 		SeqSpan span;
 		double midpoint = -1;
 		

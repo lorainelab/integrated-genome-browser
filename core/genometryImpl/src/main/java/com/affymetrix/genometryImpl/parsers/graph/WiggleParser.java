@@ -63,7 +63,7 @@ public final class WiggleParser implements GraphParser {
 					throws IOException {
 		WigFormat current_format = WigFormat.BED4;
 
-		List<GraphSym> grafs = new ArrayList<GraphSym>();
+		List<GraphSym> grafs = new ArrayList<>();
 		WiggleData current_data = null;
 		Map<String, WiggleData> current_datamap = null; // Map: seq_id -> WiggleData
 		boolean previous_track_line = false;
@@ -96,7 +96,7 @@ public final class WiggleParser implements GraphParser {
 
 				current_format = WigFormat.BED4; // assume BED4 until changed.
 				current_data = null;
-				current_datamap = new HashMap<String, WiggleData>();
+				current_datamap = new HashMap<>();
 				continue;
 			}
 
@@ -291,7 +291,7 @@ public final class WiggleParser implements GraphParser {
 			return Collections.<GraphSym>emptyList();
 		}
 
-		List<GraphSym> grafs = new ArrayList<GraphSym>(current_datamap.size());
+		List<GraphSym> grafs = new ArrayList<>(current_datamap.size());
 
 		String graph_id = track_hash.get(TrackLineParser.NAME);
 		if (graph_id == null) {

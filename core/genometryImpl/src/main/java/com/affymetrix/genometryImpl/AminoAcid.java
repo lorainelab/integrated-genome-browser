@@ -33,7 +33,7 @@ public enum AminoAcid {
 
     public static final String START_CODON = "ATG"; //AminoAcid.Methionine - not true for all species
     public static final String[] STOP_CODONS = new String[]{"TAA", "TAG", "TGA"};
-    public static final HashMap<String, AminoAcid> CODON_TO_AMINO_ACID = new HashMap<String, AminoAcid>();
+    public static final HashMap<String, AminoAcid> CODON_TO_AMINO_ACID = new HashMap<>();
 
     static {
         CODON_TO_AMINO_ACID.put("AAA", AminoAcid.Lysine);
@@ -131,7 +131,7 @@ public enum AminoAcid {
         CODON_TO_AMINO_ACID.put("CC*", AminoAcid.STOP);
     }
 
-    private static final Map<Character, AminoAcid> code1aminoAcid = new HashMap<Character, AminoAcid>();
+    private static final Map<Character, AminoAcid> code1aminoAcid = new HashMap<>();
 
     static {
         code1aminoAcid.put('A', Alanine);
@@ -156,7 +156,7 @@ public enum AminoAcid {
         code1aminoAcid.put('V', Valine);
         code1aminoAcid.put('-', STOP);
     }
-    private static final Map<String, AminoAcid> code3aminoAcid = new HashMap<String, AminoAcid>();
+    private static final Map<String, AminoAcid> code3aminoAcid = new HashMap<>();
 
     static {
         code3aminoAcid.put("Ala", Alanine);

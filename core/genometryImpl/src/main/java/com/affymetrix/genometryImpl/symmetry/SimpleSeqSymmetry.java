@@ -128,7 +128,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
             }
         } else if (other.children == null) {
             return false;
-        } else if (!(new CopyOnWriteArrayList<SeqSymmetry>(children)).equals(new CopyOnWriteArrayList<SeqSymmetry>(other.children))) {
+        } else if (!(new CopyOnWriteArrayList<>(children)).equals(new CopyOnWriteArrayList<>(other.children))) {
             return false;
         }
         if (spans == null) {
@@ -137,7 +137,7 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
             }
         } else if (other.spans == null) {
             return false;
-        } else if (!(new CopyOnWriteArrayList<SeqSpan>(spans)).equals(new CopyOnWriteArrayList<SeqSpan>(other.spans))) {
+        } else if (!(new CopyOnWriteArrayList<>(spans)).equals(new CopyOnWriteArrayList<>(other.spans))) {
             return false;
         }
         return true;

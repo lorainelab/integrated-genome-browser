@@ -19,7 +19,7 @@ import javax.swing.*;
 public abstract class MenuUtil {
 
 //  private static JMenuBar main_menu_bar = new JMenuBar();
-	private static Map<String, KeyStroke> accelerators = new HashMap<String, KeyStroke>();
+	private static Map<String, KeyStroke> accelerators = new HashMap<>();
 
 	public static void setAccelerators(Map<String, KeyStroke> _accelerators) {
 		MenuUtil.accelerators = _accelerators;

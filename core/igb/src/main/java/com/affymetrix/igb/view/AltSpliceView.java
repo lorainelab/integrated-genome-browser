@@ -66,7 +66,7 @@ public class AltSpliceView extends IGBTabPanel
 	private final JRPTextField buffer_sizeTF;
 	private final JLabel buffer_sizeL;
 	private final JRPCheckBox slice_by_selectionCB;
-	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
+	private List<SeqSymmetry> last_selected_syms = new ArrayList<>();
 	private BioSeq last_seq_changed = null;
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
@@ -167,7 +167,7 @@ public class AltSpliceView extends IGBTabPanel
 	 * Takes a list of SeqSymmetries and removes any GraphSyms from it.
 	 */
 	private static List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
-		List<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
+		List<SeqSymmetry> v = new ArrayList<>(syms.size());
 		for (SeqSymmetry sym : syms) {
 			if (!(sym instanceof GraphSym)) {
 				v.add(sym);

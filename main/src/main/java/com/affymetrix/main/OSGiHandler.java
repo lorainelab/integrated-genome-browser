@@ -273,12 +273,7 @@ public class OSGiHandler {
         if (!dir.exists()) {
             dir = new File("../bundles");
         }
-        FilenameFilter ff = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
-            }
-        };
+        FilenameFilter ff = (File dir1, String name) -> name.endsWith(".jar");
         entries.addAll(Arrays.asList(dir.list(ff)));
         if (entries.isEmpty()) {
             String messageWrapper = "------------------------------------------------------------------------";

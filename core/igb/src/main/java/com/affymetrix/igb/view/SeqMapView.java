@@ -342,39 +342,47 @@ public class SeqMapView extends JPanel
                 return;
             }
 
-            if (pce.getKey().equals(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT)) {
-                AxisGlyph ag = seqmap.getAxis();
-                if (ag != null) {
-                    setAxisFormatFromPrefs(ag);
-                }
-                seqmap.updateWidget();
-            } else if (pce.getKey().equals(PreferenceUtils.SHOW_EDGEMATCH_OPTION)) {
-                setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
-                getSeqMap().updateWidget();
-            } else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
-                if (show_edge_matches) {
-                    doEdgeMatching(seqmap.getSelected(), true);
-                }
-            } else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-                SeqMapView.this.remove(xzoombox);
-                if (b) {
-                    SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-                } else {
-                    SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-                }
-                SeqMapView.this.invalidate();
-            } else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
-                SeqMapView.this.remove(yzoombox);
-                if (b) {
-                    SeqMapView.this.add(BorderLayout.WEST, yzoombox);
-                } else {
-                    SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-                }
-                SeqMapView.this.invalidate();
-            } else if (pce.getKey().equals(PREF_SHOW_TOOLTIP)) {
-                setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
+            switch (pce.getKey()) {
+                case CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT:
+                    AxisGlyph ag = seqmap.getAxis();
+                    if (ag != null) {
+                        setAxisFormatFromPrefs(ag);
+                    }   seqmap.updateWidget();
+                    break;
+                case PreferenceUtils.SHOW_EDGEMATCH_OPTION:
+                    setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
+                    getSeqMap().updateWidget();
+                    break;
+                case PREF_EDGE_MATCH_COLOR:
+                case PREF_EDGE_MATCH_FUZZY_COLOR:
+                    if (show_edge_matches) {
+                        doEdgeMatching(seqmap.getSelected(), true);
+                    }   break;
+                case PREF_X_ZOOMER_ABOVE:
+                    {
+                        boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+                        SeqMapView.this.remove(xzoombox);
+                        if (b) {
+                            SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+                        } else {
+                            SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+                        }       SeqMapView.this.invalidate();
+                        break;
+                    }
+                case PREF_Y_ZOOMER_LEFT:
+                {
+                    boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+                    SeqMapView.this.remove(yzoombox);
+                    if (b) {
+                        SeqMapView.this.add(BorderLayout.WEST, yzoombox);
+                    } else {
+                        SeqMapView.this.add(BorderLayout.EAST, yzoombox);
+                }       SeqMapView.this.invalidate();
+                        break;
+                    }
+                case PREF_SHOW_TOOLTIP:
+                    setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
+                    break;
             }
         }
     };

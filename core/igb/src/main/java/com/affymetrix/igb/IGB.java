@@ -628,10 +628,13 @@ public final class IGB extends Application
                 version_info = group.getID();
             }
         }
-        if ("hg17".equals(version_info)) {
-            version_info = "hg17 = NCBI35";
-        } else if ("hg18".equals(version_info)) {
-            version_info = "hg18 = NCBI36";
+        if (null != version_info) switch (version_info) {
+            case "hg17":
+                version_info = "hg17 = NCBI35";
+                break;
+            case "hg18":
+                version_info = "hg18 = NCBI36";
+                break;
         }
         return version_info;
     }

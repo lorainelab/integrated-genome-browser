@@ -218,16 +218,18 @@ public class USeqGraphParser {
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
-		//set strand
-		if (strand.equals(".") ) {						
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
-		}						
-		else if (strand.equals("+")) {
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-		}
-		else if (strand.equals("-")) {
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-		}	
+            //set strand
+            switch (strand) {
+                case ".":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
+                    break;
+                case "+":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+                    break;
+                case "-":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);	
+                    break;
+            }
 		//check if an initialGraphStyle has been set, hate to hard code this 
 		if (graf.getProperties().containsKey("initialGraphStyle") == false) {
 			graf.getProperties().put("initialGraphStyle", "Bar");

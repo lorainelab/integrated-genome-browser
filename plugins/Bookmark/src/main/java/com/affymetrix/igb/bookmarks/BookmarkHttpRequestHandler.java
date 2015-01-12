@@ -72,34 +72,36 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private Response processRequest(final IHTTPSession session) {
         String contextRoot = session.getUri().substring(1); //removes prefixed /
         Response response;
-        if (contextRoot.equals(SERVLET_NAME_OLD) || contextRoot.equals(SERVLET_NAME)) {
-            parseAndGoToBookmark(session, false);
-            response = new Response(getWelcomeMessage());
-            response.setStatus(Response.Status.NO_CONTENT);
+        switch (contextRoot) {
+            case SERVLET_NAME_OLD:
+            case SERVLET_NAME:
+                parseAndGoToBookmark(session, false);
+                response = new Response(getWelcomeMessage());
+                response.setStatus(Response.Status.NO_CONTENT);
+                return response;
+            case GALAXY_REQUEST:
+                //This exist to allow custom pipeline for galaxy requests if desired
+                parseAndGoToBookmark(session, true);
+                response = new Response(getWelcomeMessage());
+                response.setStatus(Response.Status.OK);
+                return response;
+            case FAVICON_REQUEST:
+                //do nothing send back welcome message
+                response = new Response(getWelcomeMessage());
+                response.setStatus(Response.Status.OK);
             return response;
-        } else if (contextRoot.equals(GALAXY_REQUEST)) {
-            //This exist to allow custom pipeline for galaxy requests if desired
-            parseAndGoToBookmark(session, true);
-            response = new Response(getWelcomeMessage());
-            response.setStatus(Response.Status.OK);
+            case FOCUS_IGB_COMMAND:
+                response = new Response("OK");
+                bringIgbToFront();
+                response.setStatus(Response.Status.NO_CONTENT);
             return response;
-        } else if (contextRoot.equals(FAVICON_REQUEST)) {
-            //do nothing send back welcome message
-            response = new Response(getWelcomeMessage());
-            response.setStatus(Response.Status.OK);
-            return response;
-        } else if (contextRoot.equals(FOCUS_IGB_COMMAND)) {
-            response = new Response("OK");
-            bringIgbToFront();
-            response.setStatus(Response.Status.NO_CONTENT);
-            return response;
-        } else if (contextRoot.equals(IGB_STATUS_CHECK)) {
-            response = new Response(handleStatusCheckRequests(session));
-            response.setStatus(Response.Status.OK);
-            return response;
-        } else {
-            response = new Response(getBadRequestMessage());
-            response.setStatus(Response.Status.BAD_REQUEST);
+            case IGB_STATUS_CHECK:
+                response = new Response(handleStatusCheckRequests(session));
+                response.setStatus(Response.Status.OK);
+                return response;
+            default:
+                response = new Response(getBadRequestMessage());
+                response.setStatus(Response.Status.BAD_REQUEST);
             return response;
         }
     }

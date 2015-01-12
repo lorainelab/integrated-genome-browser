@@ -1418,24 +1418,29 @@ public final class GeneralLoadUtils {
         String extension = GeneralUtils.getExtension(unzippedStreamName);
         boolean getNewVersion = false;
 
-        if (extension.equals(BAM_EXT)) {
-            try {
-                handleBam(uri);
-            } catch (BamIndexNotFoundException ex) {
-                String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
-                ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
-                version = null;
-
-            }
-        } else if (extension.equals(USEQ_EXT)) {
-            loadGroup = handleUseq(uri, loadGroup);
-            getNewVersion = true;
-        } else if (extension.equals(BAR_EXT)) {
-            loadGroup = handleBar(uri, loadGroup);
-            getNewVersion = true;
-        } else if (extension.equals(BP1_EXT) || extension.equals(BP2_EXT)) {
-            loadGroup = handleBp(uri, loadGroup);
-            getNewVersion = true;
+        switch (extension) {
+            case BAM_EXT:
+                try {
+                    handleBam(uri);
+                } catch (BamIndexNotFoundException ex) {
+                    String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
+                    ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
+                    version = null;
+                    
+                }   break;
+            case USEQ_EXT:
+                loadGroup = handleUseq(uri, loadGroup);
+                getNewVersion = true;
+                break;
+            case BAR_EXT:
+                loadGroup = handleBar(uri, loadGroup);
+                getNewVersion = true;
+                break;
+            case BP1_EXT:
+            case BP2_EXT:
+                loadGroup = handleBp(uri, loadGroup);
+                getNewVersion = true;
+                break;
         }
 
         if (getNewVersion) {

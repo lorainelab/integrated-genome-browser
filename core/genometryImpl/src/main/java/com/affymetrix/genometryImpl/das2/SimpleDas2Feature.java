@@ -46,13 +46,22 @@ public final class SimpleDas2Feature extends SimpleSymWithProps implements Typed
 	public String getType() { return type; }
 
 	public Object getProperty(String prop) {
-		if (prop.equals("id")) { return id; }
-		else if (prop.equals("name")) { return name; }
-		else if (prop.equals("type")) { return type; }
-		else if (prop.equals("link")) { return doc_href; }
-		else if (prop.equals("created")) { return created; }
-		else if (prop.equals("modified")) { return modified; }
-		else { return super.getProperty(prop); }
+            switch (prop) {
+                case "id":
+                    return id;
+                case "name":
+                    return name;
+                case "type":
+                    return type;
+                case "link":
+                    return doc_href;
+                case "created":
+                    return created;
+                case "modified":
+                    return modified;
+                default:
+                    return super.getProperty(prop);
+            }
 	}
 
 	public boolean setProperty(String tag, Object val) {

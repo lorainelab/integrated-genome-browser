@@ -820,35 +820,37 @@ public final class GFFParser implements AnnotationWriter, Parser  {
 				String[] tv = gff3_tagval_splitter.split(tagval);
 				String tag = tv[0];
 				String val = tv[1];
-				//      String vals = gff3_multival_splitter.split(val);
-				if (tag.equals(GFF3_PARENT)) {
-					groupid = val;
-				}
-				else if (tag.equals(GFF3_ID)) {
-					featid = val;
-					Object obj = gff3_id_hash.get(featid);
-					if (obj == null) {
-						gff3_id_hash.put(featid, featid);
-					}
-					else {
-						if (obj instanceof String) {
-							gff3_id_hash.put(featid, TWO);
-							featid += "_1";
-						}
-						else if (obj instanceof Integer) {
-							Integer iobj = (Integer)obj;
-							int fcount = iobj.intValue();
-							gff3_id_hash.put(featid, Integer.valueOf(fcount+1));
-							featid = featid + "_" + iobj.toString();
-						}
-						if (number_of_duplicate_warnings++ <= 10) {
-							System.out.println("duplicate feature id, new id: " + featid);
-							if (number_of_duplicate_warnings == 10) {
-								System.out.println("(Suppressing further warnings about duplicate ids");
-							}
-						}
-					}
-				}
+                            //      String vals = gff3_multival_splitter.split(val);
+                            switch (tag) {
+                                case GFF3_PARENT:
+                                    groupid = val;
+                                    break;
+                                case GFF3_ID:
+                                    featid = val;
+                                    Object obj = gff3_id_hash.get(featid);
+                                    if (obj == null) {
+                                        gff3_id_hash.put(featid, featid);
+                                    }
+                                    else {
+                                        if (obj instanceof String) {
+                                            gff3_id_hash.put(featid, TWO);
+                                            featid += "_1";
+                                        }
+                                        else if (obj instanceof Integer) {
+                                            Integer iobj = (Integer)obj;
+                                            int fcount = iobj.intValue();
+                                            gff3_id_hash.put(featid, Integer.valueOf(fcount+1));
+                                            featid = featid + "_" + iobj.toString();
+                                        }
+                                        if (number_of_duplicate_warnings++ <= 10) {
+                                            System.out.println("duplicate feature id, new id: " + featid);
+                                            if (number_of_duplicate_warnings == 10) {
+                                                System.out.println("(Suppressing further warnings about duplicate ids");
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
 			}
 			if (groupid == null) {
 				return featid;

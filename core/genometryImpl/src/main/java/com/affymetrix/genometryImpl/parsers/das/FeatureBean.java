@@ -86,13 +86,17 @@ class FeatureBean {
 	float getScore() { return this.score; }
 
 	void setOrientation(String orientation) {
-		if (orientation.equals("+")) {
-			this.orientation = Orientation.FORWARD;
-		} else if (orientation.equals("-")) {
-			this.orientation = Orientation.REVERSE;
-		} else {
-			this.orientation = Orientation.UNKNOWN;
-		}
+            switch (orientation) {
+                case "+":
+                    this.orientation = Orientation.FORWARD;
+                    break;
+                case "-":
+                    this.orientation = Orientation.REVERSE;
+                    break;
+                default:
+                    this.orientation = Orientation.UNKNOWN;
+                    break;
+            }
 	}
 
 	Orientation getOrientation() { return this.orientation; }

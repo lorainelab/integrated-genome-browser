@@ -177,30 +177,39 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private GlyphI makeGlyph(String type) {
 
     GlyphI gl = null;
-    if (TYPE_NONE.equals(type)) {
-      gl = null;
-    } else if (TYPE_BOX.equals(type)) {
-      gl = new EfficientOutlineContGlyph();
-    } else if (TYPE_FILLED_BOX.equals(type)) {
-      gl = new EfficientOutlinedRectGlyph();
-    } else if (TYPE_POINTED.equals(type)) {
-      gl = new PointedGlyph();
-    } else if (TYPE_LINE.equals(type)) {
-      if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
-        gl = new EfficientLabelledLineGlyph();
-      } else {
-        gl = new EfficientLineContGlyph();
+    if (null != type) switch (type) {
+          case TYPE_NONE:
+              gl = null;
+              break;
+          case TYPE_BOX:
+              gl = new EfficientOutlineContGlyph();
+              break;
+          case TYPE_FILLED_BOX:
+              gl = new EfficientOutlinedRectGlyph();
+              break;
+          case TYPE_POINTED:
+              gl = new PointedGlyph();
+              break;
+          case TYPE_LINE:
+              if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
+                  gl = new EfficientLabelledLineGlyph();
+              } else {
+                  gl = new EfficientLineContGlyph();
+              }       break;
+          case TYPE_ARROW:
+              gl = new ArrowGlyph();
+              break;
+          case TYPE_SPAN:
+              gl = new BridgeGlyph();
+              break;
+          case TYPE_INVISIBLE:
+              gl = new InvisibleBoxGlyph();
+              break;
+          default:
+              // this will be caught by knownGlyphType() method
+              System.out.println("GLYPH Type Not Known: " + type);
+              break;
       }
-    } else if (TYPE_ARROW.equals(type)) {
-      gl = new ArrowGlyph();
-    } else if (TYPE_SPAN.equals(type)) {
-      gl = new BridgeGlyph();
-    } else if (TYPE_INVISIBLE.equals(type)) {
-      gl = new InvisibleBoxGlyph();
-    } else {
-      // this will be caught by knownGlyphType() method
-      System.out.println("GLYPH Type Not Known: " + type);
-    }
     return gl;
   }
   

@@ -320,28 +320,36 @@ public final class Das2ServerInfo  {
 			URI coords_uri = null;
 			for (int j = 0; j < vlist.getLength(); j++) {
 				String nodename = vlist.item(j).getNodeName();
-				// was CATEGORY, renamed CAPABILITY
-				if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
-					Element capel = (Element) vlist.item(j);
-					String captype = capel.getAttribute(TYPE);
-					String query_id = capel.getAttribute(QUERY_URI);
-					if (query_id.length() == 0) {
-						query_id = capel.getAttribute(QUERY_ID);
-					}
-					URI base_uri = getBaseURI(das_query, capel);
-					URI cap_root = base_uri.resolve(query_id);
-					if (DEBUG_SOURCES_QUERY) {
-						System.out.println("Capability: " + captype + ", URI: " + cap_root);
-					}
-					// for now don't worry about format subelements
+                            // was CATEGORY, renamed CAPABILITY
+                            switch (nodename) {
+                                case "CAPABILITY":
+                                case "CATEGORY":
+                                    {
+                                        Element capel = (Element) vlist.item(j);
+                                        String captype = capel.getAttribute(TYPE);
+                                        String query_id = capel.getAttribute(QUERY_URI);
+                                        if (query_id.length() == 0) {
+                                            query_id = capel.getAttribute(QUERY_ID);
+                                        }
+                                        URI base_uri = getBaseURI(das_query, capel);
+                                        URI cap_root = base_uri.resolve(query_id);
+                                        if (DEBUG_SOURCES_QUERY) {
+                                            System.out.println("Capability: " + captype + ", URI: " + cap_root);
+                                        }
+                                        // for now don't worry about format subelements
 					Das2Capability cap = new Das2Capability(captype, cap_root);
-					caps.put(captype, cap);
-				} else if (nodename.equals("COORDINATES")) {
-					Element coordel = (Element) vlist.item(j);
-					String uri_att = coordel.getAttribute("uri");
-					URI base_uri = getBaseURI(das_query, coordel);
-					coords_uri = base_uri.resolve(uri_att);
-				}
+                                        caps.put(captype, cap);
+                                        break;
+                                    }
+                                case "COORDINATES":
+                                {
+                                    Element coordel = (Element) vlist.item(j);
+                                    String uri_att = coordel.getAttribute("uri");
+                                    URI base_uri = getBaseURI(das_query, coordel);
+                                        coords_uri = base_uri.resolve(uri_att);
+                                        break;
+                                    }
+                            }
 			}
 
 			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri, primaryServer);

@@ -374,13 +374,16 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private void processMetaInformationLine(String line) {
         if (line.startsWith("fileformat=")) {
             String format = line.substring("fileformat=".length());
-            if (format.equals("VCFv4.0")) {
-                version = 4.0;
-            } else if (format.equals("VCFv4.1")) {
-                version = 4.1;
-            } else {
-                ErrorHandler.errorPanel("file version not supported " + format);
-                throw new UnsupportedOperationException("file version not supported " + format);
+            switch (format) {
+                case "VCFv4.0":
+                    version = 4.0;
+                    break;
+                case "VCFv4.1":
+                    version = 4.1;
+                    break;
+                default:
+                    ErrorHandler.errorPanel("file version not supported " + format);
+                    throw new UnsupportedOperationException("file version not supported " + format);
             }
             Logger.getLogger("com.affymetrix.genometryImpl.symloader").log(Level.INFO, "vcf file version {0}", version);
         } else if (line.startsWith("format=")) {

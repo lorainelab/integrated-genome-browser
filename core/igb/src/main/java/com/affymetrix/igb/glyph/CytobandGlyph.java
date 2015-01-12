@@ -60,7 +60,7 @@ public abstract class CytobandGlyph {
         List<CytobandSym> bands = CytobandParser.generateBands(cyto_annots);
         int centromerePoint = CytobandParser.determineCentromerePoint(bands);
 
-        GlyphI efg;
+        GlyphI efg = null;
         for (int q = 0; q < bands.size(); q++) {
             CytobandSym cyto_sym = bands.get(q);
             SeqSymmetry sym2 = smv.transformForViewSeq(cyto_sym, sma);
@@ -68,25 +68,28 @@ public abstract class CytobandGlyph {
             if (cyto_span == null) {
                 continue;
             }
-            if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-                efg = new EfficientPaintRectGlyph();
-                efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
-
-            } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-                efg = new EfficientPaintRectGlyph();
-                efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
-
-            } else if ("".equals(cyto_sym.getBand())) {
-                efg = new EfficientOutlinedRectGlyph();
-                efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-            } else {
-                efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-                efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
-                ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
-                ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
+            if (null != cyto_sym.getBand()) switch (cyto_sym.getBand()) {
+                case CytobandParser.BAND_ACEN:
+                    efg = new EfficientPaintRectGlyph();
+                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                    ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
+                    break;
+                case CytobandParser.BAND_STALK:
+                    efg = new EfficientPaintRectGlyph();
+                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                    ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
+                    break;
+                case "":
+                    efg = new EfficientOutlinedRectGlyph();
+                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                    break;
+                default:
+                    efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
+                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
+                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
+                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
+                    break;
             }
             efg.setColor(cyto_sym.getColor());
             //smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);

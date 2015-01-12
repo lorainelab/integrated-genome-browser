@@ -324,15 +324,16 @@ public final class Genbank extends SymLoader {
                 for (String tag : tagValues.keySet()) {
                     String value = current_feature.getValue(tag);
                     if (value != null && value.length() != 0) {
-                        if (tag.equals("chromosome")) {
-                            seq = this.group.getSeq(value);
-                            if (seq == null) {
-                                seq = new BioSeq(value, length);
-                            }
-                            chrLength.put(value, length);
-                            chrFound = true;
-                        } else if (tag.equals("organism")) {
-                            //   seq.setOrganism (value);
+                        switch (tag) {
+                            case "chromosome":
+                                seq = this.group.getSeq(value);
+                                if (seq == null) {
+                                    seq = new BioSeq(value, length);
+                                }   chrLength.put(value, length);
+                                chrFound = true;
+                                break;
+                            case "organism":
+                                break;
                         }
                     }
                 }
@@ -642,10 +643,12 @@ public final class Genbank extends SymLoader {
                 for (String tag : tagValues.keySet()) {
                     String value = current_feature.getValue(tag);
                     if (value != null && value.length() != 0) {
-                        if (tag.equals("chromosome")) {
-                            currentSeq = this.group.getSeq(value);
-                        } else if (tag.equals("organism")) {
-                            //   seq.setOrganism (value);
+                        switch (tag) {
+                            case "chromosome":
+                                currentSeq = this.group.getSeq(value);
+                                break;
+                            case "organism":
+                                break;
                         }
                     }
                     //If no sequence name is found. Then locus is used.
@@ -672,46 +675,50 @@ public final class Genbank extends SymLoader {
                 // skipping this annotation, which is outside the min/max range
                 continue;
             }
-            if (key.equals("mRNA")
-                    || key.equals("rRNA")
-                    || key.equals("tRNA")
-                    || key.equals("scRNA")
-                    || key.equals("snRNA")
-                    || key.equals("snoRNA")) {
-                String value = current_feature.getValue("gene");
-                if (value != null && value.length() != 0) {
-                    annotation.setProperty("name", value);
-                }
-                value = current_feature.getValue("locus_tag");
-                if (value != null && value.length() != 0) {
-                    annotation.setID(value);
-                }
-                // What are the spans associated with this key?
-                List<int[]> locs = current_feature.getLocation();
-                if (locs == null || locs.isEmpty()) {
-                    Logger.getLogger(Genbank.class.getName()).log(
-                            Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
-                } else {
-                    for (int[] loc : locs) {
-                        annotation.addBlock(loc[0], loc[1]);
+            switch (key) {
+                case "mRNA":
+                case "rRNA":
+                case "tRNA":
+                case "scRNA":
+                case "snRNA":
+                case "snoRNA":
+                    {
+                        String value = current_feature.getValue("gene");
+                        if (value != null && value.length() != 0) {
+                            annotation.setProperty("name", value);
+                        }       value = current_feature.getValue("locus_tag");
+                        if (value != null && value.length() != 0) {
+                            annotation.setID(value);
+                        }       // What are the spans associated with this key?
+                        List<int[]> locs = current_feature.getLocation();
+                        if (locs == null || locs.isEmpty()) {
+                            Logger.getLogger(Genbank.class.getName()).log(
+                                    Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
+                        } else {
+                            for (int[] loc : locs) {
+                                annotation.addBlock(loc[0], loc[1]);
                     }
-                }
-            } else if (key.equals("CDS")) {
-                // What are the spans associated with this key?
-                List<int[]> locs = current_feature.getLocation();
-                if (locs == null || locs.isEmpty()) {
-                    Logger.getLogger(Genbank.class.getName()).log(
-                            Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
-                } else {
-                    for (int[] loc : locs) {
-                        annotation.addCDSBlock(loc[0], loc[1]);
+                }       break;
                     }
+                case "CDS":
+                {
+                    // What are the spans associated with this key?
+                    List<int[]> locs = current_feature.getLocation();
+                    if (locs == null || locs.isEmpty()) {
+                        Logger.getLogger(Genbank.class.getName()).log(
+                                Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
+                    } else {
+                        for (int[] loc : locs) {
+                            annotation.addCDSBlock(loc[0], loc[1]);
+                    }
+                    }       break;
                 }
-            } else {
-                Logger.getLogger(Genbank.class.getName()).log(
-                        Level.WARNING,
-                        "ignoring {0} features; next line is {1}",
+                default:
+                    Logger.getLogger(Genbank.class.getName()).log(
+                            Level.WARNING,
+                            "ignoring {0} features; next line is {1}",
                         new Object[]{key, line_number});
+                    break;
             }
         }
     }
@@ -806,15 +813,17 @@ public final class Genbank extends SymLoader {
         for (String tag : tagValues.keySet()) {
             String value = pub_feat.getValue(tag);
             if (value != null && value.length() != 0) {
-                if (tag.equals("chromosome")) {
-                    //   curation.setChromosome(value);
-                } else if (tag.equals("organism")) {
-                    //   seq.setOrganism (value);
-                } else {
-                    seq.setProperty(tag, value);
-          //seq.setDescription (seq.getDescription() + " " + value);
-                    //seq.addProperty(tag, value);
-                    //logger.debug("Added property to sequence: " + tag + "=" + value);
+                switch (tag) {
+                    case "chromosome":
+                        break;
+                    case "organism":
+                        break;
+                    default:
+                        seq.setProperty(tag, value);
+                        //seq.setDescription (seq.getDescription() + " " + value);
+                        //seq.addProperty(tag, value);
+                        //logger.debug("Added property to sequence: " + tag + "=" + value);
+                        break;
                 }
             }
         }

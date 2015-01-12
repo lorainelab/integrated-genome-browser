@@ -194,20 +194,22 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
                 return false;
             }
         }
-        if (name.equals("method")) {
-            if (val instanceof String) {
-                method = (String) val;
-                return true;
-            } else {
-                //source = null;
-                return false;
-            }
-        } else if (name.equals("group")) {
-            // Not supported
-            throw new IllegalArgumentException("Currently can't modify 'group' via setProperty");
-        } else if (name.equals("score") || name.equals("frame")) {
-            // May need to handle these later, but it is unlikely to be an issue
-            throw new IllegalArgumentException("Currently can't modify 'score' or 'frame' via setProperty");
+        switch (name) {
+            case "method":
+                if (val instanceof String) {
+                    method = (String) val;
+                    return true;
+                } else {
+                    //source = null;
+                    return false;
+                }
+            case "group":
+                // Not supported
+                throw new IllegalArgumentException("Currently can't modify 'group' via setProperty");
+            case "score":
+            case "frame":
+                // May need to handle these later, but it is unlikely to be an issue
+                throw new IllegalArgumentException("Currently can't modify 'score' or 'frame' via setProperty");
         }
 
         return super.setProperty(name, val);

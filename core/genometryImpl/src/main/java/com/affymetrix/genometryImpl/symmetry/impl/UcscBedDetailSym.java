@@ -42,12 +42,13 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
     }
 
     public Object getProperty(String key) {
-        if (key.equals("gene name")) {
-            return geneName;
-        } else if (key.equals("description")) {
-            return description;
-        } else {
-            return super.getProperty(key);
+        switch (key) {
+            case "gene name":
+                return geneName;
+            case "description":
+                return description;
+            default:
+                return super.getProperty(key);
         }
     }
 

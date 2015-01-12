@@ -78,41 +78,44 @@ public final class KeyStrokeEditPanel extends JPanel {
                 int keyCode = evt.getKeyCode();
                 int modifiers = evt.getModifiers();
                 KeyStroke ks = KeyStroke.getKeyStroke(keyCode, modifiers);
-                if (getKeyText(ks.getKeyCode()).equals("BACK_SPACE")
-                        || getKeyText(ks.getKeyCode()).equals("DELETE")) {
-                    evt.consume();
-                    clearAction();
-                } else if (getKeyText(ks.getKeyCode()).equals("ENTER")
-                        || getKeyText(ks.getKeyCode()).equals("TAB")) {
-                    applyAction(key_field.getText().trim());
-                } else {
-                    evt.consume();
-                    String command = keyStroke2String(ks);
-                    String useCommand = isCommandInUse(command);
-                    if (useCommand != null) {
-						// Temorarily remove the focus listener
-                        // so that it doesn't try to apply the action
-                        // when the confirmation dialog pops up.
-                        GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
-                        String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
-                        key_field.removeFocusListener(lois);
-                        if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
-                                "This shortcut is currently in use; \n"
-                                + "reassigning this will remove the shortcut for '"
-                                + actionDisplayName + "'.\n"
-                                + "Do you want to proceed?", null, null, false)) {
-                            key_field.setText(lastTimeFocusGained);
-                            lastCommand = null;
-                        } else { // cancelled
-                            PreferenceUtils.getKeystrokesNode().put(useCommand, "");
-                            key_field.setText(command);
-                            applyAction(key_field.getText().trim());
-                        }
-                        key_field.addFocusListener(lois);
-                        return;
-                    }
-                    key_field.setText(command);
-                    lastCommand = command;
+                switch (getKeyText(ks.getKeyCode())) {
+                    case "BACK_SPACE":
+                    case "DELETE":
+                        evt.consume();
+                        clearAction();
+                        break;
+                    case "ENTER":
+                    case "TAB":
+                        applyAction(key_field.getText().trim());
+                        break;
+                    default:
+                        evt.consume();
+                        String command = keyStroke2String(ks);
+                        String useCommand = isCommandInUse(command);
+                        if (useCommand != null) {
+                            // Temorarily remove the focus listener
+                            // so that it doesn't try to apply the action
+                            // when the confirmation dialog pops up.
+                            GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
+                            String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
+                            key_field.removeFocusListener(lois);
+                            if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
+                                    "This shortcut is currently in use; \n"
+                                            + "reassigning this will remove the shortcut for '"
+                                            + actionDisplayName + "'.\n"
+                                            + "Do you want to proceed?", null, null, false)) {
+                                key_field.setText(lastTimeFocusGained);
+                                lastCommand = null;
+                            } else { // cancelled
+                                PreferenceUtils.getKeystrokesNode().put(useCommand, "");
+                                key_field.setText(command);
+                                applyAction(key_field.getText().trim());
+                            }
+                            key_field.addFocusListener(lois);
+                            return;
+                        }   key_field.setText(command);
+                        lastCommand = command;
+                        break;
                 }
             }
 

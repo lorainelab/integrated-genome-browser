@@ -285,24 +285,31 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			return;
 		}
 
-		if (current_elem.equals(FEATURE)) {
-			// feat_parent_id has moved to <PARENT> element
-			//      feat_parent_id = atts.getValue("parent");
-			parseFeature(atts);
-		} else if (current_elem.equals(LOC)) {
-			// DO_SEQID_HACK is a very temporary fix!!!
-			// Need to move to using full URI references to identify sequences,
+            switch (current_elem) {
+                case FEATURE:
+                    // feat_parent_id has moved to <PARENT> element
+                    //      feat_parent_id = atts.getValue("parent");
+                    parseFeature(atts);
+                    break;
+                case LOC:
+                    // DO_SEQID_HACK is a very temporary fix!!!
+                    // Need to move to using full URI references to identify sequences,
 			parseLoc(atts);
-		} else if (current_elem.equals(PARENT)) {
-			parseParent(atts);
-		} else if (current_elem.equals(PART)) {
-			parsePart(atts);
-		} else if (current_elem.equals(PROP)) {
-			feat_prop_key = atts.getValue(KEY);
-			feat_prop_val = atts.getValue(VALUE);
-		} else {
-			System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
-		}
+                        break;
+                case PARENT:
+                    parseParent(atts);
+                    break;
+                case PART:
+                    parsePart(atts);
+                    break;
+                case PROP:
+                    feat_prop_key = atts.getValue(KEY);
+                    feat_prop_val = atts.getValue(VALUE);
+                    break;
+                default:
+                    System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
+                    break;
+            }
 	}
 
 	private void parseFeature(Attributes atts) throws SAXException {
@@ -440,38 +447,40 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		if (DEBUG) {
 			System.out.println("end element: " + name);
 		}
-		// only two elements that need post-processing are  <FEATURE> and <PROP> ?
-		//   other elements are either top <FEATURELISTS> or have only attributes
-		if (name.equals(FEATURE)) {
-			addFeature();
-			clearFeature();
-		} else if (name.equals(PROP)) {
-			// need to process <PROP> elements after element is ended, because value may be in CDATA?
-			// need to account for possibility that there are multiple property values of same ptype
-			//    for such cases, make object that feat_prop_key maps to a List of the prop vals
-			//
-			// Update Feb2006 -- now that feature props use attribute value instead of content,
-			//   should probably move this stuff up to the startElement() conditional for clarity,
-			//   then can make feat_prop_key and feat_prop_val local to method
-			if (feat_props == null) {
-				feat_props = new HashMap<>();
-			}
-			Object prev = feat_props.get(feat_prop_key);
-			if (prev == null) {
-				feat_props.put(feat_prop_key, feat_prop_val);
-			} else if (prev instanceof List) {
-				((List) prev).add(feat_prop_val);
-			} else {
-				List multivals = new ArrayList();
+            // only two elements that need post-processing are  <FEATURE> and <PROP> ?
+            //   other elements are either top <FEATURELISTS> or have only attributes
+            switch (name) {
+                case FEATURE:
+                    addFeature();
+                    clearFeature();
+                    break;
+                case PROP:
+                    // need to process <PROP> elements after element is ended, because value may be in CDATA?
+                    // need to account for possibility that there are multiple property values of same ptype
+                    //    for such cases, make object that feat_prop_key maps to a List of the prop vals
+                    //
+                    // Update Feb2006 -- now that feature props use attribute value instead of content,
+                    //   should probably move this stuff up to the startElement() conditional for clarity,
+                    //   then can make feat_prop_key and feat_prop_val local to method
+                    if (feat_props == null) {
+                        feat_props = new HashMap<>();
+                    }
+                    Object prev = feat_props.get(feat_prop_key);
+                    if (prev == null) {
+                        feat_props.put(feat_prop_key, feat_prop_val);
+                    } else if (prev instanceof List) {
+                        ((List) prev).add(feat_prop_val);
+                    } else {
+                        List multivals = new ArrayList();
 				multivals.add(prev);
 				multivals.add(feat_prop_val);
 				feat_props.put(feat_prop_key, multivals);
 			}
-
-			feat_prop_key = null;
-			feat_prop_val = null;
-			current_elem = elemstack.pop();
-		}
+                    feat_prop_key = null;
+                    feat_prop_val = null;
+                    current_elem = elemstack.pop();
+                    break;
+            }
 
 		// base_uri_stack.push(...) is getting called in every startElement() call,
 		// so need to call base_uri_stack.pop() at end of every endElement() call;

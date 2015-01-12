@@ -291,16 +291,19 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
     public void preferenceChange(PreferenceChangeEvent evt) {
         final String key = evt.getKey();
 
-        if (key.equals(SERVER_NAME) || key.equals(SERVER_TYPE)) {
-            /*
-             * Ignore
-             */
-        } else if (key.equals(SERVER_LOGIN)) {
-            this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
-        } else if (key.equals(SERVER_PASSWORD)) {
-            this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
-        } else if (key.equals(IS_SERVER_ENABLED)) {
-            this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
+        switch (key) {
+            case SERVER_NAME:
+            case SERVER_TYPE:
+                break;
+            case SERVER_LOGIN:
+                this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
+                break;
+            case SERVER_PASSWORD:
+                this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
+                break;
+            case IS_SERVER_ENABLED:
+                this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
+                break;
         }
     }
 

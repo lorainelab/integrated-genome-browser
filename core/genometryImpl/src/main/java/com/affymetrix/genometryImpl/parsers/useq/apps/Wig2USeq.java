@@ -45,21 +45,23 @@ public class Wig2USeq {
 				//make save directory
 				saveDirectory = USeqUtilities.makeDirectory(workingWigFile, ".TempDelMe");
 
-				//parse file and write to save directory
-				if (type.equals("variableStep")) {
-					parseVariableStepWigFile();
-				}
-				else if (type.equals("fixedStep")) {
-					graphStyle =1;
-					parseFixedStepWigFile();
-				}
-				else if (type.equals("bedGraph")) {
-					graphStyle =1;
-					parseBedGraphFile();
-				}
-				else {
-					USeqUtilities.printExit("Not implemented "+type);
-				}
+                            //parse file and write to save directory
+                            switch (type) {
+                                case "variableStep":
+                                    parseVariableStepWigFile();
+                                    break;
+                                case "fixedStep":
+                                    graphStyle =1;
+                                    parseFixedStepWigFile();
+                                    break;
+                                case "bedGraph":
+                                    graphStyle =1;
+                                    parseBedGraphFile();
+                                    break;
+                                default:
+                                    USeqUtilities.printExit("Not implemented "+type);
+                                    break;
+                            }
 
 				//write the read me
 				writeReadMeTxt();

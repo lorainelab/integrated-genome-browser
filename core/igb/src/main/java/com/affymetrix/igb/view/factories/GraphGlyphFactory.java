@@ -221,7 +221,7 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
         if (sym instanceof GraphSym) {
             GraphGlyph graphGlyph = displayGraph((GraphSym) sym, smv, check_same_seq);
             if (graphGlyph != null) {
-                if (style.getFloatTier()) {
+                if (style.isFloatTier()) {
                     graphGlyph.setCoords(0, style.getY(), smv.getViewSeq().getLength(), graphGlyph.getCoordBox().getHeight());
                     smv.getFloaterGlyph().addChild(graphGlyph);
 //					smv.getFloaterGlyph().checkBounds(graphGlyph, smv.getSeqMap().getView());

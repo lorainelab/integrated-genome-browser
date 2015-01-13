@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -13,6 +14,7 @@ import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -51,7 +53,12 @@ public class FilterAction extends SeqMapViewActionA {
 
         ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = symmetryFilter -> {
             if (symmetryFilter instanceof SupportsFileTypeCategory) {
-                return symmetryFilter.isFileTypeCategorySupported(tg.getFileTypeCategory());
+                Optional<FileTypeCategory> category = tg.getFileTypeCategory();
+                if (category.isPresent()) {
+                    return symmetryFilter.isFileTypeCategorySupported(category.get());
+                } else {
+                    return false;
+                }
             }
             return true;
         };

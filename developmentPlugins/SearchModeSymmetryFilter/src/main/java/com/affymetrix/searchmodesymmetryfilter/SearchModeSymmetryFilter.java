@@ -14,6 +14,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 
@@ -67,8 +68,8 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
             throw new IllegalStateException("filter value changed from "
                     + ((SymmetryFilter) filter).getParameterValue(((SymmetryFilter) filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
         }
-        List<Glyph> glyphs = igbService.getAllTierGlyphs();
-        for (Glyph selectedTierGlyph : glyphs) {
+        List<TierGlyph> glyphs = igbService.getAllTierGlyphs();
+        for (TierGlyph selectedTierGlyph : glyphs) {
             Object info = selectedTierGlyph.getInfo();
             if (info instanceof TypeContainerAnnot) {
                 List<SeqSymmetry> searchResults = searchTrack(search_text, (TypeContainerAnnot) info);

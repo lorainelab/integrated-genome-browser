@@ -51,6 +51,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Optional;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -289,22 +290,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         return ((AffyTieredMap) getSeqMap()).getView();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
     @Override
-    public List<Glyph> getAllTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
+    public List<TierGlyph> getAllTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
+    
     @Override
-    public List<Glyph> getSelectedTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
+    public List<TierGlyph> getSelectedTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
     @Override
-    public List<Glyph> getVisibleTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();
+    public List<TierGlyph> getVisibleTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();
     }
 
     @Override

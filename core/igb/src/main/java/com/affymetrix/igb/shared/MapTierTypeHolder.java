@@ -60,6 +60,7 @@ public class MapTierTypeHolder {
 
     //TODO: remove this method when there is time to refactor
     public static boolean supportsTwoTrack(FileTypeCategory category) {
+        checkNotNull(category);
         MapTierGlyphFactoryI factory = getDefaultFactoryFor(category);
         if (factory == null) {
             return false;

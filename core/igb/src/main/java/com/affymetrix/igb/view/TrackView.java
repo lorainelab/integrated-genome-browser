@@ -237,7 +237,7 @@ public class TrackView {
             GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
                     method, feature.featureName, feature.getExtension(), feature.featureProps);
 
-            if (state.getTierStyle().getFloatTier()) {
+            if (state.getTierStyle().isFloatTier()) {
                 return null;
             }
 
@@ -267,7 +267,7 @@ public class TrackView {
         } else {
             //rootSym = new GraphSym(new int[]{}, new float[]{}, style.getMethodName(), seq);
             TierGlyph tg = gviewer.getTrack(style, StyledGlyph.Direction.NONE);
-            if (tg.getChildCount() == 0 && !style.getFloatTier() && !style.getJoin()) {
+            if (tg.getChildCount() == 0 && !style.isFloatTier() && !style.getJoin()) {
                 ((AbstractTierGlyph) tg).initUnloaded();
             }
             tg.pack(gviewer.getSeqMap().getView());
@@ -276,7 +276,7 @@ public class TrackView {
 
     private void addDummyChild(TierGlyph tierGlyph) {
         if (tierGlyph.getChildCount() == 0
-                && !tierGlyph.getAnnotStyle().getFloatTier()
+                && !tierGlyph.getAnnotStyle().isFloatTier()
                 && !tierGlyph.getAnnotStyle().getJoin()) {
             GlyphI glyph = new FillRectGlyph();
             glyph.setCoords(0, 0, 0, tierGlyph.getChildHeight());

@@ -975,7 +975,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     @Override
-    public final boolean getFloatTier() {
+    public final boolean isFloatTier() {
         return float_graph;
     }
 

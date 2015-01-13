@@ -38,7 +38,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
             boolean hasFloater = false;
             boolean hasAnchored = false;
             for (GraphState gs : graphStates) {
-                boolean floating = gs.getTierStyle().getFloatTier();
+                boolean floating = gs.getTierStyle().isFloatTier();
                 hasFloater |= floating;
                 hasAnchored |= !floating;
             }
@@ -69,7 +69,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
         boolean something_changed = false;
         for (GraphGlyph glyph : graphGlyphs) {
             ITrackStyleExtended style = glyph.getAnnotStyle();
-            boolean is_floating = style.getFloatTier();
+            boolean is_floating = style.isFloatTier();
             if (!is_floating) {
                 // figure out correct height
                 Rectangle2D.Double coordbox = getSeqMapView().getFloaterGlyph().getFloatCoords(glyph, getTierMap().getView());

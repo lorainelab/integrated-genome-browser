@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -57,14 +58,15 @@ public abstract class AbstractExportFileAction
      */
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
-        List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-        setEnabled(1 == answer.size() && answer.get(0).getInfo() != null && isExportable(((TierGlyph) answer.get(0)).getFileTypeCategory()));
+        List<TierGlyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        Optional<FileTypeCategory> category = answer.get(0).getFileTypeCategory();
+        setEnabled(1 == answer.size() && answer.get(0).getInfo() != null && isExportable(category));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<Glyph> current_tiers = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        List<TierGlyph> current_tiers = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
         if (current_tiers.size() > 1) {
             ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
         } else if (current_tiers.isEmpty()) {
@@ -119,9 +121,12 @@ public abstract class AbstractExportFileAction
         }
     }
 
-    public boolean isExportable(FileTypeCategory category) {
-        Map<UniFileFilter, AnnotationWriter> filter2writers = model.getFilterToWriters(category);
-        return filter2writers != null && !filter2writers.isEmpty();
+    public boolean isExportable(Optional<FileTypeCategory> category) {
+        if (category.isPresent()) {
+            return !model.getFilterToWriters(category.get()).isEmpty();
+        } else {
+            return false;
+        }
     }
 
     protected abstract void exportFile(

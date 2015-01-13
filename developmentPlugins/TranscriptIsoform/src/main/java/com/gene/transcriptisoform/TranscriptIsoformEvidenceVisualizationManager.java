@@ -212,11 +212,10 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
         }
     }
 
-    private void displayIsoforms(List<Glyph> labelGlyphs) {
+    private void displayIsoforms(List<TierGlyph> labelGlyphs) {
         clearExonConnectorGlyphs();
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        for (Glyph labelGlyph : labelGlyphs) {
-            TierGlyph reference_tier = (TierGlyph) labelGlyph;
+        for (TierGlyph reference_tier : labelGlyphs) {
             if (reference_tier.getChildren() != null && isCigarTier(reference_tier)) {
                 for (GlyphI glyph : reference_tier.getChildren()) {
                     processGlyph(glyph);

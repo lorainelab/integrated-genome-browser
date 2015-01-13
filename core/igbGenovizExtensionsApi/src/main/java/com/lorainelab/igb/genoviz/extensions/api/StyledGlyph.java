@@ -3,6 +3,7 @@ package com.lorainelab.igb.genoviz.extensions.api;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import java.util.Optional;
 
 /**
  *
@@ -26,7 +27,7 @@ public interface StyledGlyph extends GlyphI {
 
     public ITrackStyleExtended getAnnotStyle();
 
-    public FileTypeCategory getFileTypeCategory();
+    public Optional<FileTypeCategory> getFileTypeCategory();
 
     public Direction getDirection();
 }

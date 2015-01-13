@@ -3,11 +3,13 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
+import java.util.Optional;
 
 /**
  *
@@ -40,7 +42,12 @@ public class ColorByAction extends SeqMapViewActionA {
 
         ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = colorProvider -> {
             if (colorProvider instanceof SupportsFileTypeCategory) {
-                return colorProvider.isFileTypeCategorySupported(tg.getFileTypeCategory());
+                Optional<FileTypeCategory> category = tg.getFileTypeCategory();
+                if (category.isPresent()) {
+                    return colorProvider.isFileTypeCategorySupported(category.get());
+                } else {
+                    return false;
+                }
             }
             return true;
         };

@@ -51,6 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import java.util.Optional;
 
 /**
  * This is the glyph that displays the contents of a Tier/Track.
@@ -211,11 +212,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     }
 
     @Override
-    public FileTypeCategory getFileTypeCategory() {
+    public Optional<FileTypeCategory> getFileTypeCategory() {
         if (getInfo() != null && getInfo() instanceof RootSeqSymmetry) {
-            return ((RootSeqSymmetry) getInfo()).getCategory();
+            return Optional.ofNullable(((RootSeqSymmetry) getInfo()).getCategory());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -456,9 +457,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     protected void rangeChanged(SeqMapViewExtendedI smv) {
         if (isAutoLoadMode() /* && isDetail(smv.getSeqMap().getView())*/) {
             try {
-                MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(getFileTypeCategory());
-                if (factory != null) {
-                    loadAndDisplayRegion(smv, factory);
+                Optional<FileTypeCategory> fileTypeCategory = getFileTypeCategory();
+                if (fileTypeCategory.isPresent()) {
+                    MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(fileTypeCategory.get());
+                    if (factory != null) {
+                        loadAndDisplayRegion(smv, factory);
+                    }
                 }
             } catch (Exception ex) {
                 Logger.getLogger(AbstractTierGlyph.class.getName()).log(Level.SEVERE, null, ex);
@@ -466,9 +470,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         }
     }
 
-    /** Returns the color used to draw the tier background, or null
-	if there is no background. */
-	public final Color getFillColor() {
+    /**
+     * Returns the color used to draw the tier background, or null
+     * if there is no background.
+     */
+    public final Color getFillColor() {
         return style.getBackground();
     }
 
@@ -724,10 +730,10 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     }
 
     /**
-	 * Changes the maximum depth of the expanded packer.
-	 * This does not call pack() afterwards.
-	 */
-	protected void setMaxExpandDepth(int max) {
+     * Changes the maximum depth of the expanded packer.
+     * This does not call pack() afterwards.
+     */
+    protected void setMaxExpandDepth(int max) {
         expand_packer.setMaxSlots(max);
     }
 

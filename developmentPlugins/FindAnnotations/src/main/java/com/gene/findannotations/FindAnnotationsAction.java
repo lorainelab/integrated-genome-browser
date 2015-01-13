@@ -18,7 +18,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -53,15 +52,15 @@ public class FindAnnotationsAction extends GenericAction {
 
     private List<TypeContainerAnnot> getTrackSyms() {
         List<TypeContainerAnnot> trackSyms = new ArrayList<>();
-        List<Glyph> glyphs;
+        List<TierGlyph> glyphs;
         if (selectedTracksCB.isSelected()) {
             glyphs = igbService.getSelectedTierGlyphs();
         } else {
             glyphs = igbService.getVisibleTierGlyphs();
         }
-        for (Glyph tierGlyph : glyphs) {
+        for (TierGlyph tierGlyph : glyphs) {
             Object info = tierGlyph.getInfo();
-            if ((info == null || info instanceof DummyRootSeqSymmetry) && tierGlyph instanceof TierGlyph) {
+            if ((info == null || info instanceof DummyRootSeqSymmetry)) {
                 String type = ((TierGlyph) tierGlyph).getAnnotStyle().getMethodName();
                 if (type != null) {
                     trackSyms.add(new TypeContainerAnnot(type));

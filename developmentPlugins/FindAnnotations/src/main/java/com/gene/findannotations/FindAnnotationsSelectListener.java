@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.osgi.service.IGBService;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class FindAnnotationsSelectListener implements MouseListener {
 
@@ -52,7 +53,7 @@ public class FindAnnotationsSelectListener implements MouseListener {
                 @Override
                 protected List<SeqSymmetry> doInBackground() throws Exception {
                     List<SeqSymmetry> syms = new ArrayList<>();
-                    for (Glyph tierGlyph : igbService.getAllTierGlyphs()) {
+                    for (TierGlyph tierGlyph : igbService.getAllTierGlyphs()) {
                         if (tierGlyph.isVisible()) {
                             for (GlyphI glyphAtSpan : getGlyphsAtSpan(tierGlyph, span)) {
                                 SeqSymmetry symAtSpan = (SeqSymmetry) glyphAtSpan.getInfo();

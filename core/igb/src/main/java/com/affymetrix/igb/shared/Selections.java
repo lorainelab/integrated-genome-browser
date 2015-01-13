@@ -22,6 +22,7 @@ import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.event.EventListenerList;
 
@@ -41,7 +42,7 @@ public abstract class Selections {
     public static final List<RootSeqSymmetry> annotSyms = new CopyOnWriteArrayList<>();
     public static final List<RootSeqSymmetry> graphSyms = new CopyOnWriteArrayList<>();
     public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<>();
-    
+
     private static final SeqMapView smv;
     private static final EventListenerList listenerList;
 
@@ -77,7 +78,7 @@ public abstract class Selections {
         graphSyms.clear();
         axisStyles.clear();
         for (StyledGlyph useGlyph : selected) {
-            FileTypeCategory category = useGlyph.getFileTypeCategory();
+            Optional<FileTypeCategory> category = useGlyph.getFileTypeCategory();
             if (useGlyph instanceof GraphGlyph) {
                 GraphGlyph gg = (GraphGlyph) useGlyph;
                 graphStates.add(gg.getGraphState());
@@ -109,19 +110,22 @@ public abstract class Selections {
                         }
                     }
                 }
-            } else if (category == FileTypeCategory.Annotation || category == FileTypeCategory.Alignment
-                    || category == FileTypeCategory.ProbeSet || category == FileTypeCategory.PairedRead) {
-                annotStyles.add(useGlyph.getAnnotStyle());
-                allStyles.add(useGlyph.getAnnotStyle());
-                allGlyphs.add(useGlyph);
-                if (useGlyph.getInfo() != null && category != FileTypeCategory.PairedRead) {
-                    rootSyms.add((RootSeqSymmetry) useGlyph.getInfo());
-                    annotSyms.add((RootSeqSymmetry) useGlyph.getInfo());
+            } else if (category.isPresent()) {
+                
+                if (category.get() == FileTypeCategory.Annotation || category.get() == FileTypeCategory.Alignment
+                        || category.get() == FileTypeCategory.ProbeSet || category.get() == FileTypeCategory.PairedRead) {
+                    annotStyles.add(useGlyph.getAnnotStyle());
+                    allStyles.add(useGlyph.getAnnotStyle());
+                    allGlyphs.add(useGlyph);
+                    if (useGlyph.getInfo() != null && category.get() != FileTypeCategory.PairedRead) {
+                        rootSyms.add((RootSeqSymmetry) useGlyph.getInfo());
+                        annotSyms.add((RootSeqSymmetry) useGlyph.getInfo());
+                    }
+                } else if (category.get() == FileTypeCategory.Axis) {
+                    allGlyphs.add(useGlyph);
+                    axisStyles.add(useGlyph.getAnnotStyle());
                 }
-            } else if (category == FileTypeCategory.Axis) {
-                allGlyphs.add(useGlyph);
-                axisStyles.add(useGlyph.getAnnotStyle());
-            } else if (category == null) { // This happens when feature checked but data is not loaded
+            } else if (!category.isPresent()) { // This happens when feature checked but data is not loaded
                 allStyles.add(useGlyph.getAnnotStyle());
                 allGlyphs.add(useGlyph);
                 if (useGlyph.getAnnotStyle().isGraphTier()) {
@@ -166,9 +170,9 @@ public abstract class Selections {
     public static boolean isAllAnnot() {
         return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
     }
-    
-    public static boolean isAnyShowAsPaired(){
-     for (ITrackStyleExtended style : allStyles) {
+
+    public static boolean isAnyShowAsPaired() {
+        for (ITrackStyleExtended style : allStyles) {
             if (style.isShowAsPaired()) {
                 return true;
             }
@@ -205,18 +209,16 @@ public abstract class Selections {
     }
 
     public static boolean isAnyFloat() {
-        for (ITrackStyleExtended style : allStyles) {
-            if (style.getFloatTier()) {
-                return true;
-            }
-        }
-        return false;
+        return allStyles.stream().anyMatch((style) -> (style.isFloatTier()));
     }
 
     public static boolean isAllSupportTwoTrack() {
         for (StyledGlyph glyph : allGlyphs) {
-            if (!MapTierTypeHolder.supportsTwoTrack(glyph.getFileTypeCategory())) {
-                return false;
+            Optional<FileTypeCategory> fileTypeCategory = glyph.getFileTypeCategory();
+            if (fileTypeCategory.isPresent()) {
+                if (!MapTierTypeHolder.supportsTwoTrack(fileTypeCategory.get())) {
+                    return false;
+                }
             }
         }
         return true;
@@ -340,7 +342,7 @@ public abstract class Selections {
     private static void notifyRefreshListener() {
         // Guaranteed to return a non-null array
         RefreshSelectionListener[] listeners = listenerList.getListeners(RefreshSelectionListener.class);
-		// Process the listeners last to first, notifying
+        // Process the listeners last to first, notifying
         // those that are interested in this event
         for (int i = listeners.length - 1; i >= 0; i -= 1) {
             listeners[i].selectionRefreshed();
@@ -366,7 +368,7 @@ public abstract class Selections {
 
         @Override
         public void symSelectionChanged(SymSelectionEvent evt) {
-			// Only pay attention to selections from the main SeqMapView or its map.
+            // Only pay attention to selections from the main SeqMapView or its map.
             // Ignore the splice view as well as events coming from this class itself.
 
             Object src = evt.getSource();

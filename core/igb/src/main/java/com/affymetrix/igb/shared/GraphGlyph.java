@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class GraphGlyph extends Glyph implements StyledGlyph {
 
@@ -1394,11 +1395,11 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     }
 
     @Override
-    public FileTypeCategory getFileTypeCategory() {
+    public Optional<FileTypeCategory> getFileTypeCategory() {
         if (graf != null) {
-            return graf.getCategory();
+            return Optional.ofNullable(graf.getCategory());
         }
-        return FileTypeCategory.Graph;
+        return Optional.ofNullable(FileTypeCategory.Graph);
     }
 
     @Override
@@ -1412,7 +1413,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
 
     @Override
     public boolean withinView(ViewI view) {
-        if (!getAnnotStyle().getFloatTier()) {
+        if (!getAnnotStyle().isFloatTier()) {
             return super.withinView(view);
         }
         return this.getCoordBox().intersects(this.getParent().getCoordBox());

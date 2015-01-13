@@ -13,6 +13,7 @@ import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import java.util.Optional;
 
 public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.RefreshSelectionListener {
 
@@ -278,26 +279,39 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 
     private int getStretchableCount() {
         int stretchableCount = 0;
-        for (Glyph glyph : igbService.getVisibleTierGlyphs()) {
-            if (!((TierGlyph) glyph).getAnnotStyle().getFloatTier()) {
-                FileTypeCategory category = ((TierGlyph) glyph).getFileTypeCategory();
-                if (category == null) {
-                    RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) glyph.getInfo();
-                    if (rootSeqSymmetry != null) {
-                        category = rootSeqSymmetry.getCategory();
+        for (TierGlyph glyph : igbService.getVisibleTierGlyphs()) {
+            if (isTierFloating((Glyph) glyph)) {
+                Optional<FileTypeCategory> fileTypeCategory = getTierGlyphFileTypeCategory((Glyph)glyph);
+                if (fileTypeCategory.isPresent()) {
+                    if (fileTypeCategory.get() != FileTypeCategory.Sequence) {
+                        stretchableCount++;
                     }
-                }
-                if (category != null && category != FileTypeCategory.Sequence) {
-                    stretchableCount++;
                 }
             }
         }
         return stretchableCount;
     }
 
+    private Optional<FileTypeCategory> getTierGlyphFileTypeCategory(Glyph glyph) {
+        Optional<FileTypeCategory> glyphFileTypeCategory = ((TierGlyph) glyph).getFileTypeCategory();
+        // for now do not change existing logic of returning null
+        if (glyphFileTypeCategory.isPresent()) {
+            return Optional.ofNullable(glyphFileTypeCategory.get());
+        }
+        RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) glyph.getInfo();
+        if (rootSeqSymmetry != null) {
+            return Optional.ofNullable(rootSeqSymmetry.getCategory());
+        }
+        return Optional.empty();
+    }
+
+    private static boolean isTierFloating(Glyph glyph) {
+        return !((TierGlyph) glyph).getAnnotStyle().isFloatTier();
+    }
+
     private boolean isAllFloat() {
         for (ITrackStyleExtended style : allStyles) {
-            if (!style.getFloatTier()) {
+            if (!style.isFloatTier()) {
                 return false;
             }
         }
@@ -341,7 +355,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
             if (isTierGlyph(parentgl)) {
                 parentgl.pack(igbService.getView());
             }
-            if (gl.getGraphState().getTierStyle().getFloatTier()) {
+            if (gl.getGraphState().getTierStyle().isFloatTier()) {
                 gl.getGraphState().getTierStyle().setHeight(height);
             }
         }

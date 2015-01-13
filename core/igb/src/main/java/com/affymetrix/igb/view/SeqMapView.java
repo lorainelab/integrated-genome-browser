@@ -679,7 +679,7 @@ public class SeqMapView extends JPanel
         public void componentResized(ComponentEvent e) {
             SwingUtilities.invokeLater(() -> {
                 List<GraphGlyph> graphs = collectGraphs();
-                graphs.stream().filter(graph -> graph.getAnnotStyle().getFloatTier()).forEach(graph -> {
+                graphs.stream().filter(graph -> graph.getAnnotStyle().isFloatTier()).forEach(graph -> {
                     getFloaterGlyph().checkBounds(graph, getSeqMap().getView());
                 });
                 getSeqMap().stretchToFit(false, false);
@@ -1257,7 +1257,7 @@ public class SeqMapView extends JPanel
 
         // convert graph glyphs to GraphSyms via glyphsToSyms
         // Bring them all into the visual area
-        visibleList.stream().filter(gl -> gl.getAnnotStyle().getFloatTier()).forEach(gl -> {
+        visibleList.stream().filter(gl -> gl.getAnnotStyle().isFloatTier()).forEach(gl -> {
             getFloaterGlyph().checkBounds(gl, getSeqMap().getView());
         });
 
@@ -1287,7 +1287,7 @@ public class SeqMapView extends JPanel
     }
 
     public final void selectTrack(TierGlyph tier, boolean selected) {
-        if (tier.getAnnotStyle().getFloatTier()) {
+        if (tier.getAnnotStyle().isFloatTier()) {
             tier.setSelected(selected);
         } else if (selected) {
             tierLabelManager.select(tier);

@@ -327,11 +327,9 @@ public final class TierLabelManager implements PropertyHolder {
     public List<TierGlyph> getSelectedTiers() {
         List<TierGlyph> selected_tiers = new ArrayList<>();
 
-        for (TierLabelGlyph tlg : getSelectedTierLabels()) {
-            // TierGlyph should be data model for tier label, access via label.getInfo()
+        getSelectedTierLabels().stream().forEach((tlg) -> {
             selected_tiers.add(tlg.getReferenceTier());
-
-        }
+        });
         return selected_tiers;
     }
 

@@ -152,7 +152,7 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
 
         boolean allFloat = isAllGraph();
         for (GraphState state : graphStates) {
-            if (!state.getTierStyle().getFloatTier()) {
+            if (!state.getTierStyle().isFloatTier()) {
                 allFloat = false;
                 break;
             }

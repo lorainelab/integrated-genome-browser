@@ -203,7 +203,7 @@ public final class GraphSelectionManager implements MouseListener,
 
 			GlyphI gl = evt.getGlyph();
 			if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-				if (((GraphGlyph) gl).getAnnotStyle().getFloatTier()) {
+				if (((GraphGlyph) gl).getAnnotStyle().isFloatTier()) {
 					gviewer.getFloaterGlyph().checkBounds(gl, ((AffyTieredMap) src).getView());
 				}
 			}

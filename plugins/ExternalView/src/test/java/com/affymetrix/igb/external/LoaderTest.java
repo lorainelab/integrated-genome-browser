@@ -4,12 +4,10 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import static junit.framework.Assert.assertNotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class LoaderTest {
 
-    @Ignore
     @Test
     public void checkDownLoadEnsembl() throws ImageUnavailableException {
         Map<String, String> cookies = new HashMap<>();

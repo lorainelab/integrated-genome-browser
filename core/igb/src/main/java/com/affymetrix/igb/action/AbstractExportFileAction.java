@@ -59,8 +59,12 @@ public abstract class AbstractExportFileAction
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
         List<TierGlyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-        Optional<FileTypeCategory> category = answer.get(0).getFileTypeCategory();
-        setEnabled(1 == answer.size() && answer.get(0).getInfo() != null && isExportable(category));
+        if (answer.size() != 1) {
+            setEnabled(false);
+        } else {
+            Optional<FileTypeCategory> category = answer.get(0).getFileTypeCategory();
+            setEnabled(answer.get(0).getInfo() != null && isExportable(category));
+        }
     }
 
     @Override

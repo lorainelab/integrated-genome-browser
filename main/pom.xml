@@ -609,51 +609,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>
+                            index
+                        </goal>
+                        
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
+                            <mavenRepository>${project.parent.basedir}/extbundles</mavenRepository>                       
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>       
         </plugins>
     </build>
-    
-    <profiles>
-        <profile>
-            <id>run</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution> 
-                                <id>start</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>          
-                                <phase>install</phase>      
-                                <configuration>
-                                    <target name="start">
-                                        <echo message="***** Starting IGB *****" />                                        
-                                        <property name="runtime_classpath" refid="maven.runtime.classpath"/>
-                                        <condition property="apple.jvmargs" value="-Xdock:name=IGB" else="" >
-                                            <os family="mac" />
-                                        </condition>
-                                        <java fork="true" maxmemory="1g" classname="com.affymetrix.main.Main">
-                                            <jvmarg value="-enableassertions" />
-                                            <jvmarg value="-Xms32m" />
-                                            <jvmarg line="${apple.jvmargs}" />
-                                            <jvmarg value="-DdevelopmentMode=true" />
-                                            <sysproperty key="java.util.logging.config.file" value="src/main/resources/logging.properties" />
-                                            <sysproperty key="apple.laf.useScreenMenuBar" value="true" />
-                                            <classpath refid="maven.runtime.classpath"/>
-                                        </java>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

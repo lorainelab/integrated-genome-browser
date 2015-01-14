@@ -262,9 +262,9 @@
                 <module>plugins/plugins_page</module>
                 <module>plugins/window_service_def</module>
                 <module>plugins/PairedEndDataPreprocessor</module>
-                <module>plugins/IGBR</module>
-                <module>main</module>
+                <module>plugins/IGBR</module>              
                 <!-- end of core modules-->
+                
                 <!-- start of dev plugin modules-->
                 <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/TableView</module>
@@ -280,8 +280,10 @@
                 <module>developmentPlugins/TutorialHelper</module>
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
-                <module>developmentPlugins/NCBIPrimer</module>
+                <module>developmentPlugins/NCBIPrimer</module>                
                 <!-- end of dev plugin modules-->
+                
+                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
         </profile>
     </profiles>

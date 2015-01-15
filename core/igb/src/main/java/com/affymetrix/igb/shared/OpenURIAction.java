@@ -49,10 +49,7 @@ public class OpenURIAction extends SeqMapViewActionA {
             final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
 
         if (ScriptManager.getInstance().isScript(uri.toString())) {
-            int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                RunScriptAction.getAction().runScript(uri.toString());
-            }
+            RunScriptAction.getAction().runScript(uri.toString());
             return;
         }
 

@@ -209,3 +209,9 @@ www/release_notes/images/Thumbs.db
 extbundles/*
 /plugins/ConsoleGui/target/
 /core/LoggingConfig/target/
+
+*.iml
+*.ipr
+*.iws
+.idea/
+

@@ -497,13 +497,6 @@
             <artifactId>org.apache.felix.scr</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
-        
-        
-        
-        
-        
-        
         <!-- Start of development plugins  added to ensure obr repository.xml gets generated with content since reactor plugin is not respecting order of module declaration-->
         <dependency>
             <groupId>com.affymetrix</groupId>
@@ -630,6 +623,7 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
+                            <excludeScope>provided</excludeScope>                            
                         </configuration>
                     </execution>
                 </executions>

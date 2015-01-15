@@ -11,6 +11,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,10 +51,10 @@ public class ExportFileModel {
 		annotationWriters.put(FileTypeCategory.Sequence, sequenceList);
 	}
 	
-	public Map<UniFileFilter, AnnotationWriter> getFilterToWriters(FileTypeCategory fileTypeCategory){
+	public Optional<Map<UniFileFilter, AnnotationWriter>> getFilterToWriters(FileTypeCategory fileTypeCategory){
 		List<Class<? extends AnnotationWriter>> availableWriters = annotationWriters.get(fileTypeCategory);
 		if (availableWriters == null || availableWriters.isEmpty()) {		
-			return null;
+			return Optional.empty();
 		}
 		
 		Map<UniFileFilter, AnnotationWriter> filter2writers = new HashMap<>();
@@ -82,7 +83,7 @@ public class ExportFileModel {
 			}
 		}
 		
-		return filter2writers;
+		return Optional.ofNullable(filter2writers);
 	}
 	
 	/**

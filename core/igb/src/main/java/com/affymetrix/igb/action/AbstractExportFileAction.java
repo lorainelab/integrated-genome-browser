@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.util.ExportFileModel;
 import com.affymetrix.genometryImpl.util.GFileChooser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
@@ -83,13 +82,14 @@ public abstract class AbstractExportFileAction
 
     private void saveAsFile(TierGlyph atier) {
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
-        Map<UniFileFilter, AnnotationWriter> filter2writers = model.getFilterToWriters(rootSym.getCategory());
-        if (filter2writers != null && !filter2writers.isEmpty()) {
+
+        Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(rootSym.getCategory());
+        if (filter2writers.isPresent() && !filter2writers.get().isEmpty()) {
             JFileChooser chooser = new GFileChooser();
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.setMultiSelectionEnabled(false);
             chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            filter2writers.keySet().forEach(chooser::addChoosableFileFilter);
+            filter2writers.get().keySet().forEach(chooser::addChoosableFileFilter);
             UniFileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
             if (preferredFilter == null) {
                 chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
@@ -112,7 +112,7 @@ public abstract class AbstractExportFileAction
                     dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
                     UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
                     preferredFilters.put(rootSym.getCategory(), selectedFilter);
-                    exportFile(filter2writers.get(selectedFilter), dos, aseq, atier);
+                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq, atier);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 } finally {
@@ -127,10 +127,12 @@ public abstract class AbstractExportFileAction
 
     public boolean isExportable(Optional<FileTypeCategory> category) {
         if (category.isPresent()) {
-            return !model.getFilterToWriters(category.get()).isEmpty();
-        } else {
-            return false;
+            Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(category.get());
+            if (filter2writers.isPresent()) {
+                return !filter2writers.get().isEmpty();
+            }
         }
+        return false;
     }
 
     protected abstract void exportFile(

@@ -35,7 +35,6 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
     public SimpleSymWithProps(int estimated_child_count) {
         this();
-        children = new ArrayList<>(estimated_child_count);
     }
 
     /**

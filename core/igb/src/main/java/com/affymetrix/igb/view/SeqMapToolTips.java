@@ -101,7 +101,7 @@ public class SeqMapToolTips extends JWindow {
                 properties.remove(STRAND);
                 propList = ToolTipOperations.formatBamSymTooltip(properties);
             } else {
-                logger.warn("Sym class not handled: " + sym.getClass().getSimpleName());
+                logger.debug("Sym class not handled: " + sym.getClass().getSimpleName());
                 propList = ToolTipOperations.formatDefaultSymTooltip(properties);
             }
             formatCategoryToolTip(propList);

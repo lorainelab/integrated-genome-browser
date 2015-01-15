@@ -41,6 +41,7 @@ task cleanOldBuild(type: Delete) {
 task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {
     projectFile = file('distribution/igb.install4j')
     variables = [projectHomeDirectory: projectDir, igbVersion: version, codeBaseUrl: System.getProperty('codebaseUrl')]
+    macKeystorePassword = System.getProperty('macKeystorePassword')
 }
 
 clean {

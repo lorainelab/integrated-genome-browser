@@ -66,6 +66,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -77,6 +78,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "AnnotationGlyphFactory";
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AnnotationGlyphFactory.class);
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###.###");
 
     static {
@@ -121,25 +123,25 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth, ITrackStyleExtended style) {
-        SeqSymmetry sym = initSymSpan(originalSym);
-        int depth = SeqUtils.getDepthFor(sym);
-        if (sym instanceof PairedBamSymWrapper) {
+        int depth = SeqUtils.getDepthFor(originalSym);
+        if (originalSym instanceof PairedBamSymWrapper) {
             if (style.isShowAsPaired()) {
-                addTopChild(sym);
+                addTopChild(originalSym);
             } else {
-                addTopChild(sym.getChild(0));
-                initSymSpan(sym.getChild(1));
-                addTopChild(sym.getChild(1));
+                addTopChild(originalSym.getChild(0));
+                initSymSpan(originalSym.getChild(1));
+                addTopChild(originalSym.getChild(1));
             }
             return;
         }
-        if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
-            int childCount = sym.getChildCount();
+        if (depth > desired_leaf_depth || originalSym instanceof TypeContainerAnnot) {
+            int childCount = originalSym.getChildCount();
             for (int i = 0; i < childCount; i++) {
-                addLeafsToTier(sym.getChild(i), desired_leaf_depth, style);
+                addLeafsToTier(originalSym.getChild(i), desired_leaf_depth, style);
             }
+            logger.debug("recursion loop complete");
         } else {  // depth == desired_leaf_depth
-            addTopChild(sym);
+            addTopChild(originalSym);
         }
     }
 
@@ -147,7 +149,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         insyms.forEach(this::addTopChild);
     }
 
-    protected void addTopChild(SeqSymmetry sym) {
+    protected void addTopChild(SeqSymmetry originalSym) {
+        SeqSymmetry sym = initSymSpan(originalSym);
         updateSymSpan(sym);
         if (!isValidSymSpan) {
             return;

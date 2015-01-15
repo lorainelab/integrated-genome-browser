@@ -112,11 +112,6 @@ public class MainMenuUtil {
 		select_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_select_all", SelectAllAction.getAction()));
 		select_menu.add(new JRPMenuItem(id + "_main_editMenu_deselect_all", DeselectAllAction.getAction()));
-		select_menu.addSeparator();
-		for (FileTypeCategory category : FileTypeCategory.values()) {
-			JRPMenuItem item = new JRPMenuItem(id + "_main_editMenu_select_all_" + category.toString(), SelectAllAction.getAction(category));
-			select_menu.add(item);
-		}
 		edit_menu.add(select_menu);
 	}
 

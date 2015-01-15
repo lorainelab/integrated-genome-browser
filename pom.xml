@@ -534,6 +534,12 @@
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
+                <artifactId>mergeAnnotationOperator</artifactId>
+                <version>${mergeAnnotationOperator-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.affymetrix</groupId>
                 <artifactId>ncbiPrimer</artifactId>
                 <version>${ncbiPrimer-version}</version>
                 <scope>provided</scope>
@@ -544,6 +550,12 @@
                 <version>${overlapAnnotationOperator-version}</version>
                 <scope>provided</scope>
             </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>parentOperators</artifactId>
+                <version>${parentOperators-version}</version>
+                 <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>sampleSelection</artifactId>

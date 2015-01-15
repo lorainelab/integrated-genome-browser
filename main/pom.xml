@@ -497,6 +497,96 @@
             <artifactId>org.apache.felix.scr</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+        
+        
+        
+        
+        
+        
+        <!-- Start of development plugins  added to ensure obr repository.xml gets generated with content since reactor plugin is not respecting order of module declaration-->
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>bam-indexer</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>DasRegistryServerType</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>findAnnotations</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>geometricMean</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>mergeAnnotationOperator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>ncbiPrimer</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>overlapAnnotationOperator</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>parentOperators</artifactId>            
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>sampleSelection</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>searchModeSymetryFilter</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>tableView</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>talleyHandler</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>thousandGenomesServerType</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>transcriptIsoForm</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>tutorialHelper</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <!-- End of development plugins -->
+        
+        
+        
+        
+        
+        
     </dependencies>
     <build>
         <resources>
@@ -616,8 +706,8 @@
                     <execution>
                         <goals>
                             <goal>
-                            index
-                        </goal>
+                                index
+                            </goal>
                         
                         </goals>
                         <phase>package</phase>

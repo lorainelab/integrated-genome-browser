@@ -139,7 +139,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             for (int i = 0; i < childCount; i++) {
                 addLeafsToTier(originalSym.getChild(i), desired_leaf_depth, style);
             }
-            logger.debug("recursion loop complete");
         } else {  // depth == desired_leaf_depth
             addTopChild(originalSym);
         }

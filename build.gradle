@@ -45,12 +45,12 @@ task cleanOldBuild(type: Delete) {
 
 task signExeJar() {
     ant.signjar(
-            signedjar: "igb_exe_signed.jar",
+            signedjar: "igb_exe_signed.jar",    
             alias: props.get('appleKeyStoreAlias'),
             storetype: 'pkcs12', 
             jar: "./igb_exe.jar",
             keystore: '/opt/igb/developerID_application_igb.jks',
-            props.get('appleKeypass'),
+            keypass: props.get('appleKeypass'),
             preservelastmodified: 'true');
 }
 

@@ -417,8 +417,6 @@
                         <object class="com.install4j.api.beans.ScriptProperty">
                           <void property="value">
                             <string>boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac");
-boolean IS_LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
 String igbHomeDirName = ".igb";
 String igbDataHome = "";
 if (IS_WINDOWS) {
@@ -431,6 +429,8 @@ if (!igbDataHomeFile.mkdir()) {
     File osgiBundleCacheDir = new File(igbDataHome + File.separator + "bundles");
     osgiBundleCacheDir.mkdir();
     context.setVariable("osgiBundleCacheDir", igbDataHome + File.separator + "bundles");
+}else{
+context.setVariable("osgiBundleCacheDir", "");
 }
 
 
@@ -462,7 +462,7 @@ return true;</string>
                     </object>
                   </java>
                 </serializedBean>
-                <condition />
+                <condition>return !context.getVariable("osgiBundleCacheDir").toString().equalsIgnoreCase("");</condition>
               </action>
             </actions>
             <formComponents />

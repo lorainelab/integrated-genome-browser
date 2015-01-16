@@ -18,8 +18,8 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.IDComparator;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.IGBConstants;
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.igb.IGBConstants.GENOME_SEQ_ID;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.ChangeFontSizeAction;
@@ -29,7 +29,6 @@ import com.affymetrix.igb.action.ChangeTierHeightAction;
 import com.affymetrix.igb.action.CloseTracksAction;
 import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.igb.action.ColorByAction;
-import com.affymetrix.igb.action.CustomizeAction;
 import com.affymetrix.igb.action.ExpandAction;
 import com.affymetrix.igb.action.ExportFileAction;
 import com.affymetrix.igb.action.ExportSelectedAnnotationFileAction;
@@ -61,7 +60,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,7 +75,6 @@ import org.apache.commons.lang3.StringUtils;
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     private static final boolean DEBUG = false;
-    private ResourceBundle BUNDLE = IGBConstants.BUNDLE;
     private final SeqMapView gviewer;
     private final TierLabelManager tierLabelManager;
     private final JMenu strandsMenu = new JMenu(BUNDLE.getString("strandsMenu"));
@@ -93,50 +90,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         };
         at1 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showPlus", ShowPlusStrandAction.getAction());
         at2 = new ActionToggler(smv.getClass().getSimpleName() + "_SeqMapViewPopup.showMinus", ShowMinusStrandAction.getAction());
-//		addActions();
     }
 
-    /**
-     * Load all the actions in use by this pop up. Beware, this is a maintenance
-     * nightmare. This was created by grepping for '\.getAction\(' and then
-     * making an {@link IGB#addAction} call out of each one. So if anyone ever
-     * adds or removes one of the actions in the pop up this list should be
-     * modified to match. Watch out for duplicates (like ShowOneTierAction).
-     * Note that this should be called early, preferably by the constructor. The
-     * shortcuts should be available even before this pop up is ever popped up.
-     * Sigh. - elb
-     */
-    // Replacing this with GenericActionListener in Activator. HV 11/14/12
-//	private void addActions() {
-//		IGB igb = (IGB) Application.getSingleton();
-//		igb.addAction(ShowPlusStrandAction.getAction());
-//		igb.addAction(ShowMinusStrandAction.getAction());
-//		igb.addAction(ChangeForegroundColorAction.getAction());
-//		igb.addAction(ChangeBackgroundColorAction.getAction());
-//		igb.addAction(ChangeForwardColorAction.getAction());
-//		igb.addAction(ChangeReverseColorAction.getAction());
-//		igb.addAction(RenameTierAction.getAction());
-//		igb.addAction(ChangeFontSizeAction.getAction());
-//		igb.addAction(ChangeExpandMaxAction.getAction());
-////		igb.addAction(ChangeExpandMaxAllAction.getAction());
-//		igb.addAction(ShowTwoTiersAction.getAction());
-//		igb.addAction(ShowOneTierAction.getAction());
-//		igb.addAction(SetColorByScoreAction.getAction());
-//		igb.addAction(ColorByScoreAction.getAction());
-//		igb.addAction(ExportFileAction.getAction());
-//		igb.addAction(ExportSelectedAnnotationFileAction.getAction());
-//		igb.addAction(UseAsReferenceSeqAction.getAction());
-//		igb.addAction(CustomizeAction.getAction());
-//		igb.addAction(HideAction.getAction());
-//		igb.addAction(ShowAllAction.getAction());
-//		igb.addAction(CenterAtHairlineAction.getAction());
-//		igb.addAction(MaximizeTrackAction.getAction());
-//		igb.addAction(CollapseAction.getAction());
-//		igb.addAction(ExpandAction.getAction());
-//		igb.addAction(RemoveDataFromTracksAction.getAction());
-//		igb.addAction(RepackSelectedTiersAction.getAction());
-//		igb.addAction(AutoLoadThresholdAction.getAction());
-//	}
     public void refreshMap(boolean stretchVertically, boolean stretchHorizonatally) {
         if (gviewer != null) {
             // if an AnnotatedSeqViewer is being used, ask it to update itself.
@@ -156,7 +111,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     private JMenu addOperationMenu(List<? extends SeqSymmetry> syms) {
         JMenu operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
-        if (IGBConstants.GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
+        if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
             return operationsMenu;
         }
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
@@ -221,9 +176,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         JMenuItem change_expand_max = new JRPMenuItemTLP(ChangeExpandMaxAction.getAction());
         change_expand_max.setEnabled(anyAreExpanded);
         changeMenu.add(change_expand_max);
-//		JMenuItem change_expand_max_all = new JRPMenuItemTLP(ChangeExpandMaxAllAction.getAction());
-//		change_expand_max_all.setEnabled(num_selections > 0);
-//		changeMenu.add(change_expand_max_all);
         return changeMenu;
     }
 
@@ -292,10 +244,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         boolean anyShowResidueMask = false;
         boolean anyShadeBasedOnQuality = false;
         boolean allSameCategory = numSelections > 0;
-//		boolean any_are_separate_tiers = false;
-//		boolean any_are_single_tier = false;
-//		boolean any_lockable = false;
-//		boolean any_locked = false;
         int noOfLocked = 0;
         FileTypeCategory category = numSelections > 0 && Selections.allGlyphs.get(0).getInfo() != null
                 ? ((RootSeqSymmetry) Selections.allGlyphs.get(0).getInfo()).getCategory()
@@ -331,14 +279,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 containHiddenTiers = true;
             }
 
-//			if (!astyle.isGraphTier()) {
-//				any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
-//				any_are_single_tier = 
-//						any_are_single_tier || (!astyle.getSeparate() && 
-//						MapTierTypeHolder.getInstance().supportsTwoTrack(glyph.getFileTypeCategory()));
-//			} 
-//			any_lockable = any_lockable || glyph.getTierType() == TierGlyph.TierType.ANNOTATION;
-//			any_locked = any_locked || (glyph instanceof DefaultTierGlyph && ((DefaultTierGlyph)glyph).isHeightFixed());
         }
 
         StyledGlyph styledGlyph = (numSelections == 1 ? Selections.allGlyphs.get(0) : null);
@@ -364,20 +304,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         changeExpandMax.setText("Set Stack Height...");
         changeExpandMax.setIcon(null);
         popup.add(changeExpandMax);
-//		popup.add(addChangeMenu(num_selections, any_are_expanded, any_are_separate_tiers, any_are_single_tier, any_are_color_off, coordinates_track_selected));
-//		strandsMenu.removeAll();
-//		strandsMenu.add(at1);
-//		strandsMenu.add(at2);
-//		JMenuItem show_two_tiers = new JRPMenuItemTLP(ShowTwoTiersAction.getAction());
-//		GenericActionHolder.getInstance().addGenericAction(ShowTwoTiersAction.getAction());
-//		show_two_tiers.setEnabled(any_are_single_tier && num_selections > 0 && !coordinates_track_selected);
-//		strandsMenu.add(show_two_tiers);
-//		JMenuItem show_one_tier = new JRPMenuItemTLP(ShowOneTierAction.getAction());
-//		GenericActionHolder.getInstance().addGenericAction(ShowOneTierAction.getAction());
-//		show_one_tier.setEnabled(any_are_separate_tiers);
-//		strandsMenu.add(show_one_tier);
-//		strandsMenu.setEnabled(!coordinates_track_selected);
-//		popup.add(strandsMenu);
         JMenuItem hide = new JMenuItem();
         hide.setAction(HideAction.getAction());
         hide.setIcon(null);
@@ -399,10 +325,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setText("Collapse");
         collapse.setIcon(null);
         popup.add(collapse);
-        JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
-        customize.setIcon(null);
-        customize.setText("Customize...");
-        popup.add(customize);
 
         popup.add(new JSeparator());
         JCheckBoxMenuItem showResidueMask = new JCheckBoxMenuItem(ShowMismatchAction.getAction());
@@ -413,50 +335,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         useBaseQuality.setEnabled(anyAlignment);
         useBaseQuality.setSelected(anyAlignment && anyShadeBasedOnQuality);
         popup.add(useBaseQuality);
-//		JMenuItem expand = new JRPMenuItemTLP(ExpandAction.getAction());
-//		expand.setEnabled(any_are_collapsed);
-//		popup.add(expand);
-//		JCheckBoxMenuItem lock = new JCheckBoxMenuItem();
-//		if(any_locked){
-//			lock.setAction(UnlockTierHeightAction.getAction());
-//			lock.setSelected(any_locked);
-//			lock.setText(LockTierHeightAction.getAction().getDisplay());
-//		}else{
-//			lock.setAction(LockTierHeightAction.getAction());
-//		}
-//		lock.setEnabled(any_lockable);
-//		if(!any_locked){
-//			lock.setEnabled(!all_but_one_locked && any_lockable);
-//		}
-//		popup.add(lock);
-//		JMenuItem repack_selected_tiers = new JRPMenuItemTLP(RepackSelectedTiersAction.getAction());
-//		repack_selected_tiers.setEnabled(num_selections > 0 && !coordinates_track_selected);
-//		popup.add(repack_selected_tiers);
         popup.add(new JSeparator());
-//		popup.add(new JRPMenuItemTLP(CenterAtHairlineAction.getAction()));
-//		if (num_selections == 1 && ((TierGlyph) labels.get(0).getInfo()).getDirection() != StyledGlyph.Direction.AXIS) {
-//			JMenuItem maximize_track = new JRPMenuItemTLP(MaximizeTrackAction.getAction());
-//			popup.add(maximize_track);
-//		}
-        //popup.add(new JSeparator());
-        //JMenuItem show_all = new JRPMenuItemTLP(ShowAllAction.getAction());
-        //show_all.setEnabled(containHiddenTiers);
-        //popup.add(show_all);
 
         JMenu operationsMenu = addOperationMenu(Selections.rootSyms);
         popup.add(operationsMenu);
         operationsMenu.getPopupMenu().setBorder(finalBorder);
         operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
         operationsMenu.setEnabled(!coordinatesTrackSelected);
-//		JCheckBoxMenuItem color_by_score = new JCheckBoxMenuItem(ColorByScoreAction.getAction());
-//		color_by_score.setSelected(any_are_color_by_score && num_selections > 0 && !coordinates_track_selected);
-//		color_by_score.setEnabled(num_selections == 1 && !coordinates_track_selected && !any_graph);
-//		color_by_score.setIcon(null);
-//		popup.add(color_by_score);
-//		JMenuItem set_color_by_score = new JRPMenuItemTLP(SetColorByScoreAction.getAction());
-//		set_color_by_score.setIcon(null);
-//		set_color_by_score.setEnabled(!coordinates_track_selected && !any_graph);
-//		popup.add(set_color_by_score);
 
         popup.add(new JSeparator());
 
@@ -523,25 +408,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 null);
         popup.add(deleteTrack);
 
-        //	if (tierGlyph != null) {
-        //		// Check whether this selection is a graph or an annotation
-        //		ITrackStyleExtended style = tierGlyph.getAnnotStyle();
-        //		GenericFeature feature = style.getFeature();
-        //		if (feature != null) {
-        //			if (tierGlyph.getFileTypeCategory() == FileTypeCategory.Sequence) {
-        //				popup.add(new JSeparator());
-        //				JMenuItem use_as_reference_seq = new JRPMenuItemTLP(UseAsReferenceSeqAction.getAction());
-        //				popup.add(use_as_reference_seq);
-        //			}
-//
-//				if (feature.friendlyURL != null) {
-//					popup.add(new JRPMenuItemTLP(new FeatureInfoAction(feature.friendlyURL.toString())));
-//				}
-//			}
-//		}
-        //popup.add(new JSeparator());
-        //popup.add(new JSeparator());
-//		popup.add(new JRPMenuItemTLP(AutoLoadThresholdAction.getAction()));
         if (DEBUG) {
             popup.add(new AbstractAction("DEBUG") {
 

@@ -50,7 +50,7 @@ task signExeJar() {
             storetype: 'pkcs12', 
             jar: "./igb_exe.jar",
             keystore: '/opt/igb/developerID_application_igb.jks',
-            keypass: props.get('appleKeypass'),
+            storepass: props.get('appleKeypass'),
             preservelastmodified: 'true');
 }
 

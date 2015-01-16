@@ -38,7 +38,6 @@
           <entry location="core" fileType="regular" />
           <entry location="run_igb.bat" fileType="regular" />
           <entry location="main" fileType="regular" />
-          <entry location=".idea" fileType="regular" />
           <entry location="run_igb.sh" fileType="regular" />
           <entry location=".ant-targets-build.xml" fileType="regular" />
           <entry location="nbactions.xml" fileType="regular" />
@@ -1560,5 +1559,5 @@ return true;</string>
   <buildIds buildAll="false">
     <mediaSet refId="25" />
   </buildIds>
-  <buildOptions verbose="false" faster="true" disableSigning="false" disableJreBundling="true" debug="false" />
+  <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
 </install4j>

@@ -36,11 +36,6 @@
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>bundle-info</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     

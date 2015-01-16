@@ -1,25 +1,13 @@
 package com.affymetrix.common;
 
-import com.lorainelab.osgi.bundle.BundleInfo;
-import com.lorainelab.osgi.bundle.BundleInfoParser;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
@@ -220,59 +208,6 @@ public class CommonUtils {
 
     public String getBundleRegistryFileName() {
         return BUNDLE_REGISTRY_FILE_NAME;
-    }
-
-    public List<BundleInfo> getCurrentBundleInfo() {
-        Reader reader = null;
-        List<BundleInfo> bundleInfo = null;
-        try {
-            reader = new InputStreamReader(CommonUtils.class.getClassLoader().getResourceAsStream(BUNDLE_REGISTRY_FILE_NAME));
-            bundleInfo = BundleInfoParser.fromJson(reader);
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, "Error closing reader", ex);
-                }
-            }
-        }
-        return bundleInfo;
-    }
-
-    public List<BundleInfo> getCachedBundleInfo() {
-        File cachedBundleInfoFile = new File(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
-        Reader reader = null;
-        List<BundleInfo> cacheBundleInfo = null;
-        if (cachedBundleInfoFile.exists()) {
-            try {
-                reader = new BufferedReader(new FileReader(cachedBundleInfoFile));
-                cacheBundleInfo = BundleInfoParser.fromJson(reader);
-            } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        LOG.log(Level.SEVERE, "Error closing reader", ex);
-                    }
-                }
-            }
-        } else {
-            return Collections.<BundleInfo>emptyList();
-        }
-        return cacheBundleInfo;
-    }
-
-    public void exportBundleInfo() {
-        try (PrintWriter out = new PrintWriter(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME)) {
-            out.print(BundleInfoParser.toJson(getCurrentBundleInfo()));
-        } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, "Could not write bundle registry file to app data directory", ex);
-        }
     }
 
     public static boolean isBlank(final CharSequence cs) {

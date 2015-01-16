@@ -409,6 +409,61 @@
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
+              <action name="" id="468" customizedId="" beanClass="com.install4j.runtime.beans.actions.control.RunScriptAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.control.RunScriptAction">
+                      <void property="script">
+                        <object class="com.install4j.api.beans.ScriptProperty">
+                          <void property="value">
+                            <string>boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac");
+boolean IS_LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
+String igbHomeDirName = ".igb";
+String igbDataHome = "";
+if (IS_WINDOWS) {
+    igbDataHome = System.getenv("AppData") + File.separator + igbHomeDirName;
+} else {
+    igbDataHome = System.getProperty("user.home") + File.separator + igbHomeDirName;
+}
+File igbDataHomeFile = new File(igbDataHome);
+if (!igbDataHomeFile.mkdir()) {
+    File osgiBundleCacheDir = new File(igbDataHome + File.separator + "bundles");
+    osgiBundleCacheDir.mkdir();
+    context.setVariable("osgiBundleCacheDir", igbDataHome + File.separator + "bundles");
+}
+
+
+return true;</string>
+                          </void>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="469" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="files">
+                        <array class="java.io.File" length="1">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>${installer:osgiBundleCacheDir}</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="recursive">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
             </actions>
             <formComponents />
           </screen>
@@ -1495,7 +1550,7 @@ return true;</string>
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="24" />
+    <mediaSet refId="25" />
   </buildIds>
-  <buildOptions verbose="false" faster="true" disableSigning="true" disableJreBundling="true" debug="false" />
+  <buildOptions verbose="false" faster="true" disableSigning="false" disableJreBundling="true" debug="false" />
 </install4j>

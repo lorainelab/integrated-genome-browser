@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
@@ -57,7 +58,7 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
             String readName = bamSym.getName();
             int mateStart = bamSym.getMateStart();
             if (pairMap.contains(readName, mateStart)) {
-                PairedBamSymWrapper bamSymWrapper;
+                MultiTierSymWrapper bamSymWrapper;
                 if (bamSym.isForward()) {
                     List<BAMSym> matchingBAMSyms = pairMap.get(readName, mateStart);
                     if (matchingBAMSyms.size() == 1) {

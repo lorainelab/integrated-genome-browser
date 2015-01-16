@@ -18,9 +18,10 @@ import java.util.Map;
  *
  * @author dcnorris
  */
-public final class PairedBamSymWrapper implements SeqSymmetry, TypedSym, SymWithProps {
+public final class PairedBamSymWrapper implements TypedSym, SymWithProps, MultiTierSymWrapper {
 
-    private static final int CHILD_COUNT = 2;
+    private static final int FIRST_CHILD = 0;
+    private static final int SECOND_CHILD = 1;
     private BAMSym forwardStrandSym;
     private BAMSym negativeStrandSym;
     private Map<String, Object> props;
@@ -156,6 +157,16 @@ public final class PairedBamSymWrapper implements SeqSymmetry, TypedSym, SymWith
         };
 
         return toReturn;
+    }
+
+    @Override
+    public SeqSymmetry getFirstChild() {
+        return getChild(FIRST_CHILD);
+    }
+
+    @Override
+    public SeqSymmetry getSecondChild() {
+        return getChild(SECOND_CHILD);
     }
 
 }

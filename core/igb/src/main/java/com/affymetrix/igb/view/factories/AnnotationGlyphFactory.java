@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -124,7 +125,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     protected void addLeafsToTier(SeqSymmetry originalSym, int desired_leaf_depth, ITrackStyleExtended style) {
         int depth = SeqUtils.getDepthFor(originalSym);
-        if (originalSym instanceof PairedBamSymWrapper) {
+        if (originalSym instanceof MultiTierSymWrapper) {
             if (style.isShowAsPaired()) {
                 addTopChild(originalSym);
             } else {
@@ -176,8 +177,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // call out to handle rendering to indicate if any of the children of the
             //    original annotation are completely outside the view
             if (parentGlyph.isPresent()) {
-                if (sym instanceof PairedBamSymWrapper) {
-                    handlePairedChildren((PairedBamSymWrapper) sym, parentGlyph.get());
+                if (sym instanceof MultiTierSymWrapper) {
+                    handlePairedChildren((MultiTierSymWrapper) sym, parentGlyph.get());
                 } else {
                     addChildren(sym, parentGlyph.get());
                     handleInsertionGlyphs(sym, parentGlyph.get());
@@ -197,7 +198,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         return parentGlyph;
     }
 
-    private void handlePairedChildren(PairedBamSymWrapper sym, GlyphI parentGlyph) {
+    private void handlePairedChildren(MultiTierSymWrapper sym, GlyphI parentGlyph) {
         Optional<GlyphI> firstChildPglyph;
         Optional<GlyphI> secondChildPglyph;
         SeqSymmetry sym1 = sym.getChild(0);
@@ -232,7 +233,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             // in order to look at the properties associated with them.  Otherwise, the method
             // EfficientGlyph.pickTraversal() will only allow one to be chosen.
             double pheight = DEFAULT_CHILD_HEIGHT + 0.0001;
-            if ((sym instanceof PairedBamSymWrapper) && AbstractTierGlyph.useLabel(trackStyle)) {
+            if ((sym instanceof MultiTierSymWrapper) && AbstractTierGlyph.useLabel(trackStyle)) {
                 pglyph = EfficientMateJoinGlyph.class.newInstance();
             } else if (AbstractTierGlyph.useLabel(trackStyle)) {
                 EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) LABLELLED_PARENT_GLYPH_CLASS.newInstance();
@@ -257,7 +258,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             } else {
                 pglyph = (EfficientSolidGlyph) glyphClass.newInstance();
             }
-            if (sym instanceof PairedBamSymWrapper) {
+            if (sym instanceof MultiTierSymWrapper) {
                 pglyph.setDirection(NeoConstants.NONE);
                 color = Color.BLACK;
             } else {

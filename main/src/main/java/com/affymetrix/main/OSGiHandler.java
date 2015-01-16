@@ -1,7 +1,6 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
-import com.lorainelab.osgi.bundle.BundleInfo;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -47,28 +46,6 @@ public class OSGiHandler {
         this.commonUtils = commonUtils;
     }
 
-    private boolean isBundleCacheExpired() {
-        List<BundleInfo> cacheBundleDetails = commonUtils.getCachedBundleInfo();
-        List<BundleInfo> currentBundleDetails = commonUtils.getCurrentBundleInfo();
-        for (BundleInfo bundle : cacheBundleDetails) {
-            for (BundleInfo matchingBundleCandidate : currentBundleDetails) {
-                if (bundle.getName().equals(matchingBundleCandidate.getName())) {
-                    if (!CommonUtils.equals(bundle.getVersion(), matchingBundleCandidate.getVersion())) {
-                        return true;
-                    }
-                    //also check bnd last modified as a possible indication a bundle has changed without version increment
-                    if (!CommonUtils.equals(bundle.getLastModified(), matchingBundleCandidate.getLastModified())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        if (cacheBundleDetails.isEmpty()) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * start OSGi, load and start the OSGi implementation load the embedded
      * bundles, if not cached, and start all bundles
@@ -78,12 +55,6 @@ public class OSGiHandler {
     public void startOSGi(String[] args) {
         if (isDevelopmentMode()) {
             clearCache();
-        } else if (isBundleCacheExpired()) {
-            clearCache();
-        }
-
-        if (!isDevelopmentMode()) {
-            commonUtils.exportBundleInfo();
         }
 
         if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return

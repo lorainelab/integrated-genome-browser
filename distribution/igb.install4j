@@ -29,7 +29,6 @@
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".git" fileType="regular" />
-          <entry location="igb_exe_signed.jar" fileType="regular" />
           <entry location="extbundles" fileType="regular" />
           <entry location="pom.xml" fileType="regular" />
           <entry location="developmentPlugins" fileType="regular" />

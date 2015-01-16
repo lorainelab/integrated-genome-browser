@@ -8,12 +8,13 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
 
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * utilities used by both the main, starting class, and the bundles. Singleton
@@ -22,6 +23,7 @@ import org.osgi.framework.BundleContext;
  */
 public class CommonUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
     private static final CommonUtils instance = new CommonUtils();
     private String igbDataHome;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
@@ -30,7 +32,6 @@ public class CommonUtils {
     private static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
     private static final String BUNDLE_REGISTRY_FILE_NAME = "bundleRegistry.json";
-    private static final Logger LOG = Logger.getLogger(CommonUtils.class.getName());
 
     private CommonUtils() {
     }
@@ -134,7 +135,7 @@ public class CommonUtils {
             File igbDataHomeFile = new File(igbDataHome);
             igbDataHomeFile.mkdir();
         }
-        return igbDataHome;
+        return igbDataHome + File.separator;
     }
 
     /**

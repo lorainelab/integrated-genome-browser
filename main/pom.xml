@@ -230,7 +230,6 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>pluginsPage</artifactId>
             <scope>runtime</scope>
-
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>

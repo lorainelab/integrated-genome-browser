@@ -447,6 +447,9 @@ return true;</string>
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="backupForRollback">
+                        <boolean>false</boolean>
+                      </void>
                       <void property="files">
                         <array class="java.io.File" length="1">
                           <void index="0">
@@ -462,7 +465,8 @@ return true;</string>
                     </object>
                   </java>
                 </serializedBean>
-                <condition>return !context.getVariable("osgiBundleCacheDir").toString().equalsIgnoreCase("");</condition>
+                <condition>com.install4j.api.Util.logInfo(null, context.getVariable("osgiBundleCacheDir").toString());
+return !context.getVariable("osgiBundleCacheDir").toString().equalsIgnoreCase("");</condition>
               </action>
             </actions>
             <formComponents />

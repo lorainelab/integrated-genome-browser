@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="6.0" transformSequenceNumber="5">
+<install4j version="6.0.1" transformSequenceNumber="5">
   <directoryPresets config="./branding" />
   <application name="Integrated Genome Browser" distributionSourceDir="" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="http://bioviz.org/igb/" version="${compiler:igbVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -38,6 +38,7 @@
           <entry location="core" fileType="regular" />
           <entry location="run_igb.bat" fileType="regular" />
           <entry location="main" fileType="regular" />
+          <entry location=".idea" fileType="regular" />
           <entry location="run_igb.sh" fileType="regular" />
           <entry location=".ant-targets-build.xml" fileType="regular" />
           <entry location="nbactions.xml" fileType="regular" />
@@ -45,7 +46,10 @@
           <entry location="galaxy" fileType="regular" />
           <entry location="run_igb_2gb.command" fileType="regular" />
           <entry location="ext" fileType="regular" />
-          <entry location="distribution" fileType="regular" />
+          <entry location="igb_exe.jar" fileType="regular" />
+          <entry location="distribution/branding" fileType="regular" />
+          <entry location="distribution/build" fileType="regular" />
+          <entry location="distribution/igb.install4j" fileType="regular" />
           <entry location="tools" fileType="regular" />
           <entry location="settings.gradle" fileType="regular" />
           <entry location="build.gradle" fileType="regular" />

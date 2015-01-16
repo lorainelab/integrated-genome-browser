@@ -220,4 +220,4 @@ extbundles/*
 *.ipr
 *.iws
 .idea/
-distribution/igb_exe.jar
+igb_exe_signed.jar

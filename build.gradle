@@ -45,7 +45,7 @@ task cleanOldBuild(type: Delete) {
 
 task signExeJar() {
     ant.signjar(
-            destDir: "distribution/",
+            signedjar: "igb_exe_signed.jar",
             alias: props.get('keyStoreAlias'),
             jar: "./igb_exe.jar",
             keystore: System.getProperty("user.home") + '/.keystore',

@@ -29,6 +29,7 @@
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".git" fileType="regular" />
+          <entry location="igb_exe_signed.jar" fileType="regular" />
           <entry location="extbundles" fileType="regular" />
           <entry location="pom.xml" fileType="regular" />
           <entry location="developmentPlugins" fileType="regular" />
@@ -38,6 +39,7 @@
           <entry location="core" fileType="regular" />
           <entry location="run_igb.bat" fileType="regular" />
           <entry location="main" fileType="regular" />
+          <entry location=".idea" fileType="regular" />
           <entry location="run_igb.sh" fileType="regular" />
           <entry location=".ant-targets-build.xml" fileType="regular" />
           <entry location="nbactions.xml" fileType="regular" />
@@ -46,15 +48,14 @@
           <entry location="run_igb_2gb.command" fileType="regular" />
           <entry location="ext" fileType="regular" />
           <entry location="igb_exe.jar" fileType="regular" />
-          <entry location="distribution/branding" fileType="regular" />
-          <entry location="distribution/build" fileType="regular" />
-          <entry location="distribution/igb.install4j" fileType="regular" />
+          <entry location="distribution" fileType="regular" />
           <entry location="tools" fileType="regular" />
           <entry location="settings.gradle" fileType="regular" />
           <entry location="build.gradle" fileType="regular" />
           <entry location="run_igb_5gb.command" fileType="regular" />
           <entry location="nbproject" fileType="regular" />
           <entry location="bundles" fileType="regular" />
+          <entry location="igb-project.iml" fileType="regular" />
           <entry location="README.md" fileType="regular" />
           <entry location=".gradle" fileType="regular" />
           <entry location="run_igb_5gb.bat" fileType="regular" />
@@ -78,7 +79,7 @@
       </splashScreen>
       <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="igb_exe.jar" failOnError="false" />
+          <archive location="igb_exe_signed.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -112,7 +113,7 @@
       </splashScreen>
       <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true -Xmx1024m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="igb_exe.jar" failOnError="false" />
+          <archive location="igb_exe_signed.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>

@@ -20,58 +20,28 @@
     <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
+            <artifactId>affymetrix-common</artifactId> 
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>   
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb-service</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>       
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>sharedLibWrapper</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>     
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>org.apache.felix.main</artifactId>      
+            <scope>compile</scope>      
         </dependency>
  
         
@@ -79,67 +49,27 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>heatmap-editor</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genometryImpl</artifactId>  
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igbSwingExt</artifactId>  
             <scope>runtime</scope>     
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>    
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb-service</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+ 
+        </dependency>   
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>window-service</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>          
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>console-gui</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!--End of core module dependencies-->
         
@@ -148,10 +78,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <scope>runtime</scope>
         </dependency>      
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -164,13 +96,7 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>
         <dependency>
             <groupId>org.broad</groupId>
@@ -194,233 +120,111 @@
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>apollo-library</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>annotation-tab</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>bigBedHandler</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>   
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>bigWigHandler</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>bookmark</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>externalView</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>            
         </dependency>  
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>graphTab</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>            
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>igbScript</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>            
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>keyWordSearch</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>ncbiBlast</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>propertyView</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>restrictionSites</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>            
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>searchModelIdOrProps</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>            
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>searchModeLucene</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>searchView</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>          
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>sequenceViewer</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>runtime</scope>           
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>survey</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>thresholding</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+        
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>tutorial</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+      
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>update</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>pluginsPage</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
@@ -431,23 +235,12 @@
             <groupId>com.lorainelab</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+       
         </dependency> 
         <dependency> 
             <groupId>com.lorainelab</groupId>
             <artifactId>igbr</artifactId>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency> 
         <!--End of plugin module dependencies--> 
         <dependency> 
@@ -464,22 +257,22 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <scope>compile</scope>
+            <scope>compile</scope>            
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>compile</scope>
+            <scope>compile</scope>            
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <scope>compile</scope>
+            <scope>compile</scope>            
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <scope>compile</scope>
+            <scope>compile</scope>            
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
@@ -489,7 +282,6 @@
         <dependency> 
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions-api</artifactId>
-            <version>${igb-genoviz-extensions-api-version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -497,7 +289,7 @@
             <artifactId>org.apache.felix.scr</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- Start of development plugins  added to ensure obr repository.xml gets generated with content since reactor plugin is not respecting order of module declaration-->
+        <!--Start of development plugins  added to ensure obr repository.xml gets generated with content since reactor plugin is not respecting order of module declaration-->
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>bam-indexer</artifactId>
@@ -582,14 +374,6 @@
         
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>JNLP-INF/jnlpTemplate.xml</exclude>
-                </excludes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -623,7 +407,8 @@
                             <outputDirectory>
                                 ${project.build.directory}/lib
                             </outputDirectory>
-                            <excludeScope>provided</excludeScope>                            
+                            <excludeScope>provided</excludeScope>
+                            <excludeTransitive>true</excludeTransitive>                            
                         </configuration>
                     </execution>
                 </executions>

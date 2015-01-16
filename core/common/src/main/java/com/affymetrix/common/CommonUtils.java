@@ -35,7 +35,7 @@ import org.osgi.framework.BundleContext;
 public class CommonUtils {
 
     private static final CommonUtils instance = new CommonUtils();
-    private String app_dir = null;
+    private String igbDataHome;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
     private static final String APP_NAME = BUNDLE.getString("appName");
     private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
@@ -135,22 +135,18 @@ public class CommonUtils {
      * @return the application directory
      */
     public String getAppDataDirectory() {
-        if (app_dir == null) {
-            String home = System.getProperty("user.home");
-            String app_data = home + "/Application Data";
-            File app_data_dir = new File(app_data);
-            if (app_data_dir.exists() && app_data_dir.isDirectory()) {
-                app_dir = app_data + "/IGB/";
+        if (igbDataHome == null) {
+            boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+            String igbHomeDirName = ".igb";
+            if (IS_WINDOWS) {
+                igbDataHome = System.getenv("AppData") + File.separator + igbHomeDirName;
             } else {
-                app_dir = home + "/.igb/";
+                igbDataHome = System.getProperty("user.home") + File.separator + igbHomeDirName;
             }
+            File igbDataHomeFile = new File(igbDataHome);
+            igbDataHomeFile.mkdir();
         }
-        if (!app_dir.endsWith("/")) {
-            app_dir += "/";
-        }
-        File appDataDir = new File(app_dir);
-        appDataDir.mkdir();
-        return app_dir;
+        return igbDataHome;
     }
 
     /**

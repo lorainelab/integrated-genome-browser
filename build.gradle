@@ -13,6 +13,11 @@ ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.
 //remove minor version portion of version string
 version = commonProps.get('appVersion')
 
+//securely read in keystore info from disk
+ext.props = new Properties() 
+ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
+project.setProperty('props', ext.props) 
+
 buildscript {
     repositories {
         mavenLocal()
@@ -38,7 +43,18 @@ task cleanOldBuild(type: Delete) {
     delete buildDir
 }
 
-task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {
+task signExeJar(){
+ant.signjar(
+            destDir: "distribution/build",
+            alias: props.get('keyStoreAlias'),
+            jar: "./igb_exe.jar",
+            keystore: System.getProperty("user.home")+'/.keystore', 
+            storepass: 'limo162;tent',
+            keypass: 'limo162;tent',
+            preservelastmodified: 'true')
+}
+
+task media(dependsOn: cleanOldBuild, signExeJar, type: com.install4j.gradle.Install4jTask) {
     projectFile = file('distribution/igb.install4j')
     variables = [projectHomeDirectory: projectDir, igbVersion: version, codeBaseUrl: System.getProperty('codebaseUrl')]
     macKeystorePassword = System.getProperty('macKeystorePassword')

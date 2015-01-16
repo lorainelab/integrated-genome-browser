@@ -128,7 +128,7 @@ public class CommonUtils {
             boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
             String igbHomeDirName = ".igb";
             if (IS_WINDOWS) {
-                igbDataHome = System.getenv("AppData") + File.separator + igbHomeDirName;
+                igbDataHome = System.getenv("AppData") + File.separator + "IGB";
             } else {
                 igbDataHome = System.getProperty("user.home") + File.separator + igbHomeDirName;
             }

@@ -41,7 +41,7 @@ public final class SeqSymSummarizer {
 
         for (int i = 0; i < sym.getChildCount(); i++) {
             SeqSymmetry childSeqSym = sym.getChild(i);
-            if (childSeqSym instanceof PairedBamSymWrapper) {
+            if (childSeqSym instanceof MultiTierSymWrapper) {
                 SeqSymmetry firstMate = childSeqSym.getChild(0);
                 SeqSymmetry secondMate = childSeqSym.getChild(1);
                 processChildSeqSym(firstMate, seq, start, end, seq_residues, y, yR);

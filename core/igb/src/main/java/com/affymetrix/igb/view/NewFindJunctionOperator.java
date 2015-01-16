@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
@@ -142,7 +143,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
      */
     private void applyFilters(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map) {
         for (SeqSymmetry sym : list) {
-            if (sym instanceof PairedBamSymWrapper) {
+            if (sym instanceof MultiTierSymWrapper) {
                 applyFilters(bioseq, sym.getChild(0), map);
                 applyFilters(bioseq, sym.getChild(1), map);
             } else {

@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author dcnorris
  */
-public final class PairedBamSymWrapper implements SeqSymmetry, TypedSym, SymWithProps {
+public final class PairedBamSymWrapper implements TypedSym, SymWithProps, MultiTierSymWrapper {
 
     private static final int CHILD_COUNT = 2;
     private BAMSym forwardStrandSym;

@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
@@ -1472,7 +1473,7 @@ public class SeqUtils {
     }
 
     public static boolean isMultiStrandWrapperType(SeqSymmetry sym) {
-        return (sym instanceof PairedBamSymWrapper);
+        return (sym instanceof MultiTierSymWrapper);
     }
 
     public static boolean isBedSym(SeqSymmetry sym) {

@@ -1531,7 +1531,9 @@ return true;</string>
       <excludedLaunchers>
         <launcher id="22" />
       </excludedLaunchers>
-      <excludedBeans />
+      <excludedBeans>
+        <bean refId="287" />
+      </excludedBeans>
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude />
       <variables />
@@ -1558,7 +1560,7 @@ return true;</string>
     </macosFolder>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="25" />
+    <mediaSet refId="552" />
   </buildIds>
-  <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
+  <buildOptions verbose="false" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
 </install4j>

@@ -27,13 +27,15 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
  */
 public final class DASFeatureParser implements Parser {
 
-	static enum Orientation { UNKNOWN, FORWARD, REVERSE };
+	static enum Orientation { UNKNOWN, FORWARD, REVERSE }
+
 	private static enum Elements {
 		DASGFF, GFF, SEGMENT, FEATURE, TYPE, METHOD, START, END, SCORE, ORIENTATION, PHASE, NOTE, LINK, TARGET, GROUP
-	};
+	}
+
 	private static enum Attr {
 		version, href, id, start, stop, type, label, category, reference
-	};
+	}
 
 	private BioSeq sequence;
 	private String note;
@@ -47,12 +49,12 @@ public final class DASFeatureParser implements Parser {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLEventReader reader = factory.createXMLEventReader(s);
 		XMLEvent current;
-		Deque<StartElement> stack = new ArrayDeque<StartElement>();
+		Deque<StartElement> stack = new ArrayDeque<>();
 		FeatureBean feature = new FeatureBean();
 		LinkBean link = new LinkBean();
 		GroupBean group = new GroupBean();
 		TargetBean target = new TargetBean();
-		Map<String, DASSymmetry> groupMap = new HashMap<String, DASSymmetry>();
+		Map<String, DASSymmetry> groupMap = new HashMap<>();
 
 		while(reader.hasNext() && !Thread.currentThread().isInterrupted()) {
 			current = reader.nextEvent();
@@ -75,7 +77,7 @@ public final class DASFeatureParser implements Parser {
 			return Collections.<DASSymmetry>emptyList();
 		}
 		
-		return new ArrayList<DASSymmetry>(groupMap.values());
+		return new ArrayList<>(groupMap.values());
 	}
 
 	/**
@@ -258,7 +260,7 @@ public final class DASFeatureParser implements Parser {
 			boolean annotate_seq) throws Exception {
 		setAnnotateSeq(annotate_seq);
 		try {
-			return (List<? extends SeqSymmetry>)parse(is, group);
+			return parse(is, group);
 		} catch (XMLStreamException ex) {
 			Logger.getLogger(DASFeatureParser.class.getName()).log(Level.SEVERE, null, ex);
 			return null;

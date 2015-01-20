@@ -17,8 +17,8 @@ public class PariedByRunNo extends ColorProvider {
     private final static Color DEFAULT_FIRST_RUN_COLOR = new Color(204, 255, 255);
     private final static Color DEFAULT_SECOND_RUN_COLOR = new Color(51, 255, 255);
 
-    private Parameter<Color> firstRunColor = new Parameter<Color>(DEFAULT_FIRST_RUN_COLOR);
-    private Parameter<Color> secondRunColor = new Parameter<Color>(DEFAULT_SECOND_RUN_COLOR);
+    private Parameter<Color> firstRunColor = new Parameter<>(DEFAULT_FIRST_RUN_COLOR);
+    private Parameter<Color> secondRunColor = new Parameter<>(DEFAULT_SECOND_RUN_COLOR);
 
     public PariedByRunNo() {
         super();

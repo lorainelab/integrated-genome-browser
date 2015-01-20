@@ -33,9 +33,9 @@ public class GraphSym extends RootSeqSymmetry {
      * strand for display.
      */
     public static final String PROP_GRAPH_STRAND = "Graph Strand";
-    public static final Integer GRAPH_STRAND_PLUS = Integer.valueOf(1);
-    public static final Integer GRAPH_STRAND_MINUS = Integer.valueOf(-1);
-    public static final Integer GRAPH_STRAND_BOTH = Integer.valueOf(2);
+    public static final Integer GRAPH_STRAND_PLUS = 1;
+    public static final Integer GRAPH_STRAND_MINUS = -1;
+    public static final Integer GRAPH_STRAND_BOTH = 2;
 
     private int pointCount = 0;	// count of points
     private int xMin = 0;		// min X coord
@@ -564,7 +564,7 @@ public class GraphSym extends RootSeqSymmetry {
     }
 
     public Map<String, Object> getLocationProperties(int x, SeqSpan span) {
-        Map<String, Object> locprops = new HashMap<String, Object>();
+        Map<String, Object> locprops = new HashMap<>();
 
         locprops.put("x coord", x);
         if (isValid()) {

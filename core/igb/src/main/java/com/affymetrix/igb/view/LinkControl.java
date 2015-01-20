@@ -8,8 +8,7 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.weblink.WebLink;
 import com.affymetrix.igb.prefs.WebLinkUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,7 +29,7 @@ final class LinkControl implements ContextualPopupListener {
 			primary_sym = ((CdsSeqSymmetry) primary_sym).getPropertySymmetry();
 		}
 		
-		Map<String, String> menu_items = new LinkedHashMap<String, String>(); // map of menu url->name, or url -> url if there is no name
+		Map<String, String> menu_items = new LinkedHashMap<>(); // map of menu url->name, or url -> url if there is no name
 
 		// DAS files can contain links for each individual feature.
 		// These are stored in the "link" property
@@ -94,7 +93,7 @@ final class LinkControl implements ContextualPopupListener {
 //	}
 
 	private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
-		List<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> results = new ArrayList<>();
 		results.addAll(WebLinkUtils.getServerList().getWebLinks(primary_sym));
 		results.addAll(WebLinkUtils.getLocalList().getWebLinks(primary_sym));
 		if (results.isEmpty()) {
@@ -152,12 +151,7 @@ final class LinkControl implements ContextualPopupListener {
 	private static JMenuItem makeMenuItem(String name, final String url) {
 		JMenuItem linkMI = new JMenuItem(name);
 		if (url != null) {
-			linkMI.addActionListener(new ActionListener() {
-
-				public void actionPerformed(ActionEvent evt) {
-					GeneralUtils.browse(url);
-				}
-			});
+			linkMI.addActionListener(evt -> GeneralUtils.browse(url));
 		}
 		return linkMI;
 	}

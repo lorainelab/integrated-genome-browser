@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -46,7 +46,7 @@ class MatchElement implements DrawableElement {
 
     StyleElement styleElement;
     PropertyMap propertyMap;
-    List<MatchElement> subMatchList = new ArrayList<MatchElement>();
+    List<MatchElement> subMatchList = new ArrayList<>();
 
     String match_test = null;
     String match_param = null;
@@ -56,7 +56,7 @@ class MatchElement implements DrawableElement {
     public Object clone() throws CloneNotSupportedException {
         MatchElement clone = (MatchElement) super.clone();
         clone.styleElement = (StyleElement) styleElement.clone();
-        clone.subMatchList = new ArrayList<MatchElement>(subMatchList.size());
+        clone.subMatchList = new ArrayList<>(subMatchList.size());
         for (MatchElement me : subMatchList) {
             MatchElement new_me = (MatchElement) me.clone();
             clone.subMatchList.add(new_me);

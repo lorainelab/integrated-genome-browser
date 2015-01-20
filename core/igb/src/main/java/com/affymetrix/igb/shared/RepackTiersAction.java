@@ -1,9 +1,11 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -44,7 +46,7 @@ public abstract class RepackTiersAction extends SeqMapViewActionA {
             TierGlyph t = (TierGlyph) tl.getInfo();
             int a = t.getSlotsNeeded(ourView);
             ITrackStyleExtended style = t.getAnnotStyle();
-            TierGlyph.Direction d = t.getDirection();
+            StyledGlyph.Direction d = t.getDirection();
             switch (d) {
                 case REVERSE:
                     style.setReverseMaxDepth(a);

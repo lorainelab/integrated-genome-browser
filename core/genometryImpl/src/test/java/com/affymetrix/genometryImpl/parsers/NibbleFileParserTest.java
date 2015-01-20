@@ -73,24 +73,24 @@ public class NibbleFileParserTest {
     public void testCase(int start, int end) throws Exception {
         sb = new StringBuffer();
         isr = GeneralUtils.getInputStream(infile, sb);
-        ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-        boolean result = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"), start, end, outstream);
-
-        if (start < end) {
-            start = Math.max(0, start);
-            start = Math.min(total_residues, start);
-
-            end = Math.max(0, end);
-            end = Math.min(total_residues, end);
-        } else {
-            start = 0;
-            end = 0;
+        try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
+            boolean result = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"), start, end, outstream);
+            
+            if (start < end) {
+                start = Math.max(0, start);
+                start = Math.min(total_residues, start);
+                
+                end = Math.max(0, end);
+                end = Math.min(total_residues, end);
+            } else {
+                start = 0;
+                end = 0;
+            }
+            
+            assertTrue(result);
+            assertEquals(input_string.substring(start, end), outstream.toString());
+            //System.out.println(input_string.substring(start, end) + "==" +outstream.toString());
         }
-
-        assertTrue(result);
-        assertEquals(input_string.substring(start, end), outstream.toString());
-        //System.out.println(input_string.substring(start, end) + "==" +outstream.toString());
-        outstream.close();
     }
 
 }

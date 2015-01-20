@@ -14,6 +14,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 
@@ -61,14 +62,14 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
 
     @Override
     public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         if (filter instanceof SymmetryFilter
                 && !search_text.equals(((SymmetryFilter) filter).getParameterValue(((SymmetryFilter) filter).getParametersType().entrySet().iterator().next().getKey()))) {
             throw new IllegalStateException("filter value changed from "
                     + ((SymmetryFilter) filter).getParameterValue(((SymmetryFilter) filter).getParametersType().entrySet().iterator().next().getKey()) + " to " + search_text);
         }
-        List<Glyph> glyphs = igbService.getAllTierGlyphs();
-        for (Glyph selectedTierGlyph : glyphs) {
+        List<TierGlyph> glyphs = igbService.getAllTierGlyphs();
+        for (TierGlyph selectedTierGlyph : glyphs) {
             Object info = selectedTierGlyph.getInfo();
             if (info instanceof TypeContainerAnnot) {
                 List<SeqSymmetry> searchResults = searchTrack(search_text, (TypeContainerAnnot) info);
@@ -79,11 +80,11 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
         }
         String statusStr = MessageFormat.format("Searching {0} - found {1} matches", search_text, "" + results.size());
         statusHolder.setStatus(statusStr);
-        return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, results);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, results);
     }
 
     private List<SeqSymmetry> searchSym(SeqSymmetry sym) {
-        List<SeqSymmetry> searchResults = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> searchResults = new ArrayList<>();
         if (filter.filterSymmetry(null, sym)) {
             searchResults.add(sym);
         }

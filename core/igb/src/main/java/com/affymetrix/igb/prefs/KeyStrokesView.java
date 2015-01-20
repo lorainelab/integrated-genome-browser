@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -102,16 +101,13 @@ public final class KeyStrokesView {
         }
     };
 
-    private PreferenceChangeListener pcl = new PreferenceChangeListener() {
-        @Override
-        public void preferenceChange(PreferenceChangeEvent evt) {
-            if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
-                return;
-            }
-			// Each time a keystroke preference is changed, update the whole table.
-            // Inelegant, but it works. 
-            invokeRefreshTable();
+    private PreferenceChangeListener pcl = evt -> {
+        if (evt.getNode() != PreferenceUtils.getKeystrokesNode()) {
+            return;
         }
+        // Each time a keystroke preference is changed, update the whole table.
+        // Inelegant, but it works.
+        invokeRefreshTable();
     };
 
     public KeyStrokesView() {
@@ -158,7 +154,7 @@ public final class KeyStrokesView {
     private static TreeSet<String> filterActions() {
         // this still throws ConcurrentModificationException
         Set<String> keys = GenericActionHolder.getInstance().getGenericActionIds();
-        TreeSet<String> actions = new TreeSet<String>(new Comparator<String>() {
+        TreeSet<String> actions = new TreeSet<>(new Comparator<String>() {
 
             @Override
             public int compare(String o1, String o2) {
@@ -214,7 +210,7 @@ public final class KeyStrokesView {
      * These are actions that are inappropriate for the tool bar. This is kind
      * of a kludge until we can figure out a better way.
      */
-    static final Set<GenericAction> smallTimeActions = new HashSet<GenericAction>();
+    static final Set<GenericAction> smallTimeActions = new HashSet<>();
 
     static {
 		// Prefs Panel Only
@@ -303,15 +299,11 @@ public final class KeyStrokesView {
      * preference change.
      */
     public void invokeRefreshTable() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                refresh();
-                model.fireTableDataChanged();
-                if (selected > 0) {
-                    table.setRowSelectionInterval(selected, selected);
-                }
+        SwingUtilities.invokeLater(() -> {
+            refresh();
+            model.fireTableDataChanged();
+            if (selected > 0) {
+                table.setRowSelectionInterval(selected, selected);
             }
         });
 

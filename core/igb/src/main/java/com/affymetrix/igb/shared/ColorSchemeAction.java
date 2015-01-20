@@ -8,6 +8,7 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.action.SeqMapViewActionA;

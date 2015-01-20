@@ -68,7 +68,7 @@ public class ReplaceFilterInputStream extends FilterInputStream {
      * We use exactly {@link TreeMap} here in order to process all replacements in particular order - starting from
      * the replacements which <code>'from'</code> data has a larger length.
      */
-    private final Map<byte[], byte[]> replacements = new TreeMap<byte[], byte[]>(new Comparator<byte[]>() {
+    private final Map<byte[], byte[]> replacements = new TreeMap<>(new Comparator<byte[]>() {
         @Override
         public int compare(byte[] b1, byte[] b2) {
             if (b1.length != b2.length) {

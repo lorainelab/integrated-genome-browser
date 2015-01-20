@@ -19,7 +19,7 @@ public class SymmetryFilterIntersecting extends SymmetryFilter{
 	private final static String SEQSYMMETRY = "seqsymmetry";
 	private final static SeqSymmetry DEFAULT_SEQSYMMETRY = null;
 	
-    private Parameter<SeqSymmetry> original_sym = new Parameter<SeqSymmetry>(DEFAULT_SEQSYMMETRY);
+    private Parameter<SeqSymmetry> original_sym = new Parameter<>(DEFAULT_SEQSYMMETRY);
 			
 	public SymmetryFilterIntersecting(){
 		super();

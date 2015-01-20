@@ -19,7 +19,7 @@ import java.util.Map;
 
 /** Basic implementation of ITrackStyle. */
 public class DefaultTrackStyle implements ITrackStyle {
-	Color fg = Color.decode("0x0247FE");;
+	Color fg = Color.decode("0x0247FE");
 	Color bg = Color.WHITE;
 	boolean show = true;
 	boolean collapsed = false;
@@ -85,7 +85,7 @@ public class DefaultTrackStyle implements ITrackStyle {
 
 	public Map<String,Object> getTransientPropertyMap() {
 		if (transient_properties == null) {
-			transient_properties = new HashMap<String,Object>();
+			transient_properties = new HashMap<>();
 		}
 		return transient_properties;
 	}

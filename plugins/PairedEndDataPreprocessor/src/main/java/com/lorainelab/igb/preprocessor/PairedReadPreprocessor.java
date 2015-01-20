@@ -1,29 +1,38 @@
 package com.lorainelab.igb.preprocessor;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.igb.shared.SeqSymmetryPreprocessorI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqSymmetryPreprocessorI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author dcnorris
  */
+@Component(name = PairedReadPreprocessor.COMPONENT_NAME, provide = {SeqSymmetryPreprocessorI.class})
 public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
 
-    List<BAMSym> bamSyms;
-    SeqMapViewExtendedI gviewer;
+    public static final String COMPONENT_NAME = "PairedReadPreprocessor";
+    private static final Logger logger = LoggerFactory.getLogger(PairedReadPreprocessor.class);
+    private List<BAMSym> bamSyms;
+    private SeqMapViewExtendedI gviewer;
 
     @Override
     public void process(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
@@ -33,25 +42,23 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
         this.gviewer = checkNotNull(gviewer);
         if (style.isShowAsPaired()) {
             int glyphDepth = style.getGlyphDepth();
-            bamSyms = new ArrayList<BAMSym>();
+            bamSyms = new ArrayList<>();
             collectBamSyms(sym, glyphDepth);
             List<SeqSymmetry> updatedList = repackageSyms();
             sym.removeChildren();
-            for (SeqSymmetry child : updatedList) {
-                sym.addChild(child);
-            }
+            updatedList.forEach(sym::addChild);
             bamSyms.clear();
         }
     }
 
     private List<SeqSymmetry> repackageSyms() {
         Table<String, Integer, List<BAMSym>> pairMap = HashBasedTable.create();
-        List<SeqSymmetry> toReturn = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> toReturn = new ArrayList<>();
         for (BAMSym bamSym : bamSyms) {
             String readName = bamSym.getName();
             int mateStart = bamSym.getMateStart();
             if (pairMap.contains(readName, mateStart)) {
-                PairedBamSymWrapper bamSymWrapper;
+                MultiTierSymWrapper bamSymWrapper;
                 if (bamSym.isForward()) {
                     List<BAMSym> matchingBAMSyms = pairMap.get(readName, mateStart);
                     if (matchingBAMSyms.size() == 1) {
@@ -80,7 +87,7 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
                     List<BAMSym> matchingBAMSyms = pairMap.get(readName, bamSym.getEnd());
                     matchingBAMSyms.add(bamSym);
                 } else {
-                    List<BAMSym> bamSymsList = new ArrayList<BAMSym>();
+                    List<BAMSym> bamSymsList = new ArrayList<>();
                     bamSymsList.add(bamSym);
                     if (bamSym.isForward()) {
                         pairMap.put(readName, bamSym.getStart(), bamSymsList);
@@ -116,7 +123,12 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
     }
 
     @Override
+    public FileTypeCategory getCategory() {
+        return FileTypeCategory.Annotation; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public String getName() {
-        return "PairedReadPreprocessor";
+        return COMPONENT_NAME;
     }
 }

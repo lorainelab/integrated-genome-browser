@@ -29,12 +29,12 @@ public class USeq extends SymLoader {
     private ArchiveInfo archiveInfo = null;
     private ZipInputStream zis = null;
     private BufferedInputStream bis = null;
-    private final Map<BioSeq, String> chromosomeList = new HashMap<BioSeq, String>();
+    private final Map<BioSeq, String> chromosomeList = new HashMap<>();
 
     //for region parsing
     private USeqArchive useqArchive = null;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -71,7 +71,7 @@ public class USeq extends SymLoader {
                 //fetch the BioSeq from the AnnotationGroup if it exists
                 chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom), uri.toString()), chrom);
             }
-            Collections.sort(new ArrayList<BioSeq>(chromosomeList.keySet()), new BioSeqComparator());
+            Collections.sort(new ArrayList<>(chromosomeList.keySet()), new BioSeqComparator());
 
         } catch (Exception ex) {
             throw ex;
@@ -138,6 +138,6 @@ public class USeq extends SymLoader {
 
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(chromosomeList.keySet());
+        return new ArrayList<>(chromosomeList.keySet());
     }
 }

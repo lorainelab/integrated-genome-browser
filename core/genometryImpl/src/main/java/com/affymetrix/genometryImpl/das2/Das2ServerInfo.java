@@ -36,7 +36,7 @@ public final class Das2ServerInfo  {
 	private final URI server_uri;
 	private URI primary_uri = null;
 	private final String name;
-	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
+	private final Map<String,Das2Source> sources = new LinkedHashMap<>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 	private String sessionId = null; //used to store a session id following authentication with a DAS2 server
 
@@ -120,7 +120,7 @@ public final class Das2ServerInfo  {
 	private Collection<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group) {
 		// should probably make a vsource2seqgroup hash,
 		//   but for now can just iterate through sources and versions
-		Set<Das2VersionedSource> results = new LinkedHashSet<Das2VersionedSource>();
+		Set<Das2VersionedSource> results = new LinkedHashSet<>();
 		for (Das2Source source : getSources().values()) {
 			for (Das2VersionedSource version : source.getVersions().values()) {
 				AnnotatedSeqGroup version_group = version.getGenome();
@@ -141,7 +141,7 @@ public final class Das2ServerInfo  {
 		InputStream response = null;
 		String das_query = server_uri.toString();
 		try {		
-			if (login() == false) {
+			if (!login()) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
 			}
@@ -149,7 +149,7 @@ public final class Das2ServerInfo  {
 			if (DEBUG_SOURCES_QUERY) {
 				System.out.println("Das2 Request: " + server_uri);
 			}
-			Map<String,String> headers = new LinkedHashMap<String,String>();
+			Map<String,String> headers = new LinkedHashMap<>();
 			response = getInputStream(headers);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
@@ -182,7 +182,7 @@ public final class Das2ServerInfo  {
 	}
 
 
-	private InputStream getInputStream(Map<String, String> headers) throws MalformedURLException, IOException {
+	private InputStream getInputStream(Map<String, String> headers) throws IOException {
 		String load_url = getLoadURL();
 		InputStream istr = LocalUrlCacher.getInputStream(load_url, true, headers);
 
@@ -234,7 +234,7 @@ public final class Das2ServerInfo  {
 			// be established.
 			String das_query = server_uri + "/login";
 
-			Map<String,String> headers = new LinkedHashMap<String,String>();
+			Map<String,String> headers = new LinkedHashMap<>();
 
 			// We must connect to the URL w/o caching so that subsequent launches
 			// of IGB from same machine do no use the old session that may have
@@ -316,38 +316,44 @@ public final class Das2ServerInfo  {
 				System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
 			}
 			NodeList vlist = version.getChildNodes();
-			HashMap<String,Das2Capability> caps = new HashMap<String,Das2Capability>();
+			HashMap<String,Das2Capability> caps = new HashMap<>();
 			URI coords_uri = null;
 			for (int j = 0; j < vlist.getLength(); j++) {
 				String nodename = vlist.item(j).getNodeName();
-				// was CATEGORY, renamed CAPABILITY
-				if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
-					Element capel = (Element) vlist.item(j);
-					String captype = capel.getAttribute(TYPE);
-					String query_id = capel.getAttribute(QUERY_URI);
-					if (query_id.length() == 0) {
-						query_id = capel.getAttribute(QUERY_ID);
-					}
-					URI base_uri = getBaseURI(das_query, capel);
-					URI cap_root = base_uri.resolve(query_id);
-					if (DEBUG_SOURCES_QUERY) {
-						System.out.println("Capability: " + captype + ", URI: " + cap_root);
-					}
-					// for now don't worry about format subelements
+                            // was CATEGORY, renamed CAPABILITY
+                            switch (nodename) {
+                                case "CAPABILITY":
+                                case "CATEGORY":
+                                    {
+                                        Element capel = (Element) vlist.item(j);
+                                        String captype = capel.getAttribute(TYPE);
+                                        String query_id = capel.getAttribute(QUERY_URI);
+                                        if (query_id.length() == 0) {
+                                            query_id = capel.getAttribute(QUERY_ID);
+                                        }
+                                        URI base_uri = getBaseURI(das_query, capel);
+                                        URI cap_root = base_uri.resolve(query_id);
+                                        if (DEBUG_SOURCES_QUERY) {
+                                            System.out.println("Capability: " + captype + ", URI: " + cap_root);
+                                        }
+                                        // for now don't worry about format subelements
 					Das2Capability cap = new Das2Capability(captype, cap_root);
-					caps.put(captype, cap);
-				} else if (nodename.equals("COORDINATES")) {
-					Element coordel = (Element) vlist.item(j);
-					String uri_att = coordel.getAttribute("uri");
-					URI base_uri = getBaseURI(das_query, coordel);
-					coords_uri = base_uri.resolve(uri_att);
-				}
+                                        caps.put(captype, cap);
+                                        break;
+                                    }
+                                case "COORDINATES":
+                                {
+                                    Element coordel = (Element) vlist.item(j);
+                                    String uri_att = coordel.getAttribute("uri");
+                                    URI base_uri = getBaseURI(das_query, coordel);
+                                        coords_uri = base_uri.resolve(uri_att);
+                                        break;
+                                    }
+                            }
 			}
 
 			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false, primary_uri, primaryServer);
-			Iterator<Das2Capability> capiter = caps.values().iterator();
-			while (capiter.hasNext()) {
-				Das2Capability cap = capiter.next();
+			for (Das2Capability cap : caps.values()) {
 				vsource.addCapability(cap);
 			}
 			dasSource.addVersion(vsource);
@@ -362,7 +368,7 @@ public final class Das2ServerInfo  {
 	 * Attempt to retrieve base URI for an Element from a DOM-level2 model
 	 */
 	public static URI getBaseURI(String doc_uri, Node cnode) {
-		Stack<String> xml_bases = new Stack<String>();
+		Stack<String> xml_bases = new Stack<>();
 		Node pnode = cnode;
 		while (pnode != null) {
 			if (pnode instanceof Element) {

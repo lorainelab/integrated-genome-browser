@@ -35,7 +35,7 @@ public class GraphTierGlyph extends AbstractTierGlyph {
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("y_axis", Boolean.class);
         PREFERENCES = Collections.unmodifiableMap(temp);
     }
@@ -101,7 +101,7 @@ public class GraphTierGlyph extends AbstractTierGlyph {
 
     @Override
     public Map<String, Class<?>> getPreferences() {
-        return new HashMap<String, Class<?>>(PREFERENCES);
+        return new HashMap<>(PREFERENCES);
     }
 
     @Override

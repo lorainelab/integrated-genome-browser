@@ -57,7 +57,7 @@ public final class TrackLineParser {
             + "(?:\\S+)" // Any non-whitespace characters
             + ")");               //    ... end of group 2
 
-    private final Map<String, String> track_hash = new TreeMap<String, String>();
+    private final Map<String, String> track_hash = new TreeMap<>();
 
     public Map<String, String> getCurrentTrackHash() {
         return track_hash;
@@ -149,12 +149,12 @@ public final class TrackLineParser {
     }
 
     private static String appendTrackName(Map<String, String> track_hash, String default_track_name) {
-        String human_name = new String(track_hash.get(NAME));
+        String human_name = track_hash.get(NAME);
         String name = track_hash.get(NAME);
 
         //this will create the correct track name for IGB to display the track correctly
         if (name != null) {
-            if (((default_track_name.indexOf('/') > -1) || (default_track_name.indexOf("\\\\") > -1)) && !name.equals(default_track_name)) {
+            if (((default_track_name.indexOf('/') > -1) || (default_track_name.contains("\\\\"))) && !name.equals(default_track_name)) {
                 String separator = "";
                 if (default_track_name.indexOf('/') > -1) {
                     separator = "/";
@@ -208,7 +208,7 @@ public final class TrackLineParser {
      * non-graph, it will be an instance of TrackStyle.)
      */
     private static Map<String, String> getTrackProperties(Map<String, String> track_hash) {
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         String visibility = track_hash.get(VISIBILITY);
         String color_string = track_hash.get(COLOR);
         if (color_string != null) {

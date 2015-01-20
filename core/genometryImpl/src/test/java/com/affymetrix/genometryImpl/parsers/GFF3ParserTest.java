@@ -33,20 +33,20 @@ public class GFF3ParserTest {
         filename = GFF3ParserTest.class.getClassLoader().getResource(filename).getFile();
         assertTrue(new File(filename).exists());
 
-        InputStream istr = new FileInputStream(filename);
-        assertNotNull(istr);
-
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-        assertNotNull(seq_group);
-
+        try (InputStream istr = new FileInputStream(filename)) {
+            assertNotNull(istr);
+            
+            AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+            assertNotNull(seq_group);
+            
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
 //			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
 //			List result = instance.parse(istr, seq_group, true);
 //			testResults(result);
-        GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), seq_group, false);
-        testResults(gff3.getGenome());
-
-        // Replacing test with above test. hiralv 08-16-10
+            GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), seq_group, false);
+            testResults(gff3.getGenome());
+            
+            // Replacing test with above test. hiralv 08-16-10
 //			GFF3Sym mRNA1 = (GFF3Sym) gene.getChild(1);
 //			GFF3Sym mRNA2 = (GFF3Sym) gene.getChild(2);
 //			GFF3Sym mRNA3 = (GFF3Sym) gene.getChild(3);
@@ -63,7 +63,7 @@ public class GFF3ParserTest {
 //			GFF3Sym cds_group1 = (GFF3Sym) mRNA1.getChild(4);
 //			assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds_group1.getFeatureType());
 //			assertEquals(cds_group1.getSpanCount(), 4);
-        istr.close();
+        }
     }
 
     public void testResults(List result) {

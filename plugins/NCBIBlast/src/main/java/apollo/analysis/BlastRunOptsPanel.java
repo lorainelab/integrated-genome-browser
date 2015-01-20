@@ -5,8 +5,6 @@ import apollo.util.GuiUtil;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -72,15 +70,13 @@ public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunO
         numOfHits = new JTextField("100", 6);
 
         types = new JComboBox(RemoteBlastNCBI.BlastType.values());
-        types.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getItem() == RemoteBlastNCBI.BlastType.blastn) {
-                    gapOpenCost.setText("5");
-                    gapExtendCost.setText("2");
-                } else {
-                    gapOpenCost.setText("11");
-                    gapExtendCost.setText("1");
-                }
+        types.addItemListener(e -> {
+            if (e.getItem() == RemoteBlastNCBI.BlastType.blastn) {
+                gapOpenCost.setText("5");
+                gapExtendCost.setText("2");
+            } else {
+                gapOpenCost.setText("11");
+                gapExtendCost.setText("1");
             }
         });
         types.setSelectedIndex(1);

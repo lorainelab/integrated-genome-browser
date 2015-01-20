@@ -49,19 +49,14 @@ import org.w3c.dom.Element;
 public final class ServerList {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerList.class);
-    private final Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
-    private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
+    private final Map<String, GenericServer> url2server = new LinkedHashMap<>();
+    private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<>();
     private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
     private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
     private static ServerList serverInstance = new ServerList("server");
     private static ServerList repositoryInstance = new ServerList("repository");
     private final String textName;
-    private final Comparator<GenericServer> serverOrderComparator = new Comparator<GenericServer>() {
-        @Override
-        public int compare(GenericServer o1, GenericServer o2) {
-            return getServerOrder(o1) - getServerOrder(o2);
-        }
-    };
+    private final Comparator<GenericServer> serverOrderComparator = (o1, o2) -> getServerOrder(o1) - getServerOrder(o2);
 
     private ServerList(String textName) {
         this.textName = textName;
@@ -84,7 +79,7 @@ public final class ServerList {
     }
 
     public Set<GenericServer> getEnabledServers() {
-        Set<GenericServer> serverList = new HashSet<GenericServer>();
+        Set<GenericServer> serverList = new HashSet<>();
         for (GenericServer gServer : getAllServers()) {
             if (gServer.isEnabled() && gServer.getServerStatus() != ServerStatus.NotResponding) {
                 serverList.add(gServer);
@@ -94,7 +89,7 @@ public final class ServerList {
     }
 
     public Set<GenericServer> getInitializedServers() {
-        Set<GenericServer> serverList = new HashSet<GenericServer>();
+        Set<GenericServer> serverList = new HashSet<>();
         for (GenericServer gServer : getEnabledServers()) {
             if (gServer.getServerStatus() == ServerStatus.Initialized) {
                 serverList.add(gServer);
@@ -128,7 +123,7 @@ public final class ServerList {
     }
 
     public synchronized Collection<GenericServer> getAllServers() {
-        ArrayList<GenericServer> allServers = new ArrayList<GenericServer>(url2server.values());
+        ArrayList<GenericServer> allServers = new ArrayList<>(url2server.values());
         Collections.sort(allServers, serverOrderComparator);
         return allServers;
     }
@@ -596,7 +591,7 @@ public final class ServerList {
                     + ", enabled: " + enabled + "default: " + isDefault);
         }
         serverList.addServer(server_type, server_name, server_url,
-                enabled, primary, order.intValue(), isDefault, mirror_url); //qlmirror
+                enabled, primary, order, isDefault, mirror_url); //qlmirror
     }
 
     public static class ServerElementHandler implements XmlPrefsParser.ElementHandler {

@@ -17,7 +17,7 @@ public class SequenceViewerItems {
     public static enum TYPE {
 
         EXON, INTRON
-    };
+    }
 
     public int getCdsEnd() {
         return cdsEnd;

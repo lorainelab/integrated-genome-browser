@@ -28,16 +28,14 @@ public class WindowTabs implements TabHolder {
     public WindowTabs(TabStateHandler _tabStateHandler) {
         super();
         tabStateHandler = _tabStateHandler;
-        addedPlugins = new HashSet<IGBTabPanel>();
+        addedPlugins = new HashSet<>();
     }
 
     public void setMenuCreator(IMenuCreator menuCreator) {
         this.menuCreator = menuCreator;
-        for (IGBTabPanel panel : addedPlugins) {
-            if (panel.getFrame().getMenuBar() == null) {
-                panel.getFrame().setJMenuBar(menuCreator.createMenu("windowtab_" + panel.getId()));
-            }
-        }
+        addedPlugins.stream().filter(panel -> panel.getFrame().getMenuBar() == null).forEach(panel -> {
+            panel.getFrame().setJMenuBar(menuCreator.createMenu("windowtab_" + panel.getId()));
+        });
     }
 
     /**
@@ -95,11 +93,7 @@ public class WindowTabs implements TabHolder {
     @Override
     public void addTab(final IGBTabPanel plugin) {
         addedPlugins.add(plugin);
-        Runnable r = new Runnable() {
-            public void run() {
-                openCompInWindow(plugin);
-            }
-        };
+        Runnable r = () -> openCompInWindow(plugin);
         SwingUtilities.invokeLater(r);
     }
 
@@ -128,11 +122,7 @@ public class WindowTabs implements TabHolder {
     @Override
     public void restoreState() {
         for (final IGBTabPanel tabPanel : addedPlugins) {
-            Runnable r = new Runnable() {
-                public void run() {
-                    restoreWindowPosition(tabPanel);
-                }
-            };
+            Runnable r = () -> restoreWindowPosition(tabPanel);
             SwingUtilities.invokeLater(r);
         }
     }

@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl.quickload;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -42,12 +41,12 @@ public class QuickloadServerType implements ServerTypeI {
         VTWOBIT,
         TWOBIT,
         FA
-    };
+    }
 
     private static final String name = "Quickload";
     public static final int ordinal = 20;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
-    private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<QuickLoadSymLoaderHook>();
+    private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<>();
     /**
      * Private copy of the default Synonym lookup
      *
@@ -57,7 +56,7 @@ public class QuickloadServerType implements ServerTypeI {
     /**
      * For files too be looked up on server. *
      */
-    private static final Set<String> quickloadFiles = new HashSet<String>();
+    private static final Set<String> quickloadFiles = new HashSet<>();
 
     /**
      * Add files to be looked up. *
@@ -251,7 +250,7 @@ public class QuickloadServerType implements ServerTypeI {
         try {
             URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
             if (logger.isDebugEnabled()) {
-                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
+                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + gVersion.gServer.serverObj);
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);

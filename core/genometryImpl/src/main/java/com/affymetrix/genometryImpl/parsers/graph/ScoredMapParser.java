@@ -51,8 +51,8 @@ public final class ScoredMapParser implements Parser {
 			// assuming first line is header
 			line = br.readLine();
 			String[] headers = line_regex.split(line);
-			List<String> score_names = new ArrayList<String>();
-			List<FloatArrayList> score_arrays = new ArrayList<FloatArrayList>(headers.length);
+			List<String> score_names = new ArrayList<>();
+			List<FloatArrayList> score_arrays = new ArrayList<>(headers.length);
 			System.out.println("headers: " + line);
 			for (int i=2; i<headers.length; i++) {
 				score_names.add(headers[i]);

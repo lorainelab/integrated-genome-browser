@@ -8,7 +8,7 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.jidesoft.hints.ListDataIntelliHints;
-import java.awt.Font;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -73,18 +73,14 @@ public class NewGenome extends javax.swing.JPanel {
 
         speciesLabel.setText("Species");
 
-        ListDataIntelliHints<String> hints = new ListDataIntelliHints<String>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
+        ListDataIntelliHints<String> hints = new ListDataIntelliHints<>(speciesTextField, SpeciesLookup.getAllSpeciesName().toArray(new String[1]));
 
         versionLabel.setText("Genome Version");
 
         refSeqLabel.setText("Reference Sequence");
 
         refSeqBrowseButton.setText("...");
-        refSeqBrowseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refSeqBrowseButtonActionPerformed(evt);
-            }
-        });
+        refSeqBrowseButton.addActionListener(this::refSeqBrowseButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -130,7 +126,7 @@ public class NewGenome extends javax.swing.JPanel {
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refSeqBrowseButtonActionPerformed
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         JRPFileChooser chooser = new JRPFileChooser("newGenome", fileTracker.getFile());
 
         List<UniFileFilter> filters = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence);

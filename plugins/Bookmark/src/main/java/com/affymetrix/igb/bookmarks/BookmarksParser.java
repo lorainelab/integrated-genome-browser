@@ -19,7 +19,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -39,7 +38,7 @@ public final class BookmarksParser {
     public static final int BED_FORMAT = 2;
 
     public static void parse(BookmarkList bookmarks, File f)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         int format = getFormat(f);
         if (logger.isDebugEnabled()) {
             logger.debug("Format of '" + f.getAbsolutePath() + "' is " + format);
@@ -56,7 +55,7 @@ public final class BookmarksParser {
         }
     }
 
-    public static int getFormat(File f) throws FileNotFoundException, IOException {
+    public static int getFormat(File f) throws IOException {
         int result = SIMPLE_HTML_FORMAT;
         if (f.getName().endsWith(".bed")) {
             result = BED_FORMAT;
@@ -173,7 +172,7 @@ public final class BookmarksParser {
         }
 
         BookmarkList current_list = bookmarks;
-        Stack<BookmarkList> parents = new Stack<BookmarkList>();
+        Stack<BookmarkList> parents = new Stack<>();
         String line;
         while ((line = br.readLine()) != null) {
             line = line.trim();
@@ -230,7 +229,7 @@ public final class BookmarksParser {
      * Parses bookmarks from a given file (formatted in Netscape bookmark
      * format) and adds them to the given BookmarkList.
      */
-    public static void parseNetscapeBookmarks(BookmarkList bookmarks, File f) throws FileNotFoundException, IOException {
+    public static void parseNetscapeBookmarks(BookmarkList bookmarks, File f) throws IOException {
         if (logger.isDebugEnabled()) {
             logger.debug("loading bookmarks in Netscape format from '" + f.getAbsolutePath() + "'");
         }

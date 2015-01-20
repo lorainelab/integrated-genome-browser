@@ -33,7 +33,7 @@ public class UpdateParser {
      * Parsers given input stream
      */
     public static List<Update> parse(String updateXml) throws ParserConfigurationException, SAXException, IOException {
-        List<Update> updates = new ArrayList<Update>();
+        List<Update> updates = new ArrayList<>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
@@ -99,8 +98,8 @@ public class TabDelimitedParser implements Parser {
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group, boolean annotateSeq) {
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		Map<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
+		Map<String,SeqSymmetry> group_hash = new HashMap<>();
 		MutableSeqSpan union_span = new SimpleMutableSeqSpan();
 		List<String> col_names = null;
 		try {
@@ -110,7 +109,7 @@ public class TabDelimitedParser implements Parser {
 			if (has_header) {
 				line = br.readLine();
 				String[] cols = line_splitter.split(line);
-				col_names = new ArrayList<String>(cols.length);
+				col_names = new ArrayList<>(cols.length);
 				col_names.addAll(Arrays.asList(cols));
 			}
 			while ((line = br.readLine()) != null && (!Thread.currentThread().isInterrupted())) {
@@ -194,7 +193,7 @@ public class TabDelimitedParser implements Parser {
 						}
 					} else {
 						MutableSeqSpan pspan = (MutableSeqSpan) parent.getSpan(seq);
-						SeqUtils.encompass(pspan, (SeqSpan) child, union_span);
+						SeqUtils.encompass(pspan, child, union_span);
 						pspan.set(union_span.getStart(), union_span.getEnd(), seq);
 					}
 					parent.addChild(child);

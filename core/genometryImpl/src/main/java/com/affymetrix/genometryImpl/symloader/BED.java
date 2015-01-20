@@ -37,7 +37,7 @@ import org.broad.tribble.readers.LineReader;
 public class BED extends SymLoader implements LineProcessor {
 
     // Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-    private static final List<String> pref_list = new ArrayList<String>();
+    private static final List<String> pref_list = new ArrayList<>();
 
     static {
         pref_list.add("bed");
@@ -50,7 +50,7 @@ public class BED extends SymLoader implements LineProcessor {
     private boolean create_container_annot = false;
     private String default_type = null;
     private final TrackLineParser track_line_parser = new TrackLineParser();
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
     private int BED_DETAIL_LINE_CHECK_COUNT = 0;
     private static final int BED_DETAIL_LINE_CHECK_LIMIT = 10;
     private static final int BED_DETAIL_FIELD_COUNT = 14;
@@ -96,7 +96,7 @@ public class BED extends SymLoader implements LineProcessor {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -105,7 +105,7 @@ public class BED extends SymLoader implements LineProcessor {
     public List<SeqSymmetry> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -128,7 +128,7 @@ public class BED extends SymLoader implements LineProcessor {
         InputStream istr = null;
         try {
             File file = chrList.get(seq);
-            boolean isSorted = chrSort.get(seq) == true;
+            boolean isSorted = chrSort.get(seq);
             if (file == null) {
                 Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
                 return Collections.<SeqSymmetry>emptyList();
@@ -200,8 +200,8 @@ public class BED extends SymLoader implements LineProcessor {
     }
 
     private List<SeqSymmetry> parse(Iterator<String> it, boolean isSorted, int min, int max) {
-        List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-        Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<BioSeq, Map<String, SeqSymmetry>>();
+        List<SeqSymmetry> symlist = new ArrayList<>();
+        Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<>();
 
         String line;
         String type = default_type;
@@ -470,7 +470,7 @@ public class BED extends SymLoader implements LineProcessor {
      * @return annot_name
      */
     private static String parseName(String s) {
-        String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
+        String annot_name = s; // create a new String so the entire input line doesn't get preserved
         return annot_name;
     }
 
@@ -483,7 +483,7 @@ public class BED extends SymLoader implements LineProcessor {
             }
             Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
             if (type2csym == null) {
-                type2csym = new HashMap<String, SeqSymmetry>();
+                type2csym = new HashMap<>();
                 seq2types.put(seq, type2csym);
             }
             SimpleSymWithProps parent_sym = (SimpleSymWithProps) type2csym.get(type);
@@ -738,8 +738,8 @@ public class BED extends SymLoader implements LineProcessor {
         BufferedReader br = null;
         BufferedWriter bw = null;
 
-        Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+        Map<String, Boolean> chrTrack = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
         String line, trackLine = null, seq_name = null;
         String[] fields;
         int lineCounter = 0;
@@ -756,7 +756,7 @@ public class BED extends SymLoader implements LineProcessor {
                 if (firstChar == '#') {  // skip comment lines
                     continue;
                 } else if (firstChar == 't' && line.startsWith("track")) {
-                    chrTrack = new HashMap<String, Boolean>();
+                    chrTrack = new HashMap<>();
                     trackLine = line;
                     continue;
                 } else if (firstChar == 'b' && line.startsWith("browser")) {
@@ -826,9 +826,7 @@ public class BED extends SymLoader implements LineProcessor {
         } catch (Exception ex) {
             throw ex;
         } finally {
-            for (BufferedWriter b : chrs.values()) {
-                GeneralUtils.safeClose(b);
-            }
+            chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(bw);
         }

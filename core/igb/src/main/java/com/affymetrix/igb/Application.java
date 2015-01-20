@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
@@ -11,7 +12,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,23 +32,18 @@ public abstract class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final int delay = 2; //delay in seconds
 
-    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<StatusAlert>(); // list of status alert messages.
-    private ActionListener status_alert_listener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
-                removeStatusAlert((StatusAlert) e.getSource());
-            }
+    private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
+    private ActionListener status_alert_listener = e -> {
+        if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
+            removeStatusAlert((StatusAlert) e.getSource());
         }
     };
-    private final LinkedList<String> progressStringList = new LinkedList<String>(); // list of progress bar messages.
-    ActionListener update_status_bar = new ActionListener() {
-
-        public void actionPerformed(java.awt.event.ActionEvent ae) {
-            synchronized (progressStringList) {
-                String s = progressStringList.pop();
-                progressStringList.addLast(s);
-                setNotLockedUpStatus(s);
-            }
+    private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
+    ActionListener update_status_bar = ae -> {
+        synchronized (progressStringList) {
+            String s = progressStringList.pop();
+            progressStringList.addLast(s);
+            setNotLockedUpStatus(s);
         }
     };
     Timer timer = new Timer(delay * 1000, update_status_bar);
@@ -70,7 +66,7 @@ public abstract class Application {
 
     abstract public javax.swing.JFrame getFrame();
 
-    abstract public com.affymetrix.igb.view.SeqMapView getMapView();
+    abstract public SeqMapView getMapView();
 
     public final void addNotLockedUpMsg(final String s) {
         synchronized (progressStringList) {

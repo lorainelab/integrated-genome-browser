@@ -1,31 +1,20 @@
 package com.affymetrix.common;
 
-import com.lorainelab.osgi.bundle.BundleInfo;
-import com.lorainelab.osgi.bundle.BundleInfoParser;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import javax.swing.ImageIcon;
 
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * utilities used by both the main, starting class, and the bundles. Singleton
@@ -34,15 +23,15 @@ import org.osgi.framework.BundleContext;
  */
 public class CommonUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
     private static final CommonUtils instance = new CommonUtils();
-    private String app_dir = null;
+    private String igbDataHome;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
     private static final String APP_NAME = BUNDLE.getString("appName");
     private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
     private static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
     private static final String BUNDLE_REGISTRY_FILE_NAME = "bundleRegistry.json";
-    private static final Logger LOG = Logger.getLogger(CommonUtils.class.getName());
 
     private CommonUtils() {
     }
@@ -135,22 +124,18 @@ public class CommonUtils {
      * @return the application directory
      */
     public String getAppDataDirectory() {
-        if (app_dir == null) {
-            String home = System.getProperty("user.home");
-            String app_data = home + "/Application Data";
-            File app_data_dir = new File(app_data);
-            if (app_data_dir.exists() && app_data_dir.isDirectory()) {
-                app_dir = app_data + "/IGB/";
+        if (igbDataHome == null) {
+            boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+            String igbHomeDirName = ".igb";
+            if (IS_WINDOWS) {
+                igbDataHome = System.getenv("AppData") + File.separator + "IGB";
             } else {
-                app_dir = home + "/.igb/";
+                igbDataHome = System.getProperty("user.home") + File.separator + igbHomeDirName;
             }
+            File igbDataHomeFile = new File(igbDataHome);
+            igbDataHomeFile.mkdir();
         }
-        if (!app_dir.endsWith("/")) {
-            app_dir += "/";
-        }
-        File appDataDir = new File(app_dir);
-        appDataDir.mkdir();
-        return app_dir;
+        return igbDataHome + File.separator;
     }
 
     /**
@@ -226,70 +211,13 @@ public class CommonUtils {
         return BUNDLE_REGISTRY_FILE_NAME;
     }
 
-    public List<BundleInfo> getCurrentBundleInfo() {
-        Reader reader = null;
-        List<BundleInfo> bundleInfo = null;
-        try {
-            reader = new InputStreamReader(CommonUtils.class.getClassLoader().getResourceAsStream(BUNDLE_REGISTRY_FILE_NAME));
-            bundleInfo = BundleInfoParser.fromJson(reader);
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, "Error closing reader", ex);
-                }
-            }
-        }
-        return bundleInfo;
-    }
-
-    public List<BundleInfo> getCachedBundleInfo() {
-        File cachedBundleInfoFile = new File(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
-        Reader reader = null;
-        List<BundleInfo> cacheBundleInfo = null;
-        if (cachedBundleInfoFile.exists()) {
-            try {
-                reader = new BufferedReader(new FileReader(cachedBundleInfoFile));
-                cacheBundleInfo = BundleInfoParser.fromJson(reader);
-            } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Error getting bundle info from jar", ex);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        LOG.log(Level.SEVERE, "Error closing reader", ex);
-                    }
-                }
-            }
-        } else {
-            return Collections.<BundleInfo>emptyList();
-        }
-        return cacheBundleInfo;
-    }
-
-    public void exportBundleInfo() {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(getAppDataDirectory() + BUNDLE_REGISTRY_FILE_NAME);
-            out.print(BundleInfoParser.toJson(getCurrentBundleInfo()));
-        } catch (FileNotFoundException ex) {
-            LOG.log(Level.SEVERE, "Could not write bundle registry file to app data directory", ex);
-        } finally {
-            out.close();
-        }
-    }
-
     public static boolean isBlank(final CharSequence cs) {
         int strLen;
         if (cs == null || (strLen = cs.length()) == 0) {
             return true;
         }
         for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(cs.charAt(i)) == false) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
             }
         }

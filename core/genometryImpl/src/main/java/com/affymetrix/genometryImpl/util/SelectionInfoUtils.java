@@ -47,28 +47,23 @@ public class SelectionInfoUtils {
     }
 
     private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties) {
-        Map<String, Object> orderedProps = new LinkedHashMap<String, Object>();
-        for (String property : propertyKeys) {
-            if (properties.containsKey(property)) {
-                orderedProps.put(property, properties.get(property).toString());
-            }
-        }
+        Map<String, Object> orderedProps = new LinkedHashMap<>();
+        propertyKeys.stream().filter(property -> properties.containsKey(property)).forEach(property -> {
+            orderedProps.put(property, properties.get(property).toString());
+        });
 
-        for (String key : properties.keySet()) {
-            boolean test = propertyKeys.contains(key);
-            if (!test) {
-                Object property = properties.get(key);
-                if (property instanceof String[]) {
-                    StringBuilder value = new StringBuilder();
-                    for (String str : (String[]) property) {
-                        value.append(str);
-                    }
-                    orderedProps.put(key, value.toString());
-                } else {
-                    orderedProps.put(key, properties.get(key).toString());
+        properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).forEach(key -> {
+            Object property = properties.get(key);
+            if (property instanceof String[]) {
+                StringBuilder value = new StringBuilder();
+                for (String str : (String[]) property) {
+                    value.append(str);
                 }
+                orderedProps.put(key, value.toString());
+            } else {
+                orderedProps.put(key, properties.get(key).toString());
             }
-        }
+        });
         return orderedProps;
     }
 }

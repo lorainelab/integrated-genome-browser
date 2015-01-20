@@ -207,7 +207,7 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
     }
 
     @Override
-    public final boolean getFloatTier() {
+    public final boolean isFloatTier() {
         return false;
     }
 

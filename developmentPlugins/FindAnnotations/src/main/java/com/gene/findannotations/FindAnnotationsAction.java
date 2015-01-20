@@ -18,7 +18,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -29,7 +28,7 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class FindAnnotationsAction extends GenericAction {
 
@@ -52,16 +51,16 @@ public class FindAnnotationsAction extends GenericAction {
     }
 
     private List<TypeContainerAnnot> getTrackSyms() {
-        List<TypeContainerAnnot> trackSyms = new ArrayList<TypeContainerAnnot>();
-        List<Glyph> glyphs;
+        List<TypeContainerAnnot> trackSyms = new ArrayList<>();
+        List<TierGlyph> glyphs;
         if (selectedTracksCB.isSelected()) {
             glyphs = igbService.getSelectedTierGlyphs();
         } else {
             glyphs = igbService.getVisibleTierGlyphs();
         }
-        for (Glyph tierGlyph : glyphs) {
+        for (TierGlyph tierGlyph : glyphs) {
             Object info = tierGlyph.getInfo();
-            if ((info == null || info instanceof DummyRootSeqSymmetry) && tierGlyph instanceof TierGlyph) {
+            if ((info == null || info instanceof DummyRootSeqSymmetry)) {
                 String type = ((TierGlyph) tierGlyph).getAnnotStyle().getMethodName();
                 if (type != null) {
                     trackSyms.add(new TypeContainerAnnot(type));
@@ -103,13 +102,13 @@ public class FindAnnotationsAction extends GenericAction {
         super.actionPerformed(e);
         final String searchText = textField.getText();
         ((AnnotationsTableModel) resultsTable.getModel()).setResults(searchText, new ArrayList<SeqSymmetry>()); // clear table while loading data
-        resultsTable.setRowSorter(new TableRowSorter<TableModel>(resultsTable.getModel()));
+        resultsTable.setRowSorter(new TableRowSorter<>(resultsTable.getModel()));
         ((AnnotationsTableModel) resultsTable.getModel()).fireTableDataChanged();
         final List<TypeContainerAnnot> trackSyms = getTrackSyms();
         new SwingWorker<Set<SeqSymmetry>, Void>() {
             @Override
             protected Set<SeqSymmetry> doInBackground() throws Exception {
-                Set<SeqSymmetry> results = new HashSet<SeqSymmetry>(); // use Set to eliminate duplicates
+                Set<SeqSymmetry> results = new HashSet<>(); // use Set to eliminate duplicates
                 Date totalStart = new Date();
                 List<ISearchModeSym> searchModes = ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls();
                 Collections.sort(searchModes,
@@ -141,9 +140,9 @@ public class FindAnnotationsAction extends GenericAction {
             public void done() {
                 try {
                     Set<SeqSymmetry> results = get();
-                    List<SeqSymmetry> sortedResults = new ArrayList<SeqSymmetry>(results);
+                    List<SeqSymmetry> sortedResults = new ArrayList<>(results);
                     ((AnnotationsTableModel) resultsTable.getModel()).setResults(searchText, sortedResults);
-                    resultsTable.setRowSorter(new TableRowSorter<TableModel>(resultsTable.getModel()));
+                    resultsTable.setRowSorter(new TableRowSorter<>(resultsTable.getModel()));
                     ((AnnotationsTableModel) resultsTable.getModel()).fireTableStructureChanged();
                     trackFromHitsButton.setEnabled(results.size() > 0);
                     status.setStatus(MessageFormat.format(FindAnnotationsView.BUNDLE.getString("findannotationsComplete"), "" + results.size()));

@@ -49,7 +49,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
         try {
             bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
             br = new BufferedReader(new InputStreamReader(bis));
-            String header = br.readLine();;
+            String header = br.readLine();
             while (br.ready() && (!Thread.currentThread().isInterrupted())) {  // loop through lines till find a header line
                 if (header == null) {
                     continue;

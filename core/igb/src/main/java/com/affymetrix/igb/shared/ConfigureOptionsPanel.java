@@ -15,10 +15,6 @@ import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +74,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         if (includeNone) {
             comboBox.addItem(null);
         }
-        TreeSet<T> tProviders = new TreeSet<T>(new IDComparator());
+        TreeSet<T> tProviders = new TreeSet<>(new IDComparator());
         tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
         for (T cp : tProviders) {
             if (filter != null) {
@@ -118,7 +114,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     private void addOptions(final IParameters cp, final JPanel paramsPanel) {
-        paramMap = new HashMap<String, Object>();
+        paramMap = new HashMap<>();
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(new JLabel("                "));
@@ -134,17 +130,10 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 if (possibleValues != null) {
                     final JComboBox cb = new JComboBox();
                     cb.setRenderer(new IDListCellRenderer());
-                    for (Object mco : possibleValues) {
-                        cb.addItem(mco);
-                    }
+                    possibleValues.forEach(cb::addItem);
                     cb.setSelectedItem(cp.getParameterValue(label));
 
-                    cb.addItemListener(new ItemListener() {
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem());
-                        }
-                    });
+                    cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem()));
 
                     //cb.setMaximumSize(new java.awt.Dimension(70, 60));
                     cb.setPreferredSize(new java.awt.Dimension(70, 60));
@@ -204,11 +193,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 } else if (Color.class.isAssignableFrom(clazz)) {
                     final ColorComboBox colorComboBox = new ColorComboBox();
                     colorComboBox.setSelectedColor((Color) cp.getParameterValue(label));
-                    colorComboBox.addItemListener(new ItemListener() {
-                        public void itemStateChanged(ItemEvent e) {
-                            setParameter(cp, label, e.getItem());
-                        }
-                    });
+                    colorComboBox.addItemListener(e -> setParameter(cp, label, e.getItem()));
                     colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
                     colorComboBox.setButtonVisible(false);
                     colorComboBox.setColorValueVisible(false);
@@ -233,22 +218,19 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     editor.setVirtualRange(positions, colorRanges);
 
                     final JButton editButton = new JButton("Edit");
-                    editButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            editor.setTitle("Configure Heatmap");
-                            editor.setModal(true);
-                            editor.setAlwaysOnTop(false);
-                            editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
-                            editor.setDefaultCloseOperation(GradientEditorPanel.DISPOSE_ON_CLOSE);
-                            Object value = editor.showDialog();
-                            if (value.equals(JOptionPane.OK_OPTION)) {
-                                ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-                                setParameter(cp, label, new HeatMapExtended("HeatMapExtended",
-                                        colorInterpolator.getColorRange(HeatMap.BINS),
-                                        editor.getVirtualRange().getVirtualValues(),
-                                        editor.getVirtualRange().getColors()));
-                            }
+                    editButton.addActionListener(evt -> {
+                        editor.setTitle("Configure Heatmap");
+                        editor.setModal(true);
+                        editor.setAlwaysOnTop(false);
+                        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+                        editor.setDefaultCloseOperation(GradientEditorPanel.DISPOSE_ON_CLOSE);
+                        Object value = editor.showDialog();
+                        if (value.equals(JOptionPane.OK_OPTION)) {
+                            ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
+                            setParameter(cp, label, new HeatMapExtended("HeatMapExtended",
+                                    colorInterpolator.getColorRange(HeatMap.BINS),
+                                    editor.getVirtualRange().getVirtualValues(),
+                                    editor.getVirtualRange().getColors()));
                         }
                     });
                     component = editButton;
@@ -287,20 +269,18 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     private void addListeners() {
-        comboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                T cp = (T) comboBox.getSelectedItem();
-                // If a user selects same color provider as initial then reuses the same object
-                if (returnValue != null && cp != null && cp.getName().equals(returnValue.getName())) {
-                    cp = returnValue;
-                } else if (cp != null) {
-                    cp = (T) cp.newInstance();
-                }
-                setSelected(cp);
-                if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {
-                    for (SelectionChangeListener tChangeListener : tChangeListeners) {
-                        tChangeListener.selectionChanged(cp);
-                    }
+        comboBox.addItemListener(e -> {
+            T cp = (T) comboBox.getSelectedItem();
+            // If a user selects same color provider as initial then reuses the same object
+            if (returnValue != null && cp != null && cp.getName().equals(returnValue.getName())) {
+                cp = returnValue;
+            } else if (cp != null) {
+                cp = (T) cp.newInstance();
+            }
+            setSelected(cp);
+            if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {
+                for (SelectionChangeListener tChangeListener : tChangeListeners) {
+                    tChangeListener.selectionChanged(cp);
                 }
             }
         });
@@ -320,7 +300,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     public void addTChangeListner(SelectionChangeListener tcl) {
         if (tChangeListeners == null) {
-            tChangeListeners = new ArrayList<SelectionChangeListener>();
+            tChangeListeners = new ArrayList<>();
         }
         tChangeListeners.add(tcl);
     }

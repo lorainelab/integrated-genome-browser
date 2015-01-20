@@ -16,7 +16,7 @@ import java.util.Map;
 
 public final class MismatchPileupType extends MismatchGraphType {
 
-	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<Character, int[]>();
+	private static final Map<Character, int[]> BAR_ORDERS = new HashMap<>();
 
 	static {
 		BAR_ORDERS.put('A', new int[]{1, 2, 3, 4});
@@ -87,8 +87,7 @@ public final class MismatchPileupType extends MismatchGraphType {
 			return;
 		}
 		float[] residuesY = mmgs.getAllResiduesY(i);
-		for (int j = 0; j < barOrder.length; j++) {
-			int loopIndex = barOrder[j];
+		for (int loopIndex : barOrder) {
 			float _ytemp = residuesY[loopIndex];
 			if (_ytemp == 0) {
 				continue;

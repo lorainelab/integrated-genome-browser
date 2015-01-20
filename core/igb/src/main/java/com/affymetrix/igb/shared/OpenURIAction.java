@@ -49,10 +49,7 @@ public class OpenURIAction extends SeqMapViewActionA {
             final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
 
         if (ScriptManager.getInstance().isScript(uri.toString())) {
-            int result = JOptionPane.showConfirmDialog(igbService.getFrame(), "Do you want to run the script?", "Found Script", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                RunScriptAction.getAction().runScript(uri.toString());
-            }
+            RunScriptAction.getAction().runScript(uri.toString());
             return;
         }
 
@@ -67,7 +64,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     public static UniFileFilter getAllKnowFilter() {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
 
         for (String name : nameToExtensionMap.keySet()) {
             all_known_endings.addAll(nameToExtensionMap.get(name));
@@ -85,10 +82,11 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     public static List<UniFileFilter> getSupportedFiles(FileTypeCategory category) {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
-        List<UniFileFilter> filters = new ArrayList<UniFileFilter>(nameToExtensionMap.keySet().size() + 1);
+        List<UniFileFilter> filters = new ArrayList<>(nameToExtensionMap.keySet().size() + 1);
 
         for (String name : nameToExtensionMap.keySet()) {
-            UniFileFilter uff = new UniFileFilter(nameToExtensionMap.get(name).toArray(new String[]{}), name + " Files");
+            List<String> var = nameToExtensionMap.get(name);
+            UniFileFilter uff = new UniFileFilter(var.toArray(new String[var.size()]), name + " Files");
             uff.addCompressionEndings(GeneralUtils.compression_endings);
             filters.add(uff);
         }

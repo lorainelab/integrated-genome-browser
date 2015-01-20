@@ -97,7 +97,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
         } else {
             Matcher gff1_matcher = gff1_regex.matcher(group_field);
             if (gff1_matcher.matches()) {
-                this.group = new String(gff1_matcher.group(1)); // creating a new String can save Memory
+                this.group = gff1_matcher.group(1); // creating a new String can save Memory
                 this.is_gff1 = true;
             } else {
                 this.group = group_field;
@@ -145,9 +145,9 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
         } else if (name.equals("feature_type") || name.equals("type")) {
             return feature_type;
         } else if (name.equals("score") && score != UNKNOWN_SCORE) {
-            return new Float(score);
+            return score;
         } else if (name.equals("frame") && frame != UNKNOWN_FRAME) {
-            return Character.valueOf(frame);
+            return frame;
         } else if (name.equals("group")) {
             return getGroup();
         } else if (name.equals("id")) {
@@ -194,20 +194,22 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
                 return false;
             }
         }
-        if (name.equals("method")) {
-            if (val instanceof String) {
-                method = (String) val;
-                return true;
-            } else {
-                //source = null;
-                return false;
-            }
-        } else if (name.equals("group")) {
-            // Not supported
-            throw new IllegalArgumentException("Currently can't modify 'group' via setProperty");
-        } else if (name.equals("score") || name.equals("frame")) {
-            // May need to handle these later, but it is unlikely to be an issue
-            throw new IllegalArgumentException("Currently can't modify 'score' or 'frame' via setProperty");
+        switch (name) {
+            case "method":
+                if (val instanceof String) {
+                    method = (String) val;
+                    return true;
+                } else {
+                    //source = null;
+                    return false;
+                }
+            case "group":
+                // Not supported
+                throw new IllegalArgumentException("Currently can't modify 'group' via setProperty");
+            case "score":
+            case "frame":
+                // May need to handle these later, but it is unlikely to be an issue
+                throw new IllegalArgumentException("Currently can't modify 'score' or 'frame' via setProperty");
         }
 
         return super.setProperty(name, val);
@@ -220,7 +222,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
     public Map<String, Object> cloneProperties() {
         Map<String, Object> tprops = super.cloneProperties();
         if (tprops == null) {
-            tprops = new HashMap<String, Object>();
+            tprops = new HashMap<>();
         }
         if (getID() != null) {
             tprops.put("id", getID());
@@ -238,10 +240,10 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
             tprops.put("type", feature_type);
         }
         if (score != UNKNOWN_SCORE) {
-            tprops.put("score", new Float(getScore()));
+            tprops.put("score", getScore());
         }
         if (frame != UNKNOWN_FRAME) {
-            tprops.put("frame", Character.valueOf(frame));
+            tprops.put("frame", frame);
         }
         if (is_gff1) {
             if (group != null) {

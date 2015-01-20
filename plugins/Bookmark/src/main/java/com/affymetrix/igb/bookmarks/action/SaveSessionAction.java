@@ -28,13 +28,7 @@ public class SaveSessionAction extends GenericAction {
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
-    FilenameFilter fileNameFilter = new FilenameFilter() {
-
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".xml");
-        }
-    };
+    FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
     private static SaveSessionAction ACTION;
 

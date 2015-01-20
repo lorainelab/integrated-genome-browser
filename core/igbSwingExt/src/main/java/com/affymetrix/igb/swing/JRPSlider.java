@@ -2,8 +2,6 @@ package com.affymetrix.igb.swing;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class JRPSlider extends JSlider implements JRPWidget {
 
@@ -48,12 +46,7 @@ public class JRPSlider extends JSlider implements JRPWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPSlider.this, "setValue(" + getValue() + ")"));
-			}
-		});
+		addChangeListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPSlider.this, "setValue(" + getValue() + ")")));
 	}
 
 	@Override

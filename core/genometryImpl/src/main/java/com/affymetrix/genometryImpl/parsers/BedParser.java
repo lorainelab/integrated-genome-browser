@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleScoredSymWithProps;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -87,7 +86,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-	private static List<String> pref_list = new ArrayList<String>();
+	private static List<String> pref_list = new ArrayList<>();
 	static {
 		pref_list.add("bed");
 	}
@@ -142,8 +141,8 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-		Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+		List<SeqSymmetry> symlist = new ArrayList<>();
+		Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<>();
 		String line;
 		String type = default_type;
 		String bedType = null;
@@ -157,7 +156,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
 				String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
                                 if (StringUtils.isNotBlank(trackLineName)){
-                                    if (type.indexOf(".bed") > -1) {
+                                    if (type.contains(".bed")) {
                                         type = type.substring(0, type.indexOf(".bed")) + " " + trackLineName;
                                     } else {
                                         type = type + "_" + trackLineName;
@@ -361,7 +360,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 	 * @return annot_name
 	 */
 	private static String parseName(String s) {
-		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
+		String annot_name = s; // create a new String so the entire input line doesn't get preserved
 		return annot_name;
 	}
 
@@ -374,7 +373,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser  {
 			}
 			Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
 			if (type2csym == null) {
-				type2csym = new HashMap<String, SeqSymmetry>();
+				type2csym = new HashMap<>();
 				seq2types.put(seq, type2csym);
 			}
 			SimpleSymWithProps parent_sym = (SimpleSymWithProps) type2csym.get(type);

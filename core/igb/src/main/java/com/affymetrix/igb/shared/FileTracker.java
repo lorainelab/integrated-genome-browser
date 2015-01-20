@@ -24,13 +24,13 @@ public final class FileTracker {
     private static List<String> FILENAMES;
 
     static {
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
         filenames.add(CONTROL_GRAPH_DIRECTORY);
         filenames.add(DATA_DIRECTORY);
         filenames.add(OUTPUT_DIRECTORY);
         filenames.add(GENOME_DIRECTORY);
         filenames.add(EXPORT_DIRECTORY);
-        FILENAMES = Collections.<String>unmodifiableList(filenames);
+        FILENAMES = Collections.unmodifiableList(filenames);
     }
 
     private final String name;
@@ -85,7 +85,7 @@ public final class FileTracker {
         try {
             PreferenceUtils.getTopNode().flush();
         } catch (BackingStoreException bse) {
-        };
+        }
     }
 
     public File getFile() {

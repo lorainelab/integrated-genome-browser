@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 public class BigBedSymLoader extends SymLoader {
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -76,13 +76,13 @@ public class BigBedSymLoader extends SymLoader {
 		
 		initbbReader();
 				
-		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
+		Map<String, BioSeq> seqMap = new HashMap<>();
 		for (BioSeq seq : group.getSeqList()) {
 			seqMap.put(seq.getID(), seq);
 		}
-		chromosomeList = new ArrayList<BioSeq>();
-		cleanSeq2Seq = new HashMap<String, String>();
-		Map<String, Integer> chromosomeNameMap = new HashMap<String, Integer>();
+		chromosomeList = new ArrayList<>();
+		cleanSeq2Seq = new HashMap<>();
+		Map<String, Integer> chromosomeNameMap = new HashMap<>();
 		findAllChromosomeNamesAndSizes(bbReader.getChromosomeIDTree().getRootNode(), chromosomeNameMap);
 
 		for (String seqID : chromosomeNameMap.keySet()) {
@@ -113,7 +113,7 @@ public class BigBedSymLoader extends SymLoader {
 	public List<? extends SeqSymmetry> getGenome() {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
-		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> retList = new ArrayList<>();
 		for(BioSeq seq : allSeq){
 			retList.addAll(getChromosome(seq));
 		}
@@ -138,7 +138,7 @@ public class BigBedSymLoader extends SymLoader {
 		catch (RuntimeException x) {
 			if (x.getMessage().startsWith("No wig data found")) {
 				Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
-				regions = new ArrayList<SeqSymmetry>();
+				regions = new ArrayList<>();
 			}
 			else {
 				throw x;
@@ -148,7 +148,7 @@ public class BigBedSymLoader extends SymLoader {
 	}
 
 	private List<? extends SeqSymmetry> parse(BioSeq seq, BigBedIterator bedIterator){
-		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> symList = new ArrayList<>();
 		try {
 	        BedFeature bedFeature = null;
 	        while (bedIterator.hasNext() && (!Thread.currentThread().isInterrupted())) {

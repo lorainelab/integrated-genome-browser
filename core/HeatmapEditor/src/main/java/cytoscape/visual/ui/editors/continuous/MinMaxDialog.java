@@ -116,28 +116,16 @@ public class MinMaxDialog extends javax.swing.JDialog {
 
 		okButton.setText("OK");
 		okButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		okButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					okButtonActionPerformed(evt);
-				}
-			});
+		okButton.addActionListener(this::okButtonActionPerformed);
 
 		cancelButton.setText("Cancel");
 		cancelButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		cancelButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					cancelButtonActionPerformed(evt);
-				}
-			});
+		cancelButton.addActionListener(this::cancelButtonActionPerformed);
 		
 		restoreButton.setText("Restore");
 		restoreButton.setToolTipText("Set range by current attribute's min and max.");
 		restoreButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-		restoreButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					restoreButtonActionPerformed(evt);
-				}
-			});
+		restoreButton.addActionListener(this::restoreButtonActionPerformed);
 
 //		titlePanel.setBackground(new java.awt.Color(255, 255, 255));
 

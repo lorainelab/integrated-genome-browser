@@ -2,7 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;

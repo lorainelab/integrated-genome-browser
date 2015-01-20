@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -42,7 +42,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
 
     AffyTieredMap labelmap;
     JSplitPane mapsplitter;
-    final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+    final List<TierLabelGlyph> label_glyphs = new ArrayList<>();
     List<TierLabelGlyph> ordered_glyphs = null;
     JPanel can_panel;
     NeoCanvas ncan;
@@ -125,7 +125,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     }
 
     private List<TierLabelGlyph> getOrderedGlyphs() {
-        List<TierLabelGlyph> orderedGlyphs = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> orderedGlyphs = new ArrayList<>();
         for (TierLabelGlyph tierLabelGlyph : label_glyphs) {
             if (tierLabelGlyph.isVisible()) {
                 orderedGlyphs.add(tierLabelGlyph);

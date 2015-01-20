@@ -28,7 +28,7 @@ public final class SimpleBedParser implements AnnotationWriter {
 	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success;
-		List<SeqSpan> spanlist = new ArrayList<SeqSpan>(syms.size());  // initialize to number of top-level syms, won't be lower...
+		List<SeqSpan> spanlist = new ArrayList<>(syms.size());  // initialize to number of top-level syms, won't be lower...
 		for (SeqSymmetry sym : syms) {
 			SeqUtils.collectLeafSpans(sym, seq, spanlist);
 			if(Thread.currentThread().isInterrupted()) {

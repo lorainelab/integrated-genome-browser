@@ -16,7 +16,7 @@ public class USeqArchive {
 	private ArchiveInfo archiveInfo;
 	private ZipEntry archiveReadMeEntry;
 	private String binaryDataType;
-	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
+	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<> ();
 	//DAS2 does not support stranded requests at this time so leave false.
 	private boolean maintainStrandedness = false;
 	private boolean stranded = false;
@@ -36,28 +36,25 @@ public class USeqArchive {
 		}
 
 		//build ArrayList of USeqData to merge
-		ArrayList<USeqData> useqDataALPlus = new ArrayList<USeqData>();
-		ArrayList<USeqData> useqDataALMinus = new ArrayList<USeqData>();
-		ArrayList<USeqData> useqDataALNone = new ArrayList<USeqData>();
+		ArrayList<USeqData> useqDataALPlus = new ArrayList<>();
+		ArrayList<USeqData> useqDataALMinus = new ArrayList<>();
+		ArrayList<USeqData> useqDataALNone = new ArrayList<>();
 		BufferedInputStream bis = null;
 		try {
 			int numEntries = entries.size();
 			//for each entry
-			for (int i=0; i< numEntries; i++){
+			for (ZipEntry entry : entries) {
 				//get input stream to read entry
-				ZipEntry entry = entries.get(i);			
-				bis = new BufferedInputStream (zipArchive.getInputStream(entry));
+				bis = new BufferedInputStream(zipArchive.getInputStream(entry));
 				SliceInfo sliceInfo = new SliceInfo(entry.getName());
 				//load it, this will trim too thus might remove everything.
 				USeqData d = loadSlice(beginningBP, endingBP, sliceInfo, bis);
 				if (d != null) {
 					if (sliceInfo.getStrand().equals("+")) {
 						useqDataALPlus.add(d);
-					}
-					else if (sliceInfo.getStrand().equals("+")) {
+					} else if (sliceInfo.getStrand().equals("+")) {
 						useqDataALMinus.add(d);
-					}
-					else {
+					} else {
 						useqDataALNone.add(d);
 					}
 				}
@@ -201,9 +198,9 @@ public class USeqArchive {
 			if (USeqUtilities.POSITION.matcher(binaryDataType).matches()) {
 				d = new PositionData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -212,9 +209,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_SCORE.matcher(binaryDataType).matches()) {
 				d = new PositionScoreData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionScoreData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -223,9 +220,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_TEXT.matcher(binaryDataType).matches()) {
 				d = new PositionTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -234,9 +231,9 @@ public class USeqArchive {
 			else if (USeqUtilities.POSITION_SCORE_TEXT.matcher(binaryDataType).matches()) {
 				d = new PositionScoreTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((PositionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((PositionScoreTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -245,9 +242,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION.matcher(binaryDataType).matches()) {
 				d = new RegionData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -256,9 +253,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_SCORE.matcher(binaryDataType).matches()) {
 				d = new RegionScoreData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionScoreData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -267,9 +264,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_TEXT.matcher(binaryDataType).matches()) {
 				d = new RegionTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -278,9 +275,9 @@ public class USeqArchive {
 			else if (USeqUtilities.REGION_SCORE_TEXT.matcher(binaryDataType).matches()) {
 				d = new RegionScoreTextData(dis, sliceInfo);
 				//entirely contained by?
-				if (sliceInfo.isContainedBy(beginningBP, endingBP) == false){
+				if (!sliceInfo.isContainedBy(beginningBP, endingBP)){
 					//nope so slice it and check if anything remains
-					if (((RegionScoreTextData) d).trim(beginningBP, endingBP) == false) {
+					if (!((RegionScoreTextData) d).trim(beginningBP, endingBP)) {
 						d = null;
 					} 
 				}
@@ -390,13 +387,12 @@ public class USeqArchive {
 			byte data[] = new byte[2048];
 			int numEntries = entries.size();
 			//for each entry
-			for (int i=0; i< numEntries; i++){
+			for (ZipEntry entry : entries) {
 				//get input stream to read entry
-				ZipEntry entry = entries.get(i);
 				out.putNextEntry(entry);
-				is = new BufferedInputStream (zipArchive.getInputStream(entry));
+				is = new BufferedInputStream(zipArchive.getInputStream(entry));
 				//read in and write out, wish there was a way of just copying it directly
-				while ((count = is.read(data, 0, 2048))!= -1) {
+				while ((count = is.read(data, 0, 2048)) != -1) {
 					out.write(data, 0, count);
 				}
 				//close streams
@@ -416,15 +412,15 @@ public class USeqArchive {
 	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found. 
 	 * Remember this list isn't stranded so must search entire set.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
-		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
+		ArrayList<ZipEntry> al = new ArrayList<>();
 		//fetch chromStrand
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
 		if (dr == null) {
 			return null;
 		}
-		for (int i=0; i< dr.length; i++){
-			if (dr[i].intersects(beginningBP, endingBP)) {
-				al.add(dr[i].zipEntry);
+		for (DataRange aDr : dr) {
+			if (aDr.intersects(beginningBP, endingBP)) {
+				al.add(aDr.zipEntry);
 			}
 		}
 		if (al.isEmpty()) {
@@ -438,7 +434,7 @@ public class USeqArchive {
 		InputStream is = null;
 		try {
 			//make ArchiveInfo, it's always the first entry
-			if (USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches() == false) {
+			if (!USeqUtilities.USEQ_ARCHIVE.matcher(zipFile.getName()).matches()) {
 				throw new IOException("This file does not appear to be a USeq archive! "+zipFile);
 			}
 			zipArchive = new ZipFile(zipFile);
@@ -448,7 +444,7 @@ public class USeqArchive {
 			archiveInfo = new ArchiveInfo(is, false);
 
 			//load
-			HashMap<String, ArrayList<DataRange>> map = new HashMap<String,ArrayList<DataRange>> ();
+			HashMap<String, ArrayList<DataRange>> map = new HashMap<> ();
 
 			while(e.hasMoreElements()) {
 				ZipEntry zipEntry = e.nextElement();
@@ -465,22 +461,20 @@ public class USeqArchive {
 					chromName = sliceInfo.getChromosome();
 				}
 				//stranded?
-				if (sliceInfo.getStrand().equals(".") == false) {
+				if (!sliceInfo.getStrand().equals(".")) {
 					stranded = true;
 				}
 				//get/make ArrayList
 				ArrayList<DataRange> al = map.get(chromName);
 				if (al == null){
-					al = new ArrayList<DataRange>();
+					al = new ArrayList<>();
 					map.put(chromName, al);
 				}
 				al.add(new DataRange(zipEntry,sliceInfo.getFirstStartPosition(), sliceInfo.getLastStartPosition()));
 
 			}
 			//convert to arrays and sort
-			Iterator<String> it = map.keySet().iterator();
-			while (it.hasNext()){
-				String chromName = it.next();
+			for (String chromName : map.keySet()) {
 				ArrayList<DataRange> al = map.get(chromName);
 				DataRange[] dr = new DataRange[al.size()];
 				al.toArray(dr);
@@ -530,11 +524,11 @@ public class USeqArchive {
 	 * java.util.Random class.  Indicate how long you want a particular word and
 	 * the number of words.*/
 	public static String[] createRandomWords(String[] alphabet,int lengthOfWord,int numberOfWords) {
-		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<String> words = new ArrayList<>();
 		Random r = new Random();
 		int len = alphabet.length;
 		for (int i = 0; i < numberOfWords; i++) {
-			StringBuffer w = new StringBuffer();
+			StringBuilder w = new StringBuilder();
 			for (int j = 0; j < lengthOfWord; j++) {
 				w.append(alphabet[r.nextInt(len)]);
 			}
@@ -562,7 +556,7 @@ public class USeqArchive {
 	/**Returns a HashMap containing chromosomes and the last base covered.*/
 	public HashMap<String,Integer> fetchChromosomesAndLastBase() throws IOException{
 		//find last DR
-		HashMap <String,DataRange> map = new HashMap<String,DataRange>();
+		HashMap <String,DataRange> map = new HashMap<>();
 		for (String chrom : chromStrandRegions.keySet()){
 			//these are sorted by first base so it's best to look at all of them.
 			DataRange[] dr = chromStrandRegions.get(chrom);
@@ -579,7 +573,7 @@ public class USeqArchive {
 
 		//now scan each for actual last base
 		ZipFile zf = new ZipFile(zipFile);
-		HashMap<String,Integer> chromBase = new HashMap<String,Integer>();
+		HashMap<String,Integer> chromBase = new HashMap<>();
 		for (String chrom: map.keySet()){
 			DataRange dr = map.get(chrom);
 			ZipEntry ze = dr.zipEntry;
@@ -627,7 +621,7 @@ public class USeqArchive {
 				throw new IOException("\nFailed to recognize the binary file extension! "+ze.getName());
 			}
 
-			chromBase.put(chrom, new Integer(lastBase));
+			chromBase.put(chrom, lastBase);
 		}
 		return chromBase;
 	}

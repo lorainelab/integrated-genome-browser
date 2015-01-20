@@ -294,7 +294,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
     }
 
     public Map<String, Object> cloneProperties() {
-        HashMap<String, Object> tprops = new HashMap<String, Object>();
+        HashMap<String, Object> tprops = new HashMap<>();
         tprops.put("id", ID);
         tprops.put("type", type);
         if (props != null) {
@@ -318,7 +318,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
 
     public boolean setProperty(String name, Object val) {
         if (props == null) {
-            props = new Hashtable<String, Object>();
+            props = new Hashtable<>();
         }
         props.put(name, val);
         return true;

@@ -23,7 +23,7 @@ public class KeyWordSearch implements IKeyWordSearch {
     final private List<IKeyWordSearch> searchModes;
 
     public KeyWordSearch() {
-        searchModes = new ArrayList<IKeyWordSearch>();
+        searchModes = new ArrayList<>();
     }
 
     public String getName() {
@@ -47,7 +47,7 @@ public class KeyWordSearch implements IKeyWordSearch {
     }
 
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
         for (IKeyWordSearch searchMode : searchModes) {
@@ -60,11 +60,11 @@ public class KeyWordSearch implements IKeyWordSearch {
             status.append(searchMode.getName()).append(" : ").append(sh.getLastStatus()).append(", ");
         }
         statusHolder.setStatus(status.toString());
-        return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
     }
 
     public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (IKeyWordSearch searchMode : searchModes) {
             List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
             if (res != null && !res.isEmpty()) {

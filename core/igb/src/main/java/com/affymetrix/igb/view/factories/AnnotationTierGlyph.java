@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -37,7 +37,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("collapsed", Boolean.class);
         temp.put("connected", Boolean.class);
         temp.put("arrow", Boolean.class);
@@ -80,9 +80,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
         RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());
 
         for (Entry<String, List<? extends SeqSymmetry>> entry : loadData(span).entrySet()) {
-            for (SeqSymmetry sym : entry.getValue()) {
-                detailSym.addChild(sym);
-            }
+            entry.getValue().forEach(detailSym::addChild);
         }
 
         return detailSym;
@@ -470,7 +468,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
 
     @Override
     public Map<String, Class<?>> getPreferences() {
-        return new HashMap<String, Class<?>>(PREFERENCES);
+        return new HashMap<>(PREFERENCES);
     }
 
     @Override

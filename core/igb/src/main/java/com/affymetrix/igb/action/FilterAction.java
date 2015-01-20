@@ -4,17 +4,17 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -51,14 +51,16 @@ public class FilterAction extends SeqMapViewActionA {
         ITrackStyleExtended style = tg.getAnnotStyle();
         SymmetryFilterI filter = style.getFilter();
 
-        ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = new ConfigureOptionsPanel.Filter<SymmetryFilterI>() {
-            @Override
-            public boolean shouldInclude(SymmetryFilterI symmetryFilter) {
-                if (symmetryFilter instanceof SupportsFileTypeCategory) {
-                    return ((SupportsFileTypeCategory) symmetryFilter).isFileTypeCategorySupported(tg.getFileTypeCategory());
+        ConfigureOptionsPanel.Filter<SymmetryFilterI> optionFilter = symmetryFilter -> {
+            if (symmetryFilter instanceof SupportsFileTypeCategory) {
+                Optional<FileTypeCategory> category = tg.getFileTypeCategory();
+                if (category.isPresent()) {
+                    return symmetryFilter.isFileTypeCategorySupported(category.get());
+                } else {
+                    return false;
                 }
-                return true;
             }
+            return true;
         };
 
         final ConfigureFilters configurefilters = new ConfigureFilters();
@@ -71,23 +73,18 @@ public class FilterAction extends SeqMapViewActionA {
         optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
         optionPane.setIcon(new ImageIcon(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)));
 
-        optionPane.addPropertyChangeListener("value", new PropertyChangeListener() {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue() instanceof Integer && (Integer) evt.getNewValue() == JOptionPane.OK_OPTION) {
-                    AbstractAction applyAction = new AbstractAction() {
-                        public void actionPerformed(ActionEvent e) {
-                            for (TierGlyph tier : getTierManager().getSelectedTiers()) {
-                                applyFilter(configurefilters.getFilter(), tier);
-                            }
-                            getSeqMapView().getSeqMap().repackTheTiers(true, true);
+        optionPane.addPropertyChangeListener("value", evt -> {
+            if (evt.getNewValue() instanceof Integer && (Integer) evt.getNewValue() == JOptionPane.OK_OPTION) {
+                AbstractAction applyAction = new AbstractAction() {
+                    public void actionPerformed(ActionEvent e) {
+                        for (TierGlyph tier : getTierManager().getSelectedTiers()) {
+                            applyFilter(configurefilters.getFilter(), tier);
                         }
-                    };
-                    getSeqMapView().preserveSelectionAndPerformAction(applyAction);
-                }
+                        getSeqMapView().getSeqMap().repackTheTiers(true, true);
+                    }
+                };
+                getSeqMapView().preserveSelectionAndPerformAction(applyAction);
             }
-
         });
 
         JDialog dialog = optionPane.createDialog("Add/Remove/Edit Filters");

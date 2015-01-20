@@ -1,8 +1,5 @@
 package com.affymetrix.igb.swing;
 
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-
 import javax.swing.JScrollBar;
 
 public class JRPScrollBar extends JScrollBar implements JRPWidget {
@@ -30,13 +27,7 @@ public class JRPScrollBar extends JScrollBar implements JRPWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addAdjustmentListener(new AdjustmentListener() {
-
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(JRPScrollBar.this, "setValue(" + getValue() + ")"));
-			}
-		});
+		addAdjustmentListener(e -> ScriptManager.getInstance().recordOperation(new Operation(JRPScrollBar.this, "setValue(" + getValue() + ")")));
 	}
 
 	@Override

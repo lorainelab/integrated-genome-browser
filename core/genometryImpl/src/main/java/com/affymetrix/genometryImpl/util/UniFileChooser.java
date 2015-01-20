@@ -96,8 +96,8 @@ public class UniFileChooser extends GFileChooser {
 			this.extension = extension;
 
 			FileFilter[] filters = getChoosableFileFilters();
-			for (int i=0; i<filters.length; i++) {
-				removeChoosableFileFilter(filters[i]);
+			for (FileFilter filter : filters) {
+				removeChoosableFileFilter(filter);
 			}
 			current_file_filter = new UniFileFilter(extension, description);
 

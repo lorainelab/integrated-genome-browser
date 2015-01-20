@@ -53,7 +53,7 @@ public class IGBScriptEngine implements ScriptEngine {
         public String toString() {
             return name;
         }
-    };
+    }
 
     private static IGBService igbService;
     private static final Logger LOG
@@ -297,16 +297,16 @@ public class IGBScriptEngine implements ScriptEngine {
         if (action.equalsIgnoreCase("hidetrack")) {
             // Allowing multiple files to be specified, split by commas
             String[] hideTrack = join(fields, 1).split(",");
-            for (int i = 0; i < hideTrack.length; i++) {
-                hideTrack(hideTrack[i]);
+            for (String aHideTrack : hideTrack) {
+                hideTrack(aHideTrack);
             }
             return;
         }
         if (action.equalsIgnoreCase("showtrack")) {
             // Allowing multiple files to be specified, split by commas
             String[] showTrack = join(fields, 1).split(",");
-            for (int i = 0; i < showTrack.length; i++) {
-                showTrack(showTrack[i]);
+            for (String aShowTrack : showTrack) {
+                showTrack(aShowTrack);
             }
             return;
         }

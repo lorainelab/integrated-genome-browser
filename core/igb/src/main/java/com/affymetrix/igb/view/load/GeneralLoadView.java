@@ -35,7 +35,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -43,6 +43,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -220,7 +221,7 @@ public final class GeneralLoadView {
             SeqSpan request_span = gviewer.getVisibleSpan();
             System.out.println("Visible load request span: " + request_span.getBioSeq() + ":" + request_span.getStart() + "-" + request_span.getEnd());
         }
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadStrategies.add(LoadStrategy.VISIBLE);
 //		loadStrategies.add(LoadStrategy.CHROMOSOME);
@@ -233,7 +234,7 @@ public final class GeneralLoadView {
      * loaded.
      */
     public static void loadAutoLoadFeatures() {
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadFeatures(loadStrategies, null);
         GeneralLoadUtils.bufferDataForAutoload();
@@ -244,7 +245,7 @@ public final class GeneralLoadView {
      * loaded.
      */
     public static void loadWholeRangeFeatures(ServerTypeI serverType) {
-        List<LoadStrategy> loadStrategies = new ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
         loadFeatures(loadStrategies, serverType);
     }
@@ -346,12 +347,7 @@ public final class GeneralLoadView {
 
     public void refreshTreeView() {
 
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                refreshTree();
-            }
-        });
+        ThreadUtils.runOnEventQueue(this::refreshTree);
     }
 
     private void refreshTree() {
@@ -363,25 +359,19 @@ public final class GeneralLoadView {
     }
 
     public void refreshTreeViewAndRestore() {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                String state = feature_tree_view.getState();
-                refreshTree();
-                feature_tree_view.restoreState(state);
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            String state = feature_tree_view.getState();
+            refreshTree();
+            feature_tree_view.restoreState(state);
         });
     }
 
     private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures) {
 
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                table.stopCellEditing();
-                tableModel.createVirtualFeatures(visibleFeatures);
-                DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            table.stopCellEditing();
+            tableModel.createVirtualFeatures(visibleFeatures);
+            DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
         });
     }
 
@@ -464,11 +454,9 @@ public final class GeneralLoadView {
     }
 
     private void setAllButtons(final boolean enabled) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-            public void run() {
-                partial_residuesB.setEnabled(enabled);
-                refreshDataAction.setEnabled(enabled);
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            partial_residuesB.setEnabled(enabled);
+            refreshDataAction.setEnabled(enabled);
         });
     }
 
@@ -517,7 +505,7 @@ public final class GeneralLoadView {
     public void addFeature(final GenericFeature feature) {
         feature.setVisible();
 
-        List<LoadStrategy> loadStrategies = new java.util.ArrayList<LoadStrategy>();
+        List<LoadStrategy> loadStrategies = new java.util.ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
 
         if (!loadFeature(loadStrategies, feature, null)) {
@@ -559,11 +547,9 @@ public final class GeneralLoadView {
     }
 
     void removeAllFeautres(Set<GenericFeature> features) {
-        for (GenericFeature feature : features) {
-            if (feature.isVisible()) {
-                removeFeature(feature, true);
-            }
-        }
+        features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
+            removeFeature(feature, true);
+        });
     }
 
     public void removeFeature(final GenericFeature feature, final boolean refresh) {
@@ -592,12 +578,12 @@ public final class GeneralLoadView {
 
                 @Override
                 protected void finished() {
-                    TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+                    TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
                     if (tier != null) {
                         tier.removeAllChildren();
                         tier.setInfo(null);
                     }
-                    tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+                    tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
                     if (tier != null) {
                         tier.removeAllChildren();
                         tier.setInfo(null);
@@ -653,9 +639,7 @@ public final class GeneralLoadView {
                 if (refresh) {
                     removeTier(feature.getURI().toString());
                     if (!feature.getMethods().isEmpty()) {
-                        for (String method : feature.getMethods()) {
-                            removeTier(method);
-                        }
+                        feature.getMethods().forEach(this::removeTier);
                     }
                     feature.clear();
 
@@ -671,11 +655,11 @@ public final class GeneralLoadView {
 
             private void removeTier(String method) {
                 ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-                TierGlyph tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.FORWARD);
+                TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
                 if (tier != null) {
                     gviewer.getSeqMap().removeTier(tier);
                 }
-                tier = TrackView.getInstance().getTier(style, TierGlyph.Direction.REVERSE);
+                tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
                 if (tier != null) {
                     gviewer.getSeqMap().removeTier(tier);
                 }

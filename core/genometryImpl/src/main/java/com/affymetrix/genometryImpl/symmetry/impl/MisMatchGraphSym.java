@@ -66,7 +66,7 @@ public class MisMatchGraphSym extends GraphSym {
             return super.getLocationProperties(x, span);
         }
 
-        Map<String, Object> locprops = new HashMap<String, Object>();
+        Map<String, Object> locprops = new HashMap<>();
 
         locprops.put("x coord", x);
         float ytot = 0;
@@ -273,8 +273,8 @@ public class MisMatchGraphSym extends GraphSym {
 
                     //Write helper index file
                     hdos.writeInt(x);
-                    for (int j = 0; j < yR.length; j++) {
-                        hdos.writeInt(yR[j]);
+                    for (int aYR : yR) {
+                        hdos.writeInt(aYR);
                     }
                 }
             }

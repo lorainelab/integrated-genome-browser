@@ -5,7 +5,7 @@ import apollo.analysis.NCBIPrimerBlastOpts;
 import com.affymetrix.genometryImpl.event.ContextualPopupListener;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;

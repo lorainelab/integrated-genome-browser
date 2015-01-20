@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -81,7 +80,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     //  Hashtable fail_filter_hash = new Hashtable();
     Map<String, String> fail_filter_hash = null;
     Map<String, String> pass_filter_hash = null;
-    Map<String, Object> gff3_id_hash = new HashMap<String, Object>();
+    Map<String, Object> gff3_id_hash = new HashMap<>();
 
     /*
      *  tag to group features on
@@ -222,12 +221,12 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     public void addFeatureFilter(String feature_type, boolean pass_filter) {
         if (pass_filter) {
             if (pass_filter_hash == null) {
-                pass_filter_hash = new HashMap<String, String>();
+                pass_filter_hash = new HashMap<>();
             }
             pass_filter_hash.put(feature_type, feature_type);
         } else {
             if (fail_filter_hash == null) {
-                fail_filter_hash = new HashMap<String, String>();
+                fail_filter_hash = new HashMap<>();
             }
             fail_filter_hash.put(feature_type, feature_type);
         }
@@ -301,10 +300,10 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         int group_count = 0;
         number_of_duplicate_warnings = 0;
 
-        Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>(); // see getContainer()
-        Map<String, SingletonSymWithProps> group_hash = new HashMap<String, SingletonSymWithProps>();
-        gff3_id_hash = new HashMap<String, Object>();
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths = new HashMap<>(); // see getContainer()
+        Map<String, SingletonSymWithProps> group_hash = new HashMap<>();
+        gff3_id_hash = new HashMap<>();
+        List<SeqSymmetry> results = new ArrayList<>();
 
         // By default, no hierarchical grouping; turned on with a directive
         use_hierarchy = false;
@@ -367,7 +366,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 String frame_str = fields[7].intern();
                 String last_field = null;
                 if (fields.length >= 9) {
-                    last_field = new String(fields[8]);
+                    last_field = fields[8];
                 } // creating a new String saves memory
                 // last_field is "group" in GFF1 or "attributes" in GFF2 and GFF3
 
@@ -430,7 +429,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         if (new_h_level_int == null) {
             throw new RuntimeException("Hierarchy exception: unknown feature type: " + feature_type);
         }
-        int new_h_level = new_h_level_int.intValue();
+        int new_h_level = new_h_level_int;
         if (new_h_level - current_h_level > 1) {
             throw new RuntimeException("Hierarchy exception: skipped a level: " + current_h_level + " -> " + new_h_level + ":\n" + line + "\n");
         }
@@ -520,9 +519,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
     private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<BioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
         // Loop through the results List and add all Sym's to the BioSeq
-        Iterator<SeqSymmetry> iter = results.iterator();
-        while (iter.hasNext()) {
-            SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
+        for (SeqSymmetry result : results) {
+            SingletonSymWithProps sym = (SingletonSymWithProps) result;
             BioSeq seq = sym.getBioSeq();
             if (USE_GROUPING && sym.getChildCount() > 0) {
                 // stretch sym to bounds of all children
@@ -559,7 +557,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
         Map<String, SimpleSymWithProps> meth2csym = seq2meths.get(seq);
         if (meth2csym == null) {
-            meth2csym = new HashMap<String, SimpleSymWithProps>();
+            meth2csym = new HashMap<>();
             seq2meths.put(seq, meth2csym);
         }
         SimpleSymWithProps parent_sym = meth2csym.get(meth);
@@ -591,7 +589,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         //    SeqUtils.printSymmetry(psym);
         int child_count = psym.getChildCount();
         if (child_count > 0) {
-            List<SeqSymmetry> child_list = new ArrayList<SeqSymmetry>(child_count);
+            List<SeqSymmetry> child_list = new ArrayList<>(child_count);
             for (int i = 0; i < child_count; i++) {
                 SeqSymmetry csym = psym.getChild(i);
                 if (csym.getSpan(sortseq) != null) {
@@ -601,9 +599,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             psym.removeChildren();
             Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
             Collections.sort(child_list, comp);
-            for (SeqSymmetry child : child_list) {
-                psym.addChild(child);
-            }
+            child_list.forEach(psym::addChild);
         }
     }
     static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
@@ -613,8 +609,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
     static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
     boolean use_hierarchy = false;
-    Map<String, Integer> hierarchy_levels = new HashMap<String, Integer>(); // Map of String to Integer
-    Map<String, String> hierarchy_id_fields = new HashMap<String, String>(); // Map of String to String
+    Map<String, Integer> hierarchy_levels = new HashMap<>(); // Map of String to Integer
+    Map<String, String> hierarchy_id_fields = new HashMap<>(); // Map of String to String
 
     /**
      * Process directive lines in the input, which are lines beginning with
@@ -643,8 +639,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         if (m.matches()) {
             resetFilters();
             String[] feature_types = m.group(2).split(" ");
-            for (int i = 0; i < feature_types.length; i++) {
-                String feature_type = feature_types[i].trim();
+            for (String feature_type1 : feature_types) {
+                String feature_type = feature_type1.trim();
                 if (feature_type.length() > 0) {
                     addFeatureFilter(feature_type, "include ".equals(m.group(1)));
                 }
@@ -727,10 +723,9 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
      * then hash.get(key) = List vec, and each value is an element in vec
      */
     public static void processAttributes(Map<String, Object> m, String attributes) {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         String[] attarray = att_regex.split(attributes);
-        for (int i = 0; i < attarray.length; i++) {
-            String att = attarray[i];
+        for (String att : attarray) {
             Matcher tag_matcher = tag_regex.matcher(att);
             if (tag_matcher.find()) {
                 String tag = tag_matcher.group(1);
@@ -749,7 +744,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                     }
                     matches = value_matcher.find();
                 }
-				// common case where there's only one value for a tag,
+                // common case where there's only one value for a tag,
                 //  so hash the tag to that value
                 if (vals.size() == 1) {
                     Object the_object = vals.get(0);
@@ -764,7 +759,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 //   and make a new List for next tag-value entry
                 else {
                     m.put(tag, vals);
-                    vals = new ArrayList<String>();
+                    vals = new ArrayList<>();
                 }
             }
         }  // end attribute processing
@@ -802,43 +797,45 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             setUseStandardFilters(use_standard_filters);
         }
     }
-    static final Integer TWO = Integer.valueOf(2);
+    static final Integer TWO = 2;
     int number_of_duplicate_warnings = 0;
 
     public String hackGff3GroupId(String atts) {
         String groupid = null;
         String featid = null;
         String[] tagvals = att_regex.split(atts);
-        for (int i = 0; i < tagvals.length; i++) {
-            String tagval = tagvals[i];
+        for (String tagval : tagvals) {
             String[] tv = gff3_tagval_splitter.split(tagval);
             String tag = tv[0];
             String val = tv[1];
             //      String vals = gff3_multival_splitter.split(val);
-            if (tag.equals(GFF3_PARENT)) {
-                groupid = val;
-            } else if (tag.equals(GFF3_ID)) {
-                featid = val;
-                Object obj = gff3_id_hash.get(featid);
-                if (obj == null) {
-                    gff3_id_hash.put(featid, featid);
-                } else {
-                    if (obj instanceof String) {
-                        gff3_id_hash.put(featid, TWO);
-                        featid += "_1";
-                    } else if (obj instanceof Integer) {
-                        Integer iobj = (Integer) obj;
-                        int fcount = iobj.intValue();
-                        gff3_id_hash.put(featid, Integer.valueOf(fcount + 1));
-                        featid = featid + "_" + iobj.toString();
-                    }
-                    if (number_of_duplicate_warnings++ <= 10) {
-                        System.out.println("duplicate feature id, new id: " + featid);
-                        if (number_of_duplicate_warnings == 10) {
-                            System.out.println("(Suppressing further warnings about duplicate ids");
+            switch (tag) {
+                case GFF3_PARENT:
+                    groupid = val;
+                    break;
+                case GFF3_ID:
+                    featid = val;
+                    Object obj = gff3_id_hash.get(featid);
+                    if (obj == null) {
+                        gff3_id_hash.put(featid, featid);
+                    } else {
+                        if (obj instanceof String) {
+                            gff3_id_hash.put(featid, TWO);
+                            featid += "_1";
+                        } else if (obj instanceof Integer) {
+                            Integer iobj = (Integer) obj;
+                            int fcount = iobj;
+                            gff3_id_hash.put(featid, fcount + 1);
+                            featid = featid + "_" + iobj.toString();
+                        }
+                        if (number_of_duplicate_warnings++ <= 10) {
+                            System.out.println("duplicate feature id, new id: " + featid);
+                            if (number_of_duplicate_warnings == 10) {
+                                System.out.println("(Suppressing further warnings about duplicate ids");
+                            }
                         }
                     }
-                }
+                    break;
             }
         }
         if (groupid == null) {

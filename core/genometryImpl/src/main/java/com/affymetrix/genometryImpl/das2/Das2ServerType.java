@@ -11,12 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +46,8 @@ public class Das2ServerType implements ServerTypeI {
 		BNIB,
 		RAW,
 		FASTA
-	};
+	}
+
 	private static final String name = "DAS2";
 	public static final int ordinal = 10;
 	private static final GenometryModel gmodel = GenometryModel.getInstance();
@@ -62,7 +57,7 @@ public class Das2ServerType implements ServerTypeI {
 	 */
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	/** For files too be looked up on server. **/
-	private static final Set<String> das2Files = new HashSet<String>();
+	private static final Set<String> das2Files = new HashSet<>();
 
 	/** Add files to be looked up. **/
 	static{
@@ -207,7 +202,7 @@ public class Das2ServerType implements ServerTypeI {
 	@Override
 	public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
 		Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
-		List<Das2Type> types = new ArrayList<Das2Type>(version.getTypes().values());
+		List<Das2Type> types = new ArrayList<>(version.getTypes().values());
 		for (Das2Type type : types) {	
 			String type_name = type.getName();
 			if (type_name == null || type_name.length() == 0) {
@@ -339,7 +334,7 @@ public class Das2ServerType implements ServerTypeI {
   * @return - Map<String trackName,List<SeqSymmetry>>
   */
  public Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
-		Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
+		Map<String, List<SeqSymmetry>> track2Results = new HashMap<>();
 		List<SeqSymmetry> resultList = null;
 		String method = null;
 		for (SeqSymmetry result : results) {
@@ -347,7 +342,7 @@ public class Das2ServerType implements ServerTypeI {
 			if (track2Results.containsKey(method)) {
 				resultList = track2Results.get(method);
 			} else {
-				resultList = new ArrayList<SeqSymmetry>();
+				resultList = new ArrayList<>();
 				track2Results.put(method, resultList);
 			}
 			resultList.add(result);
@@ -481,7 +476,7 @@ public class Das2ServerType implements ServerTypeI {
 	private boolean LoadResiduesFromDAS2(BioSeq aseq, AnnotatedSeqGroup seq_group, String uri) {
 		InputStream istr = null;
 		BufferedReader buff = null;
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			String content_type = headers.get("content-type");
@@ -533,7 +528,7 @@ public class Das2ServerType implements ServerTypeI {
 	private String GetPartialFASTADas2Residues(String uri) {
 		InputStream istr = null;
 		BufferedReader buff = null;
-		Map<String, String> headers = new HashMap<String, String>();
+		Map<String, String> headers = new HashMap<>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			// System.out.println(headers);

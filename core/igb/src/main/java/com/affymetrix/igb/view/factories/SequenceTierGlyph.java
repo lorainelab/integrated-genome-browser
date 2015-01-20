@@ -17,7 +17,7 @@ public class SequenceTierGlyph extends AbstractTierGlyph {
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         PREFERENCES = Collections.unmodifiableMap(temp);
     }
 
@@ -74,7 +74,7 @@ public class SequenceTierGlyph extends AbstractTierGlyph {
 
     @Override
     public Map<String, Class<?>> getPreferences() {
-        return new HashMap<String, Class<?>>(PREFERENCES);
+        return new HashMap<>(PREFERENCES);
     }
 
     @Override

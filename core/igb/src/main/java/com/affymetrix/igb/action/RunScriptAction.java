@@ -54,7 +54,7 @@ public final class RunScriptAction extends GenericAction {
                 "22x22/actions/run_script.png",
                 KeyEvent.VK_R, null, true);
 
-        this.gviewerFrame = ((IGB) IGB.getSingleton()).getFrame();
+        this.gviewerFrame = IGB.getSingleton().getFrame();
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
     }
 
@@ -67,11 +67,12 @@ public final class RunScriptAction extends GenericAction {
     private JRPFileChooser getFileChooser(String id) {
         chooser = new JRPFileChooser(id);
         chooser.setMultiSelectionEnabled(false);
+        java.util.List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
         chooser.addChoosableFileFilter(new UniFileFilter(
-                ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}),
+                var.toArray(new String[var.size()]),
                 "Script File"));
 
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
             if (filter instanceof UniFileFilter) {
                 UniFileFilter uff = (UniFileFilter) filter;

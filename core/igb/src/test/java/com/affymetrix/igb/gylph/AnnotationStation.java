@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
@@ -28,8 +27,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.CustomLabelledTierMap;
@@ -38,6 +36,7 @@ import static com.affymetrix.igb.view.SeqMapView.axisFont;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.google.common.math.IntMath;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -71,13 +70,10 @@ public class AnnotationStation extends javax.swing.JFrame {
     }
 
     private void setupZoomStripe() {
-        NeoRangeListener zoomAdjuster = new NeoRangeListener() {
-            @Override
-            public void rangeChanged(NeoRangeEvent e) {
-                double midPoint = (e.getVisibleEnd() + e.getVisibleStart()) / 2.0f;
-                tieredMap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, midPoint);
-                tieredMap.updateWidget();
-            }
+        NeoRangeListener zoomAdjuster = e -> {
+            double midPoint = (e.getVisibleEnd() + e.getVisibleStart()) / 2.0f;
+            tieredMap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, midPoint);
+            tieredMap.updateWidget();
         };
 
         this.zoomPoint.addListener(zoomAdjuster);
@@ -239,29 +235,17 @@ public class AnnotationStation extends javax.swing.JFrame {
         startTextField.setText("245");
 
         addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(this::addButtonActionPerformed);
 
         clearButton.setText("Clear Map");
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
+        clearButton.addActionListener(this::clearButtonActionPerformed);
 
         jLabel1.setText("Color");
 
         rowTextLabel.setText("Row");
 
         autoLayoutCheckBox.setText("AutoLayoutRow");
-        autoLayoutCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                autoLayoutCheckBoxActionPerformed(evt);
-            }
-        });
+        autoLayoutCheckBox.addActionListener(this::autoLayoutCheckBoxActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -296,9 +280,9 @@ public class AnnotationStation extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {startFieldLabel, stopFieldLabel});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, startFieldLabel, stopFieldLabel);
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {startTextField, stopTextField});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, startTextField, stopTextField);
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -322,9 +306,9 @@ public class AnnotationStation extends javax.swing.JFrame {
                 .addContainerGap(68, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {startFieldLabel, stopFieldLabel});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, startFieldLabel, stopFieldLabel);
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {startTextField, stopTextField});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, startTextField, stopTextField);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel3.add(neoMap2, java.awt.BorderLayout.CENTER);
@@ -340,19 +324,11 @@ public class AnnotationStation extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jCheckBox1.setText("stretchXToFit");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
+        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
         jPanel2.add(jCheckBox1, new java.awt.GridBagConstraints());
 
         jCheckBox2.setText("stretchYToFit");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
+        jCheckBox2.addActionListener(this::jCheckBox2ActionPerformed);
         jPanel2.add(jCheckBox2, new java.awt.GridBagConstraints());
 
         jPanel3.add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -360,11 +336,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
-            }
-        });
+        exitMenuItem.addActionListener(this::exitMenuItemActionPerformed);
         fileMenu.add(exitMenuItem);
 
         jMenuBar1.add(fileMenu);
@@ -372,11 +344,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         editMenu.setText("edit");
 
         addAnnotationTier.setText("addAnnotationTierGlyph");
-        addAnnotationTier.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addAnnotationTierActionPerformed(evt);
-            }
-        });
+        addAnnotationTier.addActionListener(this::addAnnotationTierActionPerformed);
         editMenu.add(addAnnotationTier);
 
         jMenuBar1.add(editMenu);
@@ -479,22 +447,18 @@ public class AnnotationStation extends javax.swing.JFrame {
 
     public static void main(String args[]) {
         final AnnotationStation a = new AnnotationStation();
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                a.pack();
-                a.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            a.pack();
+            a.setVisible(true);
         });
         //hack to fix xslider position
-        Runnable r = new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    //do nothing
-                }
-                a.resetMap();
+        Runnable r = () -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                //do nothing
             }
+            a.resetMap();
         };
         new Thread(r).start();
 

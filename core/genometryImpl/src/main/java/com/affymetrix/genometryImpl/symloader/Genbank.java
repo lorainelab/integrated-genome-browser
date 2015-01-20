@@ -27,7 +27,7 @@ public final class Genbank extends SymLoader {
      * DEFINITION, FEATURES and the EMBL start of lines that they correspond to)
 	 *
      */
-    private static final Map<String, String> genbank_hash = new HashMap<String, String>();
+    private static final Map<String, String> genbank_hash = new HashMap<>();
 
     static {
         genbank_hash.put("LOCUS", "ID");
@@ -64,9 +64,9 @@ public final class Genbank extends SymLoader {
      * (and in gene) /pseudo (and in gene) /standard_name="text"
      * /usedin=accnum:feature_label /codon_start=int
      */
-    private static final List<String> transcript_id_tags = new ArrayList<String>();
-    private static final List<String> annot_id_tags = new ArrayList<String>();
-    private static final List<String> annot_name_tags = new ArrayList<String>();
+    private static final List<String> transcript_id_tags = new ArrayList<>();
+    private static final List<String> annot_id_tags = new ArrayList<>();
+    private static final List<String> annot_name_tags = new ArrayList<>();
 
     static {
         transcript_id_tags.add("product");
@@ -87,7 +87,7 @@ public final class Genbank extends SymLoader {
         annot_name_tags.add("label");
         annot_name_tags.add("note");
     }
-    private static final Map<String, String> featureTag_hash = new HashMap<String, String>();
+    private static final Map<String, String> featureTag_hash = new HashMap<>();
 
     static {
         featureTag_hash.put("map", "cyto_range");
@@ -175,13 +175,13 @@ public final class Genbank extends SymLoader {
     private String current_locus = "";
     private int current_line_type;
     private BioSeq currentSeq = null;
-    protected final List<BioSeq> seqs = new ArrayList<BioSeq>();
+    protected final List<BioSeq> seqs = new ArrayList<>();
 
     public Genbank(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
         super(uri, featureName, seq_group);
     }
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -324,15 +324,16 @@ public final class Genbank extends SymLoader {
                 for (String tag : tagValues.keySet()) {
                     String value = current_feature.getValue(tag);
                     if (value != null && value.length() != 0) {
-                        if (tag.equals("chromosome")) {
-                            seq = this.group.getSeq(value);
-                            if (seq == null) {
-                                seq = new BioSeq(value, length);
-                            }
-                            chrLength.put(value, length);
-                            chrFound = true;
-                        } else if (tag.equals("organism")) {
-                            //   seq.setOrganism (value);
+                        switch (tag) {
+                            case "chromosome":
+                                seq = this.group.getSeq(value);
+                                if (seq == null) {
+                                    seq = new BioSeq(value, length);
+                                }   chrLength.put(value, length);
+                                chrFound = true;
+                                break;
+                            case "organism":
+                                break;
                         }
                     }
                 }
@@ -378,7 +379,7 @@ public final class Genbank extends SymLoader {
     }
 
     public List<GenbankSym> parse(BufferedReader input, BioSeq seq, int min, int max) {
-        Map<String, GenbankSym> id2sym = new HashMap<String, GenbankSym>(1000);
+        Map<String, GenbankSym> id2sym = new HashMap<>(1000);
 
         if (getCurrentData(input) == null) {
             return Collections.<GenbankSym>emptyList();
@@ -387,7 +388,7 @@ public final class Genbank extends SymLoader {
         //if (beginEntry() != null) {
         readFeature(input, id2sym, seq, min, max);
         //}
-        return new ArrayList<GenbankSym>(id2sym.values());
+        return new ArrayList<>(id2sym.values());
     }
 
     private String getCurrentData(BufferedReader input) {
@@ -493,7 +494,7 @@ public final class Genbank extends SymLoader {
             within_html = (html1 >= 0 && html2 > 0 && html2 > html1);
 			// Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
             // (don't want to get rid of those!!)
-            within_html = within_html && (current_line.indexOf("   gene   ") < 0) && (current_line.indexOf("   mRNA   ") < 0);
+            within_html = within_html && (!current_line.contains("   gene   ")) && (!current_line.contains("   mRNA   "));
             if (within_html) {
                 String prefix = current_line.substring(0, html1);
                 String suffix = html2 < current_line.length() ? current_line.substring(html2) : "";
@@ -642,10 +643,12 @@ public final class Genbank extends SymLoader {
                 for (String tag : tagValues.keySet()) {
                     String value = current_feature.getValue(tag);
                     if (value != null && value.length() != 0) {
-                        if (tag.equals("chromosome")) {
-                            currentSeq = this.group.getSeq(value);
-                        } else if (tag.equals("organism")) {
-                            //   seq.setOrganism (value);
+                        switch (tag) {
+                            case "chromosome":
+                                currentSeq = this.group.getSeq(value);
+                                break;
+                            case "organism":
+                                break;
                         }
                     }
                     //If no sequence name is found. Then locus is used.
@@ -672,46 +675,50 @@ public final class Genbank extends SymLoader {
                 // skipping this annotation, which is outside the min/max range
                 continue;
             }
-            if (key.equals("mRNA")
-                    || key.equals("rRNA")
-                    || key.equals("tRNA")
-                    || key.equals("scRNA")
-                    || key.equals("snRNA")
-                    || key.equals("snoRNA")) {
-                String value = current_feature.getValue("gene");
-                if (value != null && value.length() != 0) {
-                    annotation.setProperty("name", value);
-                }
-                value = current_feature.getValue("locus_tag");
-                if (value != null && value.length() != 0) {
-                    annotation.setID(value);
-                }
-                // What are the spans associated with this key?
-                List<int[]> locs = current_feature.getLocation();
-                if (locs == null || locs.isEmpty()) {
-                    Logger.getLogger(Genbank.class.getName()).log(
-                            Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
-                } else {
-                    for (int[] loc : locs) {
-                        annotation.addBlock(loc[0], loc[1]);
+            switch (key) {
+                case "mRNA":
+                case "rRNA":
+                case "tRNA":
+                case "scRNA":
+                case "snRNA":
+                case "snoRNA":
+                    {
+                        String value = current_feature.getValue("gene");
+                        if (value != null && value.length() != 0) {
+                            annotation.setProperty("name", value);
+                        }       value = current_feature.getValue("locus_tag");
+                        if (value != null && value.length() != 0) {
+                            annotation.setID(value);
+                        }       // What are the spans associated with this key?
+                        List<int[]> locs = current_feature.getLocation();
+                        if (locs == null || locs.isEmpty()) {
+                            Logger.getLogger(Genbank.class.getName()).log(
+                                    Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
+                        } else {
+                            for (int[] loc : locs) {
+                                annotation.addBlock(loc[0], loc[1]);
                     }
-                }
-            } else if (key.equals("CDS")) {
-                // What are the spans associated with this key?
-                List<int[]> locs = current_feature.getLocation();
-                if (locs == null || locs.isEmpty()) {
-                    Logger.getLogger(Genbank.class.getName()).log(
-                            Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
-                } else {
-                    for (int[] loc : locs) {
-                        annotation.addCDSBlock(loc[0], loc[1]);
+                }       break;
                     }
+                case "CDS":
+                {
+                    // What are the spans associated with this key?
+                    List<int[]> locs = current_feature.getLocation();
+                    if (locs == null || locs.isEmpty()) {
+                        Logger.getLogger(Genbank.class.getName()).log(
+                                Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
+                    } else {
+                        for (int[] loc : locs) {
+                            annotation.addCDSBlock(loc[0], loc[1]);
+                    }
+                    }       break;
                 }
-            } else {
-                Logger.getLogger(Genbank.class.getName()).log(
-                        Level.WARNING,
-                        "ignoring {0} features; next line is {1}",
+                default:
+                    Logger.getLogger(Genbank.class.getName()).log(
+                            Level.WARNING,
+                            "ignoring {0} features; next line is {1}",
                         new Object[]{key, line_number});
+                    break;
             }
         }
     }
@@ -806,15 +813,17 @@ public final class Genbank extends SymLoader {
         for (String tag : tagValues.keySet()) {
             String value = pub_feat.getValue(tag);
             if (value != null && value.length() != 0) {
-                if (tag.equals("chromosome")) {
-                    //   curation.setChromosome(value);
-                } else if (tag.equals("organism")) {
-                    //   seq.setOrganism (value);
-                } else {
-                    seq.setProperty(tag, value);
-          //seq.setDescription (seq.getDescription() + " " + value);
-                    //seq.addProperty(tag, value);
-                    //logger.debug("Added property to sequence: " + tag + "=" + value);
+                switch (tag) {
+                    case "chromosome":
+                        break;
+                    case "organism":
+                        break;
+                    default:
+                        seq.setProperty(tag, value);
+                        //seq.setDescription (seq.getDescription() + " " + value);
+                        //seq.addProperty(tag, value);
+                        //logger.debug("Added property to sequence: " + tag + "=" + value);
+                        break;
                 }
             }
         }
@@ -838,7 +847,7 @@ final class GenbankFeature {
     private String type;
   // this is a hash into vectors to allow for cases where
     // there is more than one value for an individual tag
-    private Map<String, List<String>> tagValues = new HashMap<String, List<String>>(3);
+    private Map<String, List<String>> tagValues = new HashMap<>(3);
     private StringBuffer location;
     private String active_tag = null;
     private List<int[]> locs = null;
@@ -923,7 +932,7 @@ final class GenbankFeature {
         String note = getValue("note");
         int index = (note != null ? note.indexOf("synonyms:") : -1);
         if (index >= 0) {
-            syns = new ArrayList<String>(1);
+            syns = new ArrayList<>(1);
             //String prefix = note.substring(0, index);
             String syns_str = note.substring(index + "synonyms:".length()).trim();
             String syn;
@@ -1001,7 +1010,7 @@ final class GenbankFeature {
         if (!value.equalsIgnoreCase("unknown")) {
             List<String> current_vec = tagValues.get(tag);
             if (current_vec == null) {
-                current_vec = new ArrayList<String>();
+                current_vec = new ArrayList<>();
                 tagValues.put(tag, current_vec);
             }
             if (value.length() != 0 && !value.equals(".")) {
@@ -1042,7 +1051,7 @@ final class GenbankFeature {
     }
 
     protected List<int[]> initLocations() {
-        locs = new ArrayList<int[]>();
+        locs = new ArrayList<>();
         parseLocations(this.location.toString(), locs);
         return locs;
     }
@@ -1063,7 +1072,7 @@ final class GenbankFeature {
             int index_start = 0;
             int index_end = 0;
             if (location_str.startsWith("complement(")) {
-                List<int[]> comp_vect = new ArrayList<int[]>();
+                List<int[]> comp_vect = new ArrayList<>();
                 index_start = "complement(".length();
                 index_end = indexOfClosingParen(location_str, index_start);
                 operation_str = substringLocation(location_str,

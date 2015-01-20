@@ -2,242 +2,58 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileCollection
 
-apply plugin: 'java'
 apply plugin: 'maven'
 
-group = 'com.affymetrix'
-
-//Location to store webstart jars
-libsDirName = '../main/target/webstart'
-def mavenTargetDir = 'main/target'
-def webStartDir = mavenTargetDir + '/webstart'
-def resourceDir = 'main/src/main/resources'
+def buildDir = 'distribution/build'
 
 //Load common properties to read version
-ext.commonProps = new Properties() 
-ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties')) 
+ext.commonProps = new Properties()
+ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties'))
 
 //remove minor version portion of version string
-version = commonProps.get('appVersion').substring(0,3)
+version = commonProps.get('appVersion')
 
-//securely read in keystore info from disk
-ext.props = new Properties() 
-ext.props.load(new FileInputStream(System.getProperty("user.home")+'/build.properties')) 
-project.setProperty('props', ext.props) 
-
-description = "Small Project to bootstrap IGB's OSGI runtime"
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-ext.mainClassName = "com.affymetrix.main.Main"
-ext.applicationDefaultJvmArgs = ["-Xmx1g", "-DdevelopmentMode=true"]
-ext.appleJvmArgs = ["-Xdock:name=IGB", "-Dapple.laf.useScreenMenuBar=true"]
-
-def felixVersion = '4.2.2'
-
-repositories {
-    mavenLocal()
-    maven { url "http://eos.transvar.org/nexus/content/repositories/releases" }
-    maven { url "http://eos.transvar.org/nexus/content/repositories/freehep-maven/" }
-    maven { url "http://eos.transvar.org/nexus/content/repositories/central/" }
-}
-
-dependencies {
-    compile(group: 'com.affymetrix', name: 'affymetrix-common', version:version) {
-        exclude(module: '*')
-    }
-    compile(group: 'org.apache.felix', name: 'org.apache.felix.main', version:felixVersion) {
-        exclude(module: '*')
-    }    
-}
-
-clean{
-    delete webStartDir
-}
-
-task checkOS() {
-    ext.osName = System.properties['os.name'].toLowerCase()
-    if (osName.contains('mac')) {
-        applicationDefaultJvmArgs.addAll(appleJvmArgs)
-    } 
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir 'main/src/main/java'
-        }
-        resources {
-            srcDir resourceDir
-            exclude '**/JNLP-INF/*'
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            url 'http://maven.ej-technologies.com/repository'
         }
     }
-}
 
-task run(dependsOn: classes, type: JavaExec) {
-    main = mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    jvmArgs = applicationDefaultJvmArgs
-}
-
-task(runDebug, dependsOn: 'classes', type: JavaExec) {
-    main = mainClassName
-    classpath = sourceSets.main.runtimeClasspath
-    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787"]
-}
-
-task cbc(dependsOn: classes, type: JavaExec) {
-    main = "com.affymetrix.main.ClearBundleCache" 
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task generateSmallJnlp(type: Copy){
-    def props =  project.getProperties().get('props')
-    from resourceDir + '/JNLP-INF'
-    into webStartDir
-    include('jnlpTemplate.xml')
-    rename('jnlpTemplate.xml','igb.jnlp')
-    // Use some of the filters provided by Ant
-    filter(ReplaceTokens, tokens: [
-            "jnlp.version": version, 
-            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
-            "jnlp.jarName":'igb_exe', 
-            "jnlp.httpAgent": 'IGB/'+ version+' (Webstart)',
-            "jnlp.maxHeapSize": '1024m'])
-}
-
-task generateMediumJnlp(type: Copy) {
-    from resourceDir + '/JNLP-INF'
-    into webStartDir
-    include('jnlpTemplate.xml')
-    rename('jnlpTemplate.xml','igb-large.jnlp')
-    // Use some of the filters provided by Ant
-    filter(ReplaceTokens, tokens: [
-            "jnlp.version": version, 
-            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
-            "jnlp.jarName":'igb_exe-large', 
-            "jnlp.httpAgent": 'IGB/'+ version+' +LargeMem (Webstart)',
-            "jnlp.maxHeapSize": '2048m'])
-}
-
-task generateLargeJnlp(type: Copy) {
-    from resourceDir + '/JNLP-INF'
-    into webStartDir
-    include('jnlpTemplate.xml')
-    rename('jnlpTemplate.xml','igb-5GB.jnlp')
-    // Use some of the filters provided by Ant
-    filter(ReplaceTokens, tokens: [
-            "jnlp.version": version, 
-            "jnlp.codebase": System.getProperty('codebaseUrl'), //note: this is passed in by jenkins or should be defined locally (i.e. gradle generateWebstart -DcodebaseUrl=example.com)
-            "jnlp.jarName":'igb_exe-5GB', 
-            "jnlp.httpAgent":'IGB/'+version+ ' +5GB (Webstart)',
-            "jnlp.maxHeapSize": '5120m'])
-}
-
-task generateSmallJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
-    File dest = new File(webStartDir + '/tmp/smallJar/JNLP-INF')
-    from webStartDir
-    include 'igb.jnlp'
-    rename('igb.jnlp', 'APPLICATION_TEMPLATE.JNLP')
-    into webStartDir + '/tmp/smallJar/JNLP-INF'
-}
-task generateMediumJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
-    File dest = new File(webStartDir + '/tmp/mediumJar/JNLP-INF')
-    from webStartDir
-    include 'igb-large.jnlp'
-    rename('igb-large.jnlp', 'APPLICATION_TEMPLATE.JNLP')
-    into dest
-}
-
-task generateLargeJnlpTemplate(type: Copy, dependsOn: [generateSmallJnlp]){
-    File dest = new File(webStartDir + '/tmp/largeJar/JNLP-INF')
-    from webStartDir
-    include 'igb-5GB.jnlp'
-    rename('igb-5GB.jnlp', 'APPLICATION_TEMPLATE.JNLP')
-    into dest
-}
-
-task webstartSmallJar(type: Jar, dependsOn: [generateSmallJnlpTemplate]) {
-    archiveName = 'igb_exe.jar'
-    from zipTree("igb_exe.jar")
-    from fileTree(dir: webStartDir + '/tmp/smallJar/')
-    manifest{
-        attributes(
-        "Application-Name": "IGB",   
-        "Permissions":"all-permissions",
-        "Created-By":"Loraine lab",
-        "Main-Class": 'com.affymetrix.main.Main',
-        )
+    dependencies {
+        classpath group: 'com.install4j',
+                name: 'gradle-plugin',
+                version: '6.0'
     }
 }
 
-task webstartMediumJar(type: Jar, dependsOn: [generateMediumJnlpTemplate]) {
-    archiveName = 'igb_exe-large.jar'
-    from zipTree("igb_exe.jar")
-    from fileTree(dir: webStartDir + '/tmp/mediumJar/')
-    manifest{
-        attributes(
-        "Application-Name": "IGB",   
-        "Permissions":"all-permissions",
-        "Created-By":"Loraine lab",
-        "Main-Class": 'com.affymetrix.main.Main',
-        )
-    }
+apply plugin: 'install4j'
+
+install4j {
+    installDir = file('/opt/install4j')
 }
 
-task webstartLargeJar(type: Jar, dependsOn: [generateLargeJnlpTemplate]) {
-    archiveName = 'igb_exe-5GB.jar'    
-    from zipTree("igb_exe.jar")
-    from fileTree(dir: webStartDir + '/tmp/largeJar/')
-    manifest{
-        attributes(
-        "Application-Name": "IGB",   
-        "Permissions":"all-permissions",
-        "Created-By":"Loraine lab",
-        "Main-Class": 'com.affymetrix.main.Main',
-        )
-    }
+task cleanOldBuild(type: Delete) {
+    delete buildDir
 }
 
-task copyWebstartResources(type: Copy) {
-    from 'core/common/src/main/resources/images/'
-    include 'igb.gif'
-    from 'core/igb/src/main/resources/'
-    include 'igb_default_prefs.xml'
-    rename('igb_default_prefs.xml','igb_prefs.xml')
-    into webStartDir
+task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {
+    projectFile = file('distribution/igb.install4j')
+    variables = [projectHomeDirectory: projectDir, igbVersion: version, codeBaseUrl: System.getProperty('codebaseUrl')]
+    macKeystorePassword = System.getProperty('macKeystorePassword')
 }
 
-task signWebstartJars(dependsOn: [webstartSmallJar, webstartMediumJar, webstartLargeJar]) << {
-    def props =  project.getProperties().get('props')
-    FileTree webStartJars = fileTree(dir: webStartDir)  
-    webStartJars.include 'igb_exe*.jar'
-    webStartJars.each {File file ->
-        ant.signjar(
-            destDir: webStartDir,
-            alias: props.get('keyStoreAlias'),
-            jar: file,
-            keystore: System.getProperty("user.home")+'/.keystore', 
-            storepass: props.get('keypass'),
-            keypass: props.get('keypass'),
-            preservelastmodified: 'true')
-    }   
+clean {
+    delete buildDir
 }
 
-task generateJnlps(type: Copy, dependsOn: [generateSmallJnlp, generateMediumJnlp, generateLargeJnlp]) {
-    println 'Generating jnlp files...'
-    new File('main/target').mkdir()
-}
-
-task generateWebstart(dependsOn: [webstartSmallJar, webstartMediumJar, webstartLargeJar, generateJnlps, copyWebstartResources, signWebstartJars]){
-    println 'Generating Webstart Artifacts'
-}
-
-task packageRelease(type: Zip){
+task packageRelease(dependsOn: media, type: Zip) {
     archiveName 'igb.zip'
     from '.'
     fileMode 0755
-    include 'NOTICES.txt', 'LICENSE.html', 'README.txt', 'run_*', 'igb_exe.jar'
+    include 'NOTICES.txt', 'LICENSE.html', 'README.md', 'igb_exe.jar'
+    from 'distribution/build/'
+    fileMode 0755
+    include 'IGB_*', 'md5sums'
 }

@@ -58,8 +58,8 @@ public final class PercentThresholder extends JPanel
     //    FIX THIS!  But also need to balance between memory concerns and the
     //    desire to avoid recalculation of percent-to-score array (which requires a
     //    sort) every time a graph is selected...
-    private final Map<Object, float[]> info2pscores = new HashMap<Object, float[]>();
-    private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+    private final Map<Object, float[]> info2pscores = new HashMap<>();
+    private final List<GraphGlyph> graphs = new ArrayList<>();
 
     /**
      * Now trying to map slider values to percentages, such that each slider
@@ -76,7 +76,7 @@ public final class PercentThresholder extends JPanel
     static PercentThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
         //    PercentThresholder thresher = new PercentThresholder(sgg, widg);
         PercentThresholder thresher = new PercentThresholder(widg);
-        List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> glist = new ArrayList<>();
         glist.add(sgg);
         thresher.setGraphs(glist);
         JFrame frm = new JFrame(BUNDLE.getString("graphPercentAdjuster"));
@@ -128,10 +128,10 @@ public final class PercentThresholder extends JPanel
         max_percent_slider.addChangeListener(this);
         max_percent_slider.setPreferredSize(new Dimension(600, 15));
 
-        Hashtable<Integer, JLabel> decimal_labels = new Hashtable<Integer, JLabel>();
+        Hashtable<Integer, JLabel> decimal_labels = new Hashtable<>();
 
         for (float f = 0.0f; f <= 1000.0f; f += slider_label_offset) {
-            Integer slideval = new Integer((int) f);
+            Integer slideval = (int) f;
             int labelval = (int) (f / sliders_per_percent);
             decimal_labels.put(slideval, new JLabel(Integer.toString(labelval)));
         }
@@ -204,7 +204,7 @@ public final class PercentThresholder extends JPanel
     public void stateChanged(ChangeEvent evt) {
         Object src = evt.getSource();
         float max_val = (max_percent_slider.getValue() / sliders_per_percent);
-        float min_val = (min_percent_slider.getValue() / sliders_per_percent);;
+        float min_val = (min_percent_slider.getValue() / sliders_per_percent);
 
         if (src == max_percent_slider) {
             if (max_val <= prev_min) {

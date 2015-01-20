@@ -48,13 +48,13 @@ public final class LocalUrlCacher {
         CacheUsage(int usage) {
             this.usage = usage;
         }
-    };
+    }
 
     public static enum CacheOption {
 
         IGNORE,
         ONLY,
-        NORMAL;
+        NORMAL
     }
 
     // the "quickload" part of the constant value is there for historical reasons
@@ -101,7 +101,7 @@ public final class LocalUrlCacher {
         return StringUtils.equalsIgnoreCase(scheme, FILE_PROTOCOL);
     }
 
-    public static SeekableStream getSeekableStream(URI uri) throws FileNotFoundException, MalformedURLException, IOException {
+    public static SeekableStream getSeekableStream(URI uri) throws IOException {
         if (LocalUrlCacher.isLocalFile(uri)) {
             File f = new File(uri.getPath());
             return new SeekableFileStream(f);
@@ -182,7 +182,7 @@ public final class LocalUrlCacher {
         }
 
         // if url is a file url, and not caching files, then just directly return stream
-        if ((!CACHE_FILE_URLS) && isFile(url)) {
+        if (isFile(url)) {
             //Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
             return getUncachedFileStream(url, sessionId, fileMayNotExist);
         }
@@ -310,7 +310,7 @@ public final class LocalUrlCacher {
         return result_stream;
     }
 
-    private static URLConnection handleTemporaryRedirect(URLConnection conn, String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
+    private static URLConnection handleTemporaryRedirect(URLConnection conn, String url, String sessionId, long local_timestamp) throws IOException {
 
         String redirect_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
         if (redirect_url == null) {
@@ -326,7 +326,7 @@ public final class LocalUrlCacher {
         return conn;
     }
 
-    public static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws MalformedURLException, IOException {
+    public static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws IOException {
         URL theurl = new URL(url);
         URLConnection conn = theurl.openConnection();
         conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -345,7 +345,7 @@ public final class LocalUrlCacher {
         return conn;
     }
 
-    private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws MalformedURLException, IOException {
+    private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws IOException {
         URL furl = new URL(url);
         URLConnection huc = furl.openConnection();
         huc.setConnectTimeout(CONNECT_TIMEOUT);
@@ -410,7 +410,7 @@ public final class LocalUrlCacher {
     private static InputStream TryToRetrieveFromCache(
             boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp,
             String url, int cache_option)
-            throws IOException, FileNotFoundException {
+            throws IOException {
         if (url_reachable) {
             //  has a timestamp and response contents not modified since local cached copy last modified, so use local
             if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
@@ -472,7 +472,7 @@ public final class LocalUrlCacher {
             URLConnection conn, Map<String, String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException {
         final InputStream connstr;
         String contentEncoding = conn.getHeaderField("Content-Encoding");
-        boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
+        boolean isGZipped = contentEncoding != null && "gzip".equalsIgnoreCase(contentEncoding);
         if (isGZipped) {
             connstr = GeneralUtils.getGZipInputStream(conn.getURL().toString(), conn.getInputStream());
             if (logger.isTraceEnabled()) {
@@ -850,15 +850,16 @@ public final class LocalUrlCacher {
             logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
         }
 
-        // Buffer the result into a string
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
+        StringBuilder sb;
+        try ( // Buffer the result into a string
+                BufferedReader rd = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()))) {
+            sb = new StringBuilder();
+            String line;
+            while ((line = rd.readLine()) != null) {
+                sb.append(line);
         }
-        rd.close();
+        }
         conn.disconnect();
 
         if (DEBUG) {
@@ -896,14 +897,14 @@ public final class LocalUrlCacher {
         }
         String content = sb.toString();
         if (DEBUG) {
-            logger.info("Content :{}", content.toString());
+            logger.info("Content :{}", content);
         }
 
-        // Create the form content
-        DataOutputStream out = new DataOutputStream(conn.getOutputStream());
-        out.writeBytes(content);
-        out.flush();
-        out.close();
+        try ( // Create the form content
+                DataOutputStream out = new DataOutputStream(conn.getOutputStream())) {
+            out.writeBytes(content);
+            out.flush();
+        }
 
         if (DEBUG) {
             logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
@@ -949,7 +950,7 @@ public final class LocalUrlCacher {
         File file = new File(fileName);
         if (file.exists()) {
             try {
-                return Optional.<String>of(CharStreams.toString(new FileReader(file)));
+                return Optional.of(CharStreams.toString(new FileReader(file)));
             } catch (FileNotFoundException ex) {
                 logger.debug("File {} not found in cache", url);
             } catch (IOException ex) {

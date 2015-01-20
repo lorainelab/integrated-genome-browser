@@ -3,7 +3,6 @@ package com.gene.searchmodelucene;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.HashSet;
@@ -40,20 +39,18 @@ public class SearchHints implements ISearchHints {
     };
 
     public Set<String> search(String search_term) {
-        Set<String> syms = new HashSet<String>();
+        Set<String> syms = new HashSet<>();
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                for (GenericFeature feature : gVersion.getFeatures()) {
-                    if (feature.isVisible() && feature.symL != null) {
-                        List<String> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_term, MAX_HITS);
-                        if (results != null) {
-                            syms.addAll(results);
-                        }
+        group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+            for (GenericFeature feature : gVersion.getFeatures()) {
+                if (feature.isVisible() && feature.symL != null) {
+                    List<String> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_term, MAX_HITS);
+                    if (results != null) {
+                        syms.addAll(results);
                     }
                 }
             }
-        }
+        });
         return syms;
     }
 

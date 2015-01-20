@@ -84,11 +84,12 @@ public class RemotePrimerBlastNCBI {
      * @throws Exception - All encompassing exception should something go wrong
      */
     public String runAnalysis(StrandedFeatureSetI cs, SequenceI seq, int offset, FeatureListI fl) throws Exception {
-        InputStream response = sendRequest(seq);
-
+        String type;
         //InputStream response = new java.io.FileInputStream("/Users/elee/blah/foobar.html");
-        String type = retrieveResponse(response, cs, offset, fl);
-        response.close();
+        try (InputStream response = sendRequest(seq)) {
+            //InputStream response = new java.io.FileInputStream("/Users/elee/blah/foobar.html");
+            type = retrieveResponse(response, cs, offset, fl);
+        }
         return type;
     }
 
@@ -101,10 +102,10 @@ public class RemotePrimerBlastNCBI {
         URL url = new URL(PRIMER_BLAST_URL);
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(putBuf.toString());
-        wr.flush();
-        wr.close();
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream())) {
+            wr.write(putBuf.toString());
+            wr.flush();
+        }
 //    apollo.util.IOUtil.informationDialog("Primer-BLAST request sent");
         return conn.getInputStream();
     }

@@ -27,7 +27,8 @@ public final class WebLink implements Comparable<WebLink> {
     public enum RegexType {
 
         TYPE, ID
-    };
+    }
+
     private String url = null;
     private String name = "";
     private String species = "";

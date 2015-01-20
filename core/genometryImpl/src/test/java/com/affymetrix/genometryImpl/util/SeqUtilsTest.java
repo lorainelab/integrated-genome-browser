@@ -321,11 +321,11 @@ public class SeqUtilsTest {
 			int starts[] = new int[] {125, 325, 525, 725, 925, 1125, 1225, 1525, 1725, 1925, 2125};
 
 			MutableSeqSymmetry initialSym = new SimpleMutableSeqSymmetry();
-			for (int i=0; i<starts.length; i++) {
-				MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
-				child.addSpan(new SimpleMutableSeqSpan(starts[i], starts[i] + 50, annot_seq));
-				initialSym.addChild(child);
-			}
+		for (int start : starts) {
+			MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+			child.addSpan(new SimpleMutableSeqSpan(start, start + 50, annot_seq));
+			initialSym.addChild(child);
+		}
 
 			// Now do the transformation
 

@@ -2,7 +2,6 @@ package com.affymetrix.igb.swing;
 
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -27,8 +26,8 @@ public class ScriptManager {
 	public final static String SCRIPTING = "scripting";
 	private final static String WILDCARD = "*";
 	private static final ScriptManager instance = new ScriptManager();
-	private List<Operation> operations = new ArrayList<Operation>();
-	private Map<String, JRPWidget> widgets = new HashMap<String, JRPWidget>();
+	private List<Operation> operations = new ArrayList<>();
+	private Map<String, JRPWidget> widgets = new HashMap<>();
 	private boolean mouseDown;
 	private InputHandler inputHandler;
 
@@ -46,16 +45,14 @@ public class ScriptManager {
 		mouseDown = false;
 		long eventMask = AWTEvent.MOUSE_EVENT_MASK;
 
-		Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-			public void eventDispatched(AWTEvent e) {
-				if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-					mouseDown = true;
-				}
-				if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-					mouseDown = false;
-				}
-			}
-		}, eventMask);
+		Toolkit.getDefaultToolkit().addAWTEventListener(e -> {
+            if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+                mouseDown = true;
+            }
+            if (e.getID() == MouseEvent.MOUSE_RELEASED) {
+                mouseDown = false;
+            }
+        }, eventMask);
 	}
 
 	public boolean isMouseDown() {
@@ -199,8 +196,6 @@ public class ScriptManager {
 	}
 
 	public synchronized void addDecorator(JRPWidgetDecorator decorator) {
-		for (JRPWidget widget : widgets.values()) {
-			decorator.widgetAdded(widget);
-		}
+		widgets.values().forEach(decorator::widgetAdded);
 	}
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -88,6 +88,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -111,7 +116,7 @@
                         <Bundle-Activator>com.affymetrix.igb.plugins.Activator</Bundle-Activator>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.plugins.PluginsView</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.PluginsPage</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>IGB plugins page for managing plugins</Bundle-Description>
                     </instructions>
                 </configuration>

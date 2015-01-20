@@ -26,7 +26,7 @@ public abstract class ExclusiveOperator extends XorOperator implements Operator 
 		SeqSymmetry xorSym = getXor(seq, symsA, symsB);
 		//  if no spans for xor, then won't be any for one-sided xor either, so return null;
 		if (xorSym == null)  { return null; }
-		List<SeqSymmetry> xorList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> xorList = new ArrayList<>();
 		xorList.add(xorSym);
 		SeqSymmetry a_not_b = SeqSymSummarizer.getIntersection(symsA, xorList, seq);
 		return a_not_b;

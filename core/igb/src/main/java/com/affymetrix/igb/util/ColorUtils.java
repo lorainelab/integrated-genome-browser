@@ -4,8 +4,6 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
@@ -16,7 +14,7 @@ import java.util.prefs.Preferences;
  * @version $Id: ColorUtils.java 8371 2011-06-29 19:55:31Z dcnorris $
  */
 public class ColorUtils {
-	private static Map<String, Color> colorMap = new HashMap<String, Color>();
+	private static Map<String, Color> colorMap = new HashMap<>();
 	
 	/**
 	 *  Creates a Color chooser combo box associated with a Color preference.
@@ -36,17 +34,14 @@ public class ColorUtils {
 		combobox.setButtonVisible(false);
 		combobox.setStretchToFit(true);
 		combobox.setMaximumSize(new Dimension(150,20));
-		combobox.addItemListener(new ItemListener() {
-
-			public void itemStateChanged(ItemEvent e) {
-				Color c = combobox.getSelectedColor();
-				if (c != null) {
-					PreferenceUtils.putColor(node, pref_name, c);
-				}else{
-					combobox.setSelectedColor(PreferenceUtils.getColor(pref_name, default_val));
-				}
-			}
-		});
+		combobox.addItemListener(e -> {
+            Color c = combobox.getSelectedColor();
+            if (c != null) {
+                PreferenceUtils.putColor(node, pref_name, c);
+            }else{
+                combobox.setSelectedColor(PreferenceUtils.getColor(pref_name, default_val));
+            }
+        });
 
 		node.addPreferenceChangeListener(new PreferenceChangeListener() {
 

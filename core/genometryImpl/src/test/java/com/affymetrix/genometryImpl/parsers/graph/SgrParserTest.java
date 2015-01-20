@@ -127,9 +127,9 @@ public class SgrParserTest {
 	public File createFileFromString(String string) throws Exception{
 		File tempFile = File.createTempFile("tempFile", ".sgr");
 		tempFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-		bw.write(string);
-		bw.close();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true))) {
+                bw.write(string);
+            }
 		return tempFile;
 	}
 }

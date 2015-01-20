@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -51,7 +49,7 @@ public class GFFParserTest {
             // the single symmetry will be used without a parent.
             sym = (SingletonSymWithProps) sym.getChild(0);
             assertEquals("exon", sym.getProperty("type"));
-            assertEquals(new Float(200.0), (Float) sym.getProperty("score"));
+            assertEquals(new Float(200.0), sym.getProperty("score"));
         }
 
         sym = (SingletonSymWithProps) result.get(3);
@@ -75,7 +73,7 @@ public class GFFParserTest {
         assertEquals(1200, sym.getSpan(0).getEnd());
 
         sym = (UcscGffSym) sym.getChild(2);
-        assertEquals(new Float(600.0f), sym.getProperty("score"));
+        assertEquals(600.0f, sym.getProperty("score"));
 
         sym = (SingletonSymWithProps) result.get(17);
         assertEquals(6, sym.getChildCount());
@@ -84,7 +82,7 @@ public class GFFParserTest {
         assertEquals(1200, sym.getSpan(0).getEnd());
 
         sym = (UcscGffSym) sym.getChild(2);
-        assertEquals(new Float(200.0f), sym.getProperty("score"));
+        assertEquals(200.0f, sym.getProperty("score"));
 
         sym = (SingletonSymWithProps) result.get(18);
         assertEquals(1, sym.getChildCount());

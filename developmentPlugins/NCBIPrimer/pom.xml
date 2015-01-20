@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -40,6 +40,11 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.main</artifactId>
+            <scope>provided</scope>
+        </dependency>
+         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -85,12 +90,14 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>                       
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>com.affymetrix.igb.osgi.service,*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>apollo.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>Use NCBI BLAST to design PCR primers to amplify a selected feature.</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

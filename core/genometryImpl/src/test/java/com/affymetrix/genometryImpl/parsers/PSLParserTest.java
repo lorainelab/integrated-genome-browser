@@ -10,7 +10,7 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.symloader.PSL;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscPslSym;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -106,7 +106,7 @@ public class PSLParserTest {
      * @return the symmetries that match the given chromosome.
      */
     public List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (SeqSymmetry sym : genomeResults) {
             BioSeq seq2 = null;
             if (sym instanceof UcscPslSym) {
@@ -139,8 +139,8 @@ public class PSLParserTest {
         List<SeqSymmetry> syms1 = null;
         List<UcscPslSym> syms2 = null;
 
-        for (int i = 0; i < seqs.size(); i++) {
-            seq = seqs.get(i);
+        for (BioSeq seq1 : seqs) {
+            seq = seq1;
             syms1 = filterResultsByChromosome(syms, seq);
             syms2 = psl.getChromosome(seq);
             testSeqSymmetry(syms1, syms2);
@@ -185,9 +185,9 @@ public class PSLParserTest {
     public static File createFileFromString(String string) throws Exception {
         File tempFile = File.createTempFile("tempFile", ".psl");
         tempFile.deleteOnExit();
-        BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-        bw.write(string);
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true))) {
+            bw.write(string);
+        }
         return tempFile;
     }
 }

@@ -46,7 +46,7 @@ public class SliceInfo {
 	/**Rips and loads the info from the slice name into this object.  Throws and IOException if the name is malformed*/
 	public void parseSliceName(String sliceName) throws IOException {
 		Matcher mat = SLICE_NAME_SPLITTER.matcher(sliceName);
-		if (mat.matches() == false) {
+		if (!mat.matches()) {
 			throw new IOException ("Malformed slice name! Failed to parse the slice info from -> "+sliceName);
 		}
 		chromosome = mat.group(1);

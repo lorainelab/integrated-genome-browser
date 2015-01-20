@@ -6,8 +6,8 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -93,7 +93,7 @@ public class OldTierResizer extends MouseInputAdapter {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-        assert m != (AffyTieredMap) src; // This seems odd.
+        assert m != src; // This seems odd.
         // Seems both cursors are the same, but you never know...
         if (atResizeTop(nevt)) {
             m.setCursor(ourCursors[0]);
@@ -210,7 +210,7 @@ public class OldTierResizer extends MouseInputAdapter {
                 this.upperGl.resizeHeight(y, height);
                 this.upperGl.getReferenceTier().resizeHeight(0, height);
                 if (this.upperGl.getReferenceTier() instanceof ITransformableTierGlyph) {
-                    if (this.upperGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE) {
+                    if (this.upperGl.getReferenceTier().getDirection() != StyledGlyph.Direction.REVERSE) {
                         ((ITransformableTierGlyph) this.upperGl.getReferenceTier()).setOffset(
                                 ((ITransformableTierGlyph) this.upperGl.getReferenceTier()).getOffset() + (int) delta);
                     }
@@ -230,7 +230,7 @@ public class OldTierResizer extends MouseInputAdapter {
                 this.lowerGl.resizeHeight(y, height);
                 this.lowerGl.getReferenceTier().resizeHeight(delta, height);
                 if (this.lowerGl.getReferenceTier() instanceof ITransformableTierGlyph) {
-                    if (this.lowerGl.getReferenceTier().getDirection() != TierGlyph.Direction.REVERSE) {
+                    if (this.lowerGl.getReferenceTier().getDirection() != StyledGlyph.Direction.REVERSE) {
                         ((ITransformableTierGlyph) this.lowerGl.getReferenceTier()).setOffset(
                                 ((ITransformableTierGlyph) this.lowerGl.getReferenceTier()).getOffset() - (int) delta);
                     }

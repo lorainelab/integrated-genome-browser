@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.JSeparator;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
     private final static boolean DEBUG = false;
-    private final Map<Object, Component> component_hash = new HashMap<Object, Component>();
+    private final Map<Object, Component> component_hash = new HashMap<>();
     private final JRPMenu main_bm_menu;
     private final BookmarkList main_bookmark_list;
     private IGBService igbService;
@@ -112,7 +111,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         }
     }
 
-    private void saveBookmarks(File f) throws FileNotFoundException, IOException {
+    private void saveBookmarks(File f) throws IOException {
         if (f == null) {
             logger.error("File variable null");
             return;
@@ -146,9 +145,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
     }
 
     private void removeAllBookmarkMenuItems() {
-        Iterator<Component> iter = component_hash.values().iterator();
-        while (iter.hasNext()) {
-            Component comp = iter.next();
+        for (Component comp : component_hash.values()) {
             if (comp == main_bm_menu) {
                 // component_hash contains a mapping of main_bookmark_list to main_bm_menu.
                 // That is the only JRPMenu we do not want to remove from its parent.
@@ -157,8 +154,8 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             if (comp instanceof JRPMenuItem) {
                 JRPMenuItem item = (JRPMenuItem) comp;
                 ActionListener[] listeners = item.getActionListeners();
-                for (int i = 0; i < listeners.length; i++) {
-                    item.removeActionListener(listeners[i]);
+                for (ActionListener listener : listeners) {
+                    item.removeActionListener(listener);
                 }
             } else { // if not a JRPMenuItem, should be a JSeparator
             }

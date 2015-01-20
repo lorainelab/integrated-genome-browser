@@ -58,14 +58,14 @@ public final class QuickLoadServerModel {
      * Stores the names of the data set name. For example A_thaliana_Jun_2008
      * populated by loadGenomeNames()
      */
-    private final List<String> genome_names = new ArrayList<String>();
+    private final List<String> genome_names = new ArrayList<>();
     /**
      * A set containing initialized genomes
      */
-    private final Set<String> initialized = new HashSet<String>();
+    private final Set<String> initialized = new HashSet<>();
     // A map from String genome name to a Map of (typeName,fileName) on the server for that group
-    private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
-    private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
+    private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<>();
+    private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<>();
     private final String primary_url;
     private final GenericServer primaryServer;
 
@@ -176,7 +176,7 @@ public final class QuickLoadServerModel {
         if (getAnnotsMap(genome_name) == null) {
             return Collections.<String>emptyList();
         }
-        List<String> typeNames = new ArrayList<String>();
+        List<String> typeNames = new ArrayList<>();
         for (AnnotMapElt annotMapElt : getAnnotsMap(genome_name)) {
             typeNames.add(annotMapElt.title);
         }
@@ -225,7 +225,7 @@ public final class QuickLoadServerModel {
 
         // Make a new list of typeNames, in case this is being re-initialized
         // If this search fails, then we're just returning an empty map.
-        List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
+        List<AnnotMapElt> annotList = new ArrayList<>();
         genome2annotsMap.put(genome_name, annotList);
 
         InputStream istr = null;
@@ -235,7 +235,7 @@ public final class QuickLoadServerModel {
             filename = getPath(genome_name, Constants.ANNOTS_XML);
             istr = getInputStream(filename, false, true);
             validationIstr = getInputStream(filename, false, true);
-            boolean annots_found = false;;
+            boolean annots_found = false;
             try {
                 annots_found = processAnnotsXml(istr, validationIstr, annotList);
             } catch (SAXParseException x) {
@@ -253,7 +253,7 @@ public final class QuickLoadServerModel {
             }
 
             if (annots_found) {
-                logger.debug("Found {} files in {} on server {}.", new Object[]{annotList.size(), genome_name, root_url});
+                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, root_url);
                 return true;
             }
 
@@ -266,9 +266,9 @@ public final class QuickLoadServerModel {
             if (!annots_found) {
                 ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
                         + "file for requested genome version {1}. "
-                        + "IGB may not be able to display this genome.", new Object[]{root_url, genome_name}), Level.SEVERE);
+                        + "IGB may not be able to display this genome.", root_url, genome_name), Level.SEVERE);
             } else {
-                logger.debug("Found {} files in {} on server {}.", new Object[]{annotList.size(), genome_name, root_url});
+                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, root_url);
             }
 
             return annots_found;
@@ -285,7 +285,7 @@ public final class QuickLoadServerModel {
     /**
      * Process the annots.xml file (if it exists). This has friendly type names.
      */
-    private static boolean processAnnotsXml(InputStream istr, InputStream validationIstr, List<AnnotMapElt> annotList) throws SAXParseException, JDOMException, IOException, SAXException {
+    private static boolean processAnnotsXml(InputStream istr, InputStream validationIstr, List<AnnotMapElt> annotList) throws JDOMException, IOException, SAXException {
         if (istr == null) {
             // Search failed.  That's fine, since there's a backup test for annots.txt.
             return false;
@@ -365,7 +365,7 @@ public final class QuickLoadServerModel {
                 try {
                     cinfo_stream = getInputStream(cinfo_path, getCacheAnnots(), false);
                 } catch (Exception ex) {
-                    logger.error("ERROR: could find {} or {} or {}", new Object[]{lift_path, ginfo_path, cinfo_path, ex});
+                    logger.error("ERROR: could find {} or {} or {}", lift_path, ginfo_path, cinfo_path, ex);
                     cinfo_stream = null;
                 }
             }

@@ -53,7 +53,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 		if (getParamPrompt() == null) {
 			return null;
 		}
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		parameters.put(getParamPrompt(), String.class);
 		return parameters;
 	}
@@ -61,7 +61,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (getParamPrompt() != null && parms.size() == 1 && parms.get(getParamPrompt()) instanceof String) {
-			setParameterValue(getParamPrompt(), (String)parms.get(getParamPrompt()));
+			setParameterValue(getParamPrompt(), parms.get(getParamPrompt()));
 			return true;
 		}
 		return false;
@@ -100,8 +100,6 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getParamPrompt()).append(":").append(getParameterValue(getParamPrompt()));
-		return sb.toString();
+		return getParamPrompt() + ":" + getParameterValue(getParamPrompt());
 	}
 }

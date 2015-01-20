@@ -195,9 +195,9 @@ public final class LazyChpSym extends ScoredContainerSym {
 			return;
 		}
 
-		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>(10000);
+		List<SeqSymmetry> symlist = new ArrayList<>(10000);
 		List id_data_hits = new ArrayList(10000);
-		List<SeqSymmetry> id_sym_hits = new ArrayList<SeqSymmetry>(10000);
+		List<SeqSymmetry> id_sym_hits = new ArrayList<>(10000);
 		int id_hit_count = 0;
 		int str_hit_count = 0;
 		loadTypes(aseq, matched_types, symlist);
@@ -335,10 +335,10 @@ public final class LazyChpSym extends ScoredContainerSym {
 
 	private static Set<Das2Type> determineMatchedTypes(String chp_array_type, Das2VersionedSource vsource) {
 		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		Set<Das2Type> matched_types = new HashSet<Das2Type>();
+		Set<Das2Type> matched_types = new HashSet<>();
 		Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
 		if (chp_array_syns == null) {
-			chp_array_syns = new ArrayList<String>();
+			chp_array_syns = new ArrayList<>();
 			chp_array_syns.add(chp_array_type);
 		}
 		for (String synonym : chp_array_syns) {

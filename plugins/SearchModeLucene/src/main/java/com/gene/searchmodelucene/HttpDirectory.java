@@ -26,7 +26,7 @@ public class HttpDirectory extends Directory {
 
     private String httpURL;
     private String[] fileList;
-    private Map<String, HttpDirectoryInputSeekableStream> httpFiles = new HashMap<String, HttpDirectoryInputSeekableStream>();
+    private Map<String, HttpDirectoryInputSeekableStream> httpFiles = new HashMap<>();
 
     public HttpDirectory(String url) {
         httpURL = url;
@@ -45,14 +45,15 @@ public class HttpDirectory extends Directory {
                         URL url = new URL(httpURL + ".dir");
                         URLConnection conn = url.openConnection();
                         conn.connect();
-                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-                        String line;
-                        List<String> flist = new ArrayList<String>();
-                        while ((line = br.readLine()) != null) {
-                            flist.add(line);
+                        List<String> flist;
+                        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+                            String line;
+                            flist = new ArrayList<>();
+                            while ((line = br.readLine()) != null) {
+                                flist.add(line);
+                            }
                         }
-                        br.close();
-                        fileList = flist.toArray(new String[]{});
+                        fileList = flist.toArray(new String[flist.size()]);
                     } else {
                         File file = new File(httpURL);
                         fileList = file.list();

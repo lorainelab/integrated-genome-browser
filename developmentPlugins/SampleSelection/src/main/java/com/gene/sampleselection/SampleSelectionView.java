@@ -168,7 +168,7 @@ public class SampleSelectionView extends IGBTabPanel {
                 return;
             }
             String type = (String) typeBox.getSelectedItem();
-            List<String> sampleList = new ArrayList<String>();
+            List<String> sampleList = new ArrayList<>();
             for (int index : sampleTable.getSelectedRows()) {
                 sampleList.add(samples.get(index));
             }

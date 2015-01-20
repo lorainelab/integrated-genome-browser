@@ -89,8 +89,7 @@ public final class BrptParser implements Parser {
 		int pcount = parents.size();
 		dos.writeUTF(genome_version);
 		dos.writeInt(pcount);  // how many seqs there are
-		for (int i = 0; i < pcount; i++) {
-			SeqSymmetry parent = parents.get(i);
+		for (SeqSymmetry parent : parents) {
 			BioSeq seq = parent.getSpanSeq(0);
 			String seqid = seq.getID();
 			int rpt_count = parent.getChildCount();
@@ -98,8 +97,7 @@ public final class BrptParser implements Parser {
 			dos.writeInt(rpt_count);
 		}
 
-		for (int i = 0; i < pcount; i++) {
-			SeqSymmetry parent = parents.get(i);
+		for (SeqSymmetry parent : parents) {
 			int rpt_count = parent.getChildCount();
 			for (int k = 0; k < rpt_count; k++) {
 				LeafSingletonSymmetry rpt = (LeafSingletonSymmetry) parent.getChild(k);
@@ -114,8 +112,8 @@ public final class BrptParser implements Parser {
 
 	private static List<SeqSymmetry> readTextFormat(BufferedReader br) throws IOException {
 		//int weird_length_count = 0;
-		Map<String,MutableSeqSymmetry> id2psym = new HashMap<String,MutableSeqSymmetry>();
-		ArrayList<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+		Map<String,MutableSeqSymmetry> id2psym = new HashMap<>();
+		ArrayList<SeqSymmetry> parent_syms = new ArrayList<>();
 		int repeat_count = 0;
 		int pos_count = 0;
 		int neg_count = 0;
@@ -197,7 +195,7 @@ public final class BrptParser implements Parser {
 				total_rpt_count += rpt_counts[i];
 			}
 			System.out.println("total rpts: " + total_rpt_count);
-			rpt_syms = new ArrayList<SeqSymmetry>(total_rpt_count);
+			rpt_syms = new ArrayList<>(total_rpt_count);
 			for (int i=0; i<seq_count; i++) {
 				BioSeq aseq = seqs[i];
 

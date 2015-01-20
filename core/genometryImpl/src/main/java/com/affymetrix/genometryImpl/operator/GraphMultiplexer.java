@@ -72,9 +72,7 @@ public class GraphMultiplexer implements Operator {
 		System.arraycopy(paradigm.getGraphYCoords(), 0, y, 0, y.length);
 		newParent = new GraphSym(x, y, "newguy", aseq); // This aint right?
 		newParent.setProperties(paradigm.cloneProperties());
-		for (SeqSymmetry s: symList) {
-			newParent.addChild(s);
-		}
+		symList.forEach(newParent::addChild);
 		return newParent;
 	}
 

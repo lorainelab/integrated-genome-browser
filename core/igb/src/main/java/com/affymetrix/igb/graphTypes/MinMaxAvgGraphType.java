@@ -2,7 +2,6 @@ package com.affymetrix.igb.graphTypes;
 
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import java.awt.Color;
@@ -38,7 +37,7 @@ public class MinMaxAvgGraphType extends GraphGlyph.GraphStyle {
 		// could size cache to just the view's pixelbox, but then may end up creating a
 		//   new int array every time the pixelbox changes (which with view damage or
 		//   scrolling optimizations turned on could be often)
-		int comp_ysize = ((View) view).getComponentSize().width;
+		int comp_ysize = view.getComponentSize().width;
 		// could check for exact match with comp_ysize, but allowing larger comp size here
 		//    may be good for multiple maps that share the same scene, so that new int array
 		//    isn't created every time paint switches from mapA to mapB -- the array will

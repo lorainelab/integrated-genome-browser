@@ -6,12 +6,11 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
 import com.affymetrix.igb.shared.ScrollableFasterExpandPacker;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -79,7 +78,7 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
             //   for each entry in min sorted children list, the maximum max
             //     value up to (and including) that position
             // could do max list as int array or as symmetry list, for now doing symmetry list
-            max_child_sofar = new ArrayList<GlyphI>(child_count);
+            max_child_sofar = new ArrayList<>(child_count);
             GlyphI curMaxChild = getChild(0);
             Rectangle2D.Double curbox = curMaxChild.getCoordBox();
             double max = curbox.x + curbox.width;
@@ -239,7 +238,7 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
         int coord_offset = 0;
         if (isScrollingAllowed()) {
             coord_offset = (int) (BUFFER * 1.5);
-            if (getDirection() != TierGlyph.Direction.REVERSE) {
+            if (getDirection() != StyledGlyph.Direction.REVERSE) {
                 if (getInitialRowsToScroll() > 0) {
                     coord_offset = (int) getChildHeight() * (getInitialRowsToScroll() - 1) + coord_offset;
                 }
@@ -365,8 +364,8 @@ public class ScrollableAnnotationTierGlyph extends AbstractTransformTierGlyph im
 
     private void setSpacer(double spacer) {
         this.spacer = spacer;
-        ((PaddedPackerI) collapse_packer).setParentSpacer(spacer);
-        ((PaddedPackerI) expand_packer).setParentSpacer(spacer);
+        collapse_packer.setParentSpacer(spacer);
+        expand_packer.setParentSpacer(spacer);
     }
 
     // very, very deprecated

@@ -5,12 +5,14 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.util.ExportFileModel;
+import com.affymetrix.genometryImpl.util.FileTypeCategoryUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
@@ -43,15 +45,16 @@ public class ExportFileAction
 
   @Override
     protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException {
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> syms = new ArrayList<>();
         RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) atier.getInfo();
-        if (rootSeqSymmetry.getCategory().isContainer() && (rootSeqSymmetry instanceof TypeContainerAnnot) ) {
+        FileTypeCategory category = rootSeqSymmetry.getCategory();
+        if (FileTypeCategoryUtils.isFileTypeCategoryContainer(category) && (rootSeqSymmetry instanceof TypeContainerAnnot) ) {
             AnnotatedSeqGroup group = aseq.getSeqGroup();
             List<BioSeq> seql = group.getSeqList();
             for (BioSeq aseql : seql) {
                 RootSeqSymmetry rootSym = aseql.getAnnotation(((TypeContainerAnnot)atier.getInfo()).getType());
                 if (rootSym != null) {
-                    syms = new ArrayList<SeqSymmetry>();
+                    syms = new ArrayList<>();
                     ExportFileModel.collectSyms(rootSym, syms, atier.getAnnotStyle().getGlyphDepth());
                     annotationWriter.writeAnnotations(syms, aseql, "", dos);
                 }

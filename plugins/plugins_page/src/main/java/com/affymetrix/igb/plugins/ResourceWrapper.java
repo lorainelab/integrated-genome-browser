@@ -28,7 +28,7 @@ import org.osgi.service.obr.Resource;
 @SuppressWarnings("rawtypes")
 public class ResourceWrapper implements Bundle {
 
-    private static final HashMap<String, String> KEY_CONVERTER = new HashMap<String, String>();
+    private static final HashMap<String, String> KEY_CONVERTER = new HashMap<>();
 
     static {
         KEY_CONVERTER.put(Resource.DESCRIPTION, Constants.BUNDLE_DESCRIPTION);
@@ -79,7 +79,7 @@ public class ResourceWrapper implements Bundle {
 
     @Override
     public Dictionary<String, String> getHeaders() {
-        Hashtable<String, String> dictionary = new Hashtable<String, String>();
+        Hashtable<String, String> dictionary = new Hashtable<>();
         Map resourceProperties = resource.getProperties();
         for (Object resourceKey : resourceProperties.keySet()) {
             String bundleKey = KEY_CONVERTER.get(resourceKey);

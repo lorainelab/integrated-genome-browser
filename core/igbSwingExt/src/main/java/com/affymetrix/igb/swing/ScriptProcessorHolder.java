@@ -8,7 +8,7 @@ import java.util.Map;
 public class ScriptProcessorHolder {
 
 	private static final ScriptProcessorHolder instance = new ScriptProcessorHolder();
-	private Map<String, ScriptProcessor> scriptProcessors = new HashMap<String, ScriptProcessor>();
+	private Map<String, ScriptProcessor> scriptProcessors = new HashMap<>();
 
 	private ScriptProcessorHolder() {
 		super();
@@ -32,13 +32,13 @@ public class ScriptProcessorHolder {
 	}
 
 	public List<String> getScriptExtensions() {
-		ArrayList<String> scriptExtensions = new ArrayList<String>();
+		ArrayList<String> scriptExtensions = new ArrayList<>();
 		scriptExtensions.addAll(scriptProcessors.keySet());
 		return scriptExtensions;
 	}
 
 	public String[] getSaveScriptExtensions() {
-		ArrayList<String> saveScriptExtensions = new ArrayList<String>();
+		ArrayList<String> saveScriptExtensions = new ArrayList<>();
 		for (String extension : scriptProcessors.keySet()) {
 			if (scriptProcessors.get(extension).canWriteScript()) {
 				saveScriptExtensions.add(extension);

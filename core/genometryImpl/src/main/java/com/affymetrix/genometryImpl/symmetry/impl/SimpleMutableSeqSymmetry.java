@@ -21,9 +21,6 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
     }
 
     public void addSpan(SeqSpan span) {
-        if (spans == null) {
-            spans = new ArrayList<SeqSpan>();
-        }
         spans.add(span);
     }
 
@@ -40,9 +37,6 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
      spans.set(index, span);
      }*/
     public void addChild(SeqSymmetry sym) {
-        if (children == null) {
-            children = new ArrayList<SeqSymmetry>();
-        }
         children.add(sym);
     }
 
@@ -67,11 +61,11 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
     }
 
     public void removeChildren() {
-        children = null;
+        children.clear();
     }
 
     public void removeSpans() {
-        spans = null;
+        spans.clear();
     }
 
     public void clear() {

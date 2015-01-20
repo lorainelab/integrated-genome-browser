@@ -77,7 +77,7 @@ public class BarParserTest {
 
 		GraphSym gr0 = results.get(0);
 		BioSeq seq = gr0.getGraphSeq();
-		Collection<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		Collection<SeqSymmetry> syms = new ArrayList<>();
 		syms.add(gr0);
 		String type = "test_type";
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();

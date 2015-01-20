@@ -30,11 +30,11 @@ public class TallyLineProcessor implements LineProcessor {
 
     @Override
     public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
-        List<Integer> xList = new ArrayList<Integer>();
-        List<Integer> wList = new ArrayList<Integer>();
-        List<Float> yList = new ArrayList<Float>();
-        List<Character> refList = new ArrayList<Character>();
-        Map<Character, List<Integer>> baseTotals = new HashMap<Character, List<Integer>>();
+        List<Integer> xList = new ArrayList<>();
+        List<Integer> wList = new ArrayList<>();
+        List<Float> yList = new ArrayList<>();
+        List<Character> refList = new ArrayList<>();
+        Map<Character, List<Integer>> baseTotals = new HashMap<>();
         for (char nucleotide : nucleotides) {
             baseTotals.put(nucleotide, new ArrayList<Integer>());
         }
@@ -46,7 +46,7 @@ public class TallyLineProcessor implements LineProcessor {
 //				String seq = parts[0];
                 int location = Integer.parseInt(parts[1]) - 1;
                 String[] countStrings = parts[2].split(" ");
-                Map<Character, Integer> baseCounts = new HashMap<Character, Integer>();
+                Map<Character, Integer> baseCounts = new HashMap<>();
                 for (char nucleotide : nucleotides) {
                     baseCounts.put(nucleotide, 0);
                 }
@@ -88,7 +88,7 @@ public class TallyLineProcessor implements LineProcessor {
                 seq,
                 charListToArray(refList)
         );
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> syms = new ArrayList<>();
         syms.add(sym);
         return syms;
     }

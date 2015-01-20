@@ -10,8 +10,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
@@ -53,16 +53,16 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
     private SeqMapView smv;
     private AffyLabelledTierMap map;
-    private Map<Object, VirtualFeature> style2Feature = new HashMap<Object, VirtualFeature>();
+    private Map<Object, VirtualFeature> style2Feature = new HashMap<>();
     private List<TrackStyle> currentStyles;
     public List<VirtualFeature> virtualFeatures;
     public List<GenericFeature> features;
-    private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<GenericFeature, LoadStrategy>(); // Remember the load strategy for un-hidden restoration				
+    private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<>(); // Remember the load strategy for un-hidden restoration				
 
     DataManagementTableModel(GeneralLoadView glv) {
         this.glv = glv;
         this.features = null;
-        this.virtualFeatures = new ArrayList<VirtualFeature>();
+        this.virtualFeatures = new ArrayList<>();
         Application igb = Application.getSingleton();
         if (igb != null) {
             smv = igb.getMapView();
@@ -70,7 +70,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
         map.addTierOrderListener(this);
         // Here we map the friendly string back to the LoadStrategy.
-        this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
+        this.reverseLoadStrategyMap = new HashMap<>(3);
         for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
             this.reverseLoadStrategyMap.put(strategy.toString(), strategy);
         }
@@ -100,9 +100,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
         style2Feature.clear();
 
-        for (GenericFeature gFeature : features) {
-            createPrimaryVirtualFeatures(gFeature);
-        }
+        features.forEach(this::createPrimaryVirtualFeatures);
 
         fireTableDataChanged();
 //		sort();
@@ -170,7 +168,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
 //				ITrackStyleExtended style = tg.getAnnotStyle();
 //				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
 //					continue;
 //				}
 //
@@ -207,7 +205,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //
 //				ITrackStyleExtended style = tg.getAnnotStyle();
 //				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == TierGlyph.Direction.REVERSE) {
+//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
 //					continue;
 //				}
 //
@@ -432,11 +430,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
                 if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-                    for (GenericFeature gFeature : features) {
-                        if (gFeature.equals(vFeature.getFeature())) {
-                            GeneralLoadView.getLoadView().removeFeature(gFeature, true);
-                        }
-                    }
+                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(gFeature -> {
+                        GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+                    });
                     this.fireTableDataChanged(); //clear row selection
                 }
                 break;
@@ -444,11 +440,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 if (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
                         && vFeature.getLoadStrategy() != LoadStrategy.GENOME) {
                     GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
-                    for (GenericFeature gFeature : features) {
-                        if (gFeature.equals(vFeature.getFeature())) {
-                            GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-                        }
-                    }
+                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(GeneralLoadUtils::loadAndDisplayAnnotations);
                 }
                 break;
             case LOAD_STRATEGY_COLUMN:
@@ -488,7 +480,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 }
                 break;
             case TRACK_NAME_COLUMN:
-                if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals((String) value)) {//TK
+                if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals(value)) {//TK
                     vFeature.getStyle().setTrackName((String) value);
 
                 }
@@ -524,13 +516,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     }
 
     private List<TrackStyle> getCurrentStyles() {
-        ArrayList<TrackStyle> currentStyleList = new ArrayList<TrackStyle>();
+        ArrayList<TrackStyle> currentStyleList = new ArrayList<>();
         if (smv != null) {
-            LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<TrackStyle, TrackStyle>();
-            for (TierGlyph tier : new CopyOnWriteArrayList<TierGlyph>(smv.getSeqMap().getTiers())) {
+            LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<>();
+            for (TierGlyph tier : new CopyOnWriteArrayList<>(smv.getSeqMap().getTiers())) {
                 ITrackStyle style = tier.getAnnotStyle();
                 if (style instanceof TrackStyle) {
-                    if (tier.getDirection() != TierGlyph.Direction.AXIS) {
+                    if (tier.getDirection() != StyledGlyph.Direction.AXIS) {
                         stylemap.put((TrackStyle) style, (TrackStyle) style);
                     } else if (CytobandParser.CYTOBAND_TIER_NAME.equals(style.getMethodName())) {
                         stylemap.put((TrackStyle) style, (TrackStyle) style);
@@ -546,7 +538,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             }
             currentStyleList.addAll(stylemap.values());
         }
-        ArrayList<TrackStyle> customizables = new ArrayList<TrackStyle>(currentStyleList.size());
+        ArrayList<TrackStyle> customizables = new ArrayList<>(currentStyleList.size());
         for (TrackStyle the_style : currentStyleList) {
             if (the_style.getCustomizable()) {
                 customizables.add(the_style);

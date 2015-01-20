@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.genometryImpl.operator.Operator;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class TrackTransformAction extends TrackFunctionOperationA {
         super.actionPerformed(e);
         List<StyledGlyph> tiers;
         for (StyledGlyph glyph : Selections.allGlyphs) {
-            tiers = new ArrayList<StyledGlyph>();
+            tiers = new ArrayList<>();
             tiers.add(glyph);
             addTier(tiers);
         }

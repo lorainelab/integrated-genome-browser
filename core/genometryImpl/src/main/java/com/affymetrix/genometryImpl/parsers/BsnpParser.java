@@ -104,33 +104,31 @@ public class BsnpParser implements Parser {
 			int pcount = parents.size();
 			dos.writeUTF(genome_version);
 			dos.writeInt(pcount);  // how many seqs there are
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
-				String seqid = seq.getID();
-				int snp_count = parent.getChildCount();
-				dos.writeUTF(seqid);
-				dos.writeInt(snp_count);
-			}
+		for (SeqSymmetry parent : parents) {
+			BioSeq seq = parent.getSpanSeq(0);
+			String seqid = seq.getID();
+			int snp_count = parent.getChildCount();
+			dos.writeUTF(seqid);
+			dos.writeInt(snp_count);
+		}
 
 			int total_snp_count = 0;
-			for (int i=0; i<pcount; i++) {
-				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
-				int snp_count = parent.getChildCount();
-				List<SeqSymmetry> snps = new ArrayList<SeqSymmetry>(snp_count);
-				for (int k=0; k<snp_count; k++) {
-					// need to make sure SNPs are written out in sorted order!
-					snps.add(parent.getChild(k));
-				}
-				Collections.sort(snps, new SeqSymMinComparator(seq));
-				for (int k=0; k<snp_count; k++) {
-					EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
-					int base_coord = snp.getSpan(0).getMin();
-					dos.writeInt(base_coord);
-					total_snp_count++;
-				}
+		for (SeqSymmetry parent : parents) {
+			BioSeq seq = parent.getSpanSeq(0);
+			int snp_count = parent.getChildCount();
+			List<SeqSymmetry> snps = new ArrayList<>(snp_count);
+			for (int k = 0; k < snp_count; k++) {
+				// need to make sure SNPs are written out in sorted order!
+				snps.add(parent.getChild(k));
 			}
+			Collections.sort(snps, new SeqSymMinComparator(seq));
+			for (int k = 0; k < snp_count; k++) {
+				EfficientSnpSym snp = (EfficientSnpSym) snps.get(k);
+				int base_coord = snp.getSpan(0).getMin();
+				dos.writeInt(base_coord);
+				total_snp_count++;
+			}
+		}
 			System.out.println("total snps output to bsnp file: " + total_snp_count);
 	}
 
@@ -145,7 +143,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	private static List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> results = new ArrayList<>();
 		GFFParser gff_parser = new GFFParser();
 		gff_parser.parse(istr, seq_group, true);
 		int problem_count = 0;
@@ -186,8 +184,8 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	private static List<SeqSymmetry> readTextFormat(BufferedReader br) {
 		int snp_count = 0;
 		int weird_length_count = 0;
-		Map<String,SeqSymmetry> id2psym = new HashMap<String,SeqSymmetry>();
-		List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+		Map<String,SeqSymmetry> id2psym = new HashMap<>();
+		List<SeqSymmetry> parent_syms = new ArrayList<>();
 		try {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -249,7 +247,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			snp_counts[i] = dis.readInt();
 			total_snp_count += snp_counts[i];
 		}
-		snp_syms = new ArrayList<SeqSymmetry>(total_snp_count);
+		snp_syms = new ArrayList<>(total_snp_count);
 		for (int i=0; i<seq_count; i++) {
 			BioSeq aseq = seqs[i];
 			int snp_count = snp_counts[i];
@@ -297,24 +295,24 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 					bin_outfile = text_infile + ".bsnp";
 				}
 				File ifil = new File(text_infile);
-				List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+				List<SeqSymmetry> parent_syms = new ArrayList<>();
 				if (text_infile.endsWith(".txt")) {
-					BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-					System.out.println("reading in text data from: " + text_infile);
-					parent_syms = BsnpParser.readTextFormat(br);
-					br.close();
+                                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)))) {
+                                    System.out.println("reading in text data from: " + text_infile);
+                                    parent_syms = BsnpParser.readTextFormat(br);
+                                }
 				} else if (text_infile.endsWith(".gff")) {
-					InputStream istr = new FileInputStream(ifil);
-					System.out.println("reading in gff data from: " + text_infile);
-					parent_syms = BsnpParser.readGffFormat(istr, gmodel);
-					istr.close();
+                                try (InputStream istr = new FileInputStream(ifil)) {
+                                    System.out.println("reading in gff data from: " + text_infile);
+                                    parent_syms = BsnpParser.readGffFormat(istr, gmodel);
+                                }
 				}
 
 				File ofil = new File(bin_outfile);
-				DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
-				System.out.println("outputting binary data to: " + bin_outfile);
-				BsnpParser.outputBsnpFormat(parent_syms, genome_version, dos);
-				dos.close();
+                                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)))) {
+                                    System.out.println("outputting binary data to: " + bin_outfile);
+                                    BsnpParser.outputBsnpFormat(parent_syms, genome_version, dos);
+                            }
 				System.out.println("finished converting text data to binary .bsnp format");
 			} else {
 				System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");

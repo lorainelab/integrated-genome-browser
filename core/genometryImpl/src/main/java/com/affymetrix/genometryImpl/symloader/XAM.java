@@ -10,11 +10,13 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.BAM_FLAG;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.MATE_START;
 import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NA;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NAME;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.NH;
+import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.CIGAR;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 import java.net.URI;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -43,15 +45,14 @@ import net.sf.samtools.SAMSequenceRecord;
  */
 public abstract class XAM extends SymLoader {
 
-    protected final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    protected final List<LoadStrategy> strategyList = new ArrayList<>();
 
     protected static final boolean DEBUG = false;
     protected boolean skipUnmapped = true;
     protected SAMFileReader reader;
     protected SAMFileHeader header;
-    protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
+    protected final Map<BioSeq, String> seqs = new HashMap<>();
 
-    public static final String CIGARPROP = "cigar";
     public static final String RESIDUESPROP = "residues";
     public static final String BASEQUALITYPROP = "baseQuality";
     public static final String SHOWMASK = "showMask";
@@ -97,13 +98,13 @@ public abstract class XAM extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(seqs.keySet());
+        return new ArrayList<>(seqs.keySet());
     }
 
     @Override
     public List<SeqSymmetry> getGenome() throws Exception {
         init();
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (BioSeq seq : group.getSeqList()) {
             results.addAll(getChromosome(seq));
         }
@@ -152,7 +153,7 @@ public abstract class XAM extends SymLoader {
             span = new SimpleSeqSpan(end, start, seq);
         }
 
-        List<SeqSpan> insertChildren = new ArrayList<SeqSpan>();
+        List<SeqSpan> insertChildren = new ArrayList<>();
         List<SeqSpan> children = getChildren(seq, sr, insertChildren);
 
         int blockMins[] = new int[children.size()];
@@ -179,10 +180,9 @@ public abstract class XAM extends SymLoader {
         BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
                 sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, iblockMins,
                 iblockMaxs, sr.getCigar(), includeResidues ? sr.getReadString() : null, sr.getBaseQualityString());
-        sym.setProperty("Read name", sr.getReadName());
-        sym.setProperty("method", meth);
-        if (sr.getAttribute("NH") != null) {
-            sym.setProperty("NH", sr.getAttribute("NH"));
+        sym.setProperty(NAME, sr.getReadName());
+        if (sr.getAttribute(NH) != null) {
+            sym.setProperty(NH, sr.getAttribute(NH));
         }
         sym.setFlags(sr.getFlags());
         sym.setDuplicateReadFlag(sr.getDuplicateReadFlag());
@@ -222,7 +222,7 @@ public abstract class XAM extends SymLoader {
         for (SAMTagAndValue tv : sr.getAttributes()) {
             sym.setProperty(tv.tag, tv.value);
         }
-        sym.setProperty(CIGARPROP, sr.getCigar());
+        sym.setProperty(CIGAR, sr.getCigar());
         sym.setProperty(SHOWMASK, true);
 
 //		Not using "SEQ" anywhere. So commenting out for now.
@@ -239,7 +239,7 @@ public abstract class XAM extends SymLoader {
     protected static List<SeqSpan> getChildren(BioSeq seq, SAMRecord sr, List<SeqSpan> insertChilds) {
         Cigar cigar = sr.getCigar();
         boolean isNegative = sr.getReadNegativeStrandFlag();
-        List<SeqSpan> results = new ArrayList<SeqSpan>();
+        List<SeqSpan> results = new ArrayList<>();
         if (cigar == null || cigar.numCigarElements() == 0) {
             return results;
         }

@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.IParameters;
@@ -73,7 +75,7 @@ public class TrackUtils {
     }
 
     public List<SeqSymmetry> getSymsFromLabelGlyphs(List<TierLabelGlyph> labels) {
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> syms = new ArrayList<>();
         for (TierLabelGlyph label : labels) {
             TierGlyph glyph = label.getReferenceTier();
             RootSeqSymmetry rootSym = (RootSeqSymmetry) glyph.getInfo();
@@ -86,14 +88,12 @@ public class TrackUtils {
     }
 
     public List<RootSeqSymmetry> getSymsTierGlyphs(List<StyledGlyph> tierGlyphs) {
-        List<RootSeqSymmetry> syms = new ArrayList<RootSeqSymmetry>();
+        List<RootSeqSymmetry> syms = new ArrayList<>();
         for (StyledGlyph glyph : tierGlyphs) {
             if (glyph instanceof TierGlyph && ((TierGlyph) glyph).getTierType() == TierGlyph.TierType.GRAPH) {
-                for (GlyphI g : glyph.getChildren()) {
-                    if (g instanceof GraphGlyph) {
-                        collectRootSym(g, syms);
-                    }
-                }
+                glyph.getChildren().stream().filter(g -> g instanceof GraphGlyph).forEach(g -> {
+                    collectRootSym(g, syms);
+                });
             } else {
                 collectRootSym(glyph, syms);
             }
@@ -112,16 +112,14 @@ public class TrackUtils {
     }
 
     private Map<FileTypeCategory, Integer> getTrackCounts(List<? extends SeqSymmetry> syms) {
-        Map<FileTypeCategory, Integer> trackCounts = new EnumMap<FileTypeCategory, Integer>(FileTypeCategory.class);
-        for (SeqSymmetry sym : syms) {
-            if (sym != null) {
-                FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();
-                if (trackCounts.get(category) == null) {
-                    trackCounts.put(category, 0);
-                }
-                trackCounts.put(category, trackCounts.get(category) + 1);
+        Map<FileTypeCategory, Integer> trackCounts = new EnumMap<>(FileTypeCategory.class);
+        syms.stream().filter(sym -> sym != null).forEach(sym -> {
+            FileTypeCategory category = ((RootSeqSymmetry) sym).getCategory();
+            if (trackCounts.get(category) == null) {
+                trackCounts.put(category, 0);
             }
-        }
+            trackCounts.put(category, trackCounts.get(category) + 1);
+        });
         return trackCounts;
     }
 

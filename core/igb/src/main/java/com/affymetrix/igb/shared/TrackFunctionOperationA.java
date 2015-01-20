@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -41,7 +42,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     }
 
     protected void addTier(List<StyledGlyph> vgs) {
-        java.util.List<DelegateParent> dps = new java.util.ArrayList<DelegateParent>();
+        java.util.List<DelegateParent> dps = new java.util.ArrayList<>();
 
         for (StyledGlyph vg : vgs) {
             if (vg.getAnnotStyle().getFeature() == null) {
@@ -88,7 +89,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     private void addNonUpdateableTier(List<? extends GlyphI> vgs) {
         BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
         ITrackStyleExtended preferredStyle = null;
-        List<SeqSymmetry> seqSymList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> seqSymList = new ArrayList<>();
         for (GlyphI gl : vgs) {
             SeqSymmetry rootSym = (SeqSymmetry) gl.getInfo();
             if (rootSym == null && gl.getChildCount() > 0) {
@@ -123,11 +124,11 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             return null;
         }
 
-        if (vg.getDirection() == TierGlyph.Direction.BOTH || vg.getDirection() == TierGlyph.Direction.NONE) {
+        if (vg.getDirection() == StyledGlyph.Direction.BOTH || vg.getDirection() == StyledGlyph.Direction.NONE) {
             return null;
         }
 
-        return vg.getDirection() == TierGlyph.Direction.FORWARD;
+        return vg.getDirection() == StyledGlyph.Direction.FORWARD;
     }
 
     private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {

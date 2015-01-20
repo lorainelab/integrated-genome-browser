@@ -47,102 +47,58 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         buttonGroup1.add(graphStyleLineRadioButton);
         graphStyleLineRadioButton.setText("Line");
         graphStyleLineRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleLineRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleLineRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleLineRadioButton.addActionListener(this::graphStyleLineRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleBarRadioButton);
         graphStyleBarRadioButton.setText("Bar");
         graphStyleBarRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleBarRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleBarRadioButton.addActionListener(this::graphStyleBarRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleStairStepRadioButton);
         graphStyleStairStepRadioButton.setText("StairStep");
         graphStyleStairStepRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleStairStepRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleStairStepRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleStairStepRadioButton.addActionListener(this::graphStyleStairStepRadioButtonActionPerformed);
 
         floatCheckBox.setText("Float");
         floatCheckBox.setToolTipText("Floats the graph on the surface of main view");
         floatCheckBox.setIconTextGap(2);
         floatCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         floatCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        floatCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                floatCheckBoxActionPerformed(evt);
-            }
-        });
+        floatCheckBox.addActionListener(this::floatCheckBoxActionPerformed);
 
         YAxisCheckBox.setText("Y-axis");
         YAxisCheckBox.setToolTipText("Show Y-axis");
         YAxisCheckBox.setIconTextGap(2);
         YAxisCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
         YAxisCheckBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        YAxisCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                YAxisCheckBoxActionPerformed(evt);
-            }
-        });
+        YAxisCheckBox.addActionListener(this::YAxisCheckBoxActionPerformed);
 
         buttonGroup1.add(graphStyleHeatMapRadioButton);
         graphStyleHeatMapRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleHeatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleHeatMapRadioButton.addActionListener(this::graphStyleHeatMapRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleDotRadioButton);
         graphStyleDotRadioButton.setText("Dot");
         graphStyleDotRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleDotRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleDotRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleDotRadioButton.addActionListener(this::graphStyleDotRadioButtonActionPerformed);
 
         buttonGroup1.add(graphStyleMinMaxAvgRadioButton);
         graphStyleMinMaxAvgRadioButton.setText("Min/Max/Mean");
         graphStyleMinMaxAvgRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleMinMaxAvgRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleMinMaxAvgRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleMinMaxAvgRadioButton.addActionListener(this::graphStyleMinMaxAvgRadioButtonActionPerformed);
 
         graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
         graphStyleHeatMapComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
-        graphStyleHeatMapComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleHeatMapComboBoxActionPerformed(evt);
-            }
-        });
+        graphStyleHeatMapComboBox.addActionListener(this::graphStyleHeatMapComboBoxActionPerformed);
 
         labelCheckBox.setText("Label");
         labelCheckBox.setToolTipText("Show label within the track");
         labelCheckBox.setIconTextGap(2);
-        labelCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelCheckBoxActionPerformed(evt);
-            }
-        });
+        labelCheckBox.addActionListener(this::labelCheckBoxActionPerformed);
 
         buttonGroup1.add(graphStyleFilledBarRadioButton);
         graphStyleFilledBarRadioButton.setText("Filled Bar");
-        graphStyleFilledBarRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                graphStyleFilledBarRadioButtonActionPerformed(evt);
-            }
-        });
+        graphStyleFilledBarRadioButton.addActionListener(this::graphStyleFilledBarRadioButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout graphPanelLayout = new org.jdesktop.layout.GroupLayout(graphPanel);
         graphPanel.setLayout(graphPanelLayout);

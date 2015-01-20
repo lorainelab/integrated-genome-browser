@@ -56,12 +56,12 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     private static enum WigFormat {
 
         BED4, VARSTEP, FIXEDSTEP
-    };
+    }
 
     private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
     private static final boolean ensure_unique_id = true;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -95,7 +95,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -104,7 +104,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     public List<GraphSym> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<GraphSym> retList = new ArrayList<GraphSym>();
+        List<GraphSym> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -209,9 +209,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     private List<GraphSym> parse(Iterator<String> it, BioSeq seq, int min, int max) {
         TrackLineParser track_line_parser = new TrackLineParser();
         WigFormat current_format = WigFormat.BED4;
-        List<GraphSym> grafs = new ArrayList<GraphSym>();
+        List<GraphSym> grafs = new ArrayList<>();
         WiggleData current_data = null;
-        Map<String, WiggleData> current_datamap = new HashMap<String, WiggleData>(); // Map: seq_id -> WiggleData
+        Map<String, WiggleData> current_datamap = new HashMap<>(); // Map: seq_id -> WiggleData
         boolean previous_track_line = false;
 
         String line;
@@ -241,7 +241,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 
                 current_format = WigFormat.BED4; // assume BED4 until changed.
                 current_data = null;
-                current_datamap = new HashMap<String, WiggleData>();
+                current_datamap = new HashMap<>();
                 continue;
             }
 
@@ -437,7 +437,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             return Collections.<GraphSym>emptyList();
         }
 
-        List<GraphSym> grafs = new ArrayList<GraphSym>(current_datamap.size());
+        List<GraphSym> grafs = new ArrayList<>(current_datamap.size());
 
         //TrackLineParser.createTrackStyle(track_hash, stream_name);
         String graph_id = track_hash.get(TrackLineParser.NAME);
@@ -446,9 +446,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             graph_id = stream_name;
         }
 
-        String graph_name = new String(graph_id);
+        String graph_name = graph_id;
 
-        if (ensure_unique_id && !stream_name.equals(graph_id)) {
+        if (!stream_name.equals(graph_id)) {
             graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
         }
 //		track_hash.put(TrackLineParser.NAME, graph_id);
@@ -548,8 +548,8 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         int current_span = 0;
         int length = 0;
 
-        Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+        Map<String, Boolean> chrTrack = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
 
         try {
 
@@ -564,7 +564,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
                     continue;
                 }
                 if (firstChar == 't' && line.startsWith("track")) {
-                    chrTrack = new HashMap<String, Boolean>();
+                    chrTrack = new HashMap<>();
                     trackLine = line;
                     previous_track_line = true;
                     current_format = WigFormat.BED4; // assume BED4 until changed.
@@ -590,7 +590,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
                     if (!previous_track_line) {
                         // Creat a dummy track only it's the same sequence
                         if (current_seq_id.equals(previous_seq_id)) {
-                            trackLine = MessageFormat.format(TRACK, new Object[]{uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++});
+                            trackLine = MessageFormat.format(TRACK, uri.toString(), TRACK_COUNTER, featureName, TRACK_COUNTER++);
                             Logger.getLogger(Wiggle.class.getName()).log(Level.WARNING, "Wiggle format error: line does not have a previous ''track'' line."
                                     + " Creating a dummy track line. {0}", trackLine);
                             //throw new IllegalArgumentException("Wiggle format error: line does not have a previous 'track' line");

@@ -63,7 +63,7 @@ public class ResidueTrackSymLoader extends SymLoader {
     }
 
     private List<? extends SeqSymmetry> getResidueTrack(SeqSpan span) throws Exception {
-        List<SeqSymmetry> list = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> list = new ArrayList<>();
         SymWithProps sym = new SimpleSymWithResidues(uri.toString(), span.getBioSeq(), span.getStart(), span.getEnd(), "",
                 0.0f, span.isForward(), 0, 0, null, null, getRegionResidues(span));
         // sym.setProperty(BAM.SHOWMASK, false);

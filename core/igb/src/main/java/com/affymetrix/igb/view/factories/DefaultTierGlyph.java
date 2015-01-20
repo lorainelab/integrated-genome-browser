@@ -12,7 +12,7 @@ import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.CollapsePacker;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -37,7 +37,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final Map<String, Class<?>> ANNOT_DEFAULT_PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("collapsed", Boolean.class);
         temp.put("connected", Boolean.class);
         temp.put("arrow", Boolean.class);
@@ -49,7 +49,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final Map<String, Class<?>> GRAPH_DEFAULT_PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         temp.put("y_axis", Boolean.class);
         GRAPH_DEFAULT_PREFERENCES = Collections.unmodifiableMap(temp);
     }
@@ -88,9 +88,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         RootSeqSymmetry detailSym = new TypeContainerAnnot(style.getMethodName());
 
         for (Entry<String, List<? extends SeqSymmetry>> entry : loadData(span).entrySet()) {
-            for (SeqSymmetry sym : entry.getValue()) {
-                detailSym.addChild(sym);
-            }
+            entry.getValue().forEach(detailSym::addChild);
         }
 
         return detailSym;
@@ -549,9 +547,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         return super.getPreferences();
     }
 
-    ;
-	
-	@Override
+    @Override
     public void setPreferences(Map<String, Object> preferences) {
         Integer maxDepth = (Integer) preferences.get("max_depth");
         setMaxExpandDepth(maxDepth);
@@ -563,9 +559,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         }
     }
 
-    ;
-	
-	/**
+    /**
 	 * Determine the extreme values of <var>y</var> in theView.
 	 * We do not need to translate between scene coordinates
 	 * to those of the graph symmetry.

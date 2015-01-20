@@ -1,15 +1,13 @@
 package com.affymetrix.igb.swing;
 
 import com.affymetrix.igb.swing.util.Idable;
-import java.awt.Rectangle;
+
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -64,18 +62,15 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode nodes
-						= (DefaultMutableTreeNode) getLastSelectedPathComponent();
+		addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode nodes
+                    = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 
-				if (nodes == null) {
-				}
+            if (nodes == null) {
+            }
 
 //	            Object nodeInfos = nodes.getUserObject();
-			}
-		});
+        });
 	}
 
 	@Override
@@ -121,13 +116,9 @@ public class JRPTree extends JTree implements JRPHierarchicalWidget {
 			return null;
 		}
 		expandPath(path);
-		return new SubRegionFinder() {
-			@Override
-			public Rectangle getRegion() {
-				int row = getRowForPath(path);
-				return getRowBounds(row);
-			}
-
-		};
+		return () -> {
+            int row = getRowForPath(path);
+            return getRowBounds(row);
+        };
 	}
 }

@@ -90,7 +90,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
     //    FIX THIS!  But also need to balance between memory concerns and the
     //    desire to avoid recalculation of percent-to-score array (which requires a
     //    sort) every time a graph is selected...
-    private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+    private final List<GraphGlyph> graphs = new ArrayList<>();
 
     /*
      * Now trying to map slider values to percentages, such that each slider
@@ -114,7 +114,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
     static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
 
         GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-        List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> glist = new ArrayList<>();
         glist.add(sgg);
         thresher.setGraphs(glist);
         JFrame frm = new JFrame(BUNDLE.getString("graphPercentileAdjuster"));
@@ -188,8 +188,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
         graphs.clear();
         if (newgraphs != null) {
             int gcount = newgraphs.size();
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = newgraphs.get(i);
+            for (GraphGlyph gl : newgraphs) {
                 graphs.add(gl);
             }
         }
@@ -236,8 +235,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
         } else {
 
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float min = gl.getGraphMinY();
                 float max = gl.getGraphMaxY();
                 float vismin = gl.getVisibleMinY();
@@ -310,8 +308,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
             min_of_vismaxes = max_of_vismaxes = 0;
             avg_of_vismins = avg_of_vismaxes = 0;
         } else {
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float vismin_val = gl.getVisibleMinY();
                 float vismax_val = gl.getVisibleMaxY();
                 float vismin_per = GraphGlyphUtils.getPercentForValue(gl, vismin_val);
@@ -471,8 +468,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
             float max_of_mins = Float.NEGATIVE_INFINITY;
             float avg_of_mins = 0;
             // set values
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float min_per = GraphGlyphUtils.getPercentForValue(gl, val);
                 min_of_mins = Math.min(min_per, min_of_mins);
                 max_of_mins = Math.max(min_per, max_of_mins);
@@ -516,8 +512,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
             float min_of_maxes = Float.POSITIVE_INFINITY;
             float max_of_maxes = Float.NEGATIVE_INFINITY;
             float avg_of_maxes = 0;
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float max_per = GraphGlyphUtils.getPercentForValue(gl, val);
                 min_of_maxes = Math.min(max_per, min_of_maxes);
                 max_of_maxes = Math.max(max_per, max_of_maxes);
@@ -573,8 +568,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
             float max_of_mins = Float.NEGATIVE_INFINITY;
             float avg_of_mins = 0;
             // set percentages
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float min_val = GraphGlyphUtils.getValueForPercent(gl, percent);
                 min_of_mins = Math.min(min_val, min_of_mins);
                 max_of_mins = Math.max(min_val, max_of_mins);
@@ -634,8 +628,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
             float min_of_maxes = Float.POSITIVE_INFINITY;
             float max_of_maxes = Float.NEGATIVE_INFINITY;
             float avg_of_maxes = 0;
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 float max_val = GraphGlyphUtils.getValueForPercent(gl, percent);
                 min_of_maxes = Math.min(max_val, min_of_maxes);
                 max_of_maxes = Math.max(max_val, max_of_maxes);

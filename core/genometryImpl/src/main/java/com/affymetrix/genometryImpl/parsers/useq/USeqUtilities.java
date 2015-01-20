@@ -79,7 +79,7 @@ public class USeqUtilities {
 	public static final Pattern USEQ_ARCHIVE = Pattern.compile("(.+)\\.(useq)$");
 
 	//for GenoViz DAS/2
-	public static final List<String> USEQ_FORMATS = new ArrayList<String>();
+	public static final List<String> USEQ_FORMATS = new ArrayList<>();
 	static {
 		USEQ_FORMATS.add(USEQ_EXTENSION_NO_PERIOD);
 	}
@@ -123,7 +123,7 @@ public class USeqUtilities {
 		if (len==0) {
 			return "";
 		}
-		StringBuffer sb = new StringBuffer(s[0]);
+		StringBuilder sb = new StringBuilder(s[0]);
 		for (int i=1; i<len; i++){
 			sb.append(separator);
 			sb.append(s[i]);
@@ -175,15 +175,15 @@ public class USeqUtilities {
 		if (directory.isDirectory()){
 			fileNames = directory.list();
 			int num = fileNames.length;
-			ArrayList<File> al = new ArrayList<File>();
+			ArrayList<File> al = new ArrayList<>();
 			try{
 				String path = directory.getCanonicalPath();
 				Pattern pat = Pattern.compile("^\\w+.*");
-				Matcher mat; 
-				for (int i=0; i< num; i++)  {
-					mat = pat.matcher(fileNames[i]);
+				Matcher mat;
+				for (String fileName : fileNames) {
+					mat = pat.matcher(fileName);
 					if (mat.matches()) {
-						al.add(new File(path, fileNames[i]));
+						al.add(new File(path, fileName));
 					}
 				}
 				//convert arraylist to file[]
@@ -208,7 +208,7 @@ public class USeqUtilities {
 	/**Fetches all files with a given extension in a directory recursing through sub directories.
 	 * Will return a file if a file is given with the appropriate extension, or null.*/
 	public static File[] fetchFilesRecursively (File directory, String extension){
-		if (directory.isDirectory() == false){
+		if (!directory.isDirectory()){
 			return extractFiles(directory, extension);
 		}
 		ArrayList<File> al = fetchAllFilesRecursively (directory, extension);
@@ -219,16 +219,15 @@ public class USeqUtilities {
 	
 	/**Fetches all files with a given extension in a directory recursing through sub directories.*/
 	public static ArrayList<File> fetchAllFilesRecursively (File directory, String extension){
-		ArrayList<File> files = new ArrayList<File>(); 
+		ArrayList<File> files = new ArrayList<>(); 
 		File[] list = directory.listFiles();
-		for (int i=0; i< list.length; i++){
-			if (list[i].isDirectory()) {
-				ArrayList<File> al = fetchAllFilesRecursively (list[i], extension);
+		for (File aList : list) {
+			if (aList.isDirectory()) {
+				ArrayList<File> al = fetchAllFilesRecursively(aList, extension);
 				files.addAll(al);
-			}
-			else{
-				if (list[i].getName().endsWith(extension)) {
-					files.add(list[i]);
+			} else {
+				if (aList.getName().endsWith(extension)) {
+					files.add(aList);
 				}
 			}
 		}
@@ -248,11 +247,11 @@ public class USeqUtilities {
 		if (dirOrFile.isDirectory()){
 			files = dirOrFile.listFiles();
 			int num = files.length;
-			ArrayList<File> chromFiles = new ArrayList<File>();
-			for (int i=0; i< num; i++)  {
-				m= p.matcher(files[i].getName());
+			ArrayList<File> chromFiles = new ArrayList<>();
+			for (File file : files) {
+				m = p.matcher(file.getName());
 				if (m.matches()) {
-					chromFiles.add(files[i]);
+					chromFiles.add(file);
 				}
 			}
 			files = new File[chromFiles.size()];
@@ -298,17 +297,16 @@ public class USeqUtilities {
 		}
 		File[] files = directory.listFiles();
 		int num = files.length;
-		for (int i=0; i<num; i++){
-			if (files[i].isDirectory()) {
-				if (deleteDirectory(files[i]) == false) {
+		for (File file : files) {
+			if (file.isDirectory()) {
+				if (!deleteDirectory(file)) {
 					return false;
 				}
-			}
-			else if (files[i].delete() == false) {
+			} else if (!file.delete()) {
 				return false;
 			}
 		}
-		if (directory.delete() == false) {
+		if (!directory.delete()) {
 			return false;
 		}
 		return true;
@@ -321,9 +319,9 @@ public class USeqUtilities {
 		try {
 			out = new ZipOutputStream(new FileOutputStream(zipFile));		
 			// Compress the files
-			for (int i=0; i<filesToZip.length; i++) {
-				in = new FileInputStream(filesToZip[i]);
-				out.putNextEntry(new ZipEntry(filesToZip[i].getName()));
+			for (File aFilesToZip : filesToZip) {
+				in = new FileInputStream(aFilesToZip);
+				out.putNextEntry(new ZipEntry(aFilesToZip.getName()));
 				int len;
 				while ((len = in.read(buf)) != -1) {
 					out.write(buf, 0, len);
@@ -343,12 +341,10 @@ public class USeqUtilities {
 	}
 	/**Merges all files in File[][] to a File[].*/
 	public static File[] collapseFileArray(File[][] f){
-		ArrayList<File> al = new ArrayList<File>();
-		for (int i=0; i< f.length; i++){
-			if (f[i] != null){
-				for (int j=0; j< f[i].length; j++){
-					al.add(f[i][j]);
-				}
+		ArrayList<File> al = new ArrayList<>();
+		for (File[] aF : f) {
+			if (aF != null) {
+				Collections.addAll(al, aF);
 			}
 		}
 		File[] files = new File[al.size()];
@@ -390,23 +386,24 @@ public class USeqUtilities {
 	 * Returns both error and data from execution.
 	 */
 	public static String[] executeCommandLineReturnAll(String[] command){
-		ArrayList<String> al = new ArrayList<String>();		
+		ArrayList<String> al = new ArrayList<>();		
 		try {
 			Runtime rt = Runtime.getRuntime();
 			rt.traceInstructions(true); //for debugging
 			rt.traceMethodCalls(true); //for debugging
 			Process p = rt.exec(command);
-			//Process p = rt.exec(Misc.stringArrayToString(command, " "));
-			BufferedReader data = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			BufferedReader error = new BufferedReader(new InputStreamReader(p.getErrorStream())); //for debugging
-			String line;
-			while ((line = data.readLine()) != null){
+                        BufferedReader error;
+                        try ( //Process p = rt.exec(Misc.stringArrayToString(command, " "));
+                                BufferedReader data = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                            error = new BufferedReader(new InputStreamReader(p.getErrorStream())); //for debugging
+                            String line;
+                            while ((line = data.readLine()) != null){
+                                al.add(line);
+                            }
+                            while ((line = error.readLine()) != null){
 				al.add(line);
 			}
-			while ((line = error.readLine()) != null){
-				al.add(line);
-			}
-			data.close();
+                    } //for debugging
 			error.close();
 
 		} catch (Exception e) {
@@ -444,9 +441,9 @@ public class USeqUtilities {
 	/**Writes a String to disk. */
 	public static boolean writeString(String data, File file) {
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(file));
-			out.print(data);
-			out.close();
+                    try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
+                        out.print(data);
+                    }
 			return true;
 		} catch (IOException e) {
 			System.out.println("Problem writing String to disk!");

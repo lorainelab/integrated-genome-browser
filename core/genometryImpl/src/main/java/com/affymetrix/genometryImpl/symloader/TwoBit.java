@@ -20,14 +20,14 @@ import java.util.logging.Logger;
  */
 public class TwoBit extends SymLoader {
 
-    private static final List<String> pref_list = new ArrayList<String>();
+    private static final List<String> pref_list = new ArrayList<>();
 
     static {
         pref_list.add("raw");
         pref_list.add("2bit");
     }
-    private final Map<BioSeq, SearchableCharIterator> chrMap = new HashMap<BioSeq, SearchableCharIterator>();
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private final Map<BioSeq, SearchableCharIterator> chrMap = new HashMap<>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         // BAM files are generally large, so only allow loading visible data.
@@ -79,7 +79,7 @@ public class TwoBit extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(chrMap.keySet());
+        return new ArrayList<>(chrMap.keySet());
     }
 
     @Override

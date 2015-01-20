@@ -31,7 +31,7 @@ public class Text2USeq {
 	private File[] outputDirectories;
 	private File workingBinarySaveDirectory;
 	private HashMap<String, File> chromStrandFileHash;
-	private ArrayList<File> files2Zip = new ArrayList<File>();
+	private ArrayList<File> files2Zip = new ArrayList<>();
 	public static final Pattern PATTERN_TAB = Pattern.compile("\\t");
 	public static final Pattern PATTERN_STRAND = Pattern.compile(".*[+-\\.]$");
 
@@ -76,7 +76,7 @@ public class Text2USeq {
 
 			//split slice and write data to binary file
 			System.out.println("\tParsing, slicing, and writing binary data...");
-			if (sliceWriteSplitData() == false){
+			if (!sliceWriteSplitData()){
 				USeqUtilities.deleteDirectory(tempSplitTextDirectory);
 				USeqUtilities.deleteDirectory(workingBinarySaveDirectory);
 				USeqUtilities.printErrAndExit("\nFailed to convert split data to binary, aborting!\n");
@@ -107,7 +107,7 @@ public class Text2USeq {
 			return false;
 		}
 		String name = chromStrandFileHash.keySet().iterator().next();
-		if (PATTERN_STRAND.matcher(name).matches() == true) {
+		if (PATTERN_STRAND.matcher(name).matches()) {
 			return false;
 		}
 		return true;
@@ -195,25 +195,23 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWriteRegionData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			Region[] reg = makeRegions(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
-				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (!Region.checkStartStops(reg)) {
+				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				Region[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberReg;
 					slice = reg;
 				}
@@ -223,12 +221,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberReg) {
 						endIndex = numberReg;
-					}
-					else {
+					} else {
 						//advance until start changes
-						int endBP = reg[endIndex-1].getStart();
-						for (int i=endIndex; i< numberReg; i++){
-							if (reg[i].getStart() != endBP){
+						int endBP = reg[endIndex - 1].getStart();
+						for (int i = endIndex; i < numberReg; i++) {
+							if (reg[i].getStart() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -240,7 +237,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				RegionData.updateSliceInfo(slice, sliceInfo);
-				RegionData rd = new RegionData (slice, sliceInfo);
+				RegionData rd = new RegionData(slice, sliceInfo);
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -253,25 +250,23 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWriteRegionScoreData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);		
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScore[] reg = makeRegionScores(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
-				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (!Region.checkStartStops(reg)) {
+				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				RegionScore[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberReg;
 					slice = reg;
 				}
@@ -281,12 +276,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberReg) {
 						endIndex = numberReg;
-					}
-					else {
+					} else {
 						//advance until start changes
-						int endBP = reg[endIndex-1].getStart();
-						for (int i=endIndex; i< numberReg; i++){
-							if (reg[i].getStart() != endBP){
+						int endBP = reg[endIndex - 1].getStart();
+						for (int i = endIndex; i < numberReg; i++) {
+							if (reg[i].getStart() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -298,7 +292,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				RegionScoreData.updateSliceInfo(slice, sliceInfo);
-				RegionScoreData rd = new RegionScoreData (slice, sliceInfo);
+				RegionScoreData rd = new RegionScoreData(slice, sliceInfo);
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -311,25 +305,23 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWriteRegionScoreTextData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionScoreText[] reg = makeRegionScoreTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
-				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (!Region.checkStartStops(reg)) {
+				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				RegionScoreText[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberReg;
 					slice = reg;
 				}
@@ -339,12 +331,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberReg) {
 						endIndex = numberReg;
-					}
-					else {
+					} else {
 						//advance until start changes
-						int endBP = reg[endIndex-1].getStart();
-						for (int i=endIndex; i< numberReg; i++){
-							if (reg[i].getStart() != endBP){
+						int endBP = reg[endIndex - 1].getStart();
+						for (int i = endIndex; i < numberReg; i++) {
+							if (reg[i].getStart() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -356,7 +347,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				RegionScoreTextData.updateSliceInfo(slice, sliceInfo);
-				RegionScoreTextData rd = new RegionScoreTextData (slice, sliceInfo);
+				RegionScoreTextData rd = new RegionScoreTextData(slice, sliceInfo);
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -369,25 +360,23 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWriteRegionTextData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			RegionText[] reg = makeRegionTexts(chromStrandFileHash.get(chromStrand));
-			if (Region.checkStartStops(reg) == false) {
-				throw new Exception ("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
+			if (!Region.checkStartStops(reg)) {
+				throw new Exception("\nError: one or more of your stop coordinates is less than your start coordinate.  Start must always be less than or equal to Stop.\n");
 			}
 			int numberReg = reg.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				RegionText[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberReg;
 					slice = reg;
 				}
@@ -397,12 +386,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberReg) {
 						endIndex = numberReg;
-					}
-					else {
+					} else {
 						//advance until start changes
-						int endBP = reg[endIndex-1].getStart();
-						for (int i=endIndex; i< numberReg; i++){
-							if (reg[i].getStart() != endBP){
+						int endBP = reg[endIndex - 1].getStart();
+						for (int i = endIndex; i < numberReg; i++) {
+							if (reg[i].getStart() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -414,7 +402,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				RegionTextData.updateSliceInfo(slice, sliceInfo);
-				RegionTextData rd = new RegionTextData (slice, sliceInfo);
+				RegionTextData rd = new RegionTextData(slice, sliceInfo);
 				File savedFile = rd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -427,23 +415,21 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWritePositionData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 
 			Position[] positions = makePositions(chromStrandFileHash.get(chromStrand));
 			int numberPositions = positions.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				Position[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberPositions;
 					slice = positions;
 				}
@@ -453,12 +439,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberPositions) {
 						endIndex = numberPositions;
-					}
-					else {
+					} else {
 						//advance until position changes
-						int endBP = positions[endIndex-1].getPosition();
-						for (int i=endIndex; i< numberPositions; i++){
-							if (positions[i].getPosition() != endBP){
+						int endBP = positions[endIndex - 1].getPosition();
+						for (int i = endIndex; i < numberPositions; i++) {
+							if (positions[i].getPosition() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -470,7 +455,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				PositionData.updateSliceInfo(slice, sliceInfo);
-				PositionData pd = new PositionData (slice, sliceInfo);
+				PositionData pd = new PositionData(slice, sliceInfo);
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -483,22 +468,20 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWritePositionTextData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			PositionText[] positions = makePositionTexts(chromStrandFileHash.get(chromStrand));
 			int numberPositions = positions.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				PositionText[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberPositions;
 					slice = positions;
 				}
@@ -508,12 +491,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberPositions) {
 						endIndex = numberPositions;
-					}
-					else {
+					} else {
 						//advance until position changes
-						int endBP = positions[endIndex-1].getPosition();
-						for (int i=endIndex; i< numberPositions; i++){
-							if (positions[i].getPosition() != endBP){
+						int endBP = positions[endIndex - 1].getPosition();
+						for (int i = endIndex; i < numberPositions; i++) {
+							if (positions[i].getPosition() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -525,7 +507,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				PositionTextData.updateSliceInfo(slice, sliceInfo);
-				PositionTextData pd = new PositionTextData (slice, sliceInfo);
+				PositionTextData pd = new PositionTextData(slice, sliceInfo);
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -538,22 +520,20 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWritePositionScoreTextData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			int beginningIndex = 0;
 			int endIndex = 0;
 			PositionScoreText[] positions = makePositionScoreTexts(chromStrandFileHash.get(chromStrand));
 			int numberPositions = positions.length;
-			while (true){
+			while (true) {
 				//find beginningIndex and endIndex(excluded) indexes
 				PositionScoreText[] slice;
 				//don't slice?
-				if (rowChunkSize == -1){
-					beginningIndex =0;
+				if (rowChunkSize == -1) {
+					beginningIndex = 0;
 					endIndex = numberPositions;
 					slice = positions;
 				}
@@ -563,12 +543,11 @@ public class Text2USeq {
 					endIndex = beginningIndex + rowChunkSize;
 					if (endIndex > numberPositions) {
 						endIndex = numberPositions;
-					}
-					else {
+					} else {
 						//advance until position changes
-						int endBP = positions[endIndex-1].getPosition();
-						for (int i=endIndex; i< numberPositions; i++){
-							if (positions[i].getPosition() != endBP){
+						int endBP = positions[endIndex - 1].getPosition();
+						for (int i = endIndex; i < numberPositions; i++) {
+							if (positions[i].getPosition() != endBP) {
 								break;
 							}
 							endIndex++;
@@ -580,7 +559,7 @@ public class Text2USeq {
 				}
 				//update slice info
 				PositionScoreTextData.updateSliceInfo(slice, sliceInfo);
-				PositionScoreTextData pd = new PositionScoreTextData (slice, sliceInfo);
+				PositionScoreTextData pd = new PositionScoreTextData(slice, sliceInfo);
 				File savedFile = pd.write(workingBinarySaveDirectory, true);
 				files2Zip.add(savedFile);
 				//at the end of the data?
@@ -593,14 +572,12 @@ public class Text2USeq {
 
 	/**Split chroms by the rowChunkSize and writes each to file using an appropriate binary file type.*/
 	private void sliceWritePositionScoreData () throws Exception{
-		Iterator<String> it = chromStrandFileHash.keySet().iterator();
-		while (it.hasNext()){
-			String chromStrand = it.next();
-			String chromosome = chromStrand.substring(0, chromStrand.length()-1);
-			String strand = chromStrand.substring(chromStrand.length()-1);
-			SliceInfo sliceInfo = new SliceInfo(chromosome, strand,0,0,0,null);
+		for (String chromStrand : chromStrandFileHash.keySet()) {
+			String chromosome = chromStrand.substring(0, chromStrand.length() - 1);
+			String strand = chromStrand.substring(chromStrand.length() - 1);
+			SliceInfo sliceInfo = new SliceInfo(chromosome, strand, 0, 0, 0, null);
 			PositionScore[] positions = makePositionScores(chromStrandFileHash.get(chromStrand));
-			PositionScoreData psd = new PositionScoreData (positions, sliceInfo);
+			PositionScoreData psd = new PositionScoreData(positions, sliceInfo);
 			psd.sliceWritePositionScoreData(rowChunkSize, workingBinarySaveDirectory, files2Zip);
 		}
 
@@ -608,16 +585,16 @@ public class Text2USeq {
 
 	/**Parses a Position[]*/
 	private Position[] makePositions(File file){
-		ArrayList<Position> al = new ArrayList<Position>();
+		ArrayList<Position> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new Position(Integer.parseInt(tokens[beginningColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new Position(Integer.parseInt(tokens[beginningColumnIndex])));
+                        }
+                    }
 			Position[] d = new Position[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -632,16 +609,16 @@ public class Text2USeq {
 
 	/**Parses a PositionScore[]*/
 	private PositionScore[] makePositionScores(File file){
-		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
+		ArrayList<PositionScore> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionScore(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionScore(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
+                        }
+                    }
 			PositionScore[] d = new PositionScore[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -655,16 +632,16 @@ public class Text2USeq {
 
 	/**Parses a PositionText[]*/
 	private PositionText[] makePositionTexts(File file){
-		ArrayList<PositionText> al = new ArrayList<PositionText>();
+		ArrayList<PositionText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionText(Integer.parseInt(tokens[beginningColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionText(Integer.parseInt(tokens[beginningColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			PositionText[] d = new PositionText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -678,16 +655,16 @@ public class Text2USeq {
 
 	/**Parses a PositionScoreText[]*/
 	private PositionScoreText[] makePositionScoreTexts(File file){
-		ArrayList<PositionScoreText> al = new ArrayList<PositionScoreText>();
+		ArrayList<PositionScoreText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new PositionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new PositionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			PositionScoreText[] d = new PositionScoreText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -702,16 +679,16 @@ public class Text2USeq {
 
 	/**Parses a Region[]*/
 	private Region[] makeRegions(File file){
-		ArrayList<Region> al = new ArrayList<Region>();
+		ArrayList<Region> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new Region(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new Region(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex])));
+                        }
+                    }
 			Region[] d = new Region[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -726,16 +703,16 @@ public class Text2USeq {
 
 	/**Parses a RegionScore[]*/
 	private RegionScore[] makeRegionScores(File file){
-		ArrayList<RegionScore> al = new ArrayList<RegionScore>();
+		ArrayList<RegionScore> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionScore(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionScore(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex])));
+                        }
+                    }
 			RegionScore[] d = new RegionScore[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -749,16 +726,16 @@ public class Text2USeq {
 
 	/**Parses a RegionText[]*/
 	private RegionText[] makeRegionTexts(File file){
-		ArrayList<RegionText> al = new ArrayList<RegionText>();
+		ArrayList<RegionText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			RegionText[] d = new RegionText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -772,16 +749,16 @@ public class Text2USeq {
 
 	/**Parses a RegionScoreText[]*/
 	private RegionScoreText[] makeRegionScoreTexts(File file){
-		ArrayList<RegionScoreText> al = new ArrayList<RegionScoreText>();
+		ArrayList<RegionScoreText> al = new ArrayList<>();
 		String[] tokens = null;
 		String line = null;
 		try {
-			BufferedReader in = new BufferedReader (new FileReader(file));
-			while ((line = in.readLine()) != null){
-				tokens = PATTERN_TAB.split(line);
-				al.add(new RegionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
-			}
-			in.close();
+                    try (BufferedReader in = new BufferedReader (new FileReader(file))) {
+                        while ((line = in.readLine()) != null){
+                            tokens = PATTERN_TAB.split(line);
+                            al.add(new RegionScoreText(Integer.parseInt(tokens[beginningColumnIndex]), Integer.parseInt(tokens[endingColumnIndex]), Float.parseFloat(tokens[scoreColumnIndex]), concatinateTextColumns(tokens)));
+                        }
+                    }
 			RegionScoreText[] d = new RegionScoreText[al.size()];
 			al.toArray(d);
 			Arrays.sort(d);
@@ -813,73 +790,72 @@ public class Text2USeq {
 	public static HashMap <String, File> splitFileByChromosomeAndStrand(File dataFile, File saveDirectory, int chromosomeColumnIndex, int strandColumnIndex, boolean skipSpliceJunctions ){
 		Pattern tab = Pattern.compile("\\t");
 		Pattern spliceJunction = Pattern.compile(".+_\\d+_\\d+");
-		HashMap <String, PrintWriter> chromOut = new HashMap <String, PrintWriter>();
-		HashMap <String, File> chromFile = new HashMap <String, File>();
+		HashMap <String, PrintWriter> chromOut = new HashMap <>();
+		HashMap <String, File> chromFile = new HashMap <>();
 		try{
-			//get reader
-			BufferedReader in = USeqUtilities.fetchBufferedReader(dataFile);
-			String line;
-			String[] tokens = null;
-			String currentChrom = "";
-			PrintWriter out = null;
-			String strand = ".";
-			int counter = 0;
-			while ((line = in.readLine()) !=null){
-				try {
-					line = line.trim();
-					if (line.length()==0) {
-						continue;
-					}
-					if (line.startsWith("#")) {
-						continue;
-					}
-					if (line.contains("chrAdapter")) {
-						continue;
-					}
-					tokens = tab.split(line);
-					trim(tokens);
-					
-					//parse chromosome
-					String chromosome = tokens[chromosomeColumnIndex];
-					//check for splice junction
-					if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) {
-						continue;
-					}
-					//parse strand
-					if (strandColumnIndex != -1) {
-						strand = tokens[strandColumnIndex];
-					}
-					String chromStrand = chromosome+strand;
-
-					//get PrintWriter
-					if (currentChrom.equals(chromStrand) == false){
-						currentChrom = chromStrand;
-						if (chromOut.containsKey(chromStrand)) {
-							out = chromOut.get(chromStrand);
-						}
-						else {
-							File f = new File(saveDirectory, chromStrand);
-							out = new PrintWriter (new FileWriter(f));
-							chromOut.put(chromStrand, out);
-							chromFile.put(chromStrand, f);
-						}
-					}
-					//save data
-					out.println(line);
-				} catch (Exception e){
-					System.out.println("\nProblem parsing line -> "+line +" Skipping!");
-					//e.printStackTrace();
-					if (counter++ == 1000) {
-						System.out.println("Too many malformed lines.  Aborting.");
-						return null;
-					}
-				}
+                    try ( //get reader
+                            BufferedReader in = USeqUtilities.fetchBufferedReader(dataFile)) {
+                        String line;
+                        String[] tokens = null;
+                        String currentChrom = "";
+                        PrintWriter out = null;
+                        String strand = ".";
+                        int counter = 0;
+                        while ((line = in.readLine()) !=null){
+                            try {
+                                line = line.trim();
+                                if (line.length()==0) {
+                                    continue;
+                                }
+                                if (line.startsWith("#")) {
+                                    continue;
+                                }
+                                if (line.contains("chrAdapter")) {
+                                    continue;
+                                }
+                                tokens = tab.split(line);
+                                trim(tokens);
+                                
+                                //parse chromosome
+                                String chromosome = tokens[chromosomeColumnIndex];
+                                //check for splice junction
+                                if (skipSpliceJunctions && spliceJunction.matcher(chromosome).matches()) {
+                                    continue;
+                                }
+                                //parse strand
+                                if (strandColumnIndex != -1) {
+                                    strand = tokens[strandColumnIndex];
+                                }
+                                String chromStrand = chromosome+strand;
+                                
+                                //get PrintWriter
+                                if (!currentChrom.equals(chromStrand)){
+                                    currentChrom = chromStrand;
+                                    if (chromOut.containsKey(chromStrand)) {
+                                        out = chromOut.get(chromStrand);
+                                    }
+                                    else {
+                                        File f = new File(saveDirectory, chromStrand);
+                                        out = new PrintWriter (new FileWriter(f));
+                                        chromOut.put(chromStrand, out);
+                                        chromFile.put(chromStrand, f);
+                                    }
+                                }
+                                //save data
+                                out.println(line);
+                            } catch (Exception e){
+                                System.out.println("\nProblem parsing line -> "+line +" Skipping!");
+                                //e.printStackTrace();
+                                if (counter++ == 1000) {
+                                    System.out.println("Too many malformed lines.  Aborting.");
+                                    return null;
+                                }
+                            }
 			}
-			in.close();
+                    }
 			//close the print writers
-			Iterator<PrintWriter> it = chromOut.values().iterator();
-			while (it.hasNext()) {
-				it.next().close();
+			for (PrintWriter printWriter : chromOut.values()) {
+				printWriter.close();
 			}
 
 			return chromFile;
@@ -954,9 +930,9 @@ public class Text2USeq {
 			maxIndex = scoreColumnIndex;
 		}
 		if (textColumnIndexs != null){
-			for (int x=0; x< textColumnIndexs.length; x++){
-				if (textColumnIndexs[x] > maxIndex) {
-					maxIndex = textColumnIndexs[x];
+			for (int textColumnIndex : textColumnIndexs) {
+				if (textColumnIndex > maxIndex) {
+					maxIndex = textColumnIndex;
 				}
 			}
 		}
@@ -976,7 +952,7 @@ public class Text2USeq {
 
 		//check color
 		if (color !=null){
-			if (ArchiveInfo.COLOR_HEX_FORM.matcher(color).matches() == false){
+			if (!ArchiveInfo.COLOR_HEX_FORM.matcher(color).matches()){
 				USeqUtilities.printErrAndExit("\nCannot parse a hexidecimal color code (e.g. #CCFF33) from your color choice?! -> "+color);
 			}
 		}

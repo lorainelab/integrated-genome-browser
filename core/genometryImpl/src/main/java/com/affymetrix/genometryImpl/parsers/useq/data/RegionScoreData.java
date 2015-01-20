@@ -55,14 +55,13 @@ public class RegionScoreData extends USeqData{
 	public void writeBed (PrintWriter out, boolean fixScore){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedRegionScores.length; i++){
+		for (RegionScore sortedRegionScore : sortedRegionScores) {
 			//chrom start stop name score strand
-			if (fixScore){
-				int score = USeqUtilities.fixBedScore(sortedRegionScores[i].score);
-				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ score +"\t"+strand);
-			}
-			else {
-				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+".\t"+ sortedRegionScores[i].score +"\t"+strand);
+			if (fixScore) {
+				int score = USeqUtilities.fixBedScore(sortedRegionScore.score);
+				out.println(chrom + "\t" + sortedRegionScore.start + "\t" + sortedRegionScore.stop + "\t" + ".\t" + score + "\t" + strand);
+			} else {
+				out.println(chrom + "\t" + sortedRegionScore.start + "\t" + sortedRegionScore.stop + "\t" + ".\t" + sortedRegionScore.score + "\t" + strand);
 			}
 		}
 	}
@@ -73,14 +72,14 @@ public class RegionScoreData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop\tScore");
-			for (int i=0; i< sortedRegionScores.length; i++) {
-				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score);
+			for (RegionScore sortedRegionScore : sortedRegionScores) {
+				out.println(chrom + "\t" + sortedRegionScore.start + "\t" + sortedRegionScore.stop + "\t" + sortedRegionScore.score);
 			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tScore\tStrand");
-			for (int i=0; i< sortedRegionScores.length; i++) {
-				out.println(chrom+"\t"+sortedRegionScores[i].start+"\t"+sortedRegionScores[i].stop+"\t"+sortedRegionScores[i].score+"\t"+strand);
+			for (RegionScore sortedRegionScore : sortedRegionScores) {
+				out.println(chrom + "\t" + sortedRegionScore.start + "\t" + sortedRegionScore.stop + "\t" + sortedRegionScore.score + "\t" + strand);
 			}
 		}
 	}
@@ -108,8 +107,8 @@ public class RegionScoreData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegionScores.length; i++){
-				int diff = sortedRegionScores[i].stop - sortedRegionScores[i].start;
+			for (RegionScore sortedRegionScore : sortedRegionScores) {
+				int diff = sortedRegionScore.stop - sortedRegionScore.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -153,7 +152,7 @@ public class RegionScoreData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionScores[0].stop- sortedRegionScores[0].start);
 					workingDOS.writeFloat(sortedRegionScores[0].score);
@@ -187,7 +186,7 @@ public class RegionScoreData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegionScores[0].stop- sortedRegionScores[0].start);
 					workingDOS.writeFloat(sortedRegionScores[0].score);
@@ -233,14 +232,14 @@ public class RegionScoreData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of RegionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedRegionScores.length;
+		for (RegionScoreData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedRegionScores.length;
 		}
 		//concatinate
 		RegionScore[] concatinate = new RegionScore[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			RegionScore[] slice = pdArray[i].sortedRegionScores;
+		for (RegionScoreData aPdArray : pdArray) {
+			RegionScore[] slice = aPdArray.sortedRegionScores;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -254,9 +253,9 @@ public class RegionScoreData extends USeqData{
 	public static RegionScoreData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<RegionScoreData> a = new ArrayList<RegionScoreData>(num);
-		for (int i=0; i< num; i++) {
-			a.add((RegionScoreData) useqDataAL.get(i));
+		ArrayList<RegionScoreData> a = new ArrayList<>(num);
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((RegionScoreData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -282,8 +281,8 @@ public class RegionScoreData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegionScores.length; i++){
-				int diff = sortedRegionScores[i].stop - sortedRegionScores[i].start;
+			for (RegionScore sortedRegionScore : sortedRegionScores) {
+				int diff = sortedRegionScore.stop - sortedRegionScore.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -325,7 +324,7 @@ public class RegionScoreData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionScores[0].stop- sortedRegionScores[0].start);
 					dos.writeFloat(sortedRegionScores[0].score);
@@ -359,7 +358,7 @@ public class RegionScoreData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegionScores[0].stop- sortedRegionScores[0].start);
 					dos.writeFloat(sortedRegionScores[0].score);
@@ -474,10 +473,10 @@ public class RegionScoreData extends USeqData{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<RegionScore> al = new ArrayList<RegionScore>();
-		for (int i=0; i< sortedRegionScores.length; i++){
-			if (sortedRegionScores[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedRegionScores[i]);
+		ArrayList<RegionScore> al = new ArrayList<>();
+		for (RegionScore sortedRegionScore : sortedRegionScores) {
+			if (sortedRegionScore.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegionScore);
 			}
 		}
 		if (al.isEmpty()) {

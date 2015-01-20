@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
@@ -106,7 +106,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.affymetrix.igb.bamindexer.Activator</Bundle-Activator>   
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.bamindexer</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>Plugin to enable indexing of local bam files if an index does not exist</Bundle-Description>
                     </instructions>
                 </configuration>

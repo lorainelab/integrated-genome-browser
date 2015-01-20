@@ -79,5 +79,5 @@ public class ToggleTrackResizingAction extends SeqMapViewActionA {
         public void actionPerformed(ActionEvent e) {
             ToggleTrackResizingAction.this.toggle(this);
         }
-    };
+    }
 }

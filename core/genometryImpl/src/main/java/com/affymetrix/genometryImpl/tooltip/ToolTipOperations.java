@@ -19,7 +19,7 @@ import java.util.Map;
 public class ToolTipOperations {
 
     public static List<ToolTipCategory> formatBamSymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+        List<ToolTipCategory> categories = new ArrayList<>();
 
         populateCategory(props, BAM_INFO_CATEGORY, categories);
         populateCategory(props, BAM_LOCATION_CATEGORY, categories);
@@ -29,7 +29,7 @@ public class ToolTipOperations {
     }
     
     public static List<ToolTipCategory> formatBED14SymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+        List<ToolTipCategory> categories = new ArrayList<>();
 
         populateCategory(props, BED14_INFO_CATEGORY, categories);
         populateCategory(props, BED14_LOCATION_CATEGORY, categories);
@@ -39,7 +39,7 @@ public class ToolTipOperations {
     }
     
     public static List<ToolTipCategory> formatLinkPSLSymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+        List<ToolTipCategory> categories = new ArrayList<>();
 
         populateCategory(props, PSL_INFO_CATEGORY, categories);
         populateCategory(props, PSL_LOCATION_CATEGORY, categories);
@@ -48,7 +48,7 @@ public class ToolTipOperations {
     }
     
     public static List<ToolTipCategory> formatDefaultSymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+        List<ToolTipCategory> categories = new ArrayList<>();
 
         populateCategory(props, DEFAULT_INFO_CATEGORY, categories);
         populateCategory(props, DEFAULT_LOCATION_CATEGORY, categories);
@@ -58,7 +58,7 @@ public class ToolTipOperations {
     }
     
     public static List<ToolTipCategory> formatGFFSymTooltip(Map<String, Object> props) {
-        List<ToolTipCategory> categories = new ArrayList<ToolTipCategory>();
+        List<ToolTipCategory> categories = new ArrayList<>();
 
         populateCategory(props, GFF_INFO_CATEGORY, categories);
         populateCategory(props, GFF_LOCATION_CATEGORY, categories);
@@ -74,7 +74,7 @@ public class ToolTipOperations {
         for (Map.Entry<String, List<String>> entry : categoryData.entrySet()) {
             String categoryKey = entry.getKey();
             List<String> keys = entry.getValue();
-            Map<String, String> destProps = new LinkedHashMap<String, String>();
+            Map<String, String> destProps = new LinkedHashMap<>();
             ToolTipCategory category = null;
             for (String key : keys) {
                 if (props.containsKey(key)) {
@@ -91,14 +91,12 @@ public class ToolTipOperations {
     }
 
     private static void populateMisc(Map<String, Object> props, List<ToolTipCategory> categories, List<String> ignoreList) {
-        Map<String, String> miscInfoProps = new HashMap<String, String>();
+        Map<String, String> miscInfoProps = new HashMap<>();
         ToolTipCategory miscInfoCategory = new ToolTipCategory(MISC_CATEGORY, 3, miscInfoProps);
 
-        for (String key : props.keySet()) {
-            if (!ignoreList.contains(key)) {
-                miscInfoProps.put(key, props.get(key).toString());
-            }
-        }
+        props.keySet().stream().filter(key -> !ignoreList.contains(key)).forEach(key -> {
+            miscInfoProps.put(key, props.get(key).toString());
+        });
 
         if (miscInfoProps.size() > 1) {
             categories.add(miscInfoCategory);

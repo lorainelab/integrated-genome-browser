@@ -96,32 +96,16 @@ public class WebLinksViewGUI extends JPanel {
         jScrollPane1.setViewportView(localTable);
 
         createButton.setText("Create New");
-        createButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createButtonActionPerformed(evt);
-            }
-        });
+        createButton.addActionListener(this::createButtonActionPerformed);
 
         deleteButton.setText("Delete");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         importButton.setText("Import");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
+        importButton.addActionListener(this::importButtonActionPerformed);
 
         exportButton.setText("Export");
-        exportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportButtonActionPerformed(evt);
-            }
-        });
+        exportButton.addActionListener(this::exportButtonActionPerformed);
 
         builderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Web Link Builder"));
 
@@ -136,18 +120,10 @@ public class WebLinksViewGUI extends JPanel {
         urlLabel.setText("URL Pattern:");
 
         nameRadioButton.setText("Track Name");
-        nameRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameRadioButtonActionPerformed(evt);
-            }
-        });
+        nameRadioButton.addActionListener(this::nameRadioButtonActionPerformed);
 
         idRadioButton.setText("Annotation ID");
-        idRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                idRadioButtonActionPerformed(evt);
-            }
-        });
+        idRadioButton.addActionListener(this::idRadioButtonActionPerformed);
 
         urlTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -187,11 +163,7 @@ public class WebLinksViewGUI extends JPanel {
 
         ignoreCaseCheckBox.setSelected(true);
         ignoreCaseCheckBox.setText("Ignore Case");
-        ignoreCaseCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ignoreCaseCheckBoxActionPerformed(evt);
-            }
-        });
+        ignoreCaseCheckBox.addActionListener(this::ignoreCaseCheckBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

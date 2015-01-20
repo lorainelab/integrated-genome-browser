@@ -34,6 +34,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.tooltip.ToolTipConstants;
 
 import org.broad.tribble.readers.LineReader;
 
@@ -144,15 +145,15 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private double version = -1.0;
 //	private Date date;
     private String[] samples = new String[]{};
-    private Map<String, String> metaMap = new HashMap<String, String>();
-    private Map<String, INFO> infoMap = new HashMap<String, INFO>();
-    private Map<String, FILTER> filterMap = new HashMap<String, FILTER>();
-    private Map<String, FORMAT> formatMap = new HashMap<String, FORMAT>();
+    private Map<String, String> metaMap = new HashMap<>();
+    private Map<String, INFO> infoMap = new HashMap<>();
+    private Map<String, FILTER> filterMap = new HashMap<>();
+    private Map<String, FORMAT> formatMap = new HashMap<>();
     private boolean combineGenotype;
-    private List<String> selectedFields = new ArrayList<String>();
+    private List<String> selectedFields = new ArrayList<>();
 
     static {
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
 
         types.add("protein");
     }
@@ -175,9 +176,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         mainSym.setProperty("type", featureName);
         mainSym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
         int line_count = 0;
-        Map<String, SimpleSymWithProps> dataMap = new HashMap<String, SimpleSymWithProps>();
-        Map<String, GraphData> graphDataMap = new HashMap<String, GraphData>();
-        Map<String, SimpleSymWithProps> genotypeDataMap = new HashMap<String, SimpleSymWithProps>();
+        Map<String, SimpleSymWithProps> dataMap = new HashMap<>();
+        Map<String, GraphData> graphDataMap = new HashMap<>();
+        Map<String, SimpleSymWithProps> genotypeDataMap = new HashMap<>();
 
         String line = null;
 
@@ -196,7 +197,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                     Level.SEVERE, "failed to parse vcf file ", x);
         }
         SeqSpan span = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-        List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symlist = new ArrayList<>();
         if (mainSym.getChildCount() > 0) {
             mainSym.addSpan(span);
         }
@@ -211,7 +212,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
             container.addSpan(span);
             symlist.add(container);
         }
-        Map<String, ITrackStyle> styleMap = new HashMap<String, ITrackStyle>();
+        Map<String, ITrackStyle> styleMap = new HashMap<>();
         for (String key : graphDataMap.keySet()) {
             GraphData graphData = graphDataMap.get(key);
             int dataSize = graphData.xData.size();
@@ -257,11 +258,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     public void select(String name, boolean separateTracks, Map<String, List<String>> selections) {
         setCombineGenotype(!separateTracks);
-        for (String dataField : new ArrayList<String>(selectedFields)) {
-            if (dataField.indexOf('/') > -1) {
-                selectedFields.remove(dataField);
-            }
-        }
+        new ArrayList<>(selectedFields).stream().filter(dataField -> dataField.indexOf('/') > -1).forEach(selectedFields::remove);
         for (String type : selections.keySet()) {
             for (String sample : selections.get(type)) {
                 selectedFields.add(name + "/" + type + "/" + sample);
@@ -279,7 +276,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     }
 
     public List<String> getAllFields() {
-        return new ArrayList<String>(infoMap.keySet());
+        return new ArrayList<>(infoMap.keySet());
     }
 
     public List<String> getSamples() {
@@ -287,7 +284,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     }
 
     public List<String> getGenotypes() {
-        return new ArrayList<String>(formatMap.keySet());
+        return new ArrayList<>(formatMap.keySet());
     }
 
     private String getID(String line) {
@@ -373,13 +370,16 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private void processMetaInformationLine(String line) {
         if (line.startsWith("fileformat=")) {
             String format = line.substring("fileformat=".length());
-            if (format.equals("VCFv4.0")) {
-                version = 4.0;
-            } else if (format.equals("VCFv4.1")) {
-                version = 4.1;
-            } else {
-                ErrorHandler.errorPanel("file version not supported " + format);
-                throw new UnsupportedOperationException("file version not supported " + format);
+            switch (format) {
+                case "VCFv4.0":
+                    version = 4.0;
+                    break;
+                case "VCFv4.1":
+                    version = 4.1;
+                    break;
+                default:
+                    ErrorHandler.errorPanel("file version not supported " + format);
+                    throw new UnsupportedOperationException("file version not supported " + format);
             }
             Logger.getLogger("com.affymetrix.genometryImpl.symloader").log(Level.INFO, "vcf file version {0}", version);
         } else if (line.startsWith("format=")) {
@@ -482,7 +482,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         }
         BAMSym residueSym = new BAMSym(nameType, seq, start, end, id, true, new int[]{start}, new int[]{end}, iblockMins, iblockMaxs, cigar, residuesStr);
         if (cigar != null) {
-            residueSym.setProperty(BAM.CIGARPROP, cigar);
+            residueSym.setProperty(ToolTipConstants.CIGAR, cigar);
         }
         residueSym.setInsResidues(insertion ? alt.substring(1) : "");
         residueSym.setProperty(BAM.SHOWMASK, true);

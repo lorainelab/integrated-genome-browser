@@ -27,7 +27,6 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,87 +86,75 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
 	@Override
 	protected JPanel initSourcePanel(String viewName) {		
-		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authenticate\u2026", new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
-				Object url = sourcesTable.getModel().getValueAt(
-						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-				try {
-					URL u = new URL((String) url);
-					IGBAuthenticator.resetAuth((String) url);
-					Authenticator.requestPasswordAuthentication(
-							u.getHost(),
-							null,
-							u.getPort(),
-							u.getProtocol(),
-							"Server Credentials",
-							null,
-							u,
-							RequestorType.SERVER);
-				} catch (MalformedURLException ex) {
-					Logger.getLogger(ServerPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		});
+		editAuthButton = createButton("DataLoadPrefsView_editAuthButton", "Authenticate\u2026", e -> {
+            sourcesTable.stopCellEditing();
+            Object url = sourcesTable.getModel().getValueAt(
+                    sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                    ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+            try {
+                URL u = new URL((String) url);
+                IGBAuthenticator.resetAuth((String) url);
+                Authenticator.requestPasswordAuthentication(
+                        u.getHost(),
+                        null,
+                        u.getPort(),
+                        u.getProtocol(),
+                        "Server Credentials",
+                        null,
+                        u,
+                        RequestorType.SERVER);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ServerPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
 		editAuthButton.setEnabled(false);
 
-		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "Edit\u2026", new ActionListener() {
+		editSourceButton = createButton("DataLoadPrefsView_editAuthButton", "Edit\u2026", e -> {
+            sourcesTable.stopCellEditing();
 
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
-				
-				Object url = sourcesTable.getModel().getValueAt(
-						sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-						((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-				GenericServer server = ServerList.getServerInstance().getServer((String) url);
+            Object url = sourcesTable.getModel().getValueAt(
+                    sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                    ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+            GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
-				AddSource.getSingleton().init(true, true, "Edit Data Source", server, (String) url, server.mirrorURL);
-			}
-		});
+            AddSource.getSingleton().init(true, true, "Edit Data Source", server, (String) url, server.mirrorURL);
+        });
 		editSourceButton.setEnabled(false);
 		ImageIcon up_icon = MenuUtil.getIcon("16x16/actions/up.png");
 		rankUpButton = new JRPButton("DataLoadPrefsView_rankUpButton", up_icon);
 		rankUpButton.setToolTipText("Increase sequence server priority");
 		rankUpButton.addActionListener(
-				new ActionListener() {
-
-					public void actionPerformed(ActionEvent e) {
-						sourcesTable.stopCellEditing();
-						int row = sourcesTable.getSelectedRow();
-						if (row >= 1 && row < sourcesTable.getRowCount()) {
-							((SourceTableModel) sourcesTable.getModel()).switchRows(row - 1);
-							sourcesTable.getSelectionModel().setSelectionInterval(row - 1, row - 1);
-							int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL);
-							String URL = sourcesTable.getModel().getValueAt(row - 1, column).toString();
-							serverList.setServerOrder(URL, row - 1);
-							URL = sourcesTable.getModel().getValueAt(row, column).toString();
-							serverList.setServerOrder(URL, row);
-						}
-					}
-				});
+				e -> {
+                    sourcesTable.stopCellEditing();
+                    int row = sourcesTable.getSelectedRow();
+                    if (row >= 1 && row < sourcesTable.getRowCount()) {
+                        ((SourceTableModel) sourcesTable.getModel()).switchRows(row - 1);
+                        sourcesTable.getSelectionModel().setSelectionInterval(row - 1, row - 1);
+                        int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL);
+                        String URL = sourcesTable.getModel().getValueAt(row - 1, column).toString();
+                        serverList.setServerOrder(URL, row - 1);
+                        URL = sourcesTable.getModel().getValueAt(row, column).toString();
+                        serverList.setServerOrder(URL, row);
+                    }
+                });
 		rankUpButton.setEnabled(false);
 		ImageIcon down_icon = MenuUtil.getIcon("16x16/actions/down.png");
 		rankDownButton = new JRPButton("DataLoadPrefsView_rankDownButton", down_icon);
 		rankDownButton.setToolTipText("Decrease sequence server priority");
 		rankDownButton.addActionListener(
-				new ActionListener() {
-
-					public void actionPerformed(ActionEvent e) {
-						sourcesTable.stopCellEditing();
-						int row = sourcesTable.getSelectedRow();
-						if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
-							((SourceTableModel) sourcesTable.getModel()).switchRows(row);
-							sourcesTable.getSelectionModel().setSelectionInterval(row + 1, row + 1);
-							int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL);
-							String URL = sourcesTable.getModel().getValueAt(row, column).toString();
-							serverList.setServerOrder(URL, row);
-							URL = sourcesTable.getModel().getValueAt(row + 1, column).toString();
-							serverList.setServerOrder(URL, row + 1);
-						}
-					}
-				});
+				e -> {
+                    sourcesTable.stopCellEditing();
+                    int row = sourcesTable.getSelectedRow();
+                    if (row >= 0 && row < sourcesTable.getRowCount() - 1) {
+                        ((SourceTableModel) sourcesTable.getModel()).switchRows(row);
+                        sourcesTable.getSelectionModel().setSelectionInterval(row + 1, row + 1);
+                        int column = ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL);
+                        String URL = sourcesTable.getModel().getValueAt(row, column).toString();
+                        serverList.setServerOrder(URL, row);
+                        URL = sourcesTable.getModel().getValueAt(row + 1, column).toString();
+                        serverList.setServerOrder(URL, row + 1);
+                    }
+                });
 		rankDownButton.setEnabled(false);
 		return super.initSourcePanel(viewName);
 	}
@@ -206,53 +193,47 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		final JRPButton vopenFile = new JRPButton("DataLoadPrefsView_vopenFile", "\u2026");
 		final JRPButton copenFile = new JRPButton("DataLoadPrefsView_copenFile", "\u2026");
 
-		final ActionListener vlistener = new ActionListener() {
+		final ActionListener vlistener = e -> {
+            if (e.getSource() == vopenFile) {
+                File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+                try {
+                    if (file != null) {
+                        vsynonymFile.setText(file.getCanonicalPath());
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
 
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == vopenFile) {
-					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
-					try {
-						if (file != null) {
-							vsynonymFile.setText(file.getCanonicalPath());
-						}
-					} catch (IOException ex) {
-						Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-					}
-				}
+            if (vsynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile)) {
+                PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
+            } else {
+                ErrorHandler.errorPanel(
+                        "Unable to Load Version Synonyms",
+                        "Unable to load personal synonyms from " + vsynonymFile.getText() + ".", Level.SEVERE);
+            }
+        };
 
-				if (vsynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile)) {
-					PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
-				} else {
-					ErrorHandler.errorPanel(
-							"Unable to Load Version Synonyms",
-							"Unable to load personal synonyms from " + vsynonymFile.getText() + ".", Level.SEVERE);
-				}
-			}
-		};
+		final ActionListener clistener = e -> {
+            if (e.getSource() == copenFile) {
+                File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+                try {
+                    if (file != null) {
+                        csynonymFile.setText(file.getCanonicalPath());
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
 
-		final ActionListener clistener = new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == copenFile) {
-					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
-					try {
-						if (file != null) {
-							csynonymFile.setText(file.getCanonicalPath());
-						}
-					} catch (IOException ex) {
-						Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-					}
-				}
-
-				if (csynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile)) {
-					PreferenceUtils.getLocationsNode().put(PREF_CSYN_FILE_URL, csynonymFile.getText());
-				} else {
-					ErrorHandler.errorPanel(
-							"Unable to Load Chromosome Synonyms",
-							"Unable to load personal synonyms from " + csynonymFile.getText() + ".", Level.SEVERE);
-				}
-			}
-		};
+            if (csynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile)) {
+                PreferenceUtils.getLocationsNode().put(PREF_CSYN_FILE_URL, csynonymFile.getText());
+            } else {
+                ErrorHandler.errorPanel(
+                        "Unable to Load Chromosome Synonyms",
+                        "Unable to load personal synonyms from " + csynonymFile.getText() + ".", Level.SEVERE);
+            }
+        };
 
 		vopenFile.setToolTipText("Open Local Directory");
 		vopenFile.addActionListener(vlistener);
@@ -290,43 +271,35 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 		final JRPButton clearCache = new JRPButton("DataLoadPrefsView_clearCache", "Empty Cache");
 		cacheCleared.setVisible(false);
 		cacheCleared.setForeground(Color.RED);
-		clearCache.addActionListener(new ActionListener() {
+		clearCache.addActionListener(e -> {
+            System.out.println("Action performed :" + Thread.currentThread().getId());
+            clearCache.setEnabled(false);
+            LocalUrlCacher.clearCache();
+            clearCache.setEnabled(true);
+            cacheCleared.setVisible(true);
 
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Action performed :" + Thread.currentThread().getId());
-				clearCache.setEnabled(false);
-				LocalUrlCacher.clearCache();
-				clearCache.setEnabled(true);
-				cacheCleared.setVisible(true);
+            CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("clear cache") {
 
-				CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>("clear cache") {
+                @Override
+                protected Object runInBackground() {
+                    System.out.println("Runnable :" + Thread.currentThread().getId());
+                    try {
+                        Thread.sleep(5000);
+                    }
+                    catch (InterruptedException x) {}
+                    return null;
+                }
 
-					@Override
-					protected Object runInBackground() {
-						System.out.println("Runnable :" + Thread.currentThread().getId());
-						try {
-							Thread.sleep(5000);
-						}
-						catch (InterruptedException x) {}
-						return null;
-					}
-
-					@Override
-					public void finished() {
-						cacheCleared.setVisible(false);
-					}
-				};
-				CThreadHolder.getInstance().execute(cacheCleared, worker);
-			}
-		});
+                @Override
+                public void finished() {
+                    cacheCleared.setVisible(false);
+                }
+            };
+            CThreadHolder.getInstance().execute(cacheCleared, worker);
+        });
 
 		cacheUsage.setSelectedItem(LocalUrlCacher.getCacheUsage(LocalUrlCacher.getPreferredCacheUsage()));
-		cacheUsage.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				LocalUrlCacher.setPreferredCacheUsage(((CacheUsage) cacheUsage.getSelectedItem()).usage);
-			}
-		});
+		cacheUsage.addActionListener(e -> LocalUrlCacher.setPreferredCacheUsage(((CacheUsage) cacheUsage.getSelectedItem()).usage));
 
 		final JPanel cachePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(cachePanel);

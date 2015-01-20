@@ -26,7 +26,6 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Enumeration;
@@ -45,8 +44,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -98,51 +95,42 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", new ActionListener() {
+		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", e -> {
+            sourcesTable.stopCellEditing();
 
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
+            AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
+        });
 
-				AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
-			}
-		});
-
-		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				sourcesTable.stopCellEditing();
-				if (confirmDelete()) {
-					Object url = sourcesTable.getModel().getValueAt(
-							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-					removeDataSource(url.toString());
-					sourceTableModel.init();
-				}
-			}
-		});
+		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", e -> {
+            sourcesTable.stopCellEditing();
+            if (confirmDelete()) {
+                Object url = sourcesTable.getModel().getValueAt(
+                        sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                        ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+                removeDataSource(url.toString());
+                sourceTableModel.init();
+            }
+        });
 		removeServerButton.setEnabled(false);
 
-		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		sourcesTable.getSelectionModel().addListSelectionListener(event -> {
+            enableServerButtons(false);
 
-			public void valueChanged(ListSelectionEvent event) {
-				enableServerButtons(false);
+            if (sourcesTable.getSelectedRowCount() == 1) {
+                Object url = sourcesTable.getModel().getValueAt(
+                        sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
+                        ((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
+                GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
-				if (sourcesTable.getSelectedRowCount() == 1) {
-					Object url = sourcesTable.getModel().getValueAt(
-							sourcesTable.convertRowIndexToModel(sourcesTable.getSelectedRow()),
-							((SourceTableModel) sourcesTable.getModel()).getColumnIndex(SourceTableModel.SourceColumn.URL));
-					GenericServer server = ServerList.getServerInstance().getServer((String) url);
+                if (server == null) {
+                    server = ServerList.getRepositoryInstance().getServer((String) url);
+                }
 
-					if (server == null) {
-						server = ServerList.getRepositoryInstance().getServer((String) url);
-					}
-
-					if (!server.isDefault()) {
-						enableServerButtons(true);
-					}
-				}
-			}
-		});
+                if (!server.isDefault()) {
+                    enableServerButtons(true);
+                }
+            }
+        });
 
 		layout.setHorizontalGroup(addServerComponents(layout.createParallelGroup(TRAILING), layout.createSequentialGroup()));
 		layout.setVerticalGroup(addServerComponents(layout.createSequentialGroup(), layout.createParallelGroup(BASELINE)));

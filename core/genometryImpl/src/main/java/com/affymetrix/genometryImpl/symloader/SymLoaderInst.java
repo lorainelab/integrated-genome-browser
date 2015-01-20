@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class SymLoaderInst extends SymLoader {
 
-    private final List<BioSeq> chromosomeList = new ArrayList<BioSeq>();
+    private final List<BioSeq> chromosomeList = new ArrayList<>();
 
     public SymLoaderInst(URI uri, String featureName, AnnotatedSeqGroup group) {
         super(uri, featureName, group);

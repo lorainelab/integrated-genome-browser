@@ -24,9 +24,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     public void setFilter(SymmetryFilterI filter) {
         if (filter instanceof ChainFilter) {
             ChainFilter chainFilter = (ChainFilter) filter;
-            for (SymmetryFilterI f : chainFilter.getFilters()) {
-                ((javax.swing.DefaultListModel) filterList.getModel()).addElement(f);
-            }
+            chainFilter.getFilters().forEach(((javax.swing.DefaultListModel) filterList.getModel())::addElement);
         } else if (filter != null) {
             ((javax.swing.DefaultListModel) filterList.getModel()).addElement(filter);
         }
@@ -46,7 +44,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
             return (SymmetryFilterI) filterList.getModel().getElementAt(0);
         } else {
             ChainFilter filter = new ChainFilter();
-            java.util.List<SymmetryFilterI> filters = new java.util.ArrayList<SymmetryFilterI>(size);
+            java.util.List<SymmetryFilterI> filters = new java.util.ArrayList<>(size);
             for (int i = 0; i < filterList.getModel().getSize(); i++) {
                 filters.add((SymmetryFilterI) filterList.getModel().getElementAt(i));
             }
@@ -82,35 +80,19 @@ public class ConfigureFilters extends javax.swing.JPanel {
                 filterListMouseClicked(evt);
             }
         });
-        filterList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                filterListValueChanged(evt);
-            }
-        });
+        filterList.addListSelectionListener(this::filterListValueChanged);
         filterListScrollPane.setViewportView(filterList);
 
         addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(this::addButtonActionPerformed);
 
         removeButton.setText("Remove");
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
+        removeButton.addActionListener(this::removeButtonActionPerformed);
 
         editButton.setText("Edit");
         editButton.setEnabled(false);
-        editButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
-            }
-        });
+        editButton.addActionListener(this::editButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -178,7 +160,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }
 
     private void addNew() {
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only", optionFilter, false);
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only", optionFilter, false);
         optionDialog.setTitle("Add filter");
         optionDialog.setLocationRelativeTo(this);
         SymmetryFilterI selectedFilter = optionDialog.showDialog();
@@ -206,7 +188,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
         SymmetryFilterI selectedFilter = (SymmetryFilterI) filterList.getSelectedValue();
         SymmetryFilterI selectedClone = selectedFilter.newInstance();
 
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<SymmetryFilterI>(SymmetryFilterI.class, "Show Only");
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only");
         optionDialog.setTitle("Edit filter");
         optionDialog.setLocationRelativeTo(this);
         optionDialog.setInitialValue(selectedClone);
@@ -230,10 +212,10 @@ public class ConfigureFilters extends javax.swing.JPanel {
             filterRenderer = new javax.swing.DefaultListCellRenderer();
             parameterRenderer = new javax.swing.DefaultListCellRenderer();
 
-            filterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+            filterAttrMap = new java.util.HashMap<>();
             filterAttrMap.put(java.awt.font.TextAttribute.WEIGHT, java.awt.font.TextAttribute.WEIGHT_BOLD);
 
-            parameterAttrMap = new java.util.HashMap<java.awt.font.TextAttribute, Object>();
+            parameterAttrMap = new java.util.HashMap<>();
             parameterAttrMap.put(java.awt.font.TextAttribute.POSTURE, java.awt.font.TextAttribute.POSTURE_OBLIQUE);
         }
 
@@ -249,11 +231,8 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
             if (filter instanceof IParameters && ((IParameters) filter).getParametersType() != null
                     && !((IParameters) filter).getParametersType().isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("  ");
-                sb.append("(").append(((IParameters) filter).getPrintableString()).append(")");
 
-                javax.swing.JLabel paramComp = (javax.swing.JLabel) parameterRenderer.getListCellRendererComponent(list, sb.toString(), index, isSelected, cellHasFocus);
+                javax.swing.JLabel paramComp = (javax.swing.JLabel) parameterRenderer.getListCellRendererComponent(list, "  (" + ((IParameters) filter).getPrintableString() + ")", index, isSelected, cellHasFocus);
                 paramComp.setFont(paramComp.getFont().deriveFont(parameterAttrMap));
                 panel.add(paramComp);
             }

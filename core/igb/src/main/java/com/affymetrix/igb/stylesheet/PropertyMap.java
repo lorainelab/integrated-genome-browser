@@ -16,7 +16,6 @@ package com.affymetrix.igb.stylesheet;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
 
   private PropertyMap parentProperties;
 
-  private final ArrayList<PropertyMap> ancestors = new ArrayList<PropertyMap>(100);
+  private final ArrayList<PropertyMap> ancestors = new ArrayList<>(100);
 
 
   private static int color_warnings = 0; // count the number of warnings about colors
@@ -172,14 +171,12 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
   
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
-    Iterator<String> iter = this.keySet().iterator();
-    while (iter.hasNext()) {
-     String key = iter.next();
-     Object value = this.getProperty(key);
-     sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
-     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
-     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, getString(value));
-     sb.append("/>\n");
+    for (String key : this.keySet()) {
+      Object value = this.getProperty(key);
+      sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
+      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
+      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, getString(value));
+      sb.append("/>\n");
     }
     return sb;
   }

@@ -53,43 +53,42 @@ public final class BgrParser implements GraphParser {
 		throws IOException  {
 		System.out.println("writing graph: " + graf);
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
-		DataOutputStream dos = new DataOutputStream(bos);
-
-		Map<String, Object> headers = graf.getProperties();
-
-		if (headers == null) {
-			headers = new HashMap<String, Object>(); // use an empty map
-		}		           
-			if (headers.get("seq_name") == null) {
-				if (graf.getGraphSeq() == null) {
-					dos.writeUTF("null");
-				} else {
-					dos.writeUTF(graf.getGraphSeq().getID());
-				}
-			}
-			else { dos.writeUTF((String)headers.get("seq_name")); }
-			if (headers.get("release_name") == null)  {dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("release_name")); }           
-			if (headers.get("analysis_group_name") == null)  { dos.writeUTF("null");}
-			else  { dos.writeUTF((String)headers.get("analysis_group_name")); }           
-			if (headers.get("map_analysis_group_name") == null)  { dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("map_analysis_group_name")); }           
-			if (headers.get("method_name") == null)  { dos.writeUTF("null");}
-			else  { dos.writeUTF((String)headers.get("method_name")); }          
-			if (headers.get("parameter_set_name") == null)  { dos.writeUTF("null");}
-			else  {dos.writeUTF((String)headers.get("parameter_set_name"));}           
-			if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("value_type_name")); }           
-			if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }
-			else { dos.writeUTF((String)headers.get("control_group_name")); }
-		writeGraphPoints(graf, dos);
-		//      dos.flush();
-		dos.close();
+            try (DataOutputStream dos = new DataOutputStream(bos)) {
+                Map<String, Object> headers = graf.getProperties();
+                
+                if (headers == null) {
+                    headers = new HashMap<>(); // use an empty map
+                }
+                if (headers.get("seq_name") == null) {
+                    if (graf.getGraphSeq() == null) {
+                        dos.writeUTF("null");
+                    } else {
+                        dos.writeUTF(graf.getGraphSeq().getID());
+                    }
+                }
+                else { dos.writeUTF((String)headers.get("seq_name")); }
+                if (headers.get("release_name") == null)  {dos.writeUTF("null"); }
+                else  { dos.writeUTF((String)headers.get("release_name")); }
+                if (headers.get("analysis_group_name") == null)  { dos.writeUTF("null");}
+                else  { dos.writeUTF((String)headers.get("analysis_group_name")); }
+                if (headers.get("map_analysis_group_name") == null)  { dos.writeUTF("null"); }
+                else  { dos.writeUTF((String)headers.get("map_analysis_group_name")); }
+                if (headers.get("method_name") == null)  { dos.writeUTF("null");}
+                else  { dos.writeUTF((String)headers.get("method_name")); }
+                if (headers.get("parameter_set_name") == null)  { dos.writeUTF("null");}
+                else  {dos.writeUTF((String)headers.get("parameter_set_name"));}
+                if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
+                else  { dos.writeUTF((String)headers.get("value_type_name")); }
+                if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }
+                else { dos.writeUTF((String)headers.get("control_group_name")); }
+                writeGraphPoints(graf, dos);
+                //      dos.flush();
+            }
 		return true;
 	}
 
 	public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException{
-		List<GraphSym> results = new ArrayList<GraphSym>();
+		List<GraphSym> results = new ArrayList<>();
 		results.add(parse(istr,stream_name,seq_group, true));
 		return results;
 	}
@@ -101,7 +100,7 @@ public final class BgrParser implements GraphParser {
 		int count = 0;
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		DataInputStream dis = new DataInputStream(bis);
-		HashMap<String,Object> props = new HashMap<String,Object>();
+		HashMap<String,Object> props = new HashMap<>();
 		String seq_name = dis.readUTF();
 		String release_name = dis.readUTF();
 		String analysis_group_name = dis.readUTF();

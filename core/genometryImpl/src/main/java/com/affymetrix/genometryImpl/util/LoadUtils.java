@@ -18,7 +18,7 @@ public final class LoadUtils {
 		public String toString() {
 			return name;
 		}
-	};
+	}
 
 	public static enum LoadStatus {
 		UNLOADED ("Unloaded"),
@@ -35,7 +35,7 @@ public final class LoadUtils {
 		public String toString() {
 			return name;
 		}
-	};
+	}
 
 	public static enum ServerStatus {
 		NotInitialized ("Not initialized"),
@@ -52,7 +52,7 @@ public final class LoadUtils {
 		public String toString() {
 			return name;
 		}
-	};
+	}
 
 	public static enum RefreshStatus {
 		NOT_REFRESHED ("Feature not refeshed yet."),
@@ -71,8 +71,8 @@ public final class LoadUtils {
 		public String toString(){
 			return message;
 		}
-	};
-	
+	}
+
 	/**
 	 * Used to give a friendly name for QuickLoad features.
 	 * @param name

@@ -3,11 +3,13 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.color.ColorProviderI;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
+import java.util.Optional;
 
 /**
  *
@@ -38,17 +40,19 @@ public class ColorByAction extends SeqMapViewActionA {
         ITrackStyleExtended style = tg.getAnnotStyle();
         ColorProviderI cp = style.getColorProvider();
 
-        ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = new ConfigureOptionsPanel.Filter<ColorProviderI>() {
-            @Override
-            public boolean shouldInclude(ColorProviderI colorProvider) {
-                if (colorProvider instanceof SupportsFileTypeCategory) {
-                    return ((SupportsFileTypeCategory) colorProvider).isFileTypeCategorySupported(tg.getFileTypeCategory());
+        ConfigureOptionsPanel.Filter<ColorProviderI> configureFilter = colorProvider -> {
+            if (colorProvider instanceof SupportsFileTypeCategory) {
+                Optional<FileTypeCategory> category = tg.getFileTypeCategory();
+                if (category.isPresent()) {
+                    return colorProvider.isFileTypeCategorySupported(category.get());
+                } else {
+                    return false;
                 }
-                return true;
             }
+            return true;
         };
 
-        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<ColorProviderI>(ColorProviderI.class, "Color By", configureFilter);
+        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter);
         colorByDialog.setTitle("Color By");
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);

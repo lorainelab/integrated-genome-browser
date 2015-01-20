@@ -2,6 +2,7 @@ package com.lorainelab.igbr;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.swing.ScriptManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

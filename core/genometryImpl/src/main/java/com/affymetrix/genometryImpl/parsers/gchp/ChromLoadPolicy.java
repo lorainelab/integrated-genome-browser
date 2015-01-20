@@ -48,7 +48,7 @@ public abstract class ChromLoadPolicy {
 	}
 
 	public static ChromLoadPolicy getLoadListedChromosomesPolicy(List<String> list) {
-		final List<String> chromList = new ArrayList<String>(list);
+		final List<String> chromList = new ArrayList<>(list);
 		return new ChromLoadPolicy() {
 			@Override 
 				public boolean shouldLoadChrom(String chromName) {

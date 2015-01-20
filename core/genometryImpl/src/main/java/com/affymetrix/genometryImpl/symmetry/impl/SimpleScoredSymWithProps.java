@@ -27,7 +27,7 @@ public class SimpleScoredSymWithProps extends SimpleSymWithProps implements Scor
     public Map<String, Object> getProperties() {
         Map<String, Object> properties = super.getProperties();
         if (properties == null) {
-            properties = new HashMap<String, Object>();
+            properties = new HashMap<>();
         }
         properties.put(SCORE, score);
 

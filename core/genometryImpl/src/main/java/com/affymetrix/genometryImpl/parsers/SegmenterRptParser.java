@@ -66,7 +66,7 @@ public final class SegmenterRptParser implements Parser {
 
 
 	private static final Pattern headerPattern = Pattern.compile("^#(.*)=(.*)$");
-	private final Map<String,String> headerMap = new HashMap<String,String>();
+	private final Map<String,String> headerMap = new HashMap<>();
 
 	private static final List<String> integerColumnNames = Arrays.asList(
 			"Copy Number",
@@ -146,7 +146,7 @@ public final class SegmenterRptParser implements Parser {
 			// read header
 			if (has_column_names_header_line) {
 				String[] cols = line_splitter.split(line);
-				col_names = new ArrayList<String>(cols.length);
+				col_names = new ArrayList<>(cols.length);
 				for (int i=0; i<cols.length && (!Thread.currentThread().isInterrupted()); i++) {
 					col_names.add(cols[i]);
 				}

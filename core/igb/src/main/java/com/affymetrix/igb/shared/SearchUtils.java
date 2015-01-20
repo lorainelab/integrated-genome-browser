@@ -26,7 +26,7 @@ public final class SearchUtils {
      */
     public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
 
-        Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
+        Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
             if (chrFilter == null) {
                 group.searchProperties(syms, regex, -1);
@@ -66,7 +66,7 @@ public final class SearchUtils {
 //					break;
 //			}
 //		}
-        return new ArrayList<SeqSymmetry>(syms);
+        return new ArrayList<>(syms);
     }
 
     /**
@@ -107,7 +107,7 @@ public final class SearchUtils {
 
     public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
         String[] props_to_search;
-        Set<SeqSymmetry> syms = new HashSet<SeqSymmetry>();
+        Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
             group.searchProperties(syms, regex, limit);
             props_to_search = new String[]{"id", "gene name", "description"};
@@ -117,7 +117,7 @@ public final class SearchUtils {
         }
 
         final Matcher matcher = regex.matcher("");
-        Set<String> results = new HashSet<String>(limit);
+        Set<String> results = new HashSet<>(limit);
         SymWithProps swp;
         String match;
         Object value;

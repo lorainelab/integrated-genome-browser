@@ -22,8 +22,8 @@ public final class AffyGenericDataHeader {
 	public CharSequence unique_id;
 	public String date_time;
 	public String locale;
-	public Map<String,AffyChpParameter> paramMap = new LinkedHashMap<String,AffyChpParameter>();
-	public List<AffyGenericDataHeader> children = new ArrayList<AffyGenericDataHeader>();
+	public Map<String,AffyChpParameter> paramMap = new LinkedHashMap<>();
+	public List<AffyGenericDataHeader> children = new ArrayList<>();
 
 	/** Creates a new instance of GenericDataHeader */
 	protected AffyGenericDataHeader() {

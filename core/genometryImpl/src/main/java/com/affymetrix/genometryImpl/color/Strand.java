@@ -17,8 +17,8 @@ public class Strand extends ColorProvider {
     private final static Color DEFAULT_REVERSE_COLOR = new Color(51, 255, 255);
     private static GenometryModel model = GenometryModel.getInstance();
 
-    private Parameter<Color> forwardColor = new Parameter<Color>(DEFAULT_FORWARD_COLOR);
-    private Parameter<Color> reverseColor = new Parameter<Color>(DEFAULT_REVERSE_COLOR);
+    private Parameter<Color> forwardColor = new Parameter<>(DEFAULT_FORWARD_COLOR);
+    private Parameter<Color> reverseColor = new Parameter<>(DEFAULT_REVERSE_COLOR);
 
     public Strand() {
         super();

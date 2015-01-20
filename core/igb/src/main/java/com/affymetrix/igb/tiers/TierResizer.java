@@ -93,7 +93,7 @@ public class TierResizer extends MouseInputAdapter {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
         AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
-        assert m != (AffyTieredMap) src; // This seems odd.
+        assert m != src; // This seems odd.
         // Seems both cursors are the same, but you never know...
         if (atResizeTop(nevt)) {
             m.setCursor(ourCursors[0]);
@@ -253,7 +253,7 @@ public class TierResizer extends MouseInputAdapter {
         boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 
         if (this.upperGl != null) {
-            com.affymetrix.igb.shared.TierGlyph gl = this.upperGl.getReferenceTier();
+            com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.upperGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.upperGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()
@@ -261,7 +261,7 @@ public class TierResizer extends MouseInputAdapter {
         }
 
         if (this.lowerGl != null) {
-            com.affymetrix.igb.shared.TierGlyph gl = this.lowerGl.getReferenceTier();
+            com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.lowerGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.lowerGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()

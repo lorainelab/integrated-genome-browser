@@ -57,9 +57,9 @@ public final class AffyChpColumnData {
 			case DOUBLE:
 				theData = dataDouble = new DoubleArrayList(); break;
 			case TEXT_ASCII:
-				theData = dataString = new ArrayList<CharSequence>(); break;
+				theData = dataString = new ArrayList<>(); break;
 			case TEXT_UTF16BE:
-				theData = dataString = new ArrayList<CharSequence>(); break;
+				theData = dataString = new ArrayList<>(); break;
 			default:
 				throw new RuntimeException("Can't parse that type: " + type);
 		}

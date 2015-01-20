@@ -89,7 +89,7 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
     // repeated values into one
     @Override
     public synchronized float[] normalizeGraphYCoords() {
-        List<Float> coords = new ArrayList<Float>();
+        List<Float> coords = new ArrayList<>();
         float lastY = Float.NaN;
         int lastX = Integer.MAX_VALUE;
 //		if (getFirstYCoord() != getGraphYCoord(0)) {

@@ -43,13 +43,13 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     private static final Map<String, Class<?>> properties;
 
     static {
-        properties = new HashMap<String, Class<?>>();
+        properties = new HashMap<>();
         properties.put(THRESHOLD, Integer.class);
     }
     private static final Map<String, Object> style;
 
     static {
-        style = new HashMap<String, Object>();
+        style = new HashMap<>();
         style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
     }
 
@@ -96,15 +96,13 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
             return container;
         }
         SeqSymmetry topSym = list.get(0);
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symList = new ArrayList<>();
         for (int i = 0; i < topSym.getChildCount(); i++) {
             symList.add(topSym.getChild(i));
         }
-        HashMap<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
+        HashMap<String, SeqSymmetry> map = new HashMap<>();
         subOperate(bioseq, symList, map);
-        for (SeqSymmetry sym : map.values()) {
-            container.addChild(sym);
-        }
+        map.values().forEach(container::addChild);
         map.clear();
         symList.clear();
 
@@ -116,11 +114,9 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
      * with the resultant symmetries.
      */
     public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map) {
-        for (SeqSymmetry sym : list) {
-            if (noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))) {
-                updateIntronHashMap(sym, bioseq, map, threshold, twoTracks, topHatStyleFlanking);
-            }
-        }
+        list.stream().filter(sym -> noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))).forEach(sym -> {
+            updateIntronHashMap(sym, bioseq, map, threshold, twoTracks, topHatStyleFlanking);
+        });
     }
 
     @Override
@@ -210,7 +206,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
      * and adds the qualified introns into map using addtoMap method
      */
     private static void updateIntronHashMap(SeqSymmetry sym, BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks, boolean topHatStyleFlanking) {
-        List<Integer> childIntronIndices = new ArrayList<Integer>();
+        List<Integer> childIntronIndices = new ArrayList<>();
         int childCount = sym.getChildCount();
         int flanksLength[] = new int[2];
         childThresholdFilter.setParameterValue(childThresholdFilter.getParametersType().entrySet().iterator().next().getKey(), threshold);
@@ -344,7 +340,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym(bioseq, name,
                     currentForward, blockMins, blockMaxs, canonical, rare, 0, 0, 0);
-            map.put(name, (SeqSymmetry) tempSym);
+            map.put(name, tempSym);
         }
     }
 

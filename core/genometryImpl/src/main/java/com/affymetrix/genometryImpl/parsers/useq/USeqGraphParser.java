@@ -35,7 +35,7 @@ public class USeqGraphParser {
 
 		BufferedInputStream bis = null;
 		ZipInputStream zis = null;
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		List<GraphSym> graphs = new ArrayList<>();
 
 		//open streams
 		if (istr instanceof ZipInputStream) {
@@ -63,14 +63,14 @@ public class USeqGraphParser {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
-			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
+			if (asg!= null && !asg.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 
 			//for each entry build appropriate arrays, may contain multiple stranded chromosome slices so first build and hash them. 
 			ZipEntry ze;
 			ArrayList al = new ArrayList();
-			HashMap<String, ArrayList> chromData = new HashMap<String, ArrayList>();
+			HashMap<String, ArrayList> chromData = new HashMap<>();
 			String chromStrand;
 			SliceInfo si = null;
 			while ((ze = zis.getNextEntry()) != null){
@@ -105,9 +105,8 @@ public class USeqGraphParser {
 
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
 			if (USeqUtilities.POSITION.matcher(si.getBinaryType()).matches()) {
-				Iterator<String> it = chromData.keySet().iterator();
-				while (it.hasNext()){
-					chromStrand = it.next();
+				for (String s : chromData.keySet()) {
+					chromStrand = s;
 					al = chromData.get(chromStrand);
 					//merge data
 					PositionData merged = PositionData.merge(al);
@@ -121,9 +120,8 @@ public class USeqGraphParser {
 				}
 			}
 			else if (USeqUtilities.POSITION_SCORE.matcher(si.getBinaryType()).matches()) {
-				Iterator<String> it = chromData.keySet().iterator();
-				while (it.hasNext()){
-					chromStrand = it.next();
+				for (String s : chromData.keySet()) {
+					chromStrand = s;
 					al = chromData.get(chromStrand);
 					//merge data
 					PositionScoreData merged = PositionScoreData.merge(al);
@@ -153,39 +151,39 @@ public class USeqGraphParser {
 		this.gmodel = gmodel;
 		this.stream_name = stream_name;
 		this.archiveInfo = useqArchive.getArchiveInfo();
-		List<GraphSym> graphs = new ArrayList<GraphSym>();
+		List<GraphSym> graphs = new ArrayList<>();
 		try {
 			//check that they are loading the data into the correct genome build
 			String genomeVersion = archiveInfo.getVersionedGenome();
 			AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
-			if (asg!= null && asg.isSynonymous(genomeVersion) == false){
+			if (asg!= null && !asg.isSynonymous(genomeVersion)){
 				throw new IOException ("\nGenome versions differ! Cannot load this useq data from "+genomeVersion+" into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
 			}
 			//merge each chrom strand dataset and make graphs, note all of the BinaryTypes in the archive are assumed to be the same (e.g. either Position or PositionScore)
 			if (USeqUtilities.POSITION.matcher(useqArchive.getBinaryDataType()).matches()) {
-				for (int i=0; i< useqData.length; i++){
-					if (useqData[i] != null){
+				for (USeqData anUseqData : useqData) {
+					if (anUseqData != null) {
 						//fetch data
-						PositionData p = (PositionData) useqData[i];
+						PositionData p = (PositionData) anUseqData;
 						int xcoords[] = p.getBasePositions();
 						float ycoords[] = new float[xcoords.length];
 						//make GraphSym and add to List
 						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
 						graphs.add(graf);
-					}	
+					}
 				}
 			}
 			else if (USeqUtilities.POSITION_SCORE.matcher(useqArchive.getBinaryDataType()).matches()) {
-				for (int i=0; i< useqData.length; i++){
-					if (useqData[i] != null){
+				for (USeqData anUseqData : useqData) {
+					if (anUseqData != null) {
 						//fetch data
-						PositionScoreData p = (PositionScoreData) useqData[i];
+						PositionScoreData p = (PositionScoreData) anUseqData;
 						int xcoords[] = p.getBasePositions();
 						float ycoords[] = p.getBaseScores();
 						//make GraphSym and add to List
 						GraphSym graf = makeGraph(p.getSliceInfo().getChromosome(), p.getSliceInfo().getStrand(), xcoords, ycoords);
 						graphs.add(graf);
-					}	
+					}
 				}
 			}
 			else {
@@ -212,24 +210,26 @@ public class USeqGraphParser {
 		checkSeqLength(chromosomeBS, xcoords);
 		//make GraphSym changing stream name if needed for strand
 		String id = stream_name;
-		if (strand.equals(".") == false) {
+		if (!strand.equals(".")) {
 			id += strand;
 		}
 		GraphSym graf = new GraphSym(xcoords, ycoords, id, chromosomeBS);
 		//add properties
 		copyProps(graf, archiveInfo.getKeyValues());
-		//set strand
-		if (strand.equals(".") ) {						
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
-		}						
-		else if (strand.equals("+")) {
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-		}
-		else if (strand.equals("-")) {
-			graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-		}	
+            //set strand
+            switch (strand) {
+                case ".":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
+                    break;
+                case "+":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+                    break;
+                case "-":
+                    graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);	
+                    break;
+            }
 		//check if an initialGraphStyle has been set, hate to hard code this 
-		if (graf.getProperties().containsKey("initialGraphStyle") == false) {
+		if (!graf.getProperties().containsKey("initialGraphStyle")) {
 			graf.getProperties().put("initialGraphStyle", "Bar");
 		}
 		return graf;
@@ -244,9 +244,7 @@ public class USeqGraphParser {
 	}
 	/**Adds all tag values to GraphSym tag values.*/
 	public static void copyProps(GraphSym graf, HashMap<String,String> tagvals) {
-		Iterator<String> iter = tagvals.keySet().iterator();
-		while (iter.hasNext()) {
-			String tag = iter.next();
+		for (String tag : tagvals.keySet()) {
 			String val = tagvals.get(tag);
 			graf.setProperty(tag, val);
 		}

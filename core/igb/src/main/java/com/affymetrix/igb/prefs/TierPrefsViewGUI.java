@@ -87,18 +87,10 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         restoreToDefaultButton.setText("Restore to default");
         restoreToDefaultButton.setToolTipText("Restore selected tracks to default setting.");
-        restoreToDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreToDefaultButtonActionPerformed(evt);
-            }
-        });
+        restoreToDefaultButton.addActionListener(this::restoreToDefaultButtonActionPerformed);
 
         selectAllButton.setText("Select All");
-        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                selectAllButtonActionPerformed(evt);
-            }
-        });
+        selectAllButton.addActionListener(this::selectAllButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout selectTrackPanelLayout = new org.jdesktop.layout.GroupLayout(selectTrackPanel);
         selectTrackPanel.setLayout(selectTrackPanelLayout);
@@ -134,36 +126,20 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         possitiveColorComboBox.setButtonVisible(false);
         possitiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         possitiveColorComboBox.setStretchToFit(true);
-        possitiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                possitiveColorComboBoxActionPerformed(evt);
-            }
-        });
+        possitiveColorComboBox.addActionListener(this::possitiveColorComboBoxActionPerformed);
 
         negativeColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setColorValueVisible(false);
         negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         negativeColorComboBox.setStretchToFit(true);
-        negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                negativeColorComboBoxActionPerformed(evt);
-            }
-        });
+        negativeColorComboBox.addActionListener(this::negativeColorComboBoxActionPerformed);
 
         colorCheckBox.setText("Color");
-        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                colorCheckBoxActionPerformed(evt);
-            }
-        });
+        colorCheckBox.addActionListener(this::colorCheckBoxActionPerformed);
 
         arrowCheckBox.setText("Arrow");
-        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                arrowCheckBoxActionPerformed(evt);
-            }
-        });
+        arrowCheckBox.addActionListener(this::arrowCheckBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout showStrandPanelLayout = new org.jdesktop.layout.GroupLayout(showStrandPanel);
         showStrandPanel.setLayout(showStrandPanelLayout);
@@ -236,19 +212,11 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         bgColorComboBox.setColorValueVisible(false);
         bgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         bgColorComboBox.setStretchToFit(true);
-        bgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bgColorComboBoxActionPerformed(evt);
-            }
-        });
+        bgColorComboBox.addActionListener(this::bgColorComboBoxActionPerformed);
 
         trackNameSizeLabel.setText("Name Size:");
 
-        trackNameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trackNameSizeComboBoxActionPerformed(evt);
-            }
-        });
+        trackNameSizeComboBox.addActionListener(this::trackNameSizeComboBoxActionPerformed);
 
         labelFieldLabel.setText("Label Field:");
 
@@ -259,47 +227,23 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
         fgColorComboBox.setColorValueVisible(false);
         fgColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         fgColorComboBox.setStretchToFit(true);
-        fgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fgColorComboBoxActionPerformed(evt);
-            }
-        });
+        fgColorComboBox.addActionListener(this::fgColorComboBoxActionPerformed);
 
-        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelFieldComboBoxActionPerformed(evt);
-            }
-        });
+        labelFieldComboBox.addActionListener(this::labelFieldComboBoxActionPerformed);
 
         maxDepthLabel.setText("Max Stack Depth:");
 
-        maxDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxDepthTextFieldActionPerformed(evt);
-            }
-        });
+        maxDepthTextField.addActionListener(this::maxDepthTextFieldActionPerformed);
 
         show2TracksCheckBox.setText("Show 2 tracks (+/-)");
-        show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                show2TracksCheckBoxActionPerformed(evt);
-            }
-        });
+        show2TracksCheckBox.addActionListener(this::show2TracksCheckBoxActionPerformed);
 
         collapsedCheckBox.setText("Collapsed");
-        collapsedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                collapsedCheckBoxActionPerformed(evt);
-            }
-        });
+        collapsedCheckBox.addActionListener(this::collapsedCheckBoxActionPerformed);
 
         applyButton.setText("Apply");
         applyButton.setToolTipText("Apply max stack depth value to track");
-        applyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyButtonActionPerformed(evt);
-            }
-        });
+        applyButton.addActionListener(this::applyButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);

@@ -47,7 +47,7 @@ public class SpeciesSynonymsLookup extends SynonymLookup {
 	public synchronized void addSynonyms(Set<String> row) {
 		//we don't allow more than one common name.
 		//we reject the common name if we  already have one.
-		Set<String> synonymList = new HashSet<String>();
+		Set<String> synonymList = new HashSet<>();
 
 		String common_name = row.iterator().next();
 		Collection<String> values = thesaurus.get(common_name);
@@ -69,7 +69,7 @@ public class SpeciesSynonymsLookup extends SynonymLookup {
 				}
 			}
 		} else {
-			synonymList = new LinkedHashSet<String>();
+			synonymList = new LinkedHashSet<>();
 			for (String entry : row) {
 				synonymList.add(entry);
 			}

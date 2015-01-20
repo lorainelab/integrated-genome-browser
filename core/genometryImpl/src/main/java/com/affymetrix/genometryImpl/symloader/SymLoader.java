@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.filter.SymmetryFilterIntersecting;
@@ -36,12 +35,12 @@ public abstract class SymLoader {
     public URI uri; //fwang4:qlmirror
     protected boolean isResidueLoader = false;	// Let other classes know if this is just residues
     protected volatile boolean isInitialized = false;
-    protected final Map<BioSeq, File> chrList = new HashMap<BioSeq, File>();
-    protected final Map<BioSeq, Boolean> chrSort = new HashMap<BioSeq, Boolean>();
+    protected final Map<BioSeq, File> chrList = new HashMap<>();
+    protected final Map<BioSeq, Boolean> chrSort = new HashMap<>();
     protected final AnnotatedSeqGroup group;
     public final String featureName;
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -70,8 +69,8 @@ public abstract class SymLoader {
 
     protected boolean buildIndex() throws Exception {
         BufferedInputStream bis = null;
-        Map<String, Integer> chrLength = new HashMap<String, Integer>();
-        Map<String, File> chrFiles = new HashMap<String, File>();
+        Map<String, Integer> chrLength = new HashMap<>();
+        Map<String, File> chrFiles = new HashMap<>();
 
         try {
             bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
@@ -180,7 +179,7 @@ public abstract class SymLoader {
      * Return the symmetries that match the given chromosome.
      */
     public static List<SeqSymmetry> filterResultsByChromosome(List<? extends SeqSymmetry> genomeResults, BioSeq seq) {
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> results = new ArrayList<>();
         for (SeqSymmetry sym : genomeResults) {
             BioSeq seq2 = null;
             if (sym instanceof UcscPslSym) {
@@ -267,7 +266,7 @@ public abstract class SymLoader {
      * @return - Map<String trackName,List<SeqSymmetry>>
      */
     public static Map<String, List<SeqSymmetry>> splitResultsByTracks(List<? extends SeqSymmetry> results) {
-        Map<String, List<SeqSymmetry>> track2Results = new HashMap<String, List<SeqSymmetry>>();
+        Map<String, List<SeqSymmetry>> track2Results = new HashMap<>();
         List<SeqSymmetry> resultList = null;
         String method = null;
         for (SeqSymmetry result : results) {
@@ -275,7 +274,7 @@ public abstract class SymLoader {
             if (track2Results.containsKey(method)) {
                 resultList = track2Results.get(method);
             } else {
-                resultList = new ArrayList<SeqSymmetry>();
+                resultList = new ArrayList<>();
                 track2Results.put(method, resultList);
             }
             resultList.add(result);
@@ -285,7 +284,7 @@ public abstract class SymLoader {
     }
 
     public static Map<BioSeq, List<SeqSymmetry>> splitResultsBySeqs(List<? extends SeqSymmetry> results) {
-        Map<BioSeq, List<SeqSymmetry>> seq2Results = new HashMap<BioSeq, List<SeqSymmetry>>();
+        Map<BioSeq, List<SeqSymmetry>> seq2Results = new HashMap<>();
         List<SeqSymmetry> resultList = null;
         BioSeq seq = null;
         for (SeqSymmetry result : results) {
@@ -296,7 +295,7 @@ public abstract class SymLoader {
                 if (seq2Results.containsKey(seq)) {
                     resultList = seq2Results.get(seq);
                 } else {
-                    resultList = new ArrayList<SeqSymmetry>();
+                    resultList = new ArrayList<>();
                     seq2Results.put(seq, resultList);
                 }
                 resultList.add(result);
@@ -309,7 +308,7 @@ public abstract class SymLoader {
 
     public static Map<String, List<? extends SeqSymmetry>> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
         Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
-        Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
+        Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
         SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
         filter.setParameterValue(filter.getParametersType().entrySet().iterator().next().getKey(), feature.getRequestSym());
 
@@ -345,12 +344,10 @@ public abstract class SymLoader {
                 seq.addAnnotation(graphSym);
             } else {
                 // We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-                for (SeqSymmetry feat : filteredFeats) {
-                    //grafs.add((GraphSym)feat);
-                    if (feat instanceof GraphSym) {
-                        GraphSymUtils.addChildGraph((GraphSym) feat, ((GraphSym) feat).getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
-                    }
-                }
+                //grafs.add((GraphSym)feat);
+                filteredFeats.stream().filter(feat -> feat instanceof GraphSym).forEach(feat -> {
+                    GraphSymUtils.addChildGraph((GraphSym) feat, feat.getID(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
+                });
             }
 
             return;
@@ -364,7 +361,7 @@ public abstract class SymLoader {
     }
 
     private static List<? extends SeqSymmetry> filterOutExistingSymmetries(BioSeq seq, List<? extends SeqSymmetry> syms, SymmetryFilterIntersecting filter) {
-        List<SeqSymmetry> filteredFeats = new ArrayList<SeqSymmetry>(syms.size());
+        List<SeqSymmetry> filteredFeats = new ArrayList<>(syms.size());
 
         for (SeqSymmetry sym : syms) {
             if (filter.filterSymmetry(seq, sym)) {
@@ -380,7 +377,7 @@ public abstract class SymLoader {
         SymLoader temp = new SymLoader(uri, featureName, temp_group) {
         };
         List<? extends SeqSymmetry> syms = temp.getGenome();
-        List<BioSeq> seqs = new ArrayList<BioSeq>();
+        List<BioSeq> seqs = new ArrayList<>();
         seqs.addAll(temp_group.getSeqList());
 
         // Force GC

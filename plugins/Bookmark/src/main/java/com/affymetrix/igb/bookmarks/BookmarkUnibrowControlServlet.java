@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.google.common.base.Optional;
@@ -238,7 +238,7 @@ public final class BookmarkUnibrowControlServlet {
 
                         if (has_properties) {
                             List<String> graph_urls = getGraphUrls(parameters);
-                            final Map<String, ITrackStyleExtended> combos = new HashMap<String, ITrackStyleExtended>();
+                            final Map<String, ITrackStyleExtended> combos = new HashMap<>();
 
                             for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
                                 String combo_name = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, Bookmark.GRAPH.COMBO.toString() + i);
@@ -259,17 +259,9 @@ public final class BookmarkUnibrowControlServlet {
                                 }
                             }
 
-                            for (final GenericFeature feature : gFeatures) {
-                                if (feature != null && graph_urls.contains(feature.getURI().toString())) {
-                                    ThreadUtils.getPrimaryExecutor(feature).execute(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            BookmarkController.applyProperties(igbService, seq, parameters, feature, combos);
-                                        }
-                                    });
-                                }
-                            }
+                            gFeatures.stream().filter(feature -> feature != null && graph_urls.contains(feature.getURI().toString())).forEach(feature -> {
+                                ThreadUtils.getPrimaryExecutor(feature).execute(() -> BookmarkController.applyProperties(igbService, seq, parameters, feature, combos));
+                            });
                         }
                     }
 
@@ -323,7 +315,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     public List<String> getGraphUrls(ListMultimap<String, String> multimap) {
-        List<String> graph_paths = new ArrayList<String>();
+        List<String> graph_paths = new ArrayList<>();
         for (int i = 0; !multimap.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
             graph_paths.add(getFirstValueEntry(multimap, SYM.FEATURE_URL.toString() + i));
         }
@@ -331,7 +323,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private void loadOldBookmarks(final IGBService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
-        List<String> opaque_requests = new ArrayList<String>();
+        List<String> opaque_requests = new ArrayList<>();
         int i = 0;
         for (String url : das2_query_urls) {
             String das2_query_url = GeneralUtils.URLDecode(url);
@@ -344,8 +336,7 @@ public final class BookmarkUnibrowControlServlet {
             if (qindex > -1) {
                 String query = das2_query_url.substring(qindex + 1);
                 String[] query_array = query_splitter.split(query);
-                for (int k = -0; k < query_array.length; k++) {
-                    String tagval = query_array[k];
+                for (String tagval : query_array) {
                     int eqindex = tagval.indexOf('=');
                     String tag = tagval.substring(0, eqindex);
                     String val = tagval.substring(eqindex + 1);
@@ -395,7 +386,7 @@ public final class BookmarkUnibrowControlServlet {
 
     private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
+        List<GenericFeature> gFeatures = new ArrayList<>();
         int i = 0;
         for (String queryUrl : query_urls) {
             gFeatures.add(getFeature(igbService, seqGroup, gServers.get(i), queryUrl));
@@ -422,15 +413,11 @@ public final class BookmarkUnibrowControlServlet {
 
     private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
         List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
-        for (GenericFeature gFeature : gFeatures) {
-            if (gFeature != null) {
-                igbService.loadChromosomes(gFeature);
-            }
-        }
+        gFeatures.stream().filter(gFeature -> gFeature != null).forEach(igbService::loadChromosomes);
     }
 
     private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
-        List<GenericFeature> gFeatures = new ArrayList<GenericFeature>();
+        List<GenericFeature> gFeatures = new ArrayList<>();
 
         boolean show_message = false;
         int i = 0;

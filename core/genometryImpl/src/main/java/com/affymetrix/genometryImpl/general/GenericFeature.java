@@ -54,7 +54,7 @@ public final class GenericFeature {
     private RefreshStatus lastRefresh;
     public final Object typeObj;    // Das2Type, ...?
     public final SymLoader symL;
-    private final Set<String> methods = new HashSet<String>();
+    private final Set<String> methods = new HashSet<>();
 
     private final boolean isReferenceSequence;
 
@@ -210,14 +210,14 @@ public final class GenericFeature {
                  * Concentrate that URL with server path to support relative
                  * friendly URL (documentation link in feature tree)
                  */
-                return (String) this.gVersion.gServer.serverObj + friendlyURLString;
+                return this.gVersion.gServer.serverObj + friendlyURLString;
 
             } else {
                 return friendlyURLString;
             }
         } else {
             if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                return friendlyURLString.replaceAll(this.gVersion.gServer.URL.toString(), (String) this.gVersion.gServer.serverObj);
+                return friendlyURLString.replaceAll(this.gVersion.gServer.URL, (String) this.gVersion.gServer.serverObj);
             }
             return friendlyURLString;
         }
@@ -242,7 +242,7 @@ public final class GenericFeature {
     }
 
     public Set<String> getMethods() {
-        return Collections.<String>unmodifiableSet(methods);
+        return Collections.unmodifiableSet(methods);
     }
 
     /**
@@ -265,7 +265,7 @@ public final class GenericFeature {
     }
 
     public void clear(BioSeq seq) {
-        List<SeqSymmetry> removeList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> removeList = new ArrayList<>();
 
         for (int i = 0; i < requestSym.getChildCount(); i++) {
             SeqSymmetry sym = requestSym.getChild(i);
@@ -274,9 +274,7 @@ public final class GenericFeature {
             }
         }
 
-        for (SeqSymmetry sym : removeList) {
-            requestSym.removeChild(sym);
-        }
+        removeList.forEach(requestSym::removeChild);
 
         removeList.clear();
     }

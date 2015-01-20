@@ -31,7 +31,7 @@ public class MutableSingletonSeqSymmetry
 
     public void addChild(SeqSymmetry sym) {
         if (children == null) {
-            children = new ArrayList<SeqSymmetry>();
+            children = new ArrayList<>();
         }
         children.add(sym);
     }

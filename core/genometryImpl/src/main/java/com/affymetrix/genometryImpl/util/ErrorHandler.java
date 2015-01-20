@@ -68,10 +68,10 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 	
 	public static void errorPanelWithReportBug(String title, String message, Level level) {
-		List<GenericAction> actions = new ArrayList<GenericAction>();
+		List<GenericAction> actions = new ArrayList<>();
 		actions.add(OKAction.getAction());
 		actions.add(ReportBugAction.getAction());
-		errorPanel(title, message, new ArrayList<Throwable>(), actions, level);
+		errorPanel(title, message, new ArrayList<>(), actions, level);
 	}
 	
 	public void showError(final String title, final String message, final List<GenericAction> actions, Level level) {
@@ -104,7 +104,7 @@ public abstract class ErrorHandler implements DisplaysError{
 	}
 		
 	private static void errorPanel(String title, String message, Throwable e, Level level) {
-		List<Throwable> errs = new ArrayList<Throwable>();
+		List<Throwable> errs = new ArrayList<>();
 		if (e != null) {
 			errs.add(e);
 		}
@@ -174,11 +174,9 @@ public abstract class ErrorHandler implements DisplaysError{
 		dialog.setVisible(true);
 		Object selectedValue = pane.getValue();
 		if (selectedValue != null && actions != null) {
-			for (GenericAction action : actions) {
-				if (action != null && selectedValue.equals(action.getText())) {
-					action.actionPerformed(null);
-				}
-			}
+			actions.stream().filter(action -> action != null && selectedValue.equals(action.getText())).forEach(action -> {
+				action.actionPerformed(null);
+			});
 		}
 	}
 }

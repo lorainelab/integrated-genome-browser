@@ -10,7 +10,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.allStyles;
-import com.affymetrix.igb.shared.StyledGlyph;
+
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -45,16 +45,14 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
                 PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 
             // First split the graph.
-            for (StyledGlyph vg : allGlyphs) {
-				//If graphs is joined then apply color to combo style too.
-                // TODO: Use code from split graph
-                if (vg instanceof GraphGlyph) {
-                    ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
-                    if (style != null) {
-                        getSeqMapView().split((GraphGlyph) vg);
-                    }
+            //If graphs is joined then apply color to combo style too.
+// TODO: Use code from split graph
+            allGlyphs.stream().filter(vg -> vg instanceof GraphGlyph).forEach(vg -> {
+                ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+                if (style != null) {
+                    getSeqMapView().split(vg);
                 }
-            }
+            });
 
             for (ITrackStyleExtended style : allStyles) {
                 GeneralLoadView.getLoadView().clearTrack(style);

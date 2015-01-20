@@ -32,7 +32,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
@@ -51,6 +51,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Optional;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -106,12 +107,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
 
     @Override
     public void setStatus(final String message) {
-        ThreadUtils.runOnEventQueue(new Runnable() {
-
-            public void run() {
-                Application.getSingleton().setStatus(message);
-            }
-        });
+        ThreadUtils.runOnEventQueue(() -> Application.getSingleton().setStatus(message));
     }
 
     @Override
@@ -210,9 +206,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     @Override
     public void mapRefresh(List<GlyphI> glyphs) {
         GlyphI axis_tier = ((SeqMapView) getSeqMapView()).getAxisTier();
-        for (GlyphI glyph : new CopyOnWriteArrayList<GlyphI>(glyphs)) {
-            axis_tier.addChild(glyph);
-        }
+        new CopyOnWriteArrayList<>(glyphs).forEach(axis_tier::addChild);
     }
 
     @Override
@@ -256,9 +250,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public void saveState() {
         ((IGB) IGB.getSingleton()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
-            panel.saveSession();
-        }
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::saveSession);
     }
 
     @Override
@@ -266,9 +258,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         ((IGB) IGB.getSingleton()).getWindowService().restoreState();
         SeqMapView mapView = Application.getSingleton().getMapView();
         mapView.loadSession();
-        for (IGBTabPanel panel : ((IGB) Application.getSingleton()).getTabs()) {
-            panel.loadSession();
-        }
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::loadSession);
     }
 
     @Override
@@ -300,22 +290,20 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         return ((AffyTieredMap) getSeqMap()).getView();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
     @Override
-    public List<Glyph> getAllTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
+    public List<TierGlyph> getAllTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
+    
     @Override
-    public List<Glyph> getSelectedTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
+    public List<TierGlyph> getSelectedTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
     @Override
-    public List<Glyph> getVisibleTierGlyphs() {
-        return (List<Glyph>) (List) ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();
+    public List<TierGlyph> getVisibleTierGlyphs() {
+        return ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();
     }
 
     @Override

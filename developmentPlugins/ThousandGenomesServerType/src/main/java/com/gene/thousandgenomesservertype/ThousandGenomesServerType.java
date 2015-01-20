@@ -106,7 +106,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
         //TODO: Use symloader created below
         SymLoader symL = fth.createSymLoader(uri, featureName, gVersion.group);
         QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, gVersion.group);
-        Map<String, String> type_props = new HashMap<String, String>();
+        Map<String, String> type_props = new HashMap<>();
         gVersion.addFeature(
                 new GenericFeature(
                         featureName, type_props, gVersion, quickLoadSymLoader, null, autoload));

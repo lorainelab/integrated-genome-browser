@@ -36,7 +36,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
  */
 public abstract class UnindexedSymLoader extends SymLoader {
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -73,7 +73,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -82,7 +82,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
     public List<? extends SeqSymmetry> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -165,9 +165,9 @@ public abstract class UnindexedSymLoader extends SymLoader {
         BufferedReader br = null;
         BufferedWriter bw = null;
 
-        Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
-        List<String> infoLines = new ArrayList<String>();
+        Map<String, Boolean> chrTrack = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
+        List<String> infoLines = new ArrayList<>();
         String line, seq_name = null, trackLine = null;
         char ch;
         try {
@@ -219,9 +219,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
 
             return !thread.isInterrupted();
         } finally {
-            for (BufferedWriter b : chrs.values()) {
-                GeneralUtils.safeClose(b);
-            }
+            chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(bw);
         }

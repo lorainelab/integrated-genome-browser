@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -15,6 +16,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;

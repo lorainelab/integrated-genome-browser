@@ -3,7 +3,6 @@ package com.affymetrix.igb.bookmarks;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
         }
     }
 
-    private final List<Duple> duples = new ArrayList<Duple>(20);
+    private final List<Duple> duples = new ArrayList<>(20);
     private final String[] names = {"Parameter", "Value"};
 
     /**
@@ -55,13 +54,9 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
         duples.clear();
 
         Set<String> keySet = multimap.keySet();
-        Iterator<String> keyIterator = keySet.iterator();
-        while (keyIterator.hasNext()) {
-            String key = keyIterator.next();
+        for (String key : keySet) {
             List<String> values = multimap.get(key);
-            Iterator<String> valueIterator = values.iterator();
-            while (valueIterator.hasNext()) {
-                String value = valueIterator.next();
+            for (String value : values) {
                 Duple duple = new Duple(key, value);
                 duples.add(duple);
             }
@@ -80,7 +75,7 @@ public class BookmarkPropertyTableModel extends AbstractTableModel {
      */
     ListMultimap<String, String> getValuesAsMap() {
         ListMultimap<String, String> toReturn = ArrayListMultimap.<String, String>create();
-        Map<String, String[]> m = new LinkedHashMap<String, String[]>();
+        Map<String, String[]> m = new LinkedHashMap<>();
         for (int i = 0; i < getRowCount(); i++) {
             String key = (String) getValueAt(i, 0);
             String value = (String) getValueAt(i, 1);

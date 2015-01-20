@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.affymetrix</groupId>
@@ -87,7 +87,7 @@
                         <Bundle-Activator>com.gene.bigwighandler.Activator</Bundle-Activator>
                         <Bundle-Category>FileTypeHandler-com.gene.bigwighandler.BigWigHandler</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.gene.bigwighandler.BigWigHandler</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>plugin to allow the user to load BigWig files</Bundle-Description>
                     </instructions>
                 </configuration>

@@ -21,10 +21,10 @@ public class RatioOperator extends AbstractGraphOperator implements Operator, Op
 
 	@Override
 	protected float operate(List<Float> operands) {
-		if (operands.get(1).floatValue() == 0.0) {
+		if (operands.get(1) == 0.0) {
 			return 0.0f;
 		}
-		return operands.get(0).floatValue() / operands.get(1).floatValue();
+		return operands.get(0) / operands.get(1);
 	}
 	
 	@Override

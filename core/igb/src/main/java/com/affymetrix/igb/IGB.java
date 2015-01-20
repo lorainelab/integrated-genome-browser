@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.Constants;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
@@ -47,7 +46,6 @@ import com.affymetrix.igb.view.SeqGroupViewGUI;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
-import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
@@ -397,14 +395,10 @@ public final class IGB extends Application
         windowService.setToolBar(tool_bar);
         windowService.setTabsMenu(mbar);
         windowService.setMenuCreator(
-                new IMenuCreator() {
-
-                    @Override
-                    public JMenuBar createMenu(String id) {
-                        JMenuBar menubar = new JMenuBar();
-                        MainMenuUtil.getInstance().loadMenu(menubar, id);
-                        return menubar;
-                    }
+                id -> {
+                    JMenuBar menubar = new JMenuBar();
+                    MainMenuUtil.getInstance().loadMenu(menubar, id);
+                    return menubar;
                 });
         return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
     }
@@ -577,7 +571,7 @@ public final class IGB extends Application
                     logger.error("Trying to add set keystroke for action {}."
                             + " But action {} exists with same keystroke \"{}\"."
                             + "\nUsing keystroke with latest action.",
-                            new Object[]{theAction.getId(), existingAction.getClass(), ks});
+                            theAction.getId(), existingAction.getClass(), ks);
                     existingAction.putValue(Action.ACCELERATOR_KEY, null);
                     am.remove(existingObject);
                 }
@@ -628,10 +622,13 @@ public final class IGB extends Application
                 version_info = group.getID();
             }
         }
-        if ("hg17".equals(version_info)) {
-            version_info = "hg17 = NCBI35";
-        } else if ("hg18".equals(version_info)) {
-            version_info = "hg18 = NCBI36";
+        if (null != version_info) switch (version_info) {
+            case "hg17":
+                version_info = "hg17 = NCBI35";
+                break;
+            case "hg18":
+                version_info = "hg18 = NCBI36";
+                break;
         }
         return version_info;
     }

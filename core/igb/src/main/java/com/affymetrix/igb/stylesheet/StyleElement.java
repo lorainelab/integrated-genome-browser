@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +37,7 @@ class StyleElement implements DrawableElement {
   static String ATT_NAME="name";
   static String ATT_CONTAINER="container";
   
-  static Map<String,StyleElement> names2styles = new HashMap<String,StyleElement>();
+  static Map<String,StyleElement> names2styles = new HashMap<>();
   
   String childContainer = ".";
   PropertyMap propertyMap;
@@ -60,7 +60,7 @@ class StyleElement implements DrawableElement {
       clone.glyphElement = (GlyphElement) this.glyphElement.clone();
     }
     if (matchElements != null) {
-      clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
+      clone.matchElements = new ArrayList<>(matchElements.size());
         for (MatchElement me : matchElements) {
             MatchElement new_me = (MatchElement) me.clone();
             clone.matchElements.add(new_me);
@@ -121,7 +121,7 @@ class StyleElement implements DrawableElement {
 
  void addMatchElement(MatchElement me) {
     if (matchElements == null) {
-      matchElements = new ArrayList<MatchElement>();
+      matchElements = new ArrayList<>();
     }
     matchElements.add(me);
   }
@@ -137,10 +137,8 @@ class StyleElement implements DrawableElement {
     sb.append(">\n");
     this.propertyMap.appendXML(indent + "  ", sb);
     if (matchElements != null) {
-      Iterator<MatchElement> iter = matchElements.iterator();
-      while (iter.hasNext()) {
-       MatchElement kid = iter.next();
-       kid.appendXML(indent + "  ", sb);
+      for (MatchElement kid : matchElements) {
+        kid.appendXML(indent + "  ", sb);
       }
     }
     if (glyphElement != null) {

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -325,21 +324,21 @@ public class RemoteBlastNCBI {
 
     }
     
-    private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws UnsupportedEncodingException, IOException {
+    private RemoteBlastNCBI.BlastRequest sendRequest(SequenceI seq, int strand) throws IOException {
         String putBuf = getURLWithParams(seq);
         URL url = new URL(BLAST_URL);
         URLConnection conn = url.openConnection();
         conn.setDoOutput(true);
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-        wr.write(putBuf);
-        wr.flush();
-        wr.close();
+        try (OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream())) {
+            wr.write(putBuf);
+            wr.flush();
+        }
         RemoteBlastNCBI.BlastRequest req = parseRequest(conn.getInputStream());
         return req;
     }
 
     private String retrieveResponse(RemoteBlastNCBI.BlastRequest req, StrandedFeatureSetI sf, int strand, int genomicLength, int offset)
-            throws MalformedURLException, IOException, InterruptedException, ParserConfigurationException, SAXException, BlastXMLParser.BlastXMLParserException {
+            throws IOException, InterruptedException, ParserConfigurationException, SAXException, BlastXMLParser.BlastXMLParserException {
         try {
             Thread.sleep(req.rtoe * 1000);
         } catch (InterruptedException e) {
@@ -384,11 +383,8 @@ public class RemoteBlastNCBI {
         return getBuf.toString();
     }
 
-    private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws MalformedURLException, IOException {
-        StringBuilder deleteBuf = new StringBuilder(BLAST_URL);
-        deleteBuf.append("RID=").append(req.rid).append("&");
-        deleteBuf.append("CMD=Delete");
-        URL deleteUrl = new URL(deleteBuf.toString());
+    private void closeRequest(RemoteBlastNCBI.BlastRequest req) throws IOException {
+        URL deleteUrl = new URL(BLAST_URL + "RID=" + req.rid + "&" + "CMD=Delete");
         deleteUrl.openConnection();
     }
 

@@ -21,11 +21,7 @@ public class ConsoleLogDocumentListener implements DocumentListener {
     
     @Override
     public void insertUpdate(final DocumentEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                removeLines(e);
-            }
-        });
+        SwingUtilities.invokeLater(() -> removeLines(e));
     }
     
     private void removeLines(DocumentEvent e) {

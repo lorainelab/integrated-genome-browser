@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
@@ -26,8 +25,8 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
@@ -73,7 +72,7 @@ public final class TierLabelManager implements PropertyHolder {
             return null;
         }
 
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("File Name", feature.featureName);
         props.put("Description", feature.description());
         if (feature.getFriendlyURL() != null) {
@@ -90,7 +89,7 @@ public final class TierLabelManager implements PropertyHolder {
      * TierLabelGlyph's.
      */
     public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> result = new ArrayList<>();
         for (TierLabelGlyph tlg : tier_label_glyphs) {
             result.addAll(getContainedGraphs(tlg.getReferenceTier()));
         }
@@ -101,7 +100,7 @@ public final class TierLabelManager implements PropertyHolder {
      * Gets all the GraphGlyph objects inside the given TierLabelGlyph.
      */
     private static List<GraphGlyph> getContainedGraphs(TierGlyph tier) {
-        List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> result = new ArrayList<>();
         int child_count = tier.getChildCount();
         if (child_count > 0 && tier.getAnnotStyle().isGraphTier()
                 && tier.getChild(0) instanceof GraphGlyph) {
@@ -133,9 +132,7 @@ public final class TierLabelManager implements PropertyHolder {
                     graph.setCoords(cbox.x, cbox.y, cbox.width, tier_height);
                 }
             }
-            for (ViewI v : tg.getScene().getViews()) {
-                tg.pack(v);
-            }
+            tg.getScene().getViews().forEach(tg::pack);
         }
     }
 
@@ -143,8 +140,8 @@ public final class TierLabelManager implements PropertyHolder {
     private final AffyTieredMap labelmap;
 //	private final GlyphTransformer gs;
     private final JPopupMenu popup;
-    private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
-    private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
+    private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<>();
+    private final Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<>();
     private final Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
     private final NeoGlyphDragListener dragListener = new NeoGlyphDragListener() {
         @Override
@@ -233,7 +230,7 @@ public final class TierLabelManager implements PropertyHolder {
                 if (!preserve_selections && (labelmap.getSelected().size() == 1 || (topgl != null && !topgl.isSelected()))) {
                     labelmap.clearSelected();
                     // Deselect graphglyph selected in the tiermap
-                    List<GlyphI> deselect = new ArrayList<GlyphI>();
+                    List<GlyphI> deselect = new ArrayList<>();
                     for (GlyphI selected : tiermap.getSelected()) {
                         if (selected instanceof StyledGlyph) {
                             deselect.add(selected);
@@ -328,13 +325,11 @@ public final class TierLabelManager implements PropertyHolder {
      * Returns a list of TierGlyph items representing the selected tiers.
      */
     public List<TierGlyph> getSelectedTiers() {
-        List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
+        List<TierGlyph> selected_tiers = new ArrayList<>();
 
-        for (TierLabelGlyph tlg : getSelectedTierLabels()) {
-            // TierGlyph should be data model for tier label, access via label.getInfo()
+        getSelectedTierLabels().stream().forEach((tlg) -> {
             selected_tiers.add(tlg.getReferenceTier());
-
-        }
+        });
         return selected_tiers;
     }
 
@@ -343,7 +338,7 @@ public final class TierLabelManager implements PropertyHolder {
      */
     public List<TierLabelGlyph> getSelectedTierLabels() {
         // The below loop is unnecessary, but is done to fix generics compiler warnings.
-        List<TierLabelGlyph> tlg = new ArrayList<TierLabelGlyph>(labelmap.getSelected().size());
+        List<TierLabelGlyph> tlg = new ArrayList<>(labelmap.getSelected().size());
         for (GlyphI g : labelmap.getSelected()) {
             if (g instanceof TierLabelGlyph) {
                 tlg.add((TierLabelGlyph) g);
@@ -354,17 +349,15 @@ public final class TierLabelManager implements PropertyHolder {
 
     public List<Map<String, Object>> getTierProperties() {
 
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
 
-        for (TierGlyph glyph : getSelectedTiers()) {
-            if (!(glyph.getAnnotStyle().isGraphTier())) {
-                Map<String, Object> props = getTierProperties(glyph);
+        getSelectedTiers().stream().filter(glyph -> !(glyph.getAnnotStyle().isGraphTier())).forEach(glyph -> {
+            Map<String, Object> props = getTierProperties(glyph);
 
-                if (props != null) {
-                    propList.add(props);
-                }
+            if (props != null) {
+                propList.add(props);
             }
-        }
+        });
 
         return propList;
     }
@@ -383,14 +376,14 @@ public final class TierLabelManager implements PropertyHolder {
      * Returns a list of all TierLabelGlyph items.
      */
     public List<TierLabelGlyph> getAllTierLabels() {
-        return new CopyOnWriteArrayList<TierLabelGlyph>(tiermap.getTierLabels());
+        return new CopyOnWriteArrayList<>(tiermap.getTierLabels());
     }
 
     /**
      * Returns a list of all TierGlyph items.
      */
     public List<TierGlyph> getAllTierGlyphs(boolean allTiers) {
-        List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
+        List<TierGlyph> allTierGlyphs = new ArrayList<>();
         for (TierLabelGlyph tierlabel : getAllTierLabels()) {
             if (allTiers) {
                 allTierGlyphs.add(tierlabel.getReferenceTier());
@@ -405,7 +398,7 @@ public final class TierLabelManager implements PropertyHolder {
      * Returns a list of visible TierGlyph items.
      */
     public List<TierGlyph> getVisibleTierGlyphs() {
-        List<TierGlyph> allTierGlyphs = new ArrayList<TierGlyph>();
+        List<TierGlyph> allTierGlyphs = new ArrayList<>();
         for (TierLabelGlyph tierlabel : getAllTierLabels()) {
             if (tierlabel.getReferenceTier().getAnnotStyle().getShow() && tierlabel.getReferenceTier().isVisible()) {
                 allTierGlyphs.add(tierlabel.getReferenceTier());
@@ -418,11 +411,7 @@ public final class TierLabelManager implements PropertyHolder {
      * Selects all non-hidden tiers.
      */
     void selectAllTiers() {
-        for (TierLabelGlyph tierlabel : getAllTierLabels()) {
-            if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
-                labelmap.select(tierlabel);
-            }
-        }
+        getAllTierLabels().stream().filter(tierlabel -> tierlabel.getReferenceTier().getAnnotStyle().getShow()).forEach(labelmap::select);
         doGraphSelections(false);
         //labelmap.updateWidget();
         tiermap.updateWidget(); // make sure selections becomes visible
@@ -452,8 +441,8 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         GenometryModel gmodel = GenometryModel.getInstance();
-        Set<SeqSymmetry> graph_symmetries = new LinkedHashSet<SeqSymmetry>();
-        Set<RootSeqSymmetry> all_symmetries = new HashSet<RootSeqSymmetry>();
+        Set<SeqSymmetry> graph_symmetries = new LinkedHashSet<>();
+        Set<RootSeqSymmetry> all_symmetries = new HashSet<>();
         graph_symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
 
         if (!preserve_selection) {
@@ -508,7 +497,7 @@ public final class TierLabelManager implements PropertyHolder {
             }
         }
 
-        gmodel.setSelectedSymmetries(new ArrayList<RootSeqSymmetry>(all_symmetries), new ArrayList<SeqSymmetry>(graph_symmetries), this);
+        gmodel.setSelectedSymmetries(new ArrayList<>(all_symmetries), new ArrayList<>(graph_symmetries), this);
     }
 
     /**
@@ -521,12 +510,10 @@ public final class TierLabelManager implements PropertyHolder {
      * @see #repackTheTiers(boolean, boolean)
      */
     public void showTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
-        for (TierLabelGlyph g : tier_labels) {
-            if (g.getInfo() instanceof TierGlyph) {
-                TierGlyph tier = (TierGlyph) g.getInfo();
-                tier.getAnnotStyle().setShow(true);
-            }
-        }
+        tier_labels.stream().filter(g -> g.getInfo() instanceof TierGlyph).forEach(g -> {
+            TierGlyph tier = (TierGlyph) g.getInfo();
+            tier.getAnnotStyle().setShow(true);
+        });
 
         repackTheTiers(full_repack, fit_y);
     }
@@ -539,12 +526,10 @@ public final class TierLabelManager implements PropertyHolder {
      * @param fit_y Whether to change the zoom to fit all the tiers in the view
      */
     public void hideTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
-        for (TierLabelGlyph g : tier_labels) {
-            if (g.getInfo() instanceof TierGlyph) {
-                TierGlyph tier = (TierGlyph) g.getInfo();
-                tier.getAnnotStyle().setShow(false);
-            }
-        }
+        tier_labels.stream().filter(g -> g.getInfo() instanceof TierGlyph).forEach(g -> {
+            TierGlyph tier = (TierGlyph) g.getInfo();
+            tier.getAnnotStyle().setShow(false);
+        });
 
         repackTheTiers(full_repack, fit_y);
     }
@@ -691,25 +676,15 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     public void deselectTierLabels() {
-        for (TierLabelGlyph tglyph : getAllTierLabels()) {
-            labelmap.deselect(tglyph);
-        }
+        getAllTierLabels().forEach(labelmap::deselect);
     }
 
     public void deselect(GlyphI tierGlyph) {
-        for (TierLabelGlyph tlg : tiermap.getTierLabels()) {
-            if (tlg.getReferenceTier() == tierGlyph) {
-                labelmap.deselect(tlg);
-            }
-        }
+        tiermap.getTierLabels().stream().filter(tlg -> tlg.getReferenceTier() == tierGlyph).forEach(labelmap::deselect);
     }
 
     public void select(GlyphI tierGlyph) {
-        for (TierLabelGlyph tlg : tiermap.getTierLabels()) {
-            if (tlg.getReferenceTier() == tierGlyph) {
-                labelmap.select(tlg);
-            }
-        }
+        tiermap.getTierLabels().stream().filter(tlg -> tlg.getReferenceTier() == tierGlyph).forEach(labelmap::select);
     }
 
     public void addTrackSelectionListener(TrackSelectionListener l) {
@@ -755,7 +730,7 @@ public final class TierLabelManager implements PropertyHolder {
 
         if (props == null) {
             // make an empty hashtable if sym has no properties...
-            props = new HashMap<String, Object>();
+            props = new HashMap<>();
         }
         String symid = sym.getID();
         if (symid != null) {

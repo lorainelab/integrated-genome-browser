@@ -13,7 +13,7 @@ public class OrderComparator implements Comparator<String>{
 	final Map<String, Integer> orderMap;
 	
 	public OrderComparator(String[] order){
-		orderMap = new HashMap<String, Integer>();
+		orderMap = new HashMap<>();
 		int i = 0;
 		for(String o : order){
 			orderMap.put(o, i++);
@@ -21,7 +21,7 @@ public class OrderComparator implements Comparator<String>{
 	}
 	
 	public OrderComparator(List<String> order){
-		orderMap = new HashMap<String, Integer>();
+		orderMap = new HashMap<>();
 		int i = 0;
 		for(String o : order){
 			orderMap.put(o, i++);

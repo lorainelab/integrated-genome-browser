@@ -9,11 +9,8 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -83,7 +80,7 @@ public class WebLinkUtils {
         return false;
     }
 
-    public static void importWebLinks(File f) throws FileNotFoundException, IOException {
+    public static void importWebLinks(File f) throws IOException {
         XmlPrefsParser.parse(new FileInputStream(f));
     }
 

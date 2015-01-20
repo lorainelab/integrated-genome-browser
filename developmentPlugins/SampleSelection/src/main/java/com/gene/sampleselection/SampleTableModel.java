@@ -11,7 +11,7 @@ public class SampleTableModel extends AbstractTableModel implements TableModel {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> samples = new ArrayList<String>();
+    private List<String> samples = new ArrayList<>();
 
     public void setSamples(List<String> samples) {
         this.samples = samples;

@@ -41,13 +41,12 @@ public class ExpandPacker extends ExpandedTierPacker {
             sibs.toArray(sibarray);
             sibs.clear(); // sets parent.getChildren() to empty Vector
             int sibs_size = sibarray.length;
-            for (int i = 0; i < sibs_size; i++) {
-                GlyphI child = sibarray[i];
+            for (GlyphI child : sibarray) {
                 if (!(child instanceof LabelGlyph)) {
                     pack(parent, child, view, true);
                 }
-                Rectangle2D.Double cbox = child.getCoordBox();
-				// a quick hack to speed up packing when there are no (or few overlaps) --
+                Double cbox = child.getCoordBox();
+                // a quick hack to speed up packing when there are no (or few overlaps) --
                 // keep track of max x coord of previous sibs --
                 //   if prev_xmax < current glyph's min x, then there won't be any overlap,
                 //   so can tell pack() to skip check against previous sibs
@@ -144,10 +143,9 @@ public class ExpandPacker extends ExpandedTierPacker {
             return null;
         }
         if (avoid_sibs) {
-            sibsinrange = new ArrayList<GlyphI>();
+            sibsinrange = new ArrayList<>();
             int sibs_size = sibs.size();
-            for (int i = 0; i < sibs_size; i++) {
-                GlyphI sibling = sibs.get(i);
+            for (GlyphI sibling : sibs) {
                 siblingbox = sibling.getCoordBox();
                 if (!(siblingbox.x > (childbox.x + childbox.width)
                         || ((siblingbox.x + siblingbox.width) < childbox.x))) {
@@ -175,12 +173,11 @@ public class ExpandPacker extends ExpandedTierPacker {
         while (childMoved) {
             childMoved = false;
             int sibsinrange_size = sibsinrange.size();
-            for (int j = 0; j < sibsinrange_size; j++) {
-                GlyphI sibling = sibsinrange.get(j);
+            for (GlyphI sibling : sibsinrange) {
                 if (sibling == child) {
                     continue;
                 }
-                Rectangle2D.Double siblingbox = sibling.getCoordBox();
+                Double siblingbox = sibling.getCoordBox();
                 if (DEBUG_CHECKS) {
                     System.out.println("checking against: " + sibling);
                 }
@@ -188,7 +185,7 @@ public class ExpandPacker extends ExpandedTierPacker {
                     if (DEBUG_CHECKS) {
                         System.out.println("hit sib");
                     }
-                    Rectangle2D.Double cb = child.getCoordBox();
+                    Double cb = child.getCoordBox();
                     this.before.x = cb.x;
                     this.before.y = cb.y;
                     this.before.width = cb.width;

@@ -36,7 +36,6 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.ScriptManager;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -179,15 +178,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	public void refreshTable() {
 		final AbstractTableModel model = ((AbstractTableModel) seqtable.getModel());
 		model.fireTableDataChanged();
-		ThreadUtils.runOnEventQueue(new Runnable(){
-			@Override
-			public void run() {
-				if(seqtable.getTableHeader().getColumnModel().getColumnCount() > 0){
-					seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
-					seqtable.getTableHeader().repaint();
-				}
-			}
-		});
+		ThreadUtils.runOnEventQueue(() -> {
+            if(seqtable.getTableHeader().getColumnModel().getColumnCount() > 0){
+                seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
+                seqtable.getTableHeader().repaint();
+            }
+        });
 	}
 
 	private void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
@@ -205,15 +201,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	// Scroll the table such that the selected row is visible
 	void scrollTableLater(final JTable table, final int i) {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				// Check the row count first since this is multi-threaded
-				if (table.getRowCount() >= i) {
-					DisplayUtils.scrollToVisible(table, i, 0);
-				}
-			}
-		});
+		SwingUtilities.invokeLater(() -> {
+            // Check the row count first since this is multi-threaded
+            if (table.getRowCount() >= i) {
+                DisplayUtils.scrollToVisible(table, i, 0);
+            }
+        });
 	}
 
 	private final class SeqLengthComparator implements Comparator<String> {
@@ -476,25 +469,19 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 		if (!speciesName.equals(speciesCB.getSelectedItem())) {
 			// Set the selected species (the combo box is already populated)
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					speciesCB.removeItemListener(SeqGroupView.this);
-					speciesCB.setSelectedItem(speciesName);
-					speciesCB.addItemListener(SeqGroupView.this);
-				}
-			});
+			ThreadUtils.runOnEventQueue(() -> {
+                speciesCB.removeItemListener(SeqGroupView.this);
+                speciesCB.setSelectedItem(speciesName);
+                speciesCB.addItemListener(SeqGroupView.this);
+            });
 		}
 		if (!versionName.equals(versionCB.getSelectedItem())) {
 			refreshVersionCB(speciesName);			// Populate the versionName CB
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					versionCB.removeItemListener(SeqGroupView.this);
-					versionCB.setSelectedItem(versionName);
-					versionCB.addItemListener(SeqGroupView.this);
-				}
-			});
+			ThreadUtils.runOnEventQueue(() -> {
+                versionCB.removeItemListener(SeqGroupView.this);
+                versionCB.setSelectedItem(versionName);
+                versionCB.addItemListener(SeqGroupView.this);
+            });
 		}
 
 		GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
@@ -716,38 +703,35 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 			return;
 		}
 
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(() -> {
+            final List<String> speciesList = GeneralLoadUtils.getSpeciesList();
 
-			public void run() {
-				final List<String> speciesList = GeneralLoadUtils.getSpeciesList();
-		
-				speciesCB.removeItemListener(SeqGroupView.this);
-				String oldSpecies = (String) speciesCB.getSelectedItem();
+            speciesCB.removeItemListener(SeqGroupView.this);
+            String oldSpecies = (String) speciesCB.getSelectedItem();
 
-				speciesCB.removeAllItems();
-				speciesCB.addItem(SELECT_SPECIES);
-				for (String speciesName : speciesList) {
-					speciesCBRenderer.setToolTipEntry(speciesName, SpeciesLookup.getCommonSpeciesName(speciesName));
-					speciesCB.addItem(speciesName);
-				}
-				if (oldSpecies == null) {
-					return;
-				}
+            speciesCB.removeAllItems();
+            speciesCB.addItem(SELECT_SPECIES);
+            for (String speciesName : speciesList) {
+                speciesCBRenderer.setToolTipEntry(speciesName, SpeciesLookup.getCommonSpeciesName(speciesName));
+                speciesCB.addItem(speciesName);
+            }
+            if (oldSpecies == null) {
+                return;
+            }
 
-				if (speciesList.contains(oldSpecies)) {
-					speciesCB.setSelectedItem(oldSpecies);
-				} else {
-					// species CB changed
-					speciesCBChanged();
-				}
-				speciesCB.addItemListener(SeqGroupView.this);
-			}
-		});
+            if (speciesList.contains(oldSpecies)) {
+                speciesCB.setSelectedItem(oldSpecies);
+            } else {
+                // species CB changed
+                speciesCBChanged();
+            }
+            speciesCB.addItemListener(SeqGroupView.this);
+        });
 	}
 
 	public List<String> getAllVersions(final String speciesName) {
 		final Set<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
-		final List<String> versionNames = new ArrayList<String>();
+		final List<String> versionNames = new ArrayList<>();
 		if (versionList != null) {
 			for (GenericVersion gVersion : versionList) {
 				// the same versionName name may occur on multiple servers
@@ -774,35 +758,30 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 		
 		// Sort the versions (by date)
 
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(() -> {
+            versionCB.removeItemListener(SeqGroupView.this);
+            String oldVersion = (String) versionCB.getSelectedItem();
 
-			public void run() {
-				versionCB.removeItemListener(SeqGroupView.this);
-				String oldVersion = (String) versionCB.getSelectedItem();
+            if (versionNames.isEmpty() || speciesName.equals(SELECT_SPECIES)) {
+                versionCB.setSelectedIndex(0);
+                versionCB.setEnabled(false);
+                return;
+            }
 
-				if (versionNames.isEmpty() || speciesName.equals(SELECT_SPECIES)) {
-					versionCB.setSelectedIndex(0);
-					versionCB.setEnabled(false);
-					return;
-				}
-
-				// Add names to combo boxes.
-				versionCB.removeAllItems();
-				versionCB.addItem(SELECT_GENOME);
-				for (String versionName : versionNames) {
-					versionCB.addItem(versionName);
-				}
-				versionCB.setEnabled(true);
-				if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getVersionName2Species().containsKey(oldVersion)) {
-					versionCB.setSelectedItem(oldVersion);
-				} else {
-					versionCB.setSelectedIndex(0);
-				}
-				if (versionCB.getItemCount() > 1) {
-					versionCB.addItemListener(SeqGroupView.this);
-				}
-			}
-		});
+            // Add names to combo boxes.
+            versionCB.removeAllItems();
+            versionCB.addItem(SELECT_GENOME);
+			versionNames.forEach(versionCB::addItem);
+            versionCB.setEnabled(true);
+            if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getVersionName2Species().containsKey(oldVersion)) {
+                versionCB.setSelectedItem(oldVersion);
+            } else {
+                versionCB.setSelectedIndex(0);
+            }
+            if (versionCB.getItemCount() > 1) {
+                versionCB.addItemListener(SeqGroupView.this);
+            }
+        });
 	}
 
 	public void initVersion(String versionName) {

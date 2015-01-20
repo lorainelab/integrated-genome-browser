@@ -198,7 +198,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 //			tprops.put("cds max", Integer.valueOf(cdsMax));
 //		} 
         if (score != Float.NEGATIVE_INFINITY) {
-            tprops.put("score", new Float(score));
+            tprops.put("score", score);
         }
         return tprops;
     }
@@ -207,11 +207,11 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
     public Object getProperty(String key) {
         // test for standard gene sym  props
         if (hasCdsSpan && key.equals("cds min")) {
-            return Integer.valueOf(cdsMin);
+            return cdsMin;
         } else if (hasCdsSpan && key.equals("cds max")) {
-            return Integer.valueOf(cdsMax);
+            return cdsMax;
         } else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) {
-            return new Float(score);
+            return score;
         }
 
         return super.getProperty(key);

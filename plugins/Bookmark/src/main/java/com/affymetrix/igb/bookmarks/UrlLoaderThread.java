@@ -34,7 +34,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
@@ -144,32 +143,24 @@ public final class UrlLoaderThread extends Thread {
     }
 
     private void handleException(final Exception e) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (e instanceof UnknownHostException) {
-                    igbService.setStatus("Unknown host: " + e.getMessage());
-                } else if (e instanceof FileNotFoundException) {
-                    ErrorHandler.errorPanel("File not found", "File missing or not readable:\n " + e.getMessage());
-                } else {
-                    igbService.setStatus(e.getMessage());
-                    e.printStackTrace();
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (e instanceof UnknownHostException) {
+                igbService.setStatus("Unknown host: " + e.getMessage());
+            } else if (e instanceof FileNotFoundException) {
+                ErrorHandler.errorPanel("File not found", "File missing or not readable:\n " + e.getMessage());
+            } else {
+                igbService.setStatus(e.getMessage());
+                e.printStackTrace();
             }
         });
     }
 
     private void updateViewer(final BioSeq seq) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    igbService.getSeqMapView().setAnnotatedSeq(seq, true, true);
-                } catch (Exception e) {
-                    handleException(e);
-                }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                igbService.getSeqMapView().setAnnotatedSeq(seq, true, true);
+            } catch (Exception e) {
+                handleException(e);
             }
         });
     }
@@ -190,13 +181,7 @@ public final class UrlLoaderThread extends Thread {
         // Note: we do NOT want to simply call SwingUtilities.invokeLater(this)
         // because that would cause this thread to actually run ON the Swing thread
         // (potentially freezing the GUI)
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                start();
-            }
-        });
+        SwingUtilities.invokeLater(this::start);
     }
 
     // Parses term names from a "type" string.
@@ -232,8 +217,8 @@ public final class UrlLoaderThread extends Thread {
      * @param type a parameter passed on to parsePSL
      */
     private static void parseDataFromURL(URL url, String file_extension, String type)
-            throws UnknownHostException, IOException {
-        Map<String, List<String>> respHeaders = new HashMap<String, List<String>>();
+            throws IOException {
+        Map<String, List<String>> respHeaders = new HashMap<>();
         InputStream stream = null;
         List<String> list;
         String content_type = "content/unknown";
@@ -370,7 +355,7 @@ public final class UrlLoaderThread extends Thread {
             stream_name = stripped_name.toString();
 
             if (str instanceof BufferedInputStream) {
-                str = (BufferedInputStream) str;
+
             } else {
                 str = new BufferedInputStream(str);
             }

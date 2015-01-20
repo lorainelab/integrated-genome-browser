@@ -44,7 +44,7 @@ public final class FastaParser implements Parser {
 	 * a subset of the sequences in the group.
 	 */
 	public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		List<BioSeq> seqlist = new ArrayList<BioSeq>();
+		List<BioSeq> seqlist = new ArrayList<>();
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
 		try {
@@ -323,7 +323,7 @@ public final class FastaParser implements Parser {
 			//  internal char array -- then can garbage collect temp_residues later,
 			//  and hopefully will save space...
 			String temp_residues = new String(buf);
-			residues = new String(temp_residues);
+			residues = temp_residues;
 			temp_residues = null;
 		
 			System.out.println("done constructing residues via array");
@@ -368,7 +368,7 @@ public final class FastaParser implements Parser {
 	 * @throws java.lang.IllegalArgumentException
 	 */
 	public static byte[] readFASTA(File seqfile, int begin_sequence, int end_sequence)
-			throws FileNotFoundException, IOException, IllegalArgumentException {
+			throws IOException, IllegalArgumentException {
 
 			if (begin_sequence < 0) {
 			throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
@@ -529,7 +529,7 @@ public final class FastaParser implements Parser {
 
 		// Parse off the header (if it exists).
 		public static byte[] skipFASTAHeader(String filename, BufferedInputStream bis)
-			throws IOException, UnsupportedEncodingException {
+			throws IOException {
 			// The header is less than 500 bytes, and if it exists, the header begins with a ">" and ends with a newline.
 			byte[] header = new byte[500];
 

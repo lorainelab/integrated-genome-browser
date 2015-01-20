@@ -33,7 +33,7 @@ public final class UniFileFilter extends FileFilter {
 	private boolean useExtensionsInDescription = true;
 
 	public UniFileFilter() {
-		this.filters = new LinkedHashSet<String>();
+		this.filters = new LinkedHashSet<>();
 	}
 
 	public UniFileFilter(String extension) {
@@ -64,9 +64,9 @@ public final class UniFileFilter extends FileFilter {
 	 */
 	public UniFileFilter(String[] filters, String description) {
 		this();
-		for (int i = 0; i < filters.length; i++) {
+		for (String filter : filters) {
 			// add filters one by one
-			addExtension(filters[i]);
+			addExtension(filter);
 		}
 		if (description!=null) {
 			setDescription(description);
@@ -83,9 +83,8 @@ public final class UniFileFilter extends FileFilter {
 			// but getExtension(f) can't return compound extensions like ".egr.txt"
 
 			String base_name = stripCompressionEndings(f.getName().toLowerCase());
-			Iterator<String> iter = filters.iterator();
-			while (iter.hasNext()) {
-				String ending = "." + iter.next();
+			for (String filter : filters) {
+				String ending = "." + filter;
 				if (base_name.endsWith(ending)) {
 					return true;
 				}
@@ -94,7 +93,7 @@ public final class UniFileFilter extends FileFilter {
 		return false;
 	}
 
-	List<String> compression_endings = new ArrayList<String>(4);
+	List<String> compression_endings = new ArrayList<>(4);
 
 	/** Adds a file extension that will be considered to represent
 	 *  compression types that the filter should
@@ -106,8 +105,8 @@ public final class UniFileFilter extends FileFilter {
 
 	/** Calls {@link #addCompressionEnding(String)} for each item in the list. */
 	public void addCompressionEndings(String[] endings) {
-		for (int i=0; i<endings.length; i++) {
-			addCompressionEnding(endings[i]);
+		for (String ending : endings) {
+			addCompressionEnding(ending);
 		}
 	}
 
@@ -162,7 +161,7 @@ public final class UniFileFilter extends FileFilter {
 
 	public void addExtension(String extension) {
 		if(filters == null) {
-			filters = new LinkedHashSet<String>(5);
+			filters = new LinkedHashSet<>(5);
 		}
 		filters.add(extension.toLowerCase());
 		fullDescription = null;
@@ -172,7 +171,7 @@ public final class UniFileFilter extends FileFilter {
 	 * {@link #addExtension(String)}.
 	 */
 	public Set<String> getExtensions() {
-		return Collections.<String>unmodifiableSet(filters);
+		return Collections.unmodifiableSet(filters);
 	}
 
 	public String getDescription() {

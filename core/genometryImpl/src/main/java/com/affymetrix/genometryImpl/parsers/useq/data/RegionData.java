@@ -54,9 +54,9 @@ public class RegionData extends USeqData{
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedRegions.length; i++){
+		for (Region sortedRegion : sortedRegions) {
 			//chrom start stop name score strand
-			out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+".\t0\t"+strand);
+			out.println(chrom + "\t" + sortedRegion.start + "\t" + sortedRegion.stop + "\t" + ".\t0\t" + strand);
 		}
 	}
 	
@@ -66,14 +66,14 @@ public class RegionData extends USeqData{
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tStart\tStop");
-			for (int i=0; i< sortedRegions.length; i++) {
-				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop);
+			for (Region sortedRegion : sortedRegions) {
+				out.println(chrom + "\t" + sortedRegion.start + "\t" + sortedRegion.stop);
 			}
 		}
 		else {
 			out.println("#Chr\tStart\tStop\tStrand");
-			for (int i=0; i< sortedRegions.length; i++) {
-				out.println(chrom+"\t"+sortedRegions[i].start+"\t"+sortedRegions[i].stop+"\t"+strand);
+			for (Region sortedRegion : sortedRegions) {
+				out.println(chrom + "\t" + sortedRegion.start + "\t" + sortedRegion.stop + "\t" + strand);
 			}
 		}
 	}
@@ -101,8 +101,8 @@ public class RegionData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegions.length; i++){
-				int diff = sortedRegions[i].stop - sortedRegions[i].start;
+			for (Region sortedRegion : sortedRegions) {
+				int diff = sortedRegion.stop - sortedRegion.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -144,7 +144,7 @@ public class RegionData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
@@ -174,7 +174,7 @@ public class RegionData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					workingDOS.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
@@ -216,14 +216,14 @@ public class RegionData extends USeqData{
 		Arrays.sort(pdArray);
 		//fetch total size of Region[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedRegions.length;
+		for (RegionData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedRegions.length;
 		}
 		//concatinate
 		Region[] concatinate = new Region[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			Region[] slice = pdArray[i].sortedRegions;
+		for (RegionData aPdArray : pdArray) {
+			Region[] slice = aPdArray.sortedRegions;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -237,9 +237,9 @@ public class RegionData extends USeqData{
 	public static RegionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<RegionData> a = new ArrayList<RegionData>(num);
-		for (int i=0; i< num; i++) {
-			a.add((RegionData) useqDataAL.get(i));
+		ArrayList<RegionData> a = new ArrayList<>(num);
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((RegionData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -265,8 +265,8 @@ public class RegionData extends USeqData{
 			}
 			//check to short length
 			useShortLength = true;
-			for (int i=0; i< sortedRegions.length; i++){
-				int diff = sortedRegions[i].stop - sortedRegions[i].start;
+			for (Region sortedRegion : sortedRegions) {
+				int diff = sortedRegion.stop - sortedRegion.start;
 				if (diff > 65536) {
 					useShortLength = false;
 					break;
@@ -305,7 +305,7 @@ public class RegionData extends USeqData{
 			if (useShortBeginning) {			
 				//also short length?
 				//no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
@@ -334,7 +334,7 @@ public class RegionData extends USeqData{
 			//no, write int for position
 			else {
 				//short length? no
-				if (useShortLength == false){
+				if (!useShortLength){
 					//write first record's length
 					dos.writeInt(sortedRegions[0].stop- sortedRegions[0].start);
 					for (int i=1; i< sortedRegions.length; i++){
@@ -446,10 +446,10 @@ public class RegionData extends USeqData{
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<Region> al = new ArrayList<Region>();
-		for (int i=0; i< sortedRegions.length; i++){
-			if (sortedRegions[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedRegions[i]);
+		ArrayList<Region> al = new ArrayList<>();
+		for (Region sortedRegion : sortedRegions) {
+			if (sortedRegion.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedRegion);
 			}
 		}
 		if (al.isEmpty()) {

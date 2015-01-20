@@ -36,7 +36,7 @@ public abstract class BrowserView extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private SwingWorker<Image, Void> worker = null;
-    private final Map<String, String> cookieMap = new HashMap<String, String>();
+    private final Map<String, String> cookieMap = new HashMap<>();
     protected final JRPButton update_button;
     protected final JRPButton settingsButton;
     private BrowserImage browserImage = new BrowserImage();
@@ -149,16 +149,13 @@ public abstract class BrowserView extends JPanel {
         });
 
         settingsButton.setToolTipText(ExternalViewer.BUNDLE.getString("personalViewTT"));
-        settingsButton.addActionListener(new ActionListener() {
+        settingsButton.addActionListener(e -> {
+            final Window window = SwingUtilities.getWindowAncestor(BrowserView.this);
+            final JDialog helper = getViewHelper(window);
+            helper.setSize(500, 400);
+            helper.setModalityType(ModalityType.DOCUMENT_MODAL);
 
-            public void actionPerformed(ActionEvent e) {
-                final Window window = SwingUtilities.getWindowAncestor(BrowserView.this);
-                final JDialog helper = getViewHelper(window);
-                helper.setSize(500, 400);
-                helper.setModalityType(ModalityType.DOCUMENT_MODAL);
-
-                helper.setVisible(true);
-            }
+            helper.setVisible(true);
         });
     }
 }

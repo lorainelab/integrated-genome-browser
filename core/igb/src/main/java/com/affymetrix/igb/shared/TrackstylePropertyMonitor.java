@@ -15,7 +15,7 @@ import javax.swing.event.TableModelListener;
 public class TrackstylePropertyMonitor implements TableModelListener, ActionListener {
 
     private static TrackstylePropertyMonitor singleton = new TrackstylePropertyMonitor();
-    private final Set<TrackStylePropertyListener> listeners = new CopyOnWriteArraySet<TrackStylePropertyListener>();
+    private final Set<TrackStylePropertyListener> listeners = new CopyOnWriteArraySet<>();
 
     private TrackstylePropertyMonitor() {
     }

@@ -22,21 +22,21 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symloader.SymLoader;
 import com.affymetrix.genometryImpl.symloader.VCF;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {
 
-    private List<VCF> vcfs = new ArrayList<VCF>();
-    private IGBService igbService;
-    private Map<String, List<String>> selections;
+    private final List<VCF> vcfs = new ArrayList<>();
+    private final IGBService igbService;
+    private final Map<String, List<String>> selections;
     private TierGlyph lastClickedGlyph;
 
     public VCFListener(IGBService igbService) {
         super();
         this.igbService = igbService;
-        selections = new HashMap<String, List<String>>();
+        selections = new HashMap<>();
     }
 
     private VCF getVCF(String name) {

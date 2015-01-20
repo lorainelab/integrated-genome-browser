@@ -33,8 +33,8 @@ public class Region implements Comparable<Region>, Serializable {
 
 	/**Checks to see if each start is <= the stop*/
 	public static boolean checkStartStops(Region[] ss){
-		for (int i=0; i< ss.length; i++){
-			if (ss[i].start> ss[i].stop) {
+		for (Region s : ss) {
+			if (s.start > s.stop) {
 				return false;
 			}
 		}
@@ -43,7 +43,7 @@ public class Region implements Comparable<Region>, Serializable {
 	/**Returns a Region[] for regions defined with baseHitCounts !=0.
 	 * Coordinates are interbase.*/
 	public static Region[] makeStartStops(short[] baseHitCount){
-		ArrayList<Region> ss = new ArrayList<Region>();
+		ArrayList<Region> ss = new ArrayList<>();
 		//find first non zero base
 		int i=0;
 		for (; i< baseHitCount.length; i++) {
@@ -99,8 +99,8 @@ public class Region implements Comparable<Region>, Serializable {
 	/**Returns the total number of bases, assumes interbase coordinates.*/
 	public static int totalBP (Region[] ss){
 		int total = 0;
-		for (int i=0; i< ss.length; i++) {
-			total += ss[i].getLength();
+		for (Region s : ss) {
+			total += s.getLength();
 		}
 		return total;
 	}
@@ -143,12 +143,12 @@ public class Region implements Comparable<Region>, Serializable {
 	 * @return a HashMap<Chr,sorted Region[]> or null in none are found
 	 * */
 	public static HashMap<String,Region[]> parseStartStops (File bedFile, int subStart, int subEnd, int minSize){
-		HashMap<String,ArrayList<Region>> ss = new HashMap<String,ArrayList<Region>>();
+		HashMap<String,ArrayList<Region>> ss = new HashMap<>();
 		try{
 			BufferedReader in = USeqUtilities.fetchBufferedReader(bedFile);
 			String line;
 			String[] tokens;
-			ArrayList<Region> al = new ArrayList<Region>();
+			ArrayList<Region> al = new ArrayList<>();
 			//chrom, start, stop
 			while ((line = in.readLine()) !=null) {
 				line = line.trim();
@@ -164,7 +164,7 @@ public class Region implements Comparable<Region>, Serializable {
 					al = ss.get(tokens[0]);
 				}
 				else {
-					al = new ArrayList<Region>();
+					al = new ArrayList<>();
 					ss.put(tokens[0], al);
 				}
 				int start = Integer.parseInt(tokens[1]);
@@ -189,10 +189,8 @@ public class Region implements Comparable<Region>, Serializable {
 			return null;
 		}
 		//make hashmap
-		HashMap<String,Region[]> ssReal = new HashMap<String,Region[]>();
-		Iterator<String> it = ss.keySet().iterator();
-		while (it.hasNext()){
-			String chrom = it.next();
+		HashMap<String,Region[]> ssReal = new HashMap<>();
+		for (String chrom : ss.keySet()) {
 			ArrayList<Region> al = ss.get(chrom);
 			Region[] array = new Region[al.size()];
 			al.toArray(array);
@@ -214,9 +212,9 @@ public class Region implements Comparable<Region>, Serializable {
 	
 	public static int findLastBase(Region[] r){
 		int lastBase = -1;
-		for (int i=0; i< r.length; i++){
-			if (r[i].stop> lastBase) {
-				lastBase = r[i].stop;
+		for (Region aR : r) {
+			if (aR.stop > lastBase) {
+				lastBase = aR.stop;
 			}
 		}
 		return lastBase;

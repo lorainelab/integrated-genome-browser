@@ -133,14 +133,14 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		Arrays.sort(pdArray);
 		//fetch total size of PositionScore[]
 		int num = 0;
-		for (int i=0; i< pdArray.length; i++) {
-			num += pdArray[i].sortedPositionScores.length;
+		for (PositionScoreData aPdArray1 : pdArray) {
+			num += aPdArray1.sortedPositionScores.length;
 		}
 		//concatinate
 		PositionScore[] concatinate = new PositionScore[num];
 		int index = 0;
-		for (int i=0; i< pdArray.length; i++){
-			PositionScore[] slice = pdArray[i].sortedPositionScores;
+		for (PositionScoreData aPdArray : pdArray) {
+			PositionScore[] slice = aPdArray.sortedPositionScores;
 			System.arraycopy(slice, 0, concatinate, index, slice.length);
 			index += slice.length;
 		}
@@ -154,9 +154,9 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	public static PositionScoreData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
 		int num = useqDataAL.size();
 		//convert ArrayList
-		ArrayList<PositionScoreData> a = new ArrayList<PositionScoreData>(num);
-		for (int i=0; i< num; i++) {
-			a.add((PositionScoreData) useqDataAL.get(i));
+		ArrayList<PositionScoreData> a = new ArrayList<>(num);
+		for (USeqData anUseqDataAL : useqDataAL) {
+			a.add((PositionScoreData) anUseqDataAL);
 		}
 		return merge (a);
 	}
@@ -170,14 +170,13 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	public void writeBed (PrintWriter out, boolean fixBedScores){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
-		for (int i=0; i< sortedPositionScores.length; i++){
+		for (PositionScore sortedPositionScore : sortedPositionScores) {
 			//chrom start stop name score strand
 			if (fixBedScores) {
-				int score = USeqUtilities.fixBedScore(sortedPositionScores[i].score);
-				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+score+"\t"+strand);
-			}
-			else {
-				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+(sortedPositionScores[i].position + 1)+"\t"+".\t"+sortedPositionScores[i].score+"\t"+strand);
+				int score = USeqUtilities.fixBedScore(sortedPositionScore.score);
+				out.println(chrom + "\t" + sortedPositionScore.position + "\t" + (sortedPositionScore.position + 1) + "\t" + ".\t" + score + "\t" + strand);
+			} else {
+				out.println(chrom + "\t" + sortedPositionScore.position + "\t" + (sortedPositionScore.position + 1) + "\t" + ".\t" + sortedPositionScore.score + "\t" + strand);
 			}
 		}
 	}
@@ -188,15 +187,15 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 		String strand = sliceInfo.getStrand();
 		if (strand.equals(".")){
 			out.println("#Chr\tPosition\tScore");
-			for (int i=0; i< sortedPositionScores.length; i++) {
-				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score);
+			for (PositionScore sortedPositionScore : sortedPositionScores) {
+				out.println(chrom + "\t" + sortedPositionScore.position + "\t" + sortedPositionScore.score);
 			}
 		}
 		else {
 			out.println("#Chr\tPosition\tScore\tStrand");
-			for (int i=0; i< sortedPositionScores.length; i++){
+			for (PositionScore sortedPositionScore : sortedPositionScores) {
 				//chrom start stop name score strand
-				out.println(chrom+"\t"+sortedPositionScores[i].position+"\t"+sortedPositionScores[i].score+"\t"+strand);
+				out.println(chrom + "\t" + sortedPositionScore.position + "\t" + sortedPositionScore.score + "\t" + strand);
 			}
 		}
 	}
@@ -206,11 +205,11 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	 */
 	public void writePositionScore (PrintWriter out){
 		int prior = -1;
-		for (int i=0; i< sortedPositionScores.length; i++){
-				if (prior != sortedPositionScores[i].position) {
-					out.println((sortedPositionScores[i].position +1)+"\t"+sortedPositionScores[i].score);
-					prior = sortedPositionScores[i].position;
-				}
+		for (PositionScore sortedPositionScore : sortedPositionScores) {
+			if (prior != sortedPositionScore.position) {
+				out.println((sortedPositionScore.position + 1) + "\t" + sortedPositionScore.score);
+				prior = sortedPositionScore.position;
+			}
 		}
 	}
 	
@@ -427,10 +426,10 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 
 	/**Returns whether data remains.*/
 	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<PositionScore> al = new ArrayList<PositionScore>();
-		for (int i=0; i< sortedPositionScores.length; i++){
-			if (sortedPositionScores[i].isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedPositionScores[i]);
+		ArrayList<PositionScore> al = new ArrayList<>();
+		for (PositionScore sortedPositionScore : sortedPositionScores) {
+			if (sortedPositionScore.isContainedBy(beginningBP, endingBP)) {
+				al.add(sortedPositionScore);
 			}
 		}
 		if (al.isEmpty()) {

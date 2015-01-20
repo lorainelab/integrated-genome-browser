@@ -119,7 +119,7 @@ public class SamRecordFlag {
     }
 
     public Map<String, String> getFlagProperties() {
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         props.put(PAIRED_READ, isPaired() ? "yes" : "no");
         if (isPaired()) {
             props.put(PROPER_PAIR_READ, isProperPair() ? "yes" : "no");

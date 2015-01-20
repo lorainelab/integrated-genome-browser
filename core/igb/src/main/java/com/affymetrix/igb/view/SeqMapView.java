@@ -27,7 +27,6 @@ import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -37,6 +36,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometryImpl.util.SelectionInfoUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -78,9 +78,8 @@ import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPPopupMenu;
@@ -95,9 +94,9 @@ import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
 import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.awt.AWTEvent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -126,7 +125,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -153,6 +151,8 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A panel hosting a labeled tier map. Despite it's name this is actually a
@@ -162,6 +162,8 @@ public class SeqMapView extends JPanel
         implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, com.affymetrix.igb.swing.JRPWidget {
 
     private static final long serialVersionUID = 1L;
+    public static final String COMPONENT_NAME = "SeqMapView";
+    private static final Logger logger = LoggerFactory.getLogger(SelectionInfoUtils.class);
 
     public static enum MapMode {
 
@@ -201,8 +203,8 @@ public class SeqMapView extends JPanel
     private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
     private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
 //	private JToggleButton zoom_mode_button;
-    private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
-    private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<AxisPopupListener>();
+    private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<>();
+    private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<>();
     /**
      * maximum number of query glyphs for edge matcher. any more than this and
      * won't attempt to edge match (edge matching is currently very inefficient
@@ -298,7 +300,7 @@ public class SeqMapView extends JPanel
     private final static int yoffset_pop = 0;
     private final static int[] default_range = new int[]{0, 100};
     private final static int[] default_offset = new int[]{0, 100};
-    private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<SeqMapRefreshed>();
+    private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<>();
     private TierGlyph axis_tier;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     //private final PopupInfo popupInfo;
@@ -337,39 +339,47 @@ public class SeqMapView extends JPanel
                 return;
             }
 
-            if (pce.getKey().equals(CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT)) {
-                AxisGlyph ag = seqmap.getAxis();
-                if (ag != null) {
-                    setAxisFormatFromPrefs(ag);
-                }
-                seqmap.updateWidget();
-            } else if (pce.getKey().equals(PreferenceUtils.SHOW_EDGEMATCH_OPTION)) {
-                setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
-                getSeqMap().updateWidget();
-            } else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
-                if (show_edge_matches) {
-                    doEdgeMatching(seqmap.getSelected(), true);
-                }
-            } else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-                SeqMapView.this.remove(xzoombox);
-                if (b) {
-                    SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-                } else {
-                    SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-                }
-                SeqMapView.this.invalidate();
-            } else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
-                SeqMapView.this.remove(yzoombox);
-                if (b) {
-                    SeqMapView.this.add(BorderLayout.WEST, yzoombox);
-                } else {
-                    SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-                }
-                SeqMapView.this.invalidate();
-            } else if (pce.getKey().equals(PREF_SHOW_TOOLTIP)) {
-                setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
+            switch (pce.getKey()) {
+                case CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT:
+                    AxisGlyph ag = seqmap.getAxis();
+                    if (ag != null) {
+                        setAxisFormatFromPrefs(ag);
+                    }   seqmap.updateWidget();
+                    break;
+                case PreferenceUtils.SHOW_EDGEMATCH_OPTION:
+                    setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
+                    getSeqMap().updateWidget();
+                    break;
+                case PREF_EDGE_MATCH_COLOR:
+                case PREF_EDGE_MATCH_FUZZY_COLOR:
+                    if (show_edge_matches) {
+                        doEdgeMatching(seqmap.getSelected(), true);
+                    }   break;
+                case PREF_X_ZOOMER_ABOVE:
+                    {
+                        boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+                        SeqMapView.this.remove(xzoombox);
+                        if (b) {
+                            SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+                        } else {
+                            SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+                        }       SeqMapView.this.invalidate();
+                        break;
+                    }
+                case PREF_Y_ZOOMER_LEFT:
+                {
+                    boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+                    SeqMapView.this.remove(yzoombox);
+                    if (b) {
+                        SeqMapView.this.add(BorderLayout.WEST, yzoombox);
+                    } else {
+                        SeqMapView.this.add(BorderLayout.EAST, yzoombox);
+                }       SeqMapView.this.invalidate();
+                        break;
+                    }
+                case PREF_SHOW_TOOLTIP:
+                    setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
+                    break;
             }
         }
     };
@@ -476,12 +486,8 @@ public class SeqMapView extends JPanel
 
         // Listener for track selection events.  We will use this to populate 'Selection Info'
         // grid with properties of the Type.
-        TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
-
-            @Override
-            public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
-                // TODO:  Find properties of selected track and show in 'Selection Info' tab.
-            }
+        TierLabelManager.TrackSelectionListener track_selection_listener = (topLevelGlyph, handler) -> {
+            // TODO:  Find properties of selected track and show in 'Selection Info' tab.
         };
         tierLabelManager.addTrackSelectionListener(track_selection_listener);
 
@@ -671,22 +677,17 @@ public class SeqMapView extends JPanel
 
         @Override
         public void componentResized(ComponentEvent e) {
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtilities.invokeLater(() -> {
+                List<GraphGlyph> graphs = collectGraphs();
+                graphs.stream().filter(graph -> graph.getAnnotStyle().isFloatTier()).forEach(graph -> {
+                    getFloaterGlyph().checkBounds(graph, getSeqMap().getView());
+                });
+                getSeqMap().stretchToFit(false, false);
+                getSeqMap().updateWidget();
 
-                public void run() {
-                    List<GraphGlyph> graphs = collectGraphs();
-                    for (GraphGlyph graph : graphs) {
-                        if (graph.getAnnotStyle().getFloatTier()) {
-                            getFloaterGlyph().checkBounds(graph, getSeqMap().getView());
-                        }
-                    }
-                    getSeqMap().stretchToFit(false, false);
-                    getSeqMap().updateWidget();
-
-                }
             });
         }
-    };
+    }
 
     /**
      * Creates an instance to be used as the SeqMap. Set-up of listeners and
@@ -834,7 +835,7 @@ public class SeqMapView extends JPanel
 
         // stash annotation tiers for proper state restoration after resetting for same seq
         //    (but presumably added / deleted / modified annotations...)
-        List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
+        List<TierGlyph> cur_tiers = new ArrayList<>(seqmap.getTiers());
         TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
         int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
         List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
@@ -872,11 +873,8 @@ public class SeqMapView extends JPanel
             // reselect glyph(s) based on selected sym(s);
             // Unfortunately, some previously selected syms will not be directly
             // associatable with new glyphs, so not all selections can be preserved
-            Iterator<SeqSymmetry> iter = old_selections.iterator();
-            while (iter.hasNext()) {
-                SeqSymmetry old_selected_sym = iter.next();
-
-                GlyphI gl = seqmap.<GlyphI>getItemFromTier(old_selected_sym);
+            for (SeqSymmetry old_selected_sym : old_selections) {
+                GlyphI gl = seqmap.getItemFromTier(old_selected_sym);
                 if (gl != null) {
                     seqmap.select(gl);
                 }
@@ -893,12 +891,10 @@ public class SeqMapView extends JPanel
 
         // Restore selected tiers
         if (old_tier_selections != null) {
-            for (TierLabelGlyph tierLabelGlyph : getTierManager().getAllTierLabels()) {
-                if (tierLabelGlyph.getReferenceTier().isVisible()
-                        && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())) {
-                    ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
-                }
-            }
+            getTierManager().getAllTierLabels().stream().filter(tierLabelGlyph -> tierLabelGlyph.getReferenceTier().isVisible()
+                    && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
+                ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
+            });
         }
 
         if (show_edge_matches) {
@@ -912,9 +908,7 @@ public class SeqMapView extends JPanel
         seqmap.toFront(axis_tier);
 
         // restore floating layers to front of map
-        for (GlyphI layer_glyph : getFloatingLayers(seqmap.getScene().getGlyph())) {
-            seqmap.toFront(layer_glyph);
-        }
+        getFloatingLayers(seqmap.getScene().getGlyph()).forEach(seqmap::toFront);
 
         // Ignore preserve_view if seq has changed
         if ((preserve_view_x || preserve_view_y) && same_seq) {
@@ -970,9 +964,7 @@ public class SeqMapView extends JPanel
     }
 
     public void seqMapRefresh() {
-        for (SeqMapRefreshed smr : seqmap_refresh_list) {
-            smr.mapRefresh();
-        }
+        seqmap_refresh_list.forEach(com.affymetrix.genometryImpl.event.SeqMapRefreshed::mapRefresh);
     }
 
     /**
@@ -987,7 +979,7 @@ public class SeqMapView extends JPanel
      * @param tier_direction the direction of the track (FORWARD, REVERSE, or
      * BOTH)
      */
-    public TierGlyph getTrack(ITrackStyleExtended style, TierGlyph.Direction tier_direction) {
+    public TierGlyph getTrack(ITrackStyleExtended style, StyledGlyph.Direction tier_direction) {
         return TrackView.getInstance().getTrack(this, style, tier_direction);
     }
 
@@ -1008,11 +1000,8 @@ public class SeqMapView extends JPanel
         // reselect glyph(s) based on selected sym(s);
         // Unfortunately, some previously selected syms will not be directly
         // associatable with new glyphs, so not all selections can be preserved
-        Iterator<SeqSymmetry> sym_iter = old_sym_selections.iterator();
-        while (sym_iter.hasNext()) {
-            SeqSymmetry old_selected_sym = sym_iter.next();
-
-            GlyphI gl = seqmap.<GlyphI>getItemFromTier(old_selected_sym);
+        for (SeqSymmetry old_selected_sym : old_sym_selections) {
+            GlyphI gl = seqmap.getItemFromTier(old_selected_sym);
             if (gl != null) {
                 seqmap.select(gl);
             }
@@ -1028,7 +1017,7 @@ public class SeqMapView extends JPanel
     //   (and thus modifying map.getTiers() list -- could probably deal with this
     //    via iterators, but feels safer this way...)
     private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
-        List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
+        List<TierGlyph> temp_tiers = new ArrayList<>();
         for (TierGlyph tg : cur_tiers) {
             temp_tiers.add(tg);
             if (DEBUG_TIERS) {
@@ -1054,11 +1043,11 @@ public class SeqMapView extends JPanel
 
         // Since axis has to added only one, add it here instead of annotation track.
         axis_tier = this.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
-        MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(FileTypeCategory.Axis);
+        MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(FileTypeCategory.Axis);
         factory.createGlyphs(null, CoordinateStyle.coordinate_annot_style, this, aseq);
 
         addAnnotationTracks();
-        removeEmptyTierGlyphs(new ArrayList<TierGlyph>(seqmap.getTiers()));
+        removeEmptyTierGlyphs(new ArrayList<>(seqmap.getTiers()));
     }
 
     private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
@@ -1116,7 +1105,7 @@ public class SeqMapView extends JPanel
      * stay behind everything else).
      */
     private static List<GlyphI> getFloatingLayers(GlyphI root_glyph) {
-        List<GlyphI> layers = new ArrayList<GlyphI>();
+        List<GlyphI> layers = new ArrayList<>();
         int gcount = root_glyph.getChildCount();
         for (int i = 0; i < gcount; i++) {
             GlyphI cgl = root_glyph.getChild(i);
@@ -1134,15 +1123,11 @@ public class SeqMapView extends JPanel
      * @param tiers the list of TierGlyphs
      */
     private void removeEmptyTierGlyphs(List<TierGlyph> tiers) {
-        for (TierGlyph tg : tiers) {
-            if (tg.getChildCount() == 0) {
-                seqmap.removeTier(tg);
-//				tg.setVisibility(false);
+        //				tg.setVisibility(false);
 //				if(tg instanceof DefaultTierGlyph){
 //					((DefaultTierGlyph)tg).setHeightFixed(false);
 //				}
-            }
-        }
+        tiers.stream().filter(tg -> tg.getChildCount() == 0).forEach(seqmap::removeTier);
     }
 
     private void addAnnotationTracks() {
@@ -1260,7 +1245,7 @@ public class SeqMapView extends JPanel
     @Override
     public final void selectAllGraphs() {
         List<GraphGlyph> glyphlist = collectGraphs();
-        List<GraphGlyph> visibleList = new ArrayList<GraphGlyph>(glyphlist.size());
+        List<GraphGlyph> visibleList = new ArrayList<>(glyphlist.size());
 
         //Remove hidden Graphs
         for (GraphGlyph g : glyphlist) {
@@ -1272,11 +1257,9 @@ public class SeqMapView extends JPanel
 
         // convert graph glyphs to GraphSyms via glyphsToSyms
         // Bring them all into the visual area
-        for (GraphGlyph gl : visibleList) {
-            if (gl.getAnnotStyle().getFloatTier()) {
-                getFloaterGlyph().checkBounds(gl, getSeqMap().getView());
-            }
-        }
+        visibleList.stream().filter(gl -> gl.getAnnotStyle().isFloatTier()).forEach(gl -> {
+            getFloaterGlyph().checkBounds(gl, getSeqMap().getView());
+        });
 
         select(glyphsToSyms(visibleList), false, true, true);
     }
@@ -1299,12 +1282,12 @@ public class SeqMapView extends JPanel
 
     @Override
     public final void select(GlyphI glyph) {
-        List<GlyphI> glyphs = (List<GlyphI>) Collections.singletonList(glyph);
+        List<GlyphI> glyphs = Collections.singletonList(glyph);
         setSelectionStatus(getSelectionTitle(glyphs));
     }
 
     public final void selectTrack(TierGlyph tier, boolean selected) {
-        if (tier.getAnnotStyle().getFloatTier()) {
+        if (tier.getAnnotStyle().isFloatTier()) {
             tier.setSelected(selected);
         } else if (selected) {
             tierLabelManager.select(tier);
@@ -1323,7 +1306,7 @@ public class SeqMapView extends JPanel
 
         for (SeqSymmetry sym : sym_list) {
             // currently assuming 1-to-1 mapping of sym to glyph
-            GlyphI gl = seqmap.<GlyphI>getItemFromTier(sym);
+            GlyphI gl = seqmap.getItemFromTier(sym);
             if (gl != null) {
                 seqmap.select(gl);
             }
@@ -1379,31 +1362,29 @@ public class SeqMapView extends JPanel
     }
 
     public List<GlyphI> getAllSelectedTiers() {
-        List<GlyphI> allSelectedTiers = new ArrayList<GlyphI>();
+        List<GlyphI> allSelectedTiers = new ArrayList<>();
         // this adds all tracks selected on the label, including join tracks (not join children)
         for (TierGlyph tierGlyph : tierLabelManager.getSelectedTiers()) {
             allSelectedTiers.add(tierGlyph);
         }
         // this adds all tracks selected on the track itself (arrow on left edge), including join tracks and join children
-        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
-            if (!allSelectedTiers.contains(tierGlyph)) {
-                if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
-                    for (GlyphI child : tierGlyph.getChildren()) {
-                        if (child.isSelected()) {
-                            allSelectedTiers.add(child);
-                        }
+        tierLabelManager.getVisibleTierGlyphs().stream().filter(tierGlyph -> !allSelectedTiers.contains(tierGlyph)).forEach(tierGlyph -> {
+            if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
+                for (GlyphI child : tierGlyph.getChildren()) {
+                    if (child.isSelected()) {
+                        allSelectedTiers.add(child);
                     }
-                } else if (tierGlyph.isSelected()) {
-                    allSelectedTiers.add(tierGlyph);
                 }
+            } else if (tierGlyph.isSelected()) {
+                allSelectedTiers.add(tierGlyph);
             }
-        }
+        });
         return allSelectedTiers;
     }
 
     @Override
     public List<GraphGlyph> getSelectedFloatingGraphGlyphs() {
-        List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphGlyphs = new ArrayList<>();
         if (pixel_floater_glyph.getChildren() != null) {
             for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
                 if (floatGlyph.isSelected()) {
@@ -1415,7 +1396,7 @@ public class SeqMapView extends JPanel
     }
 
     public List<GraphGlyph> getFloatingGraphGlyphs() {
-        List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphGlyphs = new ArrayList<>();
         if (pixel_floater_glyph.getChildren() != null) {
             for (GlyphI floatGlyph : pixel_floater_glyph.getChildren()) {
                 graphGlyphs.add((GraphGlyph) floatGlyph);
@@ -1441,13 +1422,13 @@ public class SeqMapView extends JPanel
      * represent.
      */
     public static List<SeqSymmetry> glyphsToSyms(List<? extends GlyphI> glyphs) {
-        Set<SeqSymmetry> symSet = new LinkedHashSet<SeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+        Set<SeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
         for (GlyphI gl : glyphs) {
             if (gl.getInfo() instanceof SeqSymmetry) {
                 symSet.add((SeqSymmetry) gl.getInfo());
             }
         }
-        return new ArrayList<SeqSymmetry>(symSet);
+        return new ArrayList<>(symSet);
     }
 
     /**
@@ -1455,13 +1436,13 @@ public class SeqMapView extends JPanel
      * represent.
      */
     public static List<RootSeqSymmetry> glyphsToRootSyms(List<? extends GlyphI> glyphs) {
-        Set<RootSeqSymmetry> symSet = new LinkedHashSet<RootSeqSymmetry>(glyphs.size());	// use LinkedHashSet to preserve order
+        Set<RootSeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
         for (GlyphI gl : glyphs) {
             if (gl.getInfo() instanceof RootSeqSymmetry) {
                 symSet.add((RootSeqSymmetry) gl.getInfo());
             }
         }
-        return new ArrayList<RootSeqSymmetry>(symSet);
+        return new ArrayList<>(symSet);
     }
 
     @Override
@@ -1655,12 +1636,12 @@ public class SeqMapView extends JPanel
         if (show_edge_matches) {
             doEdgeMatching(seqmap.getSelected(), true);
         } else {
-            doEdgeMatching(new ArrayList<GlyphI>(0), true);
+            doEdgeMatching(new ArrayList<>(0), true);
         }
     }
 
     public List<GlyphI> doTheSelection(Rectangle2D.Double coordrect) {
-        List<GlyphI> glyphs = new ArrayList<GlyphI>();
+        List<GlyphI> glyphs = new ArrayList<>();
 
         for (TierGlyph tg : seqmap.getTiers()) {
             // Do not perform selection on axis tier childrens
@@ -1782,10 +1763,8 @@ public class SeqMapView extends JPanel
 
         boolean top_level = seqmap.getSelected().size() > 1;
         // copy selections to a new list before starting, because list of selections will be modified
-        List<GlyphI> all_selections = new ArrayList<GlyphI>(seqmap.getSelected());
-        Iterator<GlyphI> iter = all_selections.iterator();
-        while (iter.hasNext()) {
-            GlyphI child = iter.next();
+        List<GlyphI> all_selections = new ArrayList<>(seqmap.getSelected());
+        for (GlyphI child : all_selections) {
             GlyphI pglyph = getParent(child, top_level);
             if (pglyph != child) {
                 seqmap.deselect(child);
@@ -1811,12 +1790,12 @@ public class SeqMapView extends JPanel
     static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
         // linked hash set keeps parents in same order as child list so that comparison
         // like childList.equals(parentList) can be used.
-        Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
+        Set<GlyphI> results = new LinkedHashSet<>(childGlyphs.size());
         for (GlyphI child : childGlyphs) {
             GlyphI pglyph = getParent(child, true);
             results.add(pglyph);
         }
-        return new ArrayList<GlyphI>(results);
+        return new ArrayList<>(results);
     }
 
     /**
@@ -1892,7 +1871,7 @@ public class SeqMapView extends JPanel
                     sym = (SeqSymmetry) info;
                 }
                 if (sym instanceof MutableSingletonSeqSymmetry) {
-                    id = ((LeafSingletonSymmetry) sym).getID();
+                    id = sym.getID();
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof GraphSym) {
@@ -1910,7 +1889,7 @@ public class SeqMapView extends JPanel
                 if (id == null && sym instanceof DerivedSeqSymmetry) {
                     SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
                     if (original instanceof MutableSingletonSeqSymmetry) {
-                        id = ((LeafSingletonSymmetry) original).getID();
+                        id = original.getID();
                         sym_used_for_title = original;
                     } else if (original instanceof SymWithProps) {
                         id = (String) ((SymWithProps) original).getProperty("id");
@@ -2226,16 +2205,14 @@ public class SeqMapView extends JPanel
             }
         }
         // this selects all join subtracks on the track itself (arrow on left edge)
-        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
-            if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
-                for (GlyphI child : tierGlyph.getChildren()) {
-                    boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
-                    if (matches) {
-                        seqmap.select(child);
-                    }
+        tierLabelManager.getVisibleTierGlyphs().stream().filter(tierGlyph -> tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0).forEach(tierGlyph -> {
+            for (GlyphI child : tierGlyph.getChildren()) {
+                boolean matches = matchesCategory((RootSeqSymmetry) child.getInfo(), category);
+                if (matches) {
+                    seqmap.select(child);
                 }
             }
-        }
+        });
         gmodel.setSelectedSymmetries(glyphsToRootSyms(tierLabelManager.getSelectedTiers()), getSelectedSyms(), this);
         seqmap.updateWidget();
     }
@@ -2248,13 +2225,11 @@ public class SeqMapView extends JPanel
                 floatGlyph.setSelected(false);
             }
         }
-        for (TierGlyph tierGlyph : tierLabelManager.getVisibleTierGlyphs()) {
-            if (tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0) {
-                for (GlyphI child : tierGlyph.getChildren()) {
-                    seqmap.deselect(child);
-                }
+        tierLabelManager.getVisibleTierGlyphs().stream().filter(tierGlyph -> tierGlyph.getTierType() == TierGlyph.TierType.GRAPH && tierGlyph.getChildCount() > 0).forEach(tierGlyph -> {
+            for (GlyphI child : tierGlyph.getChildren()) {
+                seqmap.deselect(child);
             }
-        }
+        });
     }
 
     public void deselectAll() {
@@ -2268,7 +2243,7 @@ public class SeqMapView extends JPanel
      * GraphGlyph.
      */
     final List<GraphGlyph> collectGraphs() {
-        List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphs = new ArrayList<>();
         GlyphI root = seqmap.getScene().getGlyph();
         collectGraphs(root, graphs);
         return graphs;
@@ -2398,7 +2373,6 @@ public class SeqMapView extends JPanel
                 || toolTipSym != sym
                 || x != -1) {
             toolTipSym = sym;
-//			String toolTip = null;
             Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
@@ -2406,10 +2380,8 @@ public class SeqMapView extends JPanel
                 } else {
                     properties = propertyHandler.getPropertiesRow(toolTipSym, this);
                 }
-//				toolTip = convertPropsToString(properties);
             }
-//			seqmap.getNeoCanvas().setToolTipText(toolTip);
-            if (evt != null) {
+            if (evt != null && properties != null) {
                 Point point = new Point(evt.getXOnScreen() + ((AffyLabelledTierMap) seqmap).getLabelMap().getWidth(), evt.getYOnScreen());
                 seqMapToolTips.setToolTip(point, properties, sym);
             } else {
@@ -2419,11 +2391,11 @@ public class SeqMapView extends JPanel
     }
 
     public void disableToolTip() {
-        seqMapToolTips.setToolTip(null, new HashMap<String, Object>(), null);
+        seqMapToolTips.setVisible(false);
     }
 
     public void showProperties(int x, GraphGlyph glyph) {
-        List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> glyphs = new ArrayList<>();
         glyphs.add(glyph);
         List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
 
@@ -2564,7 +2536,7 @@ public class SeqMapView extends JPanel
     @SuppressWarnings("unchecked")
     @Override
     public List<Map<String, Object>> getProperties() {
-        List<Map<String, Object>> propList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> propList = new ArrayList<>();
         List<SeqSymmetry> selected_syms = getSelectedSyms();
         for (GlyphI glyph : getSeqMap().getSelected()) {
 
@@ -2577,12 +2549,12 @@ public class SeqMapView extends JPanel
             if (glyph.getInfo() instanceof Map) {
                 props = (Map<String, Object>) glyph.getInfo();
             } else {
-                props = new HashMap<String, Object>();
+                props = new HashMap<>();
             }
 
             boolean direction = true;
             if (props.containsKey("direction")) {
-                if (((String) props.get("direction")).equals("reverse")) {
+                if (props.get("direction").equals("reverse")) {
                     direction = false;
                 }
             }
@@ -2608,7 +2580,7 @@ public class SeqMapView extends JPanel
 
     @Override
     public Map<String, Object> determineProps(SeqSymmetry sym) {
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         if (sym == null) {
             return props;
         }
@@ -2711,7 +2683,7 @@ public class SeqMapView extends JPanel
         }
         GlyphI joinedParent = glyph.getParent();
         if (glyph.getParent() != null && glyph.getParent().getChildCount() == 2) {
-            List<GraphGlyph> graphGlyphs = new ArrayList<GraphGlyph>(2);
+            List<GraphGlyph> graphGlyphs = new ArrayList<>(2);
             for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
                 if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
                     splitGraph((GraphGlyph) glyph.getParent().getChild(i));
@@ -2745,7 +2717,7 @@ public class SeqMapView extends JPanel
     @Override
     public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex,
             String residues, int residue_offset, Color hitColor) {
-        final List<GlyphI> resultGlyphs = new ArrayList<GlyphI>();
+        final List<GlyphI> resultGlyphs = new ArrayList<>();
         List<SingletonSymWithProps> results = BioSeqUtils.searchForRegexInResidues(forward, regex, residues, residue_offset, getAnnotatedSeq());
         for (SingletonSymWithProps result : results) {
             GlyphI gl = new FillRectGlyph() {
@@ -2763,13 +2735,8 @@ public class SeqMapView extends JPanel
             gl.setCoords(result.getMin(), pos, result.getLength(), 10);
             resultGlyphs.add(gl);
         }
-        ThreadUtils.runOnEventQueue(new Runnable() {
-            @Override
-            public void run() {
-                for (GlyphI glyph : resultGlyphs) {
-                    axis_tier.addChild(glyph);
-                }
-            }
+        ThreadUtils.runOnEventQueue(() -> {
+            resultGlyphs.forEach(axis_tier::addChild);
         });
         return resultGlyphs;
     }
@@ -2906,7 +2873,7 @@ public class SeqMapView extends JPanel
         (new AnnotationGlyphFactory()).createGlyph(sym, this);
         getSeqMap().repackTheTiers(true, true);
         if (select) {
-            List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> selections = new ArrayList<>();
             selections.add(sym);
             this.select(selections, true);
         }
@@ -2922,7 +2889,7 @@ public class SeqMapView extends JPanel
         (new AnnotationGlyphFactory()).createGlyph(sym, this);
         getSeqMap().repackTheTiers(true, true);
         if (select) {
-            List<SeqSymmetry> selections = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> selections = new ArrayList<>();
             selections.add(sym);
             this.select(selections, true);
         }
@@ -2969,4 +2936,5 @@ public class SeqMapView extends JPanel
             }
         }
     }
+
 }

@@ -1,7 +1,5 @@
 package com.affymetrix.igb.swing;
 
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
 public class RPAdjustableJSlider extends AdjustableJSlider implements JRPWidget {
@@ -25,12 +23,7 @@ public class RPAdjustableJSlider extends AdjustableJSlider implements JRPWidget 
 		if (id != null) {
 			ScriptManager.getInstance().addWidget(this);
 		}
-		addAdjustmentListener(new AdjustmentListener() {
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				ScriptManager.getInstance().recordOperation(new Operation(RPAdjustableJSlider.this, "setValue(" + getValue() + ")"));
-			}
-		});
+		addAdjustmentListener(e -> ScriptManager.getInstance().recordOperation(new Operation(RPAdjustableJSlider.this, "setValue(" + getValue() + ")")));
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.util.ThresholdReader;
@@ -12,7 +12,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 /**
@@ -27,17 +26,15 @@ public class ThresholdXZoomer extends RPAdjustableJSlider{
 	private final SeqMapView smv;
 	public int threshold = ThresholdReader.default_threshold;
 	
-	PreferenceChangeListener prefListener = new PreferenceChangeListener() {
-		public void preferenceChange(PreferenceChangeEvent pce) {
-			if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
-				return;
-			}
+	PreferenceChangeListener prefListener = pce -> {
+        if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+            return;
+        }
 
-			if (pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)) {
-				threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
-			}
-		}
-	};
+        if (pce.getKey().equals(PreferenceUtils.PREFS_THRESHOLD)) {
+            threshold = ThresholdReader.getInstance().getCurrentThresholdValue();
+        }
+    };
 	
 	TrackstylePropertyMonitor.TrackStylePropertyListener trackPropertyListener = new TrackstylePropertyMonitor.TrackStylePropertyListener() {
 		@Override

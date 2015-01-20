@@ -54,7 +54,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
             } else {
                 uriString = GeneralUtils.fixFileName(uri.toString());
             }
-            uriString = uriString.substring(0, uriString.toString().length() - ".tbi".length());
+            uriString = uriString.substring(0, uriString.length() - ".tbi".length());
             tabixReader = new TabixReader(uriString);
             tabixReader.readIndex();
         } catch (Exception x) {
@@ -76,7 +76,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
             @Override
             public List<Long> get(int index) {
                 Object chunk = chunks[index];
-                List<Long> chunkList = new ArrayList<Long>();
+                List<Long> chunkList = new ArrayList<>();
                 try {
                     Field privateReaderField = chunk.getClass().getDeclaredField("u");
                     privateReaderField.setAccessible(true);
@@ -117,9 +117,9 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
                     @Override
                     public Set<Map.Entry<Integer, List<List<Long>>>> entrySet() {
                         Set<Map.Entry<Integer, List<List<Long>>>> entrySet
-                                = new HashSet<Map.Entry<Integer, List<List<Long>>>>();
+                                = new HashSet<>();
                         final Object[] chunks = bins.get(binNo);
-                        entrySet.add(new SimpleEntry<Integer, List<List<Long>>>(binNo, getChunkList(chunks)));
+                        entrySet.add(new SimpleEntry<>(binNo, getChunkList(chunks)));
                         return entrySet;
                     }
                 };
@@ -152,7 +152,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
     }
 
     private Iterator<Map<Integer, List<List<Long>>>> getBinIter(Map<String, String> synonymMap, String seq) {
-        int refno = getRefNo(synonymMap, seq.toString());
+        int refno = getRefNo(synonymMap, seq);
         if (refno != -1) {
             try {
                 Field privateReaderField = tabixReader.getClass().getDeclaredField("mIndex");

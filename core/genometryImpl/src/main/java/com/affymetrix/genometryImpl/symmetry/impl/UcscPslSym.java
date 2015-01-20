@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -345,7 +344,7 @@ public class UcscPslSym
             }
 
             if ((beg_index < qmins.length) && (qmins[beg_index] < input_max)) {
-                results = new ArrayList<SeqSymmetry>();
+                results = new ArrayList<>();
                 int index = beg_index;
                 // now scan forward till qmin[index] >= input_max and collect list of symmetries
                 while ((index < qmins.length) && (qmins[index] < input_max)) {
@@ -426,17 +425,17 @@ public class UcscPslSym
     }
 
     public Map<String, Object> cloneProperties() {
-        HashMap<String, Object> tprops = new HashMap<String, Object>();
+        HashMap<String, Object> tprops = new HashMap<>();
 
         tprops.put("id", getQuerySeq().getID());
         tprops.put("type", "Pairwise Alignment");
         tprops.put("same orientation", getSameOrientation());
-        tprops.put("matches", Integer.valueOf(getMatches()));
-        tprops.put("query length", Integer.valueOf(queryseq.getLength()));
-        tprops.put("query inserts", Integer.valueOf(getQueryNumInserts()));
-        tprops.put("query bases inserted", Integer.valueOf(getQueryBaseInserts()));
-        tprops.put("target inserts", Integer.valueOf(getTargetNumInserts()));
-        tprops.put("target bases inserted", Integer.valueOf(getTargetBaseInserts()));
+        tprops.put("matches", getMatches());
+        tprops.put("query length", queryseq.getLength());
+        tprops.put("query inserts", getQueryNumInserts());
+        tprops.put("query bases inserted", getQueryBaseInserts());
+        tprops.put("target inserts", getTargetNumInserts());
+        tprops.put("target bases inserted", getTargetBaseInserts());
 		//tprops.put("query seq", getQuerySeq().getID());
         //tprops.put("target seq", getTargetSeq().getID());
         if (props != null) {
@@ -485,7 +484,7 @@ public class UcscPslSym
 
     public boolean setProperty(String name, Object val) {
         if (props == null) {
-            props = new Hashtable<String, Object>();
+            props = new Hashtable<>();
         }
         props.put(name, val);
         return true;
@@ -585,9 +584,7 @@ public class UcscPslSym
 
     protected void outputPropTagVals(DataOutputStream out) throws IOException {
         if (props != null) {
-            Iterator<Map.Entry<String, Object>> iter = props.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, Object> entry = iter.next();
+            for (Map.Entry<String, Object> entry : props.entrySet()) {
                 out.write((entry.getKey()).getBytes());
                 out.write('=');
                 out.write(entry.getValue().toString().getBytes());

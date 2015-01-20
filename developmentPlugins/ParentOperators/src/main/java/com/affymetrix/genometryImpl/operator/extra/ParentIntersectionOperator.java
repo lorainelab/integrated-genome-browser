@@ -40,7 +40,7 @@ public class ParentIntersectionOperator extends AbstractAnnotationOperator imple
 
     private static SeqSymmetry intersect(BioSeq seq, SeqSymmetry unionA, SeqSymmetry unionB) {
         MutableSeqSymmetry psym = new SimpleSymWithProps();
-        List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symsAB = new ArrayList<>();
         symsAB.add(unionA);
         symsAB.add(unionB);
         GraphSym combo_graph = SeqSymSummarizer.getSymmetrySummary(symsAB, seq, false, "");

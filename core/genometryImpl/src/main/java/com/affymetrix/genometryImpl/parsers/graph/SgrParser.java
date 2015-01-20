@@ -27,14 +27,14 @@ public final class SgrParser implements GraphParser {
 		if (DEBUG) {
 			System.out.println("Parsing with SgrParser: " + stream_name);
 		}
-		List<GraphSym> results = new ArrayList<GraphSym>();
+		List<GraphSym> results = new ArrayList<>();
 
 		try {
 			InputStreamReader isr = new InputStreamReader(istr);
 			BufferedReader br = new BufferedReader(isr);
 
-			Map<String, IntArrayList> xhash = new HashMap<String, IntArrayList>();
-			Map<String, FloatArrayList> yhash = new HashMap<String, FloatArrayList>();
+			Map<String, IntArrayList> xhash = new HashMap<>();
+			Map<String, FloatArrayList> yhash = new HashMap<>();
 
 			String gid = stream_name;
 			if (ensure_unique_id) {
@@ -138,8 +138,7 @@ public final class SgrParser implements GraphParser {
 			int xcount = xcoords.length;
 			boolean sorted = true;
 			int prevx = Integer.MIN_VALUE;
-			for (int i = 0; i < xcount; i++) {
-				int x = xcoords[i];
+			for (int x : xcoords) {
 				if (x < prevx) {
 					sorted = false;
 					break;

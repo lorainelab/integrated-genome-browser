@@ -58,7 +58,7 @@ public class UCSCView extends BrowserView {
 
     @Override
     public Image getImage(Loc loc, int pixWidth) throws ImageUnavailableException {
-        Map<String, String> cookies = new HashMap<String, String>();
+        Map<String, String> cookies = new HashMap<>();
         cookies.put(UCSCUSERID, getCookie(UCSCUSERID));
         return new UCSCLoader().getImage(loc, pixWidth, cookies);
     }
@@ -124,12 +124,7 @@ public class UCSCView extends BrowserView {
                 }
             });
             okButton.setToolTipText(ExternalViewer.BUNDLE.getString("ucscUserIdTT"));
-            ucscInfo.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    GeneralUtils.browse("http://genome.ucsc.edu/cgi-bin/cartDump");
-                }
-            });
+            ucscInfo.addActionListener(e -> GeneralUtils.browse("http://genome.ucsc.edu/cgi-bin/cartDump"));
             ucscInfo.setToolTipText("<html>" + ExternalViewer.BUNDLE.getString("ucscTT1") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT2") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT3") + "</html>");
             getContentPane().add("Center", pane);
             getContentPane().add("South", panel);

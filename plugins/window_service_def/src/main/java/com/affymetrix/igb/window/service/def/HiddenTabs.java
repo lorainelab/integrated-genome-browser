@@ -16,7 +16,7 @@ public class HiddenTabs implements TabHolder {
 
     public HiddenTabs() {
         super();
-        addedPlugins = new HashSet<IGBTabPanel>();
+        addedPlugins = new HashSet<>();
     }
 
     @Override

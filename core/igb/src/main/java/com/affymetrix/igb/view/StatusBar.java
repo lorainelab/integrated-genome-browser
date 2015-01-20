@@ -35,7 +35,7 @@ import javax.swing.JProgressBar;
 
 public final class StatusBar extends JPanel implements DisplaysError, CThreadListener {
 	private static final long serialVersionUID = 1l;
-	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
+	private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<>();
 	static {
 		textAttrMap.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		textAttrMap.put(TextAttribute.FOREGROUND, Color.BLUE);

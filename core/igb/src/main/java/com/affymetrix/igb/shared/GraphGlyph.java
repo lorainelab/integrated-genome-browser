@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.GraphState;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class GraphGlyph extends Glyph implements StyledGlyph {
 
@@ -290,7 +292,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         double interval = Math.pow(10, Math.floor(Math.log10(range)));
         double start = Math.floor(min / interval) * interval;
 
-        List<Double> coords = new ArrayList<Double>(10);
+        List<Double> coords = new ArrayList<>(10);
         for (double d = start; d <= max; d += interval) {
             if (d >= min && d <= max) {
                 coords.add(d);
@@ -1373,7 +1375,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
             if (g instanceof Graphics2D) {
                 Graphics2D g2 = (Graphics2D) g;
                 original_render_hints = g2.getRenderingHints();
-                Map<Object, Object> my_render_hints = new HashMap<Object, Object>();
+                Map<Object, Object> my_render_hints = new HashMap<>();
                 my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
                 g2.addRenderingHints(my_render_hints);
             }
@@ -1393,11 +1395,11 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     }
 
     @Override
-    public FileTypeCategory getFileTypeCategory() {
+    public Optional<FileTypeCategory> getFileTypeCategory() {
         if (graf != null) {
-            return graf.getCategory();
+            return Optional.ofNullable(graf.getCategory());
         }
-        return FileTypeCategory.Graph;
+        return Optional.ofNullable(FileTypeCategory.Graph);
     }
 
     @Override
@@ -1411,7 +1413,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
 
     @Override
     public boolean withinView(ViewI view) {
-        if (!getAnnotStyle().getFloatTier()) {
+        if (!getAnnotStyle().isFloatTier()) {
             return super.withinView(view);
         }
         return this.getCoordBox().intersects(this.getParent().getCoordBox());

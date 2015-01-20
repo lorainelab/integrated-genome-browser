@@ -36,7 +36,7 @@ public class CopyXOperator extends AbstractAnnotationTransformer implements Oper
 			result.addSpan(t.getSpan(i));
 		}
 		// copy properties
-		result.setProperties(new HashMap<String,Object>(t.getProperties()));
+		result.setProperties(new HashMap<>(t.getProperties()));
 		return result;
 	}
 

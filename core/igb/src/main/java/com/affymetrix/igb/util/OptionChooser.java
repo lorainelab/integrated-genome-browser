@@ -35,17 +35,9 @@ public abstract class OptionChooser extends javax.swing.JPanel {
         info = new javax.swing.JLabel();
         loadAsSeqCB = new javax.swing.JCheckBox();
 
-        speciesCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                speciesCBActionPerformed(evt);
-            }
-        });
+        speciesCB.addActionListener(this::speciesCBActionPerformed);
 
-        versionCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                versionCBActionPerformed(evt);
-            }
-        });
+        versionCB.addActionListener(this::versionCBActionPerformed);
 
         speciesInfo.setIcon(CommonUtils.getInstance().getIcon("16x16/actions/info.png"));
         speciesInfo.setText(" ");
@@ -59,11 +51,7 @@ public abstract class OptionChooser extends javax.swing.JPanel {
 
         loadAsSeqCB.setText("Open as reference sequence");
         loadAsSeqCB.setEnabled(false);
-        loadAsSeqCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadAsSeqCBActionPerformed(evt);
-            }
-        });
+        loadAsSeqCB.addActionListener(this::loadAsSeqCBActionPerformed);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

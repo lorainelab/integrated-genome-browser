@@ -1,5 +1,6 @@
 package com.affymetrix.igb.osgi.service;
 
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.event.GenericAction;
@@ -15,6 +16,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.google.common.base.Optional;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -140,9 +142,9 @@ public interface IGBService {
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
 	// for plugins
-	public List<Glyph> getAllTierGlyphs();
-	public List<Glyph> getSelectedTierGlyphs();
-	public List<Glyph> getVisibleTierGlyphs();
+	public List<TierGlyph> getAllTierGlyphs();
+	public List<TierGlyph> getSelectedTierGlyphs();
+	public List<TierGlyph> getVisibleTierGlyphs();
 	public RepositoryChangeHolderI getRepositoryChangerHolder();
 
 	// ServerList

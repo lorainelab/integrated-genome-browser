@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * This is an extension of the QuickLoadSymLoader class, specifically for chp files.
@@ -49,13 +48,11 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 		}
 		
 		Map<String, List<SeqSymmetry>> syms = SymLoader.splitResultsByTracks(results);
-		Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
-		for (Entry<String, List<SeqSymmetry>> entry : syms.entrySet()) {
-			if (entry.getKey() != null) {
-				feature.addMethod(entry.getKey());
-				added.put(entry.getKey(), entry.getValue());
-			}
-		}
+		Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
+		syms.entrySet().stream().filter(entry -> entry.getKey() != null).forEach(entry -> {
+			feature.addMethod(entry.getKey());
+			added.put(entry.getKey(), entry.getValue());
+		});
 		return added;
 	}
 	

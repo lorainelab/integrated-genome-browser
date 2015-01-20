@@ -18,7 +18,7 @@ public class QualityScoreFilter extends SymmetryFilter {
 	private final static String AVG_QUALITY_SCORE = "average_quality";
 	private final static String COMPARATOR = "comparator";
 	private final static int DEFAULT_AVG_QUALITY_SCORE = 30;
-	private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<MathComparisonOperator>();
+	private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
 	static {
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanEqualMathComparisonOperator());
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.GreaterThanMathComparisonOperator());
@@ -28,8 +28,8 @@ public class QualityScoreFilter extends SymmetryFilter {
 		COMPARATOR_VALUES.add(new com.affymetrix.genometryImpl.operator.comparator.NotEqualMathComparisonOperator());
 	}
 	
-    private Parameter<Integer> averageQuality = new Parameter<Integer>(DEFAULT_AVG_QUALITY_SCORE);
-	private Parameter<MathComparisonOperator> comparator = new BoundedParameter<MathComparisonOperator>(COMPARATOR_VALUES);
+    private Parameter<Integer> averageQuality = new Parameter<>(DEFAULT_AVG_QUALITY_SCORE);
+	private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 	
 	public QualityScoreFilter(){
 		super();
@@ -58,8 +58,6 @@ public class QualityScoreFilter extends SymmetryFilter {
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(AVG_QUALITY_SCORE).append(" ").append(comparator.get().getDisplay()).append(" ").append(averageQuality.get());
-		return sb.toString();
+		return AVG_QUALITY_SCORE + " " + comparator.get().getDisplay() + " " + averageQuality.get();
 	}
 }

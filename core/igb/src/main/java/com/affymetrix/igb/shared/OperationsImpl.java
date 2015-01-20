@@ -17,8 +17,6 @@ import static com.affymetrix.igb.shared.Selections.isAllRootSeqSymmetrySame;
 import static com.affymetrix.igb.shared.Selections.rootSyms;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.MessageFormat;
@@ -51,24 +49,14 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
     public OperationsImpl(IGBService igbS) {
         this.igbService = igbS;
-        name2transformation = new HashMap<String, Operator>();
-        name2operation = new HashMap<String, Operator>();
+        name2transformation = new HashMap<>();
+        name2operation = new HashMap<>();
 
         initComponents(igbS);
-        getTransformationCB().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                setTransformationDisplay(true);
-            }
-        });
+        getTransformationCB().addItemListener(e -> setTransformationDisplay(true));
 
         getOperationCB().addMouseListener(new HoverEffect());
-        getOperationCB().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                setOperationDisplay(true);
-            }
-        });
+        getOperationCB().addItemListener(e -> setOperationDisplay(true));
 
 
 
@@ -109,12 +97,9 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     public void updateViewer() {
         // set selections to empty so that options get turned off
         resetAll(false);
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                igbService.getSeqMapView().updatePanel();
-                resetAll(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            igbService.getSeqMapView().updatePanel();
+            resetAll(true);
         });
     }
 
@@ -139,7 +124,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                 && paramField.isEnabled() && paramField.getText() != null
                 && paramField.getText().length() > 0) {
             Map<String, Class<?>> params = ((IParameters) operatorClone).getParametersType();
-            Map<String, Object> setparams = new HashMap<String, Object>();
+            Map<String, Object> setparams = new HashMap<>();
             setparams.put(params.keySet().iterator().next(), paramField.getText());
             ((IParameters) operatorClone).setParametersValue(setparams);
         }
@@ -165,9 +150,9 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
             }
         }
         boolean transformOK = transformCategory != null;
-        TreeSet<Operator> operators = new TreeSet<Operator>(new IDComparator());
+        TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
         operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
-        List<RootSeqSymmetry> transformSyms = new ArrayList<RootSeqSymmetry>(); // fake List to test compatibility of Transform operations
+        List<RootSeqSymmetry> transformSyms = new ArrayList<>(); // fake List to test compatibility of Transform operations
         transformSyms.add(rootSyms.get(0));
         for (Operator operator : operators) {
             if (!addThisOperator(operator)) {
@@ -368,12 +353,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                 ((GraphSym) rootSyms.get(1)).setGraphName("B");
 
                 comp.setToolTipText(null);
-                ThreadUtils.runOnEventQueue(new Runnable() {
-
-                    public void run() {
-                        igbService.getSeqMap().updateWidget();
-                    }
-                });
+                ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
             }
         }
 
@@ -383,12 +363,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                     ((GraphSym) rootSyms.get(0)).setGraphName(A);
                     ((GraphSym) rootSyms.get(1)).setGraphName(B);
 
-                    ThreadUtils.runOnEventQueue(new Runnable() {
-
-                        public void run() {
-                            igbService.getSeqMap().updateWidget();
-                        }
-                    });
+                    ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
                     A = null;
                     B = null;
 

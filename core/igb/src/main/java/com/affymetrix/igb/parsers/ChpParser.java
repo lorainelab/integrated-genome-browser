@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +157,7 @@ public final class ChpParser {
 		String algVersion = chp.getAlgVersion();
 		String array_type = chp.getArrayType();
 		int ps_count = chp.getEntryCount();
-		List<ProbeSetQuantificationDetectionData> int_entries = new ArrayList<ProbeSetQuantificationDetectionData>(ps_count);
+		List<ProbeSetQuantificationDetectionData> int_entries = new ArrayList<>(ps_count);
 		int int_id_count = 0;
 		int str_id_count = 0;
 		System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -184,7 +183,7 @@ public final class ChpParser {
 				name = psqData.getName();
 				try {
 					Integer nid = new Integer(name);
-					intid = nid.intValue();
+					intid = nid;
 					psqData.setId(intid);
 					psqData.setName(null);
 					int_entries.add(psqData);
@@ -222,7 +221,7 @@ public final class ChpParser {
 		String algVersion = chp.getAlgVersion();
 		String array_type = chp.getArrayType();
 		int ps_count = chp.getEntryCount();
-		List<ProbeSetQuantificationData> int_entries = new ArrayList<ProbeSetQuantificationData>(ps_count);
+		List<ProbeSetQuantificationData> int_entries = new ArrayList<>(ps_count);
 		int int_id_count = 0;
 		int str_id_count = 0;
 		System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -244,7 +243,7 @@ public final class ChpParser {
 				name = psqData.getName();
 				try {
 					Integer nid = new Integer(name);
-					intid = nid.intValue();
+					intid = nid;
 					psqData.setId(intid);
 					psqData.setName(null);
 					int_entries.add(psqData);
@@ -318,7 +317,7 @@ public final class ChpParser {
 		ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
 		style.setGlyphDepth(1);
 
-		List<LazyChpSym> results = new ArrayList<LazyChpSym>();
+		List<LazyChpSym> results = new ArrayList<>();
 		int scount = group.getSeqCount();
 		for (int i = 0; i < scount; i++) {
 			BioSeq aseq = group.getSeq(i);
@@ -375,11 +374,11 @@ public final class ChpParser {
 			}
 		}
 		Map<BioSeq, List<OneScoreEntry>> seq2entries =
-				new HashMap<BioSeq, List<OneScoreEntry>>();
+				new HashMap<>();
 		int match_count = 0;
 
 		if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+			List<SeqSymmetry> syms = new ArrayList<>();
 			for (int i = 0; i < ps_count; i++) {
 				psqData = chp.getQuantificationEntry(i);
 				float val = psqData.getQuantification();
@@ -401,7 +400,7 @@ public final class ChpParser {
 					OneScoreEntry sentry = new OneScoreEntry(isym, val);
 					List<OneScoreEntry> sentries = seq2entries.get(aseq);
 					if (sentries == null) {
-						sentries = new ArrayList<OneScoreEntry>();
+						sentries = new ArrayList<>();
 						seq2entries.put(aseq, sentries);
 					}
 					sentries.add(sentry);
@@ -409,7 +408,7 @@ public final class ChpParser {
 				syms.clear();
 			}
 		} else {  // 3' IVT results, so try to match up names of probesets with ids already seen
-			List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+			List<SeqSymmetry> syms = new ArrayList<>();
 			for (int i = 0; i < ps_count; i++) {
 				psqData = chp.getQuantificationEntry(i);
 				float val = psqData.getQuantification();
@@ -429,8 +428,7 @@ public final class ChpParser {
 				int scount = syms.size();
 				if (scount > 0) {
 					match_count++;
-					for (int k = 0; k < scount; k++) {
-						SeqSymmetry prev_sym = syms.get(k);
+					for (SeqSymmetry prev_sym : syms) {
 						SeqSpan span = prev_sym.getSpan(0);
 						BioSeq aseq = span.getBioSeq();
 						IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
@@ -438,7 +436,7 @@ public final class ChpParser {
 						OneScoreEntry sentry = new OneScoreEntry(isym, val);
 						List<OneScoreEntry> sentries = seq2entries.get(aseq);
 						if (sentries == null) {
-							sentries = new ArrayList<OneScoreEntry>();
+							sentries = new ArrayList<>();
 							seq2entries.put(aseq, sentries);
 						}
 						sentries.add(sentry);
@@ -522,14 +520,14 @@ public final class ChpParser {
 
 	private static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) throws Exception  {
 		GenometryModel gmodel = GenometryModel.getInstance();
-		List<GraphSym> results = new ArrayList<GraphSym>();
+		List<GraphSym> results = new ArrayList<>();
 		int seq_count = tchp.getNumberSequences();
 		String alg_name = tchp.getAlgName();
 		String alg_vers = tchp.getAlgVersion();
 
 		System.out.println("seq_count = " + seq_count + ", alg_name = " + alg_name + ", alg_vers = " + alg_vers);
 
-		Map<String, String> file_prop_hash = new LinkedHashMap<String, String>();
+		Map<String, String> file_prop_hash = new LinkedHashMap<>();
 		List<ParameterNameValue> alg_params = tchp.getAlgParams();
             for (ParameterNameValue param : alg_params) {
                 String pname = param.getName();
@@ -608,9 +606,7 @@ public final class ChpParser {
 			}
 			GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
 
-			Iterator<Map.Entry<String, String>> fiter = file_prop_hash.entrySet().iterator();
-			while (fiter.hasNext()) {
-				Map.Entry<String, String> ent = fiter.next();
+			for (Map.Entry<String, String> ent : file_prop_hash.entrySet()) {
 				gsym.setProperty(ent.getKey(), ent.getValue());
 			}
 

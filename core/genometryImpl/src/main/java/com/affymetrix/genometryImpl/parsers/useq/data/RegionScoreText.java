@@ -21,7 +21,7 @@ public class RegionScoreText extends RegionScore{
 	/**Loads a binary file containing int,int,float,String (start,stop,score,text)
 	 * @return an array! or null if something bad happened.*/
 	public static RegionScoreText[] oldLoadBinary_DEPRECIATED(File binaryFile, boolean sort){
-		ArrayList<RegionScoreText> sss = new ArrayList<RegionScoreText>(10000);
+		ArrayList<RegionScoreText> sss = new ArrayList<>(10000);
 		DataInputStream dis = null;
 		int start =0;
 		int stop =0;

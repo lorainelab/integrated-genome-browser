@@ -11,7 +11,7 @@ import java.util.Map;
  * @version $Id: QueryBuilder.java 6838 2010-09-02 19:54:19Z jnicol $
  */
 public class QueryBuilder {
-	private final Map<String, String> parameters = new LinkedHashMap<String, String>();
+	private final Map<String, String> parameters = new LinkedHashMap<>();
 	private final String u;
 
 	public QueryBuilder(String u) {

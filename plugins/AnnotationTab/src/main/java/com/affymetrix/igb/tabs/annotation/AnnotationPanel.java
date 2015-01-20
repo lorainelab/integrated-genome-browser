@@ -56,35 +56,19 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         labelFieldLabel.setToolTipText("Choose a feature property to label features within the track.");
 
         labelFieldComboBox.setToolTipText("Choose a feature property to label features within the track.");
-        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                labelFieldComboBoxActionPerformed(evt);
-            }
-        });
+        labelFieldComboBox.addActionListener(this::labelFieldComboBoxActionPerformed);
 
         strands2TracksCheckBox.setText("+/-");
         strands2TracksCheckBox.setToolTipText("Show + and - strand features the same track.");
-        strands2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strands2TracksCheckBoxActionPerformed(evt);
-            }
-        });
+        strands2TracksCheckBox.addActionListener(this::strands2TracksCheckBoxActionPerformed);
 
         strandsArrowCheckBox.setText("Arrow");
         strandsArrowCheckBox.setToolTipText("Show strand using arrows.");
-        strandsArrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsArrowCheckBoxActionPerformed(evt);
-            }
-        });
+        strandsArrowCheckBox.addActionListener(this::strandsArrowCheckBoxActionPerformed);
 
         strandsColorCheckBox.setText("Color by Strand:");
         strandsColorCheckBox.setToolTipText("Show strand using different colors for + and - strand features.");
-        strandsColorCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsColorCheckBoxActionPerformed(evt);
-            }
-        });
+        strandsColorCheckBox.addActionListener(this::strandsColorCheckBoxActionPerformed);
 
         strandsLabel.setText("Strand:");
         strandsLabel.setToolTipText("Configure how IGB represents strand.");
@@ -99,11 +83,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsReverseColorComboBox.setColorValueVisible(false);
         strandsReverseColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         strandsReverseColorComboBox.setStretchToFit(true);
-        strandsReverseColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsReverseColorComboBoxActionPerformed(evt);
-            }
-        });
+        strandsReverseColorComboBox.addActionListener(this::strandsReverseColorComboBoxActionPerformed);
 
         strandsForwardColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         strandsForwardColorComboBox.setToolTipText("Choose color for + strand features.");
@@ -111,11 +91,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsForwardColorComboBox.setColorValueVisible(false);
         strandsForwardColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         strandsForwardColorComboBox.setStretchToFit(true);
-        strandsForwardColorComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                strandsForwardColorComboBoxActionPerformed(evt);
-            }
-        });
+        strandsForwardColorComboBox.addActionListener(this::strandsForwardColorComboBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout annotationsPanelLayout = new org.jdesktop.layout.GroupLayout(annotationsPanel);
         annotationsPanel.setLayout(annotationsPanelLayout);
@@ -177,27 +153,15 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         stackHeightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stack Height"));
 
         stackDepthTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        stackDepthTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthTextFieldActionPerformed(evt);
-            }
-        });
+        stackDepthTextField.addActionListener(this::stackDepthTextFieldActionPerformed);
 
         stackDepthGoButton.setText("Go");
         stackDepthGoButton.setToolTipText("Click to run operation on selected tracks.");
-        stackDepthGoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthGoButtonActionPerformed(evt);
-            }
-        });
+        stackDepthGoButton.addActionListener(this::stackDepthGoButtonActionPerformed);
 
         stackDepthAllButton.setText("Optimize");
         stackDepthAllButton.setToolTipText("Set stack height to show everything. ");
-        stackDepthAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stackDepthAllButtonActionPerformed(evt);
-            }
-        });
+        stackDepthAllButton.addActionListener(this::stackDepthAllButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout stackHeightPanelLayout = new org.jdesktop.layout.GroupLayout(stackHeightPanel);
         stackHeightPanel.setLayout(stackHeightPanelLayout);
@@ -227,28 +191,16 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
 
         lockTierHeightCheckBox.setText("Lock Track Height (Pixels)");
         lockTierHeightCheckBox.setToolTipText("Lock track height to the value entered below. ");
-        lockTierHeightCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lockTierHeightCheckBoxActionPerformed(evt);
-            }
-        });
+        lockTierHeightCheckBox.addActionListener(this::lockTierHeightCheckBoxActionPerformed);
 
         setHeightInPxLabel.setText("Set Height (Pixels):");
 
         setPxHeightTextBox.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        setPxHeightTextBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setPxHeightTextBoxActionPerformed(evt);
-            }
-        });
+        setPxHeightTextBox.addActionListener(this::setPxHeightTextBoxActionPerformed);
 
         pxGoButton.setText("Go");
         pxGoButton.setToolTipText("Click to run operation on selected tracks.");
-        pxGoButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pxGoButtonActionPerformed(evt);
-            }
-        });
+        pxGoButton.addActionListener(this::pxGoButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout trackHeightPanelLayout = new org.jdesktop.layout.GroupLayout(trackHeightPanel);
         trackHeightPanel.setLayout(trackHeightPanelLayout);

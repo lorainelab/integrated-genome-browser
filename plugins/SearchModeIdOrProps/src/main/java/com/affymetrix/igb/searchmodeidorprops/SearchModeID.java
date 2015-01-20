@@ -96,7 +96,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
         }
         Pattern regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
 
-        Set<String> results = new HashSet<String>();
+        Set<String> results = new HashSet<>();
 
         GenometryModel.getInstance().getSelectedSeqGroup().searchHints(results, regex, 20);
 

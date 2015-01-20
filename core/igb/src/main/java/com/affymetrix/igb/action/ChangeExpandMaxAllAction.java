@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -30,7 +30,7 @@ public class ChangeExpandMaxAllAction extends ChangeExpandMaxActionA {
 
     @Override
     protected List<TierLabelGlyph> getTiers() {
-        List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> answer = new ArrayList<>();
         TierLabelManager m = getTierManager();
         List<TierLabelGlyph> allTiers = m.getAllTierLabels();
         if (null == allTiers) {

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.2</version>
+        <version>8.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -63,11 +63,16 @@
         </dependency>
         <!--Start of logging dependencies-->
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <scope>provided</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -90,7 +95,7 @@
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.tabs.graph.GraphTrackPanel</Bundle-Category>
                         <Bundle-Activator>com.affymetrix.igb.tabs.graph.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-SymbolicName>com.affymetrix.igb.tabs.graph.GraphTab</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
             </plugin>

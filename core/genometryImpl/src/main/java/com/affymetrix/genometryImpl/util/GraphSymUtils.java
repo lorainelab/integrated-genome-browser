@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
 import com.affymetrix.genometryImpl.parsers.Parser;
 import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
-import com.affymetrix.genometryImpl.symmetry.*;
 
 public final class GraphSymUtils {
 
@@ -120,7 +119,7 @@ public final class GraphSymUtils {
 				// new_x2coord will represent x + width: initial assumption is width is zero
 				int new_x2coord = new_xcoord;
 				if (hasWidth(original_graf)) {
-					final int old_x2coord = old_xcoord + ((GraphIntervalSym) original_graf).getGraphWidthCoord(k);
+					final int old_x2coord = old_xcoord + original_graf.getGraphWidthCoord(k);
 					new_x2coord = (int) ((scale * old_x2coord) + offset);
 					if (new_x2coord >= tspan.getEnd()) {
 						new_x2coord = tspan.getEnd();
@@ -247,7 +246,7 @@ public final class GraphSymUtils {
 
 			gsym.getGraphState().getTierStyle().setFeature(feature);
 
-			if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
+			if ((gsym.getGraphName() != null) && (gsym.getGraphName().contains("TransFrag"))) {
 				gsym = GraphSymUtils.convertTransFragGraph(gsym);
 			}
 		}
@@ -469,4 +468,6 @@ public final class GraphSymUtils {
 		}
 		return name;
 	}
+        
+ 
 }

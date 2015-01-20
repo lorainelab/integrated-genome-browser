@@ -3,8 +3,6 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -34,12 +32,10 @@ public class CopyResiduesAction extends GenericAction {
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
         GenometryModel.getInstance().addSymSelectionListener(
-                new SymSelectionListener() {
-                    public void symSelectionChanged(SymSelectionEvent evt) {
-                        boolean enabled = (IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1);
-                        ACTION.setEnabled(enabled);
-                        ACTION_SHORT.setEnabled(enabled);
-                    }
+                evt -> {
+                    boolean enabled1 = (IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1);
+                    ACTION.setEnabled(enabled1);
+                    ACTION_SHORT.setEnabled(enabled1);
                 });
         //GenericActionHolder.getInstance().addGenericAction(ACTION_SHORT);
     }

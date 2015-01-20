@@ -20,10 +20,13 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.REVERSE;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 /**
  *
@@ -45,23 +48,16 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 
 	private void updateDisplay(final boolean preserveX, final boolean preserveY){
-		ThreadUtils.runOnEventQueue(new Runnable() {
-	
-			public void run() {
+		ThreadUtils.runOnEventQueue(() -> {
 //				igbService.getSeqMap().updateWidget();
 //				igbService.getSeqMapView().setTierStyles();
 //				igbService.getSeqMapView().repackTheTiers(true, true);
-				igbService.getSeqMapView().updatePanel(preserveX, preserveY);
-			}
-		});
+igbService.getSeqMapView().updatePanel(preserveX, preserveY);
+});
 	}
 	
 	private void refreshView() {
-		ThreadUtils.runOnEventQueue(new Runnable() {	
-			public void run() {
-				igbService.getSeqMap().updateWidget();
-			}
-		});
+		ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
 	}
 	
 	private void setStackDepth() {
@@ -196,7 +192,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			for (StyledGlyph glyph : allGlyphs) {
 				if (stackDepth == -1 && !stackDepthSet) {
 					if (glyph instanceof TierGlyph) {
-						switch (((TierGlyph) glyph).getDirection()) {
+						switch (glyph.getDirection()) {
 							case FORWARD:
 								stackDepth = glyph.getAnnotStyle().getForwardMaxDepth();
 								break;
@@ -242,7 +238,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
 			if (sym instanceof SeqSymmetry) {
 				if (allFields == null) {
-					allFields = new TreeSet<String>(fields);
+					allFields = new TreeSet<>(fields);
 				}
 				else {
 					allFields.retainAll(fields);
@@ -250,7 +246,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 			}
 		}
 		if (allFields == null) {
-			allFields = new TreeSet<String>();
+			allFields = new TreeSet<>();
 			allFields.add("* none *");
 			allFields.add("id");
 			if (labelField != null && labelField.trim().length() > 0) {
@@ -376,7 +372,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 	}
 	
 	private Set<String> getFields(ITrackStyleExtended style) {
-		Set<String> fields = new TreeSet<String>();
+		Set<String> fields = new TreeSet<>();
 		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 		if (seq != null) {
 			SeqSymmetry sym = seq.getAnnotation(style.getMethodName());

@@ -34,8 +34,9 @@ import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.shared.ExpandPacker;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +123,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
     if (this.enclosedGlyphElements != null) {
-      clone.enclosedGlyphElements = new ArrayList<GlyphElement>(enclosedGlyphElements.size());
+      clone.enclosedGlyphElements = new ArrayList<>(enclosedGlyphElements.size());
 	  for (GlyphElement ge : enclosedGlyphElements) {
         GlyphElement new_glyph_element = (GlyphElement) ge.clone();
         clone.enclosedGlyphElements.add(new_glyph_element);
@@ -155,7 +156,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   
   void addGlyphElement(GlyphElement ge) {
     if (enclosedGlyphElements == null) {
-      enclosedGlyphElements = new ArrayList<GlyphElement>();
+      enclosedGlyphElements = new ArrayList<>();
     }
     enclosedGlyphElements.add(ge);
   }
@@ -176,30 +177,39 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private GlyphI makeGlyph(String type) {
 
     GlyphI gl = null;
-    if (TYPE_NONE.equals(type)) {
-      gl = null;
-    } else if (TYPE_BOX.equals(type)) {
-      gl = new EfficientOutlineContGlyph();
-    } else if (TYPE_FILLED_BOX.equals(type)) {
-      gl = new EfficientOutlinedRectGlyph();
-    } else if (TYPE_POINTED.equals(type)) {
-      gl = new PointedGlyph();
-    } else if (TYPE_LINE.equals(type)) {
-      if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
-        gl = new EfficientLabelledLineGlyph();
-      } else {
-        gl = new EfficientLineContGlyph();
+    if (null != type) switch (type) {
+          case TYPE_NONE:
+              gl = null;
+              break;
+          case TYPE_BOX:
+              gl = new EfficientOutlineContGlyph();
+              break;
+          case TYPE_FILLED_BOX:
+              gl = new EfficientOutlinedRectGlyph();
+              break;
+          case TYPE_POINTED:
+              gl = new PointedGlyph();
+              break;
+          case TYPE_LINE:
+              if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
+                  gl = new EfficientLabelledLineGlyph();
+              } else {
+                  gl = new EfficientLineContGlyph();
+              }       break;
+          case TYPE_ARROW:
+              gl = new ArrowGlyph();
+              break;
+          case TYPE_SPAN:
+              gl = new BridgeGlyph();
+              break;
+          case TYPE_INVISIBLE:
+              gl = new InvisibleBoxGlyph();
+              break;
+          default:
+              // this will be caught by knownGlyphType() method
+              System.out.println("GLYPH Type Not Known: " + type);
+              break;
       }
-    } else if (TYPE_ARROW.equals(type)) {
-      gl = new ArrowGlyph();
-    } else if (TYPE_SPAN.equals(type)) {
-      gl = new BridgeGlyph();
-    } else if (TYPE_INVISIBLE.equals(type)) {
-      gl = new InvisibleBoxGlyph();
-    } else {
-      // this will be caught by knownGlyphType() method
-      System.out.println("GLYPH Type Not Known: " + type);
-    }
     return gl;
   }
   
@@ -327,7 +337,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     lgl.getCoordBox().height *= 2;
     if (the_label != null) {
       lgl.setLabel(the_label);
-      if (tier_glyph.getDirection() == TierGlyph.Direction.REVERSE) {
+      if (tier_glyph.getDirection() == StyledGlyph.Direction.REVERSE) {
         lgl.setLabelLocation(GlyphI.SOUTH);
       } else {
         lgl.setLabelLocation(GlyphI.NORTH);

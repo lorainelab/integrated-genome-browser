@@ -23,7 +23,7 @@ public class MedianOperator extends AbstractGraphOperator implements Operator, O
 
 	@Override
 	protected float operate(List<Float> operands) {
-		List<Float> sortOperands = new ArrayList<Float>(operands);
+		List<Float> sortOperands = new ArrayList<>(operands);
 		Collections.sort(sortOperands);
 		float median = (operands.size() % 2 == 0) ?
 			(float)((sortOperands.get((operands.size() / 2) - 1) + sortOperands.get(operands.size() / 2)) / 2.0) :

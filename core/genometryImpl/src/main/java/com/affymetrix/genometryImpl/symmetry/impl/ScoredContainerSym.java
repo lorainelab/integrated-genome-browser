@@ -35,15 +35,15 @@ import java.util.regex.Pattern;
  */
 public class ScoredContainerSym extends RootSeqSymmetry {
 
-    private final Map<String, Object> name2scores = new HashMap<String, Object>();
-    private final List<Object> scorevals = new ArrayList<Object>();
-    private final List<String> scorenames = new ArrayList<String>();
+    private final Map<String, Object> name2scores = new HashMap<>();
+    private final List<Object> scorevals = new ArrayList<>();
+    private final List<String> scorenames = new ArrayList<>();
 
-    private static Map<String, GraphState> id2gstate = new HashMap<String, GraphState>();
+    private static Map<String, GraphState> id2gstate = new HashMap<>();
 
-    private static Map<String, ITrackStyleExtended> id2combo_style_plus = new HashMap<String, ITrackStyleExtended>();
-    private static Map<String, ITrackStyleExtended> id2combo_style_minus = new HashMap<String, ITrackStyleExtended>();
-    private static Map<String, ITrackStyleExtended> id2combo_style_neutral = new HashMap<String, ITrackStyleExtended>();
+    private static Map<String, ITrackStyleExtended> id2combo_style_plus = new HashMap<>();
+    private static Map<String, ITrackStyleExtended> id2combo_style_minus = new HashMap<>();
+    private static Map<String, ITrackStyleExtended> id2combo_style_neutral = new HashMap<>();
 
     /**
      * Adds scores. Assumes all child syms have already been added, and span has

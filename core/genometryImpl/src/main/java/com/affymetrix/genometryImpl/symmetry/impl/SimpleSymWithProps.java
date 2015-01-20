@@ -35,7 +35,6 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
     public SimpleSymWithProps(int estimated_child_count) {
         this();
-        children = new ArrayList<SeqSymmetry>(estimated_child_count);
     }
 
     /**
@@ -106,7 +105,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
             return false;
         }
         if (props == null) {
-            props = new HashMap<String, Object>();
+            props = new HashMap<>();
         }
         props.put(name, val);
         return true;

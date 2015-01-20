@@ -318,11 +318,11 @@ public class WelcomePage extends javax.swing.JPanel {
             .addComponent(TitlePane, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LeftSlide, RightSlide});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, LeftSlide, RightSlide);
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPanel1, jPanel2});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jPanel1, jPanel2);
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPanel3, jPanel4});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jPanel3, jPanel4);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -345,7 +345,7 @@ public class WelcomePage extends javax.swing.JPanel {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jPanel1, jPanel2});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, jPanel1, jPanel2);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel4.setBackground(new java.awt.Color(0, 0, 0));

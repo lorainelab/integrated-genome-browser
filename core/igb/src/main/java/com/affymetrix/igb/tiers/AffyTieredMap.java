@@ -21,10 +21,11 @@ import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMixedStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.shared.AxisGlyphWithSelection;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -87,8 +88,8 @@ public class AffyTieredMap extends NeoMap {
     public static void setShowMixed(boolean show_mixed_) {
         show_mixed = show_mixed_;
     }
-    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<TierGlyph>();
-    private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<>();
+    private final List<GlyphI> match_glyphs = new ArrayList<>();
     // the total pixel height of visible fixed pixel tiers
     //    (recalculated with every packTiers() call)
     protected int fixed_pixel_height;
@@ -179,7 +180,7 @@ public class AffyTieredMap extends NeoMap {
     private void packTiers(boolean full_repack, boolean stretch_map) {
         fixed_pixel_height = 0;
         fixed_coord_height = 0;
-        List<TierGlyph> tiersCopy = new CopyOnWriteArrayList<TierGlyph>(tiers);
+        List<TierGlyph> tiersCopy = new CopyOnWriteArrayList<>(tiers);
         if (full_repack) {
             for (TierGlyph mtg : tiersCopy) {
                 mtg.pack(getView());
@@ -190,11 +191,11 @@ public class AffyTieredMap extends NeoMap {
         for (TierGlyph mtg : tiersCopy) {
             if (mtg.getChildCount() == 0) {
                 mtg.setVisibility(false);
-            } else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
+            } else if ((!show_plus) && mtg.getDirection() == StyledGlyph.Direction.FORWARD) {
                 mtg.setVisibility(false);
-            } else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
+            } else if ((!show_minus) && mtg.getDirection() == StyledGlyph.Direction.REVERSE) {
                 mtg.setVisibility(false);
-            } else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {
+            } else if ((!show_mixed) && (mtg.getDirection() == StyledGlyph.Direction.BOTH)) {
                 mtg.setVisibility(false);
             } else {
                 mtg.setVisibility(mtg.getAnnotStyle().getShow());
@@ -664,19 +665,11 @@ public class AffyTieredMap extends NeoMap {
     }
 
     public void removeMouseListener(Class<? extends MouseListener> clazz) {
-        for (MouseListener ml : mouse_listeners) {
-            if (ml.getClass() == clazz) {
-                removeMouseListener(ml);
-            }
-        }
+        mouse_listeners.stream().filter(ml -> ml.getClass() == clazz).forEach(this::removeMouseListener);
     }
 
     public void removeMouseMotionListener(Class<? extends MouseMotionListener> clazz) {
-        for (MouseMotionListener ml : mouse_motion_listeners) {
-            if (ml.getClass() == clazz) {
-                removeMouseMotionListener(ml);
-            }
-        }
+        mouse_motion_listeners.stream().filter(ml -> ml.getClass() == clazz).forEach(this::removeMouseMotionListener);
     }
 
     /**

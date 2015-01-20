@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,8 +105,8 @@ public final class GeneralUtils {
      * Returns the file name with all {@link #compression_endings} stripped-off.
      */
     public static String stripEndings(String name) {
-        for (int i = 0; i < compression_endings.length; i++) {
-            String ending = compression_endings[i].toLowerCase();
+        for (String compression_ending : compression_endings) {
+            String ending = compression_ending.toLowerCase();
             if (name.toLowerCase().endsWith(ending)) {
                 String stripped_name = name.substring(0, name.lastIndexOf('.'));
                 return stripEndings(stripped_name);
@@ -125,7 +124,7 @@ public final class GeneralUtils {
      * compression endings (like ".zip") removed, and converted to lower case.
      */
     public static InputStream getInputStream(File f, StringBuffer sb) throws
-            FileNotFoundException, IOException {
+            IOException {
 
         String infile_name = "file:" + f.getAbsolutePath();
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
@@ -554,9 +553,9 @@ public final class GeneralUtils {
     public static long getUriLength(URI uri) {
         long uriLength = -1;
         try {
-            SeekableStream seekableStream = SeekableStreamFactory.getInstance().getStreamFor(GeneralUtils.fixFileName(uri.toString()));
-            uriLength = seekableStream.length();
-            seekableStream.close();
+            try (SeekableStream seekableStream = SeekableStreamFactory.getInstance().getStreamFor(GeneralUtils.fixFileName(uri.toString()))) {
+                uriLength = seekableStream.length();
+            }
             // very, very gross approximation
             if (uri.toString().toLowerCase().endsWith(".gz") || uri.toString().toLowerCase().endsWith(".zip")) {
                 uriLength = (long) (uriLength * COMPRESSION_RATIO);
@@ -607,13 +606,13 @@ public final class GeneralUtils {
      * @return
      */
     public static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> collection) {
-        List<T> list = new ArrayList<T>(collection);
+        List<T> list = new ArrayList<>(collection);
         java.util.Collections.sort(list);
         return list;
     }
 
     public static <T> List<T> asSortedList(Collection<T> collection, java.util.Comparator<T> comparator) {
-        List<T> list = new ArrayList<T>(collection);
+        List<T> list = new ArrayList<>(collection);
         java.util.Collections.sort(list, comparator);
         return list;
     }

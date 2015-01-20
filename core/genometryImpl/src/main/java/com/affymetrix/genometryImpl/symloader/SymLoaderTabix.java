@@ -40,10 +40,10 @@ import org.broad.tribble.readers.TabixReader;
 public class SymLoaderTabix extends SymLoader {
 
     private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
-    protected final Map<BioSeq, String> seqs = new HashMap<BioSeq, String>();
+    protected final Map<BioSeq, String> seqs = new HashMap<>();
     private final LineProcessor lineProcessor;
     private final GenericObjectPool<TabixReader> pool;
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -57,7 +57,7 @@ public class SymLoaderTabix extends SymLoader {
         super(uri, featureName, group);
         this.lineProcessor = lineProcessor;
         PoolableObjectFactory<TabixReader> poolFactory = new TabixReaderPoolableObjectFactory();
-        this.pool = new GenericObjectPool<TabixReader>(poolFactory);
+        this.pool = new GenericObjectPool<>(poolFactory);
         // Always have minimum one reader in pool
         this.pool.setMinIdle(1);
         // Set maximum number of object to be created
@@ -120,14 +120,14 @@ public class SymLoaderTabix extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<BioSeq>(seqs.keySet());
+        return new ArrayList<>(seqs.keySet());
     }
 
     @Override
     public List<? extends SeqSymmetry> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -146,13 +146,13 @@ public class SymLoaderTabix extends SymLoader {
         TabixReader tabixReader = pool.borrowObject();
         try {
             if (!tabixReader.mChr2tid.containsKey(seqID)) {
-                return new ArrayList<SeqSymmetry>();
+                return new ArrayList<>();
             }
 //			System.out.println("Total :" + (pool.getNumActive() + pool.getNumIdle()));
             final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.mChr2tid.get(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
             long[] startEnd = getStartEnd(lineReader);
             if (startEnd == null) {
-                return new ArrayList<SeqSymmetry>();
+                return new ArrayList<>();
             }
             return lineProcessor.processLines(overlapSpan.getBioSeq(), lineReader);
         } catch (Exception ex) {

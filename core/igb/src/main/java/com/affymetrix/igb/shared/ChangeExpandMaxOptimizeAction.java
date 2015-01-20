@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
@@ -35,7 +36,7 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
      */
     @Override
     protected List<TierLabelGlyph> getTiers() {
-        List<TierLabelGlyph> answer = new ArrayList<TierLabelGlyph>();
+        List<TierLabelGlyph> answer = new ArrayList<>();
         List<TierLabelGlyph> theTiers = getTierManager().getSelectedTierLabels();
         for (TierLabelGlyph tlg : theTiers) {
             TierGlyph tg = tlg.getReferenceTier();

@@ -6,7 +6,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.SwingUtilities;
@@ -25,26 +24,19 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel {
 	private static final Color DEF_LOWER_COLOR = Color.BLACK;
 	private static final Color DEF_UPPER_COLOR = Color.WHITE;
 	
-	private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-		/**
-		 * DOCUMENT ME!
-		 *
-		 * @param e DOCUMENT ME!
-		 */
-		public void propertyChange(PropertyChangeEvent e) {
-			if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
-				String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
+	private final PropertyChangeListener propertyChangeListener = e -> {
+        if (e.getPropertyName().equals(BelowAndAbovePanel.COLOR_CHANGED)) {
+            String sourceName = ((BelowAndAbovePanel) e.getSource()).getName();
 
-				if (sourceName.equals("abovePanel")) {
-					((MultiColorThumbModel) slider.getModel()).setAboveColor((Color) e.getNewValue());
-				} else {
-					((MultiColorThumbModel) slider.getModel()).setBelowColor((Color) e.getNewValue());
-				}
+            if (sourceName.equals("abovePanel")) {
+                ((MultiColorThumbModel) slider.getModel()).setAboveColor((Color) e.getNewValue());
+            } else {
+                ((MultiColorThumbModel) slider.getModel()).setBelowColor((Color) e.getNewValue());
+            }
 
-				repaint();
-			}
-		}
-	};
+            repaint();
+        }
+    };
 	
 	/**
 	 * Creates a new GradientEditorPanel object.
@@ -132,18 +124,16 @@ public class GradientEditorPanel extends ContinuousMappingEditorPanel {
 			}
 		});
 
-		if (true) {
-			int no_of_points = 0;
-			if (no_of_points != 0) {
-				//below = (Color) allPoints.get(0).getRange().lesserValue;
-				//above = (Color) allPoints.get(allPoints.size() - 1).getRange().greaterValue;
-			} else {
-				//below = Color.black;
-				//above = Color.white;
-			}
+		int no_of_points = 0;
+		if (no_of_points != 0) {
+            //below = (Color) allPoints.get(0).getRange().lesserValue;
+            //above = (Color) allPoints.get(allPoints.size() - 1).getRange().greaterValue;
+        } else {
+            //below = Color.black;
+            //above = Color.white;
+        }
 
-			setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
-		}
+		setSidePanelIconColor(((MultiColorThumbModel)slider.getModel()).getBelowColor(), ((MultiColorThumbModel)slider.getModel()).getAboveColor());
 
 		TriangleThumbRenderer thumbRend = new TriangleThumbRenderer();
 

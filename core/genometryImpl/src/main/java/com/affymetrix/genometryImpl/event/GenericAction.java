@@ -3,8 +3,6 @@ package com.affymetrix.genometryImpl.event;
 import com.affymetrix.common.CommonUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -59,7 +57,7 @@ public abstract class GenericAction extends AbstractAction {
 		this.mnemonic = mnemonic;
 		this.extraInfo = extraInfo;
 		this.popup = popup;
-		doneCallbacks = new HashSet<GenericActionDoneCallback>();
+		doneCallbacks = new HashSet<>();
 
 		putValue(Action.NAME, getDisplay());
 		if (iconPath != null) {
@@ -78,18 +76,15 @@ public abstract class GenericAction extends AbstractAction {
 			putValue(Action.LARGE_ICON_KEY, icon);
 			
 			if (alternateIcon != null) {
-				this.addPropertyChangeListener(new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
-							if(evt.getNewValue() == Boolean.TRUE) {
-								putValue(Action.LARGE_ICON_KEY, icon);
-							} else {
-								putValue(Action.LARGE_ICON_KEY, alternateIcon);
-							}
-						}
-					}
-				});
+				this.addPropertyChangeListener(evt -> {
+                    if (evt.getPropertyName().equals(Action.SELECTED_KEY)) {
+                        if(evt.getNewValue() == Boolean.TRUE) {
+                            putValue(Action.LARGE_ICON_KEY, icon);
+                        } else {
+                            putValue(Action.LARGE_ICON_KEY, alternateIcon);
+                        }
+                    }
+                });
 			}
 		}
 		if (mnemonic != KeyEvent.VK_UNDEFINED) {

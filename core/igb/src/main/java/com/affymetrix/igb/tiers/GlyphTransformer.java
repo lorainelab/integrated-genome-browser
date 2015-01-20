@@ -3,7 +3,8 @@ package com.affymetrix.igb.tiers;
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.ITransformableTierGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -40,7 +41,7 @@ public class GlyphTransformer {
 
     private static JScrollBar getScrollBar(TierGlyph tier, int sb_curr, float scale) {
         int style_height = (int) tier.getChildHeight() * tier.getActualSlots() + 75;
-        if (tier.getDirection() != TierGlyph.Direction.REVERSE) {
+        if (tier.getDirection() != StyledGlyph.Direction.REVERSE) {
             style_height *= -1;
         }
 

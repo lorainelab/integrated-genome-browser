@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.CodonGlyph;
 import java.awt.event.ActionEvent;
 

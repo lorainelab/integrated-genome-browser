@@ -2,11 +2,8 @@ package com.affymetrix.igb.swing;
 
 import com.affymetrix.igb.swing.util.Idable;
 import java.awt.Component;
-import java.awt.Rectangle;
 
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget {
 
@@ -33,14 +30,11 @@ public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget 
 
 	private void init() {
 		ScriptManager.getInstance().addWidget(this);
-		addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (ScriptManager.getInstance().isMouseDown()) {
-					ScriptManager.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
-				}
-			}
-		});
+		addChangeListener(e -> {
+            if (ScriptManager.getInstance().isMouseDown()) {
+                ScriptManager.getInstance().recordOperation(new Operation(JRPTabbedPane.this, "setSelectedIndex(" + getSelectedIndex() + ")"));
+            }
+        });
 	}
 
 	@Override
@@ -62,11 +56,6 @@ public class JRPTabbedPane extends JTabbedPane implements JRPHierarchicalWidget 
 			}
 		}
 		final int tabIndex = index;
-		return new SubRegionFinder() {
-			@Override
-			public Rectangle getRegion() {
-				return getBoundsAt(tabIndex);
-			}
-		};
+		return () -> getBoundsAt(tabIndex);
 	}
 }

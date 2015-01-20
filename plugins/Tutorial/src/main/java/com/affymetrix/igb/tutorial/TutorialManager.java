@@ -14,7 +14,6 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +32,8 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     private TutorialStep[] tutorial = null;
     private String waitFor = null;
     private boolean isRunning = false;
-    private Map<String, TutorialStep[]> triggers = new HashMap<String, TutorialStep[]>();
-    private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<String, AbstractComponentDecorator>();
+    private Map<String, TutorialStep[]> triggers = new HashMap<>();
+    private Map<String, AbstractComponentDecorator> decoratorMap = new HashMap<>();
     private MenuListener menuListener = new MenuListener() {
 
         @Override
@@ -76,43 +75,29 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
     private void initListeners() {
         GenometryModel.getInstance().addGroupSelectionListener(
-                new GroupSelectionListener() {
-
-                    @Override
-                    public void groupSelectionChanged(GroupSelectionEvent evt) {
-                        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-                        String species = "";
-                        if (group != null && group.getOrganism() != null) {
-                            species = "." + group.getOrganism();
-                        }
-                        String version = "";
-                        if (group != null && group.getID() != null) {
-                            version = "." + group.getID();
-                        }
-                        doWaitFor("groupSelectionChanged" + species + version);
+                evt -> {
+                    AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
+                    String species = "";
+                    if (group != null && group.getOrganism() != null) {
+                        species = "." + group.getOrganism();
                     }
+                    String version = "";
+                    if (group != null && group.getID() != null) {
+                        version = "." + group.getID();
+                    }
+                    doWaitFor("groupSelectionChanged" + species + version);
                 });
 
-        igbService.addSpeciesItemListener(new ItemListener() {
-
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
-                    return;
-                }
-
-                String species = "";
-                species = "." + ie.getItem().toString();
-                doWaitFor("speciesSelectionChanged" + species);
+        igbService.addSpeciesItemListener(ie -> {
+            if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
+                return;
             }
-        });
-        igbService.addPartialResiduesActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                doWaitFor("LoadResidueAction");
-            }
+            String species = "";
+            species = "." + ie.getItem().toString();
+            doWaitFor("speciesSelectionChanged" + species);
         });
+        igbService.addPartialResiduesActionListener(ae -> doWaitFor("LoadResidueAction"));
     }
 
     public void setTutorialDisplayed(boolean tutorialDisplayed) {

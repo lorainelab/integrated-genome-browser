@@ -75,7 +75,7 @@ public interface ITrackStyleExtended extends ITrackStyle {
 	void setReverseMaxDepth(int theNewDepth);
 	int getReverseMaxDepth();
 
-	boolean getFloatTier();
+	boolean isFloatTier();
 	void setFloatTier(boolean b);
 	boolean getJoin();
 	void setJoin(boolean b);

@@ -51,7 +51,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 		if (paramPrompt == null) {
 			return null;
 		}
-		Map<String, Class<?>> parameters = new HashMap<String, Class<?>>();
+		Map<String, Class<?>> parameters = new HashMap<>();
 		parameters.put(paramPrompt, String.class);
 		return parameters;
 	}
@@ -59,7 +59,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 	@Override
 	public boolean setParametersValue(Map<String, Object> parms) {
 		if (paramPrompt != null && parms.size() == 1 && parms.get(paramPrompt) instanceof String) {
-			setParameterValue(paramPrompt, (String)parms.get(paramPrompt));
+			setParameterValue(paramPrompt, parms.get(paramPrompt));
 			return true;
 		}
 		return false;
@@ -111,9 +111,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 	
 	@Override
 	public String getPrintableString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getParamPrompt()).append(":").append(getParameterValue(getParamPrompt()));
-		return sb.toString();
+		return getParamPrompt() + ":" + getParameterValue(getParamPrompt());
 	}
 	
 	protected boolean allowZero(){

@@ -109,20 +109,29 @@ final class ApplicationListenerProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         try {
-            if (method.getName().equals("handleAbout")) {
-                AboutIGBAction a = AboutIGBAction.getAction();
-                a.actionPerformed(null);
-                Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
-                setHandled.invoke(args[0], true);
-            } else if (method.getName().equals("handleQuit")) {
-                ExitAction a = ExitAction.getAction();
-                a.actionPerformed(null);
-            } else if (method.getName().equals("handlePreferences")) {
-                PreferencesPanel pv = PreferencesPanel.getSingleton();
-                JFrame f = pv.getFrame();
-                f.setVisible(true);
-            } else {
-                result = method.invoke(o, args);
+            switch (method.getName()) {
+                case "handleAbout":
+                    {
+                        AboutIGBAction a = AboutIGBAction.getAction();
+                        a.actionPerformed(null);
+                        Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
+                        setHandled.invoke(args[0], true);
+                        break;
+                    }
+                case "handleQuit":
+                    {
+                        ExitAction a = ExitAction.getAction();
+                        a.actionPerformed(null);
+                        break;
+                    }
+                case "handlePreferences":
+                    PreferencesPanel pv = PreferencesPanel.getSingleton();
+                    JFrame f = pv.getFrame();
+                    f.setVisible(true);
+                    break;
+                default:
+                    result = method.invoke(o, args);
+                    break;
             }
         } catch (Exception ex) {
             ourLogger.log(Level.SEVERE, "?", ex);

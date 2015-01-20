@@ -19,13 +19,14 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.FlyPointLinkerGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -71,7 +72,7 @@ public final class OrfAnalyzer extends JComponent
 	private static final int orf_thresh_max = 500;
 	private static final int max_analysis_span = 1000000;
 	private boolean show_orfs;
-	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
+	private final List<FlyPointLinkerGlyph> orf_holders = new ArrayList<>();
 	private static final String[] stop_codons = {"TAA", "TAG", "TGA", "TTA", "CTA", "TCA"};
 	private int previousBefferSize;
 
@@ -186,7 +187,7 @@ public final class OrfAnalyzer extends JComponent
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(bgcol);
 		fortier.setBackgroundColor(bgcol);
-		fortier.setDirection(TierGlyph.Direction.FORWARD);
+		fortier.setDirection(StyledGlyph.Direction.FORWARD);
 
 		AffyTieredMap map = smv.getSeqMap();
 		map.addTier(fortier, true);  // put forward tier above axis
@@ -206,7 +207,7 @@ public final class OrfAnalyzer extends JComponent
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(bgcol);
 		revtier.setBackgroundColor(bgcol);
-		revtier.setDirection(TierGlyph.Direction.REVERSE);
+		revtier.setDirection(StyledGlyph.Direction.REVERSE);
 		map.addTier(revtier, false);  // put reverse tier below axis
 
 		Color pointcol = PreferenceUtils.getColor(PREF_STOP_CODON_COLOR, default_stop_codon_color);
@@ -318,23 +319,20 @@ public final class OrfAnalyzer extends JComponent
 	}
 
 	private void adjustMap() {
-		ThreadUtils.runOnEventQueue(new Runnable() {
+		ThreadUtils.runOnEventQueue(() -> {
 
-			public void run() {
+            AbstractAction action = new AbstractAction() {
+                private static final long serialVersionUID = 1L;
 
-				AbstractAction action = new AbstractAction() {
-					private static final long serialVersionUID = 1L;
-
-					public void actionPerformed(ActionEvent e) {
-						AffyTieredMap tiermap = smv.getSeqMap();
-						tiermap.repack();
-						tiermap.stretchToFit(false, true);
-						tiermap.updateWidget();
-					}
-				};
-				smv.preserveSelectionAndPerformAction(action);
-			}
-		});
+                public void actionPerformed(ActionEvent e) {
+                    AffyTieredMap tiermap = smv.getSeqMap();
+                    tiermap.repack();
+                    tiermap.stretchToFit(false, true);
+                    tiermap.updateWidget();
+                }
+            };
+            smv.preserveSelectionAndPerformAction(action);
+        });
 
 	}
 	

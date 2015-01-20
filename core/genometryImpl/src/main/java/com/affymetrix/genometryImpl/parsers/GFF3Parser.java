@@ -67,12 +67,12 @@ public final class GFF3Parser implements Parser {
 	boolean useDefaultSource = true;
 	
 	static {
-		Set<String> types = new HashSet<String>();
+		Set<String> types = new HashSet<>();
 
 		//types.add("tf_binding_site");
 		types.add("protein");
 
-		IGNORABLE_TYPES = Collections.<String>unmodifiableSet(types);
+		IGNORABLE_TYPES = Collections.unmodifiableSet(types);
 	}
 
 	/**
@@ -136,10 +136,10 @@ public final class GFF3Parser implements Parser {
 			BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds, 
 			int minV, int maxV)
 			throws IOException {
-		List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-		Map<String, GFF3Sym> id2sym = new HashMap<String, GFF3Sym>();
+		List<SeqSymmetry> symlist = new ArrayList<>();
+		Map<String, GFF3Sym> id2sym = new HashMap<>();
 		/** Contains a list of parent ids which have been ignored */
-		Set<String> bad_parents = new HashSet<String>();
+		Set<String> bad_parents = new HashSet<>();
 		
 		if (DEBUG) {
 			System.out.println("starting GFF3 parse.");
@@ -149,7 +149,7 @@ public final class GFF3Parser implements Parser {
 
 		String line = null;
 
-		List<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
+		List<GFF3Sym> all_syms = new ArrayList<>();
 		String track_name = null;
 		
 		Thread thread = Thread.currentThread();
@@ -214,7 +214,7 @@ public final class GFF3Parser implements Parser {
 			String attributes_field = null;
 			// last_field is "attributes" in both GFF2 and GFF3, but uses different format.
 			if (fields.length >= 9) {
-				attributes_field = new String(fields[8]);
+				attributes_field = fields[8];
 			} // creating a new String saves memory
 
 			float score = GFF3Sym.UNKNOWN_SCORE;
@@ -325,8 +325,7 @@ public final class GFF3Parser implements Parser {
 			} else {
 				// Else, add this as a child to *each* parent in its parent list.
 				// It is an error if the parent doesn't exist.
-				for (int i = 0; i < parent_ids.length; i++) {
-					String parent_id = parent_ids[i];
+				for (String parent_id : parent_ids) {
 					if ("-".equals(parent_id)) {
 						throw new IOException("Parent ID cannot be '-'");
 					}
@@ -336,7 +335,8 @@ public final class GFF3Parser implements Parser {
 						 * bad_parents list contains ignored parents.  Child
 						 * ids are added to the bad_parents list since we are
 						 * ignoring them too.
-						 */ String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+						 */
+						String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
 						if (ids.length > 0) {
 							bad_parents.add(ids[0]);
 						}
@@ -452,7 +452,7 @@ public final class GFF3Parser implements Parser {
 	private static GFF3Sym createSym(String source, String feature_type, float score, char frame_char, String attributes_field, SimpleSeqSpan span, String track_name) {
 		GFF3Sym sym = new GFF3Sym(source, feature_type, score, frame_char, attributes_field);
 		sym.addSpan(span);
-		if (use_track_lines && track_name != null) {
+		if (track_name != null) {
 			sym.setProperty("method", track_name);
 		} else {
 			sym.setProperty("method", source);

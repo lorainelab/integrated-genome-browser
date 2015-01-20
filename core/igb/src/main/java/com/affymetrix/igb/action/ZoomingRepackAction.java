@@ -14,10 +14,13 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.REVERSE;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.Action;
@@ -64,7 +67,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
             TierGlyph t = (TierGlyph) tl.getInfo();
             int a = t.getSlotsNeeded(ourView);
             ITrackStyleExtended style = t.getAnnotStyle();
-            TierGlyph.Direction d = t.getDirection();
+            StyledGlyph.Direction d = t.getDirection();
             switch (d) {
                 case REVERSE:
                     style.setReverseMaxDepth(a);

@@ -35,7 +35,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-    private static final Set<String> UCSCSources = Collections.<String>synchronizedSet(new HashSet<String>());
+    private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private final IGBService igbService;
 
     public UCSCViewAction(IGBService igbService) {
@@ -43,7 +43,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
         this.igbService = igbService;
         GenometryModel model = GenometryModel.getInstance();
         model.addSeqSelectionListener(this);
-        this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.<BioSeq>singletonList(model.getSelectedSeq())));
+        this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.singletonList(model.getSelectedSeq())));
     }
 
     public void actionPerformed(ActionEvent ae) {

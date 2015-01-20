@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ThresholdReader;
@@ -61,7 +61,7 @@ public class SetSummaryThresholdAction extends SeqMapViewActionA {
                 } else {
                     summaryThreshold = ThresholdReader.getInstance().toDetail();
                 }
-                ((TrackStyle) style).setSummaryThreshold(summaryThreshold);
+                style.setSummaryThreshold(summaryThreshold);
                 if (tierGlyph instanceof NeoRangeListener) {
                     NeoRangeEvent newevt = new NeoRangeEvent(getSeqMapView(), tierGlyph.getCoordBox().x, tierGlyph.getCoordBox().x + tierGlyph.getCoordBox().width);
                     ((NeoRangeListener) tierGlyph).rangeChanged(newevt);

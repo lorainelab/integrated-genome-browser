@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.StopAutoScrollAction;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
@@ -25,7 +25,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -144,7 +143,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         }
 
         // process selections in mousePressed() or mouseReleased()
-        if (!SELECT_ON_MOUSE_PRESSED) {
+        if (true) {
             // if rubber-banding is going on, don't post selections now,
             // because that will be handled in rubberBandChanged().
             // Still need to call processSelections, though, to set
@@ -374,7 +373,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         // seems no longer needed
         //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
-        List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+        List<GraphGlyph> graphs = new ArrayList<>();
         ITrackStyleExtended combo_style = null;
         if (topgl != null && topgl instanceof GraphGlyph) {
             combo_style = ((GraphGlyph) topgl).getGraphState().getComboStyle();
@@ -382,15 +381,15 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
         if (!isSlopRowSelection) {
             if (preserve_selections) {
-                for (int i = 0; i < hcount; i++) {
-                    Object obj = hits.get(i);
+                for (GlyphI hit : hits) {
+                    Object obj = hit;
                     if (obj instanceof GraphGlyph) {
                         graphs.add((GraphGlyph) obj);
                     }
                 }
             } else if (combo_style != null) {
-                for (int i = 0; i < hcount; i++) {
-                    Object obj = hits.get(i);
+                for (GlyphI hit : hits) {
+                    Object obj = hit;
                     if (obj instanceof GraphGlyph
                             && ((GraphGlyph) obj).getGraphState().getComboStyle() == combo_style) {
                         graphs.add((GraphGlyph) obj);
@@ -426,8 +425,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
             }
 
             int gcount = graphs.size();
-            for (int i = 0; i < gcount; i++) {
-                GraphGlyph gl = graphs.get(i);
+            for (GraphGlyph gl : graphs) {
                 if (gl != topgl) {  // if gl == topgl, already handled above...
                     if (toggle_event && gl.isSelected()) {
                         map.deselect(gl);
@@ -568,9 +566,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
 
     private static void toggleSelections(NeoMap map, Collection<GlyphI> glyphs) {
         List<GlyphI> current_selections = map.getSelected();
-        Iterator<GlyphI> iter = glyphs.iterator();
-        while (iter.hasNext()) {
-            GlyphI g = iter.next();
+        for (GlyphI g : glyphs) {
             if (current_selections.contains(g)) {
                 map.deselect(g);
             } else {

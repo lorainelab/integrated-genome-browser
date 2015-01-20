@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.operator.Operator.Style;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
@@ -46,13 +47,13 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     private static final Map<String, Class<?>> properties;
 
     static {
-        properties = new HashMap<String, Class<?>>();
+        properties = new HashMap<>();
         properties.put(THRESHOLD, Integer.class);
     }
     private static final Map<String, Object> style;
 
     static {
-        style = new HashMap<String, Object>();
+        style = new HashMap<>();
         style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
     }
     public static final int default_threshold = 5;
@@ -123,15 +124,13 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
             }
         }
         SeqSymmetry topSym = list.get(0);
-        List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> symList = new ArrayList<>();
         for (int i = 0; i < topSym.getChildCount(); i++) {
             symList.add(topSym.getChild(i));
         }
-        HashMap<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
+        HashMap<String, SeqSymmetry> map = new HashMap<>();
         applyFilters(bioseq, symList, map);
-        for (SeqSymmetry sym : map.values()) {
-            container.addChild(sym);
-        }
+        map.values().forEach(container::addChild);
         map.clear();
         symList.clear();
 
@@ -144,7 +143,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
      */
     private void applyFilters(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map) {
         for (SeqSymmetry sym : list) {
-            if (sym instanceof PairedBamSymWrapper) {
+            if (sym instanceof MultiTierSymWrapper) {
                 applyFilters(bioseq, sym.getChild(0), map);
                 applyFilters(bioseq, sym.getChild(1), map);
             } else {
@@ -246,7 +245,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
      * and adds the qualified introns into map using addtoMap method
      */
     private static void updateIntronHashMap(SeqSymmetry sym, BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks, boolean topHatStyleFlanking) {
-        List<Integer> childIntronIndices = new ArrayList<Integer>();
+        List<Integer> childIntronIndices = new ArrayList<>();
         int childCount = sym.getChildCount();
         int flanksLength[] = new int[2];
         childThresholdFilter.setParameterValue(childThresholdFilter.getParametersType().entrySet().iterator().next().getKey(), threshold);
@@ -396,7 +395,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
 
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym(bioseq, name,
                     currentForward, blockMins, blockMaxs, canonical, rare, 0, 0, 0);
-            map.put(name, (SeqSymmetry) tempSym);
+            map.put(name, tempSym);
         }
     }
 

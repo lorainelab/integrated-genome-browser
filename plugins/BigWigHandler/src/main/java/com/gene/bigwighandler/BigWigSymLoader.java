@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 
 public class BigWigSymLoader extends SymLoader {
-	private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+	private static final List<LoadStrategy> strategyList = new ArrayList<>();
 	static {
 		strategyList.add(LoadStrategy.NO_LOAD);
 		strategyList.add(LoadStrategy.VISIBLE);
@@ -61,13 +61,13 @@ public class BigWigSymLoader extends SymLoader {
 		
 		initbbReader();
 		
-		Map<String, BioSeq> seqMap = new HashMap<String, BioSeq>();
+		Map<String, BioSeq> seqMap = new HashMap<>();
 		for (BioSeq seq : group.getSeqList()) {
 			seqMap.put(seq.getID(), seq);
 		}
-		chromosomeList = new ArrayList<BioSeq>();
-		realSeq2Seq = new HashMap<String, String>();
-		Map<String, Integer> chromosomeNameMap = new HashMap<String, Integer>();
+		chromosomeList = new ArrayList<>();
+		realSeq2Seq = new HashMap<>();
+		Map<String, Integer> chromosomeNameMap = new HashMap<>();
 		findAllChromosomeNamesAndSizes(bbReader.getChromosomeIDTree().getRootNode(), chromosomeNameMap);
 
 		for (String seqID : chromosomeNameMap.keySet()) {
@@ -113,7 +113,7 @@ public class BigWigSymLoader extends SymLoader {
 	public List<? extends SeqSymmetry> getGenome() {
 		init();
 		List<BioSeq> allSeq = getChromosomeList();
-		List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> retList = new ArrayList<>();
 		for(BioSeq seq : allSeq){
 			retList.addAll(getChromosome(seq));
 		}
@@ -138,7 +138,7 @@ public class BigWigSymLoader extends SymLoader {
 		catch (RuntimeException x) {
 			if (x.getMessage().startsWith("No wig data found")) {
 				Logger.getLogger(BigWigSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
-				regions = new ArrayList<SeqSymmetry>();
+				regions = new ArrayList<>();
 			}
 			else {
 				throw x;
@@ -170,7 +170,7 @@ public class BigWigSymLoader extends SymLoader {
 		float[] yList = Arrays.copyOf(yData.elements(), dataSize);
 		int[] wList =  Arrays.copyOf(wData.elements(), dataSize);
 		GraphIntervalSym graphIntervalSym = new GraphIntervalSym(xList, wList, yList, featureName, seq);
-		List<SeqSymmetry> symList = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> symList = new ArrayList<>();
 		symList.add(graphIntervalSym);
 		return symList;
 	}

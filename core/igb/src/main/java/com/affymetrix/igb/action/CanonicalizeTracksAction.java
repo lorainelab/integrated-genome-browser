@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.GraphGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
@@ -66,7 +66,7 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
                 BUNDLE.getString("canonicalizeTracksTooltip"));
     }
 
-    private List<TierGlyph> graphTracks = new ArrayList<TierGlyph>();
+    private List<TierGlyph> graphTracks = new ArrayList<>();
 
     /**
      * Should be enabled only if we can do something. Check that more than one
@@ -120,9 +120,9 @@ public class CanonicalizeTracksAction extends SeqMapViewActionA {
             GraphSym graph = (GraphSym) tg.getInfo();
             float[] y = graph.getGraphYCoords();
             float m = Float.MIN_VALUE;
-            for (int i = 0; i < y.length; i++) {
-                if (m < y[i]) {
-                    m = y[i];
+            for (float aY : y) {
+                if (m < aY) {
+                    m = aY;
                 }
             }
             maxMax = Math.max(maxMax, m);

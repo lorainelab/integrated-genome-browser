@@ -17,8 +17,8 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ExpandPacker;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +60,7 @@ static String ATT_POSITIONS = "child_positions";
       clone.styleElement = (StyleElement) styleElement.clone();
     }
     if (matchElements != null) {
-      clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
+      clone.matchElements = new ArrayList<>(matchElements.size());
 			for (MatchElement me : matchElements) {
         MatchElement new_me = (MatchElement) me.clone();
         clone.matchElements.add(new_me);
@@ -181,7 +181,7 @@ static String ATT_POSITIONS = "child_positions";
   
   void addMatchElement(MatchElement me) {
     if (matchElements == null) {
-      matchElements = new ArrayList<MatchElement>();
+      matchElements = new ArrayList<>();
     }
     matchElements.add(me);
   }
@@ -197,10 +197,8 @@ static String ATT_POSITIONS = "child_positions";
     }
     
     if (matchElements != null) {
-      Iterator<MatchElement> iter = matchElements.iterator();
-      while (iter.hasNext()) {
-       MatchElement kid = iter.next();
-       kid.appendXML(indent + "  ", sb);
+      for (MatchElement kid : matchElements) {
+        kid.appendXML(indent + "  ", sb);
       }
     }
     

@@ -49,7 +49,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 	private String[] trackDefaults;
 	private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
 	private String[] sequenceFormats = {"2bit", "fa", "fasta", "bnib"};
-	private ArrayList<String> list = new ArrayList<String>();
+	private ArrayList<String> list = new ArrayList<>();
 	private String allowedTrackDefaults;
 	private String AddButtonTitle = "Add Track Default";
 	private String selectedTrackDefaultType;
@@ -161,17 +161,15 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 
 	public void deleteTrackDefaultButton() {
 		if (table.getSelectedRow() != -1) {
-			List<TrackStyle> styles = new ArrayList<TrackStyle>();
+			List<TrackStyle> styles = new ArrayList<>();
 			for (int i : selectedRows) {
 				styles.add(((TrackDefaultPrefTableModel) model).tier_styles.get(i));
 			}
 
-			for (TrackStyle style : styles) {
-				if (style != default_annot_style) {
-					XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
-					((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
-				}
-			}
+			styles.stream().filter(style -> style != default_annot_style).forEach(style -> {
+				XmlStylesheetParser.getUserFileTypeAssociation().remove(style.getTrackName());
+				((TrackDefaultPrefTableModel) model).removeElement(style.getTrackName());
+			});
 
 			model.fireTableDataChanged();
 		}
@@ -280,7 +278,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 		private Entry<String, AssociationElement> entry;
 
 		public TrackDefaultPrefTableModel() {
-			this.tier_styles = new ArrayList<TrackStyle>();
+			this.tier_styles = new ArrayList<>();
 		}
 
 		public void setStyles(List<TrackStyle> tier_styles) {
@@ -298,7 +296,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 			for (Entry<String, AssociationElement> entries : file2types) {
 				element = entries.getValue();
 
-				addElement(entries.getKey().toString(), element);
+				addElement(entries.getKey(), element);
 			}
 			fireTableDataChanged();
 		}
@@ -440,7 +438,7 @@ public final class TrackDefaultView extends TrackPreferences implements ListSele
 							if (!style.equals(default_annot_style)) {
 								element.getPropertyMap().put(PROP_SEPARATE, ((Object)(!(Boolean)value)).toString());
 							}
-							style.setSeparate(!(((Boolean) value).booleanValue()));
+							style.setSeparate(!((Boolean) value));
 							break;
 						case COL_COLLAPSED:
 							if (!style.equals(default_annot_style)) {

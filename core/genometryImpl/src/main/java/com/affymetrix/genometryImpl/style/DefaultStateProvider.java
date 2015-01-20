@@ -17,8 +17,8 @@ import java.util.*;
 
 public class DefaultStateProvider implements StateProvider {
 
-	private static final Map<String,ITrackStyleExtended> id2annotState = new HashMap<String,ITrackStyleExtended>();
-	private static final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
+	private static final Map<String,ITrackStyleExtended> id2annotState = new HashMap<>();
+	private static final Map<String,GraphState> id2graphState = new HashMap<>();
 	private static StateProvider globalStateProvider = new DefaultStateProvider();
 
 	/** Creates a new instance of DefaultIAnnotStyleProvider */

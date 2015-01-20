@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
@@ -13,11 +14,13 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.StyledGlyph;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.SeqMapView;
+import com.google.common.collect.ImmutableSet;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Set;
@@ -27,7 +30,10 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
+@Component(name = AxisGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class AxisGlyphFactory extends MapTierGlyphFactoryA {
+
+    public static final String COMPONENT_NAME = "AxisGlyphFactory";
 
     private static final int TIER_SIZE = 54;
     private static final int AXIS_SIZE = 27;
@@ -59,7 +65,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
         });
         resultAxisTier.setPacker(null);
         resultAxisTier.setFixedPixHeight(TIER_SIZE);
-        resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
+        resultAxisTier.setDirection(StyledGlyph.Direction.AXIS);
 
         AxisGlyph axis_glyph = smv.getSeqMap().addAxis(AXIS_SIZE);
         axis_glyph.setHitable(true);
@@ -137,7 +143,7 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
         });
         resultAxisTier.setHeightFixed(true);
         resultAxisTier.setFixedPixHeight(TIER_SIZE);
-        resultAxisTier.setDirection(TierGlyph.Direction.AXIS);
+        resultAxisTier.setDirection(StyledGlyph.Direction.AXIS);
         resultAxisTier.setTierType(TierGlyph.TierType.NONE);
 
         if (smv.shouldAddCytobandGlyph()) {
@@ -163,7 +169,12 @@ public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 
     @Override
     public String getName() {
-        return "axis";
+        return COMPONENT_NAME;
     }
 
+    @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.Axis).build();
+    }
 }

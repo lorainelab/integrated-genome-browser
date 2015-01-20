@@ -66,7 +66,7 @@ public class AltSpliceView extends IGBTabPanel
 	private final JRPTextField buffer_sizeTF;
 	private final JLabel buffer_sizeL;
 	private final JRPCheckBox slice_by_selectionCB;
-	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
+	private List<SeqSymmetry> last_selected_syms = new ArrayList<>();
 	private BioSeq last_seq_changed = null;
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
@@ -167,7 +167,7 @@ public class AltSpliceView extends IGBTabPanel
 	 * Takes a list of SeqSymmetries and removes any GraphSyms from it.
 	 */
 	private static List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
-		List<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
+		List<SeqSymmetry> v = new ArrayList<>(syms.size());
 		for (SeqSymmetry sym : syms) {
 			if (!(sym instanceof GraphSym)) {
 				v.add(sym);
@@ -199,25 +199,15 @@ public class AltSpliceView extends IGBTabPanel
 
 	public void setSliceBuffer(int buf_size) {
 		buffer_sizeTF.setText(String.valueOf(buf_size));
-		spliced_view.setSliceBuffer(buf_size, 
-				new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			}
+		spliced_view.setSliceBuffer(buf_size,
+				orf_analyzer::redoOrfs
 		);
 	}
 
 	private void sliceAndDice(List<SeqSymmetry> syms) {
 		if (syms.size() > 0) {
 			spliced_view.sliceAndDice(syms,
-				new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			});
+					orf_analyzer::redoOrfs);
 		}
 	}
 
@@ -326,12 +316,7 @@ public class AltSpliceView extends IGBTabPanel
 				|| evt.getKey().equals(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR)
 				|| evt.getKey().equals(OrfAnalyzer.PREF_BACKGROUND_COLOR)) {
 			// Each time changed the color, it would triger this method twice and caused a concurrent modification exception 
-			ThreadUtils.runOnEventQueue(new Runnable() {
-
-				public void run() {
-					orf_analyzer.redoOrfs();
-				}
-			});
+			ThreadUtils.runOnEventQueue(orf_analyzer::redoOrfs);
 		}
 	}
 

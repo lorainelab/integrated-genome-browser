@@ -45,8 +45,8 @@ import javax.swing.text.StyleConstants;
 public class PopupInfo extends JWindow {
 
     private static final long serialVersionUID = 1L;
-    private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<TextAttribute, Object>();
-    private static final HashMap<TextAttribute, Object> messageAttrMap = new HashMap<TextAttribute, Object>();
+    private static final HashMap<TextAttribute, Object> textAttrMap = new HashMap<>();
+    private static final HashMap<TextAttribute, Object> messageAttrMap = new HashMap<>();
     private static final SimpleAttributeSet NAME = new SimpleAttributeSet();
 
     static {

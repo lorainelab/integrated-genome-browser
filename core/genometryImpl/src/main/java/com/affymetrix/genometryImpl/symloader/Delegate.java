@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 public class Delegate extends QuickLoadSymLoader {
 
     public static final String EXT = "igbtrack";
-    private static final List<LoadUtils.LoadStrategy> defaultStrategyList = new ArrayList<LoadUtils.LoadStrategy>();
+    private static final List<LoadUtils.LoadStrategy> defaultStrategyList = new ArrayList<>();
 
     static {
         defaultStrategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
@@ -50,7 +50,7 @@ public class Delegate extends QuickLoadSymLoader {
         super(uri, featureName, group);
         this.operator = operator;
         this.dps = dps;
-        strategyList = new ArrayList<LoadUtils.LoadStrategy>();
+        strategyList = new ArrayList<>();
         if (dps != null) {
             this.extension = EXT;
             strategyList.addAll(defaultStrategyList);
@@ -93,8 +93,8 @@ public class Delegate extends QuickLoadSymLoader {
      */
     @Override
     public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
-        List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> result = new ArrayList<>();
+        List<SeqSymmetry> syms = new ArrayList<>();
 
         if (dps.isEmpty()) {
             return result;
@@ -145,7 +145,7 @@ public class Delegate extends QuickLoadSymLoader {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
 
-        List<SeqSymmetry> requests = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> requests = new ArrayList<>();
         for (DelegateParent dp : dps) {
             if (!dp.feature.isVisible()) {
                 notUpdatable = true;
@@ -165,9 +165,7 @@ public class Delegate extends QuickLoadSymLoader {
         }
 
         if (notUpdatable) {
-            for (DelegateParent dp : dps) {
-                dp.clear();
-            }
+            dps.forEach(Delegate.DelegateParent::clear);
             dps = null;
             operator = null;
             strategyList.remove(LoadUtils.LoadStrategy.VISIBLE);
@@ -179,8 +177,8 @@ public class Delegate extends QuickLoadSymLoader {
         query_sym.addSpan(overlapSpan);
         requests.add(query_sym);
 
-        Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<String, List<? extends SeqSymmetry>>();
-        List<SeqSpan> operlapSpans = new ArrayList<SeqSpan>();
+        Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<>();
+        List<SeqSpan> operlapSpans = new ArrayList<>();
         SeqUtils.convertSymToSpanList(SeqUtils.intersection(requests, overlapSpan.getBioSeq()), operlapSpans);
 
         for (SeqSpan span : operlapSpans) {
@@ -197,7 +195,7 @@ public class Delegate extends QuickLoadSymLoader {
     @Override
     protected Map<String, List<? extends SeqSymmetry>> addSymmtries(
             final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
-        Map<String, List<? extends SeqSymmetry>> added = new HashMap<String, List<? extends SeqSymmetry>>();
+        Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
         added.put(uri.toString(), results);
 
         if (results == null || results.isEmpty()) {
@@ -210,16 +208,14 @@ public class Delegate extends QuickLoadSymLoader {
                 addWholeGraph(graphSym, feature);
             } else {
                 // We assume that if there are any GraphSyms, then we're dealing with a list of GraphSyms.
-                for (SeqSymmetry feat : results) {
-                    //grafs.add((GraphSym)feat);
-                    if (feat instanceof GraphSym) {
-                        addWholeGraph((GraphSym) feat, feature);
-                    }
+                //grafs.add((GraphSym)feat);
 //					if (feat instanceof GraphSym) {
 //						GraphSymUtils.addChildGraph((GraphSym) feat, uri.toString(), ((GraphSym) feat).getGraphName(), uri.toString(), span);
 //						feature.addMethod(uri.toString());
 //					}
-                }
+                results.stream().filter(feat -> feat instanceof GraphSym).forEach(feat -> {
+                    addWholeGraph((GraphSym) feat, feature);
+                });
             }
 
             return added;
@@ -232,9 +228,7 @@ public class Delegate extends QuickLoadSymLoader {
             sym.clear();
         }
 
-        for (SeqSymmetry feat : results) {
-            seq.addAnnotation(feat);
-        }
+        results.forEach(seq::addAnnotation);
 
         feature.addMethod(uri.toString());
 

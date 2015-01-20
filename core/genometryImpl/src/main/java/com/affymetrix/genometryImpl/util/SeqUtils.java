@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
 import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
@@ -96,7 +97,7 @@ public class SeqUtils {
      * Get spans that are contained as leaves in the symmetry (on the BioSeq).
      */
     public static List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
-        List<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
+        List<SeqSpan> leafSpans = new ArrayList<>();
         collectLeafSpans(sym, seq, leafSpans);
         return leafSpans;
     }
@@ -151,7 +152,7 @@ public class SeqUtils {
      * @return leaves.
      */
     public static List<SeqSymmetry> getLeafSyms(SeqSymmetry sym) {
-        List<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> leafSyms = new ArrayList<>();
         collectLeafSyms(sym, leafSyms);
         return leafSyms;
     }
@@ -277,12 +278,12 @@ public class SeqUtils {
      */
     public static void union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, BioSeq seq) {
         resultSym.clear();
-        List<SeqSymmetry> leaves = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> leaves = new ArrayList<>();
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectLeafSyms(sym, leaves);
         }
         int leafCount = leaves.size();
-        List<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
+        List<SeqSpan> spans = new ArrayList<>(leafCount);
         for (SeqSymmetry sym : leaves) {
             spans.add(sym.getSpan(seq));
         }
@@ -294,12 +295,12 @@ public class SeqUtils {
      */
     public static void union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, BioSeq seq, int desired_leaf_depth) {
         resultSym.clear();
-        List<SeqSymmetry> leaves = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> leaves = new ArrayList<>();
         for (SeqSymmetry sym : syms) {
             SeqUtils.collectLeafSyms(sym, leaves, desired_leaf_depth);
         }
         int leafCount = leaves.size();
-        List<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
+        List<SeqSpan> spans = new ArrayList<>(leafCount);
         for (SeqSymmetry sym : leaves) {
             spans.add(sym.getSpan(seq));
         }
@@ -312,7 +313,7 @@ public class SeqUtils {
     private static void union(SeqSymmetry symA, SeqSymmetry symB,
             MutableSeqSymmetry resultSym, BioSeq seq) {
         resultSym.clear();
-        List<SeqSpan> spans = new ArrayList<SeqSpan>();
+        List<SeqSpan> spans = new ArrayList<>();
         collectLeafSpans(symA, seq, spans);
         collectLeafSpans(symB, seq, spans);
         spanMerger(spans, resultSym);
@@ -330,7 +331,7 @@ public class SeqUtils {
                 resultSym.addSpan(syms.get(0).getSpan(i));
             }
         } else {
-            List<SeqSymmetry> intersections = new ArrayList<SeqSymmetry>();
+            List<SeqSymmetry> intersections = new ArrayList<>();
             int size = syms.size() - (syms.size() % 2);
             for (int i = 0; i < size; i += 2) {
                 intersections.add(intersection(syms.get(i), syms.get(i + 1), seq));
@@ -425,7 +426,7 @@ public class SeqUtils {
         int max = Integer.MIN_VALUE;
         // will probably be smaller, but specifying an initial capacity
         //   that won't be exceeded can be more efficient
-        List<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
+        List<SeqSpan> merged_spans = new ArrayList<>(spans.size());
 
         SeqSpan span;
         while ((span = getFirstNonNullSpan(spans)) != null) {
@@ -730,7 +731,7 @@ public class SeqUtils {
             SeqSpan cspan = child.getSpan(oseq);
             if (SeqUtils.strictOverlap(ospan, cspan)) {
                 if (results == null) {
-                    results = new ArrayList<SeqSymmetry>();
+                    results = new ArrayList<>();
                 }
                 results.add(child);
             }
@@ -1179,7 +1180,7 @@ public class SeqUtils {
             //   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
             //   so order of children reflects the order they should be spliced in, rather
             //   than their order relative to a particular seq
-            List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
+            List<SeqSymmetry> sorted_children = new ArrayList<>(child_count);
             for (int i = 0; i < child_count; i++) {
                 sorted_children.add(residues_sym.getChild(i));
             }
@@ -1407,7 +1408,7 @@ public class SeqUtils {
      * @return list of overlapping seq symmetries
      */
     public static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<? extends SeqSymmetry> symList) {
-        List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
+        List<SeqSymmetry> newList = new ArrayList<>(symList.size());
         for (SeqSymmetry sym : symList) {
             if (sym instanceof UcscPslSym) {
                 UcscPslSym uSym = (UcscPslSym) sym;
@@ -1472,7 +1473,7 @@ public class SeqUtils {
     }
 
     public static boolean isMultiStrandWrapperType(SeqSymmetry sym) {
-        return (sym instanceof PairedBamSymWrapper);
+        return (sym instanceof MultiTierSymWrapper);
     }
 
     public static boolean isBedSym(SeqSymmetry sym) {

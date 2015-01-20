@@ -18,8 +18,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -825,7 +823,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     public Map<String, Object> getTransientPropertyMap() {
         if (transient_properties == null) {
-            transient_properties = new HashMap<String, Object>();
+            transient_properties = new HashMap<>();
         }
         return transient_properties;
     }
@@ -977,7 +975,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     @Override
-    public final boolean getFloatTier() {
+    public final boolean isFloatTier() {
         return float_graph;
     }
 

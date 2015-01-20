@@ -17,7 +17,7 @@ import java.util.List;
 public class DefaultRegionFinder implements RegionFinder{
 
 	public SeqSpan findInterestingRegion(BioSeq aseq, List<SeqSymmetry> syms) {
-		List<SeqSymmetry> less_syms  = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> less_syms  = new ArrayList<>();
 		if(syms.size() > 100){
 			int size = syms.size();
 			int inc = size/100;

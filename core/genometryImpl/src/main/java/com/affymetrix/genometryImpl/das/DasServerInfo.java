@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
@@ -36,7 +35,7 @@ public final class DasServerInfo {
     private static final boolean REPORT_CAPS = true;
     private URL serverURL;
     private URL primaryURL = null;
-    private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
+    private final Map<String, DasSource> sources = new LinkedHashMap<>();  // using LinkedHashMap for predictable iteration
     private boolean initialized = false;
     private GenericServer primaryServer = null;
 
@@ -91,7 +90,7 @@ public final class DasServerInfo {
     private boolean initialize() {
         InputStream stream = null;
         try {
-            Map<String, List<String>> headers = new HashMap<String, List<String>>();
+            Map<String, List<String>> headers = new HashMap<>();
             stream = getInputStream(headers, "Das Request");
             if (stream == null) {
                 logger.error("Could not find URL {}", serverURL);
@@ -189,7 +188,7 @@ public final class DasServerInfo {
 
     }
 
-    public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws MalformedURLException, IOException {
+    public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws IOException {
         URL load_url = getLoadURL();
         InputStream istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
 

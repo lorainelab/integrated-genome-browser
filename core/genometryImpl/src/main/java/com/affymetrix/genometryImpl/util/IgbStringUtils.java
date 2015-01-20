@@ -47,7 +47,7 @@ public final class IgbStringUtils {
 	 * @return an array of Strings, one for each line of wrapped text
 	 */
 	public static String[] wrap(String toWrap, FontMetrics metrics, int pixels, int maxLines) {
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		StringBuilder buffer = new StringBuilder();
 		final int spaceWidth = metrics.stringWidth(SPACE);
 		final int ellipsisWidth = metrics.stringWidth(ELLIPSIS);

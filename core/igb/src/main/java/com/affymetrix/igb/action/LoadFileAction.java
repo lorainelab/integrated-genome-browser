@@ -23,8 +23,6 @@ import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.util.MergeOptionChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -173,39 +171,38 @@ public final class LoadFileAction extends OpenURIAction {
          *
          */
         List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
-        Set<String> all_known_endings = new HashSet<String>();
+        Set<String> all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {
             all_known_endings.addAll(filter.getExtensions());
         }
 
         final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
 
-        chooser.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
-                    File[] files = chooser.getSelectedFiles();
-                    if (files.length == 1) {
-                        if (files[0] != null) {
-                            boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
-                            chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
+        chooser.addPropertyChangeListener(evt -> {
+            if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
+                File[] files = chooser.getSelectedFiles();
+                if (files.length == 1) {
+                    if (files[0] != null) {
+                        boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
+                        chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
 
-                            if (!enableLoadAsSeqCB) {
-                                chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
-                            }
+                        if (!enableLoadAsSeqCB) {
+                            chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
                         }
-                    } else if (files.length > 1) {
-                        chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
-                        chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
                     }
-
+                } else if (files.length > 1) {
+                    chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
+                    chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
                 }
+
             }
         });
 
         filters = getSupportedFiles(null);
-        filters.add(new UniFileFilter(ScriptProcessorHolder.getInstance().getScriptExtensions().toArray(new String[]{}), "Script File"));
+        List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
+        filters.add(new UniFileFilter(var.toArray(new String[var.size()]), "Script File"));
 
-        all_known_endings = new HashSet<String>();
+        all_known_endings = new HashSet<>();
         for (UniFileFilter filter : filters) {
             chooser.addChoosableFileFilter(filter);
             all_known_endings.addAll(filter.getExtensions());

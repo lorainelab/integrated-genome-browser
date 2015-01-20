@@ -275,11 +275,12 @@ public class WiggleParserTest {
 		testResults2(url.getFile(), outresults, false);
 		File testFile = new File(WiggleParserTest.class.getClassLoader().getResource("testFile.wig").getFile());
 
-		FileInputStream fin = new FileInputStream(testFile);
-		byte fileContent[] = new byte[(int)testFile.length()];
-		fin.read(fileContent);
-		String strFileContent = new String(fileContent);
-		fin.close();
+                String strFileContent;
+            try (FileInputStream fin = new FileInputStream(testFile)) {
+                byte fileContent[] = new byte[(int)testFile.length()];
+                fin.read(fileContent);
+                strFileContent = new String(fileContent);
+            }
 		
 		assertEquals(strFileContent,outstream.toString());
 	}
@@ -287,9 +288,9 @@ public class WiggleParserTest {
 	public File createFileFromString(String string) throws Exception{
 		File tempFile = File.createTempFile("tempFile", ".wig");
 		tempFile.deleteOnExit();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-		bw.write(string);
-		bw.close();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true))) {
+                bw.write(string);
+            }
 		return tempFile;
 	}
 	/*

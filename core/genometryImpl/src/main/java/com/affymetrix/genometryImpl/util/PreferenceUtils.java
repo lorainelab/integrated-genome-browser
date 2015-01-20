@@ -15,8 +15,6 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -99,7 +97,7 @@ public abstract class PreferenceUtils {
     public static final String PREFS_THRESHOLD = "Threshold Value";
     public static final String PREFS_AUTOLOAD = "Enable Auto load";
     private static JFileChooser static_chooser = null;
-    private static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
+    private static final SortedSet<String> keystroke_node_names = Collections.synchronizedSortedSet(new TreeSet<>());
 
     /**
      * Returns the top preferences node for the "com/affymetrix/igb" package.
@@ -537,13 +535,7 @@ public abstract class PreferenceUtils {
             final String action_command, final String pref_name, final String default_val) {
         final Preferences node = PreferenceUtils.getTopNode();
         final JRadioButton radio_button = new JRadioButton(title);
-        radio_button.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                node.put(pref_name, action_command);
-            }
-        });
+        radio_button.addActionListener(ae -> node.put(pref_name, action_command));
 
         radio_button.setSelected(node.get(pref_name, default_val).equalsIgnoreCase(action_command) ? true : false);
         node.addPreferenceChangeListener(new PreferenceChangeListener() {
@@ -568,18 +560,13 @@ public abstract class PreferenceUtils {
     public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
         final Preferences node = PreferenceUtils.getTopNode();
         final JCheckBox check_box = new JCheckBox(title);
-        check_box.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                node.putBoolean(pref_name, check_box.isSelected());
-            }
-        });
+        check_box.addActionListener(ae -> node.putBoolean(pref_name, check_box.isSelected()));
         check_box.setSelected(node.getBoolean(pref_name, default_val));
         node.addPreferenceChangeListener(new PreferenceChangeListener() {
 
             public void preferenceChange(PreferenceChangeEvent evt) {
                 if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-                    check_box.setSelected(Boolean.valueOf(evt.getNewValue()).booleanValue());
+                    check_box.setSelected(Boolean.valueOf(evt.getNewValue()));
                 }
             }
         });
@@ -607,13 +594,10 @@ public abstract class PreferenceUtils {
         // an attempt to set itself to a value that isn't in its option list.
         String current_stored_value = node.get(pref_name, default_value).intern();
 
-        combo_box.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ae) {
-                String selection = (String) combo_box.getSelectedItem();
-                if (selection != null) { // selection == null is probably impossible
-                    node.put(pref_name, selection);
-                }
+        combo_box.addActionListener(ae -> {
+            String selection = (String) combo_box.getSelectedItem();
+            if (selection != null) { // selection == null is probably impossible
+                node.put(pref_name, selection);
             }
         });
 
@@ -732,7 +716,7 @@ public abstract class PreferenceUtils {
     }
 
     public static Map<String, Object> getEntryMapFromNode(Preferences pref) throws BackingStoreException {
-        Map<String, Object> entry = new HashMap<String, Object>();
+        Map<String, Object> entry = new HashMap<>();
         String[] keys;
 
         keys = pref.keys();

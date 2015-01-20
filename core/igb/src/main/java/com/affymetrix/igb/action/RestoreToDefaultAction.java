@@ -1,8 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import static com.affymetrix.igb.shared.Selections.graphStates;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
@@ -33,15 +32,11 @@ public class RestoreToDefaultAction extends SeqMapViewActionA {
         if (getTierManager().getSelectedTiers() == null) {
             return;
         }
-        for (ITrackStyleExtended style : allStyles) {
-            if (style instanceof TrackStyle) {
-                ((TrackStyle) style).restoreToDefault();
-            }
-        }
+        allStyles.stream().filter(style -> style instanceof TrackStyle).forEach(style -> {
+            ((TrackStyle) style).restoreToDefault();
+        });
 
-        for (GraphState graphState : graphStates) {
-            graphState.restoreToDefault();
-        }
+        graphStates.forEach(com.affymetrix.genometryImpl.style.GraphState::restoreToDefault);
 
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
         getSeqMapView().updatePanel();

@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.JRPStyledTable;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.JRPTextFieldTableCellRenderer;
@@ -24,8 +24,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -146,10 +144,10 @@ public final class DataManagementTable {
                 boolean hasFocus, int row, int column) {
             DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
             VirtualFeature vFeature = ftm.getFeature(row);
-            if ((String) value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
-                if (((String) value).equals(gtextField.getText())) {
+            if (value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
+                if (value.equals(gtextField.getText())) {
                     return gtextField;
-                } else if (vFeature.getLoadChoices().size() == 1 && ((String) value).equals(dtextField.getText())) {
+                } else if (vFeature.getLoadChoices().size() == 1 && value.equals(dtextField.getText())) {
                     return dtextField;
                 } else {
                     ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
@@ -194,7 +192,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         super.list.add(DataManagementTableModel.FOREGROUND_COLUMN);
         super.list.add(DataManagementTableModel.TRACK_NAME_COLUMN);
 
-        rmMap = new HashMap<Integer, RowEditorModel>();
+        rmMap = new HashMap<>();
 
         Application igb = Application.getSingleton();
         if (igb != null) {
@@ -354,14 +352,14 @@ class RowEditorModel {
     private final Map<Integer, TableCellEditor> row2Editor;
 
     RowEditorModel(int size) {
-        row2Editor = new HashMap<Integer, TableCellEditor>(size);
+        row2Editor = new HashMap<>(size);
     }
 
     void addEditorForRow(int row, TableCellEditor e) {
-        row2Editor.put(Integer.valueOf(row), e);
+        row2Editor.put(row, e);
     }
 
     TableCellEditor getEditor(int row) {
-        return row2Editor.get(Integer.valueOf(row));
+        return row2Editor.get(row);
     }
 }

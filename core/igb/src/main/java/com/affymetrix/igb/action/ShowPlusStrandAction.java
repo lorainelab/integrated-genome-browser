@@ -28,7 +28,7 @@ public class ShowPlusStrandAction extends GenericAction {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         AffyTieredMap.setShowPlus(!AffyTieredMap.isShowPlus());
-        AffyTieredMap map = ((IGB) IGB.getSingleton()).getMapView().getSeqMap();
+        AffyTieredMap map = IGB.getSingleton().getMapView().getSeqMap();
         map.repackTheTiers(false, true);
     }
 

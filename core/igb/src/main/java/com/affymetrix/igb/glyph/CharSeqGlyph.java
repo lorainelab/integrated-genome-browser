@@ -254,24 +254,32 @@ public final class CharSeqGlyph extends SequenceGlyph
 				cgl = new FillRectGlyph();
 				cgl.setColor(c3);
 			} else {
-				if (viewSeq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-					// hide axis numbering
-					axis.setLabelFormat(AxisGlyph.NO_LABELS);
-					cgl = new LabelledRectGlyph();
-					String text = ospan.getBioSeq().getID();
-					if (text.toLowerCase().startsWith("chr")) {
-						text = text.substring(3);
-					}
-					((LabelledRectGlyph) cgl).setText(text);
-				} else if (viewSeq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
-					cgl = new LabelledRectGlyph();
-					String text = childsym.getID();
-					if (text != null) {
+                            switch (viewSeq.getID()) {
+                                case IGBConstants.GENOME_SEQ_ID:
+                                    {
+                                        // hide axis numbering
+                                        axis.setLabelFormat(AxisGlyph.NO_LABELS);
+                                        cgl = new LabelledRectGlyph();
+                                        String text = ospan.getBioSeq().getID();
+                                        if (text.toLowerCase().startsWith("chr")) {
+                                            text = text.substring(3);
+                                        }
+                                        ((LabelledRectGlyph) cgl).setText(text);
+                                        break;
+                                    }
+                                case IGBConstants.ENCODE_REGIONS_ID:
+                                    {
+                                        cgl = new LabelledRectGlyph();
+                                        String text = childsym.getID();
+                                        if (text != null) {
 						((LabelledRectGlyph) cgl).setText(text);
 					}
-				} else {
-					cgl = new OutlineRectGlyph();
-				}
+                                        break;
+                                    }
+                                default:
+                                    cgl = new OutlineRectGlyph();
+                                    break;
+                            }
 				cgl.setColor(c1);
 			}
 			cgl.setHitable(false);

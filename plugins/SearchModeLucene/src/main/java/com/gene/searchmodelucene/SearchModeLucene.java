@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
@@ -103,37 +102,35 @@ public class SearchModeLucene implements IKeyWordSearch {
 
     @Override
     public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
-        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> syms = new ArrayList<>();
         if (search_text != null && !search_text.isEmpty()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             if (group != null) {
-                for (GenericVersion gVersion : group.getEnabledVersions()) {
-                    if (gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                        for (GenericFeature feature : gVersion.getFeatures()) {
-                            if (feature.isVisible() && feature.symL != null) {
-                                if (statusHolder != null) {
-                                    statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.symL.uri.toString(), search_text));
-                                }
-                                List<SeqSymmetry> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_text, MAX_HITS);
-                                if (results != null) {
-                                    syms.addAll(results);
-                                }
+                group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+                    for (GenericFeature feature : gVersion.getFeatures()) {
+                        if (feature.isVisible() && feature.symL != null) {
+                            if (statusHolder != null) {
+                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.symL.uri.toString(), search_text));
+                            }
+                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_text, MAX_HITS);
+                            if (results != null) {
+                                syms.addAll(results);
                             }
                         }
                     }
-                }
+                });
             }
         }
         String statusStr;
         if (syms.isEmpty()) {
             statusStr = BUNDLE.getString("searchNoResults");
             statusHolder.setStatus(statusStr);
-            return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
         }
         statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"), syms.size());
         statusHolder.setStatus(statusStr);
 
-        return new SearchResults<SeqSymmetry>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
     }
 
 }

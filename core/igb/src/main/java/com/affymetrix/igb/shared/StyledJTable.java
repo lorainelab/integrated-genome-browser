@@ -32,7 +32,7 @@ public class StyledJTable extends JideTable {
             notEditableColor;
 
     // The list will save all the unchangeable column num
-    public ArrayList<Integer> list = new ArrayList<Integer>();
+    public ArrayList<Integer> list = new ArrayList<>();
 
     public StyledJTable(TableModel tm) {
         super(tm);

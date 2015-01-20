@@ -113,7 +113,7 @@ public class USeq2UCSCBig extends Thread{
 	private ArrayList<File> fetchConvertRegionNames(){
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
 		File convertedFile = new File (workingUSeqArchiveFile.getParentFile(), name + ".bb");
-		ArrayList<File> al = new ArrayList<File>();
+		ArrayList<File> al = new ArrayList<>();
 		al.add(convertedFile);
 		return al;
 	}
@@ -142,14 +142,14 @@ public class USeq2UCSCBig extends Thread{
 		executeUCSCCommand(command);
 		deleteTempFiles();
 		//return
-		ArrayList<File> al = new ArrayList<File>();
+		ArrayList<File> al = new ArrayList<>();
 		al.add(convertedFile);
 		return al;
 	}
 
 	private ArrayList<File> fetchConvertedGraphNames(){
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-		ArrayList<File> convertedFiles = new ArrayList<File>();
+		ArrayList<File> convertedFiles = new ArrayList<>();
 		//is it stranded
 		boolean stranded = workingUSeqArchive.isStranded();
 		if (stranded){
@@ -170,7 +170,7 @@ public class USeq2UCSCBig extends Thread{
 		USeq2Text useq2Text = new USeq2Text();
 		useq2Text.setPrintWigFormat(true);
 		String name = workingUSeqArchiveFile.getName().replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
-		ArrayList<File> convertedFiles = new ArrayList<File>();
+		ArrayList<File> convertedFiles = new ArrayList<>();
 		tempFile = new File (workingUSeqArchiveFile.getCanonicalPath() + ".wig");
 		tempFile.deleteOnExit();
 
@@ -240,11 +240,11 @@ public class USeq2UCSCBig extends Thread{
 			for (String c : results) {
 				sb.append("\n");
 				sb.append(c);
-				if (c.contains("millis") == false) {
+				if (!c.contains("millis")) {
 					ok = false;
 				}
 			}
-			if (ok != true) {
+			if (!ok) {
 				deleteAllFiles();
 				throw new Exception (sb.toString());
 			}
@@ -255,14 +255,14 @@ public class USeq2UCSCBig extends Thread{
 		HashMap<String,Integer> nameBase = workingUSeqArchive.fetchChromosomesAndLastBase();
 		chromLengths = new File (workingUSeqArchive.getZipFile()+".chromLengths");
 		chromLengths.deleteOnExit();
-		PrintWriter out = new PrintWriter( new FileWriter (chromLengths));
-		for (String name: nameBase.keySet()){
-			int length = nameBase.get(name)+ lengthExtender;
-			out.print(name);
-			out.print("\t");
-			out.println(length);
-		}
-		out.close();
+            try (PrintWriter out = new PrintWriter( new FileWriter (chromLengths))) {
+                for (String name: nameBase.keySet()){
+                    int length = nameBase.get(name)+ lengthExtender;
+                    out.print(name);
+                    out.print("\t");
+                    out.println(length);
+                }
+            }
 	}
 
 	public void deleteAllFiles(){
@@ -317,7 +317,7 @@ public class USeq2UCSCBig extends Thread{
 			}
 		}
 		//make files
-		if (ucscDir == null || ucscDir.isDirectory() == false) {
+		if (ucscDir == null || !ucscDir.isDirectory()) {
 			USeqUtilities.printExit("\nCannot find your directory containing the UCSC wig2BigWig and bed2BigBed apps -> "+ucscDir);
 		}
 		ucscWig2BigWig = new File( ucscDir, "wigToBigWig");
@@ -327,10 +327,10 @@ public class USeq2UCSCBig extends Thread{
 		if (useqArchives == null || useqArchives.length == 0) {
 			USeqUtilities.printExit("\nCannot find any xxx."+USeqUtilities.USEQ_EXTENSION_NO_PERIOD+" USeq archives?\n");
 		}
-		if (ucscWig2BigWig.canExecute() == false) {
+		if (!ucscWig2BigWig.canExecute()) {
 			USeqUtilities.printExit("\nCannot find or execute -> "+ucscWig2BigWig+"\n");
 		}
-		if (ucscBed2BigBed.canExecute() == false) {
+		if (!ucscBed2BigBed.canExecute()) {
 			USeqUtilities.printExit("\nCannot find or execute -> "+ucscBed2BigBed+"\n");
 		}
 

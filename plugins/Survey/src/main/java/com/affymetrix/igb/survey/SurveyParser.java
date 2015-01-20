@@ -33,7 +33,7 @@ public class SurveyParser {
      * Parsers given input stream
      */
     public static List<Survey> parse(InputStream inputstream) throws ParserConfigurationException, SAXException, IOException {
-        List<Survey> surveys = new ArrayList<Survey>();
+        List<Survey> surveys = new ArrayList<>();
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -149,7 +149,7 @@ public final class WebLinksView {
 		if (table.getSelectedRow() != -1) {
 			int[] selectedTableRows = table.getSelectedRows();
 			if (confirmDelete(table.getSelectedRowCount())) {
-				List<WebLink> links = new ArrayList<WebLink>();
+				List<WebLink> links = new ArrayList<>();
 				for (int i : selectedTableRows) {
 					links.add(((WebLinksTableModel)table.getModel()).webLinks.get(i));
 				}
@@ -522,8 +522,8 @@ public final class WebLinksView {
 		public int getColumnCount() {
 			return col_headings.length;
 		}
-	};
-	
+	}
+
 	class LocalListSelectionListener implements ListSelectionListener {
 		
 		private JTable table;

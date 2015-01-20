@@ -26,8 +26,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.EventUtils;
@@ -161,7 +159,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         this._baseComponent = _baseComponent;
         this.tabState = tabState;
         retractDividerSet = false;
-        trayStateChangeListeners = new ArrayList<TrayStateChangeListener>();
+        trayStateChangeListeners = new ArrayList<>();
         trayState = TrayState.HIDDEN;
         title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
         saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
@@ -187,14 +185,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
                         }
                     }
                 });
-        tab_pane.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
-                if (sel != null) {
-                    GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
-                }
+        tab_pane.addChangeListener(e -> {
+            IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
+            if (sel != null) {
+                GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
             }
         });
 
@@ -400,15 +394,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         }
         frame.setVisible(true);
 
-        final Runnable return_panes_to_main_window = new Runnable() {
-
-            public void run() {
-                // save the current size into the preferences, so the window
-                // will re-open with this size next time
-                PreferenceUtils.saveWindowLocation(frame, title);
-                setDividerLocation(saveDividerProportionalLocation);
-                extendTray();
-            }
+        final Runnable return_panes_to_main_window = () -> {
+            // save the current size into the preferences, so the window
+            // will re-open with this size next time
+            PreferenceUtils.saveWindowLocation(frame, title);
+            setDividerLocation(saveDividerProportionalLocation);
+            extendTray();
         };
 
         frame.addWindowListener(new WindowAdapter() {
@@ -468,7 +459,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         String name = plugin.getName();
         boolean selectedTabRemoved = false;
         for (int i = 1; i < tab_pane.getTabCount(); i++) {
-            if (name.equals(((IGBTabPanel) tab_pane.getComponentAt(i)).getName())) {
+            if (name.equals(tab_pane.getComponentAt(i).getName())) {
                 if (tab_pane.getSelectedIndex() == i) {
                     selectedTabRemoved = true;
                 }
@@ -491,7 +482,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
     @Override
     public Set<IGBTabPanel> getPlugins() {
-        Set<IGBTabPanel> plugins = new HashSet<IGBTabPanel>();
+        Set<IGBTabPanel> plugins = new HashSet<>();
         for (int i = 0; i < tab_pane.getTabCount(); i++) {
             IGBTabPanel panel = (IGBTabPanel) tab_pane.getComponentAt(i);
             if (panel != null) {

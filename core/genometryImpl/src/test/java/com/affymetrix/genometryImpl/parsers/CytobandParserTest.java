@@ -13,7 +13,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -60,7 +59,7 @@ public class CytobandParserTest {
      * Test of writeAnnotations method, of class CytobandParser.
      */
     @Test
-    public void testWriteAnnotations() throws FileNotFoundException, IOException {
+    public void testWriteAnnotations() throws IOException {
 
         String string = "chr1\t39600000\t43900000\tp34.2\tgpos25\n"
                 + "chr1\t43900000\t46500000\tp34.1\tgneg\n"
@@ -72,7 +71,7 @@ public class CytobandParserTest {
 
         CytobandParser instance = new CytobandParser();
 
-        Collection<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+        Collection<SeqSymmetry> syms = new ArrayList<>();
 
         syms = instance.parse(istr, seq_group, annot_seq);
 

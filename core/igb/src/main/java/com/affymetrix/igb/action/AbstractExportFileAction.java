@@ -13,11 +13,10 @@ import com.affymetrix.genometryImpl.util.ExportFileModel;
 import com.affymetrix.genometryImpl.util.GFileChooser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -26,6 +25,7 @@ import java.io.FileOutputStream;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -47,7 +47,7 @@ public abstract class AbstractExportFileAction
             boolean popup) {
         super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
         model = new ExportFileModel();
-        preferredFilters = new EnumMap<FileTypeCategory, UniFileFilter>(FileTypeCategory.class);
+        preferredFilters = new EnumMap<>(FileTypeCategory.class);
     }
 
     /**
@@ -57,14 +57,19 @@ public abstract class AbstractExportFileAction
      */
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
-        List<Glyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
-        setEnabled(1 == answer.size() && answer.get(0).getInfo() != null && isExportable(((TierGlyph) answer.get(0)).getFileTypeCategory()));
+        List<TierGlyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        if (answer.size() != 1) {
+            setEnabled(false);
+        } else {
+            Optional<FileTypeCategory> category = answer.get(0).getFileTypeCategory();
+            setEnabled(answer.get(0).getInfo() != null && isExportable(category));
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<Glyph> current_tiers = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        List<TierGlyph> current_tiers = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
         if (current_tiers.size() > 1) {
             ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
         } else if (current_tiers.isEmpty()) {
@@ -77,21 +82,20 @@ public abstract class AbstractExportFileAction
 
     private void saveAsFile(TierGlyph atier) {
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
-        Map<UniFileFilter, AnnotationWriter> filter2writers = model.getFilterToWriters(rootSym.getCategory());
-        if (filter2writers != null && !filter2writers.isEmpty()) {
+
+        Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(rootSym.getCategory());
+        if (filter2writers.isPresent() && !filter2writers.get().isEmpty()) {
             JFileChooser chooser = new GFileChooser();
             chooser.setAcceptAllFileFilterUsed(false);
             chooser.setMultiSelectionEnabled(false);
             chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            for (UniFileFilter filter : filter2writers.keySet()) {
-                chooser.addChoosableFileFilter(filter);
-            }
+            filter2writers.get().keySet().forEach(chooser::addChoosableFileFilter);
             UniFileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
             if (preferredFilter == null) {
                 chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
             } else {
                 for (FileFilter filter : chooser.getChoosableFileFilters()) {
-                    if (((UniFileFilter) filter).getDescription().equals(preferredFilter.getDescription())) {
+                    if (filter.getDescription().equals(preferredFilter.getDescription())) {
                         chooser.setFileFilter(filter);
                         break;
                     }
@@ -108,7 +112,7 @@ public abstract class AbstractExportFileAction
                     dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
                     UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
                     preferredFilters.put(rootSym.getCategory(), selectedFilter);
-                    exportFile(filter2writers.get(selectedFilter), dos, aseq, atier);
+                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq, atier);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 } finally {
@@ -121,9 +125,14 @@ public abstract class AbstractExportFileAction
         }
     }
 
-    public boolean isExportable(FileTypeCategory category) {
-        Map<UniFileFilter, AnnotationWriter> filter2writers = model.getFilterToWriters(category);
-        return filter2writers != null && !filter2writers.isEmpty();
+    public boolean isExportable(Optional<FileTypeCategory> category) {
+        if (category.isPresent()) {
+            Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(category.get());
+            if (filter2writers.isPresent()) {
+                return !filter2writers.get().isEmpty();
+            }
+        }
+        return false;
     }
 
     protected abstract void exportFile(

@@ -9,7 +9,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.affymetrix.igb.shared.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
@@ -48,16 +48,14 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
 
             super.actionPerformed(e);
             // First split the graph.
-            for (StyledGlyph vg : allGlyphs) {
-				//If graphs is joined then apply color to combo style too.
-                // TODO: Use code from split graph
-                if (vg instanceof GraphGlyph) {
-                    ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
-                    if (style != null) {
-                        getSeqMapView().split((GraphGlyph) vg);
-                    }
+            //If graphs is joined then apply color to combo style too.
+// TODO: Use code from split graph
+            allGlyphs.stream().filter(vg -> vg instanceof GraphGlyph).forEach(vg -> {
+                ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
+                if (style != null) {
+                    getSeqMapView().split((GraphGlyph) vg);
                 }
-            }
+            });
 
             for (StyledGlyph vg : allGlyphs) {
                 GenericFeature gFeature = vg.getAnnotStyle().getFeature();

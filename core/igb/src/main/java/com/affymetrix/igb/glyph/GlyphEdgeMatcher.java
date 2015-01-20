@@ -63,7 +63,7 @@ public final class GlyphEdgeMatcher {
 	 * Glyphs added for matches are collected and returned in match_glyphs.
 	 */
 	public List<GlyphI> matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs) {
-		List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+		List<GlyphI> match_glyphs = new ArrayList<>();
 		for (GlyphI query : query_glyphs) {
 			matchEdges(map, query, target_glyphs, match_glyphs);
 		}
@@ -194,7 +194,7 @@ public final class GlyphEdgeMatcher {
 	// Result undefined if the glyph is not in a tier.
 	static GlyphI getTier(GlyphI target) {
 		GlyphI p = target;
-		while (p.getParent() != null && !(p instanceof com.affymetrix.igb.shared.TierGlyph)) {
+		while (p.getParent() != null && !(p instanceof com.lorainelab.igb.genoviz.extensions.api.TierGlyph)) {
 			p = p.getParent();
 		}
 		return p;

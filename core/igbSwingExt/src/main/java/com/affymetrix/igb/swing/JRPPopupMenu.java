@@ -15,7 +15,7 @@ import javax.swing.JPopupMenu;
 public class JRPPopupMenu extends JPopupMenu {
 
     private static final long serialVersionUID = 1L;
-    private final TreeMap<Integer, Component> popups = new TreeMap<Integer, Component>();
+    private final TreeMap<Integer, Component> popups = new TreeMap<>();
 
     public JRPPopupMenu() {
         super();

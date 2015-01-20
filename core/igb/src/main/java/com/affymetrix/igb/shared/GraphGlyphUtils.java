@@ -102,7 +102,7 @@ public final class GraphGlyphUtils {
     }
 
     private static final int MAX_INFO2PSCORES_SIZE = 1000; // prevent it from getting too big
-    private static final Map<Object, float[]> info2pscores = new HashMap<Object, float[]>();
+    private static final Map<Object, float[]> info2pscores = new HashMap<>();
 
     /**
      * Gets the percents2scores array for the given graph, creating the array if

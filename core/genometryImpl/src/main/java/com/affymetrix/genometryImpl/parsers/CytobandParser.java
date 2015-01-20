@@ -67,11 +67,11 @@ public final class CytobandParser implements AnnotationWriter, Parser {
             throws IOException {
 
         int band_alternator = 1; // toggles dark/light when band color is missing
-        List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(100);
+        List<SeqSymmetry> results = new ArrayList<>(100);
         String line;
         Thread thread = Thread.currentThread();
         BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
-        Map<BioSeq, SeqSymmetry> seq2csym = new HashMap<BioSeq, SeqSymmetry>();
+        Map<BioSeq, SeqSymmetry> seq2csym = new HashMap<>();
         while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
             if (line.charAt(0) == '#' || line.length() == 0) {  // skip comment lines
                 continue;
@@ -90,10 +90,10 @@ public final class CytobandParser implements AnnotationWriter, Parser {
 
             int beg = Integer.parseInt(fields[1]);  // start field
             int end = Integer.parseInt(fields[2]);  // stop field
-            String annot_name = new String(fields[3]);
+            String annot_name = fields[3];
             String band = null;
             if (field_count >= 5) {
-                band = new String(fields[4]);
+                band = fields[4];
             } else {
                 if (band_alternator > 0) {
                     band = "gpos25";
@@ -173,9 +173,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
         boolean success = true;
         try {
             Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-            Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-            while (iterator.hasNext()) {
-                SeqSymmetry sym = (SeqSymmetry) iterator.next();
+            for (SeqSymmetry sym : syms) {
                 writeCytobandFormat(bw, sym, seq);
             }
             bw.flush();
@@ -215,7 +213,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
     public static enum Arm {
 
         SHORT, LONG, UNKNOWN
-    };
+    }
 
     public static final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 
@@ -295,7 +293,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
         public Map<String, Object> cloneProperties() {
             Map<String, Object> props = super.cloneProperties();
             if (props == null) {
-                props = new HashMap<String, Object>(4);
+                props = new HashMap<>(4);
             }
             if (id != null) {
                 props.put("id", id);
@@ -319,7 +317,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
     }
 
     public static List<CytobandSym> generateBands(SeqSymmetry cyto_container) {
-        List<CytobandSym> bands = new ArrayList<CytobandSym>();
+        List<CytobandSym> bands = new ArrayList<>();
         for (int q = 0; q < cyto_container.getChildCount(); q++) {
             SeqSymmetry child = cyto_container.getChild(q);
             if (child instanceof CytobandSym) {

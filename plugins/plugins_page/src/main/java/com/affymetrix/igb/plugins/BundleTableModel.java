@@ -42,7 +42,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
     public static class NameInfoPanel extends JPanel implements Comparable<NameInfoPanel> {
 
         private static final long serialVersionUID = 1L;
-        private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<Bundle, NameInfoPanel>(); // kludge
+        private static final HashMap<Bundle, NameInfoPanel> PANEL_MAP = new HashMap<>(); // kludge
         private final JLabel text;
         private final JLabel icon;
         private final String tooltip;
@@ -187,7 +187,7 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
                     : "" + getVersion();
         }
     }
-    private static final ArrayList<BundleColumn> columns = new ArrayList<BundleColumn>();
+    private static final ArrayList<BundleColumn> columns = new ArrayList<>();
 
     static {
         columns.add(new BundleColumn() { // install
@@ -270,15 +270,10 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
             public void formatColumn(JTable jTable, TableColumn tc) {
                 tc.setPreferredWidth(tc.getPreferredWidth() * WIDE_COLUMN_MULTIPLIER);
                 tc.setCellRenderer(
-                        new TableCellRenderer() {
-
-                            @Override
-                            public Component getTableCellRendererComponent(JTable table, Object value,
-                                    boolean isSelected, boolean hasFocus, int row, int column) {
-                                Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                                ((JLabel) component).setToolTipText((String) value);
-                                return component;
-                            }
+                        (table, value, isSelected, hasFocus, row, column) -> {
+                            Component component = new DefaultTableCellRenderer().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                            ((JLabel) component).setToolTipText((String) value);
+                            return component;
                         });
             }
         });
@@ -315,11 +310,11 @@ public class BundleTableModel extends DefaultTableModel implements Constants {
     public static final List<SortKey> SORT_KEYS;
 
     static {
-        List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+        List<SortKey> sortKeys = new ArrayList<>(2);
         sortKeys.add(new SortKey(0, SortOrder.ASCENDING));
         sortKeys.add(new SortKey(1, SortOrder.ASCENDING));
 
-        SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
+        SORT_KEYS = Collections.unmodifiableList(sortKeys);
     }
 
     public BundleTableModel() {

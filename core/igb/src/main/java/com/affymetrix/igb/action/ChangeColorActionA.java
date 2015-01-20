@@ -5,7 +5,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.affymetrix.igb.shared.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -55,17 +55,12 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
             setChooserColor(chooser, style_0);
         }
 
-        ActionListener al = new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                performAction(chooser.getColor());
-                getSeqMapView().updatePanel();
-            }
-
+        ActionListener al = e -> {
+            performAction(chooser.getColor());
+            getSeqMapView().updatePanel();
         };
 
-        JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
+        JDialog dialog = JColorChooser.createDialog(null, // parent
                 "Pick a Color",
                 true, //modal
                 chooser,

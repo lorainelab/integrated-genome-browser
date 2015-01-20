@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.sequenceviewer.actions.ExitSeqViewerAction;
 import com.affymetrix.sequenceviewer.actions.ExportFastaSequenceAction;
@@ -211,12 +211,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                     return;
                 }
 
-                final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
-                    public void actionDone(GenericAction action) {
-                        mapframe = new JFrame();
-                        System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
-                        getGoing(residues_sym);//next destination to start the sequence viewer
-                    }
+                final GenericActionDoneCallback doneback = action -> {
+                    mapframe = new JFrame();
+                    System.setProperty("apple.laf.useScreenMenuBar", "false");//this is done to have menu attached with the frame because in mac the default menu bar is different
+                    getGoing(residues_sym);//next destination to start the sequence viewer
                 };
 
                 if (!isGenomicRequest) {
@@ -334,7 +332,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     }
 
     private void createItemListForSequenceviewer(SeqSymmetry residues_sym, BioSeq aseq) {
-        bundle = new ArrayList<CreateValueSet>();
+        bundle = new ArrayList<>();
         if (isGenomicRequest || (residues_sym.getChildCount() == 0)) {
             addSequenceViewerItem(residues_sym, SequenceViewerItems.TYPE.EXON.ordinal(), aseq);
         } else {
@@ -347,11 +345,11 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             SeqSpan span = residues_sym.getSpan(aseq);
             if (!span.isForward() && shouldReverseOnNegative()) {
                 Collections.reverse(bundle);
-                workingList = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<>(bundle);
             } else {
-                workingList = new ArrayList<CreateValueSet>(bundle);
+                workingList = new ArrayList<>(bundle);
             }
-            reverseComplementList = new ArrayList<CreateValueSet>(workingList);
+            reverseComplementList = new ArrayList<>(workingList);
             Collections.reverse(reverseComplementList);
         }
     }
@@ -539,29 +537,29 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             String fileName = chooser.getSelectedFile().toString();
             if (null != fileName) {
                 try {
-                    FileWriter fw = new FileWriter(fileName);
-                    String firstLine = title;
-                    if (isReverse) {
-                        r = DNAUtils.getReverseComplement(seqview.getResidues());
-                        firstLine = title + "Reverse Complement";
-                    } else {
-                        r = seqview.getResidues();
-                    }
-                    if (!isGenomicRequest) {
-                        firstLine = title;
-                    }
-                    fw.write(">" + firstLine);
-                    fw.write('\n');
-                    int i;
-                    for (i = 0; i < r.length() - 50; i += 50) {
-                        fw.write(r, i, 50);
+                    try (FileWriter fw = new FileWriter(fileName)) {
+                        String firstLine = title;
+                        if (isReverse) {
+                            r = DNAUtils.getReverseComplement(seqview.getResidues());
+                            firstLine = title + "Reverse Complement";
+                        } else {
+                            r = seqview.getResidues();
+                        }
+                        if (!isGenomicRequest) {
+                            firstLine = title;
+                        }
+                        fw.write(">" + firstLine);
                         fw.write('\n');
+                        int i;
+                        for (i = 0; i < r.length() - 50; i += 50) {
+                            fw.write(r, i, 50);
+                            fw.write('\n');
+                        }
+                        if (i < r.length()) {
+                            fw.write(r.substring(i) + '\n');
+                        }
+                        fw.flush();
                     }
-                    if (i < r.length()) {
-                        fw.write(r.substring(i) + '\n');
-                    }
-                    fw.flush();
-                    fw.close();
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }
@@ -641,12 +639,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         showMenu.add(showAllNegativeTranslation);
         colorMenu.add(colorScheme1);
         colorMenu.add(colorScheme2);
-        exportRComplementFasta.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                exportSequenceFasta(true);
-            }
-        });
+        exportRComplementFasta.addActionListener(evt -> exportSequenceFasta(true));
         bg.add(colorScheme1);
         bg.add(colorScheme2);
         if (colorSwitch) {
@@ -723,10 +716,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
 
     public void copySelectedTransAction(int[] frameArray) {
         int frameType;
-        StringBuffer selectedTrans = new StringBuffer();
+        StringBuilder selectedTrans = new StringBuilder();
 
-        for (int i = 0; i < frameArray.length; i++) {
-            frameType = frameArray[i];
+        for (int aFrameArray : frameArray) {
+            frameType = aFrameArray;
             if (frameType < Translatable.FRAME_ONE) {
                 continue;
             }
@@ -784,7 +777,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
      * Copy the annotated sequence and replace the 'starting', 'ending' and introns with lower cases
      */
     public void copyAnnotatedSequenceAction() {
-        StringBuffer copyAnnotatedSeqStringBuffer = new StringBuffer();
+        StringBuilder copyAnnotatedSeqStringBuffer = new StringBuilder();
 
         int start = 0, end = 0;
         Iterator<CreateValueSet> it_working = null;

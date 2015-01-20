@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.affymetrix.igb.shared.StyledGlyph;
+
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 
 /**
@@ -28,11 +28,9 @@ public class ShadeUsingBaseQualityAction extends SeqMapViewActionA {
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
         super.actionPerformed(e);
-        for (StyledGlyph glyph : allGlyphs) {
-            if (((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
-                glyph.getAnnotStyle().setShadeBasedOnQualityScore(isSelected());
-            }
-        }
+        allGlyphs.stream().filter(glyph -> ((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment).forEach(glyph -> {
+            glyph.getAnnotStyle().setShadeBasedOnQualityScore(isSelected());
+        });
         refreshMap(false, false);
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
     }

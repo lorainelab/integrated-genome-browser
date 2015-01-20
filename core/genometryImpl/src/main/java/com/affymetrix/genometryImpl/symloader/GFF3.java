@@ -40,7 +40,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
     private static final boolean DEBUG = false;
     private static final Pattern line_regex = Pattern.compile("\\s+");
     private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
     private GFF3Parser parser;
     private final boolean merge_cds;
 
@@ -80,7 +80,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -89,7 +89,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
     public List<? extends SeqSymmetry> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<SeqSymmetry> retList = new ArrayList<SeqSymmetry>();
+        List<SeqSymmetry> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -161,8 +161,8 @@ public class GFF3 extends SymLoader implements LineProcessor {
         BufferedReader br = null;
         BufferedWriter bw = null;
 
-        Map<String, Boolean> chrTrack = new HashMap<String, Boolean>();
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+        Map<String, Boolean> chrTrack = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
         String line, trackLine = null, seq_name = null;
         String[] fields;
         int counter = 0;
@@ -192,7 +192,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
                             bw.write(line + "\n");
                         }
                     } else if (line.startsWith("##track name")) {
-                        chrTrack = new HashMap<String, Boolean>();
+                        chrTrack = new HashMap<>();
                         trackLine = line;
                     }
                     continue;
@@ -234,9 +234,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
         } catch (Exception ex) {
             throw ex;
         } finally {
-            for (BufferedWriter b : chrs.values()) {
-                GeneralUtils.safeClose(b);
-            }
+            chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(bw);
         }

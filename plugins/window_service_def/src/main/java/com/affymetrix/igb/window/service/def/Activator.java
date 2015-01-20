@@ -7,7 +7,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.common.CommonUtils;
@@ -60,17 +59,14 @@ public class Activator implements BundleActivator {
         }
         try {
             bundleContext.addServiceListener(
-                    new ServiceListener() {
-                        @Override
-                        public void serviceChanged(ServiceEvent event) {
-                            @SuppressWarnings("unchecked")
-                            ServiceReference<IGBTabPanel> serviceReference = (ServiceReference<IGBTabPanel>) event.getServiceReference();
-                            if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
-                                windowServiceDefaultImpl.removeTab(bundleContext.getService(serviceReference));
-                            }
-                            if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
-                                addTab(bundleContext, serviceReference, windowServiceDefaultImpl);
-                            }
+                    event -> {
+                        @SuppressWarnings("unchecked")
+                        ServiceReference<IGBTabPanel> serviceReference = (ServiceReference<IGBTabPanel>) event.getServiceReference();
+                        if (event.getType() == ServiceEvent.UNREGISTERING || event.getType() == ServiceEvent.MODIFIED || event.getType() == ServiceEvent.MODIFIED_ENDMATCH) {
+                            windowServiceDefaultImpl.removeTab(bundleContext.getService(serviceReference));
+                        }
+                        if (event.getType() == ServiceEvent.REGISTERED || event.getType() == ServiceEvent.MODIFIED) {
+                            addTab(bundleContext, serviceReference, windowServiceDefaultImpl);
                         }
                     }, SERVICE_FILTER);
         } catch (InvalidSyntaxException x) {

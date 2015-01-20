@@ -80,12 +80,9 @@ public class HeadLessExport {
                     setJPEG_DPI(metadata);
                 }
 
-                final ImageOutputStream stream = ImageIO.createImageOutputStream(f);
-                try {
+                try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
                     writer.setOutput(stream);
                     writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
-                } finally {
-                    stream.close();
                 }
                 break;
             }

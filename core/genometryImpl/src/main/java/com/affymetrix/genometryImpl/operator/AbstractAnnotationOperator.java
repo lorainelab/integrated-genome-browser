@@ -7,9 +7,12 @@ import java.util.List;
 import com.affymetrix.genometryImpl.GenometryConstants;
 import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractAnnotationOperator implements Operator {
 	final protected FileTypeCategory category;
+        private static final Logger logger = LoggerFactory.getLogger(AbstractAnnotationOperator.class);
 	
 	protected AbstractAnnotationOperator(){
 		this.category = FileTypeCategory.Annotation;
@@ -49,12 +52,13 @@ public abstract class AbstractAnnotationOperator implements Operator {
 		try {
 			return getClass().getConstructor(FileTypeCategory.class).newInstance(category);
 		} catch (Exception ex) {
+                    logger.error("Error while cloning Operator ", ex);
 		}
 		return null;
 	}
 	
 	protected static List<SeqSymmetry> findChildSyms(SeqSymmetry sym) {
-		List<SeqSymmetry> childSyms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> childSyms = new ArrayList<>();
 		for (int i = 0; i < sym.getChildCount(); i++) {
 			childSyms.add(sym.getChild(i));
 		}

@@ -8,11 +8,10 @@ import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.JRPButton;
 import java.awt.BorderLayout;
@@ -137,7 +136,7 @@ public class IGBToolBar extends JToolBar {
     private void triggerMouseReleasedEvent() {
         for (Component c : toolbarItemPanel.getComponents()) {
             if (c instanceof JRPButtonTLP) {
-                for (MouseListener m : ((JRPButtonTLP) c).getMouseListeners()) {
+                for (MouseListener m : c.getMouseListeners()) {
                     MouseEvent me = new MouseEvent(c, 0, 0, 0, 100, 100, 1, false);
                     m.mouseReleased(me);
                 }
@@ -193,7 +192,7 @@ public class IGBToolBar extends JToolBar {
         for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
             if (((JButton) toolbarItemPanel.getComponent(i)).getAction() == action) {
                 if (action instanceof ContinuousAction) {
-                    ((JButton) toolbarItemPanel.getComponent(i)).removeMouseListener(continuousActionListener);
+                    toolbarItemPanel.getComponent(i).removeMouseListener(continuousActionListener);
                 }
                 toolbarItemPanel.remove(i);
                 refreshToolbar();
@@ -313,7 +312,7 @@ public class IGBToolBar extends JToolBar {
 
         @Override
         public List<TierGlyph> getTrackList() {
-            return ((IGB) Application.getSingleton()).getMapView().getTierManager().getSelectedTiers();
+            return Application.getSingleton().getMapView().getTierManager().getSelectedTiers();
         }
     }
 

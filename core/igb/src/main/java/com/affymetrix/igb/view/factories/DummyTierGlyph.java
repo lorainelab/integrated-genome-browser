@@ -10,7 +10,7 @@ public class DummyTierGlyph extends AbstractTierGlyph {
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {
-        Map<String, Class<?>> temp = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> temp = new HashMap<>();
         PREFERENCES = Collections.unmodifiableMap(temp);
     }
 

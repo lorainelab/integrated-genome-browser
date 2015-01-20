@@ -23,7 +23,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 
     private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-    private static final List<LoadStrategy> strategyList = new ArrayList<LoadStrategy>();
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -54,7 +54,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> chromosomeList = new ArrayList<BioSeq>(chrList.keySet());
+        List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
         return chromosomeList;
     }
@@ -63,7 +63,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
     public List<GraphSym> getGenome() throws Exception {
         init();
         List<BioSeq> allSeq = getChromosomeList();
-        List<GraphSym> retList = new ArrayList<GraphSym>();
+        List<GraphSym> retList = new ArrayList<>();
         for (BioSeq seq : allSeq) {
             retList.addAll(getChromosome(seq));
         }
@@ -87,7 +87,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
     }
 
     private List<GraphSym> parse(BioSeq seq, int min, int max) throws Exception {
-        List<GraphSym> results = new ArrayList<GraphSym>();
+        List<GraphSym> results = new ArrayList<>();
         IntArrayList xlist = new IntArrayList();
         FloatArrayList ylist = new FloatArrayList();
         BufferedReader br = null;
@@ -243,7 +243,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
      */
     @Override
     protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
-        Map<String, BufferedWriter> chrs = new HashMap<String, BufferedWriter>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
         BufferedReader br = null;
         BufferedWriter bw = null;
         String[] fields = null;

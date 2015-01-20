@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.thread.CThreadHolder;
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.osgi.service.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
@@ -44,23 +44,21 @@ public abstract class BlastSearchAction extends GenericAction {
             final BioSeq aseq = smv.getAnnotatedSeq();
             final SeqSpan span = residues_sym.getSpan(aseq);
 
-            final GenericActionDoneCallback doneback = new GenericActionDoneCallback() {
-                public void actionDone(GenericAction action) {
-                    try {
-                        StrandedFeatureSetI sf = new StrandedFeatureSet();
-                        String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5} [{6}]",
-                                new Object[]{residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getID(), aseq.getSeqGroup().getOrganism()});
-                        Sequence seq = new Sequence(id, getSequence(residues_sym));
+            final GenericActionDoneCallback doneback = action -> {
+                try {
+                    StrandedFeatureSetI sf = new StrandedFeatureSet();
+                    String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5} [{6}]",
+                            residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getID(), aseq.getSeqGroup().getOrganism());
+                    Sequence seq = new Sequence(id, getSequence(residues_sym));
 
-                        RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());
-                        String url = blast.runAnalysis(sf, seq, 1);
+                    RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());
+                    String url = blast.runAnalysis(sf, seq, 1);
 
-                        GeneralUtils.browse(url);
-                    } catch (Exception ex) {
-                        ArrayList<Throwable> exs = new ArrayList<Throwable>(1);
-                        exs.add(ex);
-                        ErrorHandler.errorPanel("Error", ex.getMessage(), exs, Level.SEVERE);
-                    }
+                    GeneralUtils.browse(url);
+                } catch (Exception ex) {
+                    ArrayList<Throwable> exs = new ArrayList<>(1);
+                    exs.add(ex);
+                    ErrorHandler.errorPanel("Error", ex.getMessage(), exs, Level.SEVERE);
                 }
             };
 

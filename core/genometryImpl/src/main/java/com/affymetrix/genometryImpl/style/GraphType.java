@@ -18,7 +18,7 @@ public enum GraphType {
 	private final static Map<String,GraphType> humanReadable2number;
 
 	static {
-		humanReadable2number = new HashMap<String,GraphType>();
+		humanReadable2number = new HashMap<>();
 		for( GraphType type : values()){
 			humanReadable2number.put(type.humanReadable, type);
 		}

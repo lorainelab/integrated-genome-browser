@@ -1,6 +1,5 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -16,17 +15,14 @@ import javax.swing.JFrame;
 public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	private static RepositoryChangerHolder instance = new RepositoryChangerHolder();
 	
-	private final GenericServerInitListener genericServerListener = new GenericServerInitListener() {
-		@Override
-		public void genericServerInit(GenericServerInitEvent evt) {
-			GenericServer gServer = (GenericServer) evt.getSource();
-			if (gServer.getServerStatus() == ServerStatus.Initialized) {
-				repositoryAdded(gServer.URL);
-			} else if (gServer.getServerStatus() == ServerStatus.NotResponding) {
-				repositoryRemoved(gServer.URL);
-			}
-		}
-	};
+	private final GenericServerInitListener genericServerListener = evt -> {
+        GenericServer gServer = (GenericServer) evt.getSource();
+        if (gServer.getServerStatus() == ServerStatus.Initialized) {
+            repositoryAdded(gServer.URL);
+        } else if (gServer.getServerStatus() == ServerStatus.NotResponding) {
+            repositoryRemoved(gServer.URL);
+        }
+    };
 			
 	private RepositoryChangerHolder() {
 		super();
@@ -37,7 +33,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 		return instance;
 	}
 
-	private List<RepositoryChangeListener> repositoryChangeListeners = new ArrayList<RepositoryChangeListener>();
+	private List<RepositoryChangeListener> repositoryChangeListeners = new ArrayList<>();
 
 
 	/**
@@ -81,12 +77,10 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 	 * @return the list of bundle repositories (URLs)
 	 */
 	public Map<String, String> getRepositories() {
-		Map<String, String> repositories = new HashMap<String, String>();
-		for (GenericServer repositoryServer : ServerList.getRepositoryInstance().getAllServers()) {
-			if (repositoryServer.isEnabled()) {
-				repositories.put(repositoryServer.serverName, repositoryServer.URL);
-			}
-		}
+		Map<String, String> repositories = new HashMap<>();
+		ServerList.getRepositoryInstance().getAllServers().stream().filter(repositoryServer -> repositoryServer.isEnabled()).forEach(repositoryServer -> {
+			repositories.put(repositoryServer.serverName, repositoryServer.URL);
+		});
 		return repositories;
 	}
 

@@ -24,22 +24,23 @@ import javax.swing.table.AbstractTableModel;
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
 
 	private static final long serialVersionUID = 1l;
-	private final List<GenericServer> servers = new ArrayList<GenericServer>();
+	private final List<GenericServer> servers = new ArrayList<>();
 
 	public static enum SourceColumn {
 
 		Refresh, Name, Type, URL, Enabled
-	};
+	}
+
 	public static final List<SortKey> SORT_KEYS;
 	private ServerList serverList;
 	private ArrayList<SourceColumn> tableColumns;
 
 	static {
-		List<SortKey> sortKeys = new ArrayList<SortKey>(2);
+		List<SortKey> sortKeys = new ArrayList<>(2);
 		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
 		sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
 
-		SORT_KEYS = Collections.<SortKey>unmodifiableList(sortKeys);
+		SORT_KEYS = Collections.unmodifiableList(sortKeys);
 	}
 
 	public SourceTableModel(ServerList serverList) {
@@ -49,7 +50,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	}
 
 	public void init() {
-		tableColumns = new ArrayList<SourceColumn>();
+		tableColumns = new ArrayList<>();
 		for (SourceColumn sourceColumn : SourceColumn.values()) {
 			if (sourceColumn != SourceColumn.Type || serverList.hasTypes()) {
 				tableColumns.add(sourceColumn);
@@ -146,7 +147,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 				}
 				break;
 			case Enabled:
-				if (((Boolean) value).booleanValue()) {
+				if ((Boolean) value) {
 					discoverServer(server);
 					server.setEnabled(true);
 				} else {

@@ -26,10 +26,10 @@ class FeatureBean {
 	private float score;
 	private Orientation orientation;
 	private char phase;
-	private final List<String> notes = new ArrayList<String>(2);
-	private final List<LinkBean> links = new ArrayList<LinkBean>(2);
-	private final List<TargetBean> targets = new ArrayList<TargetBean>(2);
-	private final List<GroupBean> groups = new ArrayList<GroupBean>(2);
+	private final List<String> notes = new ArrayList<>(2);
+	private final List<LinkBean> links = new ArrayList<>(2);
+	private final List<TargetBean> targets = new ArrayList<>(2);
+	private final List<GroupBean> groups = new ArrayList<>(2);
 
 	FeatureBean() { this.clear(); }
 
@@ -86,13 +86,17 @@ class FeatureBean {
 	float getScore() { return this.score; }
 
 	void setOrientation(String orientation) {
-		if (orientation.equals("+")) {
-			this.orientation = Orientation.FORWARD;
-		} else if (orientation.equals("-")) {
-			this.orientation = Orientation.REVERSE;
-		} else {
-			this.orientation = Orientation.UNKNOWN;
-		}
+            switch (orientation) {
+                case "+":
+                    this.orientation = Orientation.FORWARD;
+                    break;
+                case "-":
+                    this.orientation = Orientation.REVERSE;
+                    break;
+                default:
+                    this.orientation = Orientation.UNKNOWN;
+                    break;
+            }
 	}
 
 	Orientation getOrientation() { return this.orientation; }
@@ -106,25 +110,25 @@ class FeatureBean {
 	void addNote(String note) { this.notes.add(note.intern()); }
 
 	List<String> getNotes() {
-		return Collections.<String>unmodifiableList(this.notes);
+		return Collections.unmodifiableList(this.notes);
 	}
 
 	void addLink(LinkBean link) { this.links.add(link); }
 
 	List<LinkBean> getLinks() {
-		return Collections.<LinkBean>unmodifiableList(this.links);
+		return Collections.unmodifiableList(this.links);
 	}
 	
 	void addTarget(TargetBean target) { this.targets.add(target); }
 
 	List<TargetBean> getTargets() {
-		return Collections.<TargetBean>unmodifiableList(this.targets);
+		return Collections.unmodifiableList(this.targets);
 	}
 
 	void addGroup(GroupBean group) { this.groups.add(group); }
 
 	List<GroupBean> getGroups() {
-		return Collections.<GroupBean>unmodifiableList(this.groups);
+		return Collections.unmodifiableList(this.groups);
 	}
 
 	void clear() {

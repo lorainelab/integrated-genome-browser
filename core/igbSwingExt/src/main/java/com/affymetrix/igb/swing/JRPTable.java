@@ -4,8 +4,6 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
@@ -59,23 +57,17 @@ public class JRPTable extends JTable implements JRPWidget {
 
 	private void addSelectionListener(ListSelectionModel newModel) {
 		newModel.addListSelectionListener(
-				new ListSelectionListener() {
-					@Override
-					public void valueChanged(ListSelectionEvent e) {
+				e -> {
 //					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
-					}
-				}
+                }
 		);
 	}
 
 	private void addColumnSelectionListener(ListSelectionModel newModel) {
 		newModel.addListSelectionListener(
-				new ListSelectionListener() {
-					@Override
-					public void valueChanged(ListSelectionEvent e) {
+				e -> {
 //					RecordPlaybackHolder.getInstance().recordOperation(new Operation(id, "setValue(" + getValue() + ")"));
-					}
-				}
+                }
 		);
 	}
 

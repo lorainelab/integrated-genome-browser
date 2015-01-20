@@ -117,7 +117,7 @@ public final class NibbleResiduesParser implements Parser {
 
 	
 	//Returns raw format
-	public static boolean parse(InputStream istr, OutputStream output) throws FileNotFoundException, IOException
+	public static boolean parse(InputStream istr, OutputStream output) throws IOException
 	{
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), output);
 	}
@@ -129,7 +129,7 @@ public final class NibbleResiduesParser implements Parser {
 	}
 
 	//Returns raw format
-	public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws FileNotFoundException, IOException
+	public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws IOException
 	{
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), start, end, output);
 	}
@@ -168,7 +168,7 @@ public final class NibbleResiduesParser implements Parser {
 		return result_seq;
 	}
 
-	public static byte[] readBNIB(File seqfile) throws FileNotFoundException, IOException {
+	public static byte[] readBNIB(File seqfile) throws IOException {
 		DataInputStream dis = null;
 		try {
 			dis = new DataInputStream(new FileInputStream(seqfile));

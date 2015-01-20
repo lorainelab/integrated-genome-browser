@@ -1,8 +1,10 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.BioSeqUtils;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
@@ -20,11 +22,15 @@ import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,8 +38,10 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
+@Component(name = ProbeSetGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
+    public static final String COMPONENT_NAME = "ProbeSetGlyphFactory";
     /*
      Algorithm for drawing probe-set-display data.
 
@@ -131,7 +139,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         SeqSpan pspan = transformed_consensus_sym.getSpan(gviewer.getViewSeq());
         if (pspan == null) {
-			// if no span corresponding to ViewSeq, then return.
+            // if no span corresponding to ViewSeq, then return.
             // This can easily happen in the Sliced View and is not usually an error
             return null;
         }
@@ -178,7 +186,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         the_tier.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
         int childCount = transformed_consensus_sym.getChildCount();
-        java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
+        java.util.List<SeqSymmetry> outside_children = new ArrayList<>();
 
         for (int i = 0; i < childCount; i++) {
             SeqSymmetry child = transformed_consensus_sym.getChild(i);
@@ -199,12 +207,12 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
 //		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
 //				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal());
-		// call out to handle rendering to indicate if any of the children of the
+        // call out to handle rendering to indicate if any of the children of the
         //    orginal annotation are completely outside the view
         DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq,
                 child_y + child_height / 4, child_height / 2);
 
-		// Add the pglyph to the tier before drawing probesets because probesets
+        // Add the pglyph to the tier before drawing probesets because probesets
         // calculate their positions relative to the coordinates of the pglyph's coordbox
         // and the coordbox can be moved around by adding the glyph to the tier
         the_tier.addChild(pglyph);
@@ -251,7 +259,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         int span_count = sym.getSpanCount();
         if (span_count != 2) {
-			// Although this is normally an error, there are conditions where this glyph factory
+            // Although this is normally an error, there are conditions where this glyph factory
             // might be used to display things that are not consensus sequences (such as DAS queries)
             // so just return null.
             return null;
@@ -293,7 +301,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         int annot_count = consensus_seq.getAnnotationCount();
         for (int i = 0; i < annot_count; i++) {
             SeqSymmetry sym = consensus_seq.getAnnotation(i);
-			// probe sets and poly-A sites (and everything else) all get sent
+            // probe sets and poly-A sites (and everything else) all get sent
             // to handleConsensusAnnotations, because the first few steps are the same
             handleConsensusAnnotations(gviewer, tier, sym, consensus_sym, parent_glyph,
                     y, height);
@@ -342,7 +350,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_site_color);
-        } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
+        } else if (meth != null && meth.contains(POLY_A_STACK_METHOD)) {
             drawPolyA(gviewer, the_tier, probeset_sym, parent_glyph, y, height, poly_a_stack_color);
         } else {
             drawProbeSetGlyph(gviewer, the_tier, probeset_sym, parent_glyph, y, height);
@@ -358,7 +366,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
         if (span == null) {
-			// this means the probeset doesn't map onto the coordinates of the view
+            // this means the probeset doesn't map onto the coordinates of the view
             // In the Sliced view, this can happen easily and is not an error.
             return;
         }
@@ -397,7 +405,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
         SeqSpan span = transformed_probeset_sym.getSpan(gviewer.getViewSeq());
         if (span == null) {
-			// this means the probeset doesn't map onto the coordinates of the view
+            // this means the probeset doesn't map onto the coordinates of the view
             // In the Sliced view, this can happen easily and is not an error.
             return;
         }
@@ -454,7 +462,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         int num_parts = probe_sym.getChildCount();
         GlyphI probe_glyph = null;
         if (num_parts > 1) {
-			// Each probe can possibly be split into multiple exon/intron pieces,
+            // Each probe can possibly be split into multiple exon/intron pieces,
             // so use something like a LineContainerGlyph
             probe_glyph = new LineContainerGlyph();
             probe_glyph.setCoords(probe_span.getMin(), probe_y, probe_span.getLength(), probe_height);
@@ -494,7 +502,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         String meth = BioSeqUtils.determineMethod(sym);
         String human_name = meth;
         if (meth != null) {
-			// Why to strip off the ending ??
+            // Why to strip off the ending ??
             // Not stripping off the ending to resolve bug ID: 3213610
             // http://sourceforge.net/tracker/?func=detail&aid=3213610&group_id=129420&atid=714744
 //			strip off the " netaffx consensus" ending
@@ -512,11 +520,11 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
                     style.setTrackName(human_name);
                 }
                 label_field = style.getLabelField();
-                TierGlyph.Direction useDirection = (!style.getSeparate()) ? TierGlyph.Direction.BOTH : TierGlyph.Direction.FORWARD;
+                StyledGlyph.Direction useDirection = (!style.getSeparate()) ? StyledGlyph.Direction.BOTH : StyledGlyph.Direction.FORWARD;
                 TierGlyph ftier = gviewer.getTrack(style, useDirection);
                 ftier.setTierType(TierGlyph.TierType.ANNOTATION);
                 ftier.setInfo(sym);
-                TierGlyph rtier = (useDirection == TierGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, TierGlyph.Direction.REVERSE);
+                TierGlyph rtier = (useDirection == StyledGlyph.Direction.BOTH) ? ftier : gviewer.getTrack(style, StyledGlyph.Direction.REVERSE);
                 rtier.setTierType(TierGlyph.TierType.ANNOTATION);
                 rtier.setInfo(sym);
                 if (style.getSeparate()) {
@@ -541,5 +549,11 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
     @Override
     public String getName() {
         return "probeset";
+    }
+
+       @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.ProbeSet).build();
     }
 }

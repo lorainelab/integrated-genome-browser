@@ -9,8 +9,8 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.igb.shared.TierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class DependentData {
 	final private String id;
 	final private String parent_method;
 	final private DependentType type;
-	private TierGlyph.Direction direction;
+	private StyledGlyph.Direction direction;
 	private SymWithProps sym;
 
 	public DependentData(String id, DependentType type, String parentUrl) {
@@ -40,7 +40,7 @@ public class DependentData {
 		this.type = type;
 	}
 
-	public DependentData(String id, DependentType type, String parentUrl, TierGlyph.Direction direction) {
+	public DependentData(String id, DependentType type, String parentUrl, StyledGlyph.Direction direction) {
 		this(id, type, parentUrl);
 		this.direction = direction;
 	}
@@ -66,7 +66,7 @@ public class DependentData {
 	}
 
 	private GraphSym createMisMatchGraph(BioSeq aseq, SeqSymmetry tsym, boolean pileup){
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> syms = new ArrayList<>();
 		syms.add(tsym);
 		
 		int[] startEnd = getStartEnd(tsym, aseq);
@@ -103,11 +103,11 @@ public class DependentData {
 	}
 	
 	private GraphSym createSummaryGraph(BioSeq aseq, SeqSymmetry sym){
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> syms = new ArrayList<>();
 		syms.add(sym);
 		GraphSym gsym = null;
-		if (direction == TierGlyph.Direction.FORWARD || direction == TierGlyph.Direction.REVERSE) {
-			Boolean isForward = direction == TierGlyph.Direction.FORWARD ? true : false;
+		if (direction == StyledGlyph.Direction.FORWARD || direction == StyledGlyph.Direction.REVERSE) {
+			Boolean isForward = direction == StyledGlyph.Direction.FORWARD;
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id, isForward);
 		} else {
 			gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, id);
@@ -119,7 +119,7 @@ public class DependentData {
 	}
 
 	private SymWithProps createCoverageTier(BioSeq aseq, SeqSymmetry sym) {
-		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> syms = new ArrayList<>();
 		syms.add(sym);
 		SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 		SymWithProps wrapperSym;
@@ -150,7 +150,7 @@ public class DependentData {
 		return type;
 	}
 
-	public TierGlyph.Direction getDirection(){
+	public StyledGlyph.Direction getDirection(){
 		return direction;
 	}
 

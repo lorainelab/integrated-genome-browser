@@ -32,7 +32,7 @@ public class UnionOperator extends AbstractAnnotationOperator implements Operato
 
 	@Override
 	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		List<SeqSymmetry> allSyms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> allSyms = new ArrayList<>();
 		for (SeqSymmetry syms : symList) {
 			allSyms.addAll(findChildSyms(syms));
 		}

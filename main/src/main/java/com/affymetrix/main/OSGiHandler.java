@@ -1,7 +1,6 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
-import com.lorainelab.osgi.bundle.BundleInfo;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -47,28 +46,6 @@ public class OSGiHandler {
         this.commonUtils = commonUtils;
     }
 
-    private boolean isBundleCacheExpired() {
-        List<BundleInfo> cacheBundleDetails = commonUtils.getCachedBundleInfo();
-        List<BundleInfo> currentBundleDetails = commonUtils.getCurrentBundleInfo();
-        for (BundleInfo bundle : cacheBundleDetails) {
-            for (BundleInfo matchingBundleCandidate : currentBundleDetails) {
-                if (bundle.getName().equals(matchingBundleCandidate.getName())) {
-                    if (!CommonUtils.equals(bundle.getVersion(), matchingBundleCandidate.getVersion())) {
-                        return true;
-                    }
-                    //also check bnd last modified as a possible indication a bundle has changed without version increment
-                    if (!CommonUtils.equals(bundle.getLastModified(), matchingBundleCandidate.getLastModified())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        if (cacheBundleDetails.isEmpty()) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * start OSGi, load and start the OSGi implementation load the embedded
      * bundles, if not cached, and start all bundles
@@ -78,12 +55,6 @@ public class OSGiHandler {
     public void startOSGi(String[] args) {
         if (isDevelopmentMode()) {
             clearCache();
-        } else if (isBundleCacheExpired()) {
-            clearCache();
-        }
-
-        if (!isDevelopmentMode()) {
-            commonUtils.exportBundleInfo();
         }
 
         if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
@@ -104,13 +75,11 @@ public class OSGiHandler {
             }
             Bundle windowServiceDefBundle = null;
             for (Bundle bundle : bundleContext.getBundles()) {
-                if (true) {
-                    log.info("Starting Bundle: " + bundle.getSymbolicName());
-                }
+                log.info("Starting Bundle: " + bundle.getSymbolicName());
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
-                    //sad window service hack
-                    if (bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
+                    //window service hack
+                    if (!isNullOrEmpty(bundle.getSymbolicName()) && bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
                         windowServiceDefBundle = bundle;
                     } else {
                         bundle.start();
@@ -195,11 +164,9 @@ public class OSGiHandler {
 
     private void loadFramework(String argArray) {
         try {
-            Map<String, String> configProps = new HashMap<String, String>();
+            Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
-            for (String key : CONFIG_BUNDLE.keySet()) {
-                configProps.put(key, CONFIG_BUNDLE.getString(key));
-            }
+            CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
             configProps.put("args", argArray);
             FrameworkFactory factory = getFrameworkFactory();
             framework = factory.newFramework(configProps);
@@ -238,12 +205,10 @@ public class OSGiHandler {
 
     private List<String> getJarFileNames() throws IOException {
         String OSGiImplFile = ResourceBundle.getBundle("main").getString("OSGiImplFile");
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
         URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-        if (codesource.toString().endsWith(".jar")) { // ant exe or webstart
-
-            ZipInputStream zipinputstream
-                    = new ZipInputStream(codesource.openStream());
+        if (codesource.toString().endsWith(".jar")) { try ( // ant exe or webstart
+                ZipInputStream zipinputstream = new ZipInputStream(codesource.openStream())) {
             ZipEntry zipentry = zipinputstream.getNextEntry();
 
             while (zipentry != null) {
@@ -261,7 +226,7 @@ public class OSGiHandler {
                 zipinputstream.closeEntry();
                 zipentry = zipinputstream.getNextEntry();
             }//while
-            zipinputstream.close();
+            }
         } else { // ant maven gradle run
             entries = getDevelopmentModeJarFileNames();
         }
@@ -270,17 +235,12 @@ public class OSGiHandler {
     }
 
     private List<String> getDevelopmentModeJarFileNames() {
-        List<String> entries = new ArrayList<String>();
+        List<String> entries = new ArrayList<>();
         File dir = new File("bundles");
         if (!dir.exists()) {
             dir = new File("../bundles");
         }
-        FilenameFilter ff = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar");
-            }
-        };
+        FilenameFilter ff = (File dir1, String name) -> name.endsWith(".jar");
         entries.addAll(Arrays.asList(dir.list(ff)));
         if (entries.isEmpty()) {
             String messageWrapper = "------------------------------------------------------------------------";
@@ -378,5 +338,9 @@ public class OSGiHandler {
             }
         }
         return found;
+    }
+
+    public static boolean isNullOrEmpty(String string) {
+        return string == null || string.length() == 0;
     }
 }

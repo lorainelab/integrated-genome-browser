@@ -63,31 +63,15 @@ public class ExportDialogGUI extends JPanel {
 
         heightLabel.setText("Height:");
 
-        widthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                widthSpinnerStateChanged(evt);
-            }
-        });
+        widthSpinner.addChangeListener(this::widthSpinnerStateChanged);
 
-        heightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                heightSpinnerStateChanged(evt);
-            }
-        });
+        heightSpinner.addChangeListener(this::heightSpinnerStateChanged);
 
         resolutionLabel.setText("Resolution:");
 
-        resolutionComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resolutionComboBoxActionPerformed(evt);
-            }
-        });
+        resolutionComboBox.addActionListener(this::resolutionComboBoxActionPerformed);
 
-        unitComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                unitComboBoxActionPerformed(evt);
-            }
-        });
+        unitComboBox.addActionListener(this::unitComboBoxActionPerformed);
 
         sizeLabel.setText("  ");
 
@@ -143,35 +127,19 @@ public class ExportDialogGUI extends JPanel {
 
         svRadioButton.setText("Sliced View (with Labels)");
         buttonGroup.add(svRadioButton);
-        svRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                svRadioButtonActionPerformed(evt);
-            }
-        });
+        svRadioButton.addActionListener(this::svRadioButtonActionPerformed);
 
         mvRadioButton.setText("Main View");
         buttonGroup.add(mvRadioButton);
-        mvRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mvRadioButtonActionPerformed(evt);
-            }
-        });
+        mvRadioButton.addActionListener(this::mvRadioButtonActionPerformed);
 
         wfRadioButton.setText("Whole Frame");
         buttonGroup.add(wfRadioButton);
-        wfRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                wfRadioButtonActionPerformed(evt);
-            }
-        });
+        wfRadioButton.addActionListener(this::wfRadioButtonActionPerformed);
 
         mvlRadioButton.setText("Main View (with Labels)");
         buttonGroup.add(mvlRadioButton);
-        mvlRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mvlRadioButtonActionPerformed(evt);
-            }
-        });
+        mvlRadioButton.addActionListener(this::mvlRadioButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
@@ -196,11 +164,7 @@ public class ExportDialogGUI extends JPanel {
 
         refreshButton.setText("Update Preview Image");
         refreshButton.setToolTipText("Click to update Preview and image dimensions after changing IGB.");
-        refreshButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshButtonActionPerformed(evt);
-            }
-        });
+        refreshButton.addActionListener(this::refreshButtonActionPerformed);
 
         org.jdesktop.layout.GroupLayout previewPanelLayout = new org.jdesktop.layout.GroupLayout(previewPanel);
         previewPanel.setLayout(previewPanelLayout);
@@ -231,11 +195,7 @@ public class ExportDialogGUI extends JPanel {
         );
 
         browseButton.setText("Browse...");
-        browseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                browseButtonActionPerformed(evt);
-            }
-        });
+        browseButton.addActionListener(this::browseButtonActionPerformed);
 
         filePathTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -244,24 +204,12 @@ public class ExportDialogGUI extends JPanel {
         });
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(this::okButtonActionPerformed);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
-        extComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                extComboBoxActionPerformed(evt);
-            }
-        });
+        extComboBox.addActionListener(this::extComboBoxActionPerformed);
 
         org.jdesktop.layout.GroupLayout topPanelLayout = new org.jdesktop.layout.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);

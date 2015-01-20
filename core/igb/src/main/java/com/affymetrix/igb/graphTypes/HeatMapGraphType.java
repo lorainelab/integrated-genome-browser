@@ -15,7 +15,7 @@ import java.util.Map;
 public class HeatMapGraphType extends GraphGlyph.GraphStyle {
 	private static final Map<String,Class<?>> PREFERENCES;
 	static {
-		Map<String,Class<?>> temp = new HashMap<String,Class<?>>();
+		Map<String,Class<?>> temp = new HashMap<>();
 		temp.put("low_color", Color.class);
 		temp.put("high_color", Color.class);
 		PREFERENCES = Collections.unmodifiableMap(temp);
@@ -80,7 +80,7 @@ public class HeatMapGraphType extends GraphGlyph.GraphStyle {
 	}
 
 	public Map<String, Class<?>> getPreferences() {
-		Map<String,Class<?>> preferences = new HashMap<String,Class<?>>(PREFERENCES);
+		Map<String,Class<?>> preferences = new HashMap<>(PREFERENCES);
 		//preferences.putAll(super.getPreferences());
 		return preferences;
 	}

@@ -17,7 +17,7 @@ public class BedParserTest {
     static GenometryModel gmodel = GenometryModel.getInstance();
 
     @Test
-    public void testParseFromFile() throws IOException, Exception {
+    public void testParseFromFile() throws Exception {
 
         String filename = "data/bed/bed_01.bed";
         filename = BedParserTest.class.getClassLoader().getResource(filename).getFile();
@@ -57,7 +57,7 @@ public class BedParserTest {
         SeqSpan cds = sym.getCdsSpan();
         assertEquals(1965425, cds.getMin());
         assertEquals(1965460, cds.getMax());
-        assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+        assertEquals((float) 0, sym.getProperty("score"));
     }
 
     /**
@@ -112,7 +112,7 @@ public class BedParserTest {
         SeqSpan cds = sym.getCdsSpan();
         assertEquals(1965425, cds.getMin());
         assertEquals(1965460, cds.getMax());
-        assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+        assertEquals((float) 0, sym.getProperty("score"));
     }
 
     /**
@@ -344,9 +344,9 @@ public class BedParserTest {
     public File createFileFromString(String string) throws Exception {
         File tempFile = File.createTempFile("tempFile", ".bed");
         tempFile.deleteOnExit();
-        BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
-        bw.write(string);
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true))) {
+            bw.write(string);
+        }
         return tempFile;
     }
 
@@ -381,7 +381,7 @@ public class BedParserTest {
         SeqSpan cds = sym.getCdsSpan();
         assertEquals(1965425, cds.getMin());
         assertEquals(1965460, cds.getMax());
-        assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+        assertEquals((float) 0, sym.getProperty("score"));
     }
 
 }

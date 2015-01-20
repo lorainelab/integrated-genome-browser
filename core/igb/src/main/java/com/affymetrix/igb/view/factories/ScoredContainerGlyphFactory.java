@@ -1,11 +1,13 @@
 package com.affymetrix.igb.view.factories;
 
+import aQute.bnd.annotation.component.Component;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
 import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GraphIntervalSym;
@@ -16,17 +18,21 @@ import com.affymetrix.genometryImpl.symmetry.impl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.affymetrix.igb.shared.SeqMapViewExtendedI;
+import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * @author hiralv
  */
+@Component(name = ScoredContainerGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
 public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
+    public static final String COMPONENT_NAME = "ScoredContainerGlyphFactory";
     private static final String[] supportedFormat = {"sin", "egr", "egr.txt", "map", "chp"};
 
 //	private static final boolean DEBUG = false;
@@ -70,9 +76,9 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
         int score_count = container.getScoreCount();
         List<GraphIntervalSym> results = null;
         if (separate_by_strand) {
-            results = new ArrayList<GraphIntervalSym>(score_count * 2);
+            results = new ArrayList<>(score_count * 2);
         } else {
-            results = new ArrayList<GraphIntervalSym>(score_count);
+            results = new ArrayList<>(score_count);
         }
 
         for (int i = 0; i < score_count; i++) {
@@ -103,9 +109,9 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
         int score_count = original_container.getScoreCount();
         List<GraphIntervalSym> results = null;
         if (separate_by_strand) {
-            results = new ArrayList<GraphIntervalSym>(score_count * 2);
+            results = new ArrayList<>(score_count * 2);
         } else {
-            results = new ArrayList<GraphIntervalSym>(score_count);
+            results = new ArrayList<>(score_count);
         }
 
         for (int i = 0; i < score_count; i++) {
@@ -130,7 +136,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
         return results.toArray(new GraphIntervalSym[results.size()]);
     }
 
-	// strands should be one of '+', '-' or '.'
+    // strands should be one of '+', '-' or '.'
     // name -- should be a score name in the original ScoredContainerSym
     private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
             AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
@@ -138,7 +144,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
         float[] original_scores = original_container.getScores(name);
 
-		// Simply knowing the correct graph ID is the key to getting the correct
+        // Simply knowing the correct graph ID is the key to getting the correct
         // graph state, with the accompanying tier style and tier combo style.
         String id = original_container.getGraphID(seq_group, name, strands);
 
@@ -163,7 +169,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
                         xcoords.add(cspan.getMin());
                         wcoords.add(cspan.getLength());
                         IndexedSym original_child = (IndexedSym) derived_child.getOriginalSymmetry();
-						// the index of this child in the original parent symmetry.
+                        // the index of this child in the original parent symmetry.
                         // it is very possible that original_index==i in all cases,
                         // but I'm not sure of that yet
                         int original_index = original_child.getIndex();
@@ -218,5 +224,11 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
             System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry "
                     + "passed in is NOT a GraphSym: " + sym);
         }
+    }
+
+    @Override
+    public Set<FileTypeCategory> getSupportedCategories() {
+        return ImmutableSet.<FileTypeCategory>builder()
+                .add(FileTypeCategory.ScoredContainer).build();
     }
 }

@@ -6,8 +6,9 @@ import com.affymetrix.genometryImpl.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.shared.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -64,7 +65,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
     }
 
     @SuppressWarnings(value = "unused")
-    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, TierGlyph.Direction direction) {
+    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox, StyledGlyph.Direction direction) {
         int maxLines = (upperY - lowerY) / text_height;
         if (maxLines <= 0 || pixelbox.width - (pbBuffer_x * 2) <= 0) {
             return;
@@ -220,9 +221,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
             return;
         }
         this.isLoading = isLoading;
-        for (ViewI view : getScene().getViews()) {
-            draw(view);
-        }
+        getScene().getViews().forEach(this::draw);
     }
 
     @Override
@@ -277,7 +276,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
         this.textCoordHeight = view.transformToCoords(new Rectangle(0, this.textPixelHeight), new Rectangle2D.Double()).height;
 
         if (reftier instanceof DefaultTierGlyph && ((DefaultTierGlyph) reftier).isHeightFixed()
-                && IGBStateProvider.getShowLockIcon() && reftier.getDirection() != TierGlyph.Direction.AXIS) {
+                && IGBStateProvider.getShowLockIcon() && reftier.getDirection() != StyledGlyph.Direction.AXIS) {
             drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
         }
         if (trackStyle.getFilter() != null && IGBStateProvider.getShowFilterMarkState()) {
@@ -356,7 +355,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
                 boundingPixelBox.y + boundingPixelBox.height);
 
         int text_width = fm.stringWidth(label);
-        TierGlyph.Direction direction = getReferenceTier() != null ? getReferenceTier().getDirection() : TierGlyph.Direction.NONE;
+        StyledGlyph.Direction direction = getReferenceTier() != null ? getReferenceTier().getDirection() : StyledGlyph.Direction.NONE;
         if (text_width + (pbBuffer_x * 2) > pixelbox.width) {
             drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox, direction);
         } else {

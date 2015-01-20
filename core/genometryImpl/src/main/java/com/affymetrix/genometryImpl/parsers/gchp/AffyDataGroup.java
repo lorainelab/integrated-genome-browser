@@ -33,7 +33,7 @@ public final class AffyDataGroup {
 	/** Name of the data group. */
 	String name;
 
-	List<AffyDataSet> dataSets = new ArrayList<AffyDataSet>();
+	List<AffyDataSet> dataSets = new ArrayList<>();
 
 	AffyGenericChpFile chpFile;
 

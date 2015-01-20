@@ -1,9 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,29 +24,29 @@ public class SynonymLookupTest {
 	static SynonymLookup sl;
 
 	@Before
-	public void setUp() throws FileNotFoundException, IOException {
+	public void setUp() throws IOException {
 		sl = new SynonymLookup();
 
 		String filename = "data/synonymLookup/synonymTestData1";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 	}
 
 	@Test
-	public void testAddSynonym() throws FileNotFoundException, IOException {
+	public void testAddSynonym() throws IOException {
 		ImmutableSet<String> synonymSet;
 
 		boolean cs = true;
 
 		String filename = "data/synonymLookup/synonymTestData2";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 
-		List<String> testSynonymValues = new ArrayList<String>();
+		List<String> testSynonymValues = new ArrayList<>();
 		testSynonymValues.add("a");
 		testSynonymValues.add("b");
 		testSynonymValues.add("c");
@@ -70,14 +68,14 @@ public class SynonymLookupTest {
 	}
 
 	@Test
-	public void testCaseInsensitiveLookup() throws FileNotFoundException, IOException {
-		List<String> a = new ArrayList<String>();
+	public void testCaseInsensitiveLookup() throws IOException {
+		List<String> a = new ArrayList<>();
 
 		String filename = "data/synonymLookup/synonymTestData3";
-		InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename);
-		assertNotNull(istr);
-		sl.loadSynonyms(istr);
-		istr.close();
+            try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+                assertNotNull(istr);
+                sl.loadSynonyms(istr);
+            }
 
 		a.add("aa");
 		a.add("AA");
@@ -132,8 +130,8 @@ public class SynonymLookupTest {
 		assertFalse(sl.isSynonym("chr2", "chr3", cs, sr));
 
 		// The elements in list1 and list2 should be the same, other than ordering
-		Set<String> set1 = new HashSet<String>(list1);
-		Set<String> set2 = new HashSet<String>(list2);
+		Set<String> set1 = new HashSet<>(list1);
+		Set<String> set2 = new HashSet<>(list2);
 		assertEquals(set1, set2);
 	}
 
@@ -180,8 +178,8 @@ public class SynonymLookupTest {
 		assertTrue(list4 != null);
 
 		// The elements in list3 and list4 should be the same, other than ordering
-		Set<String> set3 = new HashSet<String>(list3);
-		Set<String> set4 = new HashSet<String>(list4);
+		Set<String> set3 = new HashSet<>(list3);
+		Set<String> set4 = new HashSet<>(list4);
 		assertEquals(set3, set4);
 
 		// even with case-sensitive set to false, the list will not actually contain "chrm", but rather "chrM"

@@ -95,8 +95,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private boolean add_annots_to_seq = false;
 	private static final boolean add_to_sym_hash = true;
 	private String current_elem = null;  // current element
-	private final Stack<String> elemstack = new Stack<String>();
-	private final Stack<URI> base_uri_stack = new Stack<URI>();
+	private final Stack<String> elemstack = new Stack<>();
+	private final Stack<URI> base_uri_stack = new Stack<>();
 	private URI current_base_uri = null;
 	private String feat_id = null;
 	private String feat_type = null;
@@ -108,14 +108,14 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private String feat_prop_key = null;
 	private String feat_prop_val = null;
 	/**  list of SeqSpans specifying feature locations */
-	private final List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
+	private final List<SeqSpan> feat_locs = new ArrayList<>();
 	
 	/**
 	 *  map of child feature id to either:
 	 *      itself  (if child feature not parsed yet), or
 	 *      child feature object (if child feature already parsed)
 	 */
-	private Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
+	private Map<String, Object> feat_parts = new LinkedHashMap<>();
 	private Map<String, Object> feat_props = null;
 
 	/**
@@ -125,11 +125,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  Need mapping so can connect parents and children after sym has already been created
 	 */
-	private final Map<String,MutableSeqSymmetry> id2sym = new HashMap<String,MutableSeqSymmetry>();
+	private final Map<String,MutableSeqSymmetry> id2sym = new HashMap<>();
 	/**
 	 *  Mapping of parent sym to map of child ids to connect parents and children.
 	 */
-	private final Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<SeqSymmetry,Map<String, Object>>();
+	private final Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<>();
 
 	private int dup_count = 0;
 	private int feature_constructor_calls = 0;
@@ -188,7 +188,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *  result_syms get populated via callbacks from reader.parse(),
 		 *    eventually leading to result_syms.add() calls in addFeatue();
 		 */
-		result_syms = new ArrayList<SeqSymmetry>();
+		result_syms = new ArrayList<>();
 
 		seqgroup = group;
 
@@ -218,9 +218,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					);
 		}
 		if (REPORT_RESULTS) {
-			for (SeqSymmetry sym : result_syms) {
-				SeqUtils.printSymmetry(sym);
-			}
+			result_syms.forEach(SeqUtils::printSymmetry);
 		}
 
 		System.out.println("feature constructor calls: " + feature_constructor_calls);
@@ -272,7 +270,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 
 		// check to make sure elements are in DAS/2 namespace for standard handling
-		if ((REQUIRE_DAS2_NAMESPACE) && !uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
+		if (false) {
 			// element is not in DAS/2 namespace
 			// this may be some arbitrary XML mixed in with feature XML
 			// if within the feature XML, should make a subtree of this XML and any subnodes, and attach
@@ -285,24 +283,31 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			return;
 		}
 
-		if (current_elem.equals(FEATURE)) {
-			// feat_parent_id has moved to <PARENT> element
-			//      feat_parent_id = atts.getValue("parent");
-			parseFeature(atts);
-		} else if (current_elem.equals(LOC)) {
-			// DO_SEQID_HACK is a very temporary fix!!!
-			// Need to move to using full URI references to identify sequences,
+            switch (current_elem) {
+                case FEATURE:
+                    // feat_parent_id has moved to <PARENT> element
+                    //      feat_parent_id = atts.getValue("parent");
+                    parseFeature(atts);
+                    break;
+                case LOC:
+                    // DO_SEQID_HACK is a very temporary fix!!!
+                    // Need to move to using full URI references to identify sequences,
 			parseLoc(atts);
-		} else if (current_elem.equals(PARENT)) {
-			parseParent(atts);
-		} else if (current_elem.equals(PART)) {
-			parsePart(atts);
-		} else if (current_elem.equals(PROP)) {
-			feat_prop_key = atts.getValue(KEY);
-			feat_prop_val = atts.getValue(VALUE);
-		} else {
-			System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
-		}
+                        break;
+                case PARENT:
+                    parseParent(atts);
+                    break;
+                case PART:
+                    parsePart(atts);
+                    break;
+                case PROP:
+                    feat_prop_key = atts.getValue(KEY);
+                    feat_prop_val = atts.getValue(VALUE);
+                    break;
+                default:
+                    System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
+                    break;
+            }
 	}
 
 	private void parseFeature(Attributes atts) throws SAXException {
@@ -423,7 +428,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		feat_locs.clear();
 		// making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
-		feat_parts = new LinkedHashMap<String, Object>();
+		feat_parts = new LinkedHashMap<>();
 
 
 		feat_props = null;
@@ -440,38 +445,40 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		if (DEBUG) {
 			System.out.println("end element: " + name);
 		}
-		// only two elements that need post-processing are  <FEATURE> and <PROP> ?
-		//   other elements are either top <FEATURELISTS> or have only attributes
-		if (name.equals(FEATURE)) {
-			addFeature();
-			clearFeature();
-		} else if (name.equals(PROP)) {
-			// need to process <PROP> elements after element is ended, because value may be in CDATA?
-			// need to account for possibility that there are multiple property values of same ptype
-			//    for such cases, make object that feat_prop_key maps to a List of the prop vals
-			//
-			// Update Feb2006 -- now that feature props use attribute value instead of content,
-			//   should probably move this stuff up to the startElement() conditional for clarity,
-			//   then can make feat_prop_key and feat_prop_val local to method
-			if (feat_props == null) {
-				feat_props = new HashMap<String, Object>();
-			}
-			Object prev = feat_props.get(feat_prop_key);
-			if (prev == null) {
-				feat_props.put(feat_prop_key, feat_prop_val);
-			} else if (prev instanceof List) {
-				((List) prev).add(feat_prop_val);
-			} else {
-				List multivals = new ArrayList();
+            // only two elements that need post-processing are  <FEATURE> and <PROP> ?
+            //   other elements are either top <FEATURELISTS> or have only attributes
+            switch (name) {
+                case FEATURE:
+                    addFeature();
+                    clearFeature();
+                    break;
+                case PROP:
+                    // need to process <PROP> elements after element is ended, because value may be in CDATA?
+                    // need to account for possibility that there are multiple property values of same ptype
+                    //    for such cases, make object that feat_prop_key maps to a List of the prop vals
+                    //
+                    // Update Feb2006 -- now that feature props use attribute value instead of content,
+                    //   should probably move this stuff up to the startElement() conditional for clarity,
+                    //   then can make feat_prop_key and feat_prop_val local to method
+                    if (feat_props == null) {
+                        feat_props = new HashMap<>();
+                    }
+                    Object prev = feat_props.get(feat_prop_key);
+                    if (prev == null) {
+                        feat_props.put(feat_prop_key, feat_prop_val);
+                    } else if (prev instanceof List) {
+                        ((List) prev).add(feat_prop_val);
+                    } else {
+                        List multivals = new ArrayList();
 				multivals.add(prev);
 				multivals.add(feat_prop_val);
 				feat_props.put(feat_prop_key, multivals);
 			}
-
-			feat_prop_key = null;
-			feat_prop_val = null;
-			current_elem = elemstack.pop();
-		}
+                    feat_prop_key = null;
+                    feat_prop_val = null;
+                    current_elem = elemstack.pop();
+                    break;
+            }
 
 		// base_uri_stack.push(...) is getting called in every startElement() call,
 		// so need to call base_uri_stack.pop() at end of every endElement() call;
@@ -511,8 +518,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// add locations as spans...
 		int loc_count = feat_locs.size();
-		for (int i = 0; i < loc_count; i++) {
-			SeqSpan span = feat_locs.get(i);
+		for (SeqSpan span : feat_locs) {
 			featsym.addSpan(span);
 		}
 
@@ -531,11 +537,10 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
 		if (feat_parent_id == null) {
-			if (REPORT_MULTI_LOC && loc_count > 2) {
+			if (loc_count > 2) {
 				System.out.println("loc count: " + loc_count);
 			}
-			for (int i = 0; i < loc_count; i++) {
-				SeqSpan span = feat_locs.get(i);
+			for (SeqSpan span : feat_locs) {
 				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
 				BioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
@@ -589,9 +594,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	private void addChildren(MutableSeqSymmetry parent_sym) {
 		// get parts
 		Map<String, Object> parts = parent2parts.get(parent_sym);
-		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
-		while (citer.hasNext()) {
-			Map.Entry<String, Object> keyval = citer.next();
+		for (Map.Entry<String, Object> keyval : parts.entrySet()) {
 			keyval.getKey();
 			SeqSymmetry child_sym = (SeqSymmetry) keyval.getValue();
 			if (child_sym instanceof SymWithProps) {
@@ -662,9 +665,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 
 			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
-			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry annot = iterator.next();
+			for (SeqSymmetry annot : syms) {
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
 				//	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
 				writeDasFeature(annot, null, 0, type, pw, mspan);

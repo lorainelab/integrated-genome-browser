@@ -32,11 +32,11 @@ public class ToolTipConstants {
     public static final String SHOW_MASK = "showMask";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
-    public static final String MAPQ = "mapq";
+    public static final String MAPQ = "mapQ";
     public static final String FLAGS = "flags";
 
     public static final String CL = "CL";
-    public static final String CIGAR = "cigar";
+    public static final String CIGAR = "CIGAR";
     public static final String VN = "VN";
     public static final String NH = "NH";
     public static final String XS = "XS";
@@ -67,7 +67,7 @@ public class ToolTipConstants {
     public static final List<String> BAM_DETAILS_GRP = Arrays.asList(PAIRED_READ, MATE_START, PROPER_PAIR_READ, UNMAPPED_READ, READ_REVERSE_STRAND, MATE_REVERSE_STRAND, FIRST_IN_PAIR,
             SECOND_IN_PAIR, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, NH, XS, NM);
     public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL, BAM_FLAG);
-    public static final List<String> BAM_PROP_LIST = new ArrayList<String>();
+    public static final List<String> BAM_PROP_LIST = new ArrayList<>();
 
     public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INFO_GRP);
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
@@ -79,7 +79,7 @@ public class ToolTipConstants {
     public static final List<String> BED14_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CDS_START, CDS_END, CHROMOSOME);
     public static final List<String> BED14_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
     public static final List<String> BED14_IGNORE_LIST = Arrays.asList(CL, NAME);
-    public static final List<String> BED14_PROP_LIST = new ArrayList<String>();
+    public static final List<String> BED14_PROP_LIST = new ArrayList<>();
 
     public static final Map<String, List<String>> BED14_INFO_CATEGORY = ImmutableMap.of("Basic Info", BED14_INFO_GRP);
     public static final Map<String, List<String>> BED14_LOCATION_CATEGORY = ImmutableMap.of("BED14 Info", BED14_LOC_GRP);
@@ -89,7 +89,7 @@ public class ToolTipConstants {
     public static final List<String> PSL_INFO_GRP = Arrays.asList(ID, DESCRIPTION);
     public static final List<String> PSL_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CHROMOSOME);
     public static final List<String> PSL_IGNORE_LIST = Arrays.asList(CL, NAME);
-    public static final List<String> PSL_PROP_LIST = new ArrayList<String>();
+    public static final List<String> PSL_PROP_LIST = new ArrayList<>();
 
     public static final Map<String, List<String>> PSL_INFO_CATEGORY = ImmutableMap.of("Basic Info", PSL_INFO_GRP);
     public static final Map<String, List<String>> PSL_LOCATION_CATEGORY = ImmutableMap.of("PSL Info", PSL_LOC_GRP);
@@ -99,7 +99,7 @@ public class ToolTipConstants {
     public static final List<String> DEFAULT_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
     public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(PAIRED_READ, CIGAR, VN, NH, XS, NM);
     public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);
-    public static final List<String> DEFAULT_PROP_LIST = new ArrayList<String>();
+    public static final List<String> DEFAULT_PROP_LIST = new ArrayList<>();
 
     public static final Map<String, List<String>> DEFAULT_INFO_CATEGORY = ImmutableMap.of("Basic Info", DEFAULT_INFO_GRP);
     public static final Map<String, List<String>> DEFAULT_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", DEFAULT_LOC_GRP);
@@ -110,7 +110,7 @@ public class ToolTipConstants {
     public static final List<String> GFF_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CDS_START, CDS_END, CHROMOSOME);
     public static final List<String> GFF_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
     public static final List<String> GFF_IGNORE_LIST = Arrays.asList(CL);
-    public static final List<String> GFF_PROP_LIST = new ArrayList<String>();
+    public static final List<String> GFF_PROP_LIST = new ArrayList<>();
 
     public static final Map<String, List<String>> GFF_INFO_CATEGORY = ImmutableMap.of("Basic Info", GFF_INFO_GRP);
     public static final Map<String, List<String>> GFF_LOCATION_CATEGORY = ImmutableMap.of("GFF Info", GFF_LOC_GRP);

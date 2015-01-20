@@ -38,7 +38,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
             boolean hasFloater = false;
             boolean hasAnchored = false;
             for (GraphState gs : graphStates) {
-                boolean floating = gs.getTierStyle().getFloatTier();
+                boolean floating = gs.getTierStyle().isFloatTier();
                 hasFloater |= floating;
                 hasAnchored |= !floating;
             }
@@ -46,7 +46,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
 
         }
 
-    };
+    }
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -69,7 +69,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
         boolean something_changed = false;
         for (GraphGlyph glyph : graphGlyphs) {
             ITrackStyleExtended style = glyph.getAnnotStyle();
-            boolean is_floating = style.getFloatTier();
+            boolean is_floating = style.isFloatTier();
             if (!is_floating) {
                 // figure out correct height
                 Rectangle2D.Double coordbox = getSeqMapView().getFloaterGlyph().getFloatCoords(glyph, getTierMap().getView());
@@ -89,16 +89,13 @@ public class FloatTiersAction extends SeqMapViewActionA {
     }
 
     private void updateViewer() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SeqMapView v = getSeqMapView();
-                GenometryModel m = GenometryModel.getInstance();
-                BioSeq s = m.getSelectedSeq();
-                v.setAnnotatedSeq(s, true, true);
-                v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
-                v.postSelections(); // to disable partner.
-            }
+        SwingUtilities.invokeLater(() -> {
+            SeqMapView v = getSeqMapView();
+            GenometryModel m = GenometryModel.getInstance();
+            BioSeq s = m.getSelectedSeq();
+            v.setAnnotatedSeq(s, true, true);
+            v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
+            v.postSelections(); // to disable partner.
         });
     }
 }

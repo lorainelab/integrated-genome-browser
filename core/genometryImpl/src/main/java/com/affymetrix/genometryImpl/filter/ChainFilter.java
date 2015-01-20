@@ -47,7 +47,7 @@ public class ChainFilter implements SymmetryFilterI {
 	@Override
 	public SymmetryFilterI newInstance() {
 		ChainFilter newInstance = new ChainFilter();
-		List<SymmetryFilterI> newInstanceFilters = new ArrayList<SymmetryFilterI>();
+		List<SymmetryFilterI> newInstanceFilters = new ArrayList<>();
 		for(SymmetryFilterI filter : filters){
 			newInstanceFilters.add(filter.newInstance());
 		}

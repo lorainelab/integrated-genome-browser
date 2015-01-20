@@ -29,6 +29,7 @@
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".git" fileType="regular" />
+          <entry location="igb_exe_signed.jar" fileType="regular" />
           <entry location="extbundles" fileType="regular" />
           <entry location="pom.xml" fileType="regular" />
           <entry location="developmentPlugins" fileType="regular" />
@@ -46,7 +47,6 @@
           <entry location="galaxy" fileType="regular" />
           <entry location="run_igb_2gb.command" fileType="regular" />
           <entry location="ext" fileType="regular" />
-          <entry location="igb_exe.jar" fileType="regular" />
           <entry location="distribution" fileType="regular" />
           <entry location="tools" fileType="regular" />
           <entry location="settings.gradle" fileType="regular" />
@@ -78,7 +78,7 @@
       </splashScreen>
       <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="igb_exe_signed.jar" failOnError="false" />
+          <archive location="igb_exe.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -112,7 +112,7 @@
       </splashScreen>
       <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true -Xmx1024m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="igb_exe_signed.jar" failOnError="false" />
+          <archive location="igb_exe.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -1509,19 +1509,6 @@ return true;</string>
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <macos name="Mac OS X" id="24" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_25" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="22">
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
-      <topLevelFiles />
-    </macos>
     <unixInstaller name="Unix Installer" id="25" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="368" />
@@ -1555,6 +1542,20 @@ return true;</string>
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
+    <macosFolder name="Mac OS X Folder" id="552" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_25" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" signLaunchers="true">
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <topLevelFiles />
+    </macosFolder>
   </mediaSets>
   <buildIds buildAll="false">
     <mediaSet refId="25" />

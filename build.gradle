@@ -13,11 +13,6 @@ ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.
 //remove minor version portion of version string
 version = commonProps.get('appVersion')
 
-//securely read in keystore info from disk
-ext.props = new Properties()
-ext.props.load(new FileInputStream(System.getProperty("user.home") + '/build.properties'))
-project.setProperty('props', ext.props)
-
 buildscript {
     repositories {
         mavenLocal()
@@ -41,17 +36,6 @@ install4j {
 
 task cleanOldBuild(type: Delete) {
     delete buildDir
-}
-
-task signExeJar() {
-    ant.signjar(
-            signedjar: "igb_exe_signed.jar",    
-            alias: props.get('appleKeyStoreAlias'),
-            storetype: 'pkcs12', 
-            jar: "./igb_exe.jar",
-            keystore: '/opt/igb/developerID_application_igb.jks',
-            storepass: props.get('appleKeypass'),
-            preservelastmodified: 'true');
 }
 
 task media(dependsOn: cleanOldBuild, type: com.install4j.gradle.Install4jTask) {

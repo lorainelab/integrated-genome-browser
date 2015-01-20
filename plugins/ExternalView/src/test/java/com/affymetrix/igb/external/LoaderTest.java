@@ -9,6 +9,7 @@ import org.junit.Test;
 
 public class LoaderTest {
 
+
     @Ignore //ignored for now, but will re-enable as an integration test
     @Test
     public void checkDownLoadEnsembl() throws ImageUnavailableException {

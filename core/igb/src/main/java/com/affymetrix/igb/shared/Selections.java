@@ -180,15 +180,6 @@ public abstract class Selections {
         return false;
     }
 
-    public static boolean isAnyShowAsPaired() {
-        for (ITrackStyleExtended style : allStyles) {
-            if (style.isShowAsPaired()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean isAnyJoined() {
         for (GraphState state : graphStates) {
             if (state.getComboStyle() != null) {

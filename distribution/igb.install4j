@@ -110,7 +110,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
         </text>
       </splashScreen>
-      <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true -Xmx1024m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="com.affymetrix.main.Main" vmParameters="-Dapple.laf.useScreenMenuBar=true" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <archive location="igb_exe.jar" failOnError="false" />
         </classPath>

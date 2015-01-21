@@ -206,10 +206,6 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
      * @return null if the image file is not found or can't be opened.
      */
     public Icon getIcon() {
-        ImageIcon imageIcon = CommonUtils.getInstance().getApplicationIcon();
-        if (imageIcon != null) {
-            return imageIcon;
-        }
         return null;
     }
 

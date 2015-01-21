@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.1" transformSequenceNumber="5">
-  <directoryPresets config="./branding" />
+  <directoryPresets config="/opt/igb/developerID_application_igb.p12" />
   <application name="Integrated Genome Browser" distributionSourceDir="" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="http://bioviz.org/igb/" version="${compiler:igbVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -17,7 +17,7 @@
       <variable name="codeBaseUrl" value="http://eos.transvar.org/igb/" description="A variable holding the url location of the lateset IGB installers and update information" category="" />
     </variables>
     <mergedProjects />
-    <codeSigning macEnabled="true" macPkcs12File="/opt/igb/developerID_application_igb.p12" windowsEnabled="false" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
+    <codeSigning macEnabled="true" macPkcs12File="/opt/igb/developerID_application_igb.p12" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="/opt/igb/developerID_application_igb.p12" />
   </application>
   <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets />

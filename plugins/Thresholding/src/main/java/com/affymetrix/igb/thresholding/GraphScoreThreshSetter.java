@@ -245,7 +245,7 @@ public final class GraphScoreThreshSetter extends JPanel
             thresh_setter_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             thresh_setter_frame.pack();
 
-            ImageIcon imageIcon = igbService.getIcon("igb.gif");
+            ImageIcon imageIcon = igbService.getIcon("igb.png");
             if (imageIcon != null) {
                 thresh_setter_frame.setIconImage(imageIcon.getImage());
             }

@@ -67,7 +67,7 @@ public class CommonUtils {
      * @return
      */
     public ImageIcon getApplicationIcon() {
-        return CommonUtils.getInstance().getIcon("images/igb.gif");
+        return CommonUtils.getInstance().getIcon("images/igb.png");
     }
 
     /**
@@ -76,7 +76,7 @@ public class CommonUtils {
      * @return
      */
     public ImageIcon getApplicationSmallIcon() {
-        return CommonUtils.getInstance().getIcon("images/igb_small.gif");
+        return CommonUtils.getInstance().getIcon("images/igb_small.png");
     }
 
     /**

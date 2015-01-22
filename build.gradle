@@ -53,7 +53,7 @@ task packageRelease(dependsOn: media, type: Zip) {
     archiveName 'igb.zip'
     from '.'
     fileMode 0755
-    include 'NOTICES.txt', 'LICENSE.html', 'README.md', 'igb_exe.jar'
+    include 'NOTICES.txt', 'LICENSE.html','run_igb.bat','run_igb.command','run_igb.sh', 'README.md', 'igb_exe.jar'
     from 'distribution/build/'
     fileMode 0755
     include 'IGB_*', 'md5sums'

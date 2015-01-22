@@ -31,7 +31,7 @@ fi
 PREFIX=`dirname $PREFIX`
 
 # File Locations
-ICON="$PREFIX/common/resources/images/igb.gif"
+ICON="$PREFIX/common/resources/images/igb.png"
 
 # Do our best to find java
 test -z "$JAVACMD" -a -n "$JAVA_HOME" && JAVACMD=$JAVA_HOME/bin/java
@@ -49,11 +49,6 @@ while (( "$#" )); do
 	fi
 	shift
 done
-
-# Use 1GiB RAM as maximum heap size
-echo $VMARGS[*] | grep -q '\-Xmx\|\-mx' || VMARGS[${#VMARGS[*]}]="-Xmx1024m"
-# Use 32MiB as initial heap size
-echo $VMARGS[*] | grep -q '\-Xms\|\-ms' || VMARGS[${#VMARGS[*]}]="-Xms32m"
 
 # Some Apple Specific settings. Should there be a way to override these?
 if [[ `uname -s` == "Darwin" ]]; then

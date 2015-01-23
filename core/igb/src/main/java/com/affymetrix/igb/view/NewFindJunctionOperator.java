@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.PropertyConstants;
 import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
-import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;

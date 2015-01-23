@@ -24,7 +24,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.EfficientPairSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
-import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometryImpl.symmetry.impl.UcscBedSym;

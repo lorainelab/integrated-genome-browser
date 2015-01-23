@@ -1,15 +1,12 @@
 package com.affymetrix.igb.osgi.service;
 
-import com.affymetrix.common.CommonUtils;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 

@@ -75,7 +75,7 @@ public abstract class AbstractExportFileAction
         } else if (current_tiers.isEmpty()) {
             ErrorHandler.errorPanel(BUNDLE.getString("noTrackError"));
         } else {
-            TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+            TierGlyph current_tier = current_tiers.get(0);
             saveAsFile(current_tier);
         }
     }

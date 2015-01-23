@@ -27,7 +27,7 @@
         <commonsCsvVersion>1.0</commonsCsvVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
         <genovizVersion>1.1.0</genovizVersion>
-        <felixMainVersion>4.2.2</felixMainVersion>
+        <felixMainVersion>4.6.0</felixMainVersion>
         <felix-scr-version>1.8.2</felix-scr-version>
         <org.osgi.compendium-version>4.3.1</org.osgi.compendium-version>
         <bindlib-version>2.4.0</bindlib-version>
@@ -683,7 +683,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
-                <version>${felixMainVersion}</version>
+                <version>4.6.0</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>

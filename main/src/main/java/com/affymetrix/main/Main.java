@@ -26,10 +26,8 @@ public final class Main {
      */
     public static void main(final String[] args) {
         log.info("Starting OSGI container");
-        // replacing singleton pattern would be preferred
-        CommonUtils commonUtils = CommonUtils.getInstance();
         try {
-            OSGiHandler osgiHandler = new OSGiHandler(commonUtils);
+            OSGiHandler osgiHandler = new OSGiHandler();
             osgiHandler.startOSGi(args);
         } catch (Throwable t) {
             log.error("Error starting osgi runtime container", t);

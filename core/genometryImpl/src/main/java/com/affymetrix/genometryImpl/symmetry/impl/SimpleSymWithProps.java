@@ -10,7 +10,6 @@
 package com.affymetrix.genometryImpl.symmetry.impl;
 
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;

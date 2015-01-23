@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.osgi.service.IGBService;
 import com.affymetrix.igb.osgi.service.IGBTabPanel;
 import com.affymetrix.igb.shared.JRPStyledTable;

@@ -53,7 +53,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
             allGlyphs.stream().filter(vg -> vg instanceof GraphGlyph).forEach(vg -> {
                 ITrackStyleExtended style = ((GraphGlyph) vg).getGraphState().getComboStyle();
                 if (style != null) {
-                    getSeqMapView().split((GraphGlyph) vg);
+                    getSeqMapView().split(vg);
                 }
             });
 

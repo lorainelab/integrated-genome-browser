@@ -12,7 +12,6 @@ package com.affymetrix.genometryImpl.symmetry.impl;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SimpleSeqSymmetry;
-import java.util.ArrayList;
 
 public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements MutableSeqSymmetry {
 

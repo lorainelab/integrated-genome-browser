@@ -11,7 +11,6 @@ import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import javax.swing.ImageIcon;
 
 /**
  *

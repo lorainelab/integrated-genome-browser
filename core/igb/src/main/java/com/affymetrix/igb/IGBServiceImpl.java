@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.thread.CThreadWorker;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.ServerTypeI;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;

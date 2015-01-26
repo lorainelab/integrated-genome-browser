@@ -42,7 +42,6 @@
         <samVersion>1.111</samVersion>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
-        <bundle-info-version>1.0.0</bundle-info-version>
         <slf4j-version>1.7.7</slf4j-version>
         <!-- End of external bundle version declarations -->
         
@@ -54,7 +53,7 @@
         <igbSwingExt-version>2.0.0</igbSwingExt-version>
         <igb-services-api-version>2.0.1</igb-services-api-version>
         <windows-service-version>2.0.0</windows-service-version>
-        <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
+        <shared-lib-wrapper-version>2.0.0</shared-lib-wrapper-version>
         <logging-config-version>1.0.0</logging-config-version>        
         <igb-genoviz-extensions-api-version>1.0.0</igb-genoviz-extensions-api-version>
         <!-- End of included core bundle version declarations -->      
@@ -83,17 +82,22 @@
         <pluginsPage-version>2.0.0</pluginsPage-version>
         <windowsServiceDef-version>2.0.0</windowsServiceDef-version>
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>
-        <igbr-version>2.0.1</igbr-version>
+        
         <console-gui-version>1.0.0</console-gui-version>        
         <main-version>2.0.0</main-version>
+        <!-- End of included plugin version declarations -->
+        
+        <!-- Start of optional plugin version declarations -->
+        <geometric-mean-version>0.0.1</geometric-mean-version>
+        <merge-annotation-operator-version>0.0.1</merge-annotation-operator-version>
+        <igb-command-socket-version>2.0.1</igb-command-socket-version>
+        <tutorial-helper-version>0.0.1</tutorial-helper-version>
         <!-- End of included plugin version declarations -->
         
         <!-- Start of development plugin version declarations -->
         <bam-indexer-version>0.0.1</bam-indexer-version>
         <DasRegistryServerType-version>0.0.1</DasRegistryServerType-version>
-        <findAnnotations-version>0.0.1</findAnnotations-version>
-        <genometricMean-version>0.0.1</genometricMean-version>
-        <mergeAnnotationOperator-version>0.0.1</mergeAnnotationOperator-version>
+        <findAnnotations-version>0.0.1</findAnnotations-version>        
         <ncbiPrimer-version>0.0.1</ncbiPrimer-version>
         <overlapAnnotationOperator-version>0.0.1</overlapAnnotationOperator-version>
         <parentOperators-version>0.0.1</parentOperators-version>
@@ -102,8 +106,7 @@
         <tableView-version>0.0.1</tableView-version>
         <talleyHandler-version>0.0.1</talleyHandler-version>
         <thousandGenomesServerType-version>0.0.1</thousandGenomesServerType-version>
-        <transcriptIsoForm-version>0.0.1</transcriptIsoForm-version>
-        <tutorialHelper-version>0.0.1</tutorialHelper-version>
+        <transcriptIsoForm-version>0.0.1</transcriptIsoForm-version>        
         <!-- End of development plugin version declarations -->
         
     </properties>
@@ -204,22 +207,23 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
+                <module>optionalPlugins/merge-annotation-operator</module>
+                <module>optionalPlugins/tutorial-helper</module>
+                <module>optionalPlugins/geometric-mean</module>
+                <module>optionalPlugins/igb-command-socket</module>
+                
                 <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/TableView</module>
                 <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/GeometricMean</module>
-                <module>developmentPlugins/OverlapAnnotationOperator</module>
-                <module>developmentPlugins/MergeAnnotationOperator</module>
+                <module>developmentPlugins/OverlapAnnotationOperator</module>                
                 <module>developmentPlugins/SampleSelection</module>
                 <module>developmentPlugins/SearchModeSymmetryFilter</module>
                 <module>developmentPlugins/TallyHandler</module>
                 <module>developmentPlugins/ThousandGenomesServerType</module>
-                <module>developmentPlugins/TranscriptIsoform</module>
-                <module>developmentPlugins/TutorialHelper</module>
+                <module>developmentPlugins/TranscriptIsoform</module>               
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
-                <module>developmentPlugins/NCBIPrimer</module>
-                <module>developmentPlugins/IGBR</module>
+                <module>developmentPlugins/NCBIPrimer</module>                
             </modules>
         </profile>
         <profile> <!-- profile for jenkins -->
@@ -265,22 +269,22 @@
                 <!-- end of core modules-->
                 
                 <!-- start of dev plugin modules-->
+                <module>optionalPlugins/merge-annotation-operator</module>
+                <module>optionalPlugins/tutorial-helper</module>
+                <module>optionalPlugins/geometric-mean</module>
+                <module>optionalPlugins/igb-command-socket</module>                
                 <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/TableView</module>
                 <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/GeometricMean</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>
-                <module>developmentPlugins/MergeAnnotationOperator</module>
                 <module>developmentPlugins/SampleSelection</module>
                 <module>developmentPlugins/SearchModeSymmetryFilter</module>
                 <module>developmentPlugins/TallyHandler</module>
                 <module>developmentPlugins/ThousandGenomesServerType</module>
                 <module>developmentPlugins/TranscriptIsoform</module>
-                <module>developmentPlugins/TutorialHelper</module>
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
-                <module>developmentPlugins/NCBIPrimer</module>    
-                <module>developmentPlugins/IGBR</module>              
+                <module>developmentPlugins/NCBIPrimer</module>                                 
                 <!-- end of dev plugin modules-->
                 
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
@@ -471,8 +475,8 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>sharedLibWrapper</artifactId>
-                <version>${sharedLibWrapper-version}</version>
+                <artifactId>shared-lib-wrapper</artifactId>
+                <version>${shared-lib-wrapper-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -495,8 +499,8 @@
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
-                <artifactId>igbr</artifactId>
-                <version>${igbr-version}</version>
+                <artifactId>igb-command-socket</artifactId>
+                <version>${igb-command-socket-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -528,14 +532,14 @@
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>geometricMean</artifactId>
-                <version>${genometricMean-version}</version>
+                <artifactId>geometric-mean</artifactId>
+                <version>${geometric-mean-version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>mergeAnnotationOperator</artifactId>
-                <version>${mergeAnnotationOperator-version}</version>
+                <artifactId>merge-annotation-operator</artifactId>
+                <version>${merge-annotation-operator-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -594,8 +598,8 @@
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>tutorialHelper</artifactId>
-                <version>${tutorialHelper-version}</version>
+                <artifactId>tutorial-helper</artifactId>
+                <version>${tutorial-helper-version}</version>
                 <scope>provided</scope>
             </dependency> 
             <!-- End of development plugins -->
@@ -647,13 +651,7 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commonsLangVersion}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.lorainelab</groupId>
-                <artifactId>bundle-info</artifactId>
-                <version>${bundle-info-version}</version>
-                <type>jar</type>
-            </dependency>           
+            </dependency>        
             <!--End of additional provided dependencies-->
 
 
@@ -941,6 +939,14 @@
                         </fileset>
                         <fileset>
                             <directory>${basedir}/extbundles</directory>
+                            <includes>
+                                <include>*.jar</include>
+                                <include>repository.xml</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${basedir}/extbundles/optional</directory>
                             <includes>
                                 <include>*.jar</include>
                                 <include>repository.xml</include>

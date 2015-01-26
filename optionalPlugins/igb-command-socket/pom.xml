@@ -8,11 +8,11 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.lorainelab</groupId>
-    <artifactId>igbr</artifactId>
-    <version>${igbr-version}</version>
-    <packaging>bundle</packaging>
+    <artifactId>igb-command-socket</artifactId>
+    <version>${igb-command-socket-version}</version>
+    <packaging>jar</packaging>
 
-    <name>igbr</name>
+    <name>igb-command-socket</name>
 
     <dependencies>
         <dependency>
@@ -47,15 +47,41 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
+                <artifactId>maven-jar-plugin</artifactId>                
+                <configuration>
+                    <archive>  
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                    <outputDirectory>${project.parent.basedir}/extbundles/optional</outputDirectory> 
+                </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.parent.basedir}/extbundles/optional</directory>
+                            <includes>
+                                <include>${project.build.finalName}.jar</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>    
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>

@@ -111,8 +111,8 @@ plugins/TranscriptIsoform/.classpath
 plugins/TranscriptIsoform/META-INF/MANIFEST.MF
 plugins/Tutorial/META-INF/MANIFEST.MF
 plugins/Tutorial/build-test
-plugins/TutorialHelper/.classpath
-plugins/TutorialHelper/META-INF/MANIFEST.MF
+plugins/tutorial-helper/.classpath
+plugins/tutorial-helper/META-INF/MANIFEST.MF
 plugins/Update/META-INF/MANIFEST.MF
 plugins/Update/build
 plugins/ant/build
@@ -163,7 +163,7 @@ www/release_notes/images/Thumbs.db
 /plugins/Thresholding/target/
 /plugins/TranscriptIsoform/target/
 /plugins/Tutorial/target/
-/plugins/TutorialHelper/target/
+/plugins/tutorial-helper/target/
 /plugins/Update/target/
 /plugins/window_service_def/target/
 /plugins/plugins_page/target/
@@ -196,7 +196,7 @@ www/release_notes/images/Thumbs.db
 /developmentPlugins/TallyHandler/target/
 /developmentPlugins/ThousandGenomesServerType/target/
 /developmentPlugins/TranscriptIsoform/target/
-/developmentPlugins/TutorialHelper/target/
+/developmentPlugins/tutorial-helper/target/
 /tools/FindJunctions/nbproject/private/
 
 /target/
@@ -227,3 +227,7 @@ extbundles/*
 /core/igb-swing-ext/target/
 /core/shared-lib-wrapper/target/
 /core/genometry/target/
+/optionalPlugins/geometric-mean/target/
+/optionalPlugins/igb-command-socket/target/
+/optionalPlugins/tutorial-helper/target/
+/optionalPlugins/merge-annotation-operator/target/

@@ -9,12 +9,12 @@
     </parent>
 
     <groupId>com.affymetrix</groupId>
-    <artifactId>tutorialHelper</artifactId>
-    <version>${tutorialHelper-version}</version>
+    <artifactId>tutorial-helper</artifactId>
+    <version>${tutorial-helper-version}</version>
     
     <packaging>jar</packaging>
 
-    <name>tutorialHelper</name>
+    <name>tutorial-helper</name>
 
     <dependencies>        
         <dependency>
@@ -67,7 +67,7 @@
                     <archive>  
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                    <outputDirectory>${project.parent.basedir}/extbundles</outputDirectory> 
+                    <outputDirectory>${project.parent.basedir}/extbundles/optional</outputDirectory> 
                 </configuration>
             </plugin>
             <plugin>
@@ -75,7 +75,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.parent.basedir}/extbundles</directory>
+                            <directory>${project.parent.basedir}/extbundles/optional</directory>
                             <includes>
                                 <include>${project.build.finalName}.jar</include>
                             </includes>
@@ -103,7 +103,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
-                        <Bundle-Activator>com.gene.tutorialhelper.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.gene.tutorial-helper.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Description>A plugin to allow the user to see widget ids to help develop tutorials</Bundle-Description>
                     </instructions>

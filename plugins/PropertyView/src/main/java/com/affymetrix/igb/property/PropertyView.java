@@ -19,8 +19,8 @@ import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.shared.JRPStyledTable;
 
 public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {

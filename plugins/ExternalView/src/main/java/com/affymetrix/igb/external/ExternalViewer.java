@@ -6,8 +6,8 @@ import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
 import com.affymetrix.igb.swing.JRPComboBox;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 
 /**
  * Container panel for the external views Shows up as tab in IGB Allows

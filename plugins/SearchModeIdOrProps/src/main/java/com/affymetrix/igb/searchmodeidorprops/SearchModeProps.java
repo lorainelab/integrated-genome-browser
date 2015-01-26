@@ -2,7 +2,7 @@ package com.affymetrix.igb.searchmodeidorprops;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;

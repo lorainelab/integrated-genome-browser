@@ -1,6 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 
 /**
  * interface for setting tab state

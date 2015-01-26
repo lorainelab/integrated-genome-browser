@@ -6,8 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.XServiceRegistrar;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 

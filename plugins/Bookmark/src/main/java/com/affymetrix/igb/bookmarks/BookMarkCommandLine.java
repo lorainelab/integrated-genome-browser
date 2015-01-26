@@ -2,7 +2,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import java.net.MalformedURLException;
 import javax.swing.SwingUtilities;
 import org.osgi.framework.BundleContext;

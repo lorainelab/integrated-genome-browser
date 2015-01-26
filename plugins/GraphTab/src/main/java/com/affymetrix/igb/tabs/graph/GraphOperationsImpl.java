@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tabs.graph;
 
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.OperationsImpl;
 import static com.affymetrix.igb.shared.Selections.*;
 

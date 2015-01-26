@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.affymetrix.igb.service.api;
 
 import java.util.Map;
 

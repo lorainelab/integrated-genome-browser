@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;

@@ -2,7 +2,7 @@ package com.affymetrix.igb.tabs.graph;
 
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genometryImpl.util.ThreadUtils;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 
 import static com.affymetrix.igb.shared.Selections.*;

@@ -19,7 +19,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import java.net.URI;

@@ -28,7 +28,7 @@ import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.sequenceviewer.actions.ExitSeqViewerAction;

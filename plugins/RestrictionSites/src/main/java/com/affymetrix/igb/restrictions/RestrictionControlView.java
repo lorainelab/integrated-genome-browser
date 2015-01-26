@@ -25,8 +25,8 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

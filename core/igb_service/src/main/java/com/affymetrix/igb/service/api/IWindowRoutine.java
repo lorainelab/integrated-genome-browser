@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.affymetrix.igb.service.api;
 
 /**
  * Represents any routine that should be run when IGB starts/exits.

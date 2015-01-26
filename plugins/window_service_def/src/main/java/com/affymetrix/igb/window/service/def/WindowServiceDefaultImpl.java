@@ -31,10 +31,10 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabHolder;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
-import com.affymetrix.igb.osgi.service.IWindowRoutine;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.TabHolder;
+import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
@@ -231,8 +231,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // Save the main window location
         PreferenceUtils.saveWindowLocation(frame, "main window");
 
-        tabHolders.values().forEach(com.affymetrix.igb.osgi.service.TabHolder::close);
-        for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getPlugins()) {
+        tabHolders.values().forEach(com.affymetrix.igb.service.api.TabHolder::close);
+        for (IGBTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getIGBTabPanels()) {
             PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
         }
     }
@@ -321,7 +321,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             frame.setVisible(true);
 
             // Resize all tab holder after frame is set to visible.
-            tabHolders.values().forEach(com.affymetrix.igb.osgi.service.TabHolder::resize);
+            tabHolders.values().forEach(com.affymetrix.igb.service.api.TabHolder::resize);
         });
     }
 
@@ -389,7 +389,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void shutdown() {
         saveWindowLocations();
-        stopRoutines.forEach(com.affymetrix.igb.osgi.service.IWindowRoutine::stop);
+        stopRoutines.forEach(com.affymetrix.igb.service.api.IWindowRoutine::stop);
     }
 
     @Override
@@ -426,7 +426,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
      */
     private TabState getTabState(IGBTabPanel panel) {
         for (TabState tabState : tabHolders.keySet()) {
-            if (tabHolders.get(tabState).getPlugins().contains(panel)) {
+            if (tabHolders.get(tabState).getIGBTabPanels().contains(panel)) {
                 return tabState;
             }
         }
@@ -437,7 +437,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     public Set<IGBTabPanel> getPlugins() {
         HashSet<IGBTabPanel> plugins = new HashSet<>();
         for (TabState tabState : tabHolders.keySet()) {
-            plugins.addAll(tabHolders.get(tabState).getPlugins());
+            plugins.addAll(tabHolders.get(tabState).getIGBTabPanels());
         }
         return plugins;
     }
@@ -456,7 +456,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         if (panel == null) {
             return;
         }
-        tabHolders.values().stream().filter(tabHolder -> tabHolder.getPlugins().contains(panel)).forEach(tabHolder -> {
+        tabHolders.values().stream().filter(tabHolder -> tabHolder.getIGBTabPanels().contains(panel)).forEach(tabHolder -> {
             tabHolder.selectTab(panel);
         });
     }

@@ -17,8 +17,8 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.XServiceRegistrar;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.XServiceRegistrar;
 
 public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
 

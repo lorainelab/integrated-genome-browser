@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 
 /**

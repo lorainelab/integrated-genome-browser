@@ -11,9 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabHolder;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.TabHolder;
+import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
 import com.affymetrix.igb.window.service.IMenuCreator;
 
 /**
@@ -115,7 +115,7 @@ public class WindowTabs implements TabHolder {
     }
 
     @Override
-    public Set<IGBTabPanel> getPlugins() {
+    public Set<IGBTabPanel> getIGBTabPanels() {
         return addedPlugins;
     }
 

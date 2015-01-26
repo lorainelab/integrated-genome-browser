@@ -1,4 +1,4 @@
-package com.affymetrix.igb.osgi.service;
+package com.affymetrix.igb.service.api;
 
 import java.util.Set;
 
@@ -15,7 +15,7 @@ public interface TabHolder {
 	 * Get all the tab panes that this holder contains.
 	 * @return all the tab panes
 	 */
-	public Set<IGBTabPanel> getPlugins();
+	public Set<IGBTabPanel> getIGBTabPanels();
 	/**
 	 * Add a new tab pane to this holder.
 	 * @param plugin the tab pane to add

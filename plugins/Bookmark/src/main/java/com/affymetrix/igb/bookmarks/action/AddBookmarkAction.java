@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 
 public class AddBookmarkAction extends BookmarkAction {
 

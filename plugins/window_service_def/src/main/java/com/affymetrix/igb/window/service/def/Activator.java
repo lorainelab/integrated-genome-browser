@@ -12,8 +12,8 @@ import org.osgi.framework.ServiceReference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IWindowRoutine;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.window.service.IWindowService;
 
 public class Activator implements BundleActivator {

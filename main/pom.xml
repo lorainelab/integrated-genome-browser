@@ -426,10 +426,6 @@
                                     <manifest>
                                         <attribute name="Main-Class" value="com.affymetrix.main.Main"/>
                                         <attribute name="Application-Name" value="IGB" />
-                                        <!--                                        Attributes below are useless for local instance. 
-                                        But they are need for webstart.	-->
-                                        <attribute name="Permissions" value="all-permissions"/>
-                                        <attribute name="Codebase" value="*"/>
                                     </manifest>
                                     <zipgroupfileset dir="${basedir}/target">
                                         <include name="*.jar"/>

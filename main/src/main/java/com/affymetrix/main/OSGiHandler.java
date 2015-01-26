@@ -8,9 +8,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.swing.JFrame;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
@@ -30,13 +27,6 @@ public class OSGiHandler {
     private Framework framework;
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
-
-    public static final boolean IS_WINDOWS
-            = System.getProperty("os.name").toLowerCase().contains("windows");
-    public static final boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
-    public static final boolean IS_LINUX
-            = System.getProperty("os.name").toLowerCase().contains("linux");
 
     public static final String WINDOW_SERVICE_DEF_NAME = "windowsServiceDef";
 

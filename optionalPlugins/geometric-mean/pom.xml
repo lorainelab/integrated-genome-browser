@@ -9,14 +9,15 @@
     </parent>
 
     <groupId>com.affymetrix</groupId>
-    <artifactId>mergeAnnotationOperator</artifactId>
-    <version>${mergeAnnotationOperator-version}</version>
+    <artifactId>geometric-mean</artifactId>
+    <version>${geometric-mean-version}</version>
+    
     
     <packaging>jar</packaging>
 
-    <name>Merge Annotation Operator</name>
+    <name>Geometric Mean</name>
 
-    <dependencies>       
+    <dependencies>        
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.main</artifactId>
@@ -67,7 +68,7 @@
                     <archive>  
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                    <outputDirectory>${project.parent.basedir}/extbundles</outputDirectory> 
+                    <outputDirectory>${project.parent.basedir}/extbundles/optional</outputDirectory> 
                 </configuration>
             </plugin>
             <plugin>
@@ -75,7 +76,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.parent.basedir}/extbundles</directory>
+                            <directory>${project.parent.basedir}/extbundles/optional</directory>
                             <includes>
                                 <include>${project.build.finalName}.jar</include>
                             </includes>
@@ -86,8 +87,7 @@
             </plugin>    
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                
+                <artifactId>maven-bundle-plugin</artifactId>                
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -99,13 +99,12 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
+                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
                     <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
-                        <Bundle-Activator>com.gene.mergeannotationoperator.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.gene.geometricmean.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>Annotation Operator that merges selected annotation tracks.</Bundle-Description>
+                        <Bundle-Description>operation to compute Geometric Mean on selected graph tracks</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

@@ -8,8 +8,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.lorainelab</groupId>
-    <artifactId>igbr</artifactId>
-    <version>${igbr-version}</version>
+    <artifactId>igb-command-socket</artifactId>
+    <version>${igb-command-socket-version}</version>
     <packaging>jar</packaging>
 
     <name>igbr</name>

@@ -9,14 +9,14 @@
     </parent>
 
     <groupId>com.affymetrix</groupId>
-    <artifactId>tutorialHelper</artifactId>
-    <version>${tutorialHelper-version}</version>
+    <artifactId>merge-annotation-operator</artifactId>
+    <version>${merge-annotation-operator-version}</version>
     
     <packaging>jar</packaging>
 
-    <name>tutorialHelper</name>
+    <name>Merge Annotation Operator</name>
 
-    <dependencies>        
+    <dependencies>       
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.main</artifactId>
@@ -60,14 +60,14 @@
     </dependencies>
 
     <build>
-        <plugins> 
+        <plugins>   
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>                
                 <configuration>
                     <archive>  
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                    <outputDirectory>${project.parent.basedir}/extbundles</outputDirectory> 
+                    <outputDirectory>${project.parent.basedir}/extbundles/optional</outputDirectory> 
                 </configuration>
             </plugin>
             <plugin>
@@ -75,7 +75,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.parent.basedir}/extbundles</directory>
+                            <directory>${project.parent.basedir}/extbundles/optional</directory>
                             <includes>
                                 <include>${project.build.finalName}.jar</include>
                             </includes>
@@ -83,7 +83,7 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>      
+            </plugin>    
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -99,16 +99,17 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
+                    <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
-                        <Bundle-Activator>com.gene.tutorialhelper.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.gene.mergeannotationoperator.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>A plugin to allow the user to see widget ids to help develop tutorials</Bundle-Description>
+                        <Bundle-Description>Annotation Operator that merges selected annotation tracks.</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            
         </plugins>
     </build>
+
 </project>

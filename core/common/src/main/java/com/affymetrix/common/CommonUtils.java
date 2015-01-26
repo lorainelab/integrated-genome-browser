@@ -31,7 +31,6 @@ public class CommonUtils {
     private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
     private static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
-    private static final String BUNDLE_REGISTRY_FILE_NAME = "bundleRegistry.json";
 
     private CommonUtils() {
     }
@@ -205,10 +204,6 @@ public class CommonUtils {
             // It isn't a big deal if we can't find the icon, just return null
         }
         return null;
-    }
-
-    public String getBundleRegistryFileName() {
-        return BUNDLE_REGISTRY_FILE_NAME;
     }
 
     public static boolean isBlank(final CharSequence cs) {

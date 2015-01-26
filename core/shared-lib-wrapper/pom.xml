@@ -8,11 +8,9 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.affymetrix</groupId>
-    <artifactId>sharedLibWrapper</artifactId>
-    <version>${sharedLibWrapper-version}</version>
+    <artifactId>shared-lib-wrapper</artifactId>
+    <version>${shared-lib-wrapper-version}</version>
     
-    <name>sharedLibWrapper</name>
-
     <packaging>bundle</packaging>
     
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
@@ -139,7 +137,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.affymetrix</groupId>
-                                    <artifactId>sharedLibWrapper</artifactId>
+                                    <artifactId>shared-lib-wrapper</artifactId>
                                     <version>${project.version}</version>
                                 </artifactItem>
                                 <artifactItem>
@@ -177,11 +175,6 @@
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.lorainelab</groupId>
-                                    <artifactId>bundle-info</artifactId>
-                                    <version>${bundle-info-version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.google.code.gson</groupId>

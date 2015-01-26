@@ -35,7 +35,7 @@
         </dependency>       
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>sharedLibWrapper</artifactId>
+            <artifactId>shared-lib-wrapper</artifactId>
             <scope>runtime</scope>
         </dependency>     
         <dependency>
@@ -294,15 +294,20 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>findAnnotations</artifactId>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>geometricMean</artifactId>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-command-socket</artifactId>
             <scope>provided</scope>
         </dependency> 
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>mergeAnnotationOperator</artifactId>
+            <artifactId>geometric-mean</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>merge-annotation-operator</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -352,7 +357,7 @@
         </dependency> 
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>tutorialHelper</artifactId>
+            <artifactId>tutorial-helper</artifactId>
             <scope>provided</scope>
         </dependency> 
         <!-- End of development plugins -->

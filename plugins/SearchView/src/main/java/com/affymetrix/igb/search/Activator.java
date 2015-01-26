@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.genometryImpl.event.GenericServerInitListener;
+import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.service.api.XServiceRegistrar;

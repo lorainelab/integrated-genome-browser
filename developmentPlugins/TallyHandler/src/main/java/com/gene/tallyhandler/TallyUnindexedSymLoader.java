@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.symloader.UnindexedSymLoader;
-import com.affymetrix.genometryImpl.symloader.LineProcessor;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.symloader.UnindexedSymLoader;
+import com.affymetrix.genometry.symloader.LineProcessor;
 
 public class TallyUnindexedSymLoader extends UnindexedSymLoader {
 

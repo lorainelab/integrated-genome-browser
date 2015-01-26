@@ -12,8 +12,8 @@
  */
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.igb.general.ServerList.RepositoryElementHandler;
 import com.affymetrix.igb.general.ServerList.ServerElementHandler;
 import com.affymetrix.igb.prefs.WebLinkUtils.WeblinkElementHandler;

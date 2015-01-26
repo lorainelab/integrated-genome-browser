@@ -1,14 +1,14 @@
 package com.affymetrix.igb.view;
 
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.ContextualPopupListener;
 
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometry.symloader.BAM;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.igb.action.ViewReadAlignmentAction;
 
 import java.util.List;

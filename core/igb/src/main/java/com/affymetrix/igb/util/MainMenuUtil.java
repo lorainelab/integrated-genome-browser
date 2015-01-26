@@ -1,7 +1,7 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AboutIGBAction;

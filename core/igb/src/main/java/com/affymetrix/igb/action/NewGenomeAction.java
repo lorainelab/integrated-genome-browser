@@ -1,14 +1,14 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
-import com.affymetrix.genometryImpl.util.Constants;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.parsers.ChromInfoParser;
+import com.affymetrix.genometry.util.Constants;
+import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.SpeciesLookup;
+import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.OpenURIAction;

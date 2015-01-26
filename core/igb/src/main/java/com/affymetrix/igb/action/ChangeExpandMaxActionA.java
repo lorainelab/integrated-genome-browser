@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.RepackTiersAction;

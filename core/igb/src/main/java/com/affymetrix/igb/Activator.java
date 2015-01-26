@@ -3,17 +3,17 @@ package com.affymetrix.igb;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.genometryImpl.color.ColorProviderI;
-import com.affymetrix.genometryImpl.event.AxisPopupListener;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.GenericActionListener;
-import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.color.ColorProviderI;
+import com.affymetrix.genometry.event.AxisPopupListener;
+import com.affymetrix.genometry.event.ContextualPopupListener;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionListener;
+import com.affymetrix.genometry.event.GenericServerInitListener;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
@@ -360,32 +360,32 @@ public class Activator implements BundleActivator {
 
     private void initColorProvider(final BundleContext bundleContext) {
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
-        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.RGB(), null);
+        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.RGB(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Score(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.MapqScore(), null);
-        //bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Strand(), null);
+        //bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Strand(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
-        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Duplicate(), null);
-        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.Paired(), null);
-        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometryImpl.color.PariedByRunNo(), null);
+        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Duplicate(), null);
+        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Paired(), null);
+        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.PariedByRunNo(), null);
     }
 
     private void initFilter(final BundleContext bundleContext) {
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, SymmetryFilterI.class);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.WithIntronFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NoIntronFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.UniqueLocationFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.NotUniqueLocationFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ReadAlignmentsStrandFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MismatchFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MatchFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.QualityScoreFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.MappingQualityFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.ScoreFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.PairedFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.PairedByRunNoFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometryImpl.filter.DuplicateFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.WithIntronFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.NoIntronFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.UniqueLocationFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.NotUniqueLocationFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.ReadAlignmentsStrandFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.MismatchFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.MatchFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.QualityScoreFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.MappingQualityFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.ScoreFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedByRunNoFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.DuplicateFilter(), null);
     }
     
     private void addGenericActionListener() {

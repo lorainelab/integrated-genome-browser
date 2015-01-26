@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.ContinuousAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.ContinuousAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.AffyTieredMap;

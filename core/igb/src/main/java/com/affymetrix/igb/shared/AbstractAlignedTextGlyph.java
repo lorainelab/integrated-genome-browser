@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genometry.util.ImprovedStringCharIter;
+import com.affymetrix.genometry.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;

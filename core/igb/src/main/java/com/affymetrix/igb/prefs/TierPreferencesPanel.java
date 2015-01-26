@@ -1,6 +1,6 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GroupSelectionEvent;
 
 /**
  * This is the subclass of TrackPreferencesPanel which is used to represent Preferences->Tracks Tab.

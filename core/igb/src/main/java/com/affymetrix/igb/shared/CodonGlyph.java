@@ -1,14 +1,14 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.AminoAcid;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.AminoAcid;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.ColorUtils;
 import java.awt.Color;

@@ -20,9 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableRowSorter;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
 import com.affymetrix.igb.shared.ISearchModeSym;

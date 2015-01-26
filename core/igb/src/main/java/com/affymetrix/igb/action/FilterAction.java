@@ -1,12 +1,12 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
-import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
+import com.affymetrix.genometry.general.SupportsFileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;

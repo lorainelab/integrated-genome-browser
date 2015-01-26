@@ -1,9 +1,9 @@
 package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.MisMatchPileupGraphSym;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;

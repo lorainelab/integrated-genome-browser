@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.view.load.FeatureTreeView.FeatureTreeCellEditor.FeatureLoadAction;
 import java.awt.Insets;

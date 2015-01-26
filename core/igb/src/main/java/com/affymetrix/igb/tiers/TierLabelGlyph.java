@@ -1,8 +1,8 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.Delegate;
-import com.affymetrix.genometryImpl.util.IgbStringUtils;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symloader.Delegate;
+import com.affymetrix.genometry.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;

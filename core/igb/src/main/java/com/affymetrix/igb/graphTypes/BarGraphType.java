@@ -1,8 +1,8 @@
 
 package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.style.GraphType;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 import java.awt.Color;

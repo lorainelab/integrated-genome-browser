@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Adjustable;

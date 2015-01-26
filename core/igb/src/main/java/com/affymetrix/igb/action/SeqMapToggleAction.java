@@ -19,7 +19,7 @@ import javax.swing.Action;
  * between using one delegate or the other. It is enabled iff one of the
  * delegates is. This could probably be generalized to handle more than two
  * delegates, but that is not yet needed. This must extend
- * {@link com.affymetrix.genometryImpl.event.GenericAction} to participate in
+ * {@link com.affymetrix.genometry.event.GenericAction} to participate in
  * the tool bar, scripting, and the tutorials. Can we make this just a
  * GenericAction? No. It must extend SeqMapViewActionA because when added to the
  * generic actions holder some init method is called?

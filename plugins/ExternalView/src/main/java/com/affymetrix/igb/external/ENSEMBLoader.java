@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.google.common.io.Closer;
 import java.awt.image.BufferedImage;

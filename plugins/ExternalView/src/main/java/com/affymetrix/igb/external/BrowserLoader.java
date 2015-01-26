@@ -1,6 +1,6 @@
 package com.affymetrix.igb.external;
 
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.google.common.io.Closer;
 import java.awt.Color;
 import java.awt.Font;

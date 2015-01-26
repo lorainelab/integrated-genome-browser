@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.igb.IGBConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;

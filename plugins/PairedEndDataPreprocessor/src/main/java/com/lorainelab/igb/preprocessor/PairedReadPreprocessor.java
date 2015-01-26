@@ -1,16 +1,16 @@
 package com.lorainelab.igb.preprocessor;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.impl.MultiTierSymWrapper;
-import com.affymetrix.genometryImpl.symmetry.impl.PairedBamSymWrapper;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
+import com.affymetrix.genometry.symmetry.impl.MultiTierSymWrapper;
+import com.affymetrix.genometry.symmetry.impl.PairedBamSymWrapper;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.SeqUtils;
 import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.api.SeqSymmetryPreprocessorI;
+import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

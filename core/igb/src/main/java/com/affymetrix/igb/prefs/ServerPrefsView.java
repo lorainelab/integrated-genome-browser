@@ -10,9 +10,9 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;

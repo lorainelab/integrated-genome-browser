@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
 /** Models an "ELSE" element.  Just like a "MATCH" element, except that
     it always evaluates to true.

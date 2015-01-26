@@ -2,8 +2,8 @@ package com.affymetrix.igb.tabs.graph;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.shared.SelectAllAction;

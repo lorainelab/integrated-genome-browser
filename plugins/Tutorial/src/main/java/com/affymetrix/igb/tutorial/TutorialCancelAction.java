@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import java.awt.event.ActionEvent;
 
 public class TutorialCancelAction extends GenericAction {

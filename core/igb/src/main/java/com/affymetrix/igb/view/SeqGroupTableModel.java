@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.igb.IGBConstants;
 import java.text.MessageFormat;
 import java.text.NumberFormat;

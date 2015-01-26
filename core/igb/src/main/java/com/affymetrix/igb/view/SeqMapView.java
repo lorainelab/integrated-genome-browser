@@ -1,44 +1,44 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.util.BioSeqUtils;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.event.AxisPopupListener;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.event.PropertyHolder;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.SelectionInfoUtils;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.util.BioSeqUtils;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SupportsCdsSpan;
+import com.affymetrix.genometry.event.AxisPopupListener;
+import com.affymetrix.genometry.event.ContextualPopupListener;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GroupSelectionListener;
+import com.affymetrix.genometry.event.PropertyHandler;
+import com.affymetrix.genometry.event.PropertyHolder;
+import com.affymetrix.genometry.event.SeqMapRefreshed;
+import com.affymetrix.genometry.event.SeqSelectionEvent;
+import com.affymetrix.genometry.event.SeqSelectionListener;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
+import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.SelectionInfoUtils;
+import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -964,7 +964,7 @@ public class SeqMapView extends JPanel
     }
 
     public void seqMapRefresh() {
-        seqmap_refresh_list.forEach(com.affymetrix.genometryImpl.event.SeqMapRefreshed::mapRefresh);
+        seqmap_refresh_list.forEach(com.affymetrix.genometry.event.SeqMapRefreshed::mapRefresh);
     }
 
     /**

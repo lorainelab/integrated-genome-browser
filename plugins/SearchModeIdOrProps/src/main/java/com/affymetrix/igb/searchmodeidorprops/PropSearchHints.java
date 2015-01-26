@@ -1,6 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.Set;

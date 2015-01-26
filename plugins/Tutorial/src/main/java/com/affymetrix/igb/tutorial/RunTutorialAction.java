@@ -1,7 +1,7 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.ErrorHandler;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

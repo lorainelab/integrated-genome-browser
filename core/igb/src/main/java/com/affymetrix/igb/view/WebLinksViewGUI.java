@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.DisplayUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.DisplayUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import javax.swing.JFrame;
 import javax.swing.JPanel;

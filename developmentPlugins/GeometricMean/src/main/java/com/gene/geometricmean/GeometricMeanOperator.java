@@ -2,8 +2,8 @@ package com.gene.geometricmean;
 
 import java.util.List;
 
-import com.affymetrix.genometryImpl.operator.AbstractGraphOperator;
-import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometry.operator.AbstractGraphOperator;
+import com.affymetrix.genometry.operator.Operator;
 
 public class GeometricMeanOperator extends AbstractGraphOperator implements Operator {
 

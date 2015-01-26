@@ -4,12 +4,12 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.IndexWriter;
-import com.affymetrix.genometryImpl.parsers.Parser;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeHandler;
+import com.affymetrix.genometry.parsers.IndexWriter;
+import com.affymetrix.genometry.parsers.Parser;
+import com.affymetrix.genometry.symloader.SymLoader;
 
 public class BigWigHandler implements FileTypeHandler {
 	static final String[] EXTENSIONS = new String[]{"bw", "bigWig", "bigwig"};

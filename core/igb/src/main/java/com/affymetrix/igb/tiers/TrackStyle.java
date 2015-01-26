@@ -1,13 +1,13 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.color.ColorProviderI;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyle;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.PropertyConstants;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.color.ColorProviderI;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.style.ITrackStyle;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.style.PropertyConstants;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;

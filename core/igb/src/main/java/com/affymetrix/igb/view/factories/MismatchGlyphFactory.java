@@ -1,10 +1,10 @@
 package com.affymetrix.igb.view.factories;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.MisMatchPileupGraphSym;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.igb.graphTypes.MismatchGraphType;
 import com.affymetrix.igb.graphTypes.MismatchPileupType;
 import com.affymetrix.igb.shared.GraphGlyph;

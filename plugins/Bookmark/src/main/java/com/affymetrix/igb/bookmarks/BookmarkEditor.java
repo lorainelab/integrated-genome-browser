@@ -1,8 +1,8 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;

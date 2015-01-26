@@ -9,9 +9,9 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.XMLUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.XMLUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

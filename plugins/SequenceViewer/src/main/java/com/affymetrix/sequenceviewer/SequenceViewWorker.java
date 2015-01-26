@@ -1,8 +1,8 @@
 package com.affymetrix.sequenceviewer;
 
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.GenericActionDoneCallback;
+import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.igb.shared.LoadResidueAction;
 
 public class SequenceViewWorker extends CThreadWorker<Object, Void> {

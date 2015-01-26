@@ -5,10 +5,10 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.tooltip.ToolTipCategory;
-import static com.affymetrix.genometryImpl.tooltip.ToolTipConstants.STRAND;
-import com.affymetrix.genometryImpl.tooltip.ToolTipOperations;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.tooltip.ToolTipCategory;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
+import com.affymetrix.genometry.tooltip.ToolTipOperations;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
@@ -22,7 +22,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
-import static com.affymetrix.genometryImpl.util.SeqUtils.*;
+import static com.affymetrix.genometry.util.SeqUtils.*;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;

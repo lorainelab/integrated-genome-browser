@@ -1,6 +1,6 @@
 package com.affymetrix.igb.graphTypes;
 
-import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 

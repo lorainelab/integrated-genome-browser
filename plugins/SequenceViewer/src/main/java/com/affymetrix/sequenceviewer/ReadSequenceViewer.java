@@ -1,10 +1,10 @@
 package com.affymetrix.sequenceviewer;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.event.GenericActionDoneCallback;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
-import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.event.GenericActionDoneCallback;
+import com.affymetrix.genometry.symmetry.SymWithResidues;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
 import com.affymetrix.igb.service.api.IGBService;
 

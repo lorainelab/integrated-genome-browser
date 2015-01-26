@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;

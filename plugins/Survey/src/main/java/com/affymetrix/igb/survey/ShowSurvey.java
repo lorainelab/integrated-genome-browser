@@ -1,8 +1,8 @@
 package com.affymetrix.igb.survey;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 

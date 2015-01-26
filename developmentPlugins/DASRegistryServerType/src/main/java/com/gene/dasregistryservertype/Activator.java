@@ -5,8 +5,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.BundleActivator;
 
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleContext;
 

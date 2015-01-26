@@ -9,9 +9,9 @@
  */
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.*;

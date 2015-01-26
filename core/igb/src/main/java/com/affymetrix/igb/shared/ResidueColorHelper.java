@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.LinkedHashMap;

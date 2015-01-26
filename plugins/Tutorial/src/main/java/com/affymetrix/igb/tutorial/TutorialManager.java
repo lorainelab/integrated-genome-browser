@@ -1,10 +1,10 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.*;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;

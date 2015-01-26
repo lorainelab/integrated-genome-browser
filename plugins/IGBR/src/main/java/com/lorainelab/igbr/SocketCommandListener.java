@@ -1,6 +1,6 @@
 package com.lorainelab.igbr;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

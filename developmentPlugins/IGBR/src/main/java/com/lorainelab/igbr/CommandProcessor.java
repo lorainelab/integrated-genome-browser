@@ -1,6 +1,6 @@
 package com.lorainelab.igbr;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.ScriptManager;
 
 import java.io.BufferedReader;

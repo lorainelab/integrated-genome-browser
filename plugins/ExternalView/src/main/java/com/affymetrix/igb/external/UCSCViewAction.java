@@ -4,16 +4,16 @@
  */
 package com.affymetrix.igb.external;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genometryImpl.das.DasServerInfo;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.SeqSelectionEvent;
+import com.affymetrix.genometry.event.SeqSelectionListener;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.SynonymLookup;
+import com.affymetrix.genometry.das.DasServerInfo;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IGBService;
 

@@ -1,9 +1,9 @@
 package com.gene.searchmodelucene;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.HashSet;
 import java.util.List;

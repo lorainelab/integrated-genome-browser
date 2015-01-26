@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.IgbStringUtils;
+import com.affymetrix.genometry.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import java.awt.FontMetrics;

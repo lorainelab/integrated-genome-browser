@@ -4,11 +4,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphType;
-import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.DynamicStyleHeatMap;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.style.GraphType;
+import com.affymetrix.genometry.style.HeatMap;
+import com.affymetrix.genometry.style.DynamicStyleHeatMap;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.Actions;
 import com.affymetrix.igb.shared.Selections;

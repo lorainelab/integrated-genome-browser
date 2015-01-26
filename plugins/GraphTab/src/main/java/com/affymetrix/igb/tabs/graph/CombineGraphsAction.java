@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.style.SimpleTrackStyle;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.style.SimpleTrackStyle;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.service.api.IGBService;
 
 import static com.affymetrix.igb.shared.Selections.*;

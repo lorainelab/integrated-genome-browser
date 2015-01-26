@@ -1,7 +1,7 @@
 package apollo;
 
-import com.affymetrix.genometryImpl.event.AxisPopupListener;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
+import com.affymetrix.genometry.event.AxisPopupListener;
+import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleActivator;

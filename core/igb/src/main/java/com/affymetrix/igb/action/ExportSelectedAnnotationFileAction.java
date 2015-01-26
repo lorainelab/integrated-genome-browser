@@ -1,9 +1,9 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.parsers.AnnotationWriter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;

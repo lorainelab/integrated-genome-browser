@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-service</artifactId>
+            <artifactId>igb-services-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>genometryImpl</artifactId>
+            <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -117,7 +117,7 @@
                     <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>    
                     <instructions>
                         <Export-Package/>
-                        <Bundle-Activator>com.affymetrix.genometryImpl.operator.extra.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.affymetrix.genometry.operator.extra.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Description>Plugin to add operators to perform model level operations</Bundle-Description>
                     </instructions>

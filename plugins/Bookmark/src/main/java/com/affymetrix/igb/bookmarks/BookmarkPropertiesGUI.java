@@ -1,6 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.shared.StyledJTable;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;

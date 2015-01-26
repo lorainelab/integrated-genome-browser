@@ -1,10 +1,10 @@
-package com.affymetrix.genometryImpl.operator.extra;
+package com.affymetrix.genometry.operator.extra;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.symmetry.impl.SeqSymSummarizer;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.util.ArrayList;
 import java.util.List;
 

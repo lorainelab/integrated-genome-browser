@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.igb.action.ExpandAction;
 import com.affymetrix.igb.action.SeqMapToggleAction;

@@ -4,10 +4,10 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GroupSelectionListener;
+import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.view.SeqMapView;

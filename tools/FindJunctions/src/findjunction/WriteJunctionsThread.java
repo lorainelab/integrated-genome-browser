@@ -4,11 +4,11 @@
  */
 package findjunction;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.operator.FindJunctionOperator;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.operator.FindJunctionOperator;
+import com.affymetrix.genometry.parsers.BedParser;
+import com.affymetrix.genometry.symloader.BAM;
+import com.affymetrix.genometry.symmetry.SeqSymmetry;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;

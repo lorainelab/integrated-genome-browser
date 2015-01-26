@@ -1,9 +1,9 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.SpeciesLookup;
+import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPFileChooser;

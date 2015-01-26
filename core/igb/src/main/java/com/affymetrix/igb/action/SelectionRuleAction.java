@@ -5,13 +5,13 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.PropertyHandler;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.OrderComparator;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.PropertyHandler;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.util.OrderComparator;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.genometryImpl.util.SelectionInfoUtils.*;
+import static com.affymetrix.genometry.util.SelectionInfoUtils.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;

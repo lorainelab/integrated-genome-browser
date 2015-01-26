@@ -190,7 +190,7 @@ public abstract class TrackPreferencesGUI extends javax.swing.JPanel {
         graphStyleMinMaxAvgRadioButton.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleMinMaxAvgRadioButton.addActionListener(this::graphStyleMinMaxAvgRadioButtonActionPerformed);
 
-        graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometryImpl.style.HeatMap.getStandardNames()));
+        graphStyleHeatMapComboBox.setModel(new DefaultComboBoxModel(com.affymetrix.genometry.style.HeatMap.getStandardNames()));
         graphStyleHeatMapComboBox.setMinimumSize(new java.awt.Dimension(0, 0));
         graphStyleHeatMapComboBox.addActionListener(this::graphStyleHeatMapComboBoxActionPerformed);
 

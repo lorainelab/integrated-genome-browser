@@ -1,13 +1,13 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeHandler;
+import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.style.DefaultStateProvider;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -9,17 +9,17 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
-import static com.affymetrix.genometryImpl.general.GenericServerPrefKeys.SERVER_ORDER;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher.CacheUsage;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometry.general.GenericServer;
+import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_ORDER;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.LocalUrlCacher.CacheUsage;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.swing.JRPButton;

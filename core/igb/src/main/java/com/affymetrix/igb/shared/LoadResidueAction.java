@@ -1,10 +1,10 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;

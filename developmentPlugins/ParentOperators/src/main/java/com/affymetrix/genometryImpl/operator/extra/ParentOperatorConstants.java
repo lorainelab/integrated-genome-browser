@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.operator.extra;
+package com.affymetrix.genometry.operator.extra;
 
 import java.util.ResourceBundle;
 

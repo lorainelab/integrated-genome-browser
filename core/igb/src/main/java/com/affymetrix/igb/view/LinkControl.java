@@ -1,12 +1,12 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.symmetry.impl.CdsSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.weblink.WebLink;
+import com.affymetrix.genometry.event.ContextualPopupListener;
+import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.weblink.WebLink;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 
 import java.util.ArrayList;

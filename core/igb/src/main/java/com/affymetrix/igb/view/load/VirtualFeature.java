@@ -4,11 +4,11 @@
  */
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometryImpl.util.LoadUtils.RefreshStatus;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
+import com.affymetrix.genometry.util.ServerTypeI;
 import java.util.List;
 
 /**

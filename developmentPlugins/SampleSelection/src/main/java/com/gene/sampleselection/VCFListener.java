@@ -13,17 +13,17 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symloader.VCF;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symloader.VCF;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
+import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {

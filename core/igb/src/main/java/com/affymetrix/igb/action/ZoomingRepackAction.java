@@ -10,8 +10,8 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;

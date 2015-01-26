@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.widget.AutoScroll;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

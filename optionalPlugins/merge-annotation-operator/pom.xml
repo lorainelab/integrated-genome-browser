@@ -12,7 +12,7 @@
     <artifactId>merge-annotation-operator</artifactId>
     <version>${merge-annotation-operator-version}</version>
     
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <name>Merge Annotation Operator</name>
 
@@ -62,13 +62,22 @@
     <build>
         <plugins>   
             <plugin>
-                <artifactId>maven-jar-plugin</artifactId>                
-                <configuration>
-                    <archive>  
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                    <outputDirectory>${project.parent.basedir}/extbundles/optional</outputDirectory> 
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution> 
+                        <id>copy plugin</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>          
+                        <phase>install</phase>      
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${basedir}/../../extbundles/optional"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -86,18 +95,8 @@
             </plugin>    
             <plugin>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                
+                <artifactId>maven-bundle-plugin</artifactId>                
                 <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
                     <instructions>

@@ -29,6 +29,7 @@
         <genovizVersion>1.1.0</genovizVersion>
         <felixMainVersion>4.6.0</felixMainVersion>
         <felix-scr-version>1.8.2</felix-scr-version>
+        <felix-dependencymanager-version>3.2.0</felix-dependencymanager-version>
         <org.osgi.compendium-version>4.3.1</org.osgi.compendium-version>
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
@@ -675,6 +676,30 @@
             
             <dependency>
                 <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.dependencymanager</artifactId>
+                <version>${felix-dependencymanager-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.dependencymanager.runtime</artifactId>
+                <version>${felix-dependencymanager-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
+                <version>${felix-dependencymanager-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
+                <version>${felix-dependencymanager-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
                 <version>${osgiObrServiceVersion}</version>
             </dependency>
@@ -849,6 +874,11 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
+                    <version>${felix-dependencymanager-version}</version>                   
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
@@ -862,7 +892,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

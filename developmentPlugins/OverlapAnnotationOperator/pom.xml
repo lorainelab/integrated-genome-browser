@@ -12,7 +12,7 @@
     <artifactId>overlapAnnotationOperator</artifactId>
     <version>${overlapAnnotationOperator-version}</version>
     
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <name>Overlap Annotation Operator</name>
 
@@ -60,15 +60,24 @@
     </dependencies>
 
     <build>
-        <plugins>   
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>                
-                <configuration>
-                    <archive>  
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                    <outputDirectory>${project.parent.basedir}/extbundles</outputDirectory> 
-                </configuration>
+        <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution> 
+                        <id>copy plugin</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>          
+                        <phase>install</phase>      
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${basedir}/../../extbundles"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -89,15 +98,6 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>                
                 <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>    
                     <instructions>

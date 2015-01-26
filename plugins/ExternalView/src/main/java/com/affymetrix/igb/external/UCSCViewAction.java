@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.das.DasServerInfo;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 
 import java.awt.event.ActionEvent;
 import java.util.Collections;

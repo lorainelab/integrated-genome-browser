@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import static com.affymetrix.igb.shared.Selections.isAllRootSeqSymmetrySame;
 import static com.affymetrix.igb.shared.Selections.rootSyms;

@@ -7,8 +7,8 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.genometryImpl.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.XServiceRegistrar;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 

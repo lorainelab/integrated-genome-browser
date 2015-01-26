@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
 
 public interface IWindowService {
 	/**

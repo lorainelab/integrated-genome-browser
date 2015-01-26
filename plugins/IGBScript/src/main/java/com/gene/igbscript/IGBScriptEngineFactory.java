@@ -1,6 +1,6 @@
 package com.gene.igbscript;
 
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

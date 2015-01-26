@@ -13,7 +13,7 @@ import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
 
 import com.affymetrix.genometryImpl.util.ErrorHandler;
 
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 
 public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
 

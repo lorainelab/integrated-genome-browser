@@ -13,7 +13,7 @@ import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
-import com.affymetrix.igb.osgi.service.IGBService;
+import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.DataManagementTableInfo;
 import com.google.common.collect.ListMultimap;
 import fi.iki.elonen.NanoHTTPD;

@@ -31,9 +31,9 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.event.EventUtils;
 import com.affymetrix.genometryImpl.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.TabHolder;
-import com.affymetrix.igb.osgi.service.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.TabHolder;
+import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
 
 /**
  * TabHolder implementation for all tabs that are in a tab panel. This consists
@@ -481,7 +481,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     }
 
     @Override
-    public Set<IGBTabPanel> getPlugins() {
+    public Set<IGBTabPanel> getIGBTabPanels() {
         Set<IGBTabPanel> plugins = new HashSet<>();
         for (int i = 0; i < tab_pane.getTabCount(); i++) {
             IGBTabPanel panel = (IGBTabPanel) tab_pane.getComponentAt(i);
@@ -584,7 +584,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
     private IGBTabPanel getTabPanel(String tabName) {
         IGBTabPanel tabPanel = null;
-        for (IGBTabPanel loopPanel : getPlugins()) {
+        for (IGBTabPanel loopPanel : getIGBTabPanels()) {
             if (loopPanel.getName().equals(tabName)) {
                 tabPanel = loopPanel;
                 break;

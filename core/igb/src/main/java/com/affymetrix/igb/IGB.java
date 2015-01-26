@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
+import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.MenuUtil;

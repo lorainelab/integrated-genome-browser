@@ -18,9 +18,9 @@ import com.affymetrix.genometryImpl.event.GenericActionHolder;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
-import com.affymetrix.igb.osgi.service.XServiceRegistrar;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
+import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.window.service.IWindowService;
 import org.slf4j.LoggerFactory;
 

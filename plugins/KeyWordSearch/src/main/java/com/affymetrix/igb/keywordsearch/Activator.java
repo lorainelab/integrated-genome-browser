@@ -2,7 +2,7 @@ package com.affymetrix.igb.keywordsearch;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
-import com.affymetrix.igb.osgi.service.SimpleServiceRegistrar;
+import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import org.osgi.framework.BundleActivator;

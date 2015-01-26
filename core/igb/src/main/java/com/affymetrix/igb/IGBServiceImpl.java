@@ -28,9 +28,9 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.osgi.service.IGBService;
-import com.affymetrix.igb.osgi.service.IGBTabPanel;
-import com.affymetrix.igb.osgi.service.RepositoryChangeHolderI;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -249,7 +249,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public void saveState() {
         ((IGB) IGB.getSingleton()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::saveSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IGBTabPanel::saveSession);
     }
 
     @Override
@@ -257,7 +257,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         ((IGB) IGB.getSingleton()).getWindowService().restoreState();
         SeqMapView mapView = Application.getSingleton().getMapView();
         mapView.loadSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.osgi.service.IGBTabPanel::loadSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IGBTabPanel::loadSession);
     }
 
     @Override

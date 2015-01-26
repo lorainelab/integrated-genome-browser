@@ -83,7 +83,7 @@
         <pluginsPage-version>2.0.0</pluginsPage-version>
         <windowsServiceDef-version>2.0.0</windowsServiceDef-version>
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>
-        <igbr-version>2.0.0</igbr-version>
+        <igbr-version>2.0.1</igbr-version>
         <console-gui-version>1.0.0</console-gui-version>        
         <main-version>2.0.0</main-version>
         <!-- End of included plugin version declarations -->
@@ -192,8 +192,7 @@
         <module>plugins/Update</module>
         <module>plugins/plugins_page</module>
         <module>plugins/window_service_def</module>
-        <module>plugins/PairedEndDataPreprocessor</module>
-        <module>plugins/IGBR</module>
+        <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
         <module>main</module>
     </modules>
@@ -220,6 +219,7 @@
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
                 <module>developmentPlugins/NCBIPrimer</module>
+                <module>developmentPlugins/IGBR</module>
             </modules>
         </profile>
         <profile> <!-- profile for jenkins -->
@@ -261,8 +261,7 @@
                 <module>plugins/Update</module>
                 <module>plugins/plugins_page</module>
                 <module>plugins/window_service_def</module>
-                <module>plugins/PairedEndDataPreprocessor</module>
-                <module>plugins/IGBR</module>              
+                <module>plugins/PairedEndDataPreprocessor</module>                          
                 <!-- end of core modules-->
                 
                 <!-- start of dev plugin modules-->
@@ -280,7 +279,8 @@
                 <module>developmentPlugins/TutorialHelper</module>
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/BAMIndexer</module>
-                <module>developmentPlugins/NCBIPrimer</module>                
+                <module>developmentPlugins/NCBIPrimer</module>    
+                <module>developmentPlugins/IGBR</module>              
                 <!-- end of dev plugin modules-->
                 
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
@@ -554,7 +554,7 @@
                 <groupId>com.affymetrix</groupId>
                 <artifactId>parentOperators</artifactId>
                 <version>${parentOperators-version}</version>
-                 <scope>provided</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>

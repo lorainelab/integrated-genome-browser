@@ -72,7 +72,7 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package>
-                            com.affymetrix.igb.osgi.service
+                            com.affymetrix.igb.service.api
                         </Export-Package>
                         <Import-Package>*,com.affymetrix.igb;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

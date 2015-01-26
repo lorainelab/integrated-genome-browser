@@ -933,7 +933,6 @@
                             <includes>
                                 <include>*.jar</include>
                                 <include>repository.xml</include>
-                                <include>bundleRegistry.json</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>

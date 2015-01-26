@@ -48,7 +48,7 @@ import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
-import com.affymetrix.igb.shared.PreprocessorTypeReference;
+import com.affymetrix.igb.shared.PreprocessorRegistryImpl;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
@@ -513,7 +513,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         checkNotNull(seq);
         checkNotNull(gviewer);
         //apply preprocessors
-        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorTypeReference.getPreprocessorsForType(FileTypeCategory.Annotation)) {
+        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorRegistryImpl.getPreprocessorsForType(FileTypeCategory.Annotation)) {
             preprocessor.process(sym, style, gviewer, seq);
         }
         setSeqMap(gviewer);

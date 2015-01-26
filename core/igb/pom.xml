@@ -128,6 +128,11 @@
             <groupId>com.lorainelab</groupId>
             <artifactId>console-gui</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
+            <scope>provided</scope>
         </dependency>       
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
@@ -148,6 +153,20 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>scan</goal>
+                        </goals>
+                        <configuration>
+                            <log>warn</log>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>  
             <plugin>
                 <groupId>org.apache.felix</groupId>

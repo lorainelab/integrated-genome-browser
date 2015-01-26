@@ -221,3 +221,4 @@ extbundles/*
 *.iws
 .idea/
 
+/developmentPlugins/IGBR/target/

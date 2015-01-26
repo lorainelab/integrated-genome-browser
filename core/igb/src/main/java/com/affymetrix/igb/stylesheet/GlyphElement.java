@@ -13,15 +13,15 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleDerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleDerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.ArrowGlyph;
 import com.affymetrix.genoviz.glyph.BridgeGlyph;

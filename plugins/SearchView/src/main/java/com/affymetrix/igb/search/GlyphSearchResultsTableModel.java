@@ -1,6 +1,6 @@
 package com.affymetrix.igb.search;
 
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;

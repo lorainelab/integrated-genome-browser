@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometry.operator.Operator;
 
 public class TrackOperationAction extends TrackFunctionOperationA {
 

@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.service.api.IGBService;

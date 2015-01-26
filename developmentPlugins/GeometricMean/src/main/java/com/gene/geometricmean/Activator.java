@@ -3,7 +3,7 @@ package com.gene.geometricmean;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 

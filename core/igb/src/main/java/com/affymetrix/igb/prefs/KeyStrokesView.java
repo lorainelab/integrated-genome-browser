@@ -9,9 +9,9 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.action.ClampViewAction;

@@ -1,12 +1,12 @@
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.LocalUrlCacher;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;

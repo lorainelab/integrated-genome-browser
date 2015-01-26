@@ -1,7 +1,7 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;

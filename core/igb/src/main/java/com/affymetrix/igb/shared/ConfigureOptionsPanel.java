@@ -1,12 +1,12 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.general.ID;
-import com.affymetrix.genometryImpl.general.IParameters;
-import com.affymetrix.genometryImpl.general.NewInstance;
-import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.HeatMapExtended;
-import com.affymetrix.genometryImpl.util.IDComparator;
+import com.affymetrix.genometry.general.ID;
+import com.affymetrix.genometry.general.IParameters;
+import com.affymetrix.genometry.general.NewInstance;
+import com.affymetrix.genometry.style.HeatMap;
+import com.affymetrix.genometry.style.HeatMapExtended;
+import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;

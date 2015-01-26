@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.PrintDialog;
 import java.awt.event.ActionEvent;
@@ -36,7 +36,7 @@ public class PrintAction extends GenericAction {
         try {
             PrintDialog.getSingleton().display();
         } catch (Exception ex) {
-            com.affymetrix.genometryImpl.util.ErrorHandler.errorPanel("Problem during print.", ex, Level.SEVERE);
+            com.affymetrix.genometry.util.ErrorHandler.errorPanel("Problem during print.", ex, Level.SEVERE);
         }
     }
 }

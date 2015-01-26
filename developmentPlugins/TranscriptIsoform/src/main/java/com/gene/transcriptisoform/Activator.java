@@ -15,7 +15,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;

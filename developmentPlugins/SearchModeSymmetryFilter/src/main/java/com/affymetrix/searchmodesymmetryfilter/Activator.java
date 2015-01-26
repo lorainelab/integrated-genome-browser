@@ -3,7 +3,7 @@ package com.affymetrix.searchmodesymmetryfilter;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.filter.SymmetryFilterProps;
+import com.affymetrix.genometry.filter.SymmetryFilterProps;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.shared.ISearchModeSym;

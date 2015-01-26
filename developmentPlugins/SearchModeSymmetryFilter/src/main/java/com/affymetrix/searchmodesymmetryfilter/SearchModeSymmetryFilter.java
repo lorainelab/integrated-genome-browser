@@ -4,11 +4,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.filter.SymmetryFilter;
-import com.affymetrix.genometryImpl.filter.SymmetryFilterI;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.filter.SymmetryFilter;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;

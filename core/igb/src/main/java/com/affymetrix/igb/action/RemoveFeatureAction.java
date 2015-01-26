@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.shared.Selections.allStyles;

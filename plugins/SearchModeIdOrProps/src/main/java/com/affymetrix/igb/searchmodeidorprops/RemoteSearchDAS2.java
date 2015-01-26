@@ -3,11 +3,11 @@ package com.affymetrix.igb.searchmodeidorprops;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.das2.Das2VersionedSource;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.das2.Das2VersionedSource;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.ServerTypeI;
 
 public class RemoteSearchDAS2 {
 

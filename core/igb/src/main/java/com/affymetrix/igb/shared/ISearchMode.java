@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometry.BioSeq;
 
 /**
  * represents a method of searching the selected features given an input string

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometry.util.SpeciesLookup;
+import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import java.awt.BorderLayout;
 import java.awt.Component;

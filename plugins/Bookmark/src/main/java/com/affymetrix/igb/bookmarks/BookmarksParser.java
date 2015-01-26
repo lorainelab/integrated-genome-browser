@@ -9,12 +9,12 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.parsers.BedParser;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;

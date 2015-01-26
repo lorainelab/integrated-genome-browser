@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

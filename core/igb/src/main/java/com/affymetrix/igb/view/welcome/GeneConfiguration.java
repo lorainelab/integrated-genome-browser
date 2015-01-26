@@ -7,7 +7,7 @@ package com.affymetrix.igb.view.welcome;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.SpeciesLookup;
+import com.affymetrix.genometry.util.SpeciesLookup;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

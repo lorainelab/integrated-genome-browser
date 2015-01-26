@@ -1,8 +1,8 @@
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometryImpl.quickload.QuickLoadSymLoaderHook;
-import com.affymetrix.genometryImpl.quickload.QuickloadServerType;
+import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.quickload.QuickLoadSymLoaderHook;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 
 public class ChpQuickLoadSymLoaderHook implements QuickLoadSymLoaderHook {
 	static {

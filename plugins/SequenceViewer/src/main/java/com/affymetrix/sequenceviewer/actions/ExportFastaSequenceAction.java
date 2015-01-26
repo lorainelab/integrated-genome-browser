@@ -1,6 +1,6 @@
 package com.affymetrix.sequenceviewer.actions;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

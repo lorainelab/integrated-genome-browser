@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.TierHeightAction;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;

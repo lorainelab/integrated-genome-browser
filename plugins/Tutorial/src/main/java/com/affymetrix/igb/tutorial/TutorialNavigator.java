@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPButton;
 import java.awt.BorderLayout;
 import java.awt.Color;

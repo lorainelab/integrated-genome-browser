@@ -1,7 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.util.StatusAlert;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 

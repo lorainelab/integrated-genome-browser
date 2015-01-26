@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.IGBConstants;
 import java.awt.Color;
 import javax.swing.JColorChooser;

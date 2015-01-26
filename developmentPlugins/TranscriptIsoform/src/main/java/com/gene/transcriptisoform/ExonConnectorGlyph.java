@@ -12,8 +12,8 @@ import java.util.Set;
 
 import net.sf.samtools.Cigar;
 
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.BAMSym;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;

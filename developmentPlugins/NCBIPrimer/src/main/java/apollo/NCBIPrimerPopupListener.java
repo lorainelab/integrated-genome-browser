@@ -2,9 +2,9 @@ package apollo;
 
 import apollo.action.PrimerSearchAction;
 import apollo.analysis.NCBIPrimerBlastOpts;
-import com.affymetrix.genometryImpl.event.ContextualPopupListener;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.event.ContextualPopupListener;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import java.util.List;
 import javax.swing.JMenuItem;

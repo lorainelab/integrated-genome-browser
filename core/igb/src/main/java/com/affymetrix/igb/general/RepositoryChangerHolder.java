@@ -1,9 +1,9 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometryImpl.event.GenericServerInitListener;
-import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometry.event.GenericServerInitListener;
+import com.affymetrix.genometry.event.RepositoryChangeListener;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.util.ArrayList;

@@ -5,11 +5,11 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
-import com.affymetrix.genometryImpl.util.ServerUtils;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.FileTracker;

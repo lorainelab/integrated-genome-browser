@@ -4,7 +4,7 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.shared.Selections.allStyles;
 
 import java.awt.event.ActionListener;

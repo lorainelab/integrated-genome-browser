@@ -1,8 +1,8 @@
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symloader.BED;
-import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symloader.BED;
+import com.affymetrix.genometry.symmetry.SeqSymmetry;
 import findjunction.FindJunction;
 import java.io.File;
 import java.net.URI;

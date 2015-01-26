@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.Desktop;
@@ -102,7 +102,7 @@ public class AboutIGBAction extends GenericAction {
         );
         sb.append("</p>");
 
-        String cache_root = com.affymetrix.genometryImpl.util.LocalUrlCacher.getCacheRoot();
+        String cache_root = com.affymetrix.genometry.util.LocalUrlCacher.getCacheRoot();
         File cache_file = new File(cache_root);
         if (cache_file.exists()) {
             sb.append("<p>");

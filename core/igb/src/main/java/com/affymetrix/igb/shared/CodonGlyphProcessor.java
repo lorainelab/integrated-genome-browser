@@ -1,11 +1,11 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymSpanWithCds;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import java.util.prefs.PreferenceChangeEvent;

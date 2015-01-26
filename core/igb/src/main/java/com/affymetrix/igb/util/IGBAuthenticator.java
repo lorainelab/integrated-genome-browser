@@ -1,9 +1,9 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.IgbStringUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.IgbStringUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.Color;

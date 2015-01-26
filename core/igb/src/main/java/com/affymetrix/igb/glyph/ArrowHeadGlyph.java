@@ -1,9 +1,9 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;

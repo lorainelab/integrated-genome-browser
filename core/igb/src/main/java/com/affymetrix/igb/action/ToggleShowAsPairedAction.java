@@ -5,8 +5,8 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;

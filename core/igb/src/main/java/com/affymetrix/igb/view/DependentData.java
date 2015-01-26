@@ -1,14 +1,14 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.MisMatchGraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.MisMatchGraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymSummarizer;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import java.util.ArrayList;

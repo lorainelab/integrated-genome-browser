@@ -1,9 +1,9 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import com.google.common.base.Charsets;

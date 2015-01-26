@@ -4,7 +4,7 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.util.ErrorHandler;
 
 /**
  *

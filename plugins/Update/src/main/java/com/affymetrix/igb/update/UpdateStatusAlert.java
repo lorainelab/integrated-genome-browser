@@ -1,6 +1,6 @@
 package com.affymetrix.igb.update;
 
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.util.StatusAlert;
 import java.text.MessageFormat;
 import javax.swing.Icon;
 import static com.affymetrix.igb.update.ShowUpdate.*;

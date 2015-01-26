@@ -1,7 +1,7 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;

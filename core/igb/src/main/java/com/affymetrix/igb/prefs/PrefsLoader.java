@@ -1,9 +1,9 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;

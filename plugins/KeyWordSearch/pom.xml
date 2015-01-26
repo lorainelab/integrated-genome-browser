@@ -28,7 +28,7 @@
             </dependency>
             <dependency>
                   <groupId>com.affymetrix</groupId>
-                  <artifactId>igb-service</artifactId>
+                  <artifactId>igb-services-api</artifactId>
                   <scope>provided</scope>
             </dependency>
             <dependency>
@@ -38,7 +38,7 @@
             </dependency>
             <dependency>
                   <groupId>com.affymetrix</groupId>
-                  <artifactId>genometryImpl</artifactId>
+                  <artifactId>genometry</artifactId>
                   <scope>provided</scope>
             </dependency>
             <!--Start of logging dependencies-->

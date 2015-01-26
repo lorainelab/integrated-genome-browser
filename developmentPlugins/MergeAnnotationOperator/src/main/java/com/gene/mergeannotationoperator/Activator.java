@@ -3,8 +3,8 @@ package com.gene.mergeannotationoperator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 

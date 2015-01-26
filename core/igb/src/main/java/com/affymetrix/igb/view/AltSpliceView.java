@@ -9,18 +9,18 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SeqMapRefreshed;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.SeqMapRefreshed;
+import com.affymetrix.genometry.event.SeqSelectionEvent;
+import com.affymetrix.genometry.event.SeqSelectionListener;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.IGB;

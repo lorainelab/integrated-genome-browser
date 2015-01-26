@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import java.awt.event.ActionEvent;

@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.general.ServerList;
 import javax.swing.GroupLayout.Group;
 

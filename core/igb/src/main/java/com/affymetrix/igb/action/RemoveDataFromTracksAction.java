@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.shared.GraphGlyph;

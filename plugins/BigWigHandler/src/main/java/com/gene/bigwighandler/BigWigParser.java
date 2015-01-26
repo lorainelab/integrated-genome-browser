@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.parsers.graph.GraphParser;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.parsers.graph.GraphParser;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
 public class BigWigParser implements GraphParser {
 

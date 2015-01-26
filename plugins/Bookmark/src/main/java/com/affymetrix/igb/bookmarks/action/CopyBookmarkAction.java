@@ -5,8 +5,8 @@
  */
 package com.affymetrix.igb.bookmarks.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;

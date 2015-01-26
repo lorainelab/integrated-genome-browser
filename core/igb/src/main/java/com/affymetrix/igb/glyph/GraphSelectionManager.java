@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;

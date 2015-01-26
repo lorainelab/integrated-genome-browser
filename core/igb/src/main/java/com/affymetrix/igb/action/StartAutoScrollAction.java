@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;

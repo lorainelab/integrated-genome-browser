@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.service.api.IGBService;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;

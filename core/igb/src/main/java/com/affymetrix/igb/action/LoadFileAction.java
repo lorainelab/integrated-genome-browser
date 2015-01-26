@@ -9,13 +9,13 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.FileDropHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.FileDropHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;

@@ -4,14 +4,14 @@
  */
 package findjunction;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symloader.TwoBit;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.symloader.BAM;
+import com.affymetrix.genometry.symloader.TwoBit;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.SynonymLookup;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;

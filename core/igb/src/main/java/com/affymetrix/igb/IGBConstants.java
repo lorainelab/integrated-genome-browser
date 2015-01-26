@@ -10,7 +10,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.Constants;
+import com.affymetrix.genometry.util.Constants;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;

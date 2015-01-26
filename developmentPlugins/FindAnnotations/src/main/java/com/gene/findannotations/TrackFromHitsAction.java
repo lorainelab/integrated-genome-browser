@@ -5,11 +5,11 @@ import java.text.MessageFormat;
 
 import javax.swing.JTextField;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.igb.service.api.IGBService;
 
 public class TrackFromHitsAction extends GenericAction {

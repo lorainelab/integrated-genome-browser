@@ -1,7 +1,7 @@
 package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.google.common.base.Charsets;

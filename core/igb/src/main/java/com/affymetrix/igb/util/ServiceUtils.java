@@ -9,17 +9,17 @@
  */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.general.GenericServer;
-import com.affymetrix.genometryImpl.general.GenericVersion;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ServerTypeI;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;

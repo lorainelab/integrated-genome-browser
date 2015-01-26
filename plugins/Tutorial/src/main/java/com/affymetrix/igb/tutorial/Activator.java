@@ -14,8 +14,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.service.api.IGBService;

@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.event.ActionEvent;
 

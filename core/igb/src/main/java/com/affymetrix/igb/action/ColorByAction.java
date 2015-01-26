@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.color.ColorProviderI;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.general.SupportsFileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.color.ColorProviderI;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.general.SupportsFileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;

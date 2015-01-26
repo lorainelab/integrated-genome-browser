@@ -4,9 +4,9 @@
  */
 package com.affymetrix.igb.bamindexer;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GFileChooser;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GFileChooser;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;

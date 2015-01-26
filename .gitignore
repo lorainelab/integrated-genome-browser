@@ -12,12 +12,12 @@ core/HeatmapEditor/build-test
 core/common/META-INF/MANIFEST.MF
 core/common/build
 core/debug/build
-core/genometryImpl/META-INF/MANIFEST.MF
-core/genometryImpl/build
-core/genometryImpl/test/data/bgn/testOUT.bgn
-core/genometryImpl/test/data/bps/mRNA1_test.mm.bps
-core/genometryImpl/test/data/psl/RT_U34TEST.link.psl
-core/genometryImpl/test/data/server/A_thaliana/A_thaliana_TAIR8/mRNA_INDEX_TEST.psl
+core/genometry/META-INF/MANIFEST.MF
+core/genometry/build
+core/genometry/test/data/bgn/testOUT.bgn
+core/genometry/test/data/bps/mRNA1_test.mm.bps
+core/genometry/test/data/psl/RT_U34TEST.link.psl
+core/genometry/test/data/server/A_thaliana/A_thaliana_TAIR8/mRNA_INDEX_TEST.psl
 core/igb-i18n/build-test
 core/igb/META-INF/MANIFEST.MF
 core/igb/build-test
@@ -136,7 +136,7 @@ www/release_notes/images/Thumbs.db
 /nbproject/genfiles.properties
 /core/HeatmapEditor/target/
 /core/common/target/
-/core/genometryImpl/target/
+/core/genometry/target/
 /core/igb/target/
 /core/igbSwingExt/target/
 /core/igb_service/target/
@@ -208,12 +208,8 @@ www/release_notes/images/Thumbs.db
 /plugins/IGBR/target/
 extbundles/*
 /plugins/ConsoleGui/target/
-/core/LoggingConfig/target/
-/core/TierGlyphApi/target/
 /core/SeqMapViewExtendedApi/target/
 /core/SeqSymmetryPreprocessorApi/target/
-/core/igbGenovizExtensions/target/
-/core/igbGenovizExtensionsApi/target/
 /distribution/build/
 
 *.iml
@@ -222,3 +218,12 @@ extbundles/*
 .idea/
 
 /developmentPlugins/IGBR/target/
+/core/igb-services-api/target/
+/core/heatmap-editor/target/
+/core/logging-config/target/
+/core/igb-genoviz-ext-api/target/
+/core/window-service/target/
+/plugins/window-service-def/target/
+/core/igb-swing-ext/target/
+/core/shared-lib-wrapper/target/
+/core/genometry/target/

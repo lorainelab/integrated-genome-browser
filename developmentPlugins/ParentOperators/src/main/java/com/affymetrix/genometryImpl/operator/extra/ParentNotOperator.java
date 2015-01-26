@@ -1,16 +1,16 @@
-package com.affymetrix.genometryImpl.operator.extra;
+package com.affymetrix.genometry.operator.extra;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.operator.AbstractAnnotationTransformer;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.symmetry.impl.SingletonSeqSymmetry;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.operator.AbstractAnnotationTransformer;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymSummarizer;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SingletonSeqSymmetry;
 import java.util.List;
 
 /**

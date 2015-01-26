@@ -49,10 +49,10 @@
         <!-- Start of included core bundle version declarations -->   
         <heatmap-editor-version>2.0.0</heatmap-editor-version>
         <affymetrix-common-version>2.0.0</affymetrix-common-version>
-        <genomitryImpl-version>2.0.0</genomitryImpl-version>
+        <genometry-version>2.0.0</genometry-version>
         <igb-version>2.0.0</igb-version>
         <igbSwingExt-version>2.0.0</igbSwingExt-version>
-        <igb-service-version>2.0.0</igb-service-version>
+        <igb-services-api-version>2.0.1</igb-services-api-version>
         <windows-service-version>2.0.0</windows-service-version>
         <sharedLibWrapper-version>2.0.0</sharedLibWrapper-version>
         <logging-config-version>1.0.0</logging-config-version>        
@@ -160,16 +160,16 @@
 
 
     <modules>
-        <module>core/HeatmapEditor</module>
+        <module>core/heatmap-editor</module>
         <module>core/common</module>
-        <module>core/genometryImpl</module>
+        <module>core/genometry</module>
         <module>core/igb</module>
-        <module>core/igbSwingExt</module>
-        <module>core/igb_service</module>
-        <module>core/window_service</module>
-        <module>core/sharedLibWrapper</module>
-        <module>core/LoggingConfig</module>
-        <module>core/igbGenovizExtensionsApi</module>
+        <module>core/igb-swing-ext</module>
+        <module>core/igb-services-api</module>
+        <module>core/window-service</module>
+        <module>core/shared-lib-wrapper</module>
+        <module>core/logging-config</module>
+        <module>core/igb-genoviz-ext-api</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/BigBedHandler</module>
@@ -191,7 +191,7 @@
         <module>plugins/Tutorial</module>
         <module>plugins/Update</module>
         <module>plugins/plugins_page</module>
-        <module>plugins/window_service_def</module>
+        <module>plugins/window-service-def</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
         <module>main</module>
@@ -229,16 +229,16 @@
             </activation>
             <modules>
                 <!-- start of core modules-->
-                <module>core/HeatmapEditor</module>
+                <module>core/heatmap-editor</module>
                 <module>core/common</module>
-                <module>core/genometryImpl</module>
+                <module>core/genometry</module>
                 <module>core/igb</module>
-                <module>core/igbSwingExt</module>
-                <module>core/igb_service</module>
-                <module>core/window_service</module>
-                <module>core/sharedLibWrapper</module>
-                <module>core/LoggingConfig</module>
-                <module>core/igbGenovizExtensionsApi</module>
+                <module>core/igb-swing-ext</module>
+                <module>core/igb-services-api</module>
+                <module>core/window-service</module>
+                <module>core/shared-lib-wrapper</module>
+                <module>core/logging-config</module>
+                <module>core/igb-genoviz-ext-api</module>
                 <module>plugins/ApolloLibrary</module>
                 <module>plugins/AnnotationTab</module>
                 <module>plugins/BigBedHandler</module>
@@ -260,7 +260,7 @@
                 <module>plugins/Tutorial</module>
                 <module>plugins/Update</module>
                 <module>plugins/plugins_page</module>
-                <module>plugins/window_service_def</module>
+                <module>plugins/window-service-def</module>
                 <module>plugins/PairedEndDataPreprocessor</module>                          
                 <!-- end of core modules-->
                 
@@ -306,8 +306,8 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>genometryImpl</artifactId>
-                <version>${genomitryImpl-version}</version>
+                <artifactId>genometry</artifactId>
+                <version>${genometry-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -318,8 +318,8 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>igb-service</artifactId>
-                <version>${igb-service-version}</version>
+                <artifactId>igb-services-api</artifactId>
+                <version>${igb-services-api-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

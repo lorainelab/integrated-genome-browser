@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
-import com.affymetrix.genometryImpl.parsers.IndexWriter;
-import com.affymetrix.genometryImpl.parsers.Parser;
-import com.affymetrix.genometryImpl.symloader.SymLoader;
-import com.affymetrix.genometryImpl.symloader.SymLoaderTabix;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeHandler;
+import com.affymetrix.genometry.parsers.IndexWriter;
+import com.affymetrix.genometry.parsers.Parser;
+import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symloader.SymLoaderTabix;
 
 public class TallyHandler implements FileTypeHandler {
 

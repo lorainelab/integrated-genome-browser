@@ -1,7 +1,7 @@
 package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 
 import java.text.MessageFormat;
 import javax.swing.JDialog;

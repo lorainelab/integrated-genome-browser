@@ -11,10 +11,10 @@ import javax.swing.JTable;
 import javax.swing.SwingWorker;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.service.api.IGBService;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 

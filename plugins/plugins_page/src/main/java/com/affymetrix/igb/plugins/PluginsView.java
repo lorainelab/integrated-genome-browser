@@ -40,11 +40,11 @@ import org.osgi.service.obr.Requirement;
 import org.osgi.service.obr.Resolver;
 import org.osgi.service.obr.Resource;
 
-import com.affymetrix.genometryImpl.event.RepositoryChangeListener;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadWorker;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.event.RepositoryChangeListener;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;

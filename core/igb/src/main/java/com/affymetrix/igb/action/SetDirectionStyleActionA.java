@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackConstants;

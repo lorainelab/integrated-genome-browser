@@ -7,10 +7,10 @@ Bundle-Activator: com.gene.luceneindexing.Activator
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.affymetrix.common;version="6.7.0",
- com.affymetrix.genometryImpl,
- com.affymetrix.genometryImpl.parsers,
- com.affymetrix.genometryImpl.symloader,
- com.affymetrix.genometryImpl.symmetry,
+ com.affymetrix.genometry,
+ com.affymetrix.genometry.parsers,
+ com.affymetrix.genometry.symloader,
+ com.affymetrix.genometry.symmetry,
  org.apache.commons.lang3,
  org.apache.lucene.analysis,
  org.apache.lucene.analysis.standard,

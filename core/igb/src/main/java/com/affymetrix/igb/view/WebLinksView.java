@@ -1,11 +1,11 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genometryImpl.weblink.WebLink;
-import com.affymetrix.genometryImpl.weblink.WebLink.RegexType;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.UniFileChooser;
+import com.affymetrix.genometry.weblink.WebLink;
+import com.affymetrix.genometry.weblink.WebLink.RegexType;
 import com.affymetrix.igb.Application;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.WebLinkUtils;

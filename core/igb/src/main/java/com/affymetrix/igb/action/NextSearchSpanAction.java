@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import java.awt.event.ActionEvent;

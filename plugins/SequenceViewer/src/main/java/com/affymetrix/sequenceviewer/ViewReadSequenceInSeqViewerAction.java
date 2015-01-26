@@ -4,14 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.symmetry.SymWithResidues;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.util.ErrorHandler;
 
 import com.affymetrix.igb.service.api.IGBService;
 

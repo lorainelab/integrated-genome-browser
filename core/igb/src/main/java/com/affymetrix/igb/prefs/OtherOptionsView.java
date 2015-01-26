@@ -1,6 +1,6 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.shared.CodonGlyph;
@@ -261,9 +261,9 @@ public class OtherOptionsView extends IPrefEditorComponent {
         );
 
         if(displayOption.isSelected())
-        com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
+        com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
         else
-        com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
+        com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);
         displayOption.addItemListener(this::displayOptionStateChanged);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Codon Display"));
@@ -405,10 +405,10 @@ public class OtherOptionsView extends IPrefEditorComponent {
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged
 		if(displayOption.isSelected()) {
-			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
+			com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);
 		}
 		else {
-			com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);
+			com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);
 		}
 	}//GEN-LAST:event_displayOptionStateChanged
 

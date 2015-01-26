@@ -1,12 +1,12 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.thread.CThreadEvent;
-import com.affymetrix.genometryImpl.thread.CThreadHolder;
-import com.affymetrix.genometryImpl.thread.CThreadListener;
-import com.affymetrix.genometryImpl.util.DisplaysError;
-import com.affymetrix.genometryImpl.util.StatusAlert;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.thread.CThreadEvent;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadListener;
+import com.affymetrix.genometry.util.DisplaysError;
+import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
 import com.affymetrix.igb.swing.JRPButton;

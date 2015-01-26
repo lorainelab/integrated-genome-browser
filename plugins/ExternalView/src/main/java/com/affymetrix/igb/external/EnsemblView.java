@@ -1,6 +1,6 @@
 package com.affymetrix.igb.external;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;

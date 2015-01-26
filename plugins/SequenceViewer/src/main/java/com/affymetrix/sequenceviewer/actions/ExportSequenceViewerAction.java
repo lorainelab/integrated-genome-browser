@@ -1,7 +1,7 @@
 package com.affymetrix.sequenceviewer.actions;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.shared.ExportDialog;
 import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
 import java.awt.Adjustable;

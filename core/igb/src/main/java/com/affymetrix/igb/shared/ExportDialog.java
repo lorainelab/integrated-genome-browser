@@ -1,9 +1,9 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.DisplayUtils;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.DisplayUtils;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;

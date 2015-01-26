@@ -3,7 +3,7 @@ package com.gene.bigbedhandler;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeHandler;
+import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 

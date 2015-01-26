@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.ThreadUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.ThreadUtils;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;

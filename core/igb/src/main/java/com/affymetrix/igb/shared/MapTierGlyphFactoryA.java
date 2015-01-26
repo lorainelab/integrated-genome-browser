@@ -1,16 +1,16 @@
 package com.affymetrix.igb.shared;
 
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.general.GenericFeature;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithBaseQuality;
-import com.affymetrix.genometryImpl.symmetry.SymWithResidues;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithBaseQuality;
+import com.affymetrix.genometry.symmetry.SymWithResidues;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;

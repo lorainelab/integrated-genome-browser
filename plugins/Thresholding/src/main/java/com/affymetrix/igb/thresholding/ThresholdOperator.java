@@ -1,12 +1,12 @@
 package com.affymetrix.igb.thresholding;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.shared.GraphGlyph;
 

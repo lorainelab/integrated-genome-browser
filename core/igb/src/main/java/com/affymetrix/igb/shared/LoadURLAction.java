@@ -1,12 +1,12 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.LocalUrlCacher;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.util.OptionChooserImpl;
 import java.awt.BorderLayout;

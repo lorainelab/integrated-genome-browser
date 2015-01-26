@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;

@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.property;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.awt.datatransfer.*;

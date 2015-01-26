@@ -1,13 +1,13 @@
 package apollo.action;
 
 import apollo.analysis.RemoteBlastNCBI;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import java.util.List;
 

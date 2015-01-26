@@ -10,14 +10,14 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.general.IParameters;
-import com.affymetrix.genometryImpl.operator.Operator;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.IDComparator;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.general.IParameters;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.IDComparator;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.GENOME_SEQ_ID;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;

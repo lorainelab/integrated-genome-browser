@@ -13,8 +13,8 @@
  */
 package com.affymetrix.igb.view.factories;
 
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D;

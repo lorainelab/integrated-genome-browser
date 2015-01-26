@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.util.GraphicsUtil;
 import java.awt.Component;
 import java.awt.Graphics;

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
 
 public class ExpandAction extends CollapseExpandActionA {

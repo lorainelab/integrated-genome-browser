@@ -9,12 +9,12 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.parsers.FileTypeHolder;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.action.RunScriptAction;

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import java.util.Comparator;

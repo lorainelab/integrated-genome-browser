@@ -1,11 +1,11 @@
 package com.affymetrix.igb.colorproviders;
 
-import com.affymetrix.genometryImpl.Scored;
-import com.affymetrix.genometryImpl.color.ColorProvider;
-import com.affymetrix.genometryImpl.general.Parameter;
-import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.style.HeatMapExtended;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.Scored;
+import com.affymetrix.genometry.color.ColorProvider;
+import com.affymetrix.genometry.general.Parameter;
+import com.affymetrix.genometry.style.HeatMap;
+import com.affymetrix.genometry.style.HeatMapExtended;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.IGBConstants;
 import cytoscape.visual.ui.editors.continuous.BasicVirtualRange;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;

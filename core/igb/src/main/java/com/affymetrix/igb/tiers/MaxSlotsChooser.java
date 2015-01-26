@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.util.ErrorHandler;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import javax.swing.JTextField;

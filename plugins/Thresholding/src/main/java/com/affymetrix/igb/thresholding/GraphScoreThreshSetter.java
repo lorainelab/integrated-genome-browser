@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.thresholding;
 
-import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.JRPRadioButton;
@@ -17,10 +17,10 @@ import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.genometryImpl.util.PreferenceUtils;
-import com.affymetrix.genometryImpl.util.DisplayUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.*;
 

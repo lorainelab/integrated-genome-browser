@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometryImpl.operator.Operator;
+import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import javax.swing.JOptionPane;
 

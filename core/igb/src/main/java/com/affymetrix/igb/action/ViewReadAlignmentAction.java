@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.symloader.BAM;
-import com.affymetrix.genometryImpl.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SymWithProps;
+import com.affymetrix.genometry.symloader.BAM;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;

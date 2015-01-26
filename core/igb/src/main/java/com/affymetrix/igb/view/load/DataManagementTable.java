@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;

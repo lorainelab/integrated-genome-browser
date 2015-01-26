@@ -2,11 +2,11 @@ package com.affymetrix.igb.shared;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.lorainelab.igb.genoviz.extensions.api.SeqSymmetryPreprocessorI;
+import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
 import java.util.Collection;
 import java.util.Collections;
 

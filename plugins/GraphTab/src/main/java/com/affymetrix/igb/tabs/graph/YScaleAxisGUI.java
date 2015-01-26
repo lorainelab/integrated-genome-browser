@@ -2,9 +2,9 @@ package com.affymetrix.igb.tabs.graph;
 
 import java.awt.geom.Rectangle2D;
 
-import com.affymetrix.genometryImpl.parsers.FileTypeCategory;
-import com.affymetrix.genometryImpl.style.ITrackStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.service.api.IGBService;

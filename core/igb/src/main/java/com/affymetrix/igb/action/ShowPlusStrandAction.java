@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometryImpl.event.GenericAction;
-import com.affymetrix.genometryImpl.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;

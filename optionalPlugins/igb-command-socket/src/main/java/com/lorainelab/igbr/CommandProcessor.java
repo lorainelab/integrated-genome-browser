@@ -41,20 +41,20 @@ public class CommandProcessor implements Runnable {
 
     @Override
     public void run() {
-        try {
-            String input;
-            while ((input = in.readLine()) != null) {
-                recieveIgbCommand(input);
+            try {
+                String input;
+                while ((input = in.readLine()) != null) {
+                    recieveIgbCommand(input);
+                }
+                connection.close();
+            } catch (SocketException ex) {
+                //do nothing
+            } catch (IOException ex) {
+                Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                GeneralUtils.safeClose(in);
+                GeneralUtils.safeClose(out);
             }
-            connection.close();
-        } catch (SocketException ex) {
-            //do nothing
-        } catch (IOException ex) {
-            Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            GeneralUtils.safeClose(in);
-            GeneralUtils.safeClose(out);
-        }
 
     }
 }

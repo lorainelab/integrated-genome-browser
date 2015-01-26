@@ -16,13 +16,26 @@ public class SocketCommandListener implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketCommandListener.class);
     private static final int IGBR_PORT = 7084;
+    private Boolean stop = false;
+    private ServerSocket socket = null;
+
+    public void setStop(Boolean stop) {
+        this.stop = stop;
+        if (stop) {
+            try {
+                logger.info("Closing IGB command socket");
+                socket.close();
+            } catch (IOException ex) {
+                //do nothing
+            }
+        }
+    }
 
     @Override
     public void run() {
-        ServerSocket socket = null;
         try {
             socket = new ServerSocket(IGBR_PORT);
-            while (true) {
+            while (!stop) {
                 logger.info("Opening IGB command socket");
                 Socket connection = socket.accept();
                 CommandProcessor commandProcessor = new CommandProcessor(connection);

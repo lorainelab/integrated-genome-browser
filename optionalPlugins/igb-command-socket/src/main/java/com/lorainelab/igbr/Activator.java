@@ -10,15 +10,19 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
     SocketCommandListener s;
+    Thread t;
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
         s = new SocketCommandListener();
-        new Thread(s).start();
+        t = new Thread(s);
+        t.start();
     }
 
     @Override
     public void stop(BundleContext bundleContext) throws Exception {
+        s.setStop(true);
+        t.interrupt();
         s = null;
     }
 

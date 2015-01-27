@@ -28,8 +28,6 @@ public class OSGiHandler {
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
 
-    public static final String WINDOW_SERVICE_DEF_NAME = "windowsServiceDef";
-
     /**
      * start OSGi, load and start the OSGi implementation load the embedded
      * bundles, if not cached, and start all bundles
@@ -56,21 +54,12 @@ public class OSGiHandler {
                 log.info("Loading embedded OSGi bundles");
                 loadEmbeddedBundles(bundleContext);
             }
-            Bundle windowServiceDefBundle = null;
             for (Bundle bundle : bundleContext.getBundles()) {
                 log.info("Starting Bundle: " + bundle.getSymbolicName());
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
-                    //window service hack
-                    if (!isNullOrEmpty(bundle.getSymbolicName()) && bundle.getSymbolicName().equals(WINDOW_SERVICE_DEF_NAME)) {
-                        windowServiceDefBundle = bundle;
-                    } else {
-                        bundle.start();
-                    }
+                    bundle.start();
                 }
-            }
-            if (windowServiceDefBundle != null) {
-                windowServiceDefBundle.start();
             }
             log.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});

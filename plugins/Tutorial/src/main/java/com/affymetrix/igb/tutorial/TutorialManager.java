@@ -6,7 +6,7 @@ import com.affymetrix.genometry.event.*;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.window.service.IWindowService;
 import furbelow.AbstractComponentDecorator;
@@ -342,7 +342,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
     private void setTab(String[] tabs) {
         for (String tab : tabs) {
-            IGBTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
+            IgbTabPanel panel = igbService.getTabPanelFromDisplayName(tab);
             igbService.selectTab(panel);
         }
     }

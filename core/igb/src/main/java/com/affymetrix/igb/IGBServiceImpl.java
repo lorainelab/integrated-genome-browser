@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
@@ -249,7 +249,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public void saveState() {
         ((IGB) IGB.getSingleton()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IGBTabPanel::saveSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IgbTabPanel::saveSession);
     }
 
     @Override
@@ -257,22 +257,22 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         ((IGB) IGB.getSingleton()).getWindowService().restoreState();
         SeqMapView mapView = Application.getSingleton().getMapView();
         mapView.loadSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IGBTabPanel::loadSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IgbTabPanel::loadSession);
     }
 
     @Override
-    public IGBTabPanel getTabPanel(String viewName) {
+    public IgbTabPanel getTabPanel(String viewName) {
         return ((IGB) IGB.getSingleton()).getView(viewName);
     }
 
     //Easier for scripting if we don't require full name.
     @Override
-    public IGBTabPanel getTabPanelFromDisplayName(String viewName) {
+    public IgbTabPanel getTabPanelFromDisplayName(String viewName) {
         return ((IGB) IGB.getSingleton()).getViewByDisplayName(viewName);
     }
 
     @Override
-    public void selectTab(IGBTabPanel panel) {
+    public void selectTab(IgbTabPanel panel) {
         ((IGB) IGB.getSingleton()).getWindowService().selectTab(panel);
     }
 

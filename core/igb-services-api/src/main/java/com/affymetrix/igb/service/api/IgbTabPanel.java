@@ -3,8 +3,6 @@ package com.affymetrix.igb.service.api;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -15,65 +13,9 @@ import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.swing.util.Idable;
 
-public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPanel>, JRPWidget, Idable {
+public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPanel>, JRPWidget, Idable, IgbTabPanelI {
 
     private static final long serialVersionUID = 1L;
-    public static final int DEFAULT_TAB_POSITION = Integer.MAX_VALUE - 1;
-
-    /**
-     * the current state of the tab
-     */
-    public enum TabState {
-
-        COMPONENT_STATE_LEFT_TAB(true, true),
-        COMPONENT_STATE_RIGHT_TAB(true, true),
-        COMPONENT_STATE_BOTTOM_TAB(true, false),
-        COMPONENT_STATE_WINDOW(false, false),
-        COMPONENT_STATE_HIDDEN(false, false);
-
-        private final boolean tab;
-        private final boolean portrait;
-
-        TabState(boolean tab, boolean portrait) {
-            this.tab = tab;
-            this.portrait = portrait;
-        }
-
-        /**
-         * this state is a tab (left, right or botton)
-         *
-         * @return true if this state is a tab, false for hidden or
-         * windowed
-         */
-        public boolean isTab() {
-            return tab;
-        }
-
-        /**
-         * get the default tab state
-         *
-         * @return the default tab state
-         */
-        public static TabState getDefaultTabState() {
-            return COMPONENT_STATE_BOTTOM_TAB;
-        }
-
-        /**
-         * get the list of all tab states that the user can change
-         * the tab - depends on the initial tab state of the tab.
-         *
-         * @return a list of all compatible tab states
-         */
-        public List<TabState> getCompatibleTabStates() {
-            List<TabState> compatibleTabStates = new ArrayList<>();
-            for (TabState tabState : TabState.values()) {
-                if (portrait == tabState.portrait || !isTab() || !tabState.isTab()) {
-                    compatibleTabStates.add(tabState);
-                }
-            }
-            return compatibleTabStates;
-        }
-    }
 
     private class SelectAction extends GenericAction {
 
@@ -89,7 +31,6 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
             select();
         }
     }
-    protected final IGBService igbService;
     private final String displayName;
     private final String title;
     private final boolean focus;
@@ -99,13 +40,12 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
     private Rectangle trayRectangle;
     private final SelectAction selectAction;
 
-    public IGBTabPanel(IGBService igbService, String displayName, String title, String tooltip, boolean main) {
-        this(igbService, displayName, title, tooltip, main, DEFAULT_TAB_POSITION);
+    public IgbTabPanel(String displayName, String title, String tooltip, boolean main) {
+        this(displayName, title, tooltip, main, DEFAULT_TAB_POSITION);
     }
 
-    protected IGBTabPanel(IGBService igbService, String displayName, String title, String tooltip, boolean focus, int position) {
+    protected IgbTabPanel(String displayName, String title, String tooltip, boolean focus, int position) {
         super();
-        this.igbService = igbService;
         this.displayName = displayName;
         this.title = title;
         this.focus = focus;
@@ -117,8 +57,13 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
     }
 
     @Override
-    public String getName() {
+    public String getComponentName() {
         return getClass().getName();
+    }
+
+    @Override
+    public JPanel getTabContent() {
+        return this;
     }
 
     /**
@@ -158,6 +103,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
      *
      * @return the tab position
      */
+    @Override
     public int getPosition() {
         return position;
     }
@@ -167,7 +113,8 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
      *
      * @return the default state of this tab
      */
-    public TabState getDefaultState() {
+    @Override
+    public TabState getDefaultTabState() {
         return TabState.COMPONENT_STATE_BOTTOM_TAB;
     }
 
@@ -238,7 +185,7 @@ public abstract class IGBTabPanel extends JPanel implements Comparable<IGBTabPan
     }
 
     @Override
-    public int compareTo(IGBTabPanel o) {
+    public int compareTo(IgbTabPanel o) {
         if (o == null) {
             return 1;
         }

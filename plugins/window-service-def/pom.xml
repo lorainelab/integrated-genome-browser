@@ -18,16 +18,6 @@
     <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
             <artifactId>igb-services-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -58,6 +48,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -67,20 +62,22 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
+            </plugin> 
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>                        
+                        <Import-Package>
+                            !com.affymetrix.igb.window.service.def,
+                            *
+                        </Import-Package>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
-                        <Bundle-Activator>com.affymetrix.igb.window.service.def.Activator</Bundle-Activator>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

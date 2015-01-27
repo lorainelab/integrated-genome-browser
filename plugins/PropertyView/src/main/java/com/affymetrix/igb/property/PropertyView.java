@@ -20,10 +20,10 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.JRPStyledTable;
 
-public final class PropertyView extends IGBTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
+public final class PropertyView extends IgbTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
@@ -36,9 +36,11 @@ public final class PropertyView extends IGBTabPanel implements SymSelectionListe
     private TableRowSorter<TableModel> sorter;
     private static final String PROPERTY = "property";
     private Set<PropertyListener> propertyListeners = new HashSet<>();
+    private IGBService igbService;
 
     PropertyView(IGBService igbService) {
-        super(igbService, BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), BUNDLE.getString("selectionInfoTooltip"), false, TAB_POSITION);
+        super(BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), BUNDLE.getString("selectionInfoTooltip"), false, TAB_POSITION);
+        this.igbService = igbService;
         JViewport jvp = new JViewport();
         scroll_pane.setColumnHeaderView(jvp);
         new JTableCutPasteAdapter(table, true);

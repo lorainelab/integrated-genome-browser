@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
@@ -12,7 +12,7 @@ public class Activator extends WindowActivator implements BundleActivator {
     private PluginsView pluginsView;
 
     @Override
-    protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
+    protected IgbTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
         pluginsView = new PluginsView(igbService);
         pluginsView.setBundleContext(bundleContext);
         return pluginsView;

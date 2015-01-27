@@ -15,7 +15,7 @@ package com.gene.findannotations;
  * @author frohmanl
  */
 //public class FindAnnotationsGUI extends javax.swing.JFrame {
-public class FindAnnotationsGUI extends com.affymetrix.igb.service.api.IGBTabPanel {
+public class FindAnnotationsGUI extends com.affymetrix.igb.service.api.IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class FindAnnotationsGUI extends com.affymetrix.igb.service.api.IGBTabPan
      * Creates new form FindAnnotationsGUI
      */
     public FindAnnotationsGUI() {
-        super(null, java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), "", false, 2);
+        super(java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), java.util.ResourceBundle.getBundle("findannotations").getString("findannotationsTab"), "", false, 2);
         initComponents();
     }
 

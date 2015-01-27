@@ -5,7 +5,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 
 /**
@@ -22,7 +23,7 @@ public abstract class WindowActivator extends XServiceRegistrar<IGBService> impl
     @Override
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
         return new ServiceRegistration[]{
-            bundleContext.registerService(IGBTabPanel.class, getPage(bundleContext, igbService), null),};
+            bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), null),};
     }
 
     /**
@@ -31,6 +32,6 @@ public abstract class WindowActivator extends XServiceRegistrar<IGBService> impl
      * @param igbService the IGBService implementation
      * @return the tab panel
      */
-    protected abstract IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService);
+    protected abstract IgbTabPanel getPage(BundleContext bundleContext, IGBService igbService);
 
 }

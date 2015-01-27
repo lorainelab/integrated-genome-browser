@@ -30,8 +30,9 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.prefs.WebLinkUtils;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.ScriptManager;
@@ -382,7 +383,7 @@ public final class IGB extends Application
         windowService.shutdown();
     }
 
-    public IGBTabPanel[] setWindowService(final IWindowService windowService) {
+    public IgbTabPanelI[] setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
         windowService.setMainFrame(frm);
 
@@ -400,7 +401,7 @@ public final class IGB extends Application
                     MainMenuUtil.getInstance().loadMenu(menubar, id);
                     return menubar;
                 });
-        return new IGBTabPanel[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
+        return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
     }
 
     public JRPMenu addTopMenu(String id, String text) {
@@ -494,7 +495,7 @@ public final class IGB extends Application
         return null;
     }
 
-    public Set<IGBTabPanel> getTabs() {
+    public Set<IgbTabPanel> getTabs() {
         return windowService.getPlugins();
     }
 
@@ -506,10 +507,10 @@ public final class IGB extends Application
     /**
      * Get a named view.
      */
-    public IGBTabPanel getView(String viewName) {
-        for (IGBTabPanel plugin : windowService.getPlugins()) {
+    public IgbTabPanel getView(String viewName) {
+        for (IgbTabPanelI plugin : windowService.getPlugins()) {
             if (plugin.getClass().getName().equals(viewName)) {
-                return plugin;
+                return (IgbTabPanel) plugin.getTabContent();
             }
         }
         String message = getClass().getName() + ".getView() failed for " + viewName;
@@ -525,10 +526,10 @@ public final class IGB extends Application
      * @param viewName the display name of a tab instead of a full package and
      * class name.
      */
-    public IGBTabPanel getViewByDisplayName(String viewName) {
-        for (IGBTabPanel plugin : windowService.getPlugins()) {
+    public IgbTabPanel getViewByDisplayName(String viewName) {
+        for (IgbTabPanelI plugin : windowService.getPlugins()) {
             if (plugin.getDisplayName().equals(viewName)) {
-                return plugin;
+                return (IgbTabPanel) plugin.getTabContent();
             }
         }
         String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";

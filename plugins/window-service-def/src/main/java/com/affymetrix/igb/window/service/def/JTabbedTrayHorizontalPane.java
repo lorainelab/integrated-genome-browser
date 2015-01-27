@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
 
 /**
  * JTabbedTrayPane that is on the left or right
@@ -56,17 +56,8 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         return tabPane;
     }
 
-    /**
-     * determines if the OS is windows
-     *
-     * @return true if the OS is windows, false for MacOS, Linux, etc.
-     */
     protected static boolean isMac() {
-        String os = System.getProperty("os.name");
-        if (os != null && "Mac OS X".equals(os)) {
-            return true;
-        }
-        return false;
+        return  System.getProperty("os.name").toLowerCase().contains("mac");
     }
 
     protected abstract String getLeftIconString();

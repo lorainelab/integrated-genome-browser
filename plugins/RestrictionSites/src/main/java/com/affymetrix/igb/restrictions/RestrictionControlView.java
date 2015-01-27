@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,7 +34,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.regex.Pattern;
 
-public final class RestrictionControlView extends IGBTabPanel
+public final class RestrictionControlView extends IgbTabPanel
         implements ListSelectionListener, ActionListener {
 
     private static final long serialVersionUID = 0;
@@ -56,13 +56,15 @@ public final class RestrictionControlView extends IGBTabPanel
     private ArrayList<JLabel> labelList = new ArrayList<>();
     private JRPButton actionB;
     private JRPButton clearB;
+    private IGBService igbService;
     /**
      * keep track of added glyphs
      */
     private final List<GlyphI> glyphs = new ArrayList<>();
 
     public RestrictionControlView(IGBService igbService) {
-        super(igbService, BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);
+        super(BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);
+        this.igbService = igbService;
         boolean load_success = true;
 
         String rest_file = "/rest_enzymes";
@@ -138,7 +140,7 @@ public final class RestrictionControlView extends IGBTabPanel
     }
 
     @Override
-    public TabState getDefaultState() {
+    public TabState getDefaultTabState() {
         return TabState.COMPONENT_STATE_RIGHT_TAB;
     }
 

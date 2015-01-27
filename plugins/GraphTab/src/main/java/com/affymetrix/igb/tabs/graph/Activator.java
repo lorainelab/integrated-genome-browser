@@ -5,7 +5,7 @@ import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.StylePanelImpl;
@@ -17,7 +17,7 @@ public class Activator extends WindowActivator implements org.osgi.framework.Bun
     static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Graph, FileTypeCategory.Mismatch};
 
     @Override
-    protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
+    protected IgbTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
 
         GraphTrackPanel tabPanel = new GraphTrackPanel(igbService) {
             @Override

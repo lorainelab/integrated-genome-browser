@@ -67,7 +67,7 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.PrefsLoader;
@@ -443,12 +443,12 @@ public class Activator implements BundleActivator {
 
     private void registerServices(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
         IWindowService windowService = bundleContext.getService(windowServiceReference);
-        final IGBTabPanel[] tabs = igb.setWindowService(windowService);
+        final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
         // set IGBService
         bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
         // register tabs created in IGB itself - IGBTabPanel is an extension point
-        for (IGBTabPanel tab : tabs) {
-            bundleContext.registerService(IGBTabPanel.class.getName(), tab, null);
+        for (IgbTabPanelI tab : tabs) {
+            bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
         }
 
         bundleContext.registerService(IWindowRoutine.class,

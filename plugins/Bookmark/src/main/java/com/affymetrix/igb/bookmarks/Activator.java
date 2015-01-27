@@ -14,7 +14,7 @@ import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
 import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import java.util.ResourceBundle;
@@ -45,14 +45,14 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         file_menu.insertSeparator(index);
 
         return new ServiceRegistration[]{
-            bundleContext.registerService(IGBTabPanel.class, getPage(bundleContext, igbService), null),
+            bundleContext.registerService(IgbTabPanel.class, getPage(bundleContext, igbService), null),
             bundleContext.registerService(GenericAction.class, SaveSessionAction.getAction(), null),
             bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null),
             bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), "file", index), null),
             bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_loadSession", LoadSessionAction.getAction()), "file", index), null),};
     }
 
-    private IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
+    private IgbTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 
 		// Need to let the QuickLoad system get started-up before starting

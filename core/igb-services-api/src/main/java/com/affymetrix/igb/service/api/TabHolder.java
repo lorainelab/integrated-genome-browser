@@ -15,17 +15,17 @@ public interface TabHolder {
 	 * Get all the tab panes that this holder contains.
 	 * @return all the tab panes
 	 */
-	public Set<IGBTabPanel> getIGBTabPanels();
+	public Set<IgbTabPanel> getIGBTabPanels();
 	/**
 	 * Add a new tab pane to this holder.
 	 * @param plugin the tab pane to add
 	 */
-	public void addTab(final IGBTabPanel plugin);
+	public void addTab(final IgbTabPanel plugin);
 	/**
 	 * Remove a tab pane from this holder.
 	 * @param plugin the tab pane to remove
 	 */
-	public void removeTab(final IGBTabPanel plugin);
+	public void removeTab(final IgbTabPanel plugin);
 	/**
 	 * Restore the state from the saved Preferences.
 	 */
@@ -42,5 +42,5 @@ public interface TabHolder {
 	 * Select a tab pane in this holder (make it visible).
 	 * @param panel the tab pane to remove
 	 */
-	public void selectTab(IGBTabPanel panel);
+	public void selectTab(IgbTabPanel panel);
 }

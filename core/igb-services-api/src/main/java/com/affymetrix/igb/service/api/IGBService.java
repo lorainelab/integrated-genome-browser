@@ -132,12 +132,12 @@ public interface IGBService {
 	 * Load the current state of the application.
 	 */
 	public void loadState();
-	public IGBTabPanel getTabPanel(String className);
+	public IgbTabPanel getTabPanel(String className);
 	/**
 	 * select the given tab in the tab panel, bringing it to the front
 	 * @param panel the IGBTabPanel
 	 */
-	public void selectTab(IGBTabPanel panel);
+	public void selectTab(IgbTabPanel panel);
 	public void packMap(boolean fitx, boolean fity);
 	public View getView();
 	// for plugins
@@ -164,7 +164,7 @@ public interface IGBService {
 
 	public void addPartialResiduesActionListener(ActionListener al);
 	
-	public IGBTabPanel getTabPanelFromDisplayName(String viewName); 
+	public IgbTabPanel getTabPanelFromDisplayName(String viewName); 
 	
 	public Set<GenericServer> getEnabledServerList();
 	public Collection<GenericServer> getAllServersList();

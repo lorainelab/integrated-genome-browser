@@ -5,7 +5,7 @@ import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Rectangle;
 import java.util.ResourceBundle;
@@ -21,7 +21,7 @@ import javax.swing.undo.CannotUndoException;
  *
  * @author Nick & David
  */
-public class BookmarkManagerViewGUI extends IGBTabPanel {
+public class BookmarkManagerViewGUI extends IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
     private static BookmarkManagerViewGUI singleton;
@@ -45,7 +45,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
      * Creates new form BookMarkManagerViewGUI
      */
     public BookmarkManagerViewGUI(IGBService _igbService) {
-        super(_igbService, BUNDLE.getString("bookmarksTab"),
+        super(BUNDLE.getString("bookmarksTab"),
                 BUNDLE.getString("bookmarksTab"), BUNDLE.getString("bookmarksTooltip"), false, TAB_POSITION);
         BookmarkManagerView.init(_igbService);
         bmv = BookmarkManagerView.getSingleton();
@@ -54,7 +54,7 @@ public class BookmarkManagerViewGUI extends IGBTabPanel {
     }
 
     @Override
-    public TabState getDefaultState() {
+    public TabState getDefaultTabState() {
         return TabState.COMPONENT_STATE_RIGHT_TAB;
     }
 

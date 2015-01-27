@@ -50,7 +50,7 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Tab Panel for managing plugins / bundles.
  */
-public class PluginsView extends IGBTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
+public class PluginsView extends IgbTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 
     private static final long serialVersionUID = 1L;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PluginsView.class);
@@ -87,12 +87,14 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
     private OSGIImpl osgiImpl;
+    private IGBService igbService;
 
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
 
     public PluginsView(IGBService igbService) {
-        super(igbService, BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
+        super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
+        this.igbService = igbService;
         latest = new HashMap< >();
         osgiImpl = new Felix();
 
@@ -442,9 +444,9 @@ public class PluginsView extends IGBTabPanel implements IPluginsHandler, Reposit
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getName());
+        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getComponentName());
         //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
+        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getComponentName());
         //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
         repoAdmin = osgiImpl.getRepositoryAdmin(bundleContext);
         igbService.getRepositoryChangerHolder().getRepositories().values().forEach(this::repositoryAdded);

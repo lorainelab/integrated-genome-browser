@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 
 /**
  * Container panel for the external views Shows up as tab in IGB Allows
@@ -17,7 +17,7 @@ import com.affymetrix.igb.service.api.IGBTabPanel;
  *
  * @author Ido M. Tamir
  */
-public class ExternalViewer extends IGBTabPanel implements ItemListener {
+public class ExternalViewer extends IgbTabPanel implements ItemListener {
 
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
@@ -26,9 +26,11 @@ public class ExternalViewer extends IGBTabPanel implements ItemListener {
     private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
     final JRPComboBox ucscBox;
     final JRPComboBox ensemblBox;
+    private IGBService igbService;  
 
-    public ExternalViewer(IGBService igbService_, UCSCViewAction ucscViewAction) {
-        super(igbService_, BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTooltip"), false, TAB_POSITION);
+    public ExternalViewer(IGBService igbService, UCSCViewAction ucscViewAction) {
+        super(BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTab"), BUNDLE.getString("externalViewTooltip"), false, TAB_POSITION);
+        this.igbService = igbService;
         this.setLayout(new CardLayout());
         ucscBox = createBox("ExternalViewer_ucsc");
         ensemblBox = createBox("ExternalViewer_ensemble");

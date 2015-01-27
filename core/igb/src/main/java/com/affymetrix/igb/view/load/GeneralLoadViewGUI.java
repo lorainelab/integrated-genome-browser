@@ -13,7 +13,7 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Cursor;
 import java.awt.Rectangle;
@@ -22,7 +22,7 @@ import java.awt.Rectangle;
  *
  * @author dcnorris
  */
-public final class GeneralLoadViewGUI extends IGBTabPanel {
+public final class GeneralLoadViewGUI extends IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = Integer.MIN_VALUE;
@@ -49,7 +49,7 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
      * Creates new form GeneralLoadView
      */
     public GeneralLoadViewGUI(IGBService _igbService) {
-        super(_igbService, BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
+        super(BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
         initComponents();
     }
 
@@ -166,4 +166,5 @@ public final class GeneralLoadViewGUI extends IGBTabPanel {
     public boolean isEmbedded() {
         return true;
     }
+    
 }

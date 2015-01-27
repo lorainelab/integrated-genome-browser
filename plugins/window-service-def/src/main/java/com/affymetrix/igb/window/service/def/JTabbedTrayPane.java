@@ -31,9 +31,9 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.EventUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.TabHolder;
-import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
 
 /**
  * TabHolder implementation for all tabs that are in a tab panel. This consists
@@ -186,7 +186,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
                     }
                 });
         tab_pane.addChangeListener(e -> {
-            IGBTabPanel sel = (IGBTabPanel) tab_pane.getSelectedComponent();
+            IgbTabPanel sel = (IgbTabPanel) tab_pane.getSelectedComponent();
             if (sel != null) {
                 GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
             }
@@ -441,9 +441,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     }
 
     @Override
-    public void addTab(final IGBTabPanel plugin) {
+    public void addTab(final IgbTabPanel plugin) {
         int index = 0;
-        while (index < tab_pane.getTabCount() && plugin.compareTo((IGBTabPanel) tab_pane.getComponentAt(index)) > 0) {
+        while (index < tab_pane.getTabCount() && plugin.compareTo((IgbTabPanel) tab_pane.getComponentAt(index)) > 0) {
             index++;
         }
         tab_pane.insertTab(plugin.getTitle(), plugin.getIcon(), plugin, plugin.getToolTipText(), index);
@@ -454,7 +454,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     }
 
     @Override
-    public void removeTab(final IGBTabPanel plugin) {
+    public void removeTab(final IgbTabPanel plugin) {
         plugin.setTrayRectangle(plugin.getBounds());
         String name = plugin.getName();
         boolean selectedTabRemoved = false;
@@ -472,7 +472,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
             hideTray();
         } else if (selectedTabRemoved) {
             for (int i = 1; i < tab_pane.getTabCount(); i++) {
-                if (((IGBTabPanel) tab_pane.getComponentAt(i)).isFocus()) {
+                if (((IgbTabPanel) tab_pane.getComponentAt(i)).isFocus()) {
                     tab_pane.setSelectedIndex(i);
                     break;
                 }
@@ -481,10 +481,10 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     }
 
     @Override
-    public Set<IGBTabPanel> getIGBTabPanels() {
-        Set<IGBTabPanel> plugins = new HashSet<>();
+    public Set<IgbTabPanel> getIGBTabPanels() {
+        Set<IgbTabPanel> plugins = new HashSet<>();
         for (int i = 0; i < tab_pane.getTabCount(); i++) {
-            IGBTabPanel panel = (IGBTabPanel) tab_pane.getComponentAt(i);
+            IgbTabPanel panel = (IgbTabPanel) tab_pane.getComponentAt(i);
             if (panel != null) {
                 plugins.add(panel);
             }
@@ -493,12 +493,12 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     }
 
     @Override
-    public void selectTab(IGBTabPanel panel) {
+    public void selectTab(IgbTabPanel panel) {
         tab_pane.setSelectedComponent(panel);
     }
 
-    public IGBTabPanel getSelectedIGBTabPanel() {
-        return (IGBTabPanel) tab_pane.getSelectedComponent();
+    public IgbTabPanel getSelectedIGBTabPanel() {
+        return (IgbTabPanel) tab_pane.getSelectedComponent();
     }
 
     /**
@@ -582,9 +582,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         }
     }
 
-    private IGBTabPanel getTabPanel(String tabName) {
-        IGBTabPanel tabPanel = null;
-        for (IGBTabPanel loopPanel : getIGBTabPanels()) {
+    private IgbTabPanel getTabPanel(String tabName) {
+        IgbTabPanel tabPanel = null;
+        for (IgbTabPanel loopPanel : getIGBTabPanels()) {
             if (loopPanel.getName().equals(tabName)) {
                 tabPanel = loopPanel;
                 break;

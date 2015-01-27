@@ -3,7 +3,7 @@ package com.affymetrix.igb.window.service.def;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.TabHolder;
 
 /**
@@ -12,7 +12,7 @@ import com.affymetrix.igb.service.api.TabHolder;
  */
 public class HiddenTabs implements TabHolder {
 
-    private Set<IGBTabPanel> addedPlugins;
+    private Set<IgbTabPanel> addedPlugins;
 
     public HiddenTabs() {
         super();
@@ -20,17 +20,17 @@ public class HiddenTabs implements TabHolder {
     }
 
     @Override
-    public Set<IGBTabPanel> getIGBTabPanels() {
+    public Set<IgbTabPanel> getIGBTabPanels() {
         return addedPlugins;
     }
 
     @Override
-    public void addTab(IGBTabPanel plugin) {
+    public void addTab(IgbTabPanel plugin) {
         addedPlugins.add(plugin);
     }
 
     @Override
-    public void removeTab(IGBTabPanel plugin) {
+    public void removeTab(IgbTabPanel plugin) {
         addedPlugins.remove(plugin);
     }
 
@@ -47,7 +47,7 @@ public class HiddenTabs implements TabHolder {
     }
 
     @Override
-    public void selectTab(IGBTabPanel panel) {
+    public void selectTab(IgbTabPanel panel) {
     }
 
     @Override

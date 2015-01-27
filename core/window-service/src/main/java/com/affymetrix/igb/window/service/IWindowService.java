@@ -8,8 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 
-import com.affymetrix.igb.service.api.IGBTabPanel;
-import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
+import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
 
 public interface IWindowService {
 	/**
@@ -72,17 +73,17 @@ public interface IWindowService {
 	 * get all the tab panels that have been added
 	 * @return the set of tab panels added
 	 */
-	public Set<IGBTabPanel> getPlugins();
+	public Set<IgbTabPanel> getPlugins();
 	/**
 	 * set the state of the given tab to the given state and update
 	 * the view menu to the new value
 	 * @param panel the tab to change
 	 * @param tabState the new state
 	 */
-	public void setTabStateAndMenu(IGBTabPanel panel, TabState tabState);
+	public void setTabStateAndMenu(IgbTabPanelI panel, TabState tabState);
 	/**
 	 * select the given tab in the tab panel, bringing it to the front
 	 * @param panel the IGBTabPanel
 	 */
-	public void selectTab(IGBTabPanel panel);
+	public void selectTab(IgbTabPanel panel);
 }

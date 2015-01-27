@@ -5,13 +5,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.window.service.WindowActivator;
 
 public class Activator extends WindowActivator implements BundleActivator {
 
     @Override
-    protected IGBTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
+    protected IgbTabPanel getPage(BundleContext bundleContext, IGBService igbService) {
         PropertyView propertyView = new PropertyView(igbService);
         igbService.getSeqMapView().setPropertyHandler(propertyView);
         return propertyView;

@@ -72,6 +72,11 @@
             <artifactId>igb-genoviz-extensions-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -90,10 +95,8 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>com.jidesoft.combobox,com.affymetrix.igb.window.service,*</Import-Package>
-                        <Bundle-Activator>com.affymetrix.igb.tabs.annotation.Activator</Bundle-Activator>
-                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.tabs.annotation.AnnotationTrackPanel</Bundle-Category>
                         <Export-Package/>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

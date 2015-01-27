@@ -27,7 +27,7 @@ import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IGBServiceImpl;
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.TierLabelManager;
@@ -53,7 +53,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.text.AbstractDocument;
 
-public class AltSpliceView extends IGBTabPanel
+public class AltSpliceView extends IgbTabPanel
 		implements ActionListener, ComponentListener, ItemListener,
 		SymSelectionListener, SeqSelectionListener, PreferenceChangeListener,
 		TierLabelManager.PopupListener ,SeqMapRefreshed{
@@ -71,6 +71,7 @@ public class AltSpliceView extends IGBTabPanel
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
+        private IGBService igbService;
 
 	public static AltSpliceView getSingleton() {
 		if (singleton == null) {
@@ -81,7 +82,8 @@ public class AltSpliceView extends IGBTabPanel
 	}
 
 	public AltSpliceView(IGBService igbService) {
-		super(igbService, BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"),BUNDLE.getString("slicedViewTooltip"), false, TAB_POSITION);
+		super(BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"),BUNDLE.getString("slicedViewTooltip"), false, TAB_POSITION);
+                this.igbService = igbService;
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.subselectSequence = false;

@@ -9,7 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
-import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
 
 /**
  * JTabbedTrayPane that is on the left

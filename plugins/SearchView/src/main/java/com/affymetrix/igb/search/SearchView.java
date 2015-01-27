@@ -45,7 +45,7 @@ import com.affymetrix.igb.swing.JRPTable;
 import com.affymetrix.igb.swing.JRPTextField;
 
 import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
@@ -57,7 +57,7 @@ import java.awt.Component;
 import java.util.regex.Pattern;
 import javax.swing.table.TableCellRenderer;
 
-public final class SearchView extends IGBTabPanel implements
+public final class SearchView extends IgbTabPanel implements
         GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
 
     private static final long serialVersionUID = 0;
@@ -65,6 +65,7 @@ public final class SearchView extends IGBTabPanel implements
     private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
     private static final int TAB_POSITION = 3;
     private static String[] regexChars = new String[]{"|"};
+    private IGBService igbService;
 
     public class SearchModeAction extends GenericAction {
 
@@ -278,8 +279,8 @@ public final class SearchView extends IGBTabPanel implements
     };
 
     public SearchView(IGBService igbService) {
-        super(igbService, BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), BUNDLE.getString("advancedSearchTooltip"), false, TAB_POSITION);
-
+        super(BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), BUNDLE.getString("advancedSearchTooltip"), false, TAB_POSITION);
+        this.igbService = igbService;
         group = gmodel.getSelectedSeqGroup();
 
         this.setLayout(new BorderLayout());

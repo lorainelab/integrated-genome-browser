@@ -1,6 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 
 /**
  * interface for setting tab state
@@ -12,5 +12,5 @@ public interface TabStateHandler {
      *
      * @param panel the tab pane
      */
-    public void setDefaultState(IGBTabPanel panel);
+    public void setDefaultState(IgbTabPanel panel);
 }

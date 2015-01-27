@@ -11,9 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.service.api.IGBTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.TabHolder;
-import com.affymetrix.igb.service.api.IGBTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
 import com.affymetrix.igb.window.service.IMenuCreator;
 
 /**
@@ -21,7 +21,7 @@ import com.affymetrix.igb.window.service.IMenuCreator;
  */
 public class WindowTabs implements TabHolder {
 
-    private Set<IGBTabPanel> addedPlugins;
+    private Set<IgbTabPanel> addedPlugins;
     private final TabStateHandler tabStateHandler;
     private IMenuCreator menuCreator;
 
@@ -44,8 +44,8 @@ public class WindowTabs implements TabHolder {
      *
      * @param comp the tab panel
      */
-    private void openCompInWindow(final IGBTabPanel comp) {
-        final String name = comp.getName();
+    private void openCompInWindow(final IgbTabPanel comp) {
+        final String name = comp.getComponentName();
         final String display_name = comp.getDisplayName();
 
 //		Icon temp_icon = null;
@@ -83,45 +83,45 @@ public class WindowTabs implements TabHolder {
         PreferenceUtils.saveComponentState(name, TabState.COMPONENT_STATE_WINDOW.name());
     }
 
-    public void restoreWindowPosition(IGBTabPanel tabPanel) {
-        Rectangle pos = PreferenceUtils.retrieveWindowLocation(tabPanel.getName(), tabPanel.getFrame().getBounds());
+    public void restoreWindowPosition(IgbTabPanel tabPanel) {
+        Rectangle pos = PreferenceUtils.retrieveWindowLocation(tabPanel.getComponentName(), tabPanel.getFrame().getBounds());
         if (pos != null) {
             PreferenceUtils.setWindowSize(tabPanel.getFrame(), pos);
         }
     }
 
     @Override
-    public void addTab(final IGBTabPanel plugin) {
+    public void addTab(final IgbTabPanel plugin) {
         addedPlugins.add(plugin);
         Runnable r = () -> openCompInWindow(plugin);
         SwingUtilities.invokeLater(r);
     }
 
     @Override
-    public void removeTab(final IGBTabPanel plugin) {
+    public void removeTab(final IgbTabPanel plugin) {
         // save the current size into the preferences, so the window
         // will re-open with this size next time
         addedPlugins.remove(plugin);
         JFrame frame = plugin.getFrame();
         if (frame != null) {
             final Container cont = frame.getContentPane();
-            PreferenceUtils.saveWindowLocation(frame, plugin.getName());
+            PreferenceUtils.saveWindowLocation(frame, plugin.getComponentName());
             cont.remove(plugin);
             cont.validate();
             frame.dispose();
             plugin.setFrame(null);
-            PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.name());
+            PreferenceUtils.saveComponentState(plugin.getComponentName(), TabState.COMPONENT_STATE_WINDOW.name());
         }
     }
 
     @Override
-    public Set<IGBTabPanel> getIGBTabPanels() {
+    public Set<IgbTabPanel> getIGBTabPanels() {
         return addedPlugins;
     }
 
     @Override
     public void restoreState() {
-        for (final IGBTabPanel tabPanel : addedPlugins) {
+        for (final IgbTabPanel tabPanel : addedPlugins) {
             Runnable r = () -> restoreWindowPosition(tabPanel);
             SwingUtilities.invokeLater(r);
         }
@@ -136,7 +136,7 @@ public class WindowTabs implements TabHolder {
     }
 
     @Override
-    public void selectTab(IGBTabPanel panel) {
+    public void selectTab(IgbTabPanel panel) {
     }
 
     @Override

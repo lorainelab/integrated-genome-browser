@@ -1,7 +1,5 @@
 package com.affymetrix.igb.tabs.annotation;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.service.api.IGBService;
@@ -12,27 +10,31 @@ import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import org.apache.felix.dm.annotation.api.Component;
+import org.apache.felix.dm.annotation.api.ServiceDependency;
+import org.apache.felix.dm.annotation.api.Start;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = AnnotationTrackPanel.COMPONENT_NAME, provide = IgbTabPanelI.class)
+@Component(provides = IgbTabPanelI.class)
 public class AnnotationTrackPanel extends TrackViewPanel {
 
-    public static final String COMPONENT_NAME = "AnnotationTrackPanel";
     private static final long serialVersionUID = 1L;
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("annotation");
     private static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};
     private static final int TAB_POSITION = 1;
     private OperationsImpl trackOperation;
+    @ServiceDependency
     private IGBService igbService;
 
     public AnnotationTrackPanel() {
         super(BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTooltip"), false, TAB_POSITION);
     }
 
-    private void init() {
+    @Start
+    private void start() {
         getCustomButton().setText("Other Options...");
         StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
 
@@ -65,15 +67,9 @@ public class AnnotationTrackPanel extends TrackViewPanel {
         this.addPanel(trackOperation);
     }
 
-    @Reference(multiple = true, unbind = "removeTrackOperator", optional = true, dynamic = true)
+    @ServiceDependency(removed = "removeTrackOperator")
     public void addTrackOperator(Operator operator) {
         trackOperation.addOperator(operator);
-    }
-
-    @Reference(optional = false)
-    public void setIgbService(IGBService igbService) {
-        this.igbService = igbService;
-        init();
     }
 
     public void removeTrackOperator(Operator operator) {

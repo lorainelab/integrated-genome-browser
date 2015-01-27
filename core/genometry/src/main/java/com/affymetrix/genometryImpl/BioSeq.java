@@ -308,12 +308,6 @@ public class BioSeq implements SearchableCharIterator {
             annots.add(container);	// Can't be a duplicate; the container object was just created.
         }
         container.addChild(sym);
-        if (sym instanceof GFF3Sym) {
-            int childCount = sym.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                container.addChild(sym.getChild(i));
-            }
-        }
     }
 
     /*

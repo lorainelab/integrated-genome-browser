@@ -74,6 +74,12 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             if (sym instanceof SupportsGeneName) {
                 addToIndex(((SupportsGeneName) sym).getGeneName(), sym);
             }
+            if (sym instanceof GFF3Sym) {
+                int childCount = sym.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    addToIndex(sym.getChild(i).getID(), sym.getChild(i));
+                }
+            }
         }
     }
 

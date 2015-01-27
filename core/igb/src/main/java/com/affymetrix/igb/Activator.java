@@ -213,7 +213,7 @@ public class Activator implements BundleActivator {
             se.start();
         }
         logger.trace("settingFrame visibile");
-        igb.getFrame().setVisible(true);
+        //igb.getFrame().setVisible(true);
     }
 
     private void addShortcuts() {

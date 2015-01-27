@@ -244,6 +244,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             tabs_menu.insert(pluginMenu, menuPosition);
         }
         igbTabPanel.setComponentPopupMenu(popup);
+        updateMainFrame();
+    }
+
+    private void updateMainFrame() {
+        //don't show anything until a few tabs have been added to prevent flashing at startup
+        if (tabMenus.keySet().size() > 5) {
+            showTabs();
+        }
     }
 
     private int findMenuItemPosition(final IgbTabPanel tabPanel) {

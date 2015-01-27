@@ -6,6 +6,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
@@ -307,6 +308,12 @@ public class BioSeq implements SearchableCharIterator {
             annots.add(container);	// Can't be a duplicate; the container object was just created.
         }
         container.addChild(sym);
+        if (sym instanceof GFF3Sym) {
+            int childCount = sym.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                container.addChild(sym.getChild(i));
+            }
+        }
     }
 
     /*

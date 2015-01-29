@@ -59,10 +59,21 @@
           <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <plugins><plugin><artifactId>maven-clean-plugin</artifactId></plugin><plugin><artifactId>maven-dependency-plugin</artifactId></plugin>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -73,11 +84,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
-                        <Export-Package>
-                            com.gene.searchmodelucene
-                        </Export-Package>
-                        <Bundle-Activator>com.gene.searchmodelucene.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

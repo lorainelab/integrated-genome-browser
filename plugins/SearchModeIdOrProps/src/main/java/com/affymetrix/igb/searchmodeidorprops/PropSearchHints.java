@@ -1,5 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.igb.shared.SearchUtils;
 import com.affymetrix.igb.shared.ISearchHints;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
+@Component
 public class PropSearchHints implements ISearchHints {
 
     @Override

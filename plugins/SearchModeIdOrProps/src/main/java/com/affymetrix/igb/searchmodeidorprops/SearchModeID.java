@@ -1,5 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
+import aQute.bnd.annotation.component.Component;
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,15 +13,16 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
 
+@Component(name = SearchModeID.COMPONENT_NAME, provide = ISearchModeSym.class, immediate = true)
 public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended, ISearchHints {
 
+    public static final String COMPONENT_NAME = "SearchModeID";
     private static final int SEARCH_ALL_ORDINAL = 2;
     private static final String REMOTESERVERSEARCH = BUNDLE.getString("optionCheckBox");
     private static final String REMOTESERVERSEARCHTOOLTIP = BUNDLE.getString("optionCheckBoxTT");
@@ -28,8 +30,8 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
     private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
     private boolean optionSelected;
 
-    public SearchModeID(IgbService igbService) {
-        super(igbService);
+    public SearchModeID() {
+
     }
 
     @Override

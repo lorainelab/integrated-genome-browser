@@ -1,5 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
+import aQute.bnd.annotation.component.Component;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.shared.SearchUtils;
-import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -28,13 +28,12 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodeidorprops");
     private static final int MAX_HITS = 100000;
     protected static final String FRIENDLY_PATTERN = BUNDLE.getString("friendlyPattern");
-    protected IgbService igbService;
+
     protected static final IStatus DUMMY_STATUS = s -> {
     };
 
-    protected SearchModeIDOrProps(IgbService igbService) {
-        super();
-        this.igbService = igbService;
+    public SearchModeIDOrProps() {
+
     }
 
     private Pattern getRegex(String search_text) throws Exception {

@@ -21,12 +21,7 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        </dependency>    
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>affymetrix-common</artifactId>
@@ -74,6 +69,11 @@
             <artifactId>igb-genoviz-extensions-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -90,14 +90,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
+                        <Import-Package>*</Import-Package>
                         <Export-Package/>
-                        <Bundle-Activator>com.affymetrix.igb.search.Activator</Bundle-Activator>
-                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.search.SearchView</Bundle-Category>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

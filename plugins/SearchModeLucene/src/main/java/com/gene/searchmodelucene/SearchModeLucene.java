@@ -1,5 +1,6 @@
 package com.gene.searchmodelucene;
 
+import aQute.bnd.annotation.component.Component;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +17,17 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.shared.IKeyWordSearch;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
 
-public class SearchModeLucene implements IKeyWordSearch {
+@Component(name = SearchModeLucene.COMPONENT_NAME, immediate = true)
+public class SearchModeLucene implements ISearchModeSym {
 
+    public static final String COMPONENT_NAME = "SearchModeLucene";
     private static final int SEARCH_ALL_ORDINAL = 1000;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodelucene");
     private static final int MAX_HITS = 1000;
-    protected IgbService igbService;
 
     private static final LuceneSearch<SeqSymmetry> luceneSearch = new LuceneSearch<SeqSymmetry>() {
         @Override
@@ -52,24 +53,23 @@ public class SearchModeLucene implements IKeyWordSearch {
         }
     };
 
-    public SearchModeLucene(IgbService igbService) {
-        super();
-        this.igbService = igbService;
+    public SearchModeLucene() {
+
     }
+
 
     /* for testing only */
-    public static void main(String[] args) throws Exception {
-        SearchModeLucene s = new SearchModeLucene(null);
-        String uri = args.length > 1 ? args[0] : "file:/C:/Program Files (x86)/Apache Software Foundation/Apache2.2/htdocs/quickload2/H_sapiens_Feb_2009/IGIS Gene Models.gff.gz";
-//		String uri = args.length > 1 ? args[0] : "http://localhost/Bed/bed_01.bed";
-        String searchTerm = args.length > 2 ? args[1] : "ZNF19*";
-        String seqName = args.length > 3 ? args[2] : null;
-        List<SeqSymmetry> results = luceneSearch.searchIndex(uri, searchTerm, MAX_HITS);
-        for (SeqSymmetry result : results) {
-            System.out.println(result.getID() + " @ " + result.getSpan(0));
-        }
-    }
-
+//    public static void main(String[] args) throws Exception {
+//        SearchModeLucene s = new SearchModeLucene(null);
+//        String uri = args.length > 1 ? args[0] : "file:/C:/Program Files (x86)/Apache Software Foundation/Apache2.2/htdocs/quickload2/H_sapiens_Feb_2009/IGIS Gene Models.gff.gz";
+////		String uri = args.length > 1 ? args[0] : "http://localhost/Bed/bed_01.bed";
+//        String searchTerm = args.length > 2 ? args[1] : "ZNF19*";
+//        String seqName = args.length > 3 ? args[2] : null;
+//        List<SeqSymmetry> results = luceneSearch.searchIndex(uri, searchTerm, MAX_HITS);
+//        for (SeqSymmetry result : results) {
+//            System.out.println(result.getID() + " @ " + result.getSpan(0));
+//        }
+//    }
     @Override
     public String getName() {
         return BUNDLE.getString("searchLucene");

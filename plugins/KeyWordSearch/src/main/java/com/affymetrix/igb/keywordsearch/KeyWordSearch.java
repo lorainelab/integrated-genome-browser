@@ -1,10 +1,11 @@
 package com.affymetrix.igb.keywordsearch;
 
-import com.affymetrix.common.ExtensionPointHandler;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.shared.IKeyWordSearch;
+import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
 import java.text.MessageFormat;
@@ -16,11 +17,14 @@ import java.util.ResourceBundle;
  *
  * @author hiralv
  */
-public class KeyWordSearch implements IKeyWordSearch {
+@Component(name = KeyWordSearch.COMPONENT_NAME, provide = ISearchModeSym.class, immediate = true)
+public class KeyWordSearch implements ISearchModeSym {
 
+    public static final String COMPONENT_NAME = "KeyWordSearch";
     private static final int SEARCH_ALL_ORDINAL = 1;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("keywordsearch");
-    final private List<IKeyWordSearch> searchModes;
+    
+    private volatile List<ISearchModeSym> searchModes;
 
     public KeyWordSearch() {
         searchModes = new ArrayList<>();
@@ -46,11 +50,20 @@ public class KeyWordSearch implements IKeyWordSearch {
         return null;
     }
 
+    public void removeSearchModeService(ISearchModeSym searchMode) {
+        searchModes.remove(searchMode);
+    }
+
+    @Reference(multiple = true, optional = true, unbind = "removeSearchModeService")
+    public void addSearchModeService(ISearchModeSym searchMode) {
+        searchModes.add(searchMode);
+    }
+
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
         List<SeqSymmetry> results = new ArrayList<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
-        for (IKeyWordSearch searchMode : searchModes) {
+        for (ISearchModeSym searchMode : searchModes) {
             statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
             SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
             List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
@@ -65,18 +78,13 @@ public class KeyWordSearch implements IKeyWordSearch {
 
     public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
         List<SeqSymmetry> results = new ArrayList<>();
-        for (IKeyWordSearch searchMode : searchModes) {
+        for (ISearchModeSym searchMode : searchModes) {
             List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
             if (res != null && !res.isEmpty()) {
                 results.addAll(res);
             }
         }
         return results;
-    }
-
-    public synchronized void initSearchModes() {
-        searchModes.clear();
-        searchModes.addAll(ExtensionPointHandler.getExtensionPoint(IKeyWordSearch.class).getExtensionPointImpls());
     }
 
     private static class StatusHolder implements IStatus {

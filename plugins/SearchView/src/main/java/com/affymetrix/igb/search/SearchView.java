@@ -1,5 +1,6 @@
 package com.affymetrix.igb.search;
 
+import aQute.bnd.annotation.component.Reference;
 import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -46,6 +47,7 @@ import com.affymetrix.igb.swing.JRPTextField;
 
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
@@ -57,9 +59,11 @@ import java.awt.Component;
 import java.util.regex.Pattern;
 import javax.swing.table.TableCellRenderer;
 
+@aQute.bnd.annotation.component.Component(name = SearchView.COMPONENT_NAME, provide = {IgbTabPanelI.class, SearchListener.class, GenericServerInitListener.class})
 public final class SearchView extends IgbTabPanel implements
         GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
 
+    public static final String COMPONENT_NAME = "SearchView";
     private static final long serialVersionUID = 0;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
     private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
@@ -247,6 +251,7 @@ public final class SearchView extends IgbTabPanel implements
     private CThreadWorker<Object, Void> worker;
     private Map<String, ISearchMode> searchModeMap;
     private ISearchMode selectedSearchMode;
+    private volatile List<ISearchMode> searchModes;
 
     ListDataIntelliHints<String> searchHints = new ListDataIntelliHints<String>(searchTF, new String[]{}) {
 
@@ -278,15 +283,15 @@ public final class SearchView extends IgbTabPanel implements
         }
     };
 
-    public SearchView(IgbService igbService) {
+    public SearchView() {
         super(BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), BUNDLE.getString("advancedSearchTooltip"), false, TAB_POSITION);
-        this.igbService = igbService;
+        searchModes = new ArrayList<>();
+    }
+
+    public void init() {
         group = gmodel.getSelectedSeqGroup();
-
         this.setLayout(new BorderLayout());
-
         initSearchCB();
-
         initComponents();
         String annotsStr = (group == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, group.getID());
         pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
@@ -349,6 +354,13 @@ public final class SearchView extends IgbTabPanel implements
         searchButton.addActionListener(searchAction);
         clearButton.addActionListener(clearAction);
         optionCheckBox.addItemListener(itemListener);
+        searchModes.add(new SearchModeResidue(igbService));
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+        init();
     }
 
     private void initOptionCheckBox() {
@@ -431,17 +443,22 @@ public final class SearchView extends IgbTabPanel implements
         });
     }
 
+    public void removeSearchModeService(ISearchModeSym searchMode) {
+        searchModes.remove(searchMode);
+        initSearchCB();
+    }
+
+    @Reference(multiple = true, optional = true, unbind = "removeSearchModeService")
+    public void addSearchModeService(ISearchModeSym searchMode) {
+        searchModes.add(searchMode);
+        initSearchCB();
+    }
+
     public void initSearchCB() {
         Object saveSearchMode = searchCB.getSelectedItem();
         searchCB.removeAllItems();
         searchModeMap = new HashMap<>();
         boolean saveFound = false;
-        List<ISearchMode> searchModes = new ArrayList<>();
-        ExtensionPointHandler<ISearchModeSym> extensionPointHandler = ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class);
-        if (extensionPointHandler != null) {
-            searchModes.addAll(extensionPointHandler.getExtensionPointImpls());
-        }
-        searchModes.add(new SearchModeResidue(igbService));
         // consistent order for search modes
         Collections.sort(searchModes,
                 new Comparator<ISearchMode>() {
@@ -465,13 +482,6 @@ public final class SearchView extends IgbTabPanel implements
         }
         searchCB.setToolTipText(CHOOSESEARCH);
         if (saveSearchMode == null || !saveFound) {
-            if (defaultSearchMode != null) {
-                searchCB.setSelectedItem(defaultSearchMode);
-                saveSearchMode = defaultSearchMode;
-            } else if (searchCB.getItemCount() > 0) {
-                searchCB.setSelectedIndex(0);
-                saveSearchMode = searchCB.getSelectedItem();
-            }
         } else {
             searchCB.setSelectedItem(saveSearchMode);
         }

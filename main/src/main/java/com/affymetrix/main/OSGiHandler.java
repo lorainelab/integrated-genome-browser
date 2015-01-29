@@ -137,6 +137,14 @@ public class OSGiHandler {
             Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
             CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
+            if (isDevelopmentMode()) {
+                configProps.put("org.osgi.service.http.port", "8888");
+                //TODO configProps.put("obr.repository.url", "localurl");
+                configProps.put("felix.webconsole.manager.root", "/system/console");
+                configProps.put("org.apache.felix.http.jettyEnabled", "true");
+                configProps.put("felix.webconsole.username", "igbdev");
+                configProps.put("felix.webconsole.password", "igbdev");
+            }
             configProps.put("args", argArray);
             FrameworkFactory factory = getFrameworkFactory();
             framework = factory.newFramework(configProps);
@@ -177,25 +185,26 @@ public class OSGiHandler {
         String OSGiImplFile = ResourceBundle.getBundle("main").getString("OSGiImplFile");
         List<String> entries = new ArrayList<>();
         URL codesource = this.getClass().getProtectionDomain().getCodeSource().getLocation();
-        if (codesource.toString().endsWith(".jar")) { try ( // ant exe or webstart
-                ZipInputStream zipinputstream = new ZipInputStream(codesource.openStream())) {
-            ZipEntry zipentry = zipinputstream.getNextEntry();
+        if (codesource.toString().endsWith(".jar")) {
+            try ( // ant exe or webstart
+                    ZipInputStream zipinputstream = new ZipInputStream(codesource.openStream())) {
+                ZipEntry zipentry = zipinputstream.getNextEntry();
 
-            while (zipentry != null) {
-                //for each entry to be extracted
+                while (zipentry != null) {
+                    //for each entry to be extracted
 
-                String entryName = zipentry.getName();
-                if (zipentry.isDirectory()) {
-                    File file = new File("lib");
-                    //        System.out.println("DEBUG: exist:" + file.exists());
-                }
-                if (entryName.endsWith(".jar")) {
-                    entries.add(entryName);
-                }
+                    String entryName = zipentry.getName();
+                    if (zipentry.isDirectory()) {
+                        File file = new File("lib");
+                        //        System.out.println("DEBUG: exist:" + file.exists());
+                    }
+                    if (entryName.endsWith(".jar")) {
+                        entries.add(entryName);
+                    }
 
-                zipinputstream.closeEntry();
-                zipentry = zipinputstream.getNextEntry();
-            }//while
+                    zipinputstream.closeEntry();
+                    zipentry = zipinputstream.getNextEntry();
+                }//while
             }
         } else { // ant maven gradle run
             entries = getDevelopmentModeJarFileNames();
@@ -224,7 +233,7 @@ public class OSGiHandler {
         return entries;
     }
 
-     public BundleContext getBundleContext() {
+    public BundleContext getBundleContext() {
         if (framework == null) {
             return null;
         }

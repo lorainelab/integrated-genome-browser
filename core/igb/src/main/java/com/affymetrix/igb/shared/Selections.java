@@ -14,7 +14,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
@@ -30,7 +30,7 @@ import javax.swing.event.EventListenerList;
  *
  * @author hiralv
  */
-public abstract class Selections {
+public class Selections {
 
     public static final List<ITrackStyleExtended> allStyles = new CopyOnWriteArrayList<>();
     public static final List<ITrackStyleExtended> annotStyles = new CopyOnWriteArrayList<>();
@@ -47,7 +47,7 @@ public abstract class Selections {
     private static final EventListenerList listenerList;
 
     static {
-        smv = (SeqMapView) IGBServiceImpl.getInstance().getSeqMapView();
+        smv = (SeqMapView) IgbServiceImpl.getInstance().getSeqMapView();
         listenerList = new EventListenerList();
         addListeners(new Listeners());
     }

@@ -2,7 +2,7 @@ package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.StatusAlert;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -23,16 +23,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(Activator.class);
     
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("updates");
         try {
             URL url = new URL(BUNDLE.getString("updates"));

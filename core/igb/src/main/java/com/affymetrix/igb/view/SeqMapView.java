@@ -74,7 +74,7 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
@@ -2293,7 +2293,7 @@ public class SeqMapView extends JPanel
             current_group = aseq.getSeqGroup();
         }
 
-        if (IGBService.DEBUG_EVENTS) {
+        if (IgbService.DEBUG_EVENTS) {
             System.out.println("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
         }
 
@@ -2303,7 +2303,7 @@ public class SeqMapView extends JPanel
     }
 
     public void seqSelectionChanged(SeqSelectionEvent evt) {
-        if (IGBService.DEBUG_EVENTS) {
+        if (IgbService.DEBUG_EVENTS) {
             System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
         }
         final BioSeq newseq = evt.getSelectedSeq();

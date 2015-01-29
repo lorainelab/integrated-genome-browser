@@ -7,21 +7,21 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
 
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     private SelectionListener selectionListener;
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         ThresholdingAction.createAction(igbService);
 
         JRPMenuItem thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", ThresholdingAction.getAction());

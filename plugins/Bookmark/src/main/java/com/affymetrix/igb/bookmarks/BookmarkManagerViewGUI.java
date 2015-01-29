@@ -4,7 +4,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.StyledJTable;
 import java.awt.Rectangle;
@@ -29,7 +29,7 @@ public class BookmarkManagerViewGUI extends IgbTabPanel {
     private static final int TAB_POSITION = 8;
     public static BookmarkManagerView bmv;
 
-    public static void init(IGBService _igbService) {
+    public static void init(IgbService _igbService) {
         singleton = new BookmarkManagerViewGUI(_igbService);
     }
 
@@ -44,7 +44,7 @@ public class BookmarkManagerViewGUI extends IgbTabPanel {
     /**
      * Creates new form BookMarkManagerViewGUI
      */
-    public BookmarkManagerViewGUI(IGBService _igbService) {
+    public BookmarkManagerViewGUI(IgbService _igbService) {
         super(BUNDLE.getString("bookmarksTab"),
                 BUNDLE.getString("bookmarksTab"), BUNDLE.getString("bookmarksTooltip"), false, TAB_POSITION);
         BookmarkManagerView.init(_igbService);
@@ -409,4 +409,5 @@ public class BookmarkManagerViewGUI extends IgbTabPanel {
     private javax.swing.JButton undoNameButton;
     private javax.swing.JPanel upPanel;
     // End of variables declaration//GEN-END:variables
+
 }

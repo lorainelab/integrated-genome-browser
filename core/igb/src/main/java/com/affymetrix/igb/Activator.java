@@ -66,7 +66,7 @@ import com.affymetrix.igb.action.ZoomOutXAction;
 import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -123,8 +123,7 @@ public class Activator implements BundleActivator {
                 return;
             }
             scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
-            commandLineBatchFileStr = CommonUtils.getInstance().getArg(
-                    "-" + IGBService.SCRIPTFILETAG, args);
+            commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
             // Force loading of prefs if hasn't happened yet.
             // Usually, since IGB.main() is called first,
             // prefs will have already been loaded via loadIGBPrefs() call in main().
@@ -177,8 +176,8 @@ public class Activator implements BundleActivator {
 
     /**
      * method to start IGB, called when the window service is available, creates
-     * and initializes IGB and registers the IGBService add any extension points
-     * handling here
+ and initializes IGB and registers the IgbService add any extension points
+ handling here
      *
      * @param windowServiceReference - the OSGi ServiceReference for the window
      * service
@@ -444,8 +443,8 @@ public class Activator implements BundleActivator {
     private void registerServices(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
         IWindowService windowService = bundleContext.getService(windowServiceReference);
         final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
-        // set IGBService
-        bundleContext.registerService(IGBService.class, IGBServiceImpl.getInstance(), null);
+        // set IgbService
+        bundleContext.registerService(IgbService.class, IgbServiceImpl.getInstance(), null);
         // register tabs created in IGB itself - IGBTabPanel is an extension point
         for (IgbTabPanelI tab : tabs) {
             bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
@@ -634,8 +633,8 @@ public class Activator implements BundleActivator {
         }
 
         private boolean check() {
-            return IGBServiceImpl.getInstance().areAllServersInited()
-                    && IGBServiceImpl.getInstance().getFrame().isVisible();
+            return IgbServiceImpl.getInstance().areAllServersInited()
+                    && IgbServiceImpl.getInstance().getFrame().isVisible();
         }
     }
 }

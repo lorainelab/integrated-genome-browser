@@ -10,7 +10,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.HeadLessExport;
 import java.awt.Component;
 import java.io.File;
@@ -55,7 +55,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
-    private static IGBService igbService;
+    private static IgbService igbService;
     private static final Logger LOG
             = Logger.getLogger(IGBScriptEngine.class.getPackage().getName());
 
@@ -66,7 +66,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
     private ScriptContext defaultContext;
 
-    public IGBScriptEngine(IGBScriptEngineFactory factory, IGBService igbService) {
+    public IGBScriptEngine(IGBScriptEngineFactory factory, IgbService igbService) {
         super();
         IGBScriptEngine.igbService = igbService;
         this.igbFactory = factory;

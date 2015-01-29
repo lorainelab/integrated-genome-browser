@@ -2,7 +2,7 @@ package com.affymetrix.igb.searchmodeidorprops;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -11,7 +11,7 @@ public class SearchModeProps extends SearchModeIDOrProps implements IKeyWordSear
 
     private static final int SEARCH_ALL_ORDINAL = -8000;
 
-    public SearchModeProps(IGBService igbService) {
+    public SearchModeProps(IgbService igbService) {
         super(igbService);
     }
 

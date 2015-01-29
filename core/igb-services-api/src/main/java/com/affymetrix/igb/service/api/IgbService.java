@@ -34,7 +34,7 @@ import javax.swing.event.ListSelectionListener;
  * OSGi Service to allow bundles indirect access to IGB internals.
  *
  */
-public interface IGBService {
+public interface IgbService {
 	public static final String UTF8 = "UTF-8";
 	/**
 	 * A potential parameter in either the URL of a bookmark, or a command-line option.

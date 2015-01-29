@@ -12,7 +12,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
@@ -28,7 +28,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
     private static final String REMOTESERVERSEARCHPLURAL = BUNDLE.getString("remoteServerSearchPlural");
     private boolean optionSelected;
 
-    public SearchModeID(IGBService igbService) {
+    public SearchModeID(IgbService igbService) {
         super(igbService);
     }
 

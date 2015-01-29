@@ -31,7 +31,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
@@ -101,9 +101,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 	private static SeqMapView gviewer;
 	private JRPComboBox speciesCB;
 	private JRPComboBox versionCB;
-	private final IGBService igbService;
+	private final IgbService igbService;
         private SelectVersionPanel selectVersionPanel;
-	SeqGroupView(IGBService _igbService) {
+	SeqGroupView(IgbService _igbService) {
 		igbService = _igbService;
 		gviewer = Application.getSingleton().getMapView();
                 selectVersionPanel = new SelectVersionPanel();
@@ -162,7 +162,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
 	}
 
-	static void init(IGBService _igbService) {
+	static void init(IgbService _igbService) {
 		singleton = new SeqGroupView(_igbService);
 		singleton.addListeners();
 		singleton.populateSpeciesData();

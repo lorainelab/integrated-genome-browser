@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.das.DasServerInfo;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 import java.awt.event.ActionEvent;
 import java.util.Collections;
@@ -36,9 +36,9 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
-    private final IGBService igbService;
+    private final IgbService igbService;
 
-    public UCSCViewAction(IGBService igbService) {
+    public UCSCViewAction(IgbService igbService) {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
         this.igbService = igbService;
         GenometryModel model = GenometryModel.getInstance();

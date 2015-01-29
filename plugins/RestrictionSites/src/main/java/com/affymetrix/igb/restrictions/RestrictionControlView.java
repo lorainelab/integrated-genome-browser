@@ -9,6 +9,8 @@
  */
 package com.affymetrix.igb.restrictions;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import java.awt.event.*;
 import java.io.*;
 import java.text.MessageFormat;
@@ -25,8 +27,9 @@ import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,9 +37,11 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.regex.Pattern;
 
+@Component(name = RestrictionControlView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public final class RestrictionControlView extends IgbTabPanel
         implements ListSelectionListener, ActionListener {
 
+    public static final String COMPONENT_NAME = "RestrictionControlView";
     private static final long serialVersionUID = 0;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
     private static final int TAB_POSITION = 9;
@@ -56,15 +61,15 @@ public final class RestrictionControlView extends IgbTabPanel
     private ArrayList<JLabel> labelList = new ArrayList<>();
     private JRPButton actionB;
     private JRPButton clearB;
-    private IGBService igbService;
+    private IgbService igbService;
     /**
      * keep track of added glyphs
      */
     private final List<GlyphI> glyphs = new ArrayList<>();
 
-    public RestrictionControlView(IGBService igbService) {
+    public RestrictionControlView() {
         super(BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);
-        this.igbService = igbService;
+
         boolean load_success = true;
 
         String rest_file = "/rest_enzymes";
@@ -325,5 +330,10 @@ public final class RestrictionControlView extends IgbTabPanel
     @Override
     public boolean isCheckMinimumWindowSize() {
         return true;
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 }

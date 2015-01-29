@@ -16,7 +16,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.IKeyWordSearch;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -26,7 +26,7 @@ public class SearchModeLucene implements IKeyWordSearch {
     private static final int SEARCH_ALL_ORDINAL = 1000;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmodelucene");
     private static final int MAX_HITS = 1000;
-    protected IGBService igbService;
+    protected IgbService igbService;
 
     private static final LuceneSearch<SeqSymmetry> luceneSearch = new LuceneSearch<SeqSymmetry>() {
         @Override
@@ -52,7 +52,7 @@ public class SearchModeLucene implements IKeyWordSearch {
         }
     };
 
-    public SearchModeLucene(IGBService igbService) {
+    public SearchModeLucene(IgbService igbService) {
         super();
         this.igbService = igbService;
     }

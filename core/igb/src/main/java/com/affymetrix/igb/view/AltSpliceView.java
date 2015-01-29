@@ -25,8 +25,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.IGBServiceImpl;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.IgbServiceImpl;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
@@ -71,17 +71,17 @@ public class AltSpliceView extends IgbTabPanel
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
-        private IGBService igbService;
+        private IgbService igbService;
 
 	public static AltSpliceView getSingleton() {
 		if (singleton == null) {
-			singleton = new AltSpliceView(IGBServiceImpl.getInstance());
+			singleton = new AltSpliceView(IgbServiceImpl.getInstance());
 		}
 
 		return singleton;
 	}
 
-	public AltSpliceView(IGBService igbService) {
+	public AltSpliceView(IgbService igbService) {
 		super(BUNDLE.getString("slicedViewTab"), BUNDLE.getString("slicedViewTab"),BUNDLE.getString("slicedViewTooltip"), false, TAB_POSITION);
                 this.igbService = igbService;
 		this.setLayout(new BorderLayout());
@@ -138,7 +138,7 @@ public class AltSpliceView extends IgbTabPanel
 	 * slicing on them can use too much memory).
 	 */
 	public void symSelectionChanged(SymSelectionEvent evt) {
-		if (IGBService.DEBUG_EVENTS) {
+		if (IgbService.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received selection changed event");
 		}
 		Object src = evt.getSource();
@@ -179,7 +179,7 @@ public class AltSpliceView extends IgbTabPanel
 	}
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (IGBService.DEBUG_EVENTS) {
+		if (IgbService.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
 		BioSeq newseq = GenometryModel.getInstance().getSelectedSeq();

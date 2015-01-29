@@ -9,7 +9,7 @@ import com.affymetrix.genometry.filter.SymmetryFilter;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -18,11 +18,11 @@ import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 
     private final int searchAllOrdinal;
-    private final IGBService igbService;
+    private final IgbService igbService;
     private final SymmetryFilterI filter;
     private boolean optionSelected;
 
-    public SearchModeSymmetryFilter(IGBService igbService, SymmetryFilterI filter, int searchAllOrdinal) {
+    public SearchModeSymmetryFilter(IgbService igbService, SymmetryFilterI filter, int searchAllOrdinal) {
         super();
         this.igbService = igbService;
         this.filter = filter;

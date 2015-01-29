@@ -2,7 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -13,10 +13,10 @@ import javax.swing.JComboBox;
 public abstract class StylePanelImpl extends StylePanel implements Selections.RefreshSelectionListener {
 
     private static final long serialVersionUID = 1L;
-    protected IGBService igbService;
+    protected IgbService igbService;
     protected final List<ITrackStyleExtended> styles;
 
-    public StylePanelImpl(IGBService _igbService) {
+    public StylePanelImpl(IgbService _igbService) {
         super();
         igbService = _igbService;
         styles = new CopyOnWriteArrayList<>();

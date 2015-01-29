@@ -9,20 +9,20 @@ import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 
 /**
  * @author hiralv
  */
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         GenericAction genomicSequenceAction = new ViewGenomicSequenceInSeqViewerAction(igbService);
         GenericAction readSequencAction = new ViewReadSequenceInSeqViewerAction(igbService);
         JRPMenuItem genomicSequenceMenuItem = new JRPMenuItem("SequenceViewer_viewGenomicSequenceInSeqViewer", genomicSequenceAction);

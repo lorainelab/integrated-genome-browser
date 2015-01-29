@@ -10,7 +10,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.MissingResourceException;
@@ -55,14 +55,14 @@ public final class SimpleBookmarkServer {
     // that will start the control server.
     // Thus the control server will be started only after current GUI stuff is finished,
     // but starting it won't cause the GUI to hang.
-    public static void init(final IGBService igbService) {
+    public static void init(final IgbService igbService) {
         startServerSocket(igbService, DEFAULT_SERVER_PORT);
         if (server_port != NO_PORT) {
             startServerSocket(igbService, server_port);
         }
     }
 
-    public static void startServerSocket(final IGBService igbService, int startPort) {
+    public static void startServerSocket(final IgbService igbService, int startPort) {
         try {
             final int serverPort = findAvailablePort(startPort);
 

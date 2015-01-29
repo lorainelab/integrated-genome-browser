@@ -316,9 +316,9 @@ public final class IGB extends Application
 
         WebLinkUtils.autoLoad();
 
-        GeneralLoadViewGUI.init(IGBServiceImpl.getInstance());
+        GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
-        SeqGroupViewGUI.init(IGBServiceImpl.getInstance());
+        SeqGroupViewGUI.init(IgbServiceImpl.getInstance());
         checkInternetConnection();
         notifyCounter();
         openQuickStart();
@@ -509,8 +509,9 @@ public final class IGB extends Application
      */
     public IgbTabPanel getView(String viewName) {
         for (IgbTabPanelI plugin : windowService.getPlugins()) {
-            if (plugin.getClass().getName().equals(viewName)) {
-                return (IgbTabPanel) plugin.getTabContent();
+            IgbTabPanel igbTabPanel = plugin.getIgbTabPanel();
+            if (igbTabPanel.getClass().getName().equals(viewName)) {
+                return igbTabPanel;
             }
         }
         String message = getClass().getName() + ".getView() failed for " + viewName;
@@ -528,8 +529,9 @@ public final class IGB extends Application
      */
     public IgbTabPanel getViewByDisplayName(String viewName) {
         for (IgbTabPanelI plugin : windowService.getPlugins()) {
-            if (plugin.getDisplayName().equals(viewName)) {
-                return (IgbTabPanel) plugin.getTabContent();
+             IgbTabPanel igbTabPanel = plugin.getIgbTabPanel();
+            if (igbTabPanel.getDisplayName().equals(viewName)) {
+                return igbTabPanel;
             }
         }
         String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";

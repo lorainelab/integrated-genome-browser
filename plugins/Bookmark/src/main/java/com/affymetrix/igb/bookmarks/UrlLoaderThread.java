@@ -21,7 +21,7 @@ import com.affymetrix.genometry.parsers.das.DASFeatureParser;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -53,7 +53,7 @@ public final class UrlLoaderThread extends Thread {
 
     private final URL[] urls;
     private final String[] tier_names;
-    private final IGBService igbService;
+    private final IgbService igbService;
     private final String[] file_extensions;
 
     /**
@@ -70,7 +70,7 @@ public final class UrlLoaderThread extends Thread {
      * parameter of each URL. If a non-null array is provided, the length must
      * match the length of the das_urls array.
      */
-    public UrlLoaderThread(IGBService igbService, URL[] urls, String[] file_extensions, String[] tier_names) {
+    public UrlLoaderThread(IgbService igbService, URL[] urls, String[] file_extensions, String[] tier_names) {
         if (tier_names != null && urls.length != tier_names.length) {
             throw new IllegalArgumentException("Array lengths do not match");
         }

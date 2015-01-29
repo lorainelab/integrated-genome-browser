@@ -13,7 +13,7 @@ import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.DataManagementTableInfo;
 import com.google.common.collect.ListMultimap;
 import fi.iki.elonen.NanoHTTPD;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 class BookmarkHttpRequestHandler extends NanoHTTPD {
 
-    private final IGBService igbService;
+    private final IgbService igbService;
     private static final String IGB_STATUS_CHECK = "igbStatusCheck";
     private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
@@ -36,7 +36,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
     private static final Logger logger = LoggerFactory.getLogger(BookmarkHttpRequestHandler.class);    
 
-    public BookmarkHttpRequestHandler(IGBService igbService, int port) {
+    public BookmarkHttpRequestHandler(IgbService igbService, int port) {
         super(port);
         this.igbService = igbService;
     }

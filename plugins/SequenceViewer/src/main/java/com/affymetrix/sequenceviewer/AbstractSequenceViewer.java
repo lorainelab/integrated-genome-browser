@@ -28,7 +28,7 @@ import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.sequenceviewer.actions.ExitSeqViewerAction;
@@ -95,7 +95,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     /* default constructor to get the singleton object of SeqMapView
      * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
      */
-    public AbstractSequenceViewer(IGBService igbService) {
+    public AbstractSequenceViewer(IgbService igbService) {
         seqmapview = igbService.getSeqMapView();
     }
 

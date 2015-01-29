@@ -2,36 +2,38 @@ package com.affymetrix.igb.tabs.annotation;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.shared.OperationsImpl;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import com.lorainelab.igb.track.operations.api.OperationsPanelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = AnnotationTrackPanel.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = false)
+@Component(name = AnnotationTrackPanel.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public class AnnotationTrackPanel extends TrackViewPanel {
 
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationTrackPanel.class);
     public static final String COMPONENT_NAME = "AnnotationTrackPanel";
     private static final long serialVersionUID = 1L;
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("annotation");
     private static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};
     private static final int TAB_POSITION = 1;
-    private OperationsImpl trackOperation;
-    private IGBService igbService;
+    private IgbService igbService;
 
     public AnnotationTrackPanel() {
         super(BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTooltip"), false, TAB_POSITION);
     }
-    
+
+    //this sort of initialization hack is only needed until there is time to create proper service dependency
     private void init() {
         getCustomButton().setText("Other Options...");
         StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
@@ -49,35 +51,20 @@ public class AnnotationTrackPanel extends TrackViewPanel {
         };
         AnnotationPanelImpl annotationPanel = new AnnotationPanelImpl(igbService);
 
-        trackOperation = new OperationsImpl(igbService) {
-            @Override
-            protected boolean addThisOperator(Operator operator) {
-                for (FileTypeCategory category : categories) {
-                    if (operator.getOperandCountMin(category) > 0) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
         this.addPanel(stylePanel);
         this.addPanel(annotationPanel);
-        this.addPanel(trackOperation);
-    }
 
-    @Reference(multiple = true, unbind = "removeTrackOperator", optional = true, dynamic = true)
-    public void addTrackOperator(Operator operator) {
-        trackOperation.addOperator(operator);
     }
 
     @Reference(optional = false)
-    public void setIgbService(IGBService igbService) {
+    public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
         init();
     }
 
-    public void removeTrackOperator(Operator operator) {
-        trackOperation.removeOperator(operator);
+    @Reference(optional = false)
+    public void setOperationsPanel(OperationsPanelService operationsPanelService) {
+        this.addPanel(operationsPanelService.getAnnotationOperationsPanel());
     }
 
     @Override

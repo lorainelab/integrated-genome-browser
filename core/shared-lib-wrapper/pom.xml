@@ -152,6 +152,26 @@
                                     <version>${felix-scr-version}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.bundle</artifactId>
+                                    <version>${felix-http-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.configadmin</artifactId>
+                                    <version>${felix-configadmin-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.metatype</artifactId>
+                                    <version>${felix-metatype-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.webconsole.all</artifactId>
+                                    <version>${felix-webconsole-version}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.osgi</groupId>
                                     <artifactId>org.osgi.compendium</artifactId>
                                     <version>${org.osgi.compendium-version}</version>
@@ -171,7 +191,7 @@
                                     <artifactId>org.apache.felix.dependencymanager.runtime</artifactId>
                                     <version>${felix-dependencymanager-version}</version>
                                 </artifactItem>            
-<!--                                <artifactItem>
+                                <!--                                <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
                                     <version>${felix-dependencymanager-version}</version>

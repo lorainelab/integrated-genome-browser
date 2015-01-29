@@ -27,7 +27,7 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
@@ -94,8 +94,8 @@ public final class BookmarkUnibrowControlServlet {
      * String[] objects. For example, this could be the Map returned by
      * {@link javax.servlet.ServletRequest#getParameterMap()}.
      */
-    public void goToBookmark(final IGBService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
-        String batchFileStr = getFirstValueEntry(parameters, IGBService.SCRIPTFILETAG);
+    public void goToBookmark(final IgbService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
+        String batchFileStr = getFirstValueEntry(parameters, IgbService.SCRIPTFILETAG);
         if (StringUtils.isNotBlank(batchFileStr)) {
             igbService.doActions(batchFileStr);
             return;
@@ -322,7 +322,7 @@ public final class BookmarkUnibrowControlServlet {
         return graph_paths;
     }
 
-    private void loadOldBookmarks(final IGBService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
+    private void loadOldBookmarks(final IgbService igbService, List<GenericServer> gServers, List<String> das2_query_urls, int start, int end) {
         List<String> opaque_requests = new ArrayList<>();
         int i = 0;
         for (String url : das2_query_urls) {
@@ -384,7 +384,7 @@ public final class BookmarkUnibrowControlServlet {
         }
     }
 
-    private List<GenericFeature> loadData(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
+    private List<GenericFeature> loadData(final IgbService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls, int start, int end) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         List<GenericFeature> gFeatures = new ArrayList<>();
         int i = 0;
@@ -411,12 +411,12 @@ public final class BookmarkUnibrowControlServlet {
         return gFeatures;
     }
 
-    private void loadChromosomesFor(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
+    private void loadChromosomesFor(final IgbService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
         List<GenericFeature> gFeatures = getFeatures(igbService, seqGroup, gServers, query_urls);
         gFeatures.stream().filter(gFeature -> gFeature != null).forEach(igbService::loadChromosomes);
     }
 
-    private List<GenericFeature> getFeatures(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
+    private List<GenericFeature> getFeatures(final IgbService igbService, final AnnotatedSeqGroup seqGroup, final List<GenericServer> gServers, final List<String> query_urls) {
         List<GenericFeature> gFeatures = new ArrayList<>();
 
         boolean show_message = false;
@@ -446,7 +446,7 @@ public final class BookmarkUnibrowControlServlet {
         return gFeatures;
     }
 
-    private GenericFeature getFeature(final IGBService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
+    private GenericFeature getFeature(final IgbService igbService, final AnnotatedSeqGroup seqGroup, final GenericServer gServer, final String query_url) {
 
         if (gServer == null) {
             return null;
@@ -468,7 +468,7 @@ public final class BookmarkUnibrowControlServlet {
         return feature;
     }
 
-    private void loadFeature(IGBService igbService, GenericFeature gFeature, int start, int end) {
+    private void loadFeature(IgbService igbService, GenericFeature gFeature, int start, int end) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         //a bit of a hack to force track creation since with no overlap there is currently no track being created.
         if (end == 0) {
@@ -483,7 +483,7 @@ public final class BookmarkUnibrowControlServlet {
         igbService.loadAndDisplaySpan(overlap, gFeature);
     }
 
-    private List<GenericServer> loadServers(IGBService igbService, List<String> server_urls) {
+    private List<GenericServer> loadServers(IgbService igbService, List<String> server_urls) {
         final ImmutableList.Builder<GenericServer> builder = ImmutableList.<GenericServer>builder();
 
         for (String server_url : server_urls) {
@@ -493,7 +493,7 @@ public final class BookmarkUnibrowControlServlet {
         return builder.build();
     }
 
-    private void loadDataFromURLs(final IGBService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {
+    private void loadDataFromURLs(final IgbService igbService, final String[] data_urls, final String[] extensions, final String[] tier_names) {
         try {
             if (data_urls != null && data_urls.length != 0) {
                 URL[] urls = new URL[data_urls.length];
@@ -553,7 +553,7 @@ public final class BookmarkUnibrowControlServlet {
      * @param graph_files it is ok for this parameter to be null.
      * @return true indicates that the action succeeded
      */
-    private Optional<BioSeq> goToBookmark(IGBService igbService, String seqid, String version, int start, int end) {
+    private Optional<BioSeq> goToBookmark(IgbService igbService, String seqid, String version, int start, int end) {
         AnnotatedSeqGroup book_group = null;
         try {
             book_group = igbService.determineAndSetGroup(version).orNull();

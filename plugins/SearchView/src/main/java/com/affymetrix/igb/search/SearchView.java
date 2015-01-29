@@ -44,7 +44,7 @@ import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTable;
 import com.affymetrix.igb.swing.JRPTextField;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
@@ -65,7 +65,7 @@ public final class SearchView extends IgbTabPanel implements
     private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
     private static final int TAB_POSITION = 3;
     private static String[] regexChars = new String[]{"|"};
-    private IGBService igbService;
+    private IgbService igbService;
 
     public class SearchModeAction extends GenericAction {
 
@@ -278,7 +278,7 @@ public final class SearchView extends IgbTabPanel implements
         }
     };
 
-    public SearchView(IGBService igbService) {
+    public SearchView(IgbService igbService) {
         super(BUNDLE.getString("searchTab"), BUNDLE.getString("searchTab"), BUNDLE.getString("advancedSearchTooltip"), false, TAB_POSITION);
         this.igbService = igbService;
         group = gmodel.getSelectedSeqGroup();

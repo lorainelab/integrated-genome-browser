@@ -1,6 +1,6 @@
 package com.gene.igbscript;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ public class IGBScriptEngineFactory implements ScriptEngineFactory {
     private List<String> mimeTypes;
     private List<String> names;
 
-    public IGBScriptEngineFactory(IGBService igbService) {
+    public IGBScriptEngineFactory(IgbService igbService) {
         igbScriptEngine = new IGBScriptEngine(this, igbService);
         extensions = Collections.nCopies(1, FILEEXT);
         mimeTypes = Arrays.asList(MIMETYPES);

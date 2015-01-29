@@ -5,7 +5,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
@@ -41,7 +41,7 @@ public class ExportSelectedAnnotationFileAction extends AbstractExportFileAction
 
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
-        List<TierGlyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        List<TierGlyph> answer = IgbServiceImpl.getInstance().getSelectedTierGlyphs();
         ExportSelectedAnnotationFileAction.getAction().setEnabled((1 == answer.size())
                 && !(answer.get(0).getSelected().isEmpty())
                 && isExportable(answer.get(0).getFileTypeCategory()));

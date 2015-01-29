@@ -17,19 +17,19 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     private TranscriptIsoformEvidenceVisualizationManager tievListener;
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, final IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, final IgbService igbService) throws Exception {
         tievListener = new TranscriptIsoformEvidenceVisualizationManager(igbService);
         igbService.getSeqMapView().addToRefreshList(tievListener);
         igbService.getSeqMap().addMouseListener(tievListener);
@@ -107,9 +107,9 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
     public void stop(BundleContext bundleContext) throws Exception {
         super.stop(bundleContext);
         tievListener.clearExonConnectorGlyphs();
-        ServiceReference<IGBService> igbServiceReference = bundleContext.getServiceReference(IGBService.class);
+        ServiceReference<IgbService> igbServiceReference = bundleContext.getServiceReference(IgbService.class);
         if (igbServiceReference != null) {
-            IGBService igbService = bundleContext.getService(igbServiceReference);
+            IgbService igbService = bundleContext.getService(igbServiceReference);
             igbService.getSeqMap().updateWidget();
         }
     }

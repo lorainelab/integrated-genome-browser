@@ -4,13 +4,13 @@ import javax.script.ScriptEngineFactory;
 
 import com.affymetrix.igb.swing.Operation;
 import com.affymetrix.igb.swing.ScriptProcessor;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 public class IGBScriptProcessor implements ScriptProcessor {
 
-    private IGBService igbService;
+    private IgbService igbService;
 
-    public IGBScriptProcessor(IGBService igbService) {
+    public IGBScriptProcessor(IgbService igbService) {
         super();
         this.igbService = igbService;
     }

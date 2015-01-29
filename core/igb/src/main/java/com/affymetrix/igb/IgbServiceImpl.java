@@ -28,7 +28,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
@@ -69,20 +69,20 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * implementation of the IGBService, using the IGB instance for all of the
- * methods. This is the way for bundles to access IGB functionality that is not
+ * implementation of the IgbService, using the IGB instance for all of the
+ methods. This is the way for bundles to access IGB functionality that is not
  * public.
  *
  */
-public class IGBServiceImpl implements IGBService, BundleActivator {
+public class IgbServiceImpl implements IgbService, BundleActivator {
 
-    private static IGBServiceImpl instance = new IGBServiceImpl();
+    private static IgbServiceImpl instance = new IgbServiceImpl();
 
-    public static IGBServiceImpl getInstance() {
+    public static IgbServiceImpl getInstance() {
         return instance;
     }
 
-    private IGBServiceImpl() {
+    private IgbServiceImpl() {
         super();
     }
 

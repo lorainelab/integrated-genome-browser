@@ -21,7 +21,7 @@ import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.VCF;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
@@ -29,11 +29,11 @@ import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {
 
     private final List<VCF> vcfs = new ArrayList<>();
-    private final IGBService igbService;
+    private final IgbService igbService;
     private final Map<String, List<String>> selections;
     private TierGlyph lastClickedGlyph;
 
-    public VCFListener(IGBService igbService) {
+    public VCFListener(IgbService igbService) {
         super();
         this.igbService = igbService;
         selections = new HashMap<>();

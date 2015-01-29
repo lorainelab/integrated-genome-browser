@@ -18,7 +18,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -65,7 +65,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
     }
 
     private ServiceRegistration<?>[] getServices(final BundleContext bundleContext,
-            final IGBService igbService, final IWindowService windowService) throws Exception {
+            final IgbService igbService, final IWindowService windowService) throws Exception {
         final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
         GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
         JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
@@ -105,10 +105,10 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext) throws Exception {
         initActions();
 
-        XServiceRegistrar<IGBService> igbServiceRegistrar = new XServiceRegistrar<IGBService>(IGBService.class) {
+        XServiceRegistrar<IgbService> igbServiceRegistrar = new XServiceRegistrar<IgbService>(IgbService.class) {
 
             @Override
-            protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IGBService igbService) throws Exception {
+            protected ServiceRegistration<?>[] getServices(final BundleContext bundleContext, final IgbService igbService) throws Exception {
 
                 XServiceRegistrar<IWindowService> windowServiceRegistrar = new XServiceRegistrar<IWindowService>(IWindowService.class) {
 

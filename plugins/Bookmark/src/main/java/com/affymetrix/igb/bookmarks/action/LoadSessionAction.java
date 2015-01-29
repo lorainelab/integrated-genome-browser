@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.google.common.base.Charsets;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;  
@@ -19,12 +19,12 @@ import javax.swing.JFileChooser;
 public class LoadSessionAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
-    private IGBService igbService;
+    private IgbService igbService;
     private static LoadSessionAction ACTION;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
-    public static void createAction(IGBService igbService) {
+    public static void createAction(IgbService igbService) {
         ACTION = new LoadSessionAction(igbService);
     }
 
@@ -32,7 +32,7 @@ public class LoadSessionAction extends GenericAction {
         return ACTION;
     }
 
-    private LoadSessionAction(IGBService igbService) {
+    private LoadSessionAction(IgbService igbService) {
         super(BookmarkManagerView.BUNDLE.getString("loadSession"), BookmarkManagerView.BUNDLE.getString("openSessionTooltip"),
                 "16x16/actions/load_session.png", "22x22/actions/load_session.png",
                 KeyEvent.VK_L, null, true);

@@ -7,7 +7,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
@@ -18,14 +18,14 @@ import java.util.Optional;
 public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.RefreshSelectionListener {
 
     private static final long serialVersionUID = 1L;
-    private final IGBService igbService;
+    private final IgbService igbService;
     private GraphVisibleBoundsSetter vis_bounds_setter;
     private boolean is_listening = true; // used to turn on and off listening to GUI events
 
     /**
      * Creates new form YScaleAxisGUI
      */
-    public YScaleAxisGUI(IGBService igbService) {
+    public YScaleAxisGUI(IgbService igbService) {
         super();
         this.igbService = igbService;
         vis_bounds_setter = new GraphVisibleBoundsSetter(igbService.getSeqMap());
@@ -72,13 +72,21 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         by_valRB_val.setText("Value");
         by_valRB_val.setToolTipText("Value is absolute Y-axis value");
         by_valRB_val.setIconTextGap(2);
-        by_valRB_val.addActionListener(this::by_valRB_valActionPerformed);
+        by_valRB_val.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                by_valRB_valActionPerformed(evt);
+            }
+        });
 
         VisibleRangeButtonGroup.add(by_percentileRB_val);
         by_percentileRB_val.setText("Percentile");
         by_percentileRB_val.setToolTipText("Sets Y-axis to show percentile of data");
         by_percentileRB_val.setIconTextGap(2);
-        by_percentileRB_val.addActionListener(this::by_percentileRB_valActionPerformed);
+        by_percentileRB_val.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                by_percentileRB_valActionPerformed(evt);
+            }
+        });
 
         rangeSlider.setToolTipText("Set left knob to minimum and right know to maxium.");
 
@@ -86,11 +94,19 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
 
         minText.setColumns(5);
         minText.setToolTipText("Minimum value");
-        minText.addActionListener(this::minTextActionPerformed);
+        minText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minTextActionPerformed(evt);
+            }
+        });
 
         maxText.setColumns(8);
         maxText.setToolTipText("Maximum value");
-        maxText.addActionListener(this::maxTextActionPerformed);
+        maxText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxTextActionPerformed(evt);
+            }
+        });
 
         maxValLabel.setText("Max:");
 
@@ -106,7 +122,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
                 .add(maxValLabel)
                 .add(0, 0, 0)
                 .add(maxText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 84, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .add(RangePanelLayout.createSequentialGroup()
                 .add(RangePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(RangePanelLayout.createSequentialGroup()
@@ -138,7 +154,11 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         heightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Height"));
         heightPanel.setToolTipText("Changes the height for selected graph");
 
-        heightSlider.addChangeListener(this::heightSliderStateChanged);
+        heightSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                heightSliderStateChanged(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout heightPanelLayout = new org.jdesktop.layout.GroupLayout(heightPanel);
         heightPanel.setLayout(heightPanelLayout);
@@ -281,7 +301,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         int stretchableCount = 0;
         for (TierGlyph glyph : igbService.getVisibleTierGlyphs()) {
             if (isTierFloating((Glyph) glyph)) {
-                Optional<FileTypeCategory> fileTypeCategory = getTierGlyphFileTypeCategory((Glyph)glyph);
+                Optional<FileTypeCategory> fileTypeCategory = getTierGlyphFileTypeCategory((Glyph) glyph);
                 if (fileTypeCategory.isPresent()) {
                     if (fileTypeCategory.get() != FileTypeCategory.Sequence) {
                         stretchableCount++;

@@ -16,10 +16,10 @@ import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.swing.ScriptManager;
 import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import java.net.URI;
@@ -37,11 +37,11 @@ public class OpenURIAction extends SeqMapViewActionA {
     public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("customSpecies");
     public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
     protected static final GenometryModel gmodel = GenometryModel.getInstance();
-    protected final IGBService igbService;
+    protected final IgbService igbService;
 
     public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
         super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
-        igbService = IGBServiceImpl.getInstance();
+        igbService = IgbServiceImpl.getInstance();
     }
 
     public void openURI(URI uri, final String fileName, final boolean mergeSelected,

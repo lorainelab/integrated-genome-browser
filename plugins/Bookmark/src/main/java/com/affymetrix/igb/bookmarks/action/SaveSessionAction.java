@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.google.common.base.Charsets;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
@@ -24,7 +24,7 @@ import javax.swing.JFileChooser;
 public class SaveSessionAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
-    private IGBService igbService;
+    private IgbService igbService;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
@@ -32,7 +32,7 @@ public class SaveSessionAction extends GenericAction {
 
     private static SaveSessionAction ACTION;
 
-    public static void createAction(IGBService igbService) {
+    public static void createAction(IgbService igbService) {
         ACTION = new SaveSessionAction(igbService);
     }
 
@@ -40,7 +40,7 @@ public class SaveSessionAction extends GenericAction {
         return ACTION;
     }
 
-    private SaveSessionAction(IGBService igbService) {
+    private SaveSessionAction(IgbService igbService) {
         super(BookmarkManagerView.BUNDLE.getString("saveSession"), BookmarkManagerView.BUNDLE.getString("saveSessionTooltip"),
                 "16x16/actions/save_session.png", "22x22/actions/save_session.png",
                 KeyEvent.VK_S, null, true);

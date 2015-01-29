@@ -12,7 +12,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Cursor;
@@ -36,7 +36,7 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
         closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
     }
 
-    public static void init(IGBService _igbService) {
+    public static void init(IgbService _igbService) {
         GeneralLoadView.init(_igbService);
         singleton = new GeneralLoadViewGUI(_igbService);
     }
@@ -48,7 +48,7 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
     /**
      * Creates new form GeneralLoadView
      */
-    public GeneralLoadViewGUI(IGBService _igbService) {
+    public GeneralLoadViewGUI(IgbService _igbService) {
         super(BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTab"), BUNDLE.getString("dataAccessTooltip"), true, TAB_POSITION);
         initComponents();
     }

@@ -10,17 +10,17 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 public class TrackFromHitsAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
     private static final String TYPE = FindAnnotationsView.BUNDLE.getString("findannotationsTrackFromHits");
-    private final IGBService igbService;
+    private final IgbService igbService;
     private final JTextField textField;
     private final AnnotationsTableModel tableModel;
 
-    public TrackFromHitsAction(IGBService igbService, JTextField textField, AnnotationsTableModel tableModel) {
+    public TrackFromHitsAction(IgbService igbService, JTextField textField, AnnotationsTableModel tableModel) {
         super(null, null, null);
         this.igbService = igbService;
         this.textField = textField;

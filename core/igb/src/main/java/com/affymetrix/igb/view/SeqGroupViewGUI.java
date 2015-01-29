@@ -2,7 +2,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.JRPStyledTable;
 import java.awt.Cursor;
@@ -19,7 +19,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
     private static SeqGroupViewGUI singleton;
     private SeqGroupView seqGroupModel;
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;
-    private IGBService igbService;
+    private IgbService igbService;
 
     static {
         defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -27,7 +27,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
     }
 
-    public static void init(IGBService _igbService) {
+    public static void init(IgbService _igbService) {
         singleton = new SeqGroupViewGUI(_igbService);
     }
 
@@ -35,7 +35,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         return singleton;
     }
 
-    private SeqGroupViewGUI(IGBService _igbService) {
+    private SeqGroupViewGUI(IgbService _igbService) {
         super(BUNDLE.getString("genomeTab"), BUNDLE.getString("genomeTab"), BUNDLE.getString("currentGenomeTooltip"), true, TAB_POSITION);
         this.igbService = igbService;
         SeqGroupView.init(_igbService);

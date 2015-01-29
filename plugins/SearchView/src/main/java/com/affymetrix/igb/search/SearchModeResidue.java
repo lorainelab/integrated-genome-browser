@@ -40,7 +40,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -66,7 +66,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         Color.pink};//Distinct Colors for View/Print Ease
 
     private final List<GlyphI> glyphs = new ArrayList<>();
-    private IGBService igbService;
+    private IgbService igbService;
     private int color = 0;
     private boolean optionSelected;
 
@@ -111,7 +111,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         }
     };
 
-    public SearchModeResidue(IGBService igbService) {
+    public SearchModeResidue(IgbService igbService) {
         super();
         this.igbService = igbService;
         igbService.getSeqMapView().addToRefreshList(this);

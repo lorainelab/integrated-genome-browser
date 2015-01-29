@@ -15,16 +15,16 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class FindAnnotationsSelectListener implements MouseListener {
 
     private static final int MAX_CHILDREN = 1000;
     private final JTable table;
-    private final IGBService igbService;
+    private final IgbService igbService;
 
-    public FindAnnotationsSelectListener(JTable table, IGBService igbService) {
+    public FindAnnotationsSelectListener(JTable table, IgbService igbService) {
         super();
         this.table = table;
         this.igbService = igbService;

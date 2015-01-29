@@ -27,14 +27,14 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.util.EnumMap;
 
 public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefreshed, SeqSelectionListener, MouseListener, MouseMotionListener {
 
-    private final IGBService igbService;
+    private final IgbService igbService;
     private List<TierGlyph> refSeqTiers;
     private final Map<StyledGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>> intronSpan2Glyphs;
     private int maxCount;
@@ -42,7 +42,7 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
     ;
 	private ExonConnectorGlyph.DensityDisplay showDensity = ExonConnectorGlyph.DensityDisplay.THICKNESS;
 
-    public TranscriptIsoformEvidenceVisualizationManager(IGBService igbService) {
+    public TranscriptIsoformEvidenceVisualizationManager(IgbService igbService) {
         super();
         this.igbService = igbService;
         this.refSeqTiers = new ArrayList<>();

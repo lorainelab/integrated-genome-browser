@@ -1,5 +1,8 @@
 package com.affymetrix.igb.property;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Deactivate;
+import aQute.bnd.annotation.component.Reference;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.*;
@@ -19,12 +22,15 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.JRPStyledTable;
 
+@Component(name = PropertyView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public final class PropertyView extends IgbTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 
+    public static final String COMPONENT_NAME = "PropertyView";
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
     private static final int TAB_POSITION = 4;
@@ -36,20 +42,32 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
     private TableRowSorter<TableModel> sorter;
     private static final String PROPERTY = "property";
     private Set<PropertyListener> propertyListeners = new HashSet<>();
-    private IGBService igbService;
+    private IgbService igbService;
 
-    PropertyView(IGBService igbService) {
+    public PropertyView() {
         super(BUNDLE.getString("propertyViewTab"), BUNDLE.getString("propertyViewTab"), BUNDLE.getString("selectionInfoTooltip"), false, TAB_POSITION);
-        this.igbService = igbService;
         JViewport jvp = new JViewport();
         scroll_pane.setColumnHeaderView(jvp);
+        //TODO cleanup this code... why instantiate a class here?
         new JTableCutPasteAdapter(table, true);
+         //TODO cleanup this code... why instantiate a class here?
         new PropertyViewHelper(table);
         this.setPreferredSize(new java.awt.Dimension(100, 250));
         this.setMinimumSize(new java.awt.Dimension(100, 250));
         GenometryModel.getInstance().addSymSelectionListener(this);
         GenometryModel.getInstance().addGroupSelectionListener(this);
+    }
+
+    @Deactivate
+    public void stop() {
+        igbService.getSeqMapView().setPropertyHandler(null);
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
         propertyListeners.add((PropertyListener) igbService.getSeqMapView().getMouseListener());
+        igbService.getSeqMapView().setPropertyHandler(this);
     }
 
     @Override

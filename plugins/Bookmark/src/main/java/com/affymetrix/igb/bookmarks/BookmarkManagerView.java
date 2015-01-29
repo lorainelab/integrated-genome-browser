@@ -16,7 +16,7 @@ import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.FileTracker;
 import com.google.common.collect.ImmutableListMultimap;
 import java.awt.Container;
@@ -93,7 +93,7 @@ public final class BookmarkManagerView {
     private boolean doNotShowWarning = false;
     private final BookmarkPropertiesGUI bpGUI;
     private BookmarkList selected_bl = null;
-    public final IGBService igbService;
+    public final IgbService igbService;
     private static final CopyBookmarkAction COPY_ACTION = CopyBookmarkAction.getAction();
 
     private KeyAdapter kl = new KeyAdapter() {
@@ -146,7 +146,7 @@ public final class BookmarkManagerView {
         }
     };
 
-    public static void init(IGBService _igbService) {
+    public static void init(IgbService _igbService) {
         if (singleton == null) {
             singleton = new BookmarkManagerView(_igbService);
         }
@@ -159,7 +159,7 @@ public final class BookmarkManagerView {
     /**
      * Creates a new instance of Class
      */
-    private BookmarkManagerView(IGBService igbService) {
+    private BookmarkManagerView(IgbService igbService) {
         this.igbService = igbService;
         tree = new JTree();
         tree.setDragEnabled(true);

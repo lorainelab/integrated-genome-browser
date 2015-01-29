@@ -32,7 +32,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
@@ -70,13 +70,13 @@ public final class GeneralLoadView {
     private static DataManagementTableModel tableModel;
     private FeatureTreeView feature_tree_view;
     private static GeneralLoadView singleton;
-    private static IGBService igbService;
+    private static IgbService igbService;
     //gui components
     private static JTableX table;
     private static javax.swing.JTree tree;
     private boolean showLoadingConfirm = false;
 
-    public static void init(IGBService _igbService) {
+    public static void init(IgbService _igbService) {
         singleton = new GeneralLoadView(_igbService);
     }
 
@@ -87,7 +87,7 @@ public final class GeneralLoadView {
     /**
      * Creates new form GeneralLoadView
      */
-    private GeneralLoadView(IGBService _igbService) {
+    private GeneralLoadView(IgbService _igbService) {
         igbService = _igbService;
         gviewer = Application.getSingleton().getMapView();
         initComponents();

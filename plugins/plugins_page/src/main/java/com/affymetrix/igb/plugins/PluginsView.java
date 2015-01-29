@@ -49,7 +49,7 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.shared.JRPStyledTable;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 import org.apache.commons.lang3.StringUtils;
@@ -87,15 +87,15 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
     private OSGIImpl osgiImpl;
-    private IGBService igbService;
+    private IgbService igbService;
 
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
 
-    public PluginsView(IGBService igbService) {
+    public PluginsView(IgbService igbService) {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
         this.igbService = igbService;
-        latest = new HashMap< >();
+        latest = new HashMap<>();
         osgiImpl = new Felix();
 
         igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
@@ -427,7 +427,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
      */
     private void setRepositoryBundles() {
         Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
-        List< Bundle> repositoryBundles = new ArrayList< >();
+        List< Bundle> repositoryBundles = new ArrayList<>();
         for (Resource resource : allResourceArray) {
 //            if (checkRequirements(resource.getRequirements())) {
             repositoryBundles.add(new ResourceWrapper(resource));
@@ -444,9 +444,9 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getComponentName());
+        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getName());
         //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getComponentName());
+        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
         //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
         repoAdmin = osgiImpl.getRepositoryAdmin(bundleContext);
         igbService.getRepositoryChangerHolder().getRepositories().values().forEach(this::repositoryAdded);
@@ -582,7 +582,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
      * update the set of all bundles (unfiltered) due to a change
      */
     private synchronized void setUnfilteredBundles() {
-        unfilteredBundles = new ArrayList< >();
+        unfilteredBundles = new ArrayList<>();
         latest.clear();
         if (installedBundles != null) {
             installedBundles.forEach(this::addBundle);
@@ -596,7 +596,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
      * filter the unfiltered bundles using the current bundle filter
      */
     private synchronized void filterBundles() {
-        filteredBundles = new ArrayList< >();
+        filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
             if (SYSTEM_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
                 filteredBundles.add(bundle);

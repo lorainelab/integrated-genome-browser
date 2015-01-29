@@ -9,8 +9,7 @@ import javax.swing.JToolBar;
 import javax.swing.JMenuBar;
 
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
 
 public interface IWindowService {
 	/**
@@ -80,7 +79,7 @@ public interface IWindowService {
 	 * @param panel the tab to change
 	 * @param tabState the new state
 	 */
-	public void setTabStateAndMenu(IgbTabPanelI panel, TabState tabState);
+	public void setTabStateAndMenu(IgbTabPanel panel, TabState tabState);
 	/**
 	 * select the given tab in the tab panel, bringing it to the front
 	 * @param panel the IGBTabPanel

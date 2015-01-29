@@ -45,7 +45,7 @@ import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.genometry.util.XMLUtils;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.util.Collections;
 
 /**
@@ -73,9 +73,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
     // first key is server URL, second key is featureURL, third key is property
     private final Map<String, Map<String, Map<String, Object>>> featuresMap = new HashMap<>();
     private AnnotatedSeqGroup currentGroup;
-    private final IGBService igbService;
+    private final IgbService igbService;
 
-    public DASRegistryServerType(IGBService igbService) {
+    public DASRegistryServerType(IgbService igbService) {
         super();
         this.igbService = igbService;
         GenometryModel.getInstance().addGroupSelectionListener(this);

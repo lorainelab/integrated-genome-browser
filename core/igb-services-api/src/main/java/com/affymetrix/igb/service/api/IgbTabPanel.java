@@ -3,6 +3,8 @@ package com.affymetrix.igb.service.api;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -16,6 +18,62 @@ import com.affymetrix.igb.swing.util.Idable;
 public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPanel>, JRPWidget, Idable, IgbTabPanelI {
 
     private static final long serialVersionUID = 1L;
+    public static final int DEFAULT_TAB_POSITION = Integer.MAX_VALUE - 1;
+
+    /**
+     * the current state of the tab
+     */
+    public enum TabState {
+
+        COMPONENT_STATE_LEFT_TAB(true, true),
+        COMPONENT_STATE_RIGHT_TAB(true, true),
+        COMPONENT_STATE_BOTTOM_TAB(true, false),
+        COMPONENT_STATE_WINDOW(false, false),
+        COMPONENT_STATE_HIDDEN(false, false);
+
+        private final boolean tab;
+        private final boolean portrait;
+
+        TabState(boolean tab, boolean portrait) {
+            this.tab = tab;
+            this.portrait = portrait;
+        }
+
+        /**
+         * this state is a tab (left, right or botton)
+         *
+         * @return true if this state is a tab, false for hidden or
+         * windowed
+         */
+        public boolean isTab() {
+            return tab;
+        }
+
+        /**
+         * get the default tab state
+         *
+         * @return the default tab state
+         */
+        public static TabState getDefaultTabState() {
+            return COMPONENT_STATE_BOTTOM_TAB;
+        }
+
+        /**
+         * get the list of all tab states that the user can change
+         * the tab - depends on the initial tab state of the tab.
+         *
+         * @return a list of all compatible tab states
+         */
+        public List<TabState> getCompatibleTabStates() {
+            List<TabState> compatibleTabStates = new ArrayList<>();
+            for (TabState tabState : TabState.values()) {
+                if (portrait == tabState.portrait || !isTab() || !tabState.isTab()) {
+                    compatibleTabStates.add(tabState);
+                }
+            }
+            return compatibleTabStates;
+        }
+    }
 
     private class SelectAction extends GenericAction {
 
@@ -50,20 +108,15 @@ public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPan
         this.title = title;
         this.focus = focus;
         this.position = position;
-        this.id = "IGBTabPanel_" + this.getClass().getSimpleName();
+        this.id = "IgbTabPanel_" + this.getClass().getSimpleName();
         this.setToolTipText(tooltip);
         ScriptManager.getInstance().addWidget(this);
         selectAction = new SelectAction();
     }
 
     @Override
-    public String getComponentName() {
+    public String getName() {
         return getClass().getName();
-    }
-
-    @Override
-    public JPanel getTabContent() {
-        return this;
     }
 
     /**
@@ -103,7 +156,6 @@ public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPan
      *
      * @return the tab position
      */
-    @Override
     public int getPosition() {
         return position;
     }
@@ -113,7 +165,6 @@ public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPan
      *
      * @return the default state of this tab
      */
-    @Override
     public TabState getDefaultTabState() {
         return TabState.COMPONENT_STATE_BOTTOM_TAB;
     }
@@ -140,7 +191,7 @@ public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPan
 
     @Override
     public String toString() {
-        return "IGBTabPanel: " + "displayName = " + displayName + ", class = " + this.getClass().getName();
+        return "IgbTabPanel: " + "displayName = " + displayName + ", class = " + this.getClass().getName();
     }
 
     /**
@@ -227,5 +278,10 @@ public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPan
     }
 
     public void pack() {
+    }
+
+    @Override
+    public IgbTabPanel getIgbTabPanel() {
+        return this;
     }
 }

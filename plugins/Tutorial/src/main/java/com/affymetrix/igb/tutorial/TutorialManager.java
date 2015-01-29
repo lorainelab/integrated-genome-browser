@@ -5,7 +5,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.*;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -27,7 +27,7 @@ import javax.swing.event.MenuListener;
 public class TutorialManager implements GenericActionListener, GenericActionDoneCallback {
 
     private final TutorialNavigator tutorialNavigator;
-    protected final IGBService igbService;
+    protected final IgbService igbService;
     private boolean tutorialDisplayed = false;
     private TutorialStep[] tutorial = null;
     private String waitFor = null;
@@ -60,7 +60,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     };
     private int stepIndex = 0;
 
-    public TutorialManager(IGBService igbService, IWindowService windowService) {
+    public TutorialManager(IgbService igbService, IWindowService windowService) {
         super();
         addRecordPlayback(igbService);
         this.tutorialNavigator = new TutorialNavigator(new TutorialBackAction(this), new TutorialNextAction(this), new TutorialCancelAction(this));
@@ -295,7 +295,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
         tutorialDone();
     }
 
-    private void addRecordPlayback(IGBService igbService) {
+    private void addRecordPlayback(IgbService igbService) {
     }
 
     public void addJComponent(String id, JComponent comp) {

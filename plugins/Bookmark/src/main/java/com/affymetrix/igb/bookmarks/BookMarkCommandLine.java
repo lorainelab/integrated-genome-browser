@@ -2,12 +2,13 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericServerInitListener;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.net.MalformedURLException;
-import javax.swing.SwingUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  *
@@ -15,13 +16,13 @@ import org.slf4j.LoggerFactory;
  */
 public class BookMarkCommandLine {
 
-    private final IGBService igbService;
+    private final IgbService igbService;
     private ServiceRegistration registration;
     private final String url;
     private final boolean force;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BookMarkCommandLine.class);
+    private static final Logger logger = LoggerFactory.getLogger(BookMarkCommandLine.class);
 
-    BookMarkCommandLine(final BundleContext bundleContext, final IGBService igbService, final String url, final boolean force) {
+    BookMarkCommandLine(final BundleContext bundleContext, final IgbService igbService, final String url, final boolean force) {
         this.igbService = igbService;
         this.url = url;
         this.force = force;
@@ -55,16 +56,10 @@ public class BookMarkCommandLine {
         try {
             final Bookmark bm = new Bookmark(null, "", url);
             if (bm.isValidBookmarkFormat()) {
-                SwingUtilities.invokeLater(() -> {
-                    try {
-                        //sleep thread to allow time for osgi bundles to completely load
-                        Thread.sleep(5000);
-                        logger.info("Loading bookmark: {0}", url);
-                        BookmarkController.viewBookmark(igbService, bm);
-                    } catch (InterruptedException ex) {
-                        logger.error("Thread Interrupted", ex.getMessage());
-                    }
-                });
+
+                logger.info("Loading bookmark: {0}", url);
+                BookmarkController.viewBookmark(igbService, bm);
+
             } else {
                 logger.error("Invalid bookmark given with -href argument: \n{0}", url);
             }

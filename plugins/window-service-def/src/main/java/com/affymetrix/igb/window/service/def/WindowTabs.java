@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.TabHolder;
-import com.affymetrix.igb.service.api.IgbTabPanelI.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
 import com.affymetrix.igb.window.service.IMenuCreator;
 
 /**
@@ -45,7 +45,7 @@ public class WindowTabs implements TabHolder {
      * @param comp the tab panel
      */
     private void openCompInWindow(final IgbTabPanel comp) {
-        final String name = comp.getComponentName();
+        final String name = comp.getName();
         final String display_name = comp.getDisplayName();
 
 //		Icon temp_icon = null;
@@ -84,7 +84,7 @@ public class WindowTabs implements TabHolder {
     }
 
     public void restoreWindowPosition(IgbTabPanel tabPanel) {
-        Rectangle pos = PreferenceUtils.retrieveWindowLocation(tabPanel.getComponentName(), tabPanel.getFrame().getBounds());
+        Rectangle pos = PreferenceUtils.retrieveWindowLocation(tabPanel.getName(), tabPanel.getFrame().getBounds());
         if (pos != null) {
             PreferenceUtils.setWindowSize(tabPanel.getFrame(), pos);
         }
@@ -105,12 +105,12 @@ public class WindowTabs implements TabHolder {
         JFrame frame = plugin.getFrame();
         if (frame != null) {
             final Container cont = frame.getContentPane();
-            PreferenceUtils.saveWindowLocation(frame, plugin.getComponentName());
+            PreferenceUtils.saveWindowLocation(frame, plugin.getName());
             cont.remove(plugin);
             cont.validate();
             frame.dispose();
             plugin.setFrame(null);
-            PreferenceUtils.saveComponentState(plugin.getComponentName(), TabState.COMPONENT_STATE_WINDOW.name());
+            PreferenceUtils.saveComponentState(plugin.getName(), TabState.COMPONENT_STATE_WINDOW.name());
         }
     }
 

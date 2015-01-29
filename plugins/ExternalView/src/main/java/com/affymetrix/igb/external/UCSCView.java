@@ -5,7 +5,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -40,7 +40,7 @@ public class UCSCView extends BrowserView {
      *
      * @param selector for selection foreground
      */
-    public UCSCView(JRPComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction_) {
+    public UCSCView(JRPComboBox selector, IgbService igbService, UCSCViewAction ucscViewAction_) {
         super(selector, igbService, ucscViewAction_);
     }
 

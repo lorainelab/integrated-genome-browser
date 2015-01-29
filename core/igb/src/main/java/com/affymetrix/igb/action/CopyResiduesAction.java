@@ -9,7 +9,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -102,7 +102,7 @@ public class CopyResiduesAction extends GenericAction {
                      */
                     GeneralUtils.copyToClipboard(residues);
                     String message = "Copied " + residues.length() + " residues" + from + " to clipboard";
-                    IGBServiceImpl.getInstance().setStatus(message);
+                    IgbServiceImpl.getInstance().setStatus(message);
                     success = true;
                 } else {
                     ErrorHandler.errorPanel("Missing Sequence Residues",

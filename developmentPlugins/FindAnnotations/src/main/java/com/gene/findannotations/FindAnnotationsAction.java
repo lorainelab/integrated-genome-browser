@@ -23,7 +23,7 @@ import javax.swing.table.TableRowSorter;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
@@ -32,14 +32,14 @@ import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 public class FindAnnotationsAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
-    private final IGBService igbService;
+    private final IgbService igbService;
     private final JTextField textField;
     private final JCheckBox selectedTracksCB;
     private final JTable resultsTable;
     private final JButton trackFromHitsButton;
     private final IStatus status;
 
-    public FindAnnotationsAction(IGBService igbService, JTextField textField, JCheckBox selectedTracksCB, JTable resultsTable, JButton trackFromHitsButton, IStatus status) {
+    public FindAnnotationsAction(IgbService igbService, JTextField textField, JCheckBox selectedTracksCB, JTable resultsTable, JButton trackFromHitsButton, IStatus status) {
         super(null, null, null);
         this.igbService = igbService;
         this.textField = textField;

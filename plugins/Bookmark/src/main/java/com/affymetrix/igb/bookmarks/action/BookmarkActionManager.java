@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.*;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -40,11 +40,11 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
     private final Map<Object, Component> component_hash = new HashMap<>();
     private final JRPMenu main_bm_menu;
     private final BookmarkList main_bookmark_list;
-    private IGBService igbService;
+    private IgbService igbService;
     private static BookmarkActionManager instance;
     private static final Logger logger = LoggerFactory.getLogger(BookmarkActionManager.class);
 
-    public static void init(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
+    public static void init(IgbService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
         if (instance == null) {
             instance = new BookmarkActionManager(_igbService, bm_menu, main_bookmark_list);
         }
@@ -54,7 +54,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         return instance;
     }
 
-    public BookmarkActionManager(IGBService _igbService, JRPMenu bm_menu, BookmarkList main_bm_list) {
+    public BookmarkActionManager(IgbService _igbService, JRPMenu bm_menu, BookmarkList main_bm_list) {
         igbService = _igbService;
         main_bm_menu = bm_menu;
         main_bookmark_list = main_bm_list;

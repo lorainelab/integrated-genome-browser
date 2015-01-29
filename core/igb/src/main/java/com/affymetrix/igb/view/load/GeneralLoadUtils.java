@@ -42,7 +42,7 @@ import com.affymetrix.genometry.util.Timer;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
@@ -212,7 +212,7 @@ public final class GeneralLoadUtils {
 
         server.setEnabled(false);
         if (server.serverType == null) {
-            IGBServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
+            IgbServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
         }
     }
 

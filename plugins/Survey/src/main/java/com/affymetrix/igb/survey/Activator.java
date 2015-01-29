@@ -22,7 +22,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
 import com.google.common.io.Resources;
@@ -37,16 +37,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(Activator.class);
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("survey");
         JRPMenu surveysMenu = new JRPMenu("Survey_surveysMenu", "News and Surveys");
 

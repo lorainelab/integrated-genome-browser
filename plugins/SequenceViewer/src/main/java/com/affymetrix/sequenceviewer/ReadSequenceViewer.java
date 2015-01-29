@@ -6,11 +6,11 @@ import com.affymetrix.genometry.symmetry.SymWithResidues;
 import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 public class ReadSequenceViewer extends AbstractSequenceViewer {
 
-    public ReadSequenceViewer(IGBService igbService) {
+    public ReadSequenceViewer(IgbService igbService) {
         super(igbService);
     }
 

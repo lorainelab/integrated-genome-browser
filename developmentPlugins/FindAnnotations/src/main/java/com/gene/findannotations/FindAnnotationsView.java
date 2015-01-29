@@ -1,20 +1,33 @@
 package com.gene.findannotations;
 
+import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.IStatus;
+import org.apache.felix.dm.annotation.api.Component;
+import org.apache.felix.dm.annotation.api.ServiceDependency;
+import org.apache.felix.dm.annotation.api.Start;
 
+@Component(provides = IgbTabPanelI.class)
 public class FindAnnotationsView extends FindAnnotationsGUI {
 
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("findannotations");
-    private final FindAnnotationsAction findAnnotationsAction;
+    private FindAnnotationsAction findAnnotationsAction;
 
-    public FindAnnotationsView(final IGBService igbService) {
+    @ServiceDependency
+    private IgbService igbService;
+
+    public FindAnnotationsView() {
         super();
+
+    }
+
+    @Start
+    private void init() {
         searchTable.setModel(new AnnotationsTableModel());
         searchTable.setAutoCreateRowSorter(true);
         searchTable.addMouseListener(new FindAnnotationsSelectListener(searchTable, igbService));

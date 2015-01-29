@@ -33,7 +33,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.awt.Color;
@@ -72,7 +72,7 @@ public abstract class BookmarkController {
      * {@link BookmarkUnibrowControlServlet.getInstance()#goToBookmark}. If it
      * is an external bookmark, it will be opened in an external browser.
      */
-    public static void viewBookmark(IGBService igbService, Bookmark bm) {
+    public static void viewBookmark(IgbService igbService, Bookmark bm) {
         logger.debug("Loading bookmark");
         if (bm.isValidBookmarkFormat()) {
             try {
@@ -87,7 +87,7 @@ public abstract class BookmarkController {
         }
     }
 
-    public static void applyProperties(IGBService igbService, final BioSeq seq, final ListMultimap<String, String> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
+    public static void applyProperties(IgbService igbService, final BioSeq seq, final ListMultimap<String, String> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
         double default_ypos = GraphState.DEFAULT_YPOS;
         double default_yheight = GraphState.DEFAULT_YHEIGHT;
         Color defaultForegroundColor = Color.decode("0x0247FE");
@@ -249,7 +249,7 @@ public abstract class BookmarkController {
         tier_style.setHeight(yheight);
     }
 
-    private static void applyGraphProperties(IGBService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
+    private static void applyGraphProperties(IgbService igbService, GraphState gstate, GraphType graph_style_num, String heatmap_name,
             boolean use_floating_graphs, boolean show_label, boolean show_axis, double minvis, double maxvis,
             double score_thresh, int minrun_thresh, int maxgap_thresh, boolean show_thresh, int thresh_direction,
             String combo_name, Map<String, ITrackStyleExtended> combos) {

@@ -14,7 +14,7 @@ import com.affymetrix.genometry.util.GFileChooser;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.IGBServiceImpl;
+import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.shared.FileTracker;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.ActionEvent;
@@ -57,7 +57,7 @@ public abstract class AbstractExportFileAction
      */
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
-        List<TierGlyph> answer = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        List<TierGlyph> answer = IgbServiceImpl.getInstance().getSelectedTierGlyphs();
         if (answer.size() != 1) {
             setEnabled(false);
         } else {
@@ -69,7 +69,7 @@ public abstract class AbstractExportFileAction
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<TierGlyph> current_tiers = IGBServiceImpl.getInstance().getSelectedTierGlyphs();
+        List<TierGlyph> current_tiers = IgbServiceImpl.getInstance().getSelectedTierGlyphs();
         if (current_tiers.size() > 1) {
             ErrorHandler.errorPanel(BUNDLE.getString("multTrackError"));
         } else if (current_tiers.isEmpty()) {

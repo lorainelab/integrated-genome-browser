@@ -4,20 +4,20 @@ import com.affymetrix.common.ExtensionPointHandler;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.BundleActivator;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ServerTypeI.class);
         DASRegistryServerType drst = new DASRegistryServerType(igbService);
         if (GenometryModel.getInstance().getSelectedSeqGroup() != null) {

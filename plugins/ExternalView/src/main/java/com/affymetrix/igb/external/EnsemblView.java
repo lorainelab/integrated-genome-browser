@@ -4,7 +4,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -41,7 +41,7 @@ public class EnsemblView extends BrowserView {
      *
      * @param selector selects foreground
      */
-    public EnsemblView(JRPComboBox selector, IGBService igbService, UCSCViewAction ucscViewAction) {
+    public EnsemblView(JRPComboBox selector, IgbService igbService, UCSCViewAction ucscViewAction) {
         super(selector, igbService, ucscViewAction);
     }
 

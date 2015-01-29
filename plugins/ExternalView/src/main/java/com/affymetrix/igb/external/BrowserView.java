@@ -1,7 +1,7 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Image;
@@ -41,7 +41,7 @@ public abstract class BrowserView extends JPanel {
     protected final JRPButton settingsButton;
     private BrowserImage browserImage = new BrowserImage();
     private final JScrollPane scroll = new JScrollPane();
-//	private final IGBService igbService;
+//	private final IgbService igbService;
     private final UCSCViewAction ucscViewAction;
 
     public abstract JDialog getViewHelper(Window window);
@@ -70,7 +70,7 @@ public abstract class BrowserView extends JPanel {
         cookieMap.put(key, value);
     }
 
-    public BrowserView(JComboBox selector, final IGBService igbService, final UCSCViewAction ucscViewAction) {
+    public BrowserView(JComboBox selector, final IgbService igbService, final UCSCViewAction ucscViewAction) {
         super();
 //		this.igbService = igbService;
         update_button = new JRPButton(getClass().getSimpleName() + "_updateButton", ExternalViewer.BUNDLE.getString("update"));

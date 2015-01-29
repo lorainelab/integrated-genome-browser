@@ -5,22 +5,22 @@ import org.osgi.framework.BundleActivator;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometry.event.GenericServerInitListener;
-import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.SearchListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class Activator extends XServiceRegistrar<IGBService> implements BundleActivator {
+public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     public Activator() {
-        super(IGBService.class);
+        super(IgbService.class);
     }
 
     @Override
-    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IGBService igbService) throws Exception {
+    protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
         final SearchView searchView = new SearchView(igbService);
         ExtensionPointHandler<ISearchModeSym> extensionPointSym = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
         extensionPointSym.addListener(new ExtensionPointListener<ISearchModeSym>() {
@@ -36,7 +36,7 @@ public class Activator extends XServiceRegistrar<IGBService> implements BundleAc
         });
 
         return new ServiceRegistration[]{
-            bundleContext.registerService(IgbTabPanel.class, searchView, null),
+            bundleContext.registerService(IgbTabPanelI.class, searchView, null),
             bundleContext.registerService(SearchListener.class, searchView, null),
             bundleContext.registerService(GenericServerInitListener.class, searchView, null),};
     }

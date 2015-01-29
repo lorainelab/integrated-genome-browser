@@ -231,3 +231,5 @@ extbundles/*
 /optionalPlugins/igb-command-socket/target/
 /optionalPlugins/tutorial-helper/target/
 /optionalPlugins/merge-annotation-operator/target/
+/plugins/track-operations-panel/target/
+/plugins/selection-tracker/target/

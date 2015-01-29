@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 
 public class SampleSelectionView extends IgbTabPanel {
@@ -43,7 +43,7 @@ public class SampleSelectionView extends IgbTabPanel {
     private SampleSelectionCallback callback;
     private Map<String, List<String>> selections; // key is type, value is list of samples
 
-    public SampleSelectionView(IGBService igbService) {
+    public SampleSelectionView(IgbService igbService) {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), "", false);
         selectionProcessing = false;
         setLayout(new BorderLayout());

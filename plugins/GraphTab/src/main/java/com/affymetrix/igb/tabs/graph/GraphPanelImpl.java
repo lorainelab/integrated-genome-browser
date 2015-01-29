@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tabs.graph;
 
+import com.affymetrix.igb.tabs.graph.GraphPanel;
 import java.awt.event.ActionEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -9,7 +10,7 @@ import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.DynamicStyleHeatMap;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.Actions;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
@@ -17,9 +18,9 @@ import static com.affymetrix.igb.shared.Selections.*;
 public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSelectionListener {
 
     private static final long serialVersionUID = 1L;
-    protected IGBService igbService;
+    protected IgbService igbService;
 
-    public GraphPanelImpl(IGBService _igbService) {
+    public GraphPanelImpl(IgbService _igbService) {
         super();
         igbService = _igbService;
         resetAll();

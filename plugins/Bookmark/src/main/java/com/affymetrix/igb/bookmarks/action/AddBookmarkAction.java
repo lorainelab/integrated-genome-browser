@@ -5,15 +5,15 @@ import java.awt.event.ActionEvent;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 public class AddBookmarkAction extends BookmarkAction {
 
     private static final long serialVersionUID = 1L;
     private static AddBookmarkAction ACTION;
-    private final IGBService igbService;
+    private final IgbService igbService;
 
-    public static void createAction(IGBService igbService) {
+    public static void createAction(IgbService igbService) {
         ACTION = new AddBookmarkAction(igbService);
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
@@ -22,7 +22,7 @@ public class AddBookmarkAction extends BookmarkAction {
         return ACTION;
     }
 
-    private AddBookmarkAction(IGBService igbService) {
+    private AddBookmarkAction(IgbService igbService) {
         super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
                 "22x22/actions/bookmark-new.png");
         this.igbService = igbService;

@@ -11,14 +11,14 @@ import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.util.ErrorHandler;
 
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 
 public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
 
     private static final long serialVersionUID = 1l;
-    private IGBService igbService;
+    private IgbService igbService;
 
-    public ViewGenomicSequenceInSeqViewerAction(IGBService igbService) {
+    public ViewGenomicSequenceInSeqViewerAction(IgbService igbService) {
         super(AbstractSequenceViewer.BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/Sequence_Viewer.png", "22x22/actions/Sequence_Viewer.png", KeyEvent.VK_UNDEFINED, null, false);
         GenometryModel.getInstance().addSymSelectionListener(this);
         setEnabled(false);

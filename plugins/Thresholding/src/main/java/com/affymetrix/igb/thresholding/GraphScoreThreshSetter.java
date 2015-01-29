@@ -18,7 +18,7 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.genometry.operator.Operator;
-import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -79,7 +79,7 @@ public final class GraphScoreThreshSetter extends JPanel
     private static final int THRESH_TYPE_VALUE = 2;
     private static int prev_thresh_type = THRESH_TYPE_VALUE;
     private List<GraphGlyph> graphs = new ArrayList<>();
-    private IGBService igbService;
+    private IgbService igbService;
     private final NeoAbstractWidget widg;
     private final MaxGapThresholder max_gap_thresher;
     private final MinRunThresholder min_run_thresher;
@@ -128,7 +128,7 @@ public final class GraphScoreThreshSetter extends JPanel
         shift_format = new DecimalFormat();
     }
 
-    public GraphScoreThreshSetter(IGBService igbService) {
+    public GraphScoreThreshSetter(IgbService igbService) {
         this.igbService = igbService;
         this.widg = igbService.getSeqMap();
 

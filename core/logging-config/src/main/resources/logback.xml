@@ -11,7 +11,7 @@
     <!--    <logger name="org.eclipse.jetty.util.log" level="INFO" />
     <logger name="org.apache.aries.jpa" level="INFO" />-->
 <!--    <logger name="com.affymetrix.genometry.quickload" level="DEBUG" />-->
-    <!--    <logger name="com.affymetrix.igb.plugins" level="DEBUG" />-->
+<!--        <logger name="com.affymetrix.igb.plugins" level="DEBUG" />-->
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

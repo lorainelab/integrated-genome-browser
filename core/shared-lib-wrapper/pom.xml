@@ -177,6 +177,11 @@
                                     <version>${org.osgi.compendium-version}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.bundlerepository</artifactId>
+                                    <version>${felix-bundlerepository-version}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.broad</groupId>
                                     <artifactId>bigwig</artifactId>
                                     <version>${bigWigVersion}</version>

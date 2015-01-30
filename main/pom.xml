@@ -249,7 +249,12 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-              <scope>runtime</scope>  
+            <scope>runtime</scope>  
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.bundlerepository</artifactId>
+            <scope>runtime</scope>  
         </dependency>
         <!--End of plugin module dependencies--> 
         <dependency> 

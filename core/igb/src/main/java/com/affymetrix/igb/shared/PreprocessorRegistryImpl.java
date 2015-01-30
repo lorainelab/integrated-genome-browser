@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-
-
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
@@ -9,19 +9,18 @@ import com.google.common.collect.Table;
 import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
 import java.util.Collection;
 import java.util.Collections;
-import org.apache.felix.dm.annotation.api.Component;
-import org.apache.felix.dm.annotation.api.ServiceDependency;
 
 /**
  *
  * @author dcnorris
  */
-@Component
+@Component(name = PreprocessorRegistryImpl.COMPONENT_NAME, provide = PreprocessorRegistry.class)
 public class PreprocessorRegistryImpl implements PreprocessorRegistry {
 
-    private final static Table<String, FileTypeCategory, SeqSymmetryPreprocessorI> preprocessorTypeReferenceTable= HashBasedTable.create();
-   
-    @ServiceDependency(removed = "removePreprocessor")
+    public static final String COMPONENT_NAME = "PreprocessorRegistryImpl";
+    private final static Table<String, FileTypeCategory, SeqSymmetryPreprocessorI> preprocessorTypeReferenceTable = HashBasedTable.create();
+
+    @Reference(multiple = true, optional = true, dynamic = true, unbind = "removePreprocessor")
     @Override
     public void addPreprocessor(SeqSymmetryPreprocessorI factory) {
         checkNotNull(factory);

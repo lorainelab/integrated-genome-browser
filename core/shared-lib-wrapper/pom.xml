@@ -177,26 +177,6 @@
                                     <version>${org.osgi.compendium-version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
-                                    <version>${felix-dependencymanager-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager</artifactId>
-                                    <version>${felix-dependencymanager-version}</version>
-                                </artifactItem>            
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager.runtime</artifactId>
-                                    <version>${felix-dependencymanager-version}</version>
-                                </artifactItem>            
-                                <!--                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                                    <version>${felix-dependencymanager-version}</version>
-                                </artifactItem>-->
-                                <artifactItem>
                                     <groupId>org.broad</groupId>
                                     <artifactId>bigwig</artifactId>
                                     <version>${bigWigVersion}</version>

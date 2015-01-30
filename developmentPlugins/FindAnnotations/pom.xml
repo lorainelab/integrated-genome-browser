@@ -78,8 +78,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -117,20 +117,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>scan</goal>
-                        </goals>
-                        <configuration>
-                            <log>warn</log>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>   
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -142,6 +128,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>                        
                         <Bundle-Description>A simple search panel that uses all search modes</Bundle-Description>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>            

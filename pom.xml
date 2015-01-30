@@ -304,6 +304,7 @@
 
     <dependencyManagement>
         <dependencies>
+            
             <!--Start of core module dependencies-->
             <dependency>
                 <groupId>com.affymetrix</groupId>
@@ -707,31 +708,7 @@
                 <artifactId>org.apache.felix.webconsole.all</artifactId>
                 <version>${felix-webconsole-version}</version>
             </dependency>
-            
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager</artifactId>
-                <version>${felix-dependencymanager-version}</version>
-            </dependency>
-            
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.runtime</artifactId>
-                <version>${felix-dependencymanager-version}</version>
-            </dependency>
-            
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                <version>${felix-dependencymanager-version}</version>
-            </dependency>
-            
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
-                <version>${felix-dependencymanager-version}</version>
-            </dependency>
-            
+                       
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
@@ -907,11 +884,6 @@
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
-                    <version>${felix-dependencymanager-version}</version>                   
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

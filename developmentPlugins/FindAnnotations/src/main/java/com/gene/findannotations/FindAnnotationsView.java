@@ -1,5 +1,7 @@
 package com.gene.findannotations;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import java.awt.event.KeyAdapter;
@@ -7,18 +9,15 @@ import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
 import com.affymetrix.igb.shared.IStatus;
-import org.apache.felix.dm.annotation.api.Component;
-import org.apache.felix.dm.annotation.api.ServiceDependency;
-import org.apache.felix.dm.annotation.api.Start;
 
-@Component(provides = IgbTabPanelI.class)
+@Component(name = FindAnnotationsView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public class FindAnnotationsView extends FindAnnotationsGUI {
 
+    public static final String COMPONENT_NAME = "FindAnnotationsView";
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("findannotations");
     private FindAnnotationsAction findAnnotationsAction;
 
-    @ServiceDependency
     private IgbService igbService;
 
     public FindAnnotationsView() {
@@ -26,7 +25,6 @@ public class FindAnnotationsView extends FindAnnotationsGUI {
 
     }
 
-    @Start
     private void init() {
         searchTable.setModel(new AnnotationsTableModel());
         searchTable.setAutoCreateRowSorter(true);
@@ -50,5 +48,11 @@ public class FindAnnotationsView extends FindAnnotationsGUI {
         goButton.addActionListener(findAnnotationsAction);
         trackFromHitsButton.addActionListener(new TrackFromHitsAction(igbService, searchText, (AnnotationsTableModel) searchTable.getModel()));
         trackFromHitsButton.setEnabled(false);
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+        init();
     }
 }

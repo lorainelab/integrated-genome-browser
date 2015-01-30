@@ -249,7 +249,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     private void updateMainFrame() {
         //don't show anything until a few tabs have been added to prevent flashing at startup
-        if (tabMenus.keySet().size() > 5) {
+        if (tabMenus.keySet().size() > 10) {
             showTabs();
         }
     }

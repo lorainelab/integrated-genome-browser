@@ -9,6 +9,8 @@ import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.style.DefaultStateProvider;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
@@ -567,7 +569,7 @@ public class SeqUtils {
         // Not sure how this will affect deep transformations, but so far appears to be working properly
         int spanCount = mapSym.getSpanCount();
 
-		// WARNING: still need to switch to using mutable SeqSpan args for efficiency
+        // WARNING: still need to switch to using mutable SeqSpan args for efficiency
         // find a linker span first -- a span in resSym that has same BioSeq as
         //    a span in mapSym
         SeqSpan linkSpan = null;
@@ -1489,5 +1491,14 @@ public class SeqUtils {
 
     public static boolean isGFFSym(SeqSymmetry sym) {
         return (sym instanceof GFF3Sym);
+    }
+
+    public static Optional<ITrackStyleExtended> getSymTrackStyle(SeqSymmetry sym) {
+        String method = BioSeqUtils.determineMethod(sym);
+        if (method == null) {
+            return Optional.empty();
+        }
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+        return Optional.ofNullable(style);
     }
 }

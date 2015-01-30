@@ -40,8 +40,8 @@ public class UCSCView extends BrowserView {
      *
      * @param selector for selection foreground
      */
-    public UCSCView(JRPComboBox selector, IgbService igbService, UCSCViewAction ucscViewAction_) {
-        super(selector, igbService, ucscViewAction_);
+    public UCSCView(JRPComboBox selector, IgbService igbService, UCSCViewAction ucscViewAction) {
+        super(selector, igbService, ucscViewAction);
     }
 
     @Override

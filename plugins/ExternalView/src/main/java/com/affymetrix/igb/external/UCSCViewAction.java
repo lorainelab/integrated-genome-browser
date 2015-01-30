@@ -4,6 +4,9 @@
  */
 package com.affymetrix.igb.external;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -14,6 +17,7 @@ import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.das.DasServerInfo;
+import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IgbService;
 
@@ -23,29 +27,45 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import org.osgi.framework.BundleContext;
 
 /**
  *
  * @author sgblanch
  * @version $Id: UCSCViewAction.java 7258 2010-12-17 21:40:02Z lfrohman $
  */
+@Component(name = UCSCViewAction.COMPONENT_NAME, provide = UCSCViewAction.class, immediate = true)
 public class UCSCViewAction extends GenericAction implements SeqSelectionListener {
 
+    public static final String COMPONENT_NAME = "UCSCViewAction";
+    private static final int VIEW_MENU_POS = 3;
     private static final long serialVersionUID = 1l;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
-    private final IgbService igbService;
+    private IgbService igbService;
 
-    public UCSCViewAction(IgbService igbService) {
+    public UCSCViewAction() {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
-        this.igbService = igbService;
+    }
+
+    @Activate
+    public void activate(BundleContext context) {
         GenometryModel model = GenometryModel.getInstance();
         model.addSeqSelectionListener(this);
         this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.singletonList(model.getSelectedSeq())));
+        JRPMenuItem menuItem = new JRPMenuItem("ExternalViewer_ucscView", this);
+        context.registerService(AMenuItem.class, new AMenuItem(menuItem, "view", VIEW_MENU_POS), null);
     }
 
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Override
     public void actionPerformed(ActionEvent ae) {
         super.actionPerformed(ae);
         String query = getUCSCQuery();

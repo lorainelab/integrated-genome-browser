@@ -79,9 +79,14 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-         <dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -99,15 +104,12 @@
                 <artifactId>maven-bundle-plugin</artifactId>                
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
+                    <instructions>  
+                        <Import-Package>*</Import-Package>
                         <Export-Package/>
-                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.externall.ExternalViewer</Bundle-Category>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Activator>com.affymetrix.igb.external.Activator</Bundle-Activator>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>            

@@ -239,9 +239,18 @@
         <dependency> 
             <groupId>com.lorainelab</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
-            <scope>runtime</scope>
-       
+            <scope>runtime</scope>       
         </dependency> 
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>track-operations-panel</artifactId>
+            <scope>runtime</scope>       
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+              <scope>runtime</scope>  
+        </dependency>
         <!--End of plugin module dependencies--> 
         <dependency> 
             <groupId>com.jidesoft</groupId>

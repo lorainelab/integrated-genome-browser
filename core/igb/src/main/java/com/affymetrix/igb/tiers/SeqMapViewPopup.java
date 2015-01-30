@@ -29,6 +29,7 @@ import com.affymetrix.igb.action.ChangeTierHeightAction;
 import com.affymetrix.igb.action.CloseTracksAction;
 import com.affymetrix.igb.action.CollapseAction;
 import com.affymetrix.igb.action.ColorByAction;
+import com.affymetrix.igb.action.CustomizeAction;
 import com.affymetrix.igb.action.ExpandAction;
 import com.affymetrix.igb.action.ExportFileAction;
 import com.affymetrix.igb.action.ExportSelectedAnnotationFileAction;
@@ -325,6 +326,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setText("Collapse");
         collapse.setIcon(null);
         popup.add(collapse);
+        
+        JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
+        customize.setIcon(null);
+        customize.setText("Customize...");
+        popup.add(customize);
 
         popup.add(new JSeparator());
         JCheckBoxMenuItem showResidueMask = new JCheckBoxMenuItem(ShowMismatchAction.getAction());

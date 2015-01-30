@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import org.apache.felix.bundlerepository.Resource;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -18,7 +19,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
-import org.osgi.service.obr.Resource;
+
 
 /**
  * this class implements the Bundle interface for Resource instances loaded by
@@ -36,7 +37,7 @@ public class ResourceWrapper implements Bundle {
         KEY_CONVERTER.put(Resource.SYMBOLIC_NAME, Constants.BUNDLE_SYMBOLICNAME);
         KEY_CONVERTER.put(Resource.VERSION, Constants.BUNDLE_VERSION);
         KEY_CONVERTER.put(Resource.COPYRIGHT, Constants.BUNDLE_COPYRIGHT);
-        KEY_CONVERTER.put(Resource.DOCUMENTATION_URL, Constants.BUNDLE_DOCURL);
+        KEY_CONVERTER.put(Resource.DOCUMENTATION_URI, Constants.BUNDLE_DOCURL);
     }
     private final Resource resource;
 
@@ -102,7 +103,7 @@ public class ResourceWrapper implements Bundle {
 
     @Override
     public String getLocation() {
-        return resource.getURL().toString();
+        return resource.getURI().toString();
     }
 
     @Override

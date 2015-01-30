@@ -1,5 +1,8 @@
 package com.affymetrix.igb.plugins;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -19,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -35,10 +36,6 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
-import org.osgi.service.obr.RepositoryAdmin;
-import org.osgi.service.obr.Requirement;
-import org.osgi.service.obr.Resolver;
-import org.osgi.service.obr.Resource;
 
 import com.affymetrix.genometry.event.RepositoryChangeListener;
 import com.affymetrix.genometry.thread.CThreadHolder;
@@ -52,16 +49,28 @@ import com.affymetrix.igb.shared.JRPStyledTable;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.bundlerepository.Reason;
+import org.apache.felix.bundlerepository.RepositoryAdmin;
+import org.apache.felix.bundlerepository.Resolver;
+import org.apache.felix.bundlerepository.Resource;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.InvalidSyntaxException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Tab Panel for managing plugins / bundles.
  */
+@Component(name = PluginsView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public class PluginsView extends IgbTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
 
+    public static final String COMPONENT_NAME = "PluginsView";
     private static final long serialVersionUID = 1L;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PluginsView.class);
+    private static final Logger logger = LoggerFactory.getLogger(PluginsView.class);
 
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
@@ -69,8 +78,8 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
 
     private BundleContext bundleContext;
     private JScrollPane jScrollPane;
-    private final BundleTableModel bundleTableModel;
-    private final JRPStyledTable bundleTable;
+    private BundleTableModel bundleTableModel;
+    private JRPStyledTable bundleTable;
     private JRPCheckBox installedBundlesCheckbox;
     private JRPCheckBox uninstalledBundlesCheckbox;
     private JRPButton updateAllBundlesButton;
@@ -86,18 +95,25 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     private List< Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
-    private OSGIImpl osgiImpl;
+
     private IgbService igbService;
 
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
 
-    public PluginsView(IgbService igbService) {
+    public PluginsView() {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
-        this.igbService = igbService;
         latest = new HashMap<>();
-        osgiImpl = new Felix();
+    }
 
+    @Activate
+    public void activate(BundleContext context) {
+        this.bundleContext = context;
+        init();
+    }
+
+    private void init() {
+        latest = new HashMap<>();
         igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
         setLayout(new BorderLayout());
         BundleTableModel.setPluginsHandler(this); // is there a better way ?
@@ -163,12 +179,16 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
         add("South", getButtonPanel());
         setBundleFilter(getBundleFilter());
 
-        bundleListener = arg0 -> {
+        bundleListener = (BundleEvent bundleEvent) -> {
             if (bundleContext != null) {
                 setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
                 reloadBundleTable();
             }
         };
+        setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
+        igbService.getRepositoryChangerHolder().getRepositories().values().forEach(this::repositoryAdded);
+        setRepositoryBundles();
+        bundleContext.addBundleListener(bundleListener);
     }
 
     private static final BundleFilter BOTH_BUNDLE_FILTER = bundle -> true;
@@ -348,7 +368,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
             Bundle bundle = getBundleAtRow(rowIndice);
             if (latest.get(bundle.getSymbolicName()) == null) {
                 System.out.println(MessageFormat.format(BUNDLE.getString("internalError1"), bundle.getSymbolicName()));
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, MessageFormat.format(BUNDLE.getString("internalError1"), bundle.getSymbolicName()));
+                logger.warn(MessageFormat.format(BUNDLE.getString("internalError1"), bundle.getSymbolicName()));
             }
             if (isInstalled(bundle) && !bundle.equals(latest.get(bundle.getSymbolicName()))) {
                 updateSelectedBundlesExist = true;
@@ -381,7 +401,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     @Override
     public synchronized Bundle getFilteredBundle(int index) {
         if (index < 0 || index >= filteredBundles.size()) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, MessageFormat.format(BUNDLE.getString("internalError2"), index, filteredBundles.size()));
+            logger.warn(MessageFormat.format(BUNDLE.getString("internalError2"), index, filteredBundles.size()));
             return null;
         }
         return filteredBundles.get(index);
@@ -426,33 +446,26 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
      * Preferences tab, filter by IGB version
      */
     private void setRepositoryBundles() {
-        Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
-        List< Bundle> repositoryBundles = new ArrayList<>();
-        for (Resource resource : allResourceArray) {
-//            if (checkRequirements(resource.getRequirements())) {
-            repositoryBundles.add(new ResourceWrapper(resource));
-//            }
+        try {
+            Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
+            List< Bundle> repositoryBundles = new ArrayList<>();
+            for (Resource resource : allResourceArray) {
+                repositoryBundles.add(new ResourceWrapper(resource));
+            }
+            setRepositoryBundles(repositoryBundles);
+        } catch (InvalidSyntaxException ex) {
+            logger.error("Error setting adding bundles from obr repository to PluginsView", ex);
         }
-        setRepositoryBundles(repositoryBundles);
     }
 
-    /**
-     * save the OSGi BundleContext
-     *
-     * @param bundleContext the bundle context from the OSGi implementation
-     */
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-        //		ServiceReference sr = bundleContext.getServiceReference(org.osgi.service.obr.RepositoryAdmin.class.getName());
-        //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-        //		ServiceReference sr = bundleContext.getServiceReference(org.apache.felix.bundlerepository.RepositoryAdmin.class.getName());
-        //		repoAdmin = (RepositoryAdmin)bundleContext.getService(sr);
-        repoAdmin = osgiImpl.getRepositoryAdmin(bundleContext);
-        igbService.getRepositoryChangerHolder().getRepositories().values().forEach(this::repositoryAdded);
-        setRepositoryBundles();
-        bundleContext.addBundleListener(bundleListener);
-        //		reloadBundleTable();
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Reference(optional = false)
+    public void setRepositoryAdmin(RepositoryAdmin repositoryAdmin) {
+        repoAdmin = repositoryAdmin;
     }
 
     /**
@@ -475,7 +488,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
 
     private void displayError(String error) {
         igbService.setStatus(error);
-        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, error);
+        logger.error(error);
     }
 
     @Override
@@ -487,22 +500,22 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
                 Resolver resolver = repoAdmin.resolver();
                 resolver.add(resource);
                 if (resolver.resolve()) {
-                    resolver.deploy(true);
+                    resolver.deploy(Resolver.START);
                     igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
                 } else {
                     String msg = MessageFormat.format(PluginsView.BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
                     StringBuilder sb = new StringBuilder(msg);
                     sb.append(" -> ");
                     boolean started = false;
-                    for (Requirement req : resolver.getUnsatisfiedRequirements()) {
+                    for (Reason reason : resolver.getUnsatisfiedRequirements()) {
                         if (started) {
                             sb.append(", ");
                         }
                         started = true;
-                        sb.append(req.getComment());
+                        sb.append(reason.getRequirement().getComment());
                     }
                     igbService.setStatus(msg);
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, sb.toString());
+                    logger.error(sb.toString());
                 }
                 return null;
             }
@@ -659,8 +672,9 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     @Override
     public void repositoryRemoved(String url) {
         try {
-            repoAdmin.removeRepository(new URL(url + "/repository.xml"));
-        } catch (MalformedURLException x) {
+            repoAdmin.removeRepository(new URL(url + "/repository.xml").toURI().toString());
+        } catch (MalformedURLException | URISyntaxException ex) {
+            logger.error("Error removing repository.", ex);
         }
         setRepositoryBundles();
         reloadBundleTable();

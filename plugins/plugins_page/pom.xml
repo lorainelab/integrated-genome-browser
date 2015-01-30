@@ -15,36 +15,16 @@
 
     <name>pluginsPage</name>
     
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.osgi.service.obr</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.osgi.core</artifactId>
-                    <groupId>org.apache.felix</groupId>
-                </exclusion>
-            </exclusions>
-            <scope>compile</scope>
-        </dependency>      
+    <dependencies>     
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
             <scope>provided</scope>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.bundlerepository</artifactId>
-            <version>1.6.6</version>
-            <scope>compile</scope>
-            <type>jar</type>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.osgi.core</artifactId>
-                    <groupId>org.osgi</groupId>
-                </exclusion>
-            </exclusions>
+            <scope>provided</scope>  
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -93,6 +73,11 @@
             <artifactId>commons-lang3</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -108,16 +93,12 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
-                        <Export-Package/>
-                        <Bundle-Activator>com.affymetrix.igb.plugins.Activator</Bundle-Activator>
-                        <Bundle-Category>IGBTabPanel-com.affymetrix.igb.plugins.PluginsView</Bundle-Category>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                    <instructions>    
+                        <Import-Package>*</Import-Package>
+                        <Export-Package/>                        
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Description>IGB plugins page for managing plugins</Bundle-Description>
+                        <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>            

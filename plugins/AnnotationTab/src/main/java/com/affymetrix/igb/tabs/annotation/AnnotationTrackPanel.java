@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tabs.annotation;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -10,6 +11,7 @@ import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +30,14 @@ public class AnnotationTrackPanel extends TrackViewPanel {
     private static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};
     private static final int TAB_POSITION = 1;
     private IgbService igbService;
+    private OperationsPanel operationsPanel;
 
     public AnnotationTrackPanel() {
         super(BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTab"), BUNDLE.getString("annotationTooltip"), false, TAB_POSITION);
     }
 
-    //this sort of initialization hack is only needed until there is time to create proper service dependency
-    private void init() {
+    @Activate
+    public void activate() {
         getCustomButton().setText("Other Options...");
         StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
 
@@ -53,18 +56,17 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 
         this.addPanel(stylePanel);
         this.addPanel(annotationPanel);
-
+        this.addPanel(operationsPanel);
     }
 
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        init();
     }
 
     @Reference(optional = false)
     public void setOperationsPanel(OperationsPanelService operationsPanelService) {
-        this.addPanel(operationsPanelService.getAnnotationOperationsPanel());
+        operationsPanel = operationsPanelService.getAnnotationOperationsPanel();
     }
 
     @Override

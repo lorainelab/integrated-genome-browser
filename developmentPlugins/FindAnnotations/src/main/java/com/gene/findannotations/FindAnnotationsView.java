@@ -1,5 +1,6 @@
 package com.gene.findannotations;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.service.api.IgbService;
@@ -21,11 +22,10 @@ public class FindAnnotationsView extends FindAnnotationsGUI {
     private IgbService igbService;
 
     public FindAnnotationsView() {
-        super();
-
     }
 
-    private void init() {
+    @Activate
+    public void activate() {
         searchTable.setModel(new AnnotationsTableModel());
         searchTable.setAutoCreateRowSorter(true);
         searchTable.addMouseListener(new FindAnnotationsSelectListener(searchTable, igbService));
@@ -53,6 +53,5 @@ public class FindAnnotationsView extends FindAnnotationsGUI {
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        init();
     }
 }

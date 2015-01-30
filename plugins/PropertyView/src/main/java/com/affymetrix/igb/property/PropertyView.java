@@ -1,5 +1,6 @@
 package com.affymetrix.igb.property;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
@@ -50,12 +51,18 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
         scroll_pane.setColumnHeaderView(jvp);
         //TODO cleanup this code... why instantiate a class here?
         new JTableCutPasteAdapter(table, true);
-         //TODO cleanup this code... why instantiate a class here?
+        //TODO cleanup this code... why instantiate a class here?
         new PropertyViewHelper(table);
         this.setPreferredSize(new java.awt.Dimension(100, 250));
         this.setMinimumSize(new java.awt.Dimension(100, 250));
         GenometryModel.getInstance().addSymSelectionListener(this);
         GenometryModel.getInstance().addGroupSelectionListener(this);
+    }
+
+    @Activate
+    public void activate() {
+        propertyListeners.add((PropertyListener) igbService.getSeqMapView().getMouseListener());
+        igbService.getSeqMapView().setPropertyHandler(this);
     }
 
     @Deactivate
@@ -66,8 +73,6 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        propertyListeners.add((PropertyListener) igbService.getSeqMapView().getMouseListener());
-        igbService.getSeqMapView().setPropertyHandler(this);
     }
 
     @Override

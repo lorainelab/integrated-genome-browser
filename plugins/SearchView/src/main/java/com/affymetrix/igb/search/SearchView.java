@@ -1,5 +1,6 @@
 package com.affymetrix.igb.search;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -288,7 +289,8 @@ public final class SearchView extends IgbTabPanel implements
         searchModes = new ArrayList<>();
     }
 
-    public void init() {
+    @Activate
+    public void activate() {
         group = gmodel.getSelectedSeqGroup();
         this.setLayout(new BorderLayout());
         initSearchCB();
@@ -360,7 +362,6 @@ public final class SearchView extends IgbTabPanel implements
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        init();
     }
 
     private void initOptionCheckBox() {

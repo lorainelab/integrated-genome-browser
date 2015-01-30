@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tabs.graph;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -11,6 +12,7 @@ import com.affymetrix.igb.shared.TrackViewPanel;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
+import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanelService;
 
 /**
@@ -25,8 +27,8 @@ public class GraphTrackPanel extends TrackViewPanel {
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("graph");
     private static final int TAB_POSITION = 2;
     private IgbService igbService;
-    
-    
+    private OperationsPanel operationsPanel;
+
     public GraphTrackPanel() {
         super(BUNDLE.getString("graphTab"), BUNDLE.getString("graphTab"), BUNDLE.getString("graphTooltip"), false, TAB_POSITION);
         getCustomButton().setText("Thresholding...");
@@ -35,8 +37,8 @@ public class GraphTrackPanel extends TrackViewPanel {
         getDeleteButton().setText(("Delete Graph"));
     }
 
-    //this sort of initialization hack is only needed until there is time to create proper service dependency
-    private void init() {
+    @Activate
+    public void activate() {
         StylePanelImpl stylePanel = new StylePanelImpl(igbService) {
 
             @Override
@@ -55,18 +57,17 @@ public class GraphTrackPanel extends TrackViewPanel {
         addPanel(stylePanel);
         addPanel(yscaleAxis);
         addPanel(graphPanel);
-
+        addPanel(operationsPanel);
     }
 
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        init();
     }
 
     @Reference(optional = false)
     public void setOperationsPanel(OperationsPanelService operationsPanelService) {
-        this.addPanel(operationsPanelService.getGraphOperationsPanel());
+        operationsPanel = operationsPanelService.getGraphOperationsPanel();
     }
 
     @Override

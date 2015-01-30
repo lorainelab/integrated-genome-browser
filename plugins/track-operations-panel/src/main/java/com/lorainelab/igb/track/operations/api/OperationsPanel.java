@@ -1,5 +1,6 @@
 package com.lorainelab.igb.track.operations.api;
 
+import aQute.bnd.annotation.component.Activate;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
@@ -13,8 +14,6 @@ import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import static com.affymetrix.igb.shared.Selections.isAllRootSeqSymmetrySame;
-import static com.affymetrix.igb.shared.Selections.rootSyms;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackTransformAction;
 import com.affymetrix.igb.shared.TrackUtils;
@@ -48,34 +47,31 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
     private String preserved_transformationCB_selection = null;
     private String preserved_operationCB_selection = null;
 
-    private final IgbService igbService;
-    private FileTypeCategory[] categories;
+    private IgbService igbService;
+    protected FileTypeCategory[] categories;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
 
-    public OperationsPanel(IgbService igbService, FileTypeCategory[] categories) {
-
-        this.igbService = igbService;
-        this.categories = categories;
+    public OperationsPanel() {
         name2transformation = new HashMap<>();
         name2operation = new HashMap<>();
-
-        initComponents(igbService);
         getTransformationCB().addItemListener(e -> setTransformationDisplay(true));
-
         getOperationCB().addMouseListener(new HoverEffect());
         getOperationCB().addItemListener(e -> setOperationDisplay(true));
-
         getTransformationParamLabel().setVisible(false);
         getTransformationParam().setVisible(false);
         getOperationParamLabel().setVisible(false);
         getOperationParam().setVisible(false);
-        invalidate();
+    }
 
+    public void init(IgbService igbService) {
+        this.igbService = igbService;
+        invalidate();
         resetAll(false);
         Selections.addRefreshSelectionListener(this);
     }
 
-    protected void initComponents(IgbService igbS) {
+    public void setCategories(FileTypeCategory[] categories) {
+        this.categories = categories;
     }
 
     public void addOperator(Operator operator) {
@@ -108,6 +104,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         });
     }
 
+    @Override
     protected void transformationGoBActionPerformedA(ActionEvent evt) {
         String selection = (String) getTransformationCB().getSelectedItem();
         preserved_transformationCB_selection = selection; // store selection
@@ -115,6 +112,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         (new TrackTransformAction(operator)).actionPerformed(evt);
     }
 
+    @Override
     protected void operationGoBActionPerformedA(ActionEvent evt) {
         String selection = (String) getOperationCB().getSelectedItem();
         preserved_operationCB_selection = selection; // store selection
@@ -144,11 +142,11 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         getTransformationCB().removeAllItems();
         getOperationCB().removeAllItems();
 
-        if (rootSyms.isEmpty() || !enable) {
+        if (Selections.rootSyms.isEmpty() || !enable) {
             return;
         }
-        FileTypeCategory transformCategory = rootSyms.get(0).getCategory();
-        for (RootSeqSymmetry rootSym : rootSyms) {
+        FileTypeCategory transformCategory = Selections.rootSyms.get(0).getCategory();
+        for (RootSeqSymmetry rootSym : Selections.rootSyms) {
             if (transformCategory != rootSym.getCategory()) {
                 transformCategory = null;
                 break;
@@ -158,7 +156,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
         operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
         List<RootSeqSymmetry> transformSyms = new ArrayList<>(); // fake List to test compatibility of Transform operations
-        transformSyms.add(rootSyms.get(0));
+        transformSyms.add(Selections.rootSyms.get(0));
         for (Operator operator : operators) {
             if (!addThisOperator(operator)) {
                 continue;
@@ -167,7 +165,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
             if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
                 name2transformation.put(operator.getDisplay(), operator);
                 getTransformationCB().addItem(operator.getDisplay());
-            } else if (TrackUtils.getInstance().checkCompatible(rootSyms, operator, true)) {
+            } else if (TrackUtils.getInstance().checkCompatible(Selections.rootSyms, operator, true)) {
                 name2operation.put(operator.getDisplay(), operator);
                 getOperationCB().addItem(operator.getDisplay());
             }
@@ -187,7 +185,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         isListening = false; // turn off propagation of events from the GUI while we modify the settings
         int transformCount = name2transformation.size();
         int operatorCount = name2operation.size();
-        boolean enableTransformation = enable && isAllRootSeqSymmetrySame() && transformCount > 0;
+        boolean enableTransformation = enable && Selections.isAllRootSeqSymmetrySame() && transformCount > 0;
 
         getTransformationParamLabel().setEnabled(enableTransformation);
         getTransformationCB().setEnabled(enableTransformation);
@@ -202,7 +200,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         }
         getTransformationGoB().setEnabled(enableTransformation);
         setTransformationDisplay(enableTransformation);
-        boolean enableOperation = enable && rootSyms.size() > 1 && operatorCount > 0;
+        boolean enableOperation = enable && Selections.rootSyms.size() > 1 && operatorCount > 0;
 
         getOperationParamLabel().setEnabled(enableOperation);
         getOperationCB().setEnabled(enableOperation);
@@ -252,7 +250,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
             Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
             Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
-            if (params == null || params.isEmpty() || (!singleOK && rootSyms.size() < 2)) {
+            if (params == null || params.isEmpty() || (!singleOK && Selections.rootSyms.size() < 2)) {
                 ationParamLabel.setText(" ");
                 ationParamLabel.setEnabled(false);
                 ationParam.setEditable(false);
@@ -339,8 +337,8 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
                 return;
             }
 
-            if (rootSyms.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
-                    && rootSyms.size() <= operator.getOperandCountMax(FileTypeCategory.Graph)) {
+            if (Selections.rootSyms.size() >= operator.getOperandCountMin(FileTypeCategory.Graph)
+                    && Selections.rootSyms.size() <= operator.getOperandCountMax(FileTypeCategory.Graph)) {
                 setGraphName(comp, operator);
             } else {
                 comp.setToolTipText(getTooltipMessage(operator));
@@ -355,11 +353,11 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
 
         public void setGraphName(JRPComboBoxWithSingleListener comp, Operator operator) {
             if (operator != null && operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
-                A = ((GraphSym) rootSyms.get(0)).getGraphName();
-                B = ((GraphSym) rootSyms.get(1)).getGraphName();
+                A = ((GraphSym) Selections.rootSyms.get(0)).getGraphName();
+                B = ((GraphSym) Selections.rootSyms.get(1)).getGraphName();
 
-                ((GraphSym) rootSyms.get(0)).setGraphName("A");
-                ((GraphSym) rootSyms.get(1)).setGraphName("B");
+                ((GraphSym) Selections.rootSyms.get(0)).setGraphName("A");
+                ((GraphSym) Selections.rootSyms.get(1)).setGraphName("B");
 
                 comp.setToolTipText(null);
                 ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
@@ -368,9 +366,9 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
 
         public void unsetGraphName(Operator operator) {
             if (operator != null && operator.getOperandCountMin(FileTypeCategory.Graph) == 2 && operator.getOperandCountMax(FileTypeCategory.Graph) == 2) {
-                if (A != null && B != null && rootSyms.size() > 1) {
-                    ((GraphSym) rootSyms.get(0)).setGraphName(A);
-                    ((GraphSym) rootSyms.get(1)).setGraphName(B);
+                if (A != null && B != null && Selections.rootSyms.size() > 1) {
+                    ((GraphSym) Selections.rootSyms.get(0)).setGraphName(A);
+                    ((GraphSym) Selections.rootSyms.get(1)).setGraphName(B);
 
                     ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
                     A = null;

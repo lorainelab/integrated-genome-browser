@@ -23,11 +23,11 @@ public class KeyWordSearch implements ISearchModeSym {
     public static final String COMPONENT_NAME = "KeyWordSearch";
     private static final int SEARCH_ALL_ORDINAL = 1;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("keywordsearch");
-    
-    private volatile List<ISearchModeSym> searchModes;
+
+    private SearchModeRegistry searchModeRegistry;
 
     public KeyWordSearch() {
-        searchModes = new ArrayList<>();
+
     }
 
     public String getName() {
@@ -50,20 +50,11 @@ public class KeyWordSearch implements ISearchModeSym {
         return null;
     }
 
-    public void removeSearchModeService(ISearchModeSym searchMode) {
-        searchModes.remove(searchMode);
-    }
-
-    @Reference(multiple = true, optional = true, unbind = "removeSearchModeService")
-    public void addSearchModeService(ISearchModeSym searchMode) {
-        searchModes.add(searchMode);
-    }
-
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
         List<SeqSymmetry> results = new ArrayList<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
-        for (ISearchModeSym searchMode : searchModes) {
+        for (ISearchModeSym searchMode : searchModeRegistry.getSearchModes()) {
             statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
             SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
             List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
@@ -78,7 +69,7 @@ public class KeyWordSearch implements ISearchModeSym {
 
     public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
         List<SeqSymmetry> results = new ArrayList<>();
-        for (ISearchModeSym searchMode : searchModes) {
+        for (ISearchModeSym searchMode : searchModeRegistry.getSearchModes()) {
             List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
             if (res != null && !res.isEmpty()) {
                 results.addAll(res);
@@ -105,4 +96,10 @@ public class KeyWordSearch implements ISearchModeSym {
             return lastStatus;
         }
     }
+
+    @Reference(optional = false)
+    public void setSearchModeRegistry(SearchModeRegistry searchModeRegistry) {
+        this.searchModeRegistry = searchModeRegistry;
+    }
+
 }

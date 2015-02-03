@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.view;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.filter.ChildThresholdFilter;
@@ -23,17 +20,18 @@ import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class NewFindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
+@Component(name = TopHatFindJunctionOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
+public class TopHatFindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
+    public static final String COMPONENT_NAME = "TopHatFindJunctionOperator";
     public static final String THRESHOLD = "threshold";
-    public static final String TWOTRACKS = "twoTracks";
-    public static final String UNIQUENESS = "uniqueness";
     /**
      * TopHat style flanking makes the junction flanks as long as the largest
      * length of extrons from each side of a qualified intron.
@@ -43,46 +41,28 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
      *
      */
     public static final String TOPHATSTYLEFLANKING = "topHatStyleFlanking";
-    private static final Map<String, Class<?>> properties;
-
-    static {
-        properties = new HashMap<>();
-        properties.put(THRESHOLD, Integer.class);
-    }
-    private static final Map<String, Object> style;
-
-    static {
-        style = new HashMap<>();
-        style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
-    }
     public static final int default_threshold = 5;
-    public static final boolean default_twoTracks = true;
-    public static final boolean default_uniqueness = true;
-    public static final boolean default_topHatStyleFlanking = false;
+
+    private final Map<String, Class<?>> properties;
+    private final Map<String, Object> style;
     private static final SymmetryFilterI noIntronFilter = new WithIntronFilter();
     private static final ChildThresholdFilter childThresholdFilter = new ChildThresholdFilter();
     private static final SymmetryFilterI uniqueLocationFilter = new UniqueLocationFilter();
     private int threshold;
-    private boolean twoTracks;
-    private boolean uniqueness;
-    private boolean topHatStyleFlanking;
 
-    public NewFindJunctionOperator() {
-        this(default_topHatStyleFlanking);
-    }
-
-    public NewFindJunctionOperator(Boolean topHatStyle) {
+    public TopHatFindJunctionOperator() {
         super(FileTypeCategory.Alignment);
         threshold = default_threshold;
-        twoTracks = default_twoTracks;
-        uniqueness = default_uniqueness;
-        topHatStyleFlanking = topHatStyle;
+
+        properties = new HashMap<>();
+        properties.put(THRESHOLD, Integer.class);
+        style = new HashMap<>();
+        style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
     }
 
     @Override
     public String getName() {
-        String append = topHatStyleFlanking ? "_tophat" : "";
-        return "findjunctions" + append;
+        return "findjunctions_tophat";
     }
 
     private static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq) {
@@ -152,8 +132,8 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     }
 
     private void applyFilters(BioSeq bioseq, SeqSymmetry sym, HashMap<String, SeqSymmetry> map) {
-        if (noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))) {
-            updateIntronHashMap(sym, bioseq, map, threshold, twoTracks, topHatStyleFlanking);
+        if (noIntronFilter.filterSymmetry(bioseq, sym) && uniqueLocationFilter.filterSymmetry(bioseq, sym)) {
+            updateIntronHashMap(sym, bioseq, map);
         }
     }
 
@@ -164,7 +144,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
 
     @Override
     public boolean setParametersValue(Map<String, Object> map) {
-        if (map.size() <= 0) {
+        if (map.isEmpty()) {
             return false;
         }
 
@@ -177,18 +157,12 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
 
     @Override
     public Object getParameterValue(String key) {
-        if (key == null || key.length() == 0) {
+        if (Strings.isNullOrEmpty(key)) {
             return null;
         }
 
         if (key.equalsIgnoreCase(THRESHOLD)) {
             return threshold;
-        } else if (key.equalsIgnoreCase(TWOTRACKS)) {
-            return twoTracks;
-        } else if (key.equalsIgnoreCase(UNIQUENESS)) {
-            return uniqueness;
-        } else if (key.equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
-            return topHatStyleFlanking;
         }
         return null;
     }
@@ -202,15 +176,6 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     public boolean setParameterValue(String key, Object value) {
         if (key.equalsIgnoreCase(THRESHOLD)) {
             threshold = Integer.valueOf(value.toString());
-            return true;
-        } else if (key.equalsIgnoreCase(TWOTRACKS)) {
-            twoTracks = Boolean.valueOf(value.toString());
-            return true;
-        } else if (key.equalsIgnoreCase(UNIQUENESS)) {
-            uniqueness = Boolean.valueOf(value.toString());
-            return true;
-        } else if (key.equalsIgnoreCase(TOPHATSTYLEFLANKING)) {
-            topHatStyleFlanking = Boolean.valueOf(value.toString());
             return true;
         }
         return false;
@@ -227,15 +192,6 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     }
 
     @Override
-    public Operator newInstance() {
-        try {
-            return getClass().getConstructor(Boolean.class).newInstance(topHatStyleFlanking);
-        } catch (Exception ex) {
-        }
-        return null;
-    }
-
-    @Override
     public String getPrintableString() {
         return "";
     }
@@ -243,7 +199,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
     /* This method splits the given Sym into introns and filters out the qualified Introns
      * and adds the qualified introns into map using addtoMap method
      */
-    private static void updateIntronHashMap(SeqSymmetry sym, BioSeq bioseq, HashMap<String, SeqSymmetry> map, int threshold, boolean twoTracks, boolean topHatStyleFlanking) {
+    private void updateIntronHashMap(SeqSymmetry sym, BioSeq bioseq, HashMap<String, SeqSymmetry> map) {
         List<Integer> childIntronIndices = new ArrayList<>();
         int childCount = sym.getChildCount();
         int flanksLength[] = new int[2];
@@ -264,86 +220,73 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
                     flanksLength[0] = leftExtronLength;
                     flanksLength[1] = rightExtronLength;
                     SeqSpan span = intronChild.getSpan(bioseq);
-                    addToMap(span, map, bioseq, threshold, twoTracks, topHatStyleFlanking, flanksLength);
+                    addToMap(span, map, bioseq, flanksLength);
                 }
             }
         }
     }
 
     private static boolean residueCheck(String leftResidues, String rightResidues) {
-        if ((leftResidues.equalsIgnoreCase("GA") && rightResidues.equalsIgnoreCase("TG"))
+        return !((leftResidues.equalsIgnoreCase("GA") && rightResidues.equalsIgnoreCase("TG"))
                 || (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("AC"))
                 || (leftResidues.equalsIgnoreCase("CA") && rightResidues.equalsIgnoreCase("TA"))
-                || (leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT"))) {
-            return false;
-        }
-        return true;
+                || (leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT")));
     }
     /*
      * This builds the JunctionUcscBedSym based on different properties of sym and adds the sym into map.
      */
 
-    private static void addToMap(SeqSpan span, HashMap<String, SeqSymmetry> map, BioSeq bioseq, int threshold, boolean twoTracks, boolean topHatStyleFlanking, int[] flanksLength) {
+    private static void addToMap(SeqSpan span, HashMap<String, SeqSymmetry> map, BioSeq bioseq, int[] flanksLength) {
 
-        boolean currentForward = false;
+        boolean currentForward;
         String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
         String leftResidues = bioseq.getResidues(span.getMin(), span.getMin() + 2);
         String rightResidues = bioseq.getResidues(span.getMax() - 2, span.getMax());
         if (map.containsKey(name)) {
             JunctionUcscBedSym sym = (JunctionUcscBedSym) map.get(name);
-            if (!twoTracks) {
-                currentForward = sym.isCanonical() ? sym.isForward() : (sym.isRare() ? span.isForward() : sym.isForward());
-            } else {
-                //Changes to be done in here
-                currentForward = residueCheck(leftResidues, rightResidues);
-                //currentForward = span.isForward();
+            currentForward = residueCheck(leftResidues, rightResidues);
 
-            }
+            /**
+             * txMin/blockMins(txMax/blockMaxs) from UcscBedSym should be
+             * updated to get a longer flank A new symmentry will be created
+             * and old properties kept
+             */
+            // Remember current symmetry's properties
+            int[] oldBlockMins = sym.getBlockMins();
+            int[] oldBlockMaxs = sym.getBlockMaxs();
+            boolean canonical = sym.canonical;
+            boolean rare = sym.rare;
+            int localScore = sym.localScore;
+            int positiveScore = sym.positiveScore;
+            int negativeScore = sym.negativeScore;
 
-            if (topHatStyleFlanking) {
+            if (span.getMin() - sym.getBlockMins()[0] < flanksLength[0]) {
 
                 /**
-                 * txMin/blockMins(txMax/blockMaxs) from UcscBedSym should be
-                 * updated to get a longer flank A new symmentry will be created
-                 * and old properties kept
+                 * Create a symmetry if a longer left flank length found Use
+                 * new blockMins property and retain all other properties
+                 * txMin will be updated upon blockMins
                  */
-                // Remember current symmetry's properties
-                int[] oldBlockMins = sym.getBlockMins();
-                int[] oldBlockMaxs = sym.getBlockMaxs();
-                boolean canonical = sym.canonical;
-                boolean rare = sym.rare;
-                int localScore = sym.localScore;
-                int positiveScore = sym.positiveScore;
-                int negativeScore = sym.negativeScore;
+                sym = new JunctionUcscBedSym(bioseq, name,
+                        currentForward,
+                        new int[]{span.getMin() - flanksLength[0], span.getMax()}, // new length of left flank 
+                        oldBlockMaxs, canonical, rare,
+                        localScore, positiveScore, negativeScore);
+            }
 
-                if (span.getMin() - sym.getBlockMins()[0] < flanksLength[0]) {
+            if (sym.getBlockMaxs()[1] - span.getMax() < flanksLength[1]) {
 
-                    /**
-                     * Create a symmetry if a longer left flank length found Use
-                     * new blockMins property and retain all other properties
-                     * txMin will be updated upon blockMins
-                     */
-                    sym = new JunctionUcscBedSym(bioseq, name,
-                            currentForward,
-                            new int[]{span.getMin() - flanksLength[0], span.getMax()}, // new length of left flank 
-                            oldBlockMaxs, canonical, rare,
-                            localScore, positiveScore, negativeScore);
-                }
-
-                if (sym.getBlockMaxs()[1] - span.getMax() < flanksLength[1]) {
-
-                    /**
-                     * Create a symmetry if a longer right flank length found
-                     * Use new blockMaxs property and retain all other
-                     * properties txMax will be updated upon blockMaxs
-                     */
-                    sym = new JunctionUcscBedSym(bioseq, name,
-                            currentForward,
-                            oldBlockMins,
-                            new int[]{span.getMin(), span.getMax() + flanksLength[1]}, // new length of right flank
-                            canonical, rare,
-                            localScore, positiveScore, negativeScore);
-                }
+                /**
+                 * Create a symmetry if a longer right flank length found
+                 * Use new blockMaxs property and retain all other
+                 * properties txMax will be updated upon blockMaxs
+                 */
+                sym = new JunctionUcscBedSym(bioseq, name,
+                        currentForward,
+                        oldBlockMins,
+                        new int[]{span.getMin(), span.getMax() + flanksLength[1]}, // new length of right flank
+                        canonical, rare,
+                        localScore, positiveScore, negativeScore);
             }
 
             sym.updateScore(currentForward);
@@ -351,47 +294,12 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
         } else {
             boolean canonical = true;
             boolean rare = false;
-
-            if (!twoTracks) {
-
-                if (leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AG")) {
-                    canonical = true;
-                    currentForward = true;
-                } else if (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("AC")) {
-                    canonical = true;
-                    currentForward = false;
-                } else if ((leftResidues.equalsIgnoreCase("AT") && rightResidues.equalsIgnoreCase("AC"))
-                        || (leftResidues.equalsIgnoreCase("GC") && rightResidues.equalsIgnoreCase("AG"))) {
-                    canonical = false;
-                    currentForward = true;
-                } else if ((leftResidues.equalsIgnoreCase("GT") && rightResidues.equalsIgnoreCase("AT"))
-                        || (leftResidues.equalsIgnoreCase("CT") && rightResidues.equalsIgnoreCase("GC"))) {
-                    canonical = false;
-                    currentForward = false;
-                } else {
-                    canonical = false;
-                    currentForward = span.isForward();
-                    rare = true;
-                }
-            } else {
-                //Changes to be done here
-                currentForward = residueCheck(leftResidues, rightResidues);
-                //currentForward = span.isForward();
-
-            }
-
+            currentForward = residueCheck(leftResidues, rightResidues);
             // Create TopHat style flanking if requested by parameter
-            int[] blockMins = new int[2];
-            int[] blockMaxs = new int[2];
-
-            if (topHatStyleFlanking) {
-                blockMins = new int[]{span.getMin() - flanksLength[0], span.getMax()};
-                blockMaxs = new int[]{span.getMin(), span.getMax() + flanksLength[1]};
-            } else {
-                blockMins = new int[]{span.getMin() - threshold, span.getMax()};
-                blockMaxs = new int[]{span.getMin(), span.getMax() + threshold};
-            }
-
+            int[] blockMins;
+            int[] blockMaxs;
+            blockMins = new int[]{span.getMin() - flanksLength[0], span.getMax()};
+            blockMaxs = new int[]{span.getMin(), span.getMax() + flanksLength[1]};
             JunctionUcscBedSym tempSym = new JunctionUcscBedSym(bioseq, name,
                     currentForward, blockMins, blockMaxs, canonical, rare, 0, 0, 0);
             map.put(name, tempSym);
@@ -487,7 +395,7 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
 
         @Override
         public boolean isForward() {
-            return canonical ? super.isForward() : positiveScore > negativeScore ? true : false;
+            return canonical ? super.isForward() : positiveScore > negativeScore;
         }
 
         public boolean isCanonical() {
@@ -497,5 +405,14 @@ public class NewFindJunctionOperator extends AbstractAnnotationTransformer imple
         public boolean isRare() {
             return rare;
         }
+    }
+
+    @Override
+    public Operator newInstance() {
+        try {
+            return getClass().getConstructor().newInstance();
+        } catch (Exception ex) {
+        }
+        return null;
     }
 }

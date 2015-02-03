@@ -13,6 +13,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
@@ -116,7 +117,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             return operationsMenu;
         }
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
-        operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+        operators.addAll(OperatorServiceRegistry.getOperators());
         for (Operator operator : operators) {
             if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {
                 String title = operator.getDisplay();
@@ -127,7 +128,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 }
 
                 Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
-                if (null != params && 0 < params.size()) {
+                
+                if (params != null && !params.isEmpty()) {
                     JMenu operatorSMI = new JMenu(title);
 
                     JMenuItem operatorMI = new JMenuItem("Use Default");

@@ -154,7 +154,7 @@ public class Activator implements BundleActivator {
 
                                 @Override
                                 public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-                                    logger.info("Starting IGB from  addingService()");
+                                    logger.info("Starting IGB from  ServiceTracker");
                                     run(bundleContext, windowServiceReference);
                                     logger.info("IGB Started");
                                     return super.addingService(windowServiceReference);
@@ -162,7 +162,6 @@ public class Activator implements BundleActivator {
                             };
                     serviceTracker.open();
         }
-        initOperators(bundleContext);
         initColorProvider(bundleContext);
         initFilter(bundleContext);
     }
@@ -170,15 +169,15 @@ public class Activator implements BundleActivator {
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
         if (scriptManagerServiceReference != null) {
-            scriptManagerServiceReference.unregister();
+            scriptManagerServiceReference.unregister(); 
             scriptManagerServiceReference = null;
         }
     }
 
     /**
      * method to start IGB, called when the window service is available, creates
- and initializes IGB and registers the IgbService add any extension points
- handling here
+     * and initializes IGB and registers the IgbService add any extension points
+     * handling here
      *
      * @param windowServiceReference - the OSGi ServiceReference for the window
      * service
@@ -350,15 +349,6 @@ public class Activator implements BundleActivator {
         NewGenomeAction.getAction();
     }
 
-    private void initOperators(final BundleContext bundleContext) {
-        ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, Operator.class);
-        bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchOperator(), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.MismatchPileupOperator(), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(false), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.igb.view.NewFindJunctionOperator(true), null);
-
-    }
-
     private void initColorProvider(final BundleContext bundleContext) {
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ColorProviderI.class);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.RGB(), null);
@@ -388,7 +378,7 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedByRunNoFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.DuplicateFilter(), null);
     }
-    
+
     private void addGenericActionListener() {
         //TODO: Probably should implement using extension point listener.
         GenericActionHolder.getInstance().addGenericActionListener(

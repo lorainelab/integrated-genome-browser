@@ -110,6 +110,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -141,6 +146,7 @@
                             com.affymetrix.genometry.general,
                             com.affymetrix.genometry.operator,
                             com.affymetrix.genometry.operator.comparator,
+                            com.affymetrix.genometry.operator.service,
                             com.affymetrix.genometry.parsers,
                             com.affymetrix.genometry.parsers.das,
                             com.affymetrix.genometry.parsers.gchp,
@@ -160,6 +166,7 @@
                         </Export-Package>
                         <Import-Package>com.apple.laf,*;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>          

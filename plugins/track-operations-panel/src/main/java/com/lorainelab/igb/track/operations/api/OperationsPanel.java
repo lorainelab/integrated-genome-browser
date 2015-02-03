@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Activate;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
@@ -154,7 +155,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         }
         boolean transformOK = transformCategory != null;
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
-        operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
+        operators.addAll(OperatorServiceRegistry.getOperators());
         List<RootSeqSymmetry> transformSyms = new ArrayList<>(); // fake List to test compatibility of Transform operations
         transformSyms.add(Selections.rootSyms.get(0));
         for (Operator operator : operators) {

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.symmetry.impl.SeqSymSummarizer;
@@ -11,20 +12,23 @@ import java.util.List;
  *
  * @author hiralv
  */
+@Component(name = MismatchPileupOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
 public class MismatchPileupOperator extends AbstractMismatchOperator implements Operator {
 
-	@Override
-	public String getName() {
-		return "mismatchpileup";
-	}
+    public static final String COMPONENT_NAME = "MismatchPileupOperator";
 
-	@Override
-	public String getDisplay() {
-		return IGBConstants.BUNDLE.getString("operator_" + getName());
-	}
+    @Override
+    public String getName() {
+        return "mismatchpileup";
+    }
 
-	@Override
-	public SeqSymmetry getMismatch(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end) {
-		return SeqSymSummarizer.getMismatchGraph(syms, seq, false, id, start, end, true);
-	}
+    @Override
+    public String getDisplay() {
+        return IGBConstants.BUNDLE.getString("operator_" + getName());
+    }
+
+    @Override
+    public SeqSymmetry getMismatch(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end) {
+        return SeqSymSummarizer.getMismatchGraph(syms, seq, false, id, start, end, true);
+    }
 }

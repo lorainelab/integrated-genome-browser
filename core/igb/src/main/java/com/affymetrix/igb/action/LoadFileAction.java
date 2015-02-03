@@ -10,6 +10,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -21,6 +22,8 @@ import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.ScriptProcessorHolder;
 import com.affymetrix.igb.util.MergeOptionChooser;
+import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -33,31 +36,35 @@ import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @version $Id: LoadFileAction.java 11360 2012-05-02 14:41:01Z anuj4159 $
  */
 public final class LoadFileAction extends OpenURIAction {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(LoadFileAction.class);
+    
     private static final long serialVersionUID = 1L;
     private static final LoadFileAction ACTION = new LoadFileAction();
     private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
     private boolean mergeSelected = false;
     private final FileTracker load_dir_tracker;
-
+    
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
-
+    
     public static LoadFileAction getAction() {
         return ACTION;
     }
-
+    
     private final TransferHandler fdh = new FileDropHandler() {
-
+        
         private static final long serialVersionUID = 1L;
-
+        
         @Override
         public void openFileAction(List<File> files) {
             AnnotatedSeqGroup loadGroup = getloadGroup();
@@ -68,7 +75,7 @@ public final class LoadFileAction extends OpenURIAction {
                 mergeSelected = true; // loadGroup will not be null at this point
             }
         }
-
+        
         @Override
         public void openURLAction(String url) {
             try {
@@ -80,14 +87,14 @@ public final class LoadFileAction extends OpenURIAction {
             }
         }
     };
-
+    
     private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String name, FileFilter all_known_types) {
         if (openURI(uri, loadGroup, speciesName, all_known_types)) {
             return;
         }
         ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + name, Level.WARNING);
     }
-
+    
     private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, FileFilter all_known_types) {
         String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
         String friendlyName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
@@ -98,7 +105,7 @@ public final class LoadFileAction extends OpenURIAction {
 
         return true;
     }
-
+    
     private AnnotatedSeqGroup getloadGroup() {
         AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
         if (loadGroup == null) {
@@ -109,7 +116,7 @@ public final class LoadFileAction extends OpenURIAction {
         }
         return loadGroup;
     }
-
+    
     private String getSpeciesName() {
         String speciesName = igbService.getSelectedSpecies();
         if (SELECT_SPECIES.equals(speciesName)) {
@@ -117,7 +124,7 @@ public final class LoadFileAction extends OpenURIAction {
         }
         return speciesName;
     }
-
+    
     private LoadFileAction() {
         super(BUNDLE.getString("openFile"), BUNDLE.getString("openFileTooltip"),
                 "16x16/actions/document-open.png",
@@ -127,95 +134,42 @@ public final class LoadFileAction extends OpenURIAction {
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
         this.igbService.getFrame().setTransferHandler(fdh);
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-
-        MergeOptionChooser fileChooser = getFileChooser();
+        
+        FileDialog fileChooser = new FileDialog(igbService.getFrame());
         File currDir = load_dir_tracker.getFile();
         if (currDir == null) {
             currDir = new File(System.getProperty("user.home"));
         }
-        fileChooser.setCurrentDirectory(currDir);
-        fileChooser.rescanCurrentDirectory();
-
-        int option = fileChooser.showOpenDialog(igbService.getFrame());
-
-        if (option != JFileChooser.APPROVE_OPTION) {
+        fileChooser.setDirectory(currDir.getAbsolutePath());
+        fileChooser.setMultipleMode(true);
+        
+        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+        AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
+        File[] files = null;
+        
+        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
+            fileChooser.setVisible(true);
+            files = fileChooser.getFiles();
+        } else {
+            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"), 
+                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+        }
+        
+        if (files == null || files.length == 0) {
             return;
         }
-
-        load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
-
-        final File[] fils = fileChooser.getSelectedFiles();
-
-        final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) fileChooser.getSelectedVersion());
-
+        
+        load_dir_tracker.setFile(new File(fileChooser.getDirectory()));
+        
         final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
-
-        for (File file : fils) {
+        
+        for (File file : files) {
             URI uri = file.toURI();
-            openURI(uri, file.getName(), mergeSelected, loadGroup, (String) fileChooser.getSelectedSpecies(), fileChooser.optionChooser.getLoadAsSeqCB().isSelected());
+            openURI(uri, file.getName(), mergeSelected, loadGroup, speciesName, false);
         }
     }
-
-    private MergeOptionChooser getFileChooser() {
-        final MergeOptionChooser chooser = new MergeOptionChooser("loadFile");
-        chooser.setMultiSelectionEnabled(true);
-
-        /**
-         * The following code implements function check each single file (from
-         * file selector or URI input) for known sequence file, enable the 'Open
-         * as reference sequence' checkbox if yes.
-         *
-         */
-        List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
-        Set<String> all_known_endings = new HashSet<>();
-        for (UniFileFilter filter : filters) {
-            all_known_endings.addAll(filter.getExtensions());
-        }
-
-        final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
-
-        chooser.addPropertyChangeListener(evt -> {
-            if (JFileChooser.SELECTED_FILES_CHANGED_PROPERTY.equals(evt.getPropertyName())) { // Single selection included
-                File[] files = chooser.getSelectedFiles();
-                if (files.length == 1) {
-                    if (files[0] != null) {
-                        boolean enableLoadAsSeqCB = seq_ref_filter.accept(files[0]);
-                        chooser.optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
-
-                        if (!enableLoadAsSeqCB) {
-                            chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck for disabled
-                        }
-                    }
-                } else if (files.length > 1) {
-                    chooser.optionChooser.getLoadAsSeqCB().setSelected(false); // Uncheck & disable for multiple selection
-                    chooser.optionChooser.getLoadAsSeqCB().setEnabled(false);
-                }
-
-            }
-        });
-
-        filters = getSupportedFiles(null);
-        List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
-        filters.add(new UniFileFilter(var.toArray(new String[var.size()]), "Script File"));
-
-        all_known_endings = new HashSet<>();
-        for (UniFileFilter filter : filters) {
-            chooser.addChoosableFileFilter(filter);
-            all_known_endings.addAll(filter.getExtensions());
-        }
-
-        UniFileFilter all_known_types = new UniFileFilter(
-                all_known_endings.toArray(new String[all_known_endings.size()]),
-                "Known Types");
-        all_known_types.setExtensionListInDescription(false);
-        all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
-        chooser.addChoosableFileFilter(all_known_types);
-        chooser.setFileFilter(all_known_types);
-        return chooser;
-    }
-
 }

@@ -169,7 +169,7 @@ public final class LoadFileAction extends OpenURIAction {
         
         for (File file : files) {
             URI uri = file.toURI();
-            openURI(uri, file.getName(), mergeSelected, loadGroup, speciesName, true);
+            openURI(uri, file.getName(), mergeSelected, loadGroup, speciesName, false);
         }
     }
 }

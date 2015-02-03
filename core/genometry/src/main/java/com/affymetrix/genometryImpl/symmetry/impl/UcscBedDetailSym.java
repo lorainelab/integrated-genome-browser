@@ -43,7 +43,7 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 
     public Object getProperty(String key) {
         switch (key) {
-            case "gene name":
+            case "title":
                 return geneName;
             case "description":
                 return description;

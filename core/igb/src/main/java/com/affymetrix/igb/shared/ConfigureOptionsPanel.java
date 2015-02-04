@@ -4,6 +4,8 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.HeatMapExtended;
 import com.affymetrix.genometry.util.IDComparator;
@@ -16,6 +18,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +78,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             comboBox.addItem(null);
         }
         TreeSet<T> tProviders = new TreeSet<>(new IDComparator());
-        tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
+        //exception for now
+        if (clazz == Operator.class) {
+            tProviders.addAll((Collection<? extends T>) OperatorServiceRegistry.getOperators());
+        } else {
+            tProviders.addAll(ExtensionPointHandler.getExtensionPoint(clazz).getExtensionPointImpls());
+        }
         for (T cp : tProviders) {
             if (filter != null) {
                 if (!filter.shouldInclude(cp)) {

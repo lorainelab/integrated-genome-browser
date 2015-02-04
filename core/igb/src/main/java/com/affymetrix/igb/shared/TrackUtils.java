@@ -1,25 +1,24 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.Delegate;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -45,7 +44,7 @@ public class TrackUtils {
     }
 
     private ITrackStyleExtended makeNonPersistentStyle(SymWithProps sym, String human_name, Operator operator, ITrackStyleExtended preferredStyle) {
-		// Needs a unique name so that if any later tier is produced with the same
+        // Needs a unique name so that if any later tier is produced with the same
         // human name, it will not automatically get the same color, etc.
         String unique_name = IGBStateProvider.getUniqueName(human_name);
         sym.setProperty("method", unique_name);
@@ -57,7 +56,7 @@ public class TrackUtils {
             style.setGlyphDepth(1);
             style.setSeparate(false); // there are not separate (+) and (-) strands
 
-			// This might have become obsolete
+            // This might have become obsolete
             // style.setCustomizable(false); // the user can change the color, but not much else is meaningful
         } else {
             style.copyPropertiesFrom(preferredStyle);
@@ -124,16 +123,6 @@ public class TrackUtils {
     }
 
     public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator) {
-
-        if (operator instanceof IParameters) {
-            Map<String, Class<?>> params = ((IParameters) operator).getParametersType();
-            if (null != params) {
-                if (0 < params.size()) {
-                    return false;
-                }
-            }
-        }
-
         Map<FileTypeCategory, Integer> trackCounts = getTrackCounts(syms);
         for (FileTypeCategory category : FileTypeCategory.values()) {
             int count = (trackCounts.get(category) == null) ? 0 : trackCounts.get(category);

@@ -1,13 +1,11 @@
 package com.lorainelab.igb.track.operations.api;
 
-import aQute.bnd.annotation.component.Activate;
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genometry.util.ThreadUtils;

@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
@@ -47,8 +46,6 @@ import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackOperationWithParametersAction;
@@ -58,6 +55,8 @@ import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -128,7 +127,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 }
 
                 Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
-                
+
                 if (params != null && !params.isEmpty()) {
                     JMenu operatorSMI = new JMenu(title);
 
@@ -328,7 +327,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setText("Collapse");
         collapse.setIcon(null);
         popup.add(collapse);
-        
+
         JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
         customize.setIcon(null);
         customize.setText("Customize...");

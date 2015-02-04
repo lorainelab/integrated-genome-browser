@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.operator;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -13,7 +12,6 @@ import java.util.List;
  *
  * @author hiralv
  */
-@Component(name = CopyMismatchOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
 public class CopyMismatchOperator implements Operator, ICopy {
 
     public static final String COMPONENT_NAME = "CopyMismatchOperator";

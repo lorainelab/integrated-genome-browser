@@ -1,5 +1,6 @@
 package com.gene.searchmodelucene;
 
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public abstract class LuceneSearch<T> {
         String path = null;
         try {
             Directory directory;
-            if (uri.toLowerCase().startsWith("http")) {
+            if (uri.toLowerCase().startsWith(HTTP_PROTOCOL_SCHEME)) {
                 path = uri;
                 directory = new HttpDirectory(FileUtil.getInstance().getIndexName(uri));
             } else {

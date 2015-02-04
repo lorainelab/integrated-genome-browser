@@ -8,6 +8,10 @@ import com.affymetrix.genometry.das2.FormatPriorities;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -43,7 +47,6 @@ public final class GenericFeature {
     public static final boolean default_show_how_to_load = true;
 
     private static final String WHOLE_GENOME = "Whole Sequence";
-    private static final String AUTOLOAD = LoadStrategy.AUTOLOAD.name();
 
     public final String featureName;      // friendly name of the feature.
     public final Map<String, String> featureProps;
@@ -190,10 +193,11 @@ public final class GenericFeature {
         String friendlyURLString = friendlyURL;
 
         // Support relative path in friendly URL for Quickload
-        if (!(friendlyURLString.toLowerCase().startsWith("http:")
-                || friendlyURLString.toLowerCase().startsWith("https:")
-                || friendlyURLString.toLowerCase().startsWith("ftp:")
-                || friendlyURLString.toLowerCase().startsWith("file:"))) {
+        if (!(friendlyURLString.toLowerCase().startsWith(HTTP_PROTOCOL)
+                || friendlyURLString.toLowerCase().startsWith(HTTPS_PROTOCOL)
+                || friendlyURLString.toLowerCase().startsWith(FTP_PROTOCOL)
+                || friendlyURLString.toLowerCase().startsWith(FILE_PROTOCOL))) {
+
             if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
 
                 if (friendlyURLString.startsWith("./")) {
@@ -302,10 +306,7 @@ public final class GenericFeature {
         query_sym.addSpan(span);
 
         SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, requestSym, span.getBioSeq());
-        if (SeqUtils.hasSpan(optimized_sym)) {
-            return false;
-        }
-        return true;
+        return !SeqUtils.hasSpan(optimized_sym);
     }
 
     public synchronized boolean isLoading(SeqSpan span) {
@@ -313,10 +314,7 @@ public final class GenericFeature {
         query_sym.addSpan(span);
 
         SeqSymmetry optimized_sym = SeqUtils.exclusive(query_sym, currentRequestSym, span.getBioSeq());
-        if (SeqUtils.hasSpan(optimized_sym)) {
-            return false;
-        }
-        return true;
+        return !SeqUtils.hasSpan(optimized_sym);
     }
 
     /**

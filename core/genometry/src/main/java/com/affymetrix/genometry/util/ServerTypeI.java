@@ -15,13 +15,6 @@ import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
-/**
- * interface that represents one server type that IGB can
- * use to access genome data. This is an extension point
- * and there are four implementations preinstalled: DAS, DAS2,
- * QuickLoad, and LocalFiles. There should be one instance
- * per server type - singleton pattern can be used.
- */
 public interface ServerTypeI extends Comparable<ServerTypeI> {
 	// preinstalled server types
 	ServerTypeI QuickLoad = QuickloadServerType.getInstance();

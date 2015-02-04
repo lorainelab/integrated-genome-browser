@@ -59,7 +59,7 @@ public class FindJunctionsTest {
                 }
                 file = file.getAbsoluteFile();
                 String path = file.getAbsolutePath();
-                URI bedUri = new URI("file:"+path);
+                URI bedUri = new URI(FILE_PROTOCOL+path);
                 Map<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
                 AnnotatedSeqGroup group = new AnnotatedSeqGroup(name.substring(0 , name.length()-3));
                 BED bedFile = new BED(bedUri,name.substring(0 , name.length()-3),group);

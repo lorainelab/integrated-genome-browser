@@ -1,6 +1,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -215,10 +217,10 @@ public abstract class PrefsLoader {
                     strm = new FileInputStream(fil);
                     strm = getPrefsModeInputStream(strm, prefsMode);
                     XmlPrefsParser.parse(strm);
-                } else if (fileOrURL.startsWith("http:")) {
+                } else if (fileOrURL.startsWith(HTTP_PROTOCOL)) {
                     logger.debug("loading user prefs from: " + fileOrURL);
                     LoadPreferencesFromURL(fileOrURL, prefsMode);
-                } else if (fileOrURL.startsWith("file:")) {
+                } else if (fileOrURL.startsWith(FILE_PROTOCOL)) {
                     fil = new File(new URI(fileOrURL));
                     logger.debug("loading user prefs from: " + fileOrURL);
                     strm = new FileInputStream(fil);

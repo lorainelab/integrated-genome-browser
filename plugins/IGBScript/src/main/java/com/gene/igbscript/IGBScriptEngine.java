@@ -7,6 +7,7 @@ import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
@@ -433,7 +434,7 @@ public class IGBScriptEngine implements ScriptEngine {
     private void loadFile(String fileName) {
         URI uri;
         File f = new File(fileName.trim());
-        if (fileName.startsWith("http")) {
+        if (fileName.startsWith(HTTP_PROTOCOL_SCHEME)) {
             try {
                 uri = new URI(fileName);
             } catch (URISyntaxException ex) {

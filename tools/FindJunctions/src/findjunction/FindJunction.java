@@ -137,7 +137,7 @@ public class FindJunction {
     /* This method is used to convert the given file path from relative to absolute.
      */
     private URI relativeToAbsolute(String path) throws URISyntaxException {
-        if (!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("ftp:")))) {
+        if (!(path.startsWith(FILE_PROTOCOL) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL)))) {
             return getAbsoluteFile(path).toURI();
         }
         return new URI(path);

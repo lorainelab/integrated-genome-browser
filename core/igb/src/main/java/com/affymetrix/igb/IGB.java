@@ -20,6 +20,10 @@ import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.StateProvider;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -301,7 +305,7 @@ public final class IGB extends Application
             /* This method is used to convert the given file path from relative to absolute.
              */
             private URI relativeToAbsolute(String path) throws URISyntaxException {
-                if (!(path.startsWith("file:")) && !(path.startsWith("http:")) && !(path.startsWith("https:")) && !(path.startsWith("ftp:"))) {
+                if (!(path.startsWith(FILE_PROTOCOL)) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(HTTPS_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL))) {
                     return getAbsoluteFile(path).toURI();
                 }
                 return new URI(path);

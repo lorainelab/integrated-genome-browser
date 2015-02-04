@@ -31,6 +31,7 @@ import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.BAM;
 import com.affymetrix.genometry.symloader.SymLoader;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -438,7 +439,7 @@ public class Das2ServerType implements ServerTypeI {
 					bamfile.deleteOnExit();
 					BAM bam = new BAM(bamfile.toURI(),typeName, aseq.getSeqGroup());
 					//for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-					if (typeURI.getScheme().equals("http")) {
+					if (typeURI.getScheme().equals(HTTP_PROTOCOL_SCHEME)) {
 						feats = bam.parseAll(span.getBioSeq(), typeURI.toString());
 					}
 					else {

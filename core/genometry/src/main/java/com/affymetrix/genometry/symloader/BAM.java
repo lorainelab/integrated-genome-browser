@@ -3,10 +3,10 @@ package com.affymetrix.genometry.symloader;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.HTTPS_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.HTTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
@@ -65,14 +65,14 @@ public final class BAM extends XAM {
         File indexFile = null;
         SAMFileReader samFileReader = null;
         String scheme = uri.getScheme().toLowerCase();
-        if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
+        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
             // BAM is file.
             //indexFile = new File(uri.)
             File f = new File(uri);
             indexFile = findIndexFile(f);
             samFileReader = new SAMFileReader(f, indexFile, false);
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
-        } else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, HTTPS_PROTOCOL)) {
+        } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
             String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 
             if (reachable_url == null) {
@@ -85,7 +85,7 @@ public final class BAM extends XAM {
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
             samFileReader = new SAMFileReader(seekableStream, indexFile, false);
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
-        } else if (scheme.startsWith(FTP_PROTOCOL)) {
+        } else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             String baiUriStr = getBamIndexUriStr(uri);
             indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
             samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
@@ -399,10 +399,10 @@ public final class BAM extends XAM {
 
     public static boolean hasIndex(URI uri) throws BamIndexNotFoundException {
         String scheme = uri.getScheme().toLowerCase();
-        if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
+        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
             File f = findIndexFile(new File(uri));
             return f != null;
-        } else if (StringUtils.equals(scheme, HTTP_PROTOCOL) || StringUtils.equals(scheme, HTTPS_PROTOCOL) || StringUtils.equals(scheme, FTP_PROTOCOL)) {
+        } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME) || StringUtils.equals(scheme, FTP_PROTOCOL_SCHEME)) {
             String uriStr = findIndexFile(uri.toString());
             return uriStr != null;
         }
@@ -443,7 +443,7 @@ public final class BAM extends XAM {
         bamfile.deleteOnExit();
         BAM bam = new BAM(bamfile.toURI(), featureName, group);
         //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-        if (uri.getScheme().equals("http")) {
+        if (uri.getScheme().equals(HTTP_PROTOCOL_SCHEME)) {
             return bam.parseAll(overlap_span.getBioSeq(), uri.toString());
         }
         return bam.getRegion(overlap_span);

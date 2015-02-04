@@ -16,6 +16,9 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -204,9 +207,9 @@ public class SymLoaderTabix extends SymLoader {
 
         BlockCompressedInputStream is = null;
         try {
-            if (path.startsWith("ftp:")) {
+            if (path.startsWith(FTP_PROTOCOL)) {
                 return false; // ftp not supported by BlockCompressedInputStream
-            } else if (path.startsWith("http:") || path.startsWith("https:")) {
+            } else if (path.startsWith(HTTP_PROTOCOL) || path.startsWith(HTTPS_PROTOCOL)) {
                 is = new BlockCompressedInputStream(LocalUrlCacher.getInputStream(new URL(path + ".tbi")));
             } else {
                 is = new BlockCompressedInputStream(new File(URLDecoder.decode(path, GeneralUtils.UTF8) + ".tbi"));

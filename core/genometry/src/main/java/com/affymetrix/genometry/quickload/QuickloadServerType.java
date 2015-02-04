@@ -12,6 +12,9 @@ import com.affymetrix.genometry.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometry.symloader.BNIB;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.TwoBitNew;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.*;
 import java.io.File;
@@ -196,7 +199,7 @@ public class QuickloadServerType implements ServerTypeI {
         URI uri = null;
 
         if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
-            int httpIndex = featureName.toLowerCase().indexOf("http:");
+            int httpIndex = featureName.toLowerCase().indexOf(HTTP_PROTOCOL);
             if (httpIndex > -1) {
                 // Strip off initial characters up to and including http:
                 // Sometimes this is necessary, as URLs can start with invalid "http:/"
@@ -207,9 +210,9 @@ public class QuickloadServerType implements ServerTypeI {
             }
         } else {
             String fileName = determineFileName(version, featureName);
-            int httpIndex = fileName.toLowerCase().indexOf("http:");
-            int httpsIndex = fileName.toLowerCase().indexOf("https:");
-            int ftpIndex = fileName.toLowerCase().indexOf("ftp:");
+            int httpIndex = fileName.toLowerCase().indexOf(HTTP_PROTOCOL);
+            int httpsIndex = fileName.toLowerCase().indexOf(HTTPS_PROTOCOL);
+            int ftpIndex = fileName.toLowerCase().indexOf(FTP_PROTOCOL);
             if (httpIndex > -1 || httpsIndex > -1 || ftpIndex > -1) {
                 uri = URI.create(fileName);
             } else {

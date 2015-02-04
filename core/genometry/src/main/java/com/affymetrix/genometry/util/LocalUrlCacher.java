@@ -1,10 +1,10 @@
 package com.affymetrix.genometry.util;
 
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.HTTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.IGB_PROTOCOL;
-import static com.affymetrix.genometry.symloader.UriProtocolConstants.SUPPORTED_PROTOCOLS;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.IGB_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.SUPPORTED_PROTOCOL_SCHEMES;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
@@ -93,12 +93,12 @@ public final class LocalUrlCacher {
         if (url == null || url.length() < 4) {
             return false;
         }
-        return (url.substring(0, 4).compareToIgnoreCase(FILE_PROTOCOL) == 0);
+        return (url.substring(0, 4).compareToIgnoreCase(FILE_PROTOCOL_SCHEME) == 0);
     }
 
     public static boolean isLocalFile(URI uri) {
         String scheme = uri.getScheme();
-        return StringUtils.equalsIgnoreCase(scheme, FILE_PROTOCOL);
+        return StringUtils.equalsIgnoreCase(scheme, FILE_PROTOCOL_SCHEME);
     }
 
     public static SeekableStream getSeekableStream(URI uri) throws IOException {
@@ -647,7 +647,7 @@ public final class LocalUrlCacher {
             return f;
         }
         String scheme = uri.getScheme().toLowerCase();
-        if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+        if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             InputStream istr = null;
             try {
                 String uriStr = uri.toString();
@@ -684,9 +684,9 @@ public final class LocalUrlCacher {
     public static BufferedInputStream convertURIToBufferedUnzippedStream(URI uri) throws Exception {
         String scheme = uri.getScheme().toLowerCase();
         InputStream is = null;
-        if (scheme.length() == 0 || scheme.equals(FILE_PROTOCOL)) {
+        if (scheme.length() == 0 || scheme.equals(FILE_PROTOCOL_SCHEME)) {
             is = new FileInputStream(new File(uri));
-        } else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+        } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             is = LocalUrlCacher.getInputStream(uri.toString());
         } else {
             logger.error(
@@ -709,9 +709,9 @@ public final class LocalUrlCacher {
         String scheme = uri.getScheme().toLowerCase();
         InputStream is = null;
         try {
-            if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
+            if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
                 is = new FileInputStream(new File(uri));
-            } else if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+            } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
                 is = LocalUrlCacher.getInputStream(uri.toString());
             } else {
                 logger.error(
@@ -732,7 +732,7 @@ public final class LocalUrlCacher {
     public static boolean isURL(String url) {
         if (StringUtils.isNotBlank(url)) {
             String scheme = StringUtils.substringBefore(url, ":");
-            return SUPPORTED_PROTOCOLS.contains(scheme);
+            return SUPPORTED_PROTOCOL_SCHEMES.contains(scheme);
         }
         return false;
     }
@@ -756,14 +756,14 @@ public final class LocalUrlCacher {
             logger.warn("Check if Url {} is proper. No schema found", uri.toString());
             return false;
         }
-        if (StringUtils.equals(scheme, FILE_PROTOCOL)) {
+        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
             File f = new File(uri);
             if (f.exists()) {
                 return true;
             }
         }
 
-        if (scheme.startsWith(HTTP_PROTOCOL) || scheme.startsWith(FTP_PROTOCOL)) {
+        if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             InputStream istr = null;
             try {
 
@@ -786,18 +786,18 @@ public final class LocalUrlCacher {
             }
         }
 
-        return scheme.startsWith(IGB_PROTOCOL);
+        return scheme.startsWith(IGB_PROTOCOL_SCHEME);
     }
 
     public static String getReachableUrl(String urlString) {
-        if (urlString.startsWith(FILE_PROTOCOL)) {
+        if (urlString.startsWith(FILE_PROTOCOL_SCHEME)) {
             File f = new File(urlString);
             if (f.exists()) {
                 return urlString;
             }
         }
 
-        if (urlString.startsWith(HTTP_PROTOCOL) || urlString.startsWith(FTP_PROTOCOL)) {
+        if (urlString.startsWith(HTTP_PROTOCOL_SCHEME) || urlString.startsWith(FTP_PROTOCOL_SCHEME)) {
             InputStream istr = null;
             try {
 

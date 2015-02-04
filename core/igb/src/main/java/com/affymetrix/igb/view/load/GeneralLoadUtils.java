@@ -21,6 +21,7 @@ import com.affymetrix.genometry.symloader.BAM.BamIndexNotFoundException;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInst;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -1352,7 +1353,7 @@ public final class GeneralLoadUtils {
 
             // handle URL case.
             String uriString = uri.toString();
-            int httpIndex = uriString.toLowerCase().indexOf("http:");
+            int httpIndex = uriString.toLowerCase().indexOf(HTTP_PROTOCOL);
             if (httpIndex > -1) {
                 // Strip off initial characters up to and including http:
                 // Sometimes this is necessary, as URLs can start with invalid "http:/"

@@ -16,6 +16,10 @@ import java.util.logging.Logger;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.util.GeneralUtils;
 
 import org.broad.tribble.readers.TabixReader;
@@ -30,7 +34,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
 
     private URI getFileURI(URI tbiUri) throws Exception {
         String baseUriString = tbiUri.toString().substring(0, tbiUri.toString().length() - ".tbi".length());
-        if (!baseUriString.startsWith("file:") && !baseUriString.startsWith("http:") && !baseUriString.startsWith("https:") && !baseUriString.startsWith("ftp:")) {
+        if (!baseUriString.startsWith(FILE_PROTOCOL) && !baseUriString.startsWith(HTTP_PROTOCOL) && !baseUriString.startsWith(HTTPS_PROTOCOL) && !baseUriString.startsWith(FTP_PROTOCOL)) {
             baseUriString = GeneralUtils.getFileScheme() + baseUriString;
         }
         return new URI(baseUriString);
@@ -49,7 +53,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
         }
         try {
             String uriString;
-            if (uri.toString().startsWith("http:") || uri.toString().startsWith("https:")) {
+            if (uri.toString().startsWith(HTTP_PROTOCOL) || uri.toString().startsWith(HTTPS_PROTOCOL)) {
                 uriString = uri.toString();
             } else {
                 uriString = GeneralUtils.fixFileName(uri.toString());

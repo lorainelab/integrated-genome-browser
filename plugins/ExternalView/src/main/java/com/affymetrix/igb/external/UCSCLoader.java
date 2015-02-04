@@ -1,5 +1,6 @@
 package com.affymetrix.igb.external;
 
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -35,7 +36,7 @@ public class UCSCLoader extends BrowserLoader {
         String base_url = getUrlForView(loc, pixWidth);
         String userId = cookies.get(UCSCView.UCSCUSERID).equals("") ? null : UCSCView.UCSCUSERID + "=" + cookies.get(UCSCView.UCSCUSERID);
         String file_name_url = getImageUrl(base_url, userId, new UCSCURLFinder(fileNameBaseUrl, fileNamePattern));
-        if (file_name_url.startsWith("http")) {
+        if (file_name_url.startsWith(HTTP_PROTOCOL_SCHEME)) {
             BufferedImage finalImage = null;
             BufferedImage fileImage = null;
             try {
@@ -45,7 +46,7 @@ public class UCSCLoader extends BrowserLoader {
                 Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + file_name_url, e);
             }
             String side_name_url = getImageUrl(base_url,userId, new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
-            if (fileImage != null && side_name_url.startsWith("http")) {
+            if (fileImage != null && side_name_url.startsWith(HTTP_PROTOCOL_SCHEME)) {
                 BufferedImage sideImage = null;
                 try {
                     sideImage = ImageIO.read(new URL(side_name_url));

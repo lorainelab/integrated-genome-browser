@@ -37,6 +37,8 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericVersion;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import static com.google.common.io.Closeables.close;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -126,7 +128,7 @@ public final class GeneralUtils {
     public static InputStream getInputStream(File f, StringBuffer sb) throws
             IOException {
 
-        String infile_name = "file:" + f.getAbsolutePath();
+        String infile_name = FILE_PROTOCOL + f.getAbsolutePath();
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
         InputStream isr = unzipStream(bis, infile_name, sb);
         return isr;
@@ -187,7 +189,7 @@ public final class GeneralUtils {
      * Fix several potential problems in URL names.
      */
     public static String convertStreamNameToValidURLName(String streamName) {
-        int httpIndex = streamName.indexOf("http:");
+        int httpIndex = streamName.indexOf(HTTP_PROTOCOL);
         if (httpIndex > -1) {
             streamName = streamName.substring(httpIndex + 5);	// strip off initial characters including http:
         }
@@ -531,7 +533,7 @@ public final class GeneralUtils {
         if (os != null && os.toLowerCase().contains("windows")) {
             return "file:/";
         } else {
-            return "file:";
+            return FILE_PROTOCOL;
         }
     }
 
@@ -542,8 +544,8 @@ public final class GeneralUtils {
         String fixedFileName = fileName;
         if (fileName.startsWith("file:/")) {
             fixedFileName = fileName.substring(getFileScheme().length());
-        } else if (fileName.startsWith("file:")) {
-            fixedFileName = fileName.substring("file:".length());
+        } else if (fileName.startsWith(FILE_PROTOCOL)) {
+            fixedFileName = fileName.substring(FILE_PROTOCOL.length());
         }
         return URLDecode(fixedFileName);
     }
@@ -569,7 +571,7 @@ public final class GeneralUtils {
     public static boolean urlExists(String url) {
         if (url == null) {
             return false;
-        } else if (url.startsWith("http:")) {
+        } else if (url.startsWith(HTTP_PROTOCOL)) {
             return httpExists(url);
         } else {
             File f = new File(fixFileName(url));

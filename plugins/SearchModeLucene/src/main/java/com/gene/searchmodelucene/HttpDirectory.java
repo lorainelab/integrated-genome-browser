@@ -1,5 +1,6 @@
 package com.gene.searchmodelucene;
 
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -24,9 +25,9 @@ import java.util.Map;
  */
 public class HttpDirectory extends Directory {
 
-    private String httpURL;
+    private final String httpURL;
     private String[] fileList;
-    private Map<String, HttpDirectoryInputSeekableStream> httpFiles = new HashMap<>();
+    private final Map<String, HttpDirectoryInputSeekableStream> httpFiles = new HashMap<>();
 
     public HttpDirectory(String url) {
         httpURL = url;
@@ -41,7 +42,7 @@ public class HttpDirectory extends Directory {
         if (fileList == null) {
             if (FileUtil.getInstance().isIndexName(httpURL)) {
                 try {
-                    if (httpURL.startsWith("http")) {
+                    if (httpURL.startsWith(HTTP_PROTOCOL_SCHEME)) {
                         URL url = new URL(httpURL + ".dir");
                         URLConnection conn = url.openConnection();
                         conn.connect();

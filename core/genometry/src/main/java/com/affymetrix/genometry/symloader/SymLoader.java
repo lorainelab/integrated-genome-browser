@@ -19,6 +19,7 @@ import com.affymetrix.genometry.filter.SymmetryFilterIntersecting;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.*;
 
@@ -28,7 +29,7 @@ import com.affymetrix.genometry.util.*;
  */
 public abstract class SymLoader {
 
-    public static final String FILE_PREFIX = "file:";
+    public static final String FILE_PREFIX = FILE_PROTOCOL;
     public static final String TOO_MANY_CONTIGS_EXCEPTION = "Too many open files";
     public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
     public String extension;	// used for ServerUtils call

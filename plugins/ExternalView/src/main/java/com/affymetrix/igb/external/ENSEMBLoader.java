@@ -1,5 +1,6 @@
 package com.affymetrix.igb.external;
 
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,7 +104,7 @@ class ENSEMBLoader extends BrowserLoader {
         String url;
         Closer closer = Closer.create();
         url = getUrlForView(loc, pixWidth);
-        if (url.startsWith("http")) {
+        if (url.startsWith(HTTP_PROTOCOL_SCHEME)) {
             try {
                 String cookie = EnsemblView.ENSEMBLWIDTH + "=" + cookies.get(EnsemblView.ENSEMBLWIDTH);
                 String session = cookies.get(EnsemblView.ENSEMBLSESSION);

@@ -16,6 +16,10 @@ import net.sf.samtools.StubBAMFileIndex;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import net.sf.samtools.seekablestream.SeekableFileStream;
@@ -46,14 +50,14 @@ public class BaiZoomSymLoader extends IndexZoomSymLoader {
 
     private URI getBamURI(URI baiUri) throws Exception {
         String bamUriString = baiUri.toString().substring(0, baiUri.toString().length() - ".bai".length());
-        if (!bamUriString.startsWith("file:") && !bamUriString.startsWith("http:") && !bamUriString.startsWith("https:") && !bamUriString.startsWith("ftp:")) {
+        if (!bamUriString.startsWith(FILE_PROTOCOL) && !bamUriString.startsWith(HTTP_PROTOCOL) && !bamUriString.startsWith(HTTPS_PROTOCOL) && !bamUriString.startsWith(FTP_PROTOCOL)) {
             bamUriString = GeneralUtils.getFileScheme() + bamUriString;
         }
         return new URI(bamUriString);
     }
 
     protected SeekableStream getSeekableStream(URI uri) throws Exception {
-        if (uri.toString().startsWith("http:") || uri.toString().startsWith("https:")) {
+        if (uri.toString().startsWith(HTTP_PROTOCOL) || uri.toString().startsWith(HTTPS_PROTOCOL)) {
             return new SeekableHTTPStream(new URL(uri.toString()));
         } else {
             return new SeekableFileStream(new File(GeneralUtils.fixFileName(uri.toString())));

@@ -339,7 +339,7 @@ public final class Das2VersionedSource {
 			}
 			NodeList flist = typenode.getElementsByTagName("FORMAT");
 			LinkedHashMap<String,String> formats = new LinkedHashMap<>();
-			HashMap<String,String> props = new HashMap<>();
+			Map<String,String> props = new HashMap<>();
 			for (int k = 0; k < flist.getLength(); k++) {
 				Element fnode = (Element) flist.item(k);
 				String formatid = fnode.getAttribute(NAME);

@@ -119,7 +119,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
         operators.addAll(OperatorServiceRegistry.getOperators());
         for (Operator operator : operators) {
-            if (TrackUtils.getInstance().checkCompatible(syms, operator, true)) {
+            if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
                 String title = operator.getDisplay();
                 Operator newOperator = operator.newInstance();
                 if (newOperator == null) {

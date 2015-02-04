@@ -123,9 +123,9 @@ public class TrackUtils {
         return trackCounts;
     }
 
-    public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator, boolean paramsOK) {
+    public boolean checkCompatible(List<? extends SeqSymmetry> syms, Operator operator) {
 
-        if (!paramsOK && operator instanceof IParameters) {
+        if (operator instanceof IParameters) {
             Map<String, Class<?>> params = ((IParameters) operator).getParametersType();
             if (null != params) {
                 if (0 < params.size()) {

@@ -30,7 +30,7 @@ public class CopyMismatchOperator implements Operator, ICopy {
 
     @Override
     public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-        if (symList.size() != 1 || !(symList.get(0) instanceof MisMatchGraphSym)) {
+        if (!isCopyable(symList)) {
             return null;
         }
         MisMatchGraphSym sourceSym = (MisMatchGraphSym) symList.get(0);
@@ -67,6 +67,14 @@ public class CopyMismatchOperator implements Operator, ICopy {
         }
 
         return graphSym;
+    }
+
+    private static boolean isCopyable(List<SeqSymmetry> symList) {
+        if (symList.size() != 1) {
+            return false;
+        }
+        SeqSymmetry sym = symList.get(0);
+        return !(sym instanceof MisMatchGraphSym || sym instanceof MisMatchPileupGraphSym);
     }
 
     @Override

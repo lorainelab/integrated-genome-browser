@@ -163,10 +163,10 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
                 continue;
             }
 
-            if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator, true)) {
+            if (transformOK && TrackUtils.getInstance().checkCompatible(transformSyms, operator)) {
                 name2transformation.put(operator.getDisplay(), operator);
                 getTransformationCB().addItem(operator.getDisplay());
-            } else if (TrackUtils.getInstance().checkCompatible(Selections.rootSyms, operator, true)) {
+            } else if (TrackUtils.getInstance().checkCompatible(Selections.rootSyms, operator)) {
                 name2operation.put(operator.getDisplay(), operator);
                 getOperationCB().addItem(operator.getDisplay());
             }

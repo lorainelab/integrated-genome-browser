@@ -61,7 +61,8 @@ public class OperatorServiceFactory {
         this.bundleContext = bundleContext;
         bundleContext.registerService(Operator.class, new ComplementSequenceOperator(), null);
         bundleContext.registerService(Operator.class, new CopyGraphOperator(), null);
-        bundleContext.registerService(Operator.class, new CopyMismatchOperator(), null);
+        //note: CopyMismatchOperator appears to have never worked, and is disabled now until it is repaired
+//        bundleContext.registerService(Operator.class, new CopyMismatchOperator(), null);
         bundleContext.registerService(Operator.class, new CopySequenceOperator(), null);
         bundleContext.registerService(Operator.class, new CopyXOperator(FileTypeCategory.Alignment), null);
         bundleContext.registerService(Operator.class, new CopyXOperator(FileTypeCategory.Annotation), null);

@@ -318,11 +318,6 @@
         <!--Start of development plugins  added to ensure obr repository.xml gets generated with content since reactor plugin is not respecting order of module declaration-->
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>bam-indexer</artifactId>
-            <scope>provided</scope>
-        </dependency> 
-        <dependency>
-            <groupId>com.affymetrix</groupId>
             <artifactId>DasRegistryServerType</artifactId>
             <scope>provided</scope>
         </dependency> 

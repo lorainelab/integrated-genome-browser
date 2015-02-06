@@ -151,6 +151,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
+import static com.affymetrix.igb.view.SeqMapViewConstants.*;
 
 /**
  * A panel hosting a labeled tier map. Despite it's name this is actually a
@@ -195,7 +196,13 @@ public class SeqMapView extends JPanel
 
     protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
     protected boolean coord_shift = false;
-    boolean show_edge_matches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
+    boolean showEdgeMatches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
+
+    public boolean isShowEdgeMatches() {
+        return showEdgeMatches;
+    }
+
+    
     private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip);
     private MapMode mapMode;
     private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
@@ -232,31 +239,12 @@ public class SeqMapView extends JPanel
     // mapping of annotated seq to virtual "view" seq
     protected MutableSeqSymmetry seq2viewSym;
     protected SeqSymmetry[] transform_path;
-    public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
-    public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
-    /**
-     * Name of a boolean preference for whether the horizontal zoom slider is
-     * above the map.
-     */
-    private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
-    /**
-     * Name of a boolean preference for whether the vertical zoom slider is left
-     * of the map.
-     */
-    private static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
-    /**
-     * Name of a boolean preference for whether to show properties in tooltip.
-     */
-    public static final String PREF_SHOW_TOOLTIP = "Show properties in tooltip";
-    /**
-     * Name of a string preference define which resize behavior to use.
-     */
-    public static final String PREF_TRACK_RESIZING_BEHAVIOR = "Track resizing behavior";
+    
     //public static final Color default_edge_match_color = Color.RED;
     public static final Color default_edge_match_color = new Color(204, 0, 255);
     public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
-    private static final boolean default_x_zoomer_above = true;
-    private static final boolean default_y_zoomer_left = true;
+    public static final boolean defaultXZoomerAbove = true;
+    public static final boolean defaultYZoomerLeft = true;
     private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
     private final FloaterGlyph pixel_floater_glyph = new CoordFloaterGlyph();
     private final AutoScroll autoScroll = new AutoScroll();
@@ -279,6 +267,14 @@ public class SeqMapView extends JPanel
     private SeqSpan horizontalClampedRegion = null; //Span representing clamped region
     protected TierLabelManager tierLabelManager;
     protected JComponent xzoombox;
+
+    public JComponent getXzoombox() {
+        return xzoombox;
+    }
+
+    public JComponent getYzoombox() {
+        return yzoombox;
+    }
     protected JComponent yzoombox;
     protected com.affymetrix.igb.swing.JRPButton zoomInXB;
     protected com.affymetrix.igb.swing.JRPButton zoomInYB;
@@ -301,89 +297,11 @@ public class SeqMapView extends JPanel
     private final Set<SeqMapRefreshed> seqmap_refresh_list = new CopyOnWriteArraySet<>();
     private TierGlyph axis_tier;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
-    //private final PopupInfo popupInfo;
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
-    // This preference change listener can reset some things, like whether
-    // the axis uses comma format or not, in response to changes in the stored
-    // preferences.  Changes to axis, and other tier, colors are not so simple,
-    // in part because of the need to coordinate with the label glyphs.
-    private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
+    private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListenerImpl(this);
 
-        @Override
-        public void preferenceChange(PreferenceChangeEvent pce) {
-            if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
-                return;
-            }
-
-            if (pce.getKey().equals(PREF_TRACK_RESIZING_BEHAVIOR)) {
-                String behavior = PreferenceUtils.getStringParam(PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
-                MouseInputAdapter resizer;
-                if (behavior.equals(TierResizer.class.getSimpleName())) {
-                    resizer = new TierResizer((AffyLabelledTierMap) seqmap);
-                } else {
-                    resizer = new AccordionTierResizer((AffyLabelledTierMap) seqmap);
-                }
-
-                // Remove previous instances of mouse adapters.
-                ((AffyLabelledTierMap) seqmap).getLabelMap().removeMouseListener(TierResizer.class);
-                ((AffyLabelledTierMap) seqmap).getLabelMap().removeMouseListener(AccordionTierResizer.class);
-                ((AffyLabelledTierMap) seqmap).getLabelMap().removeMouseMotionListener(TierResizer.class);
-                ((AffyLabelledTierMap) seqmap).getLabelMap().removeMouseMotionListener(AccordionTierResizer.class);
-
-                ((AffyLabelledTierMap) seqmap).getLabelMap().addMouseListener(resizer);
-                ((AffyLabelledTierMap) seqmap).getLabelMap().addMouseMotionListener(resizer);
-
-                return;
-            }
-
-            switch (pce.getKey()) {
-                case CoordinateStyle.PREF_COORDINATE_LABEL_FORMAT:
-                    AxisGlyph ag = seqmap.getAxis();
-                    if (ag != null) {
-                        setAxisFormatFromPrefs(ag);
-                    }
-                    seqmap.updateWidget();
-                    break;
-                case PreferenceUtils.SHOW_EDGEMATCH_OPTION:
-                    setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
-                    getSeqMap().updateWidget();
-                    break;
-                case PREF_EDGE_MATCH_COLOR:
-                case PREF_EDGE_MATCH_FUZZY_COLOR:
-                    if (show_edge_matches) {
-                        doEdgeMatching(seqmap.getSelected(), true);
-                    }
-                    break;
-                case PREF_X_ZOOMER_ABOVE: {
-                    boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-                    SeqMapView.this.remove(xzoombox);
-                    if (b) {
-                        SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-                    } else {
-                        SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-                    }
-                    SeqMapView.this.invalidate();
-                    break;
-                }
-                case PREF_Y_ZOOMER_LEFT: {
-                    boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
-                    SeqMapView.this.remove(yzoombox);
-                    if (b) {
-                        SeqMapView.this.add(BorderLayout.WEST, yzoombox);
-                    } else {
-                        SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-                    }
-                    SeqMapView.this.invalidate();
-                    break;
-                }
-                case PREF_SHOW_TOOLTIP:
-                    setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
-                    break;
-            }
-        }
-    };
-
+    // IGBF-323 May be extract this to a separate class
     private MouseListener continuousActionListener = new MouseAdapter() {
         private javax.swing.Timer timer;
 
@@ -553,7 +471,7 @@ public class SeqMapView extends JPanel
         addRefreshButton(this.id);
         addLoadResidueButton(this.id);
 
-        boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+        boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, defaultXZoomerAbove);
         JPanel pan = new JPanel(new BorderLayout(0, 0));
         pan.add("Center", xzoombox);
         if (x_above) {
@@ -575,7 +493,7 @@ public class SeqMapView extends JPanel
 
         yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 
-        boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+        boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, defaultYZoomerLeft);
         if (y_left) {
             this.add(BorderLayout.WEST, yzoombox);
         } else {
@@ -776,7 +694,6 @@ public class SeqMapView extends JPanel
      */
     public final void setAnnotatedSeq(BioSeq seq) {
         setAnnotatedSeq(seq, false, (seq == this.aseq) && (seq != null));
-        // if the seq is not changing, try to preserve current view
     }
 
     /**
@@ -792,22 +709,6 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
     }
 
-    //   want to optimize for several situations:
-    //       a) merging newly loaded data with existing data (adding more annotations to
-    //           existing BioSeq) -- would like to avoid recreation and repacking
-    //           of already glyphified annotations
-    //       b) reverse complementing existing BioSeq
-    //       c) coord shifting existing BioSeq
-    //   in all these cases:
-    //       "new" BioSeq == old BioSeq
-    //       existing glyphs could be reused (in (b) they'd have to be "flipped")
-    //       should preserve selection
-    //       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
-    //   only some of the above optimization/preservation are implemented yet
-    //   WARNING: currently graphs are not properly displayed when reverse complementing,
-    //               need to "genometrize" them
-    //            currently sequence is not properly displayed when reverse complementing
-    //
     @Override
     public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
         if (seq == null) {
@@ -897,7 +798,7 @@ public class SeqMapView extends JPanel
                     });
         }
 
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), false);
         }
 
@@ -929,16 +830,6 @@ public class SeqMapView extends JPanel
         } else {
             seqmap.stretchToFit(true, true);
 
-            /**
-             * Possible bug : Below both ranges are different
-             * System.out.println("SeqMapRange "+seqmap.getMapRange()[1]);
-             * System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
-             *
-             */
-            // NOTE: Below call to stretchToFit is not redundancy. It is there
-            //       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
-            // Probably not necessary after a fix in r9248 - HV
-            //seqmap.stretchToFit(true, true);
             zoomToSelections();
             postSelections();
             int[] range = seqmap.getVisibleRange();
@@ -960,7 +851,6 @@ public class SeqMapView extends JPanel
         if (seq.getLength() > 0) {
             autoScroll.configure(seqmap, 0, seq.getLength());
         }
-        //GeneralLoadView.getLoadView().getTableModel().fireTableDataChanged(); //for updating cell renderers/editors
     }
 
     public void seqMapRefresh() {
@@ -991,7 +881,7 @@ public class SeqMapView extends JPanel
 
         List<SeqSymmetry> old_sym_selections = getSelectedSyms();
         seqmap.clearSelected();
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), false);
         }
 
@@ -1008,7 +898,7 @@ public class SeqMapView extends JPanel
         }
 
 //		setSelectionStatus(getSelectionTitle(seqmap.getSelected()));
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), true);
         }
     }
@@ -1271,7 +1161,7 @@ public class SeqMapView extends JPanel
             zoomToSelections();
             List<GlyphI> glyphs = seqmap.getSelected();
             setSelectionStatus(getSelectionTitle(glyphs));
-            if (show_edge_matches) {
+            if (showEdgeMatches) {
                 doEdgeMatching(glyphs, false);
             }
             if (autoload != null) {
@@ -1484,9 +1374,6 @@ public class SeqMapView extends JPanel
             SeqSpan span = getViewSeqSpan(seq_selected_sym);
             zoomTo(span);
         }
-//		else{
-//			zoomToRectangle(seqmap.getCoordBounds()); //Enable double click to zoom out here.
-//		}
     }
 
     /**
@@ -1608,7 +1495,6 @@ public class SeqMapView extends JPanel
             }
 
             List<GlyphI> target_glyphs = doTheSelection(coordrect);
-//			target_glyphs.add(seqmap.getScene().getGlyph());
 
             if (target_glyphs.isEmpty()) {
                 return;
@@ -1632,8 +1518,8 @@ public class SeqMapView extends JPanel
     }
 
     protected final void setEdgeMatching(boolean b) {
-        show_edge_matches = b;
-        if (show_edge_matches) {
+        showEdgeMatches = b;
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), true);
         } else {
             doEdgeMatching(new ArrayList<>(0), true);
@@ -1659,13 +1545,13 @@ public class SeqMapView extends JPanel
 
     public final void adjustEdgeMatching(int bases) {
         getEdgeMatcher().setFuzziness(bases);
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), true);
         }
     }
 
     public final void redoEdgeMatching() {
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), true);
         }
     }
@@ -1772,7 +1658,7 @@ public class SeqMapView extends JPanel
             }
         }
 
-        if (show_edge_matches) {
+        if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), false);
         }
         seqmap.updateWidget();
@@ -1788,8 +1674,6 @@ public class SeqMapView extends JPanel
      * has a parent, or else the child itself is included in the list
      */
     static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
-        // linked hash set keeps parents in same order as child list so that comparison
-        // like childList.equals(parentList) can be used.
         Set<GlyphI> results = new LinkedHashSet<>(childGlyphs.size());
         for (GlyphI child : childGlyphs) {
             GlyphI pglyph = getParent(child, true);
@@ -2367,7 +2251,7 @@ public class SeqMapView extends JPanel
         }
     }
 
-    private void setShowPropertiesTooltip(boolean b) {
+    public void setShowPropertiesTooltip(boolean b) {
         show_prop_tooltip = b;
         if (!b) {
             setToolTip(null, null, -1);

@@ -103,7 +103,6 @@
         <!-- End of included plugin version declarations -->
         
         <!-- Start of development plugin version declarations -->
-        <bam-indexer-version>0.0.1</bam-indexer-version>
         <DasRegistryServerType-version>0.0.1</DasRegistryServerType-version>
         <findAnnotations-version>0.0.1</findAnnotations-version>        
         <ncbiPrimer-version>0.0.1</ncbiPrimer-version>
@@ -231,7 +230,6 @@
                 <module>developmentPlugins/ThousandGenomesServerType</module>
                 <module>developmentPlugins/TranscriptIsoform</module>               
                 <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/BAMIndexer</module>
                 <module>developmentPlugins/NCBIPrimer</module>                
             </modules>
         </profile>
@@ -293,7 +291,6 @@
                 <module>developmentPlugins/ThousandGenomesServerType</module>
                 <module>developmentPlugins/TranscriptIsoform</module>
                 <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/BAMIndexer</module>
                 <module>developmentPlugins/NCBIPrimer</module>                                 
                 <!-- end of dev plugin modules-->
                 
@@ -528,12 +525,6 @@
             <!--End of plugin module dependencies-->
             
             <!-- Start of development plugins -->
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>bam-indexer</artifactId>
-                <version>${bam-indexer-version}</version>
-                <scope>provided</scope>
-            </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>DasRegistryServerType</artifactId>

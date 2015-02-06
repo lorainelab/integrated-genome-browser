@@ -6,7 +6,6 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
@@ -17,7 +16,6 @@ import com.affymetrix.genometry.event.PropertyHolder;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
-import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -114,11 +112,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +141,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
+import com.affymetrix.igb.swing.JRPWidget;
 import static com.affymetrix.igb.view.SeqMapViewConstants.*;
 
 /**
@@ -152,95 +149,34 @@ import static com.affymetrix.igb.view.SeqMapViewConstants.*;
  * panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
-        implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, com.affymetrix.igb.swing.JRPWidget {
+        implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, JRPWidget {
 
     private static final long serialVersionUID = 1L;
-    public static final String COMPONENT_NAME = "SeqMapView";
     private static final Logger logger = LoggerFactory.getLogger(SeqMapView.class);
     private final PropertyHolder propertyHolder;
     private final SymSelectionListener symSelectionListener;
-
-    public SymSelectionListener getSymSelectionListener() {
-        return symSelectionListener;
-    }
-
-    public static enum MapMode {
-
-        MapSelectMode(true, false, defaultCursor, defaultCursor),
-        MapScrollMode(false, true, openHandCursor, closedHandCursor),
-        MapZoomMode(false, false, defaultCursor, defaultCursor);
-        public final boolean rubber_band, drag_scroll;
-        public final Cursor defCursor, pressedCursor;
-
-        private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor) {
-            this.rubber_band = rubber_band;
-            this.drag_scroll = drag_scroll;
-            this.defCursor = defaultCursor;
-            this.pressedCursor = pressedCursor;
-        }
-    }
-
-    private final static String SEQ_MODE = "SEQ_MODE";
     public static final boolean default_auto_change_view = false;
     public static final boolean default_show_prop_tooltip = true;
-
     private static final boolean DEBUG_TIERS = false;
-
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;
-
-    static {
-        defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-        openHandCursor = new Cursor(Cursor.HAND_CURSOR);
-        closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
-    }
-
     protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
     protected boolean coord_shift = false;
     boolean showEdgeMatches = PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match);
-
-    public boolean isShowEdgeMatches() {
-        return showEdgeMatches;
-    }
-
-    
     private boolean show_prop_tooltip = PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip);
     private MapMode mapMode;
     private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
     private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
-//	private JToggleButton zoom_mode_button;
     private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<>();
     private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<>();
-    /**
-     * maximum number of query glyphs for edge matcher. any more than this and
-     * won't attempt to edge match (edge matching is currently very inefficient
-     * with large numbers of glyphs -- something like O(N * M), where N is
-     * number of query glyphs and M is total number of glyphs to try and match
-     * against query glyphs [or possibly O(N^2 * M) ???] )
-     */
-    private static final int max_for_matching = 500;
+    private static final int max_for_matching = 500;    //maximum number of query glyphs for edge matcher.
     private String id;
-    /**
-     * boolean for setting map range to min and max bounds of AnnotatedBioSeq's
-     * annotations
-     */
     private boolean shrinkWrapMapBounds = false;
     protected AffyTieredMap seqmap;
     private UnibrowHairline hairline = null;
     protected BioSeq aseq;
-    /**
-     * a virtual sequence that maps the BioSeq aseq to the map coordinates. if
-     * the mapping is identity, then: vseq == aseq OR
-     * vseq.getComposition().getSpan(aseq) = SeqSpan(0, aseq.getLength(), aseq)
-     * if the mapping is reverse complement, then:
-     * vseq.getComposition().getSpan(aseq) = SeqSpan(aseq.getLength(), 0, aseq);
-     *
-     */
-    protected BioSeq viewseq;
-    // mapping of annotated seq to virtual "view" seq
+    protected BioSeq viewseq; //a virtual sequence that maps the BioSeq aseq to the map coordinates.
     protected MutableSeqSymmetry seq2viewSym;
     protected SeqSymmetry[] transform_path;
-    
-    //public static final Color default_edge_match_color = Color.RED;
     public static final Color default_edge_match_color = new Color(204, 0, 255);
     public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
     public static final boolean defaultXZoomerAbove = true;
@@ -259,14 +195,6 @@ public class SeqMapView extends JPanel
     private SeqSpan horizontalClampedRegion = null; //Span representing clamped region
     protected TierLabelManager tierLabelManager;
     protected JComponent xzoombox;
-
-    public JComponent getXzoombox() {
-        return xzoombox;
-    }
-
-    public JComponent getYzoombox() {
-        return yzoombox;
-    }
     protected JComponent yzoombox;
     protected com.affymetrix.igb.swing.JRPButton zoomInXB;
     protected com.affymetrix.igb.swing.JRPButton zoomInYB;
@@ -291,9 +219,30 @@ public class SeqMapView extends JPanel
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
-    private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListenerImpl(this);
+    private final PreferenceChangeListener pref_change_listener;
+    
+    public static enum MapMode {
 
-    // IGBF-323 May be extract this to a separate class
+        MapSelectMode(true, false, defaultCursor, defaultCursor),
+        MapScrollMode(false, true, openHandCursor, closedHandCursor),
+        MapZoomMode(false, false, defaultCursor, defaultCursor);
+        public final boolean rubber_band, drag_scroll;
+        public final Cursor defCursor, pressedCursor;
+
+        private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor) {
+            this.rubber_band = rubber_band;
+            this.drag_scroll = drag_scroll;
+            this.defCursor = defaultCursor;
+            this.pressedCursor = pressedCursor;
+        }
+    }
+
+    static {
+        defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+        openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+        closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+    }
+
     private MouseListener continuousActionListener = new MouseAdapter() {
         private javax.swing.Timer timer;
 
@@ -344,60 +293,39 @@ public class SeqMapView extends JPanel
 
     public SeqMapView(boolean add_popups, String theId, JFrame frame) {
         super();
-        this.symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
-        this.propertyHolder = new SeqMapViewPropertyHolderImpl(this);
+
         this.id = theId;
         com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(this);
         seqmap = createAffyTieredMap();
-
+        pref_change_listener = new PreferenceChangeListenerImpl(this);
+        symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
+        propertyHolder = new SeqMapViewPropertyHolderImpl(this);
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
-
         seqmap.addComponentListener(new SeqMapViewComponentListener());
-
         seqmap.setMapColor(Color.WHITE);
-
         edge_matcher = GlyphEdgeMatcher.getSingleton();
-
         mouse_listener = new SeqMapViewMouseListener(this);
-
         seqMapToolTips = new SeqMapToolTips(frame);
-
         seqmap.getNeoCanvas().setDoubleBuffered(false);
-
         seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
-
         Adjustable xzoomer = getXZoomer(this.id);
-
         ((JSlider) xzoomer).setToolTipText(BUNDLE.getString("horizontalZoomToolTip"));
         Adjustable yzoomer = new com.affymetrix.igb.swing.RPAdjustableJSlider(this.id + "_yzoomer", Adjustable.VERTICAL);
         ((JSlider) yzoomer).setToolTipText(BUNDLE.getString("verticalZoomToolTip"));
-
         seqmap.setZoomer(NeoMap.X, xzoomer);
         seqmap.setZoomer(NeoMap.Y, yzoomer);
-
         tierLabelManager = new TierLabelManager((AffyLabelledTierMap) seqmap);
         popup = new SeqMapViewPopup(tierLabelManager, this);
         MouseShortCut msc = new MouseShortCut(popup);
-
         tierLabelManager.setDoGraphSelections(true);
-
         GraphSelectionManager gsm = new GraphSelectionManager(this);
         seqmap.addMouseListener(gsm);
-
         if (add_popups) {
-            //NOTE: popup listeners are called in reverse of the order that they are added
-            // Must use separate instances of GraphSelectioManager if we want to use
-            // one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
-            //tier_manager.addPopupListener(new GraphSelectionManager(this));
-            //tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
-            //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
             tierLabelManager.addPopupListener(popup);
             autoload = new AutoLoadThresholdHandler(this);
         }
 
-        // Listener for track selection events.  We will use this to populate 'Selection Info'
-        // grid with properties of the Type.
         TierLabelManager.TrackSelectionListener track_selection_listener = (topLevelGlyph, handler) -> {
             // TODO:  Find properties of selected track and show in 'Selection Info' tab.
         };
@@ -408,12 +336,8 @@ public class SeqMapView extends JPanel
         seqmap.addMouseListener(msc);
         seqmap.addMouseMotionListener(mouse_listener);
         ((AffyLabelledTierMap) seqmap).getLabelMap().addMouseMotionListener(mouse_listener);
-        //((AffyLabelledTierMap)seqmap).getLabelMap().addMouseListener(msc); //Enable mouse short cut here.
 
         tierLabelManager.setDoGraphSelections(true);
-
-        // A "Smart" rubber band is necessary becaus we don't want our attempts
-        // to drag the graph handles to also cause rubber-banding
         RubberBand srb = new SeqMapViewRubberBand(seqmap);
         seqmap.setRubberBand(srb);
         seqmap.addRubberBandListener(mouse_listener);
@@ -443,22 +367,15 @@ public class SeqMapView extends JPanel
         scroll_mode_button.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
         scroll_mode_button.setMargin(new Insets(2, 4, 2, 4));
         xzoombox.add(scroll_mode_button);
-
-//		zoom_mode_button = new JToggleButton(new MapModeAction(this, MapMode.MapZoomMode));
-//		zoom_mode_button.setText("");
-//		xzoombox.add(zoom_mode_button);
         ButtonGroup group = new ButtonGroup();
         group.add(select_mode_button);
         group.add(scroll_mode_button);
-//		group.add(zoom_mode_button);
         select_mode_button.doClick(); // default
 
         xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-
         addZoomOutXButton(this.id);
         xzoombox.add((Component) xzoomer);
         addZoomInXButton(this.id);
-
         xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 
         refreshDataAction = new RefreshDataAction(this);
@@ -474,13 +391,8 @@ public class SeqMapView extends JPanel
             this.add(BorderLayout.SOUTH, pan);
         }
 
-//		JSlider specialZoomer = new JSlider(JSlider.VERTICAL, 0, 100, 50);
-//		ChangeListener zoomie = new LawrencianZoomer(seqmap, specialZoomer.getModel());
-//		specialZoomer.addChangeListener(zoomie);
         yzoombox = Box.createVerticalBox();
-
         yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
-
         addZoomOutYButton(this.id);
         yzoombox.add((Component) yzoomer, BorderLayout.CENTER);
         addZoomInYButton(this.id);
@@ -498,8 +410,6 @@ public class SeqMapView extends JPanel
 
         LinkControl link_control = new LinkControl();
         this.addPopupListener(link_control);
-
-//		this.addPopupListener(new ReadAlignmentView());
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
         String behavior = PreferenceUtils.getStringParam(PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
@@ -621,27 +531,6 @@ public class SeqMapView extends JPanel
         return tierLabelManager;
     }
 
-    private void setupPopups() {
-
-//		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
-//		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
-//		selectParentMI = new JRPMenuItem("SeqMapView_" + getId() + "_popup_selectParent", SelectParentAction.getAction());
-//		KeyStroke ks = MenuUtil.addAccelerator(this,
-//				SelectParentAction.getAction(), SelectParentAction.getAction().getId());
-//		if (ks != null) {
-//			// Make the accelerator be visible in the menu item.
-//			selectParentMI.setAccelerator(ks);
-//		}
-//		setThreshold = setUpMenuItem(sym_popup, "Set AutoLoad Threshold to Current View");
-//		seqViewerOptions = setUpMenuItem(sym_popup, "View Genomic Sequence in Sequence Viewer");
-//		viewFeatureinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Just selected span using genomic coordinates");
-//		viewParentinSequenceViewer = setUpMenuItemDuplicate(seqViewerOptions, "Linked spans using transcript coordinates");
-//		viewFeatureinSequenceViewer = new JMenuItem("View selected feature in Sequence Viewer");
-//		viewParentinSequenceViewer = new JMenuItem("View sequence for parent in sequence Viewer");
-//		seqViewerOptions.add(viewFeatureinSequenceViewer);
-//		seqViewerOptions.add(viewParentinSequenceViewer);// get more info
-    }
-
     public final TierGlyph getAxisTier() {
         return axis_tier;
     }
@@ -727,9 +616,6 @@ public class SeqMapView extends JPanel
 
         // Save selected tiers
         List<TierGlyph> old_tier_selections = getTierManager().getSelectedTiers();
-
-        // stash annotation tiers for proper state restoration after resetting for same seq
-        //    (but presumably added / deleted / modified annotations...)
         List<TierGlyph> cur_tiers = new ArrayList<>(seqmap.getTiers());
         TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
         int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
@@ -890,8 +776,6 @@ public class SeqMapView extends JPanel
                 seqmap.select(gl);
             }
         }
-
-//		setSelectionStatus(getSelectionTitle(seqmap.getSelected()));
         if (showEdgeMatches) {
             doEdgeMatching(seqmap.getSelected(), true);
         }
@@ -909,7 +793,6 @@ public class SeqMapView extends JPanel
             }
             tg.removeAllChildren();
             tg.setScene(null);
-            //seqmap.removeTier(tg);
         }
         return temp_tiers;
     }
@@ -921,9 +804,7 @@ public class SeqMapView extends JPanel
             hairline.destroy();
         }
         hairline = new UnibrowHairline(seqmap);
-        //hairline.getShadow().setLabeled(hairline_is_labeled);
         addPreviousTierGlyphs(seqmap, temp_tiers);
-//		axis_tier = AxisGlyphFactory.addAxisTier(this, axis_index);
 
         // Since axis has to added only one, add it here instead of annotation track.
         axis_tier = this.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
@@ -1007,10 +888,6 @@ public class SeqMapView extends JPanel
      * @param tiers the list of TierGlyphs
      */
     private void removeEmptyTierGlyphs(List<TierGlyph> tiers) {
-        //				tg.setVisibility(false);
-//				if(tg instanceof DefaultTierGlyph){
-//					((DefaultTierGlyph)tg).setHeightFixed(false);
-//				}
         tiers.stream().filter(tg -> tg.getChildCount() == 0).forEach(seqmap::removeTier);
     }
 
@@ -1027,15 +904,15 @@ public class SeqMapView extends JPanel
     }
 
     // muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
-    //   addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
+    // addLeafsToTier(), addToTier(), etc. into mapping from composition sequences
     private void handleCompositionSequence() {
         BioSeq cached_aseq = aseq;
         MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
         SeqSymmetry[] cached_path = transform_path;
         SeqSymmetry comp = aseq.getComposition();
         // assuming a two-level deep composition hierarchy for now...
-        //   need to make more recursive at some point...
-        //   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
+        // need to make more recursive at some point...
+        // (or does recursive call to addAnnotationTiers already give us full recursion?!!)
         int scount = comp.getChildCount();
         for (int i = 0; i < scount; i++) {
             SeqSymmetry csym = comp.getChild(i);
@@ -1122,10 +999,6 @@ public class SeqMapView extends JPanel
         return seqmap;
     }
 
-//	@Override
-//	public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
-//		seqmap.setDataModelFromOriginalSym(g, sym);
-//	}
     @Override
     public final void selectAllGraphs() {
         List<GraphGlyph> glyphlist = collectGraphs();
@@ -1435,8 +1308,6 @@ public class SeqMapView extends JPanel
             public void actionPerformed(ActionEvent e) {
                 horizontalClamp(horizontalClampedRegion == null);
                 seqmap.repackTheTiers(true, false);
-                //seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
-                //seqmap.updateWidget();
             }
         });
     }
@@ -1569,7 +1440,6 @@ public class SeqMapView extends JPanel
     public final void setShrinkWrap(boolean b) {
         shrinkWrapMapBounds = b;
         setAnnotatedSeq(aseq);
-//		ShrinkWrapAction.getAction().putValue(Action.SELECTED_KEY, b);
     }
 
     public final boolean getShrinkWrap() {
@@ -1800,7 +1670,6 @@ public class SeqMapView extends JPanel
     final void showPopup(NeoMouseEvent nevt) {
         if (sym_popup == null) {
             sym_popup = new JRPPopupMenu();
-            setupPopups();
         }
         sym_popup.setVisible(false); // in case already showing
         sym_popup.removeAll();
@@ -1862,18 +1731,6 @@ public class SeqMapView extends JPanel
                 sym_popup.show(seqmap, nevt.getX() + xoffset_pop, nevt.getY() + yoffset_pop);
             }
         }
-        // For garbage collection, it would be nice to add a listener that
-        // could call sym_popup.removeAll() when the popup is removed from view.
-
-        /*
-         * Force a repaint of the JPopupMenu. This is a work-around for an Apple
-         * JVM Bug (verified on 10.5.8, Java Update 5). Affected systems will
-         * display a stale copy of the JPopupMenu if the current number of menu
-         * items is equal to the previous number of menu items.
-         *
-         * The repaint must occur after the menu has been drawn: it appears to
-         * skip the repaint if isVisible is false. (another optimisation?)
-         */
         sym_popup.repaint();
     }
 
@@ -2096,6 +1953,7 @@ public class SeqMapView extends JPanel
         return pixel_floater_glyph;
     }
 
+    @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
         AnnotatedSeqGroup current_group = null;
         AnnotatedSeqGroup new_group = evt.getSelectedGroup();
@@ -2351,6 +2209,22 @@ public class SeqMapView extends JPanel
             joinedParent.removeChild(glyph);
         }
         joinedParent.pack(getSeqMap().getView());
+    }
+
+    public SymSelectionListener getSymSelectionListener() {
+        return symSelectionListener;
+    }
+
+    public boolean isShowEdgeMatches() {
+        return showEdgeMatches;
+    }
+
+    public JComponent getXzoombox() {
+        return xzoombox;
+    }
+
+    public JComponent getYzoombox() {
+        return yzoombox;
     }
 
     @Override

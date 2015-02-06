@@ -30,4 +30,6 @@ public class SeqMapViewConstants {
      * Name of a string preference define which resize behavior to use.
      */
     public static final String PREF_TRACK_RESIZING_BEHAVIOR = "Track resizing behavior";
+    public static final String COMPONENT_NAME = "SeqMapView";
+    public final static String SEQ_MODE = "SEQ_MODE";
 }

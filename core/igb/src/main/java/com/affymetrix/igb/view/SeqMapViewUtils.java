@@ -197,15 +197,4 @@ public class SeqMapViewUtils {
         seqMapView.getSeqMap().updateWidget();
         return glyph;
     }
-
-    public void showProperties(int x, GraphGlyph glyph, SeqMapView seqMapView) {
-        List<GraphGlyph> glyphs = new ArrayList<>();
-        glyphs.add(glyph);
-        List<SeqSymmetry> sym = SeqMapView.glyphsToSyms(glyphs);
-        if (!sym.isEmpty()) {
-            if (seqMapView.propertyHandler != null) {
-                seqMapView.propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, seqMapView);
-            }
-        }
-    }
 }

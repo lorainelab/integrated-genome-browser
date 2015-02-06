@@ -62,6 +62,9 @@ public class ToolTipConstants {
     public static final String NA = "na";
     
     // Constants added while SeqMapView refactoring
+    public static final String SEQ_ID = "seq id";
+    public static final String METHOD = "method";
+    public static final String TYPE = "type";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);

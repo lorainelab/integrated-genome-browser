@@ -161,7 +161,7 @@ public class SeqMapView extends JPanel
 
     private static final long serialVersionUID = 1L;
     public static final String COMPONENT_NAME = "SeqMapView";
-    private static final Logger logger = LoggerFactory.getLogger(SelectionInfoUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SeqMapView.class);
 
     public static enum MapMode {
 
@@ -342,7 +342,8 @@ public class SeqMapView extends JPanel
                     AxisGlyph ag = seqmap.getAxis();
                     if (ag != null) {
                         setAxisFormatFromPrefs(ag);
-                    }   seqmap.updateWidget();
+                    }
+                    seqmap.updateWidget();
                     break;
                 case PreferenceUtils.SHOW_EDGEMATCH_OPTION:
                     setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
@@ -352,29 +353,30 @@ public class SeqMapView extends JPanel
                 case PREF_EDGE_MATCH_FUZZY_COLOR:
                     if (show_edge_matches) {
                         doEdgeMatching(seqmap.getSelected(), true);
-                    }   break;
-                case PREF_X_ZOOMER_ABOVE:
-                    {
-                        boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-                        SeqMapView.this.remove(xzoombox);
-                        if (b) {
-                            SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-                        } else {
-                            SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-                        }       SeqMapView.this.invalidate();
-                        break;
                     }
-                case PREF_Y_ZOOMER_LEFT:
-                {
+                    break;
+                case PREF_X_ZOOMER_ABOVE: {
+                    boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+                    SeqMapView.this.remove(xzoombox);
+                    if (b) {
+                        SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+                    } else {
+                        SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+                    }
+                    SeqMapView.this.invalidate();
+                    break;
+                }
+                case PREF_Y_ZOOMER_LEFT: {
                     boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
                     SeqMapView.this.remove(yzoombox);
                     if (b) {
                         SeqMapView.this.add(BorderLayout.WEST, yzoombox);
                     } else {
                         SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-                }       SeqMapView.this.invalidate();
-                        break;
                     }
+                    SeqMapView.this.invalidate();
+                    break;
+                }
                 case PREF_SHOW_TOOLTIP:
                     setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
                     break;
@@ -891,8 +893,8 @@ public class SeqMapView extends JPanel
         if (old_tier_selections != null) {
             getTierManager().getAllTierLabels().stream().filter(tierLabelGlyph -> tierLabelGlyph.getReferenceTier().isVisible()
                     && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
-                ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
-            });
+                        ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
+                    });
         }
 
         if (show_edge_matches) {
@@ -1865,6 +1867,7 @@ public class SeqMapView extends JPanel
                 GlyphI topgl = selected_glyphs.get(0);
                 Object info = topgl.getInfo();
                 SeqSymmetry sym = null;
+                // IGBF-323 try to improve this code by using some list or something
                 if (info instanceof SeqSymmetry) {
                     sym = (SeqSymmetry) info;
                 }
@@ -2099,46 +2102,17 @@ public class SeqMapView extends JPanel
                     SeqSpan visible = getVisibleSpan();
                     if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
                         popup.add(load_partial_sequence);
-                        //popup.add(new JMenuItem(LoadPartialSequenceAction.getAction()));
                     }
 
                     if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
-                        //popup.add(new JMenuItem(CopyResiduesAction.getActionShort()));
-                        //popup.add(new JMenuItem(ViewGenomicSequenceInSeqViewerAction.getAction()));
-                        //popup.add(new JMenuItem(ViewReadSequenceInSeqViewerAction.getAction()));
                         popup.add(copy_residues_action);
                         for (AxisPopupListener listener : axisPopupListeners) {
                             listener.addPopup(popup);
                         }
-//						view_genomic_sequence_action.setEnabled(true);	
                     }
                 }
-
-//				return;
             }
-
-//			if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME) {
-//				JMenuItem refresh_a_feature= new JMenuItem(RefreshAFeatureAction.createRefreshAFeatureAction(feature));
-//				refresh_a_feature.setIcon(null);
-//				popup.add(refresh_a_feature);
-//			}
         }
-    }
-
-    // sets the text on the JLabel based on the current selection
-    private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
-        String title = "";
-        if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
-            GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
-            title = gg.getLabel();
-        } else {
-            title = getSelectionTitle(selected_glyphs);
-        }
-        // limit the popup title to 30 characters because big popup-menus don't work well
-        if (title != null && title.length() > 30) {
-            title = title.substring(0, 30) + " ...";
-        }
-        label.setText(title);
     }
 
     @Override
@@ -2291,9 +2265,7 @@ public class SeqMapView extends JPanel
             current_group = aseq.getSeqGroup();
         }
 
-        if (IgbService.DEBUG_EVENTS) {
-            System.out.println("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
-        }
+        logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
 
         if ((new_group != current_group) && (current_group != null)) {
             clear();
@@ -2301,17 +2273,8 @@ public class SeqMapView extends JPanel
     }
 
     public void seqSelectionChanged(SeqSelectionEvent evt) {
-        if (IgbService.DEBUG_EVENTS) {
-            System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
-        }
+        logger.debug("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
         final BioSeq newseq = evt.getSelectedSeq();
-		// Don't worry if newseq is null, setAnnotatedSeq can handle that
-        // (It can also handle the case where newseq is same as old seq.)
-
-        // trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
-        // Maybe should change GenometryModel.setSelectedSeq() to only fire if seq changes...
-        // reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq,
-        //    because often need to trigger repacking / rendering anyway
         setAnnotatedSeq(newseq);
     }
 
@@ -2488,7 +2451,7 @@ public class SeqMapView extends JPanel
 
             Map<String, Object> props = null;
             if (glyph.getInfo() instanceof Map) {
-                props = (Map<String,    Object>) glyph.getInfo();
+                props = (Map<String, Object>) glyph.getInfo();
             } else {
                 props = new HashMap<>();
             }
@@ -2642,7 +2605,6 @@ public class SeqMapView extends JPanel
         }
         joinedParent.pack(getSeqMap().getView());
     }
-
 
     @Override
     public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex,

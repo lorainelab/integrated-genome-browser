@@ -220,7 +220,7 @@ public class SeqMapView extends JPanel
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
     private final PreferenceChangeListener pref_change_listener;
-    
+
     public static enum MapMode {
 
         MapSelectMode(true, false, defaultCursor, defaultCursor),
@@ -297,9 +297,6 @@ public class SeqMapView extends JPanel
         this.id = theId;
         com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(this);
         seqmap = createAffyTieredMap();
-        pref_change_listener = new PreferenceChangeListenerImpl(this);
-        symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
-        propertyHolder = new SeqMapViewPropertyHolderImpl(this);
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
         seqmap.addComponentListener(new SeqMapViewComponentListener());
@@ -410,13 +407,18 @@ public class SeqMapView extends JPanel
 
         LinkControl link_control = new LinkControl();
         this.addPopupListener(link_control);
-        PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
 
         String behavior = PreferenceUtils.getStringParam(PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName());
         PreferenceUtils.getTopNode().put(PREF_TRACK_RESIZING_BEHAVIOR, behavior);
 
         TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
         Toolkit.getDefaultToolkit().addAWTEventListener(modeController, AWTEvent.KEY_EVENT_MASK);
+
+        pref_change_listener = new PreferenceChangeListenerImpl(this);
+        symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
+        propertyHolder = new SeqMapViewPropertyHolderImpl(this);
+
+        PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
     }
 
     protected void addZoomInXButton(String id) {

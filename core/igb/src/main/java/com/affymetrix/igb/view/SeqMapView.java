@@ -34,7 +34,6 @@ import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genometry.util.SelectionInfoUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -72,7 +71,6 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
@@ -82,7 +80,6 @@ import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CoordinateStyle;
@@ -128,7 +125,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -139,14 +135,12 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
-import javax.swing.event.MouseInputAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,11 +152,17 @@ import static com.affymetrix.igb.view.SeqMapViewConstants.*;
  * panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
-        implements SeqMapViewExtendedI, SymSelectionListener, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, com.affymetrix.igb.swing.JRPWidget {
+        implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, com.affymetrix.igb.swing.JRPWidget {
 
     private static final long serialVersionUID = 1L;
     public static final String COMPONENT_NAME = "SeqMapView";
     private static final Logger logger = LoggerFactory.getLogger(SeqMapView.class);
+    private final PropertyHolder propertyHolder;
+    private final SymSelectionListener symSelectionListener;
+
+    public SymSelectionListener getSymSelectionListener() {
+        return symSelectionListener;
+    }
 
     public static enum MapMode {
 
@@ -344,6 +344,8 @@ public class SeqMapView extends JPanel
 
     public SeqMapView(boolean add_popups, String theId, JFrame frame) {
         super();
+        this.symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
+        this.propertyHolder = new SeqMapViewPropertyHolderImpl(this);
         this.id = theId;
         com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(this);
         seqmap = createAffyTieredMap();
@@ -1180,7 +1182,7 @@ public class SeqMapView extends JPanel
         postSelections();
     }
 
-    private void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
+    public void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
             boolean call_listeners, boolean update_widget) {
         if (!add_to_previous) {
             clearSelection();
@@ -1575,37 +1577,6 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * SymSelectionListener interface
-     */
-    public void symSelectionChanged(SymSelectionEvent evt) {
-        Object src = evt.getSource();
-
-        // ignore self-generated xym selection -- already handled internally
-        if (src == this) {
-            String title = getSelectionTitle(seqmap.getSelected());
-            setSelectionStatus(title);
-        } // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
-        else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView)) {
-            // catching SeqMapView as source of event because currently sym selection events actually originating
-            //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
-        } else {
-            List<SeqSymmetry> symlist = evt.getSelectedGraphSyms();
-            // select:
-            //   add_to_previous ==> false
-            //   call_listeners ==> false
-            //   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
-            select(symlist, true, true, false);
-            // Zoom to selections, unless the selection was caused by the TierLabelManager
-            // (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
-            if (src != getSeqMap() && src != getTierManager()) {
-                zoomToSelections();
-            }
-            String title = getSelectionTitle(seqmap.getSelected());
-            setSelectionStatus(title);
-        }
-    }
-
-    /**
      * Sets the hairline position and zoom center to the given spot. Does not
      * call map.updateWidget()
      */
@@ -1698,12 +1669,12 @@ public class SeqMapView extends JPanel
         return g;
     }
 
-    private void setSelectionStatus(String title) {
+    public void setSelectionStatus(String title) {
         Map<String, Object> props = null;
         if (tier_used_in_selection_info != null) {
             props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
         } else {
-            props = determineProps(sym_used_for_title);
+            props = propertyHolder.determineProps(sym_used_for_title);
         }
         Application.getSingleton().setSelField(props, title, sym_used_for_title);
     }
@@ -1718,7 +1689,7 @@ public class SeqMapView extends JPanel
     // Compare the code here with SymTableView.selectionChanged()
     // The logic about finding the ID from instances of DerivedSeqSymmetry
     // should be similar in both places, or else users could get confused.
-    private String getSelectionTitle(List<GlyphI> selected_glyphs) {
+    public String getSelectionTitle(List<GlyphI> selected_glyphs) {
         String id = null;
         tier_used_in_selection_info = null;
         if (selected_glyphs.isEmpty()) {
@@ -2204,9 +2175,9 @@ public class SeqMapView extends JPanel
             Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
-                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, this);
+                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, propertyHolder);
                 } else {
-                    properties = propertyHandler.getPropertiesRow(toolTipSym, this);
+                    properties = propertyHandler.getPropertiesRow(toolTipSym, propertyHolder);
                 }
             }
             if (evt != null && properties != null) {
@@ -2229,7 +2200,7 @@ public class SeqMapView extends JPanel
 
         if (!sym.isEmpty()) {
             if (propertyHandler != null) {
-                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, this);
+                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, propertyHolder);
             }
         }
     }
@@ -2302,97 +2273,6 @@ public class SeqMapView extends JPanel
                 autoload.loadData();
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Map<String, Object>> getProperties() {
-        List<Map<String, Object>> propList = new ArrayList<>();
-        List<SeqSymmetry> selected_syms = getSelectedSyms();
-        for (GlyphI glyph : getSeqMap().getSelected()) {
-
-            if (glyph.getInfo() instanceof SeqSymmetry
-                    && selected_syms.contains(glyph.getInfo())) {
-                continue;
-            }
-
-            Map<String, Object> props = null;
-            if (glyph.getInfo() instanceof Map) {
-                props = (Map<String, Object>) glyph.getInfo();
-            } else {
-                props = new HashMap<>();
-            }
-
-            boolean direction = true;
-            if (props.containsKey("direction")) {
-                if (props.get("direction").equals("reverse")) {
-                    direction = false;
-                }
-            }
-
-            Rectangle2D.Double boundary = glyph.getSelectedRegion();
-            int start = (int) boundary.getX();
-            int length = (int) boundary.getWidth();
-            int end = start + length;
-            if (!direction) {
-                int temp = start;
-                start = end;
-                end = temp;
-            }
-            props.put("start", start);
-            props.put("end", end);
-            props.put("length", length);
-
-            propList.add(props);
-        }
-        propList.addAll(getTierManager().getProperties());
-        return propList;
-    }
-
-    @Override
-    public Map<String, Object> determineProps(SeqSymmetry sym) {
-        Map<String, Object> props = new HashMap<>();
-        if (sym == null) {
-            return props;
-        }
-        Map<String, Object> tierprops = getTierManager().determineProps(sym);
-        if (tierprops != null) {
-            props.putAll(tierprops);
-        }
-        SeqSpan span = getViewSeqSpan(sym);
-        if (span != null) {
-            String chromID = span.getBioSeq().getID();
-            props.put(CHROMOSOME, chromID);
-            props.put(START,
-                    NumberFormat.getIntegerInstance().format(span.getStart()));
-            props.put(END,
-                    NumberFormat.getIntegerInstance().format(span.getEnd()));
-            props.put(LENGTH,
-                    NumberFormat.getIntegerInstance().format(span.getLength()));
-            props.put(STRAND,
-                    span.isForward() ? "+" : "-");
-            props.remove(SEQ_ID); // this is redundant if "chromosome" property is set
-            if (props.containsKey(METHOD)) {
-                props.remove(METHOD);
-            }
-            if (props.containsKey(TYPE)) {
-                props.remove(TYPE);
-            }
-        }
-        if (sym instanceof CdsSeqSymmetry) {
-            sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
-        }
-        if (sym instanceof SupportsCdsSpan) {
-            span = ((SupportsCdsSpan) sym).getCdsSpan();
-            if (span != null) {
-                props.put(CDS_START,
-                        NumberFormat.getIntegerInstance().format(span.getStart()));
-                props.put(CDS_END,
-                        NumberFormat.getIntegerInstance().format(span.getEnd()));
-
-            }
-        }
-        return props;
     }
 
     public MapRangeBox getMapRangeBox() {

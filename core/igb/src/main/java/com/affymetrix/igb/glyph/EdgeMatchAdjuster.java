@@ -16,6 +16,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.SeqMapViewConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -145,8 +146,8 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 		edge_match_box.setLayout(new GridLayout(2, 0));
 		edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge match colors"));
 
-		edge_match_box.add(addColorChooser("Standard", SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color));
-		edge_match_box.add(addColorChooser("Fuzzy matching", SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color));
+		edge_match_box.add(addColorChooser("Standard", SeqMapViewConstants.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color));
+		edge_match_box.add(addColorChooser("Fuzzy matching", SeqMapViewConstants.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color));
 		this.add("South", edge_match_box);
 		this.revalidate();
 	}

@@ -38,9 +38,9 @@
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
-                          <Component id="edgeMatchPanel" alignment="0" pref="473" max="32767" attributes="1"/>
-                          <Component id="orfAnalyzerPanel" alignment="0" pref="473" max="32767" attributes="1"/>
-                          <Component id="residueColorPanel" alignment="0" pref="473" max="32767" attributes="1"/>
+                          <Component id="edgeMatchPanel" alignment="0" pref="490" max="32767" attributes="1"/>
+                          <Component id="orfAnalyzerPanel" alignment="0" pref="490" max="32767" attributes="1"/>
+                          <Component id="residueColorPanel" alignment="0" pref="490" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="confirmBeforeDeleteCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -52,11 +52,11 @@
                                   <Component id="displayOption" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="coordinatePanel" alignment="0" pref="473" max="32767" attributes="1"/>
+                          <Component id="coordinatePanel" alignment="0" pref="490" max="32767" attributes="1"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="57" max="32767" attributes="0"/>
+              <EmptySpace pref="40" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -160,16 +160,10 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="stopCodonLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="StopCodonColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
                   <Component id="dynamicORFLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="DynamicORFColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
                   <Component id="bgLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="bgComboBox" min="-2" pref="20" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -177,16 +171,13 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="stopCodonLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="dynamicORFLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="StopCodonColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="DynamicORFColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="bgLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="bgComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -202,25 +193,10 @@
             <Property name="text" type="java.lang.String" value="Dynamic ORF:"/>
           </Properties>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="StopCodonColorComboBox">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, null)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, null)"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JLabel" name="bgLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Background: "/>
           </Properties>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="bgComboBox">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, null)"/>
-          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -242,24 +218,15 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="aLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="AColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                   <Component id="tLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="TColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                   <Component id="gLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="GColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                   <Component id="cLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="CColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
                   <Component id="otherLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="OtherColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -268,17 +235,12 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="aLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="AColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="gLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="cLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="otherLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="tLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="TColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="GColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="CColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="OtherColorComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -308,46 +270,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Other:"/>
           </Properties>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="AColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, null)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="TColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, null)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="GColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, null)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="CColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, null)"/>
-          </AuxValues>
-        </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="OtherColorComboBox">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OtherColorComboBoxActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, null)"/>
-          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -396,30 +318,20 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                  <Component id="edgeMatchColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="191" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="221" max="-2" attributes="0"/>
                   <Component id="showEdgeMatchCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="183" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="showEdgeMatchCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="edgeMatchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="edgeMatchColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="edgeMatchLabel" min="-2" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="edgeMatchColorComboBox">
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color, null)"/>
-          </AuxValues>
-        </Component>
         <Component class="javax.swing.JLabel" name="edgeMatchLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Color:"/>
@@ -443,7 +355,7 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;,&#xa;    PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors)"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);&#xa;else&#xa;    com.affymetrix.genometryImpl.util.ErrorHandler.setDisplayHandler(null);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);&#xa;else&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
@@ -558,7 +470,7 @@
             <Property name="text" type="java.lang.String" value="Adjust All Tracks"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust All Tracks&quot;, AccordionTierResizer.class.getSimpleName(),&#xa;    SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust All Tracks&quot;, AccordionTierResizer.class.getSimpleName(),&#xa;    SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="jRadioButton2">
@@ -569,7 +481,7 @@
             <Property name="text" type="java.lang.String" value="Adjust Adjacent Tracks"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust Adjacent Tracks&quot;, TierResizer.class.getSimpleName(),&#xa;    SeqMapView.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createRadioButton(&quot;Adjust Adjacent Tracks&quot;, TierResizer.class.getSimpleName(),&#xa;    SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR, TierResizer.class.getSimpleName())"/>
           </AuxValues>
         </Component>
       </SubComponents>

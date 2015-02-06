@@ -2,6 +2,7 @@ package com.affymetrix.genometry.symmetry.impl;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.SupportsGeneName;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,16 +37,16 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 
     public Map<String, Object> cloneProperties() {
         Map<String, Object> tprops = super.cloneProperties();
-        tprops.put("title", geneName);
-        tprops.put("description", description);
+        tprops.put(TITLE, geneName);
+        tprops.put(DESCRIPTION, description);
         return tprops;
     }
 
     public Object getProperty(String key) {
         switch (key) {
-            case "title":
+            case TITLE:
                 return geneName;
-            case "description":
+            case DESCRIPTION:
                 return description;
             default:
                 return super.getProperty(key);

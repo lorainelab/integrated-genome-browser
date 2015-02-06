@@ -65,6 +65,8 @@ public class ToolTipConstants {
     public static final String SEQ_ID = "seq id";
     public static final String METHOD = "method";
     public static final String TYPE = "type";
+    public static final String MATCH = "match";
+    public static final String FEATURE_TYPE = "feature type";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);

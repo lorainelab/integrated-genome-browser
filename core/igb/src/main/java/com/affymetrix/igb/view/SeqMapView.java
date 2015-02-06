@@ -251,17 +251,9 @@ public class SeqMapView extends JPanel
     private final GlyphEdgeMatcher edge_matcher;
     private JRPPopupMenu sym_popup = null;
     private SeqSymmetry toolTipSym;
-    // A fake menu item, prevents null pointer exceptions in loadResidues()
-    // for menu items whose real definitions are commented-out in the code
     private static final JMenuItem empty_menu_item = new JMenuItem("");
-    //JMenuItem zoomtoMI = empty_menu_item;
-//	JMenuItem selectParentMI = empty_menu_item;
     JMenuItem slicendiceMI = empty_menu_item;
-//	JMenu seqViewerOptions = new JMenu("Show genomic sequence for ..");
     JMenuItem seqViewerOptions = empty_menu_item;
-//	JMenuItem viewFeatureinSequenceViewer = empty_menu_item;
-//	JMenuItem viewParentinSequenceViewer = empty_menu_item;
-    // for right-click on background
     private final SeqMapViewMouseListener mouse_listener;
     private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
     private SeqSpan horizontalClampedRegion = null; //Span representing clamped region
@@ -1751,7 +1743,7 @@ public class SeqMapView extends JPanel
                 GlyphI topgl = selected_glyphs.get(0);
                 Object info = topgl.getInfo();
                 SeqSymmetry sym = null;
-                // IGBF-323 try to improve this code by using some list or something
+                // IGBF-323 Really bad logic. Need to come up with something better.
                 if (info instanceof SeqSymmetry) {
                     sym = (SeqSymmetry) info;
                 }
@@ -1764,11 +1756,11 @@ public class SeqMapView extends JPanel
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("gene name");
+                    id = (String) ((SymWithProps) sym).getProperty(GENE_NAME);
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("id");
+                    id = (String) ((SymWithProps) sym).getProperty(ID);
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof DerivedSeqSymmetry) {
@@ -1777,18 +1769,18 @@ public class SeqMapView extends JPanel
                         id = original.getID();
                         sym_used_for_title = original;
                     } else if (original instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) original).getProperty("id");
+                        id = (String) ((SymWithProps) original).getProperty(ID);
                         sym_used_for_title = original;
                     }
                 }
                 if (id == null && sym instanceof CdsSeqSymmetry) {
                     SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
                     if (property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty("gene name");
+                        id = (String) ((SymWithProps) property_sym).getProperty(GENE_NAME);
                         sym_used_for_title = sym;
                     }
                     if (id == null && property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty("id");
+                        id = (String) ((SymWithProps) property_sym).getProperty(ID);
                         sym_used_for_title = sym;
                     }
                 }
@@ -1806,21 +1798,12 @@ public class SeqMapView extends JPanel
                     }
                     sym_used_for_title = null;
                 }
-//				if (id == null) {
-//					// If ID of item is null, check recursively for parent ID, or parent of that...
-//					GlyphI pglyph = topgl.getParent();
-//					if (pglyph != null && !(pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-//						// Add one ">" symbol for each level of getParent()
-//						sym_used_for_title = null; // may be re-set in the recursive call
-//						id = getSelectionTitle(Arrays.asList(pglyph));
-//					} 
-//				}
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("match");
+                    id = (String) ((SymWithProps) sym).getProperty(MATCH);
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("feature type");
+                    id = (String) ((SymWithProps) sym).getProperty(FEATURE_TYPE);
                     sym_used_for_title = sym;
                 }
                 if (id == null) {

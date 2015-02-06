@@ -22,7 +22,6 @@ import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
@@ -32,7 +31,6 @@ import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -93,7 +91,6 @@ import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
-import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
@@ -128,7 +125,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -153,6 +149,8 @@ import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
 
 /**
  * A panel hosting a labeled tier map. Despite it's name this is actually a
@@ -2406,60 +2404,6 @@ public class SeqMapView extends JPanel
         }
     }
 
-    private static String convertPropsToString(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
-        }
-
-        StringBuilder props = new StringBuilder();
-        props.append("<html>");
-        for (Entry<String, Object> prop : properties.entrySet()) {
-            props.append("<b>");
-            props.append(prop.getKey());
-            props.append(" : </b>");
-            props.append(getSortString(prop.getValue()));
-            props.append("<br>");
-        }
-        props.append("</html>");
-
-        return props.toString();
-    }
-
-    /**
-     * Converts given properties into string.
-     */
-    private static String convertPropsToString(String[][] properties) {
-        StringBuilder props = new StringBuilder();
-        props.append("<html>");
-        if (properties.length >= 1) {
-            props.append("<div align='center'> <b> ").append(getSortString(properties[0][1])).append(" </b> </div> <hr>");
-        }
-        for (String[] propertie : properties) {
-            props.append("<b>");
-            props.append(propertie[0]);
-            props.append(" : </b>");
-            props.append(getSortString(propertie[1]));
-            props.append("<br>");
-        }
-        props.append("</html>");
-
-        return props.toString();
-    }
-
-    private static String getSortString(Object str) {
-        if (str == null) {
-            return "";
-        }
-
-        String string = str.toString();
-        int strlen = string.length();
-        if (strlen < 30) {
-            return string;
-        }
-
-        return " ..." + string.substring(strlen - 25, strlen);
-    }
-
     private void setShowPropertiesTooltip(boolean b) {
         show_prop_tooltip = b;
         if (!b) {
@@ -2515,9 +2459,6 @@ public class SeqMapView extends JPanel
         if (MapMode.MapSelectMode.name().equals(mapMode)) {
             select_mode_button.doClick();
         }
-//		if (MapMode.MapZoomMode.name().equals(mapMode)) {
-//			zoom_mode_button.doClick();
-//		}
     }
 
     @Override
@@ -2547,7 +2488,7 @@ public class SeqMapView extends JPanel
 
             Map<String, Object> props = null;
             if (glyph.getInfo() instanceof Map) {
-                props = (Map<String, Object>) glyph.getInfo();
+                props = (Map<String,    Object>) glyph.getInfo();
             } else {
                 props = new HashMap<>();
             }
@@ -2591,21 +2532,21 @@ public class SeqMapView extends JPanel
         SeqSpan span = getViewSeqSpan(sym);
         if (span != null) {
             String chromID = span.getBioSeq().getID();
-            props.put("chromosome", chromID);
-            props.put("start",
+            props.put(CHROMOSOME, chromID);
+            props.put(START,
                     NumberFormat.getIntegerInstance().format(span.getStart()));
-            props.put("end",
+            props.put(END,
                     NumberFormat.getIntegerInstance().format(span.getEnd()));
-            props.put("length",
+            props.put(LENGTH,
                     NumberFormat.getIntegerInstance().format(span.getLength()));
-            props.put("strand",
+            props.put(STRAND,
                     span.isForward() ? "+" : "-");
-            props.remove("seq id"); // this is redundant if "chromosome" property is set
-            if (props.containsKey("method")) {
-                props.remove("method");
+            props.remove(SEQ_ID); // this is redundant if "chromosome" property is set
+            if (props.containsKey(METHOD)) {
+                props.remove(METHOD);
             }
-            if (props.containsKey("type")) {
-                props.remove("type");
+            if (props.containsKey(TYPE)) {
+                props.remove(TYPE);
             }
         }
         if (sym instanceof CdsSeqSymmetry) {
@@ -2614,9 +2555,9 @@ public class SeqMapView extends JPanel
         if (sym instanceof SupportsCdsSpan) {
             span = ((SupportsCdsSpan) sym).getCdsSpan();
             if (span != null) {
-                props.put("cds start",
+                props.put(CDS_START,
                         NumberFormat.getIntegerInstance().format(span.getStart()));
-                props.put("cds end",
+                props.put(CDS_END,
                         NumberFormat.getIntegerInstance().format(span.getEnd()));
 
             }
@@ -2686,7 +2627,7 @@ public class SeqMapView extends JPanel
             List<GraphGlyph> graphGlyphs = new ArrayList<>(2);
             for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
                 if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
-                    splitGraph((GraphGlyph) glyph.getParent().getChild(i));
+                    SeqMapViewUtils.splitGraph((GraphGlyph) glyph.getParent().getChild(i));
                     graphGlyphs.add((GraphGlyph) glyph.getParent().getChild(i));
                 }
             }
@@ -2696,23 +2637,12 @@ public class SeqMapView extends JPanel
                 tier.pack(getSeqMap().getView());
             }
         } else {
-            splitGraph((GraphGlyph) glyph);
+            SeqMapViewUtils.splitGraph((GraphGlyph) glyph);
             joinedParent.removeChild(glyph);
         }
         joinedParent.pack(getSeqMap().getView());
     }
 
-    private static void splitGraph(GraphGlyph glyph) {
-        GraphSym gsym = (GraphSym) glyph.getInfo();
-        GraphState gstate = gsym.getGraphState();
-        // Set Y value from combo style to avoid graph jumping
-        if (gstate.getComboStyle() != null) {
-            gstate.getTierStyle().setY(gstate.getComboStyle().getY());
-        }
-        gstate.setComboStyle(null, 0);
-        gstate.getTierStyle().setJoin(false);
-        gstate.getTierStyle().setFloatTier(false);
-    }
 
     @Override
     public List<GlyphI> searchForRegexInResidues(boolean forward, Pattern regex,
@@ -2746,181 +2676,6 @@ public class SeqMapView extends JPanel
         seqmap.getView().setBackGroundProvider(bgp);
         ((AffyLabelledTierMap) seqmap).getLabelMap().getView().setBackGroundProvider(labelbgp);
         seqmap.updateWidget();
-    }
-
-    public void updateStart(int start, SeqSymmetry sym) {
-        GlyphI glyph = getSeqMap().getItemFromTier(sym);
-        Rectangle2D.Double originalCoordBox = glyph.getCoordBox();
-        Rectangle2D.Double coordBox = glyph.getCoordBox();
-        int end = (int) (coordBox.x + coordBox.width);
-        int min = Math.min(start, end);
-        int max = Math.max(start, end);
-        glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
-        updateSpan(glyph, sym);
-
-        for (int i = 0; i < sym.getChildCount(); i++) {
-            SeqSymmetry child = sym.getChild(i);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-            if (child != null && start > coordBox.x) {
-                end = (int) (coordBox.x + coordBox.width);
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-            }
-        }
-
-        if (sym instanceof SimpleSymWithPropsWithCdsSpan) {
-            SeqSpan span = ((SimpleSymWithPropsWithCdsSpan) sym).getCdsSpan();
-            if (start > span.getMin()) {
-                updateCdsStart(start, sym, false);
-            }
-        }
-
-        if (sym instanceof CdsSeqSymmetry) {
-            SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
-            SeqSymmetry child = parentSym.getChild(0);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-            boolean checkCdsStart = false;
-            int cdsStart = start;
-            if (child != null && coordBox.intersects(originalCoordBox)) {
-                checkCdsStart = true;
-                start = (int) coordBox.x;
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-            }
-
-            child = parentSym.getChild(parentSym.getChildCount() - 1);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-            if (child != null && coordBox.intersects(originalCoordBox)) {
-                end = (int) (coordBox.x + coordBox.width);
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-            }
-
-            if (checkCdsStart) {
-                updateCdsStart(cdsStart, parentSym, false);
-            }
-        }
-        getSeqMap().updateWidget();
-    }
-
-    public void updateEnd(int end, SeqSymmetry sym) {
-        GlyphI glyph = getSeqMap().getItemFromTier(sym);
-        Rectangle2D.Double originalCoordBox = glyph.getCoordBox();
-        Rectangle2D.Double coordBox = glyph.getCoordBox();
-        int start = (int) coordBox.x;
-        int min = Math.min(start, end);
-        int max = Math.max(start, end);
-        glyph.setCoords(min, coordBox.y, max - min, coordBox.height);
-        updateSpan(glyph, sym);
-
-        for (int i = 0; i < sym.getChildCount(); i++) {
-            SeqSymmetry child = sym.getChild(i);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-            if (child != null && coordBox.x + coordBox.width > end) {
-                start = (int) coordBox.x;
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-            }
-        }
-
-        if (sym instanceof SimpleSymWithPropsWithCdsSpan) {
-            SeqSpan span = ((SimpleSymWithPropsWithCdsSpan) sym).getCdsSpan();
-            if (end < span.getMax()) {
-                updateCdsEnd(end, sym, false);
-            }
-        }
-
-        if (sym instanceof CdsSeqSymmetry) {
-            SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
-            SeqSymmetry child = parentSym.getChild(0);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-
-            if (child != null && coordBox.intersects(originalCoordBox)) {
-                start = (int) coordBox.x;
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-            }
-
-            child = parentSym.getChild(parentSym.getChildCount() - 1);
-            glyph = getSeqMap().getItemFromTier(child);
-            coordBox = glyph.getCoordBox();
-            if (child != null && coordBox.intersects(originalCoordBox)) {
-                int cdsEnd = end;
-                end = (int) (coordBox.x + coordBox.width);
-                glyph.setCoords(start, coordBox.y, end - start, coordBox.height);
-                updateSpan(glyph, child);
-
-                //Update cds end
-                updateCdsEnd(cdsEnd, parentSym, false);
-            }
-        }
-
-        getSeqMap().updateWidget();
-    }
-
-    public void updateCdsStart(int start, SeqSymmetry sym, boolean select) {
-        if (sym instanceof SimpleSymWithPropsWithCdsSpan) {
-            SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan) sym).getCdsSpan();
-            cdsSpan = new SimpleSeqSpan(start, cdsSpan.getEnd(), cdsSpan.getBioSeq());
-            ((SimpleSymWithPropsWithCdsSpan) sym).setCdsSpan(cdsSpan);
-        }
-        removeSym(sym);
-        (new AnnotationGlyphFactory()).createGlyph(sym, this);
-        getSeqMap().repackTheTiers(true, true);
-        if (select) {
-            List<SeqSymmetry> selections = new ArrayList<>();
-            selections.add(sym);
-            this.select(selections, true);
-        }
-    }
-
-    public void updateCdsEnd(int end, SeqSymmetry sym, boolean select) {
-        if (sym instanceof SimpleSymWithPropsWithCdsSpan) {
-            SeqSpan cdsSpan = ((SimpleSymWithPropsWithCdsSpan) sym).getCdsSpan();
-            cdsSpan = new SimpleSeqSpan(cdsSpan.getStart(), end, cdsSpan.getBioSeq());
-            ((SimpleSymWithPropsWithCdsSpan) sym).setCdsSpan(cdsSpan);
-        }
-        removeSym(sym);
-        (new AnnotationGlyphFactory()).createGlyph(sym, this);
-        getSeqMap().repackTheTiers(true, true);
-        if (select) {
-            List<SeqSymmetry> selections = new ArrayList<>();
-            selections.add(sym);
-            this.select(selections, true);
-        }
-    }
-
-    private void updateSpan(GlyphI glyph, SeqSymmetry sym) {
-        if (sym instanceof MutableSeqSymmetry) {
-            SeqSpan span = sym.getSpan(getAnnotatedSeq());
-            ((MutableSeqSymmetry) sym).removeSpan(span);
-            if (span.isForward()) {
-                span = new SimpleSeqSpan((int) glyph.getCoordBox().x, (int) (glyph.getCoordBox().x + glyph.getCoordBox().width), getAnnotatedSeq());
-            } else {
-                span = new SimpleSeqSpan((int) (glyph.getCoordBox().x + glyph.getCoordBox().width), (int) glyph.getCoordBox().x, getAnnotatedSeq());
-            }
-            ((MutableSeqSymmetry) sym).addSpan(span);
-        }
-    }
-
-    public GlyphI removeSym(SeqSymmetry sym) {
-        GlyphI glyph = getSeqMap().getItemFromTier(sym);
-        // If it inner child then remove it parent sym too.
-        if (!(glyph.getParent() instanceof TierGlyph)) {
-            SeqSymmetry parentSym = (SeqSymmetry) glyph.getParent().getInfo();
-            if (parentSym instanceof MutableSeqSymmetry) {
-                ((MutableSeqSymmetry) parentSym).removeChild(sym);
-            }
-        }
-        getSeqMap().removeItem(glyph);
-        getSeqMap().updateWidget();
-        return glyph;
-
     }
 
     private class SeqMapViewRubberBand extends RubberBand {

@@ -60,6 +60,8 @@ public class ToolTipConstants {
     public static final String FAILED_QC = "failed qc";
 
     public static final String NA = "na";
+    
+    // Constants added while SeqMapView refactoring
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);

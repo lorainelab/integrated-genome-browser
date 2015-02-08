@@ -1,16 +1,17 @@
 package com.affymetrix.genometry.weblink;
 
-import java.io.*;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.google.common.base.Strings;
+import com.lorainelab.igb.preferences.model.AnnotationUrl;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.GenometryModel;
 
 /**
  *
@@ -18,33 +19,45 @@ import com.affymetrix.genometry.GenometryModel;
  */
 public final class WebLink implements Comparable<WebLink> {
 
+    public static final String LOCAL = "local";
     private static final String separator = System.getProperty("line.separator");
     private static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");	//A pattern that matches the string "$$"
     private static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");	// A pattern that matches the string "$:genome:$"
 
-    // TYPE is feature name, ID is annotation ID
     public enum RegexType {
 
-        TYPE, ID
+        ANNOTATION_NAME, ANNOTATION_ID
     }
 
-    private String url = null;
-    private String name = "";
-    private String species = "";
-    private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
-    private String original_regex = null;
-    private String type = null; // server or local source
-    private RegexType regexType = RegexType.TYPE;	// matching on type or id
-    private String imageIconPath = null;
-    private Pattern pattern = null;
-
-    public static final String LOCAL = "local";
+    private String url;
+    private String name;
+    private String species;
+    private String id_field_name;
+    private String original_regex;
+    private String type; // server or local source
+    private RegexType regexType = RegexType.ANNOTATION_NAME;
+    private String imageIconPath;
+    private Pattern pattern;
 
     public WebLink() {
     }
 
+    public WebLink(AnnotationUrl annotationUrl) {
+        name = annotationUrl.getName();
+        url = annotationUrl.getUrl();
+        id_field_name = annotationUrl.getIdField();
+        type = annotationUrl.getType();
+        species = annotationUrl.getSpecies();
+        imageIconPath = annotationUrl.getImageIconPath();
+        if (Strings.isNullOrEmpty(annotationUrl.getAnnotTypeRegex())) {
+            regexType = WebLink.RegexType.ANNOTATION_ID;
+            setRegex(annotationUrl.getAnnotIdRegex());
+        } else {
+            setRegex(annotationUrl.getAnnotTypeRegex());
+        }
+    }
+
     WebLink(String name, String regex, String url, RegexType regexType) throws PatternSyntaxException {
-        this();
         setName(name);
         setRegex(regex);
         setUrl(url);
@@ -210,7 +223,7 @@ public final class WebLink implements Comparable<WebLink> {
     }
 
     private String getURLForSym_(SeqSymmetry sym) {
-		// Currently this just replaces any "$$" with the ID, but it could
+        // Currently this just replaces any "$$" with the ANNOTATION_ID, but it could
         // do something more sophisticated later, like replace "$$" with
         // some other sym property.
         if (id_field_name == null || id_field_name.trim().length() <= 0) {
@@ -240,7 +253,6 @@ public final class WebLink implements Comparable<WebLink> {
         this.imageIconPath = imageIconPath;
     }
 
-    
     @Override
     public String toString() {
         return "WebLink: name=" + name
@@ -248,35 +260,14 @@ public final class WebLink implements Comparable<WebLink> {
                 + ", regexType=" + this.regexType.toString()
                 + ", url=" + url
                 + ", id_field_name=" + id_field_name
-                +", image_icon_path="+ imageIconPath;
-    }
-
-    public String toXML() {
-        String annotRegexString = (this.regexType == RegexType.TYPE) ? "annot_type_regex" : "annot_id_regex";
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<annotation_url ").append(separator);
-        sb.append(" ").append(annotRegexString).append("=\"").
-                append(escapeXML(getRegex() == null ? ".*" : getRegex())).append("\"").append(separator);
-        sb.append(" name=\"").append(escapeXML(name)).
-                append("\"").append(separator).append(" species=\"").
-                append(escapeXML(species)).append("\"").append(separator);
-        if (this.id_field_name != null && id_field_name.trim().length() > 0) {
-            sb.append(" id_field=\"").append(escapeXML(id_field_name)).
-                    append("\"").append(separator);
-        }
-        sb.append(" url=\"").append(escapeXML(url)).append("\"").append(separator);
-        sb.append(" type=\"").append(escapeXML(type)).append("\"").append(separator);
-        sb.append(" image_icon_path=\"").append(escapeXML(imageIconPath)).append("\"").append(separator);
-        sb.append("/>");
-        return sb.toString();
+                + ", image_icon_path=" + imageIconPath;
     }
 
     /**
      * Used to compute the hashCode and in the equals() method.
      */
     private String toComparisonString() {
-		// Do NOT consider the "name" in tests of equality.
+        // Do NOT consider the "name" in tests of equality.
         // We do not want to allow two links that are identical except for name.
         // This is important in allowing users to over-ride the default links.
         return original_regex + ", " + url.toString() + ", " + id_field_name;
@@ -303,13 +294,6 @@ public final class WebLink implements Comparable<WebLink> {
 
     private static String sortString(WebLink wl) {
         return wl.getName() + ", " + wl.getRegex() + ", " + wl.getUrl() + ", " + wl.getIDField();
-    }
-
-    private static String escapeXML(String s) {
-        if (s == null) {
-            return null;
-        }
-        return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
     }
 
 }

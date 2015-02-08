@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2001-2006 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb;
 
@@ -38,7 +38,6 @@ public interface IGBConstants {
     public static final boolean DEBUG = false;
 
     public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
-    public static final String default_prefs_resource = "/igb_default_prefs.xml";
 
     public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
     public final static String ENCODE_REGIONS_ID = "encode_regions";

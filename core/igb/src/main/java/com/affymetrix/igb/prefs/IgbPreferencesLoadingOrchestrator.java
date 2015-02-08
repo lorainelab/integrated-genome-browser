@@ -1,135 +1,106 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LocalUrlCacher;
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.weblink.WebLink;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.util.ReplaceInputStream;
+import com.lorainelab.igb.preferences.IgbPreferencesService;
+import com.lorainelab.igb.preferences.model.AnnotationUrl;
+import com.lorainelab.igb.preferences.model.DataProvider;
+import com.lorainelab.igb.preferences.model.IgbPreferences;
+import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.prefs.BackingStoreException;
+import java.util.List;
+import java.util.Optional;
 import java.util.prefs.Preferences;
-import javax.swing.JOptionPane;
+import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author jnicol1
- * @version $Id$
- */
-public abstract class PrefsLoader {
+@Component(name = IgbPreferencesLoadingOrchestrator.COMPONENT_NAME, immediate = true)
+public class IgbPreferencesLoadingOrchestrator {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PrefsLoader.class);
-    private static final int CURRENT_PREF_VERSION = 2;
-    private static boolean prefsLoaded = false;
-    private static final String user_dir = System.getProperty("user.dir");
-    private static final String user_home = System.getProperty("user.home");
-    /**
-     * We no longer distribute a file called "igb_prefs.xml". Instead there is a
-     * default prefs file hidden inside the igb.jar file, and this is augmented
-     * by a web-based prefs file. But, we still will load a file called
-     * "igb_prefs.xml" if it exists in the user's home directory, since they may
-     * have put some personal modifications there.
-     */
-    private static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
-    // optional file to customize menu
-    private static final String PREFS_MENU_RESOURCE = "/igb_menu_prefs.xml";
-    static String default_user_prefs_files
-            = (new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath()
-            + ";"
-            + (new File(user_dir, DEFAULT_PREFS_FILENAME)).getAbsolutePath();
-
+    public static final String COMPONENT_NAME = "PrefsLoader";
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IgbPreferencesLoadingOrchestrator.class);
     private static final String COMMAND_KEY = "meta";
     private static final String CONTROL_KEY = "ctrl";
+    private IgbPreferencesService igbPreferencesService;
 
-    /**
-     * Returns IGB prefs hash If prefs haven't been loaded yet, will force
-     * loading of prefs
-     */
-    public static void loadIGBPrefs(String[] main_args) {
-        checkPrefsVersion();
+    @Activate
+    public void activate(BundleContext bundleContext) {
+//        loadIGBPrefs(CommonUtils.getInstance().getArgs(bundleContext));
+        loadIGBPrefs();
 
-        if (prefsLoaded) {
-            return;
-        }
+    }
 
-        String prefsMode = CommonUtils.getInstance().getArg("-prefsmode", main_args);
-        String def_prefs_url = get_default_prefs_url(main_args);
-        String[] prefs_list = get_prefs_list(main_args);
+    @Reference(optional = false)
+    public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
+        this.igbPreferencesService = igbPreferencesService;
+    }
 
-        LoadDefaultPrefsFromJar(prefsMode);
-        LoadDefaultAPIPrefsFromJar(prefsMode);
-        LoadMenuPrefsFromJar(prefsMode);
-        LoadWebPrefs(def_prefs_url, prefsMode);
-        LoadFileOrURLPrefs(prefs_list, prefsMode);
+    public void loadIGBPrefs() {
+        loadDefaultPrefs();
+        loadDefaultToolbarActionsAndKeystrokeBindings();
+        //        String remotePreferencesUrl = getRemoteOverridePreferencesFile(args);
+        //Note, this functionality seems to have never worked for two reasons...
+        //1. remote version of preferences was being cached, so it would not really have received updatesmail
+        //2. Once a server is loaded no settings are overwritten by new configuration
+        // loadRemotePreferencesOverrideFile(remotePreferencesUrl);
+
+//Load DataProviders and Plugin Repositories from persistence api
         ServerList.getServerInstance().loadServerPrefs();
         ServerList.getRepositoryInstance().loadServerPrefs();
 
-        prefsLoaded = true;
     }
 
-    private static void LoadDefaultPrefsFromJar(String prefsMode) {
-        /**
-         * first load default prefs from jar (with XmlPrefsParser)
-         */
-        InputStream default_prefs_stream = null;
-        try {
-            default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.default_prefs_resource);
-            if (default_prefs_stream == null) {
-                logger.debug("no default preferences found at " + IGBConstants.default_prefs_resource + ", skipping...");
-                return;
-            }
-            logger.debug("loading default prefs from: " + IGBConstants.default_prefs_resource);
-            default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
-            XmlPrefsParser.parse(default_prefs_stream);
-        } catch (IOException ex) {
-            logger.error("Problem parsing prefs from: {}", IGBConstants.default_prefs_resource, ex);
-        } finally {
-            GeneralUtils.safeClose(default_prefs_stream);
+    private void loadDefaultPrefs() {
+        Optional<IgbPreferences> igbPreferences = igbPreferencesService.fromDefaultPreferences();
+        loadPreferences(igbPreferences);
+    }
+
+    private static void loadPreferences(Optional<IgbPreferences> igbPreferences) {
+        if (igbPreferences.isPresent()) {
+            processPluginRepositories(igbPreferences.get().getRepository());
+            processDataProviders(igbPreferences.get().getDataProviders());
+            processAnnotationUrls(igbPreferences.get().getAnnotationUrl());
+
         }
     }
 
-    private static void LoadDefaultExtraPrefsFromJar(String fileName, String aNodeName, String prefsMode) {
-        // This test is valid. But if we add more default preferences due this it won't load those preferences. - HV 10/10/2012
-//		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
-//		try {
-//			if (aNodeName != null && (PreferenceUtils.getTopNode()).nodeExists(aNodeName) && (PreferenceUtils.getTopNode()).node(aNodeName).keys().length > 0) {
-//				return;
-//			}
-//		} catch (BackingStoreException ex) {
-//		}
-//		
-        InputStream default_prefs_stream = null;
-        ByteArrayOutputStream outputStream = null;
-        ByteArrayInputStream outputInputStream = null;
+    private static void processDataProviders(List<DataProvider> dataProviders) {
+        //TODO ServerList implementation is suspect and should be replaced
+        dataProviders.stream().forEach(dataProvider -> ServerList.getServerInstance().addServer(dataProvider));
+    }
+
+    private static void processAnnotationUrls(List<AnnotationUrl> annotationUrls) {
+        annotationUrls.stream().map((url) -> new WebLink(url)).forEach((webLink) -> {
+            WebLinkUtils.getWebLinkList(webLink.getType()).addWebLink(webLink);
+        });
+
+    }
+
+    private static void processPluginRepositories(List<PluginRepository> pluginRepositories) {
+        pluginRepositories.stream().forEach(pluginRepository -> ServerList.getRepositoryInstance().addServer(pluginRepository));
+    }
+
+    private static void loadDefaultToolbarActionsAndKeystrokeBindings() {
+        String fileName = IGBConstants.DEFAULT_PREFS_API_RESOURCE;
+
         /**
          * load default prefs from jar (with Preferences API). This will be the
          * standard method soon.
          */
-        try {
-            //Save current preferences 
-            outputStream = new ByteArrayOutputStream();
+        try (InputStream default_prefs_stream = IGB.class.getResourceAsStream(fileName);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+            //Save current preferences
             PreferenceUtils.getTopNode().exportSubtree(outputStream);
-
-            default_prefs_stream = IGB.class.getResourceAsStream(fileName);
             if (default_prefs_stream != null) {
                 logger.debug("loading default User preferences from: " + fileName);
-                default_prefs_stream = getPrefsModeInputStream(default_prefs_stream, prefsMode);
                 Preferences.importPreferences(default_prefs_stream);
 
                 /**
@@ -146,199 +117,28 @@ public abstract class PrefsLoader {
                         }
                     }
                 }
-
                 //Load back saved preferences
-                if (outputStream != null) {
-                    outputInputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                try (ByteArrayInputStream outputInputStream = new ByteArrayInputStream(outputStream.toByteArray())) {
                     Preferences.importPreferences(outputInputStream);
                 }
             }
-            //prefs_parser.parse(default_prefs_stream, "", prefs_hash);
         } catch (Exception ex) {
             logger.debug("Problem parsing prefs from: {}", fileName, ex);
-        } finally {
-            GeneralUtils.safeClose(default_prefs_stream);
-            GeneralUtils.safeClose(outputStream);
-            GeneralUtils.safeClose(outputInputStream);
         }
     }
 
-    private static void LoadDefaultAPIPrefsFromJar(String prefsMode) {
-        LoadDefaultExtraPrefsFromJar(IGBConstants.DEFAULT_PREFS_API_RESOURCE, "keystrokes", prefsMode);
-    }
-
-    private static void LoadMenuPrefsFromJar(String prefsMode) {
-        Preferences mainMenuPrefs = PreferenceUtils.getAltNode(PreferenceUtils.MENU_NODE_NAME);
-        try {
-            mainMenuPrefs.removeNode();
-        } catch (BackingStoreException x) {
-        }
-        LoadDefaultExtraPrefsFromJar(PREFS_MENU_RESOURCE, null, prefsMode);
-    }
-
-    private static void LoadWebPrefs(String def_prefs_url, String prefsMode) {
-        // If a particular web prefs file was specified, then load it.
-        // Otherwise try to load the web-based-default prefs file. (But
-        // only load it if it is cached, then later update the cache on
-        // a background thread.)
-        if (def_prefs_url != null) {
-            //	loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
-            //} else {
-            LoadPreferencesFromURL(def_prefs_url, prefsMode);
-        }
-    }
-
-    private static void LoadPreferencesFromURL(String prefs_url, String prefsMode) {
-        InputStream prefs_url_stream = null;
-        try {
-            prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
-            logger.debug("loading prefs from url: " + prefs_url);
-            prefs_url_stream = getPrefsModeInputStream(prefs_url_stream, prefsMode);
-            XmlPrefsParser.parse(prefs_url_stream);
-        } catch (IOException ex) {
-            logger.error("Problem parsing prefs from url: {}", prefs_url, ex);
-        } finally {
-            GeneralUtils.safeClose(prefs_url_stream);
-        }
-    }
-
-    private static void LoadFileOrURLPrefs(String[] prefs_list, String prefsMode) {
-        if (prefs_list == null || prefs_list.length == 0) {
-            return;
-        }
-
-        for (String fileOrURL : prefs_list) {
-            InputStream strm = null;
-            try {
-
-                File fil = new File(fileOrURL);
-                if (fil.exists()) {
-                    logger.debug("loading user prefs from: " + fileOrURL);
-                    strm = new FileInputStream(fil);
-                    strm = getPrefsModeInputStream(strm, prefsMode);
-                    XmlPrefsParser.parse(strm);
-                } else if (fileOrURL.startsWith(HTTP_PROTOCOL)) {
-                    logger.debug("loading user prefs from: " + fileOrURL);
-                    LoadPreferencesFromURL(fileOrURL, prefsMode);
-                } else if (fileOrURL.startsWith(FILE_PROTOCOL)) {
-                    fil = new File(new URI(fileOrURL));
-                    logger.debug("loading user prefs from: " + fileOrURL);
-                    strm = new FileInputStream(fil);
-                    strm = getPrefsModeInputStream(strm, prefsMode);
-                    XmlPrefsParser.parse(strm);
-                } else {
-                    /*
-                     * Non-existant files like $HOME/igb_prefs.xml and
-                     * $PWD/igb_prefs.xml fall to here so do not print an error
-                     */
-                    //logger.debug("Unknown prefs source: " + fileOrURL);
-                }
-            } catch (URISyntaxException ex) {
-                logger.error("Problem parsing prefs from: {}", fileOrURL, ex);
-            } catch (IOException ex) {
-                logger.debug("Problem parsing prefs from: {}", fileOrURL, ex);
-            } finally {
-                GeneralUtils.safeClose(strm);
-            }
-        }
-    }
-
-    /**
-     * Parse the command line arguments. Find out what prefs file to use. Return
-     * the name of the file as a String, or null if not invoked with -prefs
-     * option.
-     */
-    private static String[] get_prefs_list(String[] args) {
-        String files = CommonUtils.getInstance().getArg("-prefs", args);
-        if (files == null) {
-            files = default_user_prefs_files;
-        }
-        StringTokenizer st = new StringTokenizer(files, ";");
-        Set<String> result = new HashSet<>();
-        result.add(st.nextToken());
-        while (st.hasMoreTokens()) {
-            result.add(st.nextToken());
-        }
-        return result.toArray(new String[result.size()]);
-    }
-
-    private static String get_default_prefs_url(String[] args) {
-        String def_prefs_url = CommonUtils.getInstance().getArg("-default_prefs_url", args);
-        return def_prefs_url;
-    }
-
-    /**
-     * Checks the version of the preferences file. This function is also
-     * responsible for updating older preference files to the current version.
-     */
-    @SuppressWarnings("fallthrough")
-    private static void checkPrefsVersion() {
-        int version = PreferenceUtils.getTopNode().getInt("version", 0);
-
-        switch (version) {
-            case 0:
-                logger.debug("Upgrading unversioned preferences to version 1");
-                ServerList.getServerInstance().updateServerPrefs();
-            /* continue */
-            case 1:
-                logger.debug("Upgrading preferences version 1 to version 2");
-
-                ServerList.getServerInstance().updateServerURLsInPrefs();
-
-                /* this always should occur in version n-1 */
-                version = CURRENT_PREF_VERSION; /* change this number to current prefs version */
-
-                PreferenceUtils.getTopNode().putInt("version", version);
-                break;
-            default:
-            /* do nothing */
-
-        }
-
-        /*
-         * Check if the version of the preferences is not the 'correct' version.
-         * The check is done this way because code above this point should have
-         * upgraded the preferences file to the 'correct' version.  This check
-         * will catch any future preference versions as well as any mistakes in
-         * the upgrade code that runs before it.
-         */
-        if (version != CURRENT_PREF_VERSION) {
-            Object[] options = {"Quit IGB", "Delete and Continue"};
-            int n = JOptionPane.showOptionDialog(null,
-                    "The preferences file is newer than this version of IGB.  Do you\n"
-                    + "wish to delete preferences and continue?",
-                    "Preferences Too New",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    options,
-                    options[0]);
-
-            System.err.println("pressed: " + n);
-            if (n == 0 || n == JOptionPane.CLOSED_OPTION) {
-                System.err.println("Quitting");
-                System.exit(0);
-            } else {
-                try {
-                    System.err.println("Deleting");
-                    PreferenceUtils.getTopNode().removeNode();
-                } catch (BackingStoreException ex) {
-                    logger.error(ex.getMessage(), ex);
-                }
-            }
-        }
-    }
-
-    private static InputStream getPrefsModeInputStream(InputStream is, String prefsMode) {
-        if (prefsMode == null) {
-            return is;
-        }
-        try {
-            return new ReplaceInputStream(is, "<node name=\"igb\">", "<node name=\"" + prefsMode + "\">");
-        } catch (IOException x) {
-            logger.error("unable to set prefs mode for {}", prefsMode, x);
-            return is;
-        }
-    }
-
+//    private void loadRemotePreferencesOverrideFile(String remotePreferencesUrl) {
+//        try (InputStream prefs_url_stream = Resources.asByteSource(new URL(remotePreferencesUrl)).openStream();
+//                InputStreamReader reader = new InputStreamReader(prefs_url_stream)) {
+//            logger.debug("loading prefs from url: " + remotePreferencesUrl);
+//
+//            loadPreferences(igbPreferencesService.fromJson(reader));
+//        } catch (IOException ex) {
+//            logger.error("Problem parsing prefs from url: {}", remotePreferencesUrl, ex);
+//        }
+//    }
+//    private static String getRemoteOverridePreferencesFile(String[] args) {
+//        String remotePreferencesUrl = CommonUtils.getInstance().getArg("-prefs", args);
+//        return remotePreferencesUrl;
+//    }
 }

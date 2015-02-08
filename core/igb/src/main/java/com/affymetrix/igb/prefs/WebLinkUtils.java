@@ -1,68 +1,77 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.util.GeneralUtils;
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.weblink.WebLink;
 import com.affymetrix.genometry.weblink.WebLinkList;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
+import com.lorainelab.igb.preferences.IgbPreferencesService;
+import com.lorainelab.igb.preferences.model.AnnotationUrl;
+import com.lorainelab.igb.preferences.model.IgbPreferences;
+import com.lorainelab.igb.preferences.model.JsonWrapper;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.regex.PatternSyntaxException;
-import org.apache.commons.lang3.StringUtils;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 /**
  *
  * @author hiralv
  */
+@Component(name = WebLinkUtils.COMPONENT_NAME, immediate = true)
 public class WebLinkUtils {
 
+    public static final String COMPONENT_NAME = "WebLinkUtils";
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(WebLinkUtils.class);
-    private static final String separator = System.getProperty("line.separator");
-    private static final String FILE_NAME = "weblinks.xml";	// Name of the xml file used to store the web links data.
+    private static final String OLD_WEBLINKS_FILE_NAME = "weblinks.xml";
+    private static final String WEBLINKS_FILE_NAME = "weblinks.json";
     static final WebLinkList LOCAL_WEBLINK_LIST = new WebLinkList("local", true);
     static final WebLinkList SERVER_WEBLINK_LIST = new WebLinkList("default", false);
+    //TODO this should not be static, but must be during this refactoring to avoid larger changes
+    private static IgbPreferencesService igbPreferencesService;
+
+    public WebLinkUtils() {
+    }
 
     /**
      * Returns the file that is used to store the user-edited web links.
      */
-    private static File getLinksFile() {
-        return new File(PreferenceUtils.getAppDataDirectory(), FILE_NAME);
+    private static File getOldLinksFile() {
+        return new File(PreferenceUtils.getAppDataDirectory(), OLD_WEBLINKS_FILE_NAME);
     }
 
-    /**
-     * Loads links from the file specified by {@link #getLinksFile()}.
-     */
-    public static void autoLoad() {
-        File f = getLinksFile();
+    private static File getLinksFileJson() {
+        return new File(PreferenceUtils.getAppDataDirectory(), WEBLINKS_FILE_NAME);
+    }
+
+    @Activate
+    public void activate() {
+        File f = getLinksFileJson();
         if (f == null || !f.exists()) {
-            return;
+            f = getOldLinksFile();
+            if (f == null || !f.exists()) {
+                return;
+            }
         }
+
         String filename = f.getAbsolutePath();
         try {
-            logger.debug(
-                    "Loading web links from file \"{}\"", filename);
-
+            logger.debug("Loading web links from file {}", filename);
             importWebLinks(f);
         } catch (Exception ioe) {
-            logger.error(
-                    "Could not load web links from file \"{}\"", filename);
+            logger.error("Could not load web links from file {}", filename);
         }
     }
 
-    /**
-     * Save the current web links into the file that was specified by
-     * {@link #getLinksFile()}.
-     *
-     * @return true for sucessfully saving the file
-     */
-    public static boolean autoSave() {
-        File f = getLinksFile();
+    public static void exportUserWebLinks() {
+        File f = getLinksFileJson();
         String filename = f.getAbsolutePath();
         try {
             logger.info(
@@ -71,59 +80,60 @@ public class WebLinkUtils {
             if (parent_dir != null) {
                 parent_dir.mkdirs();
             }
-            exportWebLinks(f, true);
-            return true;
+            exportWebLinks(f);
         } catch (IOException ioe) {
             logger.error(
                     "Error while saving web links to \"{}\"", filename);
         }
-        return false;
     }
 
+    //not a fan of doing this import from WebLinkUtils, but this is legacy code
+    //TODO consider passing this responsibility to preference loading orchestrator
     public static void importWebLinks(File f) throws IOException {
-        XmlPrefsParser.parse(new FileInputStream(f));
+        String ext = com.google.common.io.Files.getFileExtension(f.getAbsolutePath());
+        Optional<IgbPreferences> igbPreferences;
+        //Eventually this can be removed, but for now we will continue to support xml format
+        if (ext.equals("xml")) {
+            try (Reader reader = new FileReader(f);) {
+                igbPreferences = igbPreferencesService.fromXml(reader);
+            }
+        } else {
+            try (Reader reader = new FileReader(f);) {
+                igbPreferences = igbPreferencesService.fromJson(reader);
+            }
+        }
+        if (igbPreferences.isPresent()) {
+            igbPreferences.get().getAnnotationUrl().stream().map((url) -> new WebLink(url)).forEach((webLink) -> {
+                getWebLinkList(webLink.getType()).addWebLink(webLink);
+            });
+        }
     }
 
-    public static void exportWebLinks(File f, boolean include_warning) throws IOException {
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        try {
+    public static void exportWebLinks(File f) throws IOException {
 
-            fw = new FileWriter(f);
-            bw = new BufferedWriter(fw);
-            bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            bw.write(separator);
-            bw.write("");
-            bw.write(separator);
-            bw.write("<!--");
-            bw.write(separator);
-            bw.write("  This file was generated by " + CommonUtils.getInstance().getAppName() + " " + CommonUtils.getInstance().getAppVersion() + "\n");
-            bw.write(separator);
-            if (include_warning) {
-                bw.write("  WARNING: This file is automatically created by the application.");
-                bw.write(separator);
-                bw.write("  Edit the Web-Links from inside the application.");
-                bw.write(separator);
-            }
-            bw.write("-->");
-            bw.write(separator);
-            bw.write("");
-            bw.write(separator);
-            bw.write("<prefs>");
-            bw.write(separator);
-
+        try (FileWriter fw = new FileWriter(f);
+                BufferedWriter bw = new BufferedWriter(fw);) {
+            List<AnnotationUrl> annotationUrls = new ArrayList<>();
             for (WebLink link : getLocalList().getWebLinkList()) {
-                String xml = link.toXML();
-                bw.write(xml);
-                bw.write(separator);
+                AnnotationUrl url = new AnnotationUrl();
+                if (link.getRegexType() == WebLink.RegexType.ANNOTATION_NAME) {
+                    url.setAnnotTypeRegex(link.getRegex());
+                } else {
+                    url.setAnnotIdRegex(link.getRegex());
+                }
+                url.setIdField(link.getIDField());
+                url.setImageIconPath(link.getImageIconPath());
+                url.setName(link.getName());
+                url.setSpecies(link.getSpeciesName());
+                url.setType(link.getType());
+                url.setUrl(link.getUrl());
+                annotationUrls.add(url);
             }
-
-            bw.write("</prefs>");
-            bw.write(separator);
-            bw.write(separator);
-        } finally {
-            GeneralUtils.safeClose(bw);
-            GeneralUtils.safeClose(fw);
+            JsonWrapper jsonWrapper = new JsonWrapper();
+            IgbPreferences prefs = new IgbPreferences();
+            prefs.setAnnotationUrl(annotationUrls);
+            jsonWrapper.setPrefs(prefs);
+            bw.write(igbPreferencesService.toJson(jsonWrapper));
         }
     }
 
@@ -142,73 +152,8 @@ public class WebLinkUtils {
         return LOCAL_WEBLINK_LIST;
     }
 
-    public static class WeblinkElementHandler implements XmlPrefsParser.ElementHandler {
-
-        /**
-         * Sets up a regular-expression matching between a method name or id and
-         * a url, which can be used, for example, in SeqMapView to "get more
-         * info" about an item. For example:
-         * <p>
-         * <code>&gt;annotation_url annot_type_regex="google" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
-         * <code>&gt;annotation_url annot_id_regex="^AT*" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
-         * <p>
-         * Note that the url can contain "$$" which will later be substituted
-         * with the "id" of the annotation to form a link. By default, match is
-         * case-insensitive; use match_case="true" if you want to require an
-         * exact match.
-         */
-        @Override
-        public void processElement(Element el) {
-
-            String url = el.getAttribute("url");
-            if (StringUtils.isBlank(url)) {
-                logger.error("Empty data in preferences file for an 'annotation_url':" + el.toString());
-                return;
-            }
-
-            WebLink.RegexType type_regex = WebLink.RegexType.TYPE;
-            String annot_regex_string = el.getAttribute("annot_type_regex");
-            if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
-                type_regex = WebLink.RegexType.ID;
-                annot_regex_string = el.getAttribute("annot_id_regex");
-            }
-            if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
-                logger.error("Empty data in preferences file for an 'annotation_url':" + el.toString());
-                return;
-            }
-
-            String name = el.getAttribute("name");
-            String species = el.getAttribute("species");
-            String IDField = el.getAttribute("id_field");
-            String type = el.getAttribute("type");
-            String imageIconPath = el.getAttribute("image_icon_path");
-            if (type == null) {
-                type = WebLink.LOCAL;
-            }
-            WebLink link = new WebLink();
-            link.setRegexType(type_regex);
-            link.setName(name);
-            link.setIDField(IDField);
-            link.setUrl(url);
-            link.setType(type);
-            link.setSpeciesName(species);
-            link.setImageIconPath(imageIconPath);
-            try {
-                if ("false".equalsIgnoreCase(el.getAttribute("match_case"))) {
-                    link.setRegex("(?-i)" + annot_regex_string);
-                } else {
-                    link.setRegex(annot_regex_string);
-                }
-            } catch (PatternSyntaxException pse) {
-                logger.error("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
-            }
-            WebLinkUtils.getWebLinkList(type).addWebLink(link);
-        }
-
-        @Override
-        public String getElementTag() {
-            return "annotation_url";
-        }
-
+    @Reference(optional = false)
+    public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
+        WebLinkUtils.igbPreferencesService = igbPreferencesService;
     }
 }

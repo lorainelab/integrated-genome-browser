@@ -35,7 +35,6 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.MenuUtil;
@@ -85,6 +84,8 @@ import javax.swing.SwingWorker;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,7 +200,7 @@ public final class IGB extends Application
 
     }
 
-    public void init(String[] args) {
+    public void init(String[] args, BundleContext bundleContext) {
         logger.debug("Setting look and feel");
 
         setLaf();
@@ -287,10 +288,15 @@ public final class IGB extends Application
                 String message = "Do you really want to exit?";
 
                 if (confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
-                    TrackStyle.autoSaveUserStylesheet();
-                    Persistence.saveCurrentView(map_view);
-                    defaultCloseOperations();
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    try {
+                        TrackStyle.autoSaveUserStylesheet();
+                        Persistence.saveCurrentView(map_view);
+                        defaultCloseOperations();
+                        bundleContext.getBundle(0).stop();
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    } catch (BundleException ex) {
+                        ex.printStackTrace();
+                    }
                 } else {
                     frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 }
@@ -317,8 +323,6 @@ public final class IGB extends Application
                 return new File(path).getAbsoluteFile();
             }
         });
-
-        WebLinkUtils.autoLoad();
 
         GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
@@ -533,7 +537,7 @@ public final class IGB extends Application
      */
     public IgbTabPanel getViewByDisplayName(String viewName) {
         for (IgbTabPanelI plugin : windowService.getPlugins()) {
-             IgbTabPanel igbTabPanel = plugin.getIgbTabPanel();
+            IgbTabPanel igbTabPanel = plugin.getIgbTabPanel();
             if (igbTabPanel.getDisplayName().equals(viewName)) {
                 return igbTabPanel;
             }
@@ -629,13 +633,15 @@ public final class IGB extends Application
                 version_info = group.getID();
             }
         }
-        if (null != version_info) switch (version_info) {
-            case "hg17":
-                version_info = "hg17 = NCBI35";
-                break;
-            case "hg18":
-                version_info = "hg18 = NCBI36";
-                break;
+        if (null != version_info) {
+            switch (version_info) {
+                case "hg17":
+                    version_info = "hg17 = NCBI35";
+                    break;
+                case "hg18":
+                    version_info = "hg18 = NCBI36";
+                    break;
+            }
         }
         return version_info;
     }

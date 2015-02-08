@@ -18,10 +18,10 @@ import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.BAM;
 import com.affymetrix.genometry.symloader.BAM.BamIndexNotFoundException;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInst;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -46,7 +46,6 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -297,7 +296,7 @@ public final class GeneralLoadUtils {
                     Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
                 }
                 if (gServer.serverType == ServerTypeI.QuickLoad) {
-                    XmlPrefsParser.parse(gServer.serverObj.toString() + "preferences.xml"); // Use server object for Quickload
+
                 }
             }
             ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
@@ -942,7 +941,7 @@ public final class GeneralLoadUtils {
         for (SeqSpan optimized_span : optimized_spans) {
             Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
-            // If thread was interruped then it might return null. 
+            // If thread was interruped then it might return null.
             // So avoid null pointer exception, check it here.
             if (results != null) {
                 for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
@@ -1244,7 +1243,7 @@ public final class GeneralLoadUtils {
             addChromosomesForUnknownGroup(gFeature);
         }
 
-        // force a refresh of this server		
+        // force a refresh of this server
         ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 
 //		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
@@ -1406,8 +1405,9 @@ public final class GeneralLoadUtils {
                     String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                     ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
                     version = null;
-                    
-                }   break;
+
+                }
+                break;
             case USEQ_EXT:
                 loadGroup = handleUseq(uri, loadGroup);
                 getNewVersion = true;

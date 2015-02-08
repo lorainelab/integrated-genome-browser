@@ -11,7 +11,6 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.genoviz.swing.AMenuItem;
@@ -67,12 +66,11 @@ import com.affymetrix.igb.action.ZoomOutXAction;
 import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.prefs.WebLinkUtils;
+import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.service.api.IWindowRoutine;
-import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.prefs.PrefsLoader;
-import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
@@ -125,51 +123,38 @@ public class Activator implements BundleActivator {
             }
             scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
-            // Force loading of prefs if hasn't happened yet.
-            // Usually, since IGB.main() is called first,
-            // prefs will have already been loaded via loadIGBPrefs() call in main().
-            // But if for some reason an IGB instance is created without call to main(),
-            // will force loading of prefs here...
-            PrefsLoader.loadIGBPrefs(args);
+
         }
+        verifyJidesoftLicense();
+
+        ServiceTracker<IWindowService, Object> serviceTracker;
+        serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
+                logger.info("Starting IGB");
+                run(bundleContext, windowServiceReference);
+                logger.info("IGB Started");
+                return super.addingService(windowServiceReference);
+            }
+        };
+        serviceTracker.open();
+
+        initColorProvider(bundleContext);
+        initFilter(bundleContext);
+    }
+
+    private void verifyJidesoftLicense() {
         // Verify jidesoft license.
         logger.info("Verifying Jidesoft license");
 
         com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-
-        logger.info("Getting IWindowService from ");
-        ServiceReference<IWindowService> windowServiceReference
-                = bundleContext.getServiceReference(IWindowService.class);
-
-        if (windowServiceReference != null) {
-            logger.info("Starting IGB");
-            run(bundleContext, windowServiceReference);
-            logger.info("IGB Started");
-        } else {
-            logger.info("Getting serviceTracker");
-            ServiceTracker<IWindowService, Object> serviceTracker
-                    = new ServiceTracker<IWindowService, Object>(
-                            bundleContext, IWindowService.class, null) {
-
-                                @Override
-                                public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-                                    logger.info("Starting IGB from  ServiceTracker");
-                                    run(bundleContext, windowServiceReference);
-                                    logger.info("IGB Started");
-                                    return super.addingService(windowServiceReference);
-                                }
-                            };
-                    serviceTracker.open();
-        }
-        initColorProvider(bundleContext);
-        initFilter(bundleContext);
     }
 
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
         if (scriptManagerServiceReference != null) {
-            scriptManagerServiceReference.unregister(); 
+            scriptManagerServiceReference.unregister();
             scriptManagerServiceReference = null;
         }
     }
@@ -187,7 +172,7 @@ public class Activator implements BundleActivator {
         final IGB igb = new IGB();
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
-        igb.init(args);
+        igb.init(args, bundleContext);
 
         addGenericActionListener();
         registerServices(bundleContext, windowServiceReference, igb);
@@ -446,7 +431,7 @@ public class Activator implements BundleActivator {
                 new IWindowRoutine() {
                     @Override
                     public void stop() {
-                        WebLinkUtils.autoSave();
+                        WebLinkUtils.exportUserWebLinks();
                         ((IGB) Application.getSingleton()).saveToolBar();
                     }
 

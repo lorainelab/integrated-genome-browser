@@ -18,6 +18,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-preferences</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.boxysystems</groupId>
             <artifactId>jgoogleanalytics</artifactId>
             <scope>provided</scope>
@@ -86,16 +91,6 @@
             <groupId>org.freehep</groupId>
             <artifactId>freehep-graphicsio-svg</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>freehep-graphicsio-tests</artifactId>
-                    <groupId>org.freehep</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>junit</artifactId>
-                    <groupId>junit</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>

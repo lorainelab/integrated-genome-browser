@@ -20,8 +20,9 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.lorainelab.igb.preferences.model.DataProvider;
+import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -40,7 +41,6 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -157,6 +157,29 @@ public final class ServerList {
         return server;
     }
 
+    //for now I must follow old conventions
+    public void addServer(DataProvider dataProvider) {
+        ServerTypeI serverType = getServerType(dataProvider.getType());
+
+        addServer(serverType, dataProvider.getName(), dataProvider.getUrl(), Boolean.valueOf(dataProvider.getEnabled()),
+                Boolean.valueOf(dataProvider.getPrimary()), dataProvider.getOrder(), Boolean.valueOf(dataProvider.getDefault()), dataProvider.getMirror());
+    }
+
+    public void addServer(PluginRepository pluginRepository) {
+        addServer(null, pluginRepository.getName(), pluginRepository.getUrl(), Boolean.valueOf(pluginRepository.getEnabled()),
+                false, 0, Boolean.valueOf(pluginRepository.getDefault()), null);
+
+    }
+
+    private static ServerTypeI getServerType(String type) {
+        for (ServerTypeI t : ServerUtils.getServerTypes()) {
+            if (type.equalsIgnoreCase(t.getName())) {
+                return t;
+            }
+        }
+        return ServerTypeI.DEFAULT;
+    }
+
     public GenericServer addServer(ServerTypeI serverType, String name, String url,
             boolean enabled, boolean primary, int order, boolean isDefault, String mirrorURL) { //qlmirror
         url = ServerUtils.formatURL(url, serverType);
@@ -183,18 +206,6 @@ public final class ServerList {
         }
 
         return server;
-    }
-
-    private ServerTypeI getServerType(String name) {
-        if (name == null) {
-            return null;
-        }
-        for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
-            if (name.equalsIgnoreCase(serverType.getName())) {
-                return serverType;
-            }
-        }
-        return null;
     }
 
     public GenericServer addServer(Preferences node) {
@@ -535,7 +546,7 @@ public final class ServerList {
 //			}
         }
 
-        // Fire event whenever server status in set to initialized 
+        // Fire event whenever server status in set to initialized
         // or server status does not match previous status
         if (status == ServerStatus.Initialized || server.getServerStatus() != status) {
 
@@ -572,61 +583,4 @@ public final class ServerList {
         return null;
     }
 
-    private static void processServer(Element el, ServerList serverList, ServerTypeI server_type) {
-        String server_name = el.getAttribute("name");
-        String server_url = el.getAttribute("url");
-        String mirror_url = el.getAttribute("mirror"); //qlmirror
-        String en = el.getAttribute("enabled");
-        String orderString = el.getAttribute("order");
-        Integer order = orderString == null || orderString.isEmpty() ? 0 : Integer.valueOf(orderString);
-        Boolean enabled = en == null || en.isEmpty() ? true : Boolean.valueOf(en);
-        String pr = el.getAttribute("primary");
-        Boolean primary = pr == null || pr.isEmpty() ? false : Boolean.valueOf(pr);
-        String d = el.getAttribute("default");
-        Boolean isDefault = d == null || d.isEmpty() ? false : Boolean.valueOf(d);
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("XmlPrefsParser adding " + server_type
-                    + " server: " + server_name + ",  " + server_url + " mirror: " + mirror_url
-                    + ", enabled: " + enabled + "default: " + isDefault);
-        }
-        serverList.addServer(server_type, server_name, server_url,
-                enabled, primary, order, isDefault, mirror_url); //qlmirror
-    }
-
-    public static class ServerElementHandler implements XmlPrefsParser.ElementHandler {
-
-        @Override
-        public void processElement(Element el) {
-            processServer(el, ServerList.getServerInstance(), getServerType(el.getAttribute("type")));
-        }
-
-        @Override
-        public String getElementTag() {
-            return ServerList.getServerInstance().getTextName();
-        }
-
-        private static ServerTypeI getServerType(String type) {
-            for (ServerTypeI t : ServerUtils.getServerTypes()) {
-                if (type.equalsIgnoreCase(t.getName())) {
-                    return t;
-                }
-            }
-            return ServerTypeI.DEFAULT;
-        }
-    }
-
-    public static class RepositoryElementHandler implements XmlPrefsParser.ElementHandler {
-
-        @Override
-        public void processElement(Element el) {
-            processServer(el, ServerList.getRepositoryInstance(), null);
-        }
-
-        @Override
-        public String getElementTag() {
-            return ServerList.getRepositoryInstance().getTextName();
-        }
-
-    }
 }

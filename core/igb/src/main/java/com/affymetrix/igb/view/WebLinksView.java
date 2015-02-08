@@ -335,7 +335,7 @@ public final class WebLinksView {
      */
     private static JFileChooser getJFileChooser() {
         if (static_chooser == null) {
-            static_chooser = UniFileChooser.getFileChooser("XML file", "xml");
+            static_chooser = UniFileChooser.getFileChooser("JSON file", "json");
             static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
         }
         static_chooser.rescanCurrentDirectory();
@@ -384,8 +384,8 @@ public final class WebLinksView {
                 File fil = chooser.getSelectedFile();
                 String full_path = fil.getCanonicalPath();
 
-                if (!full_path.endsWith(".xml")) {
-                    fil = new File(full_path + ".xml");
+                if (!full_path.endsWith(".json")) {
+                    fil = new File(full_path + ".json");
                 }
                 WebLinkUtils.exportWebLinks(fil);
             } catch (Exception ex) {

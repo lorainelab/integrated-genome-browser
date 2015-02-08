@@ -5,7 +5,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.osgi.framework.Bundle;
@@ -23,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class OSGiHandler {
 
     private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
-    private static final Logger log = LoggerFactory.getLogger(OSGiHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(OSGiHandler.class);
     private Framework framework;
     private String bundlePathToInstall;
     private String bundleSymbolicNameToUninstall;
@@ -44,27 +52,27 @@ public class OSGiHandler {
             return;
         }
 
-        log.info("Loading OSGi framework");
+        logger.info("Loading OSGi framework");
         String argArray = Arrays.toString(args);
         loadFramework(argArray.substring(1, argArray.length() - 1));
 
         try {
             BundleContext bundleContext = framework.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
-                log.info("Loading embedded OSGi bundles");
+                logger.info("Loading embedded OSGi bundles");
                 loadEmbeddedBundles(bundleContext);
             }
             for (Bundle bundle : bundleContext.getBundles()) {
-                log.info("Starting Bundle: " + bundle.getSymbolicName());
+                logger.info("Starting Bundle: " + bundle.getSymbolicName());
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
                     bundle.start();
                 }
             }
-            log.info("OSGi is started with {} version {}",
+            logger.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
         } catch (Exception ex) {
-            log.warn("Could not create framework, plugins disabled: {}", ex.getMessage());
+            logger.warn("Could not create framework, plugins disabled: {}", ex.getMessage());
         }
     }
 
@@ -150,11 +158,28 @@ public class OSGiHandler {
             framework = factory.newFramework(configProps);
             framework.init();
             framework.start();
+            addShutdownHook();
         } catch (Exception ex) {
             System.err.println("Could not create framework: " + ex);
             ex.printStackTrace(System.err);
             System.exit(0);
         }
+    }
+
+    private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread("Felix Shutdown Hook") {
+            @Override
+            public void run() {
+                try {
+                    if (framework != null) {
+                        framework.stop();
+                        framework.waitForStop(2);
+                    }
+                } catch (Exception ex) {
+                    logger.error("Error stopping framework: ", ex);
+                }
+            }
+        });
     }
 
     private void loadEmbeddedBundles(BundleContext bundleContext) throws IOException {
@@ -170,13 +195,13 @@ public class OSGiHandler {
             if (locationURL != null) {
                 try {
                     bundleContext.installBundle(locationURL.toString());
-                    log.info("loading {}", new Object[]{fileName});
+                    logger.info("loading {}", new Object[]{fileName});
                 } catch (Exception ex) {
                     ex.printStackTrace(System.err);
-                    log.warn("Could not install {}", new Object[]{fileName});
+                    logger.warn("Could not install {}", new Object[]{fileName});
                 }
             } else {
-                log.warn("Could not find {}", new Object[]{fileName});
+                logger.warn("Could not find {}", new Object[]{fileName});
             }
         }
     }
@@ -228,7 +253,7 @@ public class OSGiHandler {
             System.out.println(messageWrapper);
             System.exit(0);
         }
-        //this shouldn't be needed, but since windowservicedef needs all tabs to already registered it is... also this ordering is consistent with the jar ordering 
+        //this shouldn't be needed, but since windowservicedef needs all tabs to already registered it is... also this ordering is consistent with the jar ordering
         Collections.sort(entries);
         return entries;
     }
@@ -252,11 +277,11 @@ public class OSGiHandler {
                 bundle = bundleContext.installBundle(filePath);
                 bundle.start();
             } catch (Exception x) {
-                log.error("error installing bundle", x);
+                logger.error("error installing bundle", x);
                 bundle = null;
             }
             if (bundle != null) {
-                log.info("installed bundle: {}", filePath);
+                logger.info("installed bundle: {}", filePath);
             }
         }
         return bundle != null;
@@ -274,10 +299,10 @@ public class OSGiHandler {
                 if (symbolicName.equals(bundle.getSymbolicName())) {
                     try {
                         bundle.uninstall();
-                        log.info("uninstalled bundle: {}", symbolicName);
+                        logger.info("uninstalled bundle: {}", symbolicName);
                         found = true;
                     } catch (Exception x) {
-                        log.error("error uninstalling bundle", x);
+                        logger.error("error uninstalling bundle", x);
                         found = false;
                     }
                 }

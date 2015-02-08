@@ -3,6 +3,19 @@ package com.affymetrix.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.event.RepositoryChangeListener;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
+import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
+import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPCheckBox;
+import com.affymetrix.igb.swing.MenuUtil;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -11,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,43 +36,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
+import java.util.logging.Level;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.BundleListener;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
-
-import com.affymetrix.genometry.event.RepositoryChangeListener;
-import com.affymetrix.genometry.thread.CThreadHolder;
-import com.affymetrix.genometry.thread.CThreadWorker;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.swing.JRPCheckBox;
-import com.affymetrix.igb.shared.JRPStyledTable;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
-import com.affymetrix.igb.service.api.IgbTabPanelI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +72,20 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
     private static final int TAB_POSITION = 7;
+    private static final BundleFilter BOTH_BUNDLE_FILTER = bundle -> true;
+    private static final BundleFilter INSTALLED_BUNDLE_FILTER = PluginsView::isInstalled;
+    private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = bundle -> !isInstalled(bundle);
+    private static final BundleFilter NEITHER_BUNDLE_FILTER = bundle -> false;
+
+    /**
+     * determins if a given bundle is installed
+     *
+     * @param bundle the bundle to check
+     * @return true if the bundle is installed, false otherwise
+     */
+    private static boolean isInstalled(Bundle bundle) {
+        return bundle.getState() != Bundle.UNINSTALLED;
+    }
 
     private BundleContext bundleContext;
     private JScrollPane jScrollPane;
@@ -89,10 +100,10 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     private boolean isShowUninstalledBundles = true;
     private RepositoryAdmin repoAdmin;
     private BundleListener bundleListener;
-    private List< Bundle> installedBundles;
-    private List< Bundle> repositoryBundles;
-    private List< Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
-    private List< Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
+    private List<Bundle> installedBundles;
+    private List<Bundle> repositoryBundles;
+    private List<Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
+    private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
 
@@ -100,6 +111,20 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
 
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
+
+    private final BundleFilter SYSTEM_BUNDLE_FILTER = bundle -> {
+        if (bundle.getBundleId() == 0) { // system bundle
+            return false;
+        }
+        try {
+            //will automate soon
+            logger.debug(bundle.getSymbolicName() + ";" + bundle.getVersion());
+            BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
+        } catch (MissingResourceException x) {
+            return true;
+        }
+        return false;
+    };
 
     public PluginsView() {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
@@ -190,24 +215,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
         setRepositoryBundles();
         bundleContext.addBundleListener(bundleListener);
     }
-
-    private static final BundleFilter BOTH_BUNDLE_FILTER = bundle -> true;
-    private static final BundleFilter INSTALLED_BUNDLE_FILTER = PluginsView::isInstalled;
-    private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = bundle -> !isInstalled(bundle);
-    private static final BundleFilter NEITHER_BUNDLE_FILTER = bundle -> false;
-    private final BundleFilter SYSTEM_BUNDLE_FILTER = bundle -> {
-        if (bundle.getBundleId() == 0) { // system bundle
-            return false;
-        }
-        try {
-            //will automate soon
-            logger.debug(bundle.getSymbolicName() + ";" + bundle.getVersion());
-            BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
-        } catch (MissingResourceException x) {
-            return true;
-        }
-        return false;
-    };
 
     /**
      * get the Bundle on the line where the cursor is
@@ -309,16 +316,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
     public Bundle getBundleAtRow(int row) {
         int modelRow = bundleTable.convertRowIndexToModel(row);
         return getFilteredBundle(modelRow);
-    }
-
-    /**
-     * determins if a given bundle is installed
-     *
-     * @param bundle the bundle to check
-     * @return true if the bundle is installed, false otherwise
-     */
-    private static boolean isInstalled(Bundle bundle) {
-        return bundle.getState() != Bundle.UNINSTALLED;
     }
 
     private void installBundleIfNecessary(Bundle bundle) {

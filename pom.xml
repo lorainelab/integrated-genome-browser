@@ -63,6 +63,7 @@
         <shared-lib-wrapper-version>2.0.0</shared-lib-wrapper-version>
         <logging-config-version>1.0.0</logging-config-version>        
         <igb-genoviz-extensions-api-version>1.0.0</igb-genoviz-extensions-api-version>
+        <igb-preferences-version>1.0.0</igb-preferences-version>
         <!-- End of included core bundle version declarations -->      
         
         <!-- Start of included plugin version declarations -->
@@ -180,6 +181,7 @@
         <module>core/shared-lib-wrapper</module>
         <module>core/logging-config</module>
         <module>core/igb-genoviz-ext-api</module>
+        <module>core/igb-preferences</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -250,6 +252,7 @@
                 <module>core/shared-lib-wrapper</module>
                 <module>core/logging-config</module>
                 <module>core/igb-genoviz-ext-api</module>
+                <module>core/igb-preferences</module>
                 <module>plugins/ApolloLibrary</module>
                 <module>plugins/AnnotationTab</module>
                 <module>plugins/track-operations-panel</module>
@@ -344,6 +347,12 @@
                 <groupId>com.affymetrix</groupId>
                 <artifactId>window-service</artifactId>
                 <version>${windows-service-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>igb-preferences</artifactId>
+                <version>${igb-preferences-version}</version>
                 <scope>provided</scope>
             </dependency>
             <!--End of core module dependencies-->

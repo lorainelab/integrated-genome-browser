@@ -1,0 +1,195 @@
+{
+    "prefs": {
+        "server": [
+            {
+                "type": "quickload",
+                "name": "IGB Quickload",
+                "url": "http://igbquickload.org/quickload/",
+                "order": "0",
+                "default": "true",
+                "enabled": "true",
+                "mirror": "http://bioviz.org/quickload/"
+            },
+            {
+                "type": "quickload",
+                "name": "Pollen",
+                "url": "http://www.igbquickload.org/pollen",
+                "order": "1",
+                "default": "true",
+                "enabled": "true",
+                "mirror": "http://bioviz.org/pollen/"
+            },
+            {
+                "type": "quickload",
+                "name": "Cytokinin",
+                "url": "http://www.igbquickload.org/cyto",
+                "order": "2",
+                "default": "true",
+                "enabled": "true",
+                "mirror": "http://bioviz.org/cytopub/"
+            },
+            {
+                "type": "quickload",
+                "name": "Blueberry",
+                "url": "http://www.igbquickload.org/blueberry",
+                "order": "3",
+                "default": "true",
+                "enabled": "true",
+                "mirror": "http://bioviz.org/berrypub/"
+            },
+            {
+                "type": "das",
+                "name": "UCSC",
+                "url": "http://genome.cse.ucsc.edu/cgi-bin/das/dsn",
+                "order": "5",
+                "enabled": "true",
+                "default": "true"
+            },
+            {
+                "type": "das",
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/das/dsn",
+                "enabled": "false",
+                "order": "6",
+                "default": "true"
+            },
+            {
+                "type": "quickload",
+                "name": "BioVizServerCache",
+                "url": "http://bioviz.org/cached/",
+                "primary": "true",
+                "order": "7",
+                "enabled": "true",
+                "default": "true"
+            }
+        ],
+        "repository": [
+            {
+                "name": "Bioviz",
+                "url": "http://bioviz.org/igbserver",
+                "enabled": "true",
+                "default": "true"
+            },
+            {
+                "name": "Bioviz development",
+                "url": "http://eos.transvar.org/igb_plugins",
+                "enabled": "false",
+                "default": "true"
+            }
+        ],
+        "annotation_url": [
+            {
+                "annot_id_regex": ".*",
+                "name": "Google",
+                "url": "http://www.google.com/search?q=$$",
+                "type": "default",
+                "image_icon_path": "16x16/actions/google.png",
+                "description": "Always support Google searching"
+            },
+            {
+                "annot_type_regex": "(EST)|(mRNA)|(RefGene)|(RefSeq)",
+                "name": "NCBI",
+                "description": "",
+                "url": "http://www.ncbi.nlm.nih.gov/nuccore/$$",
+                "type": "default",
+                "image_icon_path": "16x16/actions/ncbi.png",
+                "description": "Any RefSeq mRNA alignment"
+            },
+            {
+                "annot_id_regex": "^AT[1-5CM]G\\d{5,}\\.\\d+$",
+                "name": "TAIR",
+                "url": "http://www.arabidopsis.org/servlets/TairObject?type=gene&name=$$",
+                "type": "default",
+                "image_icon_path": "16x16/actions/tair.png",
+                "description": "Match AGI gene models names for model organism database"
+            },
+            {
+                "annot_id_regex": "^DDB_G\\d+$",
+                "name": "DictyBase Gene",
+                "url": "http://dictybase.org/gene/$$",
+                "type": "default",
+                "description": "Match slime mold gene models names for model organism database"
+            },
+            {
+                "annot_id_regex": "^DDB\\d+$",
+                "name": "DictyBase",
+                "url": "http://www.dictybase.org/db/cgi-bin/search/search.pl?query=$$",
+                "type": "default",
+                "description": "Match slime mold gene models names for model organism database"
+            },
+            {
+                "annot_type_regex": "(?i).*sanger_pombe$",
+                "name": "GeneDB",
+                "url": "http://www.genedb.org/genedb/Search?name=$$&organism=pombe&desc=yes&wildcard=yes&searchId=Search",
+                "type": "default",
+                "description": "fission yeast"
+            },
+            {
+                "annot_type_regex": ".*Maize Transcripts.*",
+                "name": "MaizeSequence.org",
+                "url": "http://www.maizesequence.org/Zea_mays/Transcript/Transcript?t=$$",
+                "type": "default",
+                "description": "corn - annotation titles should be something like 'Maize Transcripts 5b release'"
+            },
+            {
+                "annot_type_regex": "S. cerevisiae genes",
+                "name": "SGD",
+                "url": "http://www.yeastgenome.org/cgi-bin/locus.fpl?locus=$$",
+                "type": "default",
+                "description": "budding yeast"
+            },
+            {
+                "annot_type_regex": "(?i).* netaffx consensus",
+                "name": "NetAffx",
+                "url": "https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$",
+                "type": "default",
+                "description": "Affymetrix Link-outs"
+            },
+            {
+                "annot_type_regex": "(?i).*Ex-1_0-st.*Probes$",
+                "name": "NetAffx Probeset Details",
+                "url": "http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$",
+                "type": "default",
+                "description": "Affymetrix Link-outs"
+            },
+            {
+                "annot_type_regex": "(?i).*Ex-1_0-st.*Transcripts$",
+                "name": "NetAffx Transcript Details",
+                "url": "http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$",
+                "type": "default",
+                "description": "Affymetrix Link-outs"
+            },
+            {
+                "annot_id_regex": "^FLYBASE:.*$",
+                "id_field": "db_xref",
+                "name": "Flybase",
+                "url": "http://flybase.org/.bin/fbidq.html?$$",
+                "type": "default",
+                "description": "FLYBASE"
+            },
+            {
+                "annot_id_regex": "^dictyBase:.*$",
+                "id_field": "db_xref",
+                "name": "DictyBase",
+                "url": "http://dictybase.org/db/cgi-bin/search/search.pl?query=$$",
+                "type": "default",
+                "description": "DictyBase"
+            },
+            {
+                "annot_id_regex": "^GeneID:.*$",
+                "id_field": "db_xref",
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/$$",
+                "type": "default",
+                "description": "Entrez"
+            },
+            {
+                "annot_id_regex": ".*NCBI.*",
+                "name": "Entrez cross-database search",
+                "url": "http://www.ncbi.nlm.nih.gov/gquery?term=$$",
+                "type": "default",
+                "description": "Entrez cross-database search"
+            }
+        ]
+    }
+}

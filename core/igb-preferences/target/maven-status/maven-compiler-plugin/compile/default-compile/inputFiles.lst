@@ -1,0 +1,7 @@
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/model/IgbPreferences.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/model/JsonWrapper.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/model/AnnotationUrl.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/model/DataProvider.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/IgbPreferencesParser.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/IgbPreferencesService.java
+/home/tarun/IGB/integrated-genome-browser/core/igb-preferences/src/main/java/com/lorainelab/igb/preferences/model/PluginRepository.java

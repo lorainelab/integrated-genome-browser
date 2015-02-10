@@ -38,6 +38,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
     protected static final GenometryModel gmodel = GenometryModel.getInstance();
     protected final IgbService igbService;
+    protected static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 
     public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
         super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);

@@ -5,6 +5,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.SeqMapViewConstants;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -49,7 +50,7 @@ public class ToggleToolTipAction extends GenericAction {
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
-        PreferenceUtils.saveToPreferences(SeqMapView.PREF_SHOW_TOOLTIP, SeqMapView.default_show_prop_tooltip, ACTION);
+        PreferenceUtils.saveToPreferences(SeqMapViewConstants.PREF_SHOW_TOOLTIP, SeqMapView.default_show_prop_tooltip, ACTION);
     }
 
     public static ToggleToolTipAction getAction() {

@@ -439,7 +439,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         boolean nothing_changed = (preserve_selections && (topgl == null));
         boolean selections_changed = !nothing_changed;
 
-        if (smv.show_edge_matches && selections_changed && topgl != null && topgl.getParent() != smv.getAxisTier()) {
+        if (smv.showEdgeMatches && selections_changed && topgl != null && topgl.getParent() != smv.getAxisTier()) {
             smv.doEdgeMatching(map.getSelected(), false);
         }
         smv.setZoomSpotX(zoom_point.getX());
@@ -553,7 +553,7 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
                 map.select(glyphs);
             }
         }
-        if (smv.show_edge_matches && something_changed) {
+        if (smv.showEdgeMatches && something_changed) {
             smv.doEdgeMatching(map.getSelected(), false);
         }
 

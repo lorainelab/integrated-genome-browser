@@ -30,7 +30,7 @@ import javax.swing.event.MouseInputAdapter;
  *
  * @author tarun
  */
-public class PreferenceChangeListenerImpl implements PreferenceChangeListener {
+public class SeqMapViewPrefChangeListenerImpl implements PreferenceChangeListener {
 
     MouseInputAdapter resizer;
     AffyTieredMap seqmap;
@@ -39,7 +39,7 @@ public class PreferenceChangeListenerImpl implements PreferenceChangeListener {
     JComponent yzoombox;
     boolean showEdgeMatches;
 
-    public PreferenceChangeListenerImpl(SeqMapView seqMapView) {
+    public SeqMapViewPrefChangeListenerImpl(SeqMapView seqMapView) {
         this.seqMapView = seqMapView;
         this.seqmap = seqMapView.getSeqMap();
         this.xzoombox = seqMapView.getXzoombox();

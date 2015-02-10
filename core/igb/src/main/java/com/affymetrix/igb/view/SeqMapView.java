@@ -20,6 +20,7 @@ import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
@@ -414,7 +415,7 @@ public class SeqMapView extends JPanel
         TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(this);
         Toolkit.getDefaultToolkit().addAWTEventListener(modeController, AWTEvent.KEY_EVENT_MASK);
 
-        pref_change_listener = new PreferenceChangeListenerImpl(this);
+        pref_change_listener = new SeqMapViewPrefChangeListenerImpl(this);
         symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
         propertyHolder = new SeqMapViewPropertyHolderImpl(this);
 
@@ -1963,7 +1964,10 @@ public class SeqMapView extends JPanel
             current_group = aseq.getSeqGroup();
         }
 
-        logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
+        if(logger.isDebugEnabled()){
+            logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
+        }
+        
 
         if ((new_group != current_group) && (current_group != null)) {
             clear();
@@ -1971,7 +1975,10 @@ public class SeqMapView extends JPanel
     }
 
     public void seqSelectionChanged(SeqSelectionEvent evt) {
-        logger.debug("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+        if(logger.isDebugEnabled()){
+            logger.debug("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+        }
+        
         final BioSeq newseq = evt.getSelectedSeq();
         setAnnotatedSeq(newseq);
     }
@@ -2197,7 +2204,7 @@ public class SeqMapView extends JPanel
             List<GraphGlyph> graphGlyphs = new ArrayList<>(2);
             for (int i = 0; i < glyph.getParent().getChildCount(); i++) {
                 if (glyph.getParent().getChild(i) instanceof GraphGlyph) {
-                    SeqMapViewUtils.splitGraph((GraphGlyph) glyph.getParent().getChild(i));
+                    splitGraph((GraphGlyph) glyph.getParent().getChild(i));
                     graphGlyphs.add((GraphGlyph) glyph.getParent().getChild(i));
                 }
             }
@@ -2207,7 +2214,7 @@ public class SeqMapView extends JPanel
                 tier.pack(getSeqMap().getView());
             }
         } else {
-            SeqMapViewUtils.splitGraph((GraphGlyph) glyph);
+            splitGraph((GraphGlyph) glyph);
             joinedParent.removeChild(glyph);
         }
         joinedParent.pack(getSeqMap().getView());
@@ -2261,6 +2268,17 @@ public class SeqMapView extends JPanel
         seqmap.getView().setBackGroundProvider(bgp);
         ((AffyLabelledTierMap) seqmap).getLabelMap().getView().setBackGroundProvider(labelbgp);
         seqmap.updateWidget();
+    }
+    
+    private static void splitGraph(GraphGlyph glyph) {
+        GraphSym gsym = (GraphSym) glyph.getInfo();
+        GraphState gstate = gsym.getGraphState();
+        if (gstate.getComboStyle() != null) {
+            gstate.getTierStyle().setY(gstate.getComboStyle().getY());
+        }
+        gstate.setComboStyle(null, 0);
+        gstate.getTierStyle().setJoin(false);
+        gstate.getTierStyle().setFloatTier(false);
     }
 
     private class SeqMapViewRubberBand extends RubberBand {

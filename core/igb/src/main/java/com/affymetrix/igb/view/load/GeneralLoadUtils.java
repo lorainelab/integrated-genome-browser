@@ -723,14 +723,14 @@ public final class GeneralLoadUtils {
                         Timer timer = new Timer();
                         timer.start();
                         try {
-                            List<BioSeq> chrList = feature.symL.getChromosomeList();
-                            Collections.sort(chrList,
-                                    new Comparator<BioSeq>() {
-                                        @Override
-                                        public int compare(BioSeq s1, BioSeq s2) {
-                                            return s1.getID().compareToIgnoreCase(s2.getID());
-                                        }
-                                    });
+                            List<BioSeq> chrList = gmodel.getSelectedSeqGroup().getSeqList();
+//                            Collections.sort(chrList,
+//                                    new Comparator<BioSeq>() {
+//                                        @Override
+//                                        public int compare(BioSeq s1, BioSeq s2) {
+//                                            return s1.getID().compareToIgnoreCase(s2.getID());
+//                                        }
+//                                    });
                             if (feature.symL.isMultiThreadOK()) {
                                 return multiThreadedLoad(chrList);
                             }

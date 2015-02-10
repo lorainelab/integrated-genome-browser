@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -54,7 +55,6 @@ public final class ServerList {
     private final GenericServer localFilesServer = new GenericServer("Local Files", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
     private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", ServerTypeI.LocalFiles, true, null, false, null); //qlmirror
     private static ServerList serverInstance = new ServerList("server");
-    private static ServerList repositoryInstance = new ServerList("repository");
     private final String textName;
     private final Comparator<GenericServer> serverOrderComparator = (o1, o2) -> getServerOrder(o1) - getServerOrder(o2);
 
@@ -64,10 +64,6 @@ public final class ServerList {
 
     public static ServerList getServerInstance() {
         return serverInstance;
-    }
-
-    public static ServerList getRepositoryInstance() {
-        return repositoryInstance;
     }
 
     public String getTextName() {
@@ -123,7 +119,7 @@ public final class ServerList {
     }
 
     public synchronized Collection<GenericServer> getAllServers() {
-        ArrayList<GenericServer> allServers = new ArrayList<>(url2server.values());
+        List<GenericServer> allServers = new ArrayList<>(url2server.values());
         Collections.sort(allServers, serverOrderComparator);
         return allServers;
     }
@@ -197,11 +193,8 @@ public final class ServerList {
                     }
                 }
                 server = new GenericServer(name, url, serverType, enabled, info, primary, isDefault, mirrorURL);
-
-                if (server != null) {
-                    url2server.put(url, server);
-                    addServerToPrefs(server, order, isDefault);
-                }
+                url2server.put(url, server);
+                addServerToPrefs(server, order, isDefault);
             }
         }
 
@@ -261,29 +254,6 @@ public final class ServerList {
             //serverURL not an actual url now, it is a long hash instead.
             for (String serverURL : getPreferencesNode().childrenNames()) {
                 node = getPreferencesNode().node(serverURL);
-                //this check for the old preference format which used the url as the key
-                //the new one uses a long integer hash, so if the key is not a long
-                //we have the old format.  We can convert the old format to the new one
-                //without loss of data.
-                if (!isLong(serverURL)) {
-
-                    String url = GeneralUtils.URLDecode(node.name());
-                    System.out.println("Converting old standard server preferences to new standard (" + url + ").");
-                    Preferences n_node = getPreferencesNode().node(GenericServer.getHash(url));
-                    n_node.put(SERVER_URL, node.name());
-                    n_node.put(SERVER_LOGIN, node.get(SERVER_LOGIN, ""));
-                    n_node.put(SERVER_PASSWORD, node.get(SERVER_PASSWORD, ""));
-                    n_node.put(SERVER_NAME, node.get(SERVER_NAME, ""));
-                    n_node.putInt(SERVER_ORDER, node.getInt(SERVER_ORDER, 0));
-                    if (node.get(SERVER_TYPE, null) != null) {
-                        n_node.put(SERVER_TYPE, node.get(SERVER_TYPE, null));
-                    }
-                    n_node.putBoolean(IS_SERVER_ENABLED, node.getBoolean(IS_SERVER_ENABLED, true));
-
-                    node.removeNode();
-                    node = n_node;
-                }
-
                 serverType = null;
                 if (node.get(SERVER_TYPE, null) != null) {
                     serverType = getServerType(node.get(SERVER_TYPE, ServerTypeI.DEFAULT.getName()));
@@ -298,15 +268,6 @@ public final class ServerList {
             logger.info("Completed loading server preferences from the Java preferences subsystem");
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
-        }
-    }
-
-    public boolean isLong(String input) {
-        try {
-            Long.parseLong(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 

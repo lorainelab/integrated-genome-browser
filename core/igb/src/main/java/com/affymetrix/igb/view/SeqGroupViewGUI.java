@@ -4,7 +4,7 @@ import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;

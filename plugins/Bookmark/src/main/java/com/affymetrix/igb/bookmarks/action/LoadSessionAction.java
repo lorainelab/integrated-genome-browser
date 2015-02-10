@@ -1,41 +1,44 @@
 package com.affymetrix.igb.bookmarks.action;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
+import com.affymetrix.igb.service.api.IgbMenuItemProvider;
 import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
 import java.awt.FileDialog;
-import java.awt.event.ActionEvent;  
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLDecoder;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 
-public class LoadSessionAction extends GenericAction {
+@Component(name = LoadSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
+public class LoadSessionAction extends GenericAction implements IgbMenuItemProvider {
 
+    public static final String COMPONENT_NAME = "LoadSessionAction";
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
-    private static LoadSessionAction ACTION;
+
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
-    public static void createAction(IgbService igbService) {
-        ACTION = new LoadSessionAction(igbService);
-    }
-
-    public static LoadSessionAction getAction() {
-        return ACTION;
-    }
-
-    private LoadSessionAction(IgbService igbService) {
+    public LoadSessionAction() {
         super(BookmarkManagerView.BUNDLE.getString("loadSession"), BookmarkManagerView.BUNDLE.getString("openSessionTooltip"),
                 "16x16/actions/load_session.png", "22x22/actions/load_session.png",
                 KeyEvent.VK_L, null, true);
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
@@ -99,5 +102,20 @@ public class LoadSessionAction extends GenericAction {
             BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
         }
         PreferenceUtils.getSessionPrefsNode().removeNode();
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return "file";
+    }
+
+    @Override
+    public JMenuItem getMenuItem() {
+        return new JRPMenuItem("Bookmark_loadSession", this);
+    }
+
+    @Override
+    public int getMenuItemPosition() {
+        return 8;
     }
 }

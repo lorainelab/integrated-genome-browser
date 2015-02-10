@@ -28,17 +28,16 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -50,6 +49,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Optional;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
@@ -70,7 +70,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * implementation of the IgbService, using the IGB instance for all of the
- methods. This is the way for bundles to access IGB functionality that is not
+ * methods. This is the way for bundles to access IGB functionality that is not
  * public.
  *
  */
@@ -130,15 +130,9 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public JRPMenu getMenu(String menuName) {
+    public JRPMenu addTopMenu(String id, String text, int index) {
         IGB igb = (IGB) IGB.getSingleton();
-        return igb.getMenu(menuName);
-    }
-
-    @Override
-    public JRPMenu addTopMenu(String id, String text) {
-        IGB igb = (IGB) IGB.getSingleton();
-        return igb.addTopMenu(id, text);
+        return igb.addTopMenu(id, text, index);
     }
 
     @Override
@@ -294,7 +288,6 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         return ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
     }
 
-    
     @Override
     public List<TierGlyph> getSelectedTierGlyphs() {
         return ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
@@ -482,7 +475,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     public GenericFeature createFeature(String featureName, SymLoader loader) {
         return GeneralLoadView.getLoadView().createFeature(featureName, loader);
     }
-    
+
     @Override
     public void bringToFront() {
         JFrame f = Application.getSingleton().getFrame();
@@ -493,5 +486,5 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         f.repaint();
         f.setAlwaysOnTop(tmp);
     }
-    
+
 }

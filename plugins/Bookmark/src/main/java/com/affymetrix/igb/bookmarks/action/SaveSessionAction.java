@@ -1,12 +1,16 @@
 package com.affymetrix.igb.bookmarks.action;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
+import com.affymetrix.igb.service.api.IgbMenuItemProvider;
 import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
@@ -20,9 +24,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 
-public class SaveSessionAction extends GenericAction {
+@Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
+public class SaveSessionAction extends GenericAction implements IgbMenuItemProvider {
 
+    public static final String COMPONENT_NAME = "SaveSessionAction";
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
     final public static boolean IS_MAC
@@ -30,21 +37,10 @@ public class SaveSessionAction extends GenericAction {
 
     FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
-    private static SaveSessionAction ACTION;
-
-    public static void createAction(IgbService igbService) {
-        ACTION = new SaveSessionAction(igbService);
-    }
-
-    public static SaveSessionAction getAction() {
-        return ACTION;
-    }
-
-    private SaveSessionAction(IgbService igbService) {
+    public SaveSessionAction() {
         super(BookmarkManagerView.BUNDLE.getString("saveSession"), BookmarkManagerView.BUNDLE.getString("saveSessionTooltip"),
                 "16x16/actions/save_session.png", "22x22/actions/save_session.png",
                 KeyEvent.VK_S, null, true);
-        this.igbService = igbService;
     }
 
     @Override
@@ -118,11 +114,31 @@ public class SaveSessionAction extends GenericAction {
             topNode.node(keyStrokePref.name());
 
             PreferenceUtils.addEntryToNode(PreferenceUtils.getToolbarNode(), toolBarKeyvalue);
-            PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);            
+            PreferenceUtils.addEntryToNode(PreferenceUtils.getKeystrokesNode(), keyStrokeKeyvalue);
 
             PreferenceUtils.getSessionPrefsNode().removeNode();
         } catch (Exception x) {
             ErrorHandler.errorPanel("ERROR", "Error saving session to file", x);
         }
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return "file";
+    }
+
+    @Override
+    public JMenuItem getMenuItem() {
+        return new JRPMenuItem("Bookmark_saveSession", this);
+    }
+
+    @Override
+    public int getMenuItemPosition() {
+        return 8;
     }
 }

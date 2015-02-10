@@ -234,3 +234,4 @@ extbundles/*
 /plugins/track-operations-panel/target/
 /plugins/selection-tracker/target/
 /core/igb-preferences/target/
+/core/weblinks/target/

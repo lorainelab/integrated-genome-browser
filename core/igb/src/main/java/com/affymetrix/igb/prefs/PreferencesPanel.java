@@ -17,6 +17,7 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
+import com.affymetrix.igb.service.api.PreferencesPanelProvider;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.swing.MenuUtil;
 import java.awt.BorderLayout;
@@ -37,11 +38,9 @@ import javax.swing.JTabbedPane;
 public final class PreferencesPanel extends JPanel {
 
     public static int TAB_TIER_PREFS_VIEW = -1;
-    public static int TAB_TRACK_DEFAULT_VIEW = -1;
     public static int TAB_KEY_STROKES_VIEW = -1;
     public static int TAB_OTHER_OPTIONS_VIEW = -1;
     public static int TAB_DATALOAD_PREFS = -1;
-    public static int TAB_PLUGIN_PREFS = -1;
     private static final long serialVersionUID = 1L;
     public static final String WINDOW_NAME = "Preferences Window";
     private JFrame frame = null;
@@ -58,7 +57,7 @@ public final class PreferencesPanel extends JPanel {
 
         this.add(tab_pane, BorderLayout.CENTER);
 
-		// using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
+        // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
         //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
@@ -77,15 +76,13 @@ public final class PreferencesPanel extends JPanel {
 
             @Override
             public void componentHidden(ComponentEvent e) {
-                ((TierPrefsView) (singleton.tpvGUI.tdv)).removedFromView();
+                ((TierPrefsView) singleton.tpvGUI.tdv).removedFromView();
             }
         });
 
         TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
-        TAB_TRACK_DEFAULT_VIEW = singleton.addPrefEditorComponent(new TrackDefaultsPanel());
         TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(new KeyStrokesViewGUI());
         TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(new OtherOptionsView());
-        TAB_PLUGIN_PREFS = singleton.addPrefEditorComponent(BundleRepositoryPrefsView.getSingleton());
         TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
         return singleton;
     }
@@ -125,6 +122,17 @@ public final class PreferencesPanel extends JPanel {
         return tab_pane.indexOfComponent(pec);
     }
 
+    public void addPrefEditorComponent(PreferencesPanelProvider panelProvider) {
+        tab_pane.add(panelProvider.getPanel());
+        panelProvider.getPanel().addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                panelProvider.refresh();
+            }
+        });
+    }
+
     public IPrefEditorComponent[] getPrefEditorComponents() {
         int count = tab_pane.getTabCount();
         IPrefEditorComponent[] comps = new IPrefEditorComponent[count];
@@ -140,7 +148,7 @@ public final class PreferencesPanel extends JPanel {
     public JFrame getFrame() {
         int width = 558;
         int height = 582;
-        if(IGB.IS_LINUX){
+        if (IGB.IS_LINUX) {
             width = 574;
             height = 610;
         }
@@ -152,10 +160,10 @@ public final class PreferencesPanel extends JPanel {
 
                 @Override
                 public void windowClosing(WindowEvent evt) {
-					// save the current size into the preferences, so the window
+                    // save the current size into the preferences, so the window
                     // will re-open with this size next time
                     PreferenceUtils.saveWindowLocation(frame, WINDOW_NAME);
-					// if the TierPrefsView is being displayed, the apply any changes from it.
+                    // if the TierPrefsView is being displayed, the apply any changes from it.
                     // if it is not being displayed, then its changes have already been applied in componentHidden()
                     if (singleton.tpvGUI != null) {
                         if (singleton.tab_pane.getSelectedComponent() == singleton.tpvGUI) {

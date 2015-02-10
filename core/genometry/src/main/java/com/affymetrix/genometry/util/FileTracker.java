@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.PreferenceUtils;

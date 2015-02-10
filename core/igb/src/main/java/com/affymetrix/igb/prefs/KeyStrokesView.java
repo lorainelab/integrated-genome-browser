@@ -34,7 +34,7 @@ import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
 import com.affymetrix.igb.action.ToggleHairlineAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.UnFloatTiersAction;
-import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import java.awt.event.KeyEvent;

@@ -14,7 +14,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.affymetrix.igb.IgbServiceImpl;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
@@ -47,7 +47,7 @@ public class Selections {
     private static final EventListenerList listenerList;
 
     static {
-        smv = (SeqMapView) IgbServiceImpl.getInstance().getSeqMapView();
+        smv = (SeqMapView) Application.getSingleton().getMapView();
         listenerList = new EventListenerList();
         addListeners(new Listeners());
     }
@@ -111,7 +111,7 @@ public class Selections {
                     }
                 }
             } else if (category.isPresent()) {
-                
+
                 if (category.get() == FileTypeCategory.Annotation || category.get() == FileTypeCategory.Alignment
                         || category.get() == FileTypeCategory.ProbeSet || category.get() == FileTypeCategory.PairedRead) {
                     annotStyles.add(useGlyph.getAnnotStyle());
@@ -170,9 +170,9 @@ public class Selections {
     public static boolean isAllAnnot() {
         return allStyles.size() == annotStyles.size() && annotStyles.size() > 0;
     }
-    
-    public static boolean isAnyShowAsPaired(){
-     for (ITrackStyleExtended style : allStyles) {
+
+    public static boolean isAnyShowAsPaired() {
+        for (ITrackStyleExtended style : allStyles) {
             if (style.isShowAsPaired()) {
                 return true;
             }

@@ -4,29 +4,44 @@
  */
 package com.affymetrix.igb.prefs;
 
-/**
- * This class is a subclass of TrackPreferences Panel and is used for Tracks->Defaults Tab which makes some of the components 
- * invisible on Panel which are inappropriate
- * 
- * @author Anuj
- */
-public class TrackDefaultsPanel extends TrackPreferencesPanel{
-	private static final long serialVersionUID = 1L;
-	public TrackDefaultsPanel(){
-		super("Track Defaults",TrackDefaultView.getSingleton());	
-	}
-	@Override
-	protected void enableSpecificComponents()
-	{
-		autoRefreshCheckBox.setVisible(false);
-		refreshButton.setVisible(false);
-	}
-	@Override
-	protected void deleteAndRestoreButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		((TrackDefaultView)tdv).deleteTrackDefaultButton();
-	}
-	@Override
-	protected void selectAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {  
-		((TrackDefaultView)tdv).addTrackDefaultButton();
-	}
+import aQute.bnd.annotation.component.Component;
+import com.affymetrix.igb.service.api.PreferencesPanelProvider;
+import javax.swing.JPanel;
+
+@Component(name = TrackDefaultsPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+public class TrackDefaultsPanel extends TrackPreferencesPanel implements PreferencesPanelProvider {
+
+    public static final String COMPONENT_NAME = "TrackDefaultsPanel";
+    private static final long serialVersionUID = 1L;
+
+    //TODO remove this dependency on a singleton
+    public TrackDefaultsPanel() {
+        super("Track Defaults", TrackDefaultView.getSingleton());
+    }
+
+    @Override
+    protected void enableSpecificComponents() {
+        autoRefreshCheckBox.setVisible(false);
+        refreshButton.setVisible(false);
+    }
+
+    @Override
+    protected void deleteAndRestoreButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        ((TrackDefaultView) tdv).deleteTrackDefaultButton();
+    }
+
+    @Override
+    protected void selectAndAddButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        ((TrackDefaultView) tdv).addTrackDefaultButton();
+    }
+
+    @Override
+    public int getTabWeight() {
+        return 2;
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
 }

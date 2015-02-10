@@ -1,6 +1,7 @@
 package com.affymetrix.igb.swing;
 
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import com.affymetrix.genoviz.swing.StyledJComboBox;

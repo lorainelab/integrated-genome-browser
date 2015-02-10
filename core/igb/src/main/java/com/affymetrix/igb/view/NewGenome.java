@@ -4,7 +4,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.UniFileFilter;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.jidesoft.hints.ListDataIntelliHints;

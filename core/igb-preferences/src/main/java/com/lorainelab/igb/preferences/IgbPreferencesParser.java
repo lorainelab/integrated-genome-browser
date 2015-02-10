@@ -30,6 +30,7 @@ public class IgbPreferencesParser implements IgbPreferencesService {
     private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
     private JAXBContext jaxbContext;
     private Unmarshaller unmarshaller;
+    private Optional<IgbPreferences> defaultPreferences;
 
     public IgbPreferencesParser() {
         try {
@@ -78,8 +79,11 @@ public class IgbPreferencesParser implements IgbPreferencesService {
 
     @Override
     public Optional<IgbPreferences> fromDefaultPreferences() {
-        Reader reader = new InputStreamReader(IgbPreferencesParser.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
-        return fromJson(reader);
+        if (defaultPreferences == null) {
+            Reader reader = new InputStreamReader(IgbPreferencesParser.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
+            defaultPreferences = fromJson(reader);
+        }
+        return defaultPreferences;
     }
 
 }

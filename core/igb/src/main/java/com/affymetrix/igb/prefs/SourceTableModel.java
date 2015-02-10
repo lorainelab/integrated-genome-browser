@@ -23,190 +23,187 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
 
-	private static final long serialVersionUID = 1l;
-	private final List<GenericServer> servers = new ArrayList<>();
+    private static final long serialVersionUID = 1l;
+    private final List<GenericServer> servers = new ArrayList<>();
 
-	public static enum SourceColumn {
+    public static enum SourceColumn {
 
-		Refresh, Name, Type, URL, Enabled
-	}
+        Refresh, Name, Type, URL, Enabled
+    }
 
-	public static final List<SortKey> SORT_KEYS;
-	private ServerList serverList;
-	private ArrayList<SourceColumn> tableColumns;
+    public static final List<SortKey> SORT_KEYS;
+    private ServerList serverList;
+    private ArrayList<SourceColumn> tableColumns;
 
-	static {
-		List<SortKey> sortKeys = new ArrayList<>(2);
-		sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
-		sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
+    static {
+        List<SortKey> sortKeys = new ArrayList<>(2);
+        sortKeys.add(new SortKey(SourceColumn.Name.ordinal(), SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(SourceColumn.Type.ordinal(), SortOrder.ASCENDING));
 
-		SORT_KEYS = Collections.unmodifiableList(sortKeys);
-	}
+        SORT_KEYS = Collections.unmodifiableList(sortKeys);
+    }
 
-	public SourceTableModel(ServerList serverList) {
-		super();
-		this.serverList = serverList;
-		init();
-	}
+    public SourceTableModel(ServerList serverList) {
+        super();
+        this.serverList = serverList;
+        init();
+    }
 
-	public void init() {
-		tableColumns = new ArrayList<>();
-		for (SourceColumn sourceColumn : SourceColumn.values()) {
-			if (sourceColumn != SourceColumn.Type || serverList.hasTypes()) {
-				tableColumns.add(sourceColumn);
-			}
-		}
-		this.servers.clear();
-		this.servers.addAll(serverList.getAllServers());
-		this.fireTableDataChanged();
-	}
+    public void init() {
+        tableColumns = new ArrayList<>();
+        for (SourceColumn sourceColumn : SourceColumn.values()) {
+            if (sourceColumn != SourceColumn.Type || serverList.hasTypes()) {
+                tableColumns.add(sourceColumn);
+            }
+        }
+        this.servers.clear();
+        this.servers.addAll(serverList.getAllServers());
+        this.fireTableDataChanged();
+    }
 
-	public int getRowCount() {
-		return servers.size();
-	}
+    public int getRowCount() {
+        return servers.size();
+    }
 
-	public int getColumnIndex(SourceColumn sourceColumn) {
-		return tableColumns.indexOf(sourceColumn);
-	}
+    public int getColumnIndex(SourceColumn sourceColumn) {
+        return tableColumns.indexOf(sourceColumn);
+    }
 
-	@Override
-	public Class<?> getColumnClass(int col) {
-		switch (tableColumns.get(col)) {
-			case Enabled:
-				return Boolean.class;
-			case Type:
-				return ServerTypeI.class;
-			default:
-				return String.class;
-		}
-	}
+    @Override
+    public Class<?> getColumnClass(int col) {
+        switch (tableColumns.get(col)) {
+            case Enabled:
+                return Boolean.class;
+            case Type:
+                return ServerTypeI.class;
+            default:
+                return String.class;
+        }
+    }
 
-	public int getColumnCount() {
-		return tableColumns.size();
-	}
+    public int getColumnCount() {
+        return tableColumns.size();
+    }
 
-	@Override
-	public String getColumnName(int col) {
-		return tableColumns.get(col).toString();
-	}
+    @Override
+    public String getColumnName(int col) {
+        return tableColumns.get(col).toString();
+    }
 
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		if (columnIndex >= tableColumns.size()) {
-			System.out.println("row " + rowIndex + ", columnIndex " + columnIndex + " is out of range");
-			return null;
-		}
-		switch (tableColumns.get(columnIndex)) {
-			case Refresh:
-				return "";
-			case Name:
-				return servers.get(rowIndex).serverName;
-			case Type:
-				return servers.get(rowIndex).serverType;
-			case URL:
-				return servers.get(rowIndex).URL;
-			case Enabled:
-				return servers.get(rowIndex).isEnabled();
-			default:
-				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
-		}
-	}
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (columnIndex >= tableColumns.size()) {
+            System.out.println("row " + rowIndex + ", columnIndex " + columnIndex + " is out of range");
+            return null;
+        }
+        switch (tableColumns.get(columnIndex)) {
+            case Refresh:
+                return "";
+            case Name:
+                return servers.get(rowIndex).serverName;
+            case Type:
+                return servers.get(rowIndex).serverType;
+            case URL:
+                return servers.get(rowIndex).URL;
+            case Enabled:
+                return servers.get(rowIndex).isEnabled();
+            default:
+                throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
+        }
+    }
 
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		if (!servers.get(row).isDefault()
-				&& col == tableColumns.indexOf(SourceColumn.Name)) {
-			return true;
-		}
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        if (!servers.get(row).isDefault()
+                && col == tableColumns.indexOf(SourceColumn.Name)) {
+            return true;
+        }
 
-		if (col == tableColumns.indexOf(SourceColumn.Enabled)) {
-			return true;
-		}
+        if (col == tableColumns.indexOf(SourceColumn.Enabled)) {
+            return true;
+        }
 
-		if (servers.get(row).isEnabled() && col == tableColumns.indexOf(SourceColumn.Refresh)) {
-			return true;
-		}
-		
-		return false;
-	}
+        if (servers.get(row).isEnabled() && col == tableColumns.indexOf(SourceColumn.Refresh)) {
+            return true;
+        }
 
-	@Override
-	public void setValueAt(Object value, int row, int col) {
-		final GenericServer server = servers.get(row);
-		switch (tableColumns.get(col)) {
-			case Refresh:
-				// Plugin is used as a Server Object and its serverType is null
-				if (server.serverType != null) {
-					if (!server.isEnabled()
-							|| DataLoadPrefsView.getSingleton().confirmRefresh()) {
-						DataLoadPrefsView.getSingleton().updateSource(server.URL,
-								server.serverType, server.serverName, server.URL, server.mirrorURL);
-					}
-				} else {
-					BundleRepositoryPrefsView.getSingleton().updateSource(server.URL,
-							server.serverType, server.serverName, server.URL, server.mirrorURL);
-				}
-				break;
-			case Enabled:
-				if ((Boolean) value) {
-					discoverServer(server);
-					server.setEnabled(true);
-				} else {
-					if (server.serverType == null || DataLoadPrefsView.getSingleton().confirmDelete()) {
-						serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding, true);
-						server.setEnabled(false);
-					}
-				}
-				break;
-			case Name:
-				server.setName((String) value);
-				break;
-			case URL:
-				//do nothing
-				break;
-			case Type:
-				//do nothing
-				break;
-			default:
-				throw new IllegalArgumentException("columnIndex " + col + " not editable");
-		}
+        return false;
+    }
 
-		this.fireTableDataChanged();
-	}
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        final GenericServer server = servers.get(row);
+        switch (tableColumns.get(col)) {
+            case Refresh:
+                // Plugin is used as a Server Object and its serverType is null
+                if (server.serverType != null) {
+                    if (!server.isEnabled()
+                            || DataLoadPrefsView.getSingleton().confirmRefresh()) {
+                        DataLoadPrefsView.getSingleton().updateSource(server.URL,
+                                server.serverType, server.serverName, server.URL, server.mirrorURL);
+                    }
+                }
+                break;
+            case Enabled:
+                if ((Boolean) value) {
+                    discoverServer(server);
+                    server.setEnabled(true);
+                } else {
+                    if (server.serverType == null || DataLoadPrefsView.getSingleton().confirmDelete()) {
+                        serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding, true);
+                        server.setEnabled(false);
+                    }
+                }
+                break;
+            case Name:
+                server.setName((String) value);
+                break;
+            case URL:
+                //do nothing
+                break;
+            case Type:
+                //do nothing
+                break;
+            default:
+                throw new IllegalArgumentException("columnIndex " + col + " not editable");
+        }
 
-	private void discoverServer(final GenericServer server) {
-		CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server") {
+        this.fireTableDataChanged();
+    }
 
-			@Override
-			protected Void runInBackground() {
-				GeneralLoadUtils.discoverServer(server);
-				return null;
-			}
+    private void discoverServer(final GenericServer server) {
+        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server") {
 
-			@Override
-			protected void finished() {
-			}
-		};
-		CThreadHolder.getInstance().execute(server, worker);
-	}
+            @Override
+            protected Void runInBackground() {
+                GeneralLoadUtils.discoverServer(server);
+                return null;
+            }
 
-	public void preferenceChange(PreferenceChangeEvent evt) {
-		/*
-		 * It is easier to rebuild than try and find out what changed
-		 */
-		this.init();
-	}
+            @Override
+            protected void finished() {
+            }
+        };
+        CThreadHolder.getInstance().execute(server, worker);
+    }
 
-	public void switchRows(int rowIndex) {
-		if (rowIndex < 0 || rowIndex >= servers.size() - 1) {
-			return;
-		}
-		GenericServer firstServer = servers.get(rowIndex);
-		servers.set(rowIndex, servers.get(rowIndex + 1));
-		servers.set(rowIndex + 1, firstServer);
-		this.fireTableDataChanged();
-	}
+    public void preferenceChange(PreferenceChangeEvent evt) {
+        /*
+         * It is easier to rebuild than try and find out what changed
+         */
+        this.init();
+    }
 
-	public List<GenericServer> getServers() {
-		return servers;
-	}
+    public void switchRows(int rowIndex) {
+        if (rowIndex < 0 || rowIndex >= servers.size() - 1) {
+            return;
+        }
+        GenericServer firstServer = servers.get(rowIndex);
+        servers.set(rowIndex, servers.get(rowIndex + 1));
+        servers.set(rowIndex + 1, firstServer);
+        this.fireTableDataChanged();
+    }
+
+    public List<GenericServer> getServers() {
+        return servers;
+    }
 }

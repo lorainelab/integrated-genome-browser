@@ -1,18 +1,19 @@
 package com.affymetrix.igb.window.service.def;
 
 import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.TabHolder;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.window.service.IMenuCreator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import java.awt.BorderLayout;
@@ -41,9 +42,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
-
 @Component(name = WindowServiceDefaultImpl.COMPONENT_NAME, provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
@@ -56,7 +54,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private Map<TabState, TabHolder> tabHolders;
     private Map<IgbTabPanel, JMenu> tabMenus;
     private Map<JMenu, Integer> tabMenuPositions;
-    private volatile HashSet<IWindowRoutine> stopRoutines;
+    private volatile HashSet<IWindowRoutine> stopRoutines = new HashSet<>();
     private Container cpane;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
@@ -70,7 +68,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
         tabMenus = new ConcurrentHashMap<>();
         tabMenuPositions = new HashMap<>();
-        stopRoutines = new HashSet<>();
     }
 
     @Override
@@ -135,13 +132,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     @Override
-    public void setMenuCreator(IMenuCreator menuCreator) {
-        ((WindowTabs) tabHolders.get(TabState.COMPONENT_STATE_WINDOW)).setMenuCreator(menuCreator);
-    }
-
-    @Override
     public void setTabsMenu(JMenuBar mbar) {
-        this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"));
+        this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"), 5);
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(
@@ -249,7 +241,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     private void updateMainFrame() {
         //don't show anything until a few tabs have been added to prevent flashing at startup
-        if (tabMenus.keySet().size() > 9) {
+        if (tabMenus.keySet().size() > 8) {
             showTabs();
         }
     }
@@ -325,7 +317,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                 tabs_menu.remove(item);
             }
         }
-        
+
         PreferenceUtils.saveComponentState(igbTabPanel.getName(), null);
     }
 

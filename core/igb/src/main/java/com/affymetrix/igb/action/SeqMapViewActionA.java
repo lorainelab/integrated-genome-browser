@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.Application;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelManager;

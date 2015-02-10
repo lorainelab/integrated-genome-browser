@@ -1,15 +1,15 @@
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genometry.weblink.WebLink;
-import com.affymetrix.genometry.weblink.WebLinkList;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.AnnotationUrl;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import com.lorainelab.igb.preferences.model.JsonWrapper;
+import com.lorainelab.igb.preferences.weblink.model.WebLink;
+import com.lorainelab.igb.preferences.weblink.model.WebLinkList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author hiralv
  */
 @Component(name = WebLinkUtils.COMPONENT_NAME, immediate = true)
-public class WebLinkUtils {
+public class WebLinkUtils implements WebLinkExporter {
 
     public static final String COMPONENT_NAME = "WebLinkUtils";
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(WebLinkUtils.class);
@@ -53,6 +53,7 @@ public class WebLinkUtils {
 
     @Activate
     public void activate() {
+        initializeDefaultWebLinks();
         File f = getLinksFileJson();
         if (f == null || !f.exists()) {
             f = getOldLinksFile();
@@ -70,7 +71,17 @@ public class WebLinkUtils {
         }
     }
 
-    public static void exportUserWebLinks() {
+    private void initializeDefaultWebLinks() {
+        Optional<IgbPreferences> defaultPreferences = igbPreferencesService.fromDefaultPreferences();
+        if (defaultPreferences.isPresent()) {
+            defaultPreferences.get().getAnnotationUrl().stream().map((url) -> new WebLink(url)).forEach((webLink) -> {
+                getWebLinkList(webLink.getType()).addWebLink(webLink);
+            });
+        }
+    }
+
+    @Override
+    public void exportUserWebLinks() {
         File f = getLinksFileJson();
         String filename = f.getAbsolutePath();
         try {

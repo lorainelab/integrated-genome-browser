@@ -7,7 +7,7 @@ package com.affymetrix.igb.tutorial;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingWorker;
 

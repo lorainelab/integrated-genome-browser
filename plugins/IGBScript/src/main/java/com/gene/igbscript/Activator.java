@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.affymetrix.igb.swing.ScriptProcessor;
+import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
 

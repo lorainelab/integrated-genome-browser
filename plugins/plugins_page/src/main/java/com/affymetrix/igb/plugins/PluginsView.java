@@ -12,7 +12,7 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.MenuUtil;
@@ -298,7 +298,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
 
                     if (src == PluginsView.this.repositoryPrefsButton) {
                         // Go to repository prefs tab.
-                        igbService.getRepositoryChangerHolder().displayRepositoryPreferences();
+                        // igbService.getRepositoryChangerHolder().displayRepositoryPreferences();
                     }
                 });
         repositoryPrefsButton.setToolTipText(BUNDLE.getString("repositoryTooltip"));

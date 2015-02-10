@@ -134,6 +134,11 @@
             <artifactId>igb-genoviz-extensions-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>weblinks</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.weblink;
+package com.lorainelab.igb.preferences.weblink.model;
 
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.style.DefaultStateProvider;
@@ -21,8 +21,6 @@ import java.util.Set;
  * @author hiralv
  */
 public class WebLinkList {
-
-    private static final boolean DEBUG = false;
 
     private final String name;
     private final boolean allowDuplicates;
@@ -80,7 +78,7 @@ public class WebLinkList {
             sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
         }
 
-		// Most links come from matching the tier name (i.e. method)
+        // Most links come from matching the tier name (i.e. method)
         // to a regular expression.
         String method = BioSeqUtils.determineMethod(sym);
         if (method == null) { // rarely happens, but can
@@ -95,11 +93,6 @@ public class WebLinkList {
         if (style_url != null && style_url.length() > 0) {
             WebLink link = new WebLink("Track Line URL", null, style_url, WebLink.RegexType.ANNOTATION_NAME);
             results.add(link);
-        }
-
-        if (DEBUG) {
-            System.out.println("method is : " + method);
-            System.out.println("ID is : " + sym.getID());
         }
 
         Set<WebLink> webLinks = new HashSet<>();
@@ -140,23 +133,14 @@ public class WebLinkList {
                 }
                 String property = (String) ((SymWithProps) sym).getProperty(link.getIDField());
                 if (property != null && link.matches(property)) {
-                    if (DEBUG) {
-                        System.out.println("link " + link + " matches property:" + property);
-                    }
                     results.add(link);
                 }
                 continue;
             }
 
             if (link.getRegexType() == WebLink.RegexType.ANNOTATION_NAME && link.matches(method)) {
-                if (DEBUG) {
-                    System.out.println("link " + link + " matches method.");
-                }
                 results.add(link);
             } else if (link.getRegexType() == WebLink.RegexType.ANNOTATION_ID && link.matches(sym.getID())) {
-                if (DEBUG) {
-                    System.out.println("link " + link + " matches ID.");
-                }
                 results.add(link);
             }
         }

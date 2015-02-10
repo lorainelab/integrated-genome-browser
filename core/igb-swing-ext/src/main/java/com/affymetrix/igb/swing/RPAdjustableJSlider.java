@@ -1,5 +1,6 @@
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
 public class RPAdjustableJSlider extends AdjustableJSlider implements JRPWidget {

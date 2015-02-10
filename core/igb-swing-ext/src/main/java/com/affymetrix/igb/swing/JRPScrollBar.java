@@ -1,5 +1,6 @@
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import javax.swing.JScrollBar;
 
 public class JRPScrollBar extends JScrollBar implements JRPWidget {

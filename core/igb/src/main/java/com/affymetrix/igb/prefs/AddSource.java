@@ -12,7 +12,7 @@ import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.Component;
@@ -30,10 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-/**
- *
- * @author dcnorris Modified by nick
- */
 public class AddSource extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -228,78 +224,75 @@ public class AddSource extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
-            File f = fileChooser(DIRECTORIES_ONLY, this);
-            if (f != null && f.isDirectory()) {
-                try {
-                    urlText.setText(f.toURI().toURL().toString());
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(ServerPrefsView.class.getName()).log(Level.WARNING, "Unable to convert File '" + f.getName() + "' to URL", ex);
-                }
+        File f = fileChooser(DIRECTORIES_ONLY, this);
+        if (f != null && f.isDirectory()) {
+            try {
+                urlText.setText(f.toURI().toURL().toString());
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ServerPrefsView.class.getName()).log(Level.WARNING, "Unable to convert File '" + f.getName() + "' to URL", ex);
             }
+        }
 	}//GEN-LAST:event_openDirActionPerformed
 
 	private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
-            openDir.setEnabled(typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
+        openDir.setEnabled(typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
 	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 
-            CThreadWorker<Boolean, Void> worker;
-            worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText()) {
-                @Override
-                protected Boolean runInBackground() {
-                    if (isEditPanel) {
-                        DataLoadPrefsView.getSingleton().updateSource(serverURL,
-                                (ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText(), mirrorURL);
-                    } else {
-                        if (enableCombo) {
-                            return DataLoadPrefsView.getSingleton().addDataSource(
-                                    (ServerTypeI) typeCombo.getSelectedItem(),
-                                    nameText.getText(), urlText.getText(), -1, false, mirrorURL);
-                        } else {
-                            return BundleRepositoryPrefsView.getSingleton().addDataSource(null,
-                                    nameText.getText(), urlText.getText(), -1, false, mirrorURL);
-                        }
+        CThreadWorker<Boolean, Void> worker;
+        worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText()) {
+            @Override
+            protected Boolean runInBackground() {
+                if (isEditPanel) {
+                    DataLoadPrefsView.getSingleton().updateSource(serverURL,
+                            (ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText(), mirrorURL);
+                } else {
+                    if (enableCombo) {
+                        return DataLoadPrefsView.getSingleton().addDataSource(
+                                (ServerTypeI) typeCombo.getSelectedItem(),
+                                nameText.getText(), urlText.getText(), -1, false, mirrorURL);
                     }
-                    return true;
                 }
-
-                @Override
-                protected void finished() {
-                    boolean serverAdded = true;
-                    try {
-                        serverAdded = get();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ExecutionException ex) {
-                        Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    if (serverAdded) {
-                        Application.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
-                        //Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
-                    }/*else{
-
-                     ErrorHandler.errorPanel(
-                     "Unable to Load Data Source",
-                     "Unable to load " + (ServerTypeI) typeCombo.getSelectedItem() + " data source" + urlText.getText() + ".");
-                     }*/
-
-                }
-            };
-
-            GenericServer server = ServerList.getServerInstance().getServer(urlText.getText());
-            if (server == null) {
-                CThreadHolder.getInstance().execute(evt, worker);
-            } else {
-                Application.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
+                return true;
             }
 
-            this.setVisible(false);
+            @Override
+            protected void finished() {
+                boolean serverAdded = true;
+                try {
+                    serverAdded = get();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(AddSource.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (serverAdded) {
+                    Application.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    //Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
+                }/*else{
+
+                 ErrorHandler.errorPanel(
+                 "Unable to Load Data Source",
+                 "Unable to load " + (ServerTypeI) typeCombo.getSelectedItem() + " data source" + urlText.getText() + ".");
+                 }*/
+
+            }
+        };
+
+        GenericServer server = ServerList.getServerInstance().getServer(urlText.getText());
+        if (server == null) {
+            CThreadHolder.getInstance().execute(evt, worker);
+        } else {
+            Application.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
+        }
+
+        this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-            this.setVisible(false);
+        this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerButton;

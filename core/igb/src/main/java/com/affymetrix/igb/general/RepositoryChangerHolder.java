@@ -4,13 +4,11 @@ import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.event.RepositoryChangeListener;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JFrame;
 
 public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 
@@ -33,7 +31,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
 
     private RepositoryChangerHolder() {
         super();
-        ServerList.getRepositoryInstance().addServerInitListener(genericServerListener);
+
     }
 
     /**
@@ -85,9 +83,7 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
     @Override
     public Map<String, String> getRepositories() {
         Map<String, String> repositories = new HashMap<>();
-        ServerList.getRepositoryInstance().getAllServers().stream().filter(repositoryServer -> repositoryServer.isEnabled()).forEach(repositoryServer -> {
-            repositories.put(repositoryServer.serverName, repositoryServer.URL);
-        });
+
         return repositories;
     }
 
@@ -99,21 +95,6 @@ public class RepositoryChangerHolder implements RepositoryChangeHolderI {
      */
     @Override
     public void failRepository(String url) {
-        ServerList.getRepositoryInstance().getServer(url).setEnabled(false);
-    }
 
-    /**
-     * display the Bundle Repository tab of the Preferences page
-     */
-    @Override
-    public void displayRepositoryPreferences() {
-        if (PreferencesPanel.TAB_PLUGIN_PREFS != -1) {
-            PreferencesPanel pv = PreferencesPanel.getSingleton();
-            pv.setTab(PreferencesPanel.TAB_PLUGIN_PREFS);	// Repository preferences tab
-            JFrame f = pv.getFrame();
-            f.setVisible(true);
-        } else {
-            System.out.println("Plugin Repository Preferences not instantiated");
-        }
     }
 }

@@ -12,7 +12,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;

@@ -13,7 +13,6 @@ import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
-import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
@@ -67,7 +66,6 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.prefs.WebLinkUtils;
 import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
@@ -80,10 +78,9 @@ import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.ScriptManager;
-import com.affymetrix.igb.swing.ScriptProcessor;
-import com.affymetrix.igb.swing.ScriptProcessorHolder;
+import com.affymetrix.igb.swing.script.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptProcessor;
+import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -91,14 +88,12 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,35 +104,44 @@ import org.slf4j.LoggerFactory;
 public class Activator implements BundleActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(Activator.class);
-
     private String commandLineBatchFileStr;
     String[] args;
-    private ServiceRegistration<ScriptManager> scriptManagerServiceReference;
+    private IGB igb;
 
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
+        verifyJidesoftLicense();
+        igb = new IGB();
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
             if (CommonUtils.getInstance().isExit(bundleContext)) {
                 return;
             }
-            scriptManagerServiceReference = bundleContext.registerService(ScriptManager.class, ScriptManager.getInstance(), null);
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
 
         }
-        verifyJidesoftLicense();
 
         ServiceTracker<IWindowService, Object> serviceTracker;
         serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
             @Override
             public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-                logger.info("Starting IGB");
-                run(bundleContext, windowServiceReference);
-                logger.info("IGB Started");
+                logger.info("Starting Window Manager");
+                IWindowService windowService = bundleContext.getService(windowServiceReference);
+                final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
+                // set IgbService
+                bundleContext.registerService(IgbService.class, IgbServiceImpl.getInstance(), null);
+                // register tabs created in IGB itself - IGBTabPanel is an extension point
+                for (IgbTabPanelI tab : tabs) {
+                    bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
+                }
+                logger.info("Window Manager Started");
                 return super.addingService(windowServiceReference);
             }
         };
         serviceTracker.open();
+        logger.info("Starting IGB");
+        run(bundleContext);
+        logger.info("IGB Started");
 
         initColorProvider(bundleContext);
         initFilter(bundleContext);
@@ -151,14 +155,6 @@ public class Activator implements BundleActivator {
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
     }
 
-    @Override
-    public void stop(BundleContext _bundleContext) throws Exception {
-        if (scriptManagerServiceReference != null) {
-            scriptManagerServiceReference.unregister();
-            scriptManagerServiceReference = null;
-        }
-    }
-
     /**
      * method to start IGB, called when the window service is available, creates
      * and initializes IGB and registers the IgbService add any extension points
@@ -167,21 +163,20 @@ public class Activator implements BundleActivator {
      * @param windowServiceReference - the OSGi ServiceReference for the window
      * service
      */
-    private void run(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference) {
+    private void run(final BundleContext bundleContext) {
         logger.info("Running IGB");
-        final IGB igb = new IGB();
+
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
         igb.init(args, bundleContext);
 
         addGenericActionListener();
-        registerServices(bundleContext, windowServiceReference, igb);
+        registerServices(bundleContext);
 
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
 
-        addMenuItemListener(bundleContext);
         addPopupListener(bundleContext);
         addAxisPopupListener(bundleContext);
         addScriptListener(bundleContext);
@@ -417,21 +412,12 @@ public class Activator implements BundleActivator {
         );
     }
 
-    private void registerServices(final BundleContext bundleContext, final ServiceReference<IWindowService> windowServiceReference, final IGB igb) {
-        IWindowService windowService = bundleContext.getService(windowServiceReference);
-        final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
-        // set IgbService
-        bundleContext.registerService(IgbService.class, IgbServiceImpl.getInstance(), null);
-        // register tabs created in IGB itself - IGBTabPanel is an extension point
-        for (IgbTabPanelI tab : tabs) {
-            bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
-        }
+    private void registerServices(final BundleContext bundleContext) {
 
         bundleContext.registerService(IWindowRoutine.class,
                 new IWindowRoutine() {
                     @Override
                     public void stop() {
-                        WebLinkUtils.exportUserWebLinks();
                         ((IGB) Application.getSingleton()).saveToolBar();
                     }
 
@@ -439,38 +425,6 @@ public class Activator implements BundleActivator {
                     public void start() { /* Do Nothing */ }
                 },
                 null
-        );
-    }
-
-    private void addMenuItemListener(final BundleContext bundleContext) {
-        ExtensionPointHandler<AMenuItem> menuExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, AMenuItem.class);
-
-        menuExtensionPoint.addListener(new ExtensionPointListener<AMenuItem>() {
-            @Override
-            public void addService(AMenuItem amenuItem) {
-                JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
-                if (parent == null) {
-                    logger.warn("No menu found with name {0}. {1} is not added.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
-                    return;
-                }
-                if (amenuItem.getLocation() == -1) {
-                    MenuUtil.addToMenu(parent, amenuItem.getMenuItem());
-                } else {
-                    MenuUtil.insertIntoMenu(parent, amenuItem.getMenuItem(), amenuItem.getLocation());
-                }
-
-            }
-
-            @Override
-            public void removeService(AMenuItem amenuItem) {
-                JMenu parent = ((IGB) Application.getSingleton()).getMenu(amenuItem.getParentMenu());
-                if (parent == null) {
-                    logger.warn("No menu found with name {0}. {1} is cannot be removed.", new Object[]{amenuItem.getParentMenu(), amenuItem.getMenuItem()});
-                    return;
-                }
-                MenuUtil.removeFromMenu(parent, amenuItem.getMenuItem());
-            }
-        }
         );
     }
 
@@ -613,5 +567,10 @@ public class Activator implements BundleActivator {
             return IgbServiceImpl.getInstance().areAllServersInited()
                     && IgbServiceImpl.getInstance().getFrame().isVisible();
         }
+    }
+
+    @Override
+    public void stop(BundleContext context) throws Exception {
+
     }
 }

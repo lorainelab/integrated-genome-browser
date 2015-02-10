@@ -1,5 +1,6 @@
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import java.util.Vector;
 
 import javax.swing.JTable;

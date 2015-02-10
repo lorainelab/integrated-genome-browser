@@ -4,15 +4,12 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genometry.weblink.WebLink;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
-import com.lorainelab.igb.preferences.model.AnnotationUrl;
 import com.lorainelab.igb.preferences.model.DataProvider;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
-import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -33,7 +30,6 @@ public class IgbPreferencesLoadingOrchestrator {
 
     @Activate
     public void activate(BundleContext bundleContext) {
-//        loadIGBPrefs(CommonUtils.getInstance().getArgs(bundleContext));
         loadIGBPrefs();
 
     }
@@ -46,15 +42,9 @@ public class IgbPreferencesLoadingOrchestrator {
     public void loadIGBPrefs() {
         loadDefaultPrefs();
         loadDefaultToolbarActionsAndKeystrokeBindings();
-        //        String remotePreferencesUrl = getRemoteOverridePreferencesFile(args);
-        //Note, this functionality seems to have never worked for two reasons...
-        //1. remote version of preferences was being cached, so it would not really have received updatesmail
-        //2. Once a server is loaded no settings are overwritten by new configuration
-        // loadRemotePreferencesOverrideFile(remotePreferencesUrl);
 
-//Load DataProviders and Plugin Repositories from persistence api
+        //Load DataProviders from persistence api
         ServerList.getServerInstance().loadServerPrefs();
-        ServerList.getRepositoryInstance().loadServerPrefs();
 
     }
 
@@ -65,10 +55,8 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private static void loadPreferences(Optional<IgbPreferences> igbPreferences) {
         if (igbPreferences.isPresent()) {
-            processPluginRepositories(igbPreferences.get().getRepository());
+//            processPluginRepositories(igbPreferences.get().getRepository());
             processDataProviders(igbPreferences.get().getDataProviders());
-            processAnnotationUrls(igbPreferences.get().getAnnotationUrl());
-
         }
     }
 
@@ -77,18 +65,10 @@ public class IgbPreferencesLoadingOrchestrator {
         dataProviders.stream().forEach(dataProvider -> ServerList.getServerInstance().addServer(dataProvider));
     }
 
-    private static void processAnnotationUrls(List<AnnotationUrl> annotationUrls) {
-        annotationUrls.stream().map((url) -> new WebLink(url)).forEach((webLink) -> {
-            WebLinkUtils.getWebLinkList(webLink.getType()).addWebLink(webLink);
-        });
-
-    }
-
-    private static void processPluginRepositories(List<PluginRepository> pluginRepositories) {
-        pluginRepositories.stream().forEach(pluginRepository -> ServerList.getRepositoryInstance().addServer(pluginRepository));
-    }
-
-    private static void loadDefaultToolbarActionsAndKeystrokeBindings() {
+//    private static void processPluginRepositories(List<PluginRepository> pluginRepositories) {
+//        pluginRepositories.stream().forEach(pluginRepository -> ServerList.getRepositoryInstance().addServer(pluginRepository));
+//    }
+    private void loadDefaultToolbarActionsAndKeystrokeBindings() {
         String fileName = IGBConstants.DEFAULT_PREFS_API_RESOURCE;
 
         /**
@@ -126,19 +106,4 @@ public class IgbPreferencesLoadingOrchestrator {
             logger.debug("Problem parsing prefs from: {}", fileName, ex);
         }
     }
-
-//    private void loadRemotePreferencesOverrideFile(String remotePreferencesUrl) {
-//        try (InputStream prefs_url_stream = Resources.asByteSource(new URL(remotePreferencesUrl)).openStream();
-//                InputStreamReader reader = new InputStreamReader(prefs_url_stream)) {
-//            logger.debug("loading prefs from url: " + remotePreferencesUrl);
-//
-//            loadPreferences(igbPreferencesService.fromJson(reader));
-//        } catch (IOException ex) {
-//            logger.error("Problem parsing prefs from url: {}", remotePreferencesUrl, ex);
-//        }
-//    }
-//    private static String getRemoteOverridePreferencesFile(String[] args) {
-//        String remotePreferencesUrl = CommonUtils.getInstance().getArg("-prefs", args);
-//        return remotePreferencesUrl;
-//    }
 }

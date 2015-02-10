@@ -2,12 +2,17 @@ package com.affymetrix.igb.tutorial;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.event.*;
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionDoneCallback;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
+import com.affymetrix.igb.swing.JRPWidget;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.window.service.IWindowService;
 import furbelow.AbstractComponentDecorator;
 import java.awt.Container;
@@ -107,10 +112,10 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     private JComponent getWidget(String widgetId) {
         int pos = widgetId.indexOf('.');
         if (pos == -1) {
-            return (JComponent) com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(widgetId);
+            return (JComponent) ScriptManager.getInstance().getWidget(widgetId);
         } else {
             String mainWidgetId = widgetId.substring(0, pos);
-            return (JComponent) com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(mainWidgetId);
+            return (JComponent) ScriptManager.getInstance().getWidget(mainWidgetId);
         }
     }
 
@@ -216,7 +221,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
             return false;
         } else {
             String waitForItem = step.getWaitFor();
-            com.affymetrix.igb.swing.JRPWidget widget = com.affymetrix.igb.swing.ScriptManager.getInstance().getWidget(waitForItem);
+            JRPWidget widget = ScriptManager.getInstance().getWidget(waitForItem);
             if (widget instanceof com.affymetrix.igb.swing.JRPMenu) {
                 ((com.affymetrix.igb.swing.JRPMenu) widget).addMenuListener(menuListener);
             } else if (widget instanceof com.affymetrix.igb.swing.JRPMenuItem) {
@@ -299,11 +304,11 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     }
 
     public void addJComponent(String id, JComponent comp) {
-        com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(new com.affymetrix.igb.swing.JRPWrapper(id, comp));
+        ScriptManager.getInstance().addWidget(new com.affymetrix.igb.swing.JRPWrapper(id, comp));
     }
 
     public void removeJComponent(String id) {
-        com.affymetrix.igb.swing.ScriptManager.getInstance().removeWidget(id);
+        ScriptManager.getInstance().removeWidget(id);
     }
 
     @Override

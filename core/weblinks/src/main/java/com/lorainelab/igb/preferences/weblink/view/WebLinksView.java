@@ -1,17 +1,17 @@
-package com.affymetrix.igb.view;
+package com.lorainelab.igb.preferences.weblink.view;
 
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
-import com.affymetrix.genometry.weblink.WebLink;
-import com.affymetrix.genometry.weblink.WebLink.RegexType;
-import com.affymetrix.igb.Application;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.prefs.WebLinkUtils;
-import com.affymetrix.igb.shared.FileTracker;
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.lorainelab.igb.preferences.weblink.WebLinkUtils;
+import com.lorainelab.igb.preferences.weblink.model.WebLink;
+import com.lorainelab.igb.preferences.weblink.model.WebLink.RegexType;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.HeadlessException;
@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -46,7 +47,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class WebLinksView {
 
-    private static WebLinksView singleton;
+    private final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     public StyledJTable serverTable;
     public StyledJTable localTable;
     public WebLinksTableModel serverModel;
@@ -82,14 +83,7 @@ public final class WebLinksView {
     public final static Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     public final static Cursor defaultCursor = null;
 
-    public static synchronized WebLinksView getSingleton() {
-        if (singleton == null) {
-            singleton = new WebLinksView();
-        }
-        return singleton;
-    }
-
-    private WebLinksView() {
+    public WebLinksView() {
         super();
 
         serverModel = new WebLinksTableModel();
@@ -145,10 +139,10 @@ public final class WebLinksView {
     /*
      * Only allow to delete local web links
      */
-    public void delete(JTable table) throws HeadlessException {
+    public void delete(JTable table, Component comp) throws HeadlessException {
         if (table.getSelectedRow() != -1) {
             int[] selectedTableRows = table.getSelectedRows();
-            if (confirmDelete(table.getSelectedRowCount())) {
+            if (confirmDelete(table.getSelectedRowCount(), comp)) {
                 List<WebLink> links = new ArrayList<>();
                 for (int i : selectedTableRows) {
                     links.add(((WebLinksTableModel) table.getModel()).webLinks.get(i));
@@ -167,11 +161,11 @@ public final class WebLinksView {
     /*
      * A confirmation window for delete operation
      */
-    public boolean confirmDelete(int numberOfRows) {
+    public boolean confirmDelete(int numberOfRows, Component comp) {
         String message = "Delete these " + numberOfRows
                 + " selected link(s)?\n";
 
-        return Application.confirmPanel(WebLinksViewGUI.getSingleton(),
+        return ModalUtils.confirmPanel(comp,
                 message, PreferenceUtils.getTopNode(),
                 PreferenceUtils.CONFIRM_BEFORE_DELETE,
                 PreferenceUtils.default_confirm_before_delete);

@@ -9,7 +9,7 @@ import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPTextField;

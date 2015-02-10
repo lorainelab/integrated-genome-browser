@@ -1,7 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.awt.Rectangle;

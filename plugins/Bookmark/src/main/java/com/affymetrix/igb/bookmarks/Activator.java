@@ -1,23 +1,19 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ExportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
-import com.affymetrix.igb.bookmarks.action.LoadSessionAction;
-import com.affymetrix.igb.bookmarks.action.SaveSessionAction;
+import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IWindowRoutine;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.swing.MenuUtil;
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleActivator;
@@ -37,26 +33,20 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 
     @Override
     protected ServiceRegistration<?>[] getServices(BundleContext bundleContext, IgbService igbService) throws Exception {
-        SaveSessionAction.createAction(igbService);
-        LoadSessionAction.createAction(igbService);
 
         // assuming last file menu item is Exit, leave it there
-        JRPMenu file_menu = igbService.getMenu("file");
-        final int index = file_menu.getItemCount() - 1;
-        file_menu.insertSeparator(index);
-
+//        JRPMenu file_menu = igbService.getMenu("file");
+//        final int index = file_menu.getItemCount() - 1;
+//        file_menu.insertSeparator(index);
         return new ServiceRegistration[]{
-            bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), null),
-            bundleContext.registerService(GenericAction.class, SaveSessionAction.getAction(), null),
-            bundleContext.registerService(GenericAction.class, LoadSessionAction.getAction(), null),
-            bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_saveSession", SaveSessionAction.getAction()), "file", index), null),
-            bundleContext.registerService(AMenuItem.class, new AMenuItem(new JRPMenuItem("Bookmark_loadSession", LoadSessionAction.getAction()), "file", index), null),};
+            bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), null)
+        };
     }
 
     private IgbTabPanel getPage(BundleContext bundleContext, IgbService igbService) {
         ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
 
-		// Need to let the QuickLoad system get started-up before starting
+        // Need to let the QuickLoad system get started-up before starting
         //   the control server that listens to ping requests?
         // Therefore start listening for http requests only after all set-up is done.
         String[] args = CommonUtils.getInstance().getArgs(bundleContext);
@@ -85,7 +75,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
         AddBookmarkAction.createAction(igbService);
 
         BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
-        JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"));
+        JRPMenu bookmark_menu = igbService.addTopMenu("Bookmark_bookmarksMenu", BUNDLE.getString("bookmarksMenu"), 6);
         bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_add_pos", AddBookmarkAction.getAction()));
         MenuUtil.addToMenu(bookmark_menu, new JRPMenuItem("Bookmark_import", ImportBookmarkAction.getAction()));

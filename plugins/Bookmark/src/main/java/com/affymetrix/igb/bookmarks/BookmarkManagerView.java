@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.ImmutableListMultimap;
 import java.awt.Container;
 import java.awt.event.ActionEvent;

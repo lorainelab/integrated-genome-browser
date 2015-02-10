@@ -30,7 +30,7 @@ import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.sequenceviewer.actions.ExitSeqViewerAction;
 import com.affymetrix.sequenceviewer.actions.ExportFastaSequenceAction;
 import com.affymetrix.sequenceviewer.actions.ExportSequenceViewerAction;

@@ -232,11 +232,10 @@ public final class GeneralLoadUtils {
     };
 
     public static boolean discoverServer(GenericServer gServer) {
-        if (gServer.isPrimary()) {
+        if (gServer.serverType == null) { // bundle repository
             return true;
         }
-        if (gServer.serverType == null) { // bundle repository
-            ServerList.getRepositoryInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
+        if (gServer.isPrimary()) {
             return true;
         }
 

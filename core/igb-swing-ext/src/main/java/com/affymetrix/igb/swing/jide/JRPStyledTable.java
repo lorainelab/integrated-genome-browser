@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.swing.jide;
 
 import com.affymetrix.igb.swing.JRPWidget;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import java.util.Vector;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;

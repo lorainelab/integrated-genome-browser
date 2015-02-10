@@ -1,5 +1,6 @@
-package com.affymetrix.igb.swing;
+package com.affymetrix.igb.swing.script;
 
+import com.affymetrix.igb.swing.Operation;
 import javax.script.ScriptEngineFactory;
 
 public interface ScriptProcessor {

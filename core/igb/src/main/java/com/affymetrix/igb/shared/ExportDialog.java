@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;

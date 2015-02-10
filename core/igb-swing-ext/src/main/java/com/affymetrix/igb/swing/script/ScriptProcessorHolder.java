@@ -1,5 +1,6 @@
-package com.affymetrix.igb.swing;
+package com.affymetrix.igb.swing.script;
 
+import com.affymetrix.igb.swing.JavascriptScriptProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

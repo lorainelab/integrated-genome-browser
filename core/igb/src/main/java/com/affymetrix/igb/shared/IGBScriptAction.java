@@ -4,7 +4,7 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 
 /**
  *

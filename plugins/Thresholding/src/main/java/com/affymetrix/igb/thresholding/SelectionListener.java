@@ -1,8 +1,9 @@
 package com.affymetrix.igb.thresholding;
 
+import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
+import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.thresholding.action.ThresholdingAction;
-import static com.affymetrix.igb.shared.Selections.*;
 
 public class SelectionListener implements RefreshSelectionListener {
 
@@ -19,7 +20,7 @@ public class SelectionListener implements RefreshSelectionListener {
     }
 
     private void resetSelectedGraphGlyphs() {
-        ThresholdingAction.getAction().setGraphs(graphGlyphs);
+        ((ThresholdingAction) thresholdingMenuItem.getAction()).setGraphs(graphGlyphs);
         thresholdingMenuItem.setEnabled(!graphGlyphs.isEmpty());
     }
 

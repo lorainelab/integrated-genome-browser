@@ -1,0 +1,24 @@
+package com.affymetrix.igb.prefs;
+
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.igb.service.api.PreferencesPanelProvider;
+
+/**
+ *
+ * @author dcnorris
+ */
+@Component(name = PreferencesPanelRegistry.COMPONENT_NAME, immediate = true)
+public class PreferencesPanelRegistry {
+
+    public static final String COMPONENT_NAME = "PreferencesPanelRegistry";
+
+    @Reference(multiple = true, optional = true, dynamic = true, unbind = "removePreferencesPanel")
+    public void addPreferencesPanel(PreferencesPanelProvider panelProvider) {
+        PreferencesPanel.getSingleton().addPrefEditorComponent(panelProvider);
+    }
+
+    public void removePreferencesPanel(PreferencesPanelProvider panelProvider) {
+
+    }
+}

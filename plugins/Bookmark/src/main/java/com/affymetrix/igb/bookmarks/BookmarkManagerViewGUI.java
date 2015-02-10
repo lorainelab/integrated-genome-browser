@@ -6,7 +6,7 @@ import com.affymetrix.igb.bookmarks.action.AddFolderAction;
 import com.affymetrix.igb.bookmarks.action.AddSeparatorAction;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.igb.swing.jide.StyledJTable;
 import java.awt.Rectangle;
 import java.util.ResourceBundle;
 import javax.swing.JTabbedPane;

@@ -115,11 +115,6 @@
             <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>igb-preferences</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>

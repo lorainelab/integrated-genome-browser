@@ -1,5 +1,6 @@
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
 

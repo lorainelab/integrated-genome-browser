@@ -38,12 +38,11 @@ import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBTrustManager;
-import com.affymetrix.igb.util.MainMenuUtil;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqGroupViewGUI;
@@ -229,7 +228,8 @@ public final class IGB extends Application
         }
 
         frm = new JFrame(APP_NAME + " " + APP_VERSION);
-
+        mbar = new JMenuBar();
+        frm.setJMenuBar(mbar);
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default
         Authenticator.setDefault(new IGBAuthenticator(frm));
@@ -268,10 +268,6 @@ public final class IGB extends Application
         gmodel.addSeqSelectionListener(map_view);
         gmodel.addGroupSelectionListener(map_view);
         gmodel.addSymSelectionListener(map_view.getSymSelectionListener());
-
-        mbar = new JMenuBar();
-        frm.setJMenuBar(mbar);
-        MainMenuUtil.getInstance().loadMenu(mbar, "IGB");
 
         Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
                 new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
@@ -403,17 +399,11 @@ public final class IGB extends Application
         }
         windowService.setToolBar(tool_bar);
         windowService.setTabsMenu(mbar);
-        windowService.setMenuCreator(
-                id -> {
-                    JMenuBar menubar = new JMenuBar();
-                    MainMenuUtil.getInstance().loadMenu(menubar, id);
-                    return menubar;
-                });
         return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
     }
 
-    public JRPMenu addTopMenu(String id, String text) {
-        return MenuUtil.getRPMenu(mbar, id, text);
+    public JRPMenu addTopMenu(String id, String text, int index) {
+        return MenuUtil.getRPMenu(mbar, id, text, index);
     }
 
     public int addToolbarAction(GenericAction genericAction) {
@@ -489,18 +479,6 @@ public final class IGB extends Application
 
     public IWindowService getWindowService() {
         return windowService;
-    }
-
-    public JRPMenu getMenu(String menuId) {
-        String id = "IGB_main_" + menuId + "Menu";
-        int num_menus = mbar.getMenuCount();
-        for (int i = 0; i < num_menus; i++) {
-            JRPMenu menu_i = (JRPMenu) mbar.getMenu(i);
-            if (id.equals(menu_i.getId())) {
-                return menu_i;
-            }
-        }
-        return null;
     }
 
     public Set<IgbTabPanel> getTabs() {

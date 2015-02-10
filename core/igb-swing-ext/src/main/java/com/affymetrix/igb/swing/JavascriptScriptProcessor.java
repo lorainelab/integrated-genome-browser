@@ -1,5 +1,6 @@
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptProcessor;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 

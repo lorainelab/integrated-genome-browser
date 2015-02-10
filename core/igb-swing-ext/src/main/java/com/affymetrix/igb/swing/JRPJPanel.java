@@ -4,6 +4,7 @@
  */
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.script.ScriptManager;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 

@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPWidget;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.util.Idable;
 
 public abstract class IgbTabPanel extends JPanel implements Comparable<IgbTabPanel>, JRPWidget, Idable, IgbTabPanelI {

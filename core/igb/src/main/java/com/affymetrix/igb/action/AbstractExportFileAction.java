@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.io.BufferedOutputStream;

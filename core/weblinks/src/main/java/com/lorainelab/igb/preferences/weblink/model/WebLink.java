@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.weblink;
+package com.lorainelab.igb.preferences.weblink.model;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;

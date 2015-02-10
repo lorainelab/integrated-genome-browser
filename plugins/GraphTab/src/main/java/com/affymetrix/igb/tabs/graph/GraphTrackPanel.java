@@ -3,15 +3,15 @@ package com.affymetrix.igb.tabs.graph;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.TrackViewPanel;
-import static com.affymetrix.igb.shared.Selections.*;
+import static com.affymetrix.igb.shared.Selections.graphSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
-import com.affymetrix.igb.thresholding.action.ThresholdingAction;
+import com.affymetrix.igb.shared.TrackViewPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanelService;
 
@@ -28,6 +28,7 @@ public class GraphTrackPanel extends TrackViewPanel {
     private static final int TAB_POSITION = 2;
     private IgbService igbService;
     private OperationsPanel operationsPanel;
+    private GenericAction thresholdingAction;
 
     public GraphTrackPanel() {
         super(BUNDLE.getString("graphTab"), BUNDLE.getString("graphTab"), BUNDLE.getString("graphTooltip"), false, TAB_POSITION);
@@ -82,7 +83,7 @@ public class GraphTrackPanel extends TrackViewPanel {
 
     @Override
     protected void customButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-        ThresholdingAction.getAction().actionPerformed(evt);
+        thresholdingAction.actionPerformed(evt);
     }
 
     @Override
@@ -118,4 +119,10 @@ public class GraphTrackPanel extends TrackViewPanel {
     public boolean isEmbedded() {
         return true;
     }
+
+    @Reference(optional = false, target = "(name=ThresholdingAction)")
+    public void setThresholdingAction(GenericAction thresholdingAction) {
+        this.thresholdingAction = thresholdingAction;
+    }
+
 }

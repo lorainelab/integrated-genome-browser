@@ -1,19 +1,5 @@
 package com.gene.transcriptisoform;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.sf.samtools.Cigar;
-import net.sf.samtools.CigarElement;
-import net.sf.samtools.CigarOperator;
-
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -30,25 +16,39 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.sf.samtools.Cigar;
+import net.sf.samtools.CigarElement;
+import net.sf.samtools.CigarOperator;
 
 public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefreshed, SeqSelectionListener, MouseListener, MouseMotionListener {
 
-    private final IgbService igbService;
     private List<TierGlyph> refSeqTiers;
     private final Map<StyledGlyph.Direction, Map<SimpleSeqSpan, Set<GlyphI>>> intronSpan2Glyphs;
     private int maxCount;
     private boolean showUnfound = true;
-    ;
-	private ExonConnectorGlyph.DensityDisplay showDensity = ExonConnectorGlyph.DensityDisplay.THICKNESS;
+    private IgbService igbService;
+
+    private ExonConnectorGlyph.DensityDisplay showDensity = ExonConnectorGlyph.DensityDisplay.THICKNESS;
 
     public TranscriptIsoformEvidenceVisualizationManager(IgbService igbService) {
-        super();
-        this.igbService = igbService;
         this.refSeqTiers = new ArrayList<>();
         intronSpan2Glyphs = new EnumMap<>(StyledGlyph.Direction.class);
-        intronSpan2Glyphs.put(StyledGlyph.Direction.FORWARD, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
-        intronSpan2Glyphs.put(StyledGlyph.Direction.REVERSE, new HashMap<SimpleSeqSpan, Set<GlyphI>>());
+        intronSpan2Glyphs.put(StyledGlyph.Direction.FORWARD, new HashMap<>());
+        intronSpan2Glyphs.put(StyledGlyph.Direction.REVERSE, new HashMap<>());
+        igbService.getSeqMapView().addToRefreshList(this);
+        igbService.getSeqMap().addMouseListener(this);
+        igbService.getSeqMap().addMouseMotionListener(this);
+        GenometryModel.getInstance().addSeqSelectionListener(this);
     }
 
     public boolean isShowUnfound() {

@@ -36,6 +36,11 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,15 +66,16 @@
                 </executions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>*;resolution:=optional</Import-Package>
-                        <Bundle-Activator>com.affymetrix.igb.swing.bundle.Activator</Bundle-Activator>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
+                        <Import-Package>*</Import-Package>
                         <Export-Package>
                             com.affymetrix.igb.swing,
+                            com.affymetrix.igb.swing.script,
+                            com.affymetrix.igb.swing.jide,
                             com.affymetrix.igb.swing.util
                         </Export-Package>
+                        <Bundle-Activator>com.affymetrix.igb.swing.bundle.Activator</Bundle-Activator>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

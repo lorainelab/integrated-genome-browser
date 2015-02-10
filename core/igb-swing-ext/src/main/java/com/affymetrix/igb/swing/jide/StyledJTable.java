@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.swing.jide;
 
 import com.affymetrix.genoviz.swing.PartialLineBorder;
 import com.jidesoft.grid.JideTable;

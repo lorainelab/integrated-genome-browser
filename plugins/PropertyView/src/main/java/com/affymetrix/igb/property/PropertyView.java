@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.shared.JRPStyledTable;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 
 @Component(name = PropertyView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public final class PropertyView extends IgbTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {

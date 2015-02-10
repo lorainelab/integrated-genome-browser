@@ -3,11 +3,10 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPButton;
@@ -18,6 +17,7 @@ import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,18 +119,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         // Add a "refresh map" button, if there is an instance of IGB
         if (smv != null) {
             refreshButton.addActionListener(evt -> refreshSeqMapViewAndSlicedView());
-
-            autoRefreshCheckBox = PreferenceUtils.createCheckBox(AUTO_REFRESH, PREF_AUTO_REFRESH,
-                    default_auto_refresh);
-            autoRefreshCheckBox.addActionListener(evt -> {
-                if (refreshButton != null) {
-                    refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
-                    if (autoRefreshCheckBox.isSelected()) {
-                        refreshSeqMapViewAndSlicedView();
-                    }
-                }
-            });
-            refreshButton.setEnabled(!autoRefreshCheckBox.isSelected());
+            refreshButton.setEnabled(true);
         }
     }
 
@@ -219,7 +208,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         Set<TrackStyle> customizables = new HashSet<>(currentStyles.size());
         for (TrackStyle the_style : currentStyles) {
             if (the_style.getCustomizable()) {
-                    // if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
+                // if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
                 //if ((!the_style.isGraphTier())) {
                 customizables.add(the_style);
                 //}
@@ -611,7 +600,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
      * this panel.
      */
     public void removedFromView() {
-		// if autoApplyChanges(), then the changes were already applied,
+        // if autoApplyChanges(), then the changes were already applied,
         // otherwise apply changes as needed.
         if (!autoApplyChanges()) {
             SwingUtilities.invokeLater(this::refreshSeqMapViewAndSlicedView);
@@ -717,7 +706,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
             if (style.getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE) && (column == COL_TRACK_NAME)) {
                 return false;
             }
-			//if (column == COL_TRACK_NAME) {
+            //if (column == COL_TRACK_NAME) {
             //	return false;
             //}
 
@@ -847,7 +836,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
                     System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
                 }
 
-                if ((autoApplyChanges() && apply)) {
+                if (apply) {
                     update(col);
                 }
             }
@@ -887,7 +876,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
                     return Integer.parseInt(s);
                 }
             } catch (Exception e) {
-				//System.out.println("Exception: " + e);
+                //System.out.println("Exception: " + e);
                 // don't report the error, use the fallback value
             }
             return fallback;

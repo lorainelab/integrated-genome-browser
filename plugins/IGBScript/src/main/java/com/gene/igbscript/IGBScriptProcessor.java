@@ -3,7 +3,7 @@ package com.gene.igbscript;
 import javax.script.ScriptEngineFactory;
 
 import com.affymetrix.igb.swing.Operation;
-import com.affymetrix.igb.swing.ScriptProcessor;
+import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.service.api.IgbService;
 
 public class IGBScriptProcessor implements ScriptProcessor {

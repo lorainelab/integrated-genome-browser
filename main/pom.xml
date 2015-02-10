@@ -76,6 +76,11 @@
             <artifactId>igb-preferences</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>weblinks</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--End of core module dependencies-->
         
         <!-- Start of external bundle dependencies-->

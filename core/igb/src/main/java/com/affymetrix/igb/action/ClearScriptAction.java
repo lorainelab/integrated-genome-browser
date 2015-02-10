@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.swing.ScriptManager;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

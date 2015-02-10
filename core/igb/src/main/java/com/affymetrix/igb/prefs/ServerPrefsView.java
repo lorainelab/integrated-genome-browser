@@ -19,9 +19,9 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
-import com.affymetrix.igb.shared.StyledJTable;
+import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Component;
@@ -50,58 +50,58 @@ import javax.swing.table.TableColumn;
 
 public abstract class ServerPrefsView extends IPrefEditorComponent {
 
-	private static final long serialVersionUID = 2l;
-	private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
-	protected final JPanel sourcePanel;
-	protected final GroupLayout layout;
-	protected ServerList serverList;
-	protected StyledJTable sourcesTable;
-	protected JScrollPane sourcesScrollPane;
-	protected JRPButton addServerButton;
-	protected JRPButton removeServerButton;
-	public final SourceTableModel sourceTableModel;
+    private static final long serialVersionUID = 2l;
+    private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
+    protected final JPanel sourcePanel;
+    protected final GroupLayout layout;
+    protected ServerList serverList;
+    protected StyledJTable sourcesTable;
+    protected JScrollPane sourcesScrollPane;
+    protected JRPButton addServerButton;
+    protected JRPButton removeServerButton;
+    public final SourceTableModel sourceTableModel;
 
-	public ServerPrefsView(ServerList serverList_) {
-		layout = new GroupLayout(this);
-		serverList = serverList_;
-		sourceTableModel = new SourceTableModel(serverList);
+    public ServerPrefsView(ServerList serverList_) {
+        layout = new GroupLayout(this);
+        serverList = serverList_;
+        sourceTableModel = new SourceTableModel(serverList);
 
-		sourcePanel = initSourcePanel(getViewName());
+        sourcePanel = initSourcePanel(getViewName());
 
-		this.setName(getViewName());
-		this.setToolTipText(getToolTip());
+        this.setName(getViewName());
+        this.setToolTipText(getToolTip());
 
-		this.setLayout(layout);
+        this.setLayout(layout);
 
-		layout.setAutoCreateGaps(
-				true);
-		layout.setAutoCreateContainerGaps(
-				true);
-	}
+        layout.setAutoCreateGaps(
+                true);
+        layout.setAutoCreateContainerGaps(
+                true);
+    }
 
-	public void refreshServers() {
-		((SourceTableModel)sourcesTable.getModel()).init();
-	}
+    public void refreshServers() {
+        ((SourceTableModel) sourcesTable.getModel()).init();
+    }
 
-	protected JPanel initSourcePanel(String viewName) {
-		final JPanel sourcePanel = new JPanel();
-		final GroupLayout layout = new GroupLayout(sourcePanel);
+    protected JPanel initSourcePanel(String viewName) {
+        final JPanel sourcePanel = new JPanel();
+        final GroupLayout layout = new GroupLayout(sourcePanel);
 
-		sourcesTable = createSourcesTable(sourceTableModel, isSortable());
-		sourcesScrollPane = new JScrollPane(sourcesTable);
+        sourcesTable = createSourcesTable(sourceTableModel, isSortable());
+        sourcesScrollPane = new JScrollPane(sourcesTable);
 
-		sourcePanel.setLayout(layout);
-		sourcePanel.setBorder(new TitledBorder(viewName));
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
+        sourcePanel.setLayout(layout);
+        sourcePanel.setBorder(new TitledBorder(viewName));
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
 
-		addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", e -> {
+        addServerButton = createButton("ServerPrefsView_addServerButton", "Add\u2026", e -> {
             sourcesTable.stopCellEditing();
 
             AddSource.getSingleton().init(false, enableCombo(), "Add Data Source", null, null, null);
         });
 
-		removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", e -> {
+        removeServerButton = createButton("ServerPrefsView_removeServerButton", "Remove", e -> {
             sourcesTable.stopCellEditing();
             if (confirmDelete()) {
                 Object url = sourcesTable.getModel().getValueAt(
@@ -111,9 +111,9 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
                 sourceTableModel.init();
             }
         });
-		removeServerButton.setEnabled(false);
+        removeServerButton.setEnabled(false);
 
-		sourcesTable.getSelectionModel().addListSelectionListener(event -> {
+        sourcesTable.getSelectionModel().addListSelectionListener(event -> {
             enableServerButtons(false);
 
             if (sourcesTable.getSelectedRowCount() == 1) {
@@ -123,196 +123,194 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
                 GenericServer server = ServerList.getServerInstance().getServer((String) url);
 
                 if (server == null) {
-                    server = ServerList.getRepositoryInstance().getServer((String) url);
-                }
 
-                if (!server.isDefault()) {
+                } else if (!server.isDefault()) {
                     enableServerButtons(true);
                 }
             }
         });
 
-		layout.setHorizontalGroup(addServerComponents(layout.createParallelGroup(TRAILING), layout.createSequentialGroup()));
-		layout.setVerticalGroup(addServerComponents(layout.createSequentialGroup(), layout.createParallelGroup(BASELINE)));
-		return sourcePanel;
-	}
+        layout.setHorizontalGroup(addServerComponents(layout.createParallelGroup(TRAILING), layout.createSequentialGroup()));
+        layout.setVerticalGroup(addServerComponents(layout.createSequentialGroup(), layout.createParallelGroup(BASELINE)));
+        return sourcePanel;
+    }
 
-	protected void enableServerButtons(boolean enable) {
-		removeServerButton.setEnabled(enable);
-	}
+    protected void enableServerButtons(boolean enable) {
+        removeServerButton.setEnabled(enable);
+    }
 
-	protected abstract boolean isSortable();
+    protected abstract boolean isSortable();
 
-	protected abstract Group addServerComponents(Group group1, Group group2);
+    protected abstract Group addServerComponents(Group group1, Group group2);
 
-	protected abstract Group getServerButtons(Group group);
+    protected abstract Group getServerButtons(Group group);
 
-	private static StyledJTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
-		final StyledJTable table = new StyledJTable(sourceTableModel);
-		table.setAutoCreateRowSorter(sortable);
+    private static StyledJTable createSourcesTable(SourceTableModel sourceTableModel, boolean sortable) {
+        final StyledJTable table = new StyledJTable(sourceTableModel);
+        table.setAutoCreateRowSorter(sortable);
 
-		if (sortable) {
-			table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
-		}
-		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-		TableCellRenderer renderer = new DefaultTableCellRenderer() {
+        if (sortable) {
+            table.getRowSorter().setSortKeys(SourceTableModel.SORT_KEYS);
+        }
+        table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+        TableCellRenderer renderer = new DefaultTableCellRenderer() {
 
-			private static final long serialVersionUID = -1l;
+            private static final long serialVersionUID = -1l;
 
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value,
-					boolean isSelected, boolean hasFocus, int row, int col) {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
 
-				int modelRow = table.convertRowIndexToModel(row);
-				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
-				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-			}
-		};
-		table.setDefaultRenderer(String.class, renderer);
-		table.setDefaultRenderer(ServerTypeI.class, renderer);
+                int modelRow = table.convertRowIndexToModel(row);
+                this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            }
+        };
+        table.setDefaultRenderer(String.class, renderer);
+        table.setDefaultRenderer(ServerTypeI.class, renderer);
 
-		TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
+        TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
 
-			private static final long serialVersionUID = -1l;
+            private static final long serialVersionUID = -1l;
 
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value,
-					boolean isSelected, boolean hasFocus, int row, int col) {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
 
-				Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-				int modelRow = table.convertRowIndexToModel(row);
-				this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
-				return ret;
-			}
-		};
-			
-		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
-			TableColumn column = e.nextElement();
-			SourceTableModel.SourceColumn current = SourceTableModel.SourceColumn.valueOf((String) column.getHeaderValue());
+                Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+                int modelRow = table.convertRowIndexToModel(row);
+                this.setEnabled((Boolean) table.getModel().getValueAt(modelRow, ((SourceTableModel) table.getModel()).getColumnIndex(SourceTableModel.SourceColumn.Enabled)));
+                return ret;
+            }
+        };
 
-			switch (current) {
-				case Refresh:
-					column.setMaxWidth(20);
-					column.setCellRenderer(refresh_renderer);
-					column.setCellEditor(new ButtonTableCellEditor(refresh_icon));
-					break;
-				case Name:
-					column.setPreferredWidth(100);
-					break;
-				case URL:
-					column.setPreferredWidth(300);
-					break;
-				case Enabled:
-					column.setPreferredWidth(30);
-					break;
-				default:
-					column.setPreferredWidth(50);
-					break;
-			}
-		}
+        for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
+            TableColumn column = e.nextElement();
+            SourceTableModel.SourceColumn current = SourceTableModel.SourceColumn.valueOf((String) column.getHeaderValue());
 
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setCellSelectionEnabled(false);
-		table.setRowSelectionAllowed(true);
-		
-		return table;
-	}
+            switch (current) {
+                case Refresh:
+                    column.setMaxWidth(20);
+                    column.setCellRenderer(refresh_renderer);
+                    column.setCellEditor(new ButtonTableCellEditor(refresh_icon));
+                    break;
+                case Name:
+                    column.setPreferredWidth(100);
+                    break;
+                case URL:
+                    column.setPreferredWidth(300);
+                    break;
+                case Enabled:
+                    column.setPreferredWidth(30);
+                    break;
+                default:
+                    column.setPreferredWidth(50);
+                    break;
+            }
+        }
 
-	/**
-	 * Add the URL/Directory and server name to the preferences.
-	 *
-	 * @param url
-	 * @param type
-	 * @param name
-	 */
-	public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault, String mirrorURL) {
-		if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
-			return false;
-		}
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(true);
 
-		GenericServer server = GeneralLoadUtils.addServer(serverList,
-				type, name, url, order, isDefault, mirrorURL); //qlmirror
+        return table;
+    }
 
-		if (server == null) {
+    /**
+     * Add the URL/Directory and server name to the preferences.
+     *
+     * @param url
+     * @param type
+     * @param name
+     */
+    public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault, String mirrorURL) {
+        if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
+            return false;
+        }
 
-			return false;
-		}
+        GenericServer server = GeneralLoadUtils.addServer(serverList,
+                type, name, url, order, isDefault, mirrorURL); //qlmirror
 
-		ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
-		sourceTableModel.init();
-		if(server.isEnabled()) {
-			return true;
-		}
-		return false;
-	}
+        if (server == null) {
 
-	public boolean confirmRefresh() {
-		String message = "Warning:\n"
-				+ "Refreshing the server will force IGB to re-read configuration files from the server.\n"
-				+ "This means all data sets currently loaded from the server will be deleted.\n"
-				+ "This is useful mainly for setting up or configuring a QuickLoad site.";
+            return false;
+        }
 
-		return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
-				message, PreferenceUtils.getTopNode(),
-				PreferenceUtils.CONFIRM_BEFORE_REFRESH,
-				PreferenceUtils.default_confirm_before_refresh);
-	}
+        ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
+        sourceTableModel.init();
+        if (server.isEnabled()) {
+            return true;
+        }
+        return false;
+    }
 
-	public boolean confirmDelete() {
-		String message = "Warning:\n"
-				+ "Disabling or removing a server will cause any"
-				+ " currently loaded data from that server to be removed from IGB.\n";
+    public boolean confirmRefresh() {
+        String message = "Warning:\n"
+                + "Refreshing the server will force IGB to re-read configuration files from the server.\n"
+                + "This means all data sets currently loaded from the server will be deleted.\n"
+                + "This is useful mainly for setting up or configuring a QuickLoad site.";
 
-		return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
-				message, PreferenceUtils.getTopNode(),
-				PreferenceUtils.CONFIRM_BEFORE_DELETE,
-				PreferenceUtils.default_confirm_before_delete);
-	}
+        return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+                message, PreferenceUtils.getTopNode(),
+                PreferenceUtils.CONFIRM_BEFORE_REFRESH,
+                PreferenceUtils.default_confirm_before_refresh);
+    }
 
-	protected void removeDataSource(String url) {
-		if (serverList.getServer(url) == null) {
-			Logger.getLogger(ServerPrefsView.class.getName()).log(
-					Level.SEVERE, "Can not remove Server ''{0}'': it does not exist in ServerList", url);
-			return;
-		}
+    public boolean confirmDelete() {
+        String message = "Warning:\n"
+                + "Disabling or removing a server will cause any"
+                + " currently loaded data from that server to be removed from IGB.\n";
 
-		if (serverList.getServer(url).serverType == null) {
-			IgbServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(serverList.getServer(url).URL);
-		}
-		serverList.removeServer(url);
-		serverList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node
-	}
+        return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+                message, PreferenceUtils.getTopNode(),
+                PreferenceUtils.CONFIRM_BEFORE_DELETE,
+                PreferenceUtils.default_confirm_before_delete);
+    }
 
-	protected static JRPButton createButton(String id, String name, ActionListener listener) {
-		final JRPButton button = new JRPButton(id, name);
-		button.addActionListener(listener);
-		return button;
-	}
+    protected void removeDataSource(String url) {
+        if (serverList.getServer(url) == null) {
+            Logger.getLogger(ServerPrefsView.class.getName()).log(
+                    Level.SEVERE, "Can not remove Server ''{0}'': it does not exist in ServerList", url);
+            return;
+        }
 
-	protected static File fileChooser(int mode, Component parent) throws HeadlessException {
-		JFileChooser chooser = new JFileChooser();
+        if (serverList.getServer(url).serverType == null) {
+            IgbServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(serverList.getServer(url).URL);
+        }
+        serverList.removeServer(url);
+        serverList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node
+    }
 
-		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-		chooser.setFileSelectionMode(mode);
-		chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-		chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-		chooser.rescanCurrentDirectory();
+    protected static JRPButton createButton(String id, String name, ActionListener listener) {
+        final JRPButton button = new JRPButton(id, name);
+        button.addActionListener(listener);
+        return button;
+    }
 
-		if (chooser.showOpenDialog(parent) != APPROVE_OPTION) {
-			return null;
-		}
+    protected static File fileChooser(int mode, Component parent) throws HeadlessException {
+        JFileChooser chooser = new JFileChooser();
 
-		return chooser.getSelectedFile();
-	}
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        chooser.setFileSelectionMode(mode);
+        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
+        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
+        chooser.rescanCurrentDirectory();
 
-	public void refresh() {
-	}
+        if (chooser.showOpenDialog(parent) != APPROVE_OPTION) {
+            return null;
+        }
 
-	protected abstract String getViewName();
+        return chooser.getSelectedFile();
+    }
 
-	protected abstract String getToolTip();
+    public void refresh() {
+    }
 
-	protected abstract boolean enableCombo();
-	
-	protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL);
+    protected abstract String getViewName();
+
+    protected abstract String getToolTip();
+
+    protected abstract boolean enableCombo();
+
+    protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL);
 }

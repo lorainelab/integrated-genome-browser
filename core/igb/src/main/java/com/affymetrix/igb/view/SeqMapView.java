@@ -296,7 +296,7 @@ public class SeqMapView extends JPanel
         super();
 
         this.id = theId;
-        com.affymetrix.igb.swing.ScriptManager.getInstance().addWidget(this);
+        com.affymetrix.igb.swing.script.ScriptManager.getInstance().addWidget(this);
         seqmap = createAffyTieredMap();
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);

@@ -14,7 +14,6 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.TabHolder;
 import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
-import com.affymetrix.igb.window.service.IMenuCreator;
 
 /**
  * TabHolder implementation for all tabs that are in separate popup windows
@@ -23,19 +22,11 @@ public class WindowTabs implements TabHolder {
 
     private Set<IgbTabPanel> addedPlugins;
     private final TabStateHandler tabStateHandler;
-    private IMenuCreator menuCreator;
 
     public WindowTabs(TabStateHandler _tabStateHandler) {
         super();
         tabStateHandler = _tabStateHandler;
         addedPlugins = new HashSet<>();
-    }
-
-    public void setMenuCreator(IMenuCreator menuCreator) {
-        this.menuCreator = menuCreator;
-        addedPlugins.stream().filter(panel -> panel.getFrame().getMenuBar() == null).forEach(panel -> {
-            panel.getFrame().setJMenuBar(menuCreator.createMenu("windowtab_" + panel.getId()));
-        });
     }
 
     /**
@@ -54,9 +45,7 @@ public class WindowTabs implements TabHolder {
 //		}
         final JFrame frame = new JFrame(display_name);
         comp.setFrame(frame);
-        if (menuCreator != null) {
-            frame.setJMenuBar(menuCreator.createMenu("windowtab_" + comp.getId()));
-        }
+
 //			final Image icon = temp_icon;
 //			if (icon != null) {
 //				frame.setIconImage(icon);

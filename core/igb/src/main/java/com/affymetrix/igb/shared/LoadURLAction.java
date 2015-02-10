@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -9,6 +10,7 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.util.OptionChooserImpl;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -95,13 +97,21 @@ public final class LoadURLAction extends OpenURIAction {
         });
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
+        
+        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+        AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
 
-        JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
-        dialog.setModal(true);
-        dialog.getContentPane().add(optionChooser, BorderLayout.SOUTH);
-        dialog.pack();
-        dialog.setLocationRelativeTo(igbService.getFrame());
-        dialog.setVisible(true);
+        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
+            JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
+            dialog.setModal(true);
+            dialog.getContentPane().add(optionChooser, BorderLayout.SOUTH);
+            dialog.pack();
+            dialog.setLocationRelativeTo(igbService.getFrame());
+            dialog.setVisible(true);
+        } else {
+            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
+                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+        }
 
         String urlStr = urlTextField.getText();
 
@@ -135,11 +145,7 @@ public final class LoadURLAction extends OpenURIAction {
             return;
         }
 
-        final AnnotatedSeqGroup loadGroup = gmodel.addSeqGroup((String) optionChooser.getVersionCB().getSelectedItem());
-
-        final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
-
-        openURI(uri, friendlyName, mergeSelected, loadGroup, (String) optionChooser.getSpeciesCB().getSelectedItem(), optionChooser.getLoadAsSeqCB().isSelected());
+        openURI(uri, friendlyName, true, loadGroup, (String) optionChooser.getSpeciesCB().getSelectedItem(), optionChooser.getLoadAsSeqCB().isSelected());
 
     }
 

@@ -49,7 +49,7 @@ public final class LoadFileAction extends OpenURIAction {
     
     private static final long serialVersionUID = 1L;
     private static final LoadFileAction ACTION = new LoadFileAction();
-    private static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
+    
     private boolean mergeSelected = false;
     private final FileTracker load_dir_tracker;
     
@@ -165,11 +165,9 @@ public final class LoadFileAction extends OpenURIAction {
         
         load_dir_tracker.setFile(new File(fileChooser.getDirectory()));
         
-        final boolean mergeSelected = loadGroup == gmodel.getSelectedSeqGroup();
-        
         for (File file : files) {
             URI uri = file.toURI();
-            openURI(uri, file.getName(), mergeSelected, loadGroup, speciesName, false);
+            openURI(uri, file.getName(), true, loadGroup, speciesName, false);
         }
     }
 }

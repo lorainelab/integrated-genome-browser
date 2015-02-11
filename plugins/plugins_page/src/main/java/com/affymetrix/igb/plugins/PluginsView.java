@@ -3,7 +3,6 @@ package com.affymetrix.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.RepositoryChangeListener;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -12,10 +11,10 @@ import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -62,8 +61,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Tab Panel for managing plugins / bundles.
  */
-@Component(name = PluginsView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
-public class PluginsView extends IgbTabPanel implements IPluginsHandler, RepositoryChangeListener, Constants {
+@Component(name = PluginsView.COMPONENT_NAME, provide = {IgbTabPanelI.class, PluginsView.class}, immediate = true)
+public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constants {
 
     public static final String COMPONENT_NAME = "PluginsView";
     private static final long serialVersionUID = 1L;
@@ -139,7 +138,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
 
     private void init() {
         latest = new HashMap<>();
-        igbService.getRepositoryChangerHolder().addRepositoryChangeListener(this);
         setLayout(new BorderLayout());
         BundleTableModel.setPluginsHandler(this); // is there a better way ?
         bundleTableModel = new BundleTableModel();
@@ -636,7 +634,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
         this.bundleFilter = bundleFilter;
     }
 
-    @Override
     public boolean repositoryAdded(final String url) {
         CThreadWorker< Void, Void> worker = new CThreadWorker< Void, Void>("repositoryAdded") {
             @Override
@@ -650,7 +647,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
                 } catch (MalformedURLException x) {
                     displayError(MessageFormat.format(BUNDLE.getString("invalidRepositoryError"), url));
                 } catch (Exception x) {
-                    igbService.getRepositoryChangerHolder().failRepository(url);
                     ErrorHandler.errorPanelWithReportBug(BUNDLE.getString("repository"),
                             MessageFormat.format(BUNDLE.getString("invalidRepositoryError"), url),
                             Level.SEVERE);
@@ -666,13 +662,17 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Reposit
         return true;
     }
 
-    @Override
     public void repositoryRemoved(String url) {
         try {
             repoAdmin.removeRepository(new URL(url + "/repository.xml").toURI().toString());
         } catch (MalformedURLException | URISyntaxException ex) {
             logger.error("Error removing repository.", ex);
         }
+        setRepositoryBundles();
+        reloadBundleTable();
+    }
+
+    public void updateBundleTable() {
         setRepositoryBundles();
         reloadBundleTable();
     }

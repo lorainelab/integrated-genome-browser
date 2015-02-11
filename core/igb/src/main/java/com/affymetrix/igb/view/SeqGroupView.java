@@ -32,9 +32,9 @@ import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -78,632 +78,624 @@ import javax.swing.table.TableRowSorter;
  * @author lorainelab
  */
 public class SeqGroupView implements ItemListener, ListSelectionListener,
-		GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
+        GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
-	private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
-	private static final boolean DEBUG_EVENTS = false;
-	public static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
-	private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
-	private static final GenometryModel gmodel = GenometryModel.getInstance();
-	protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
-	private final JRPStyledTable seqtable;
-	private final ListSelectionModel lsm;
-	private BioSeq selected_seq = null;
-	private AnnotatedSeqGroup previousGroup = null;
-	private int previousSeqCount = 0;
-	private TableRowSorter<SeqGroupTableModel> sorter;
-	private String most_recent_seq_id = null;
-	private static SeqGroupView singleton;
-	private JComboBoxToolTipRenderer versionCBRenderer;
-	private JComboBoxToolTipRenderer speciesCBRenderer;
-	private AnnotatedSeqGroup curGroup = null;
-	private volatile boolean lookForPersistentGenome = true;
-	private static SeqMapView gviewer;
-	private JRPComboBox speciesCB;
-	private JRPComboBox versionCB;
-	private final IgbService igbService;
-        private SelectVersionPanel selectVersionPanel;
-	SeqGroupView(IgbService _igbService) {
-		igbService = _igbService;
-		gviewer = Application.getSingleton().getMapView();
-                selectVersionPanel = new SelectVersionPanel();
-		seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
+    private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
+    private static final boolean DEBUG_EVENTS = false;
+    public static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
+    private static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
+    private static final GenometryModel gmodel = GenometryModel.getInstance();
+    protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
+    private final JRPStyledTable seqtable;
+    private final ListSelectionModel lsm;
+    private BioSeq selected_seq = null;
+    private AnnotatedSeqGroup previousGroup = null;
+    private int previousSeqCount = 0;
+    private TableRowSorter<SeqGroupTableModel> sorter;
+    private String most_recent_seq_id = null;
+    private static SeqGroupView singleton;
+    private JComboBoxToolTipRenderer versionCBRenderer;
+    private JComboBoxToolTipRenderer speciesCBRenderer;
+    private AnnotatedSeqGroup curGroup = null;
+    private volatile boolean lookForPersistentGenome = true;
+    private static SeqMapView gviewer;
+    private JRPComboBox speciesCB;
+    private JRPComboBox versionCB;
+    private final IgbService igbService;
+    private SelectVersionPanel selectVersionPanel;
 
-			private static final long serialVersionUID = 1L;
-			//Implement table header tool tips.
+    SeqGroupView(IgbService _igbService) {
+        igbService = _igbService;
+        gviewer = Application.getSingleton().getMapView();
+        selectVersionPanel = new SelectVersionPanel();
+        seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
 
-			@Override
-			protected JTableHeader createDefaultTableHeader() {
-				return new JTableHeader(columnModel) {
+            private static final long serialVersionUID = 1L;
+            //Implement table header tool tips.
 
-					private static final long serialVersionUID = 1L;
+            @Override
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
 
-					@Override
-					public String getToolTipText(MouseEvent e) {
-						java.awt.Point p = e.getPoint();
-						int index = columnModel.getColumnIndexAtX(p.x);
-						int realIndex = columnModel.getColumn(index).getModelIndex();
-						return columnToolTips[realIndex];
-					}
-				};
-			}
-		};
-		seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
-		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		seqtable.setCellSelectionEnabled(false);
-		seqtable.setRowSelectionAllowed(true);
-		
-		SeqGroupTableModel model = new SeqGroupTableModel(null);
-		seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
+                    private static final long serialVersionUID = 1L;
 
-		lsm = seqtable.getSelectionModel();
-		lsm.addListSelectionListener(this);
+                    @Override
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        return columnToolTips[realIndex];
+                    }
+                };
+            }
+        };
+        seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
+        seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        seqtable.setCellSelectionEnabled(false);
+        seqtable.setRowSelectionAllowed(true);
 
+        SeqGroupTableModel model = new SeqGroupTableModel(null);
+        seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
 
-		speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
-		speciesCB.addItem(SELECT_SPECIES);
-		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));
-		speciesCB.setEnabled(false);
-		speciesCB.setEditable(false);
-		speciesCB.setToolTipText("Choose" + " " + SELECT_SPECIES);
-		speciesCBRenderer = new JComboBoxToolTipRenderer();
-		speciesCB.setRenderer(speciesCBRenderer);
-		speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, "Choose" + " " + SELECT_SPECIES);
+        lsm = seqtable.getSelectionModel();
+        lsm.addListSelectionListener(this);
 
-		versionCB = new JRPComboBoxWithSingleListener("DataAccess_version");
-		versionCB.addItem(SELECT_GENOME);
-		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width * 4, versionCB.getPreferredSize().height));
-		versionCB.setEnabled(false);
-		versionCB.setEditable(false);
-		versionCB.setToolTipText("Choose" + " " + SELECT_GENOME);
-		versionCBRenderer = new JComboBoxToolTipRenderer();
-		versionCB.setRenderer(versionCBRenderer);
-		versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
+        speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
+        speciesCB.addItem(SELECT_SPECIES);
+        speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width * 4, speciesCB.getPreferredSize().height));
+        speciesCB.setEnabled(false);
+        speciesCB.setEditable(false);
+        speciesCB.setToolTipText("Choose" + " " + SELECT_SPECIES);
+        speciesCBRenderer = new JComboBoxToolTipRenderer();
+        speciesCB.setRenderer(speciesCBRenderer);
+        speciesCBRenderer.setToolTipEntry(SELECT_SPECIES, "Choose" + " " + SELECT_SPECIES);
 
-	}
+        versionCB = new JRPComboBoxWithSingleListener("DataAccess_version");
+        versionCB.addItem(SELECT_GENOME);
+        versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width * 4, versionCB.getPreferredSize().height));
+        versionCB.setEnabled(false);
+        versionCB.setEditable(false);
+        versionCB.setToolTipText("Choose" + " " + SELECT_GENOME);
+        versionCBRenderer = new JComboBoxToolTipRenderer();
+        versionCB.setRenderer(versionCBRenderer);
+        versionCBRenderer.setToolTipEntry(SELECT_GENOME, "Choose" + " " + SELECT_GENOME);
 
-	static void init(IgbService _igbService) {
-		singleton = new SeqGroupView(_igbService);
-		singleton.addListeners();
-		singleton.populateSpeciesData();
-	}
+    }
 
-	public static SeqGroupView getInstance() {
-		return singleton;
-	}
+    static void init(IgbService _igbService) {
+        singleton = new SeqGroupView(_igbService);
+        singleton.addListeners();
+        singleton.populateSpeciesData();
+    }
 
-	/**
-	 * Refresh seqtable if more chromosomes are added, for example.
-	 */
-	public void refreshTable() {
-		final AbstractTableModel model = ((AbstractTableModel) seqtable.getModel());
-		model.fireTableDataChanged();
-		ThreadUtils.runOnEventQueue(() -> {
-            if(seqtable.getTableHeader().getColumnModel().getColumnCount() > 0){
+    public static SeqGroupView getInstance() {
+        return singleton;
+    }
+
+    /**
+     * Refresh seqtable if more chromosomes are added, for example.
+     */
+    public void refreshTable() {
+        final AbstractTableModel model = ((AbstractTableModel) seqtable.getModel());
+        model.fireTableDataChanged();
+        ThreadUtils.runOnEventQueue(() -> {
+            if (seqtable.getTableHeader().getColumnModel().getColumnCount() > 0) {
                 seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
                 seqtable.getTableHeader().repaint();
             }
         });
-	}
+    }
 
-	private void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
-		if (previousSeqCount > group.getSeqCount()) {
-			System.out.println("WARNING: chromosomes have been added");
-			if (previousSeqCount < group.getSeqCount()) {
-				System.out.print("New chromosomes:");
-				for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
-					System.out.print(" " + group.getSeq(i).getID());
-				}
-				System.out.println();
-			}
-		}
-	}
+    private void warnAboutNewlyAddedChromosomes(int previousSeqCount, AnnotatedSeqGroup group) {
+        if (previousSeqCount > group.getSeqCount()) {
+            System.out.println("WARNING: chromosomes have been added");
+            if (previousSeqCount < group.getSeqCount()) {
+                System.out.print("New chromosomes:");
+                for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
+                    System.out.print(" " + group.getSeq(i).getID());
+                }
+                System.out.println();
+            }
+        }
+    }
 
-	// Scroll the table such that the selected row is visible
-	void scrollTableLater(final JTable table, final int i) {
-		SwingUtilities.invokeLater(() -> {
+    // Scroll the table such that the selected row is visible
+    void scrollTableLater(final JTable table, final int i) {
+        SwingUtilities.invokeLater(() -> {
             // Check the row count first since this is multi-threaded
             if (table.getRowCount() >= i) {
                 DisplayUtils.scrollToVisible(table, i, 0);
             }
         });
-	}
+    }
 
-	private final class SeqLengthComparator implements Comparator<String> {
+    private final class SeqLengthComparator implements Comparator<String> {
 
-		public int compare(String o1, String o2) {
-			if (o1 == null || o2 == null) {
-				return SeqSymIdComparator.compareNullIDs(o2, o1);	// null is last
-			}
-			if (o1.length() == 0 || o2.length() == 0) {
-				return o2.compareTo(o1);	// empty string is last
-			}
+        public int compare(String o1, String o2) {
+            if (o1 == null || o2 == null) {
+                return SeqSymIdComparator.compareNullIDs(o2, o1);	// null is last
+            }
+            if (o1.length() == 0 || o2.length() == 0) {
+                return o2.compareTo(o1);	// empty string is last
+            }
 
-			// use valueOf to get a Long object versus a long primitive.
-			return Long.valueOf(o1).compareTo(Long.parseLong(o2));
-		}
-	}
-
-	static final class ColumnRenderer extends DefaultTableCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		public ColumnRenderer() {
-			setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-		}
-
-		@Override
-		public Component getTableCellRendererComponent(
-				JTable table, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
-
-			if (value == null) { //fixes NPE when tabbing through table
-				return null;
-			}
-
-			if (value.toString().length() == 0) {
-				return super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
-			}
-
-			return super.getTableCellRendererComponent(table, nformat.format(Double.valueOf(value.toString())),
-					isSelected, hasFocus, row, column);
-		}
-	}
-
-	public void itemStateChanged(ItemEvent evt) {
-		Object src = evt.getSource();
-		if (DEBUG_EVENTS) {
-			System.out.println("####### GeneralLoadView received itemStateChanged event: " + evt);
-		}
-		try {
-			if ((src == speciesCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-				speciesCBChanged(); // make sure display gets updated
-                                toogleView(false);
-			} else if ((src == versionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-				versionCBChanged();
-			}
-		} catch (Throwable t) {
-			// some out-of-memory errors could happen during this code, so
-			// this catch block will report that to the user.
-			ErrorHandler.errorPanel("Error ", t, Level.SEVERE);
-		}
-	}
-
-	/**
-	 * The species combo box changed. If the species changes to SELECT, the
-	 * SelectedSeqGroup is set to null. If the species changes to a specific
-	 * organism and there's only one choice for the genome versionName, the
-	 * SelectedSeqGroup is set to that versionName. Otherwise, the
-	 * SelectedSetGroup is set to null.
-	 */
-	private void speciesCBChanged() {
-		String speciesName = (String) speciesCB.getSelectedItem();
-
-		// Populate the versionName CB
-		refreshVersionCB(speciesName);
-                
-		// Select the null group (and the null seq), if it's not already selected.
-		if (curGroup != null) {
-			gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
-			gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
-		}
-	}
-        
-        /**
-         * This method is used to toggle view in the gViewer when the user has only selected the 
-         * species and yet to choose the version.
-         * The method considers that the gviewer has the seqmap as the last component added.
-         * @param isVersionSelected 
-         */
-        private void toogleView(boolean isVersionSelected) {
-            int index = gviewer.getComponentCount()-1;
-            gviewer.remove(index);
-            gviewer.add(isVersionSelected ? gviewer.getSeqMap() : selectVersionPanel);
-            gviewer.repaint();
-
+            // use valueOf to get a Long object versus a long primitive.
+            return Long.valueOf(o1).compareTo(Long.parseLong(o2));
         }
-	/**
-	 * The versionName combo box changed. This changes the selected group
-	 * (either to null, or to a valid group). It is assumed that at this point,
-	 * the species is valid.
-	 */
-	private void versionCBChanged() {
-		String versionName = (String) versionCB.getSelectedItem();
-		if (DEBUG_EVENTS) {
-			System.out.println("Selected version: " + versionName);
-		}
+    }
 
-		if (curGroup != null) {
-			gmodel.setSelectedSeqGroup(null);
-			gmodel.setSelectedSeq(null);
-		}
+    static final class ColumnRenderer extends DefaultTableCellRenderer {
 
-		if (versionName.equals(SELECT_GENOME)) {
-			// Select the null group (and the null seq), if it's not already selected.
-                        toogleView(false);
-			return;
-		}
+        private static final long serialVersionUID = 1L;
 
-		setSelectedGroup(versionName);
-	}
+        public ColumnRenderer() {
+            setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        }
 
-	public void setSelectedGroup(String versionName) {
-                toogleView(true);
-		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
-		if (group == null) {
-			System.out.println("Group was null -- trying species instead");
-			group = gmodel.getSeqGroup(GeneralLoadUtils.getVersionName2Species().get(versionName));
-			if (group == null) {
-				return;
-			}
-		}
+        @Override
+        public Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
 
-		speciesCB.setEnabled(false);
-		versionCB.setEnabled(false);
+            if (value == null) { //fixes NPE when tabbing through table
+                return null;
+            }
 
-		InitVersionWorker worker = new InitVersionWorker(versionName, group);
-		CThreadHolder.getInstance().execute(versionName, worker);
-	}
+            if (value.toString().length() == 0) {
+                return super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
+            }
 
-	public void valueChanged(ListSelectionEvent evt) {
-		Object src = evt.getSource();
-		if ((src == lsm) && (!evt.getValueIsAdjusting())) { // ignore extra messages
-			if (SeqGroupView.DEBUG_EVENTS) {
-				System.out.println("SeqGroupView received valueChanged() ListSelectionEvent");
-			}
-			int srow = seqtable.getSelectedRow();
-			if (srow >= 0) {
-				String seq_name = (String) seqtable.getValueAt(srow, 0);
-				selected_seq = gmodel.getSelectedSeqGroup().getSeq(seq_name);
-				if (selected_seq != gmodel.getSelectedSeq()) {
-					gmodel.setSelectedSeq(selected_seq);
-				}
-			}
-		}
-	}
+            return super.getTableCellRendererComponent(table, nformat.format(Double.valueOf(value.toString())),
+                    isSelected, hasFocus, row, column);
+        }
+    }
 
-	public void groupSelectionChanged(GroupSelectionEvent evt) {
-                toogleView(true);
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (SeqGroupView.DEBUG_EVENTS) {
-			System.out.println("SeqGroupView received groupSelectionChanged() event");
-			if (group == null) {
-				System.out.println("  group is null");
-			} else {
-				System.out.println("  group: " + group.getID());
-				System.out.println("  seq count: " + group.getSeqCount());
-			}
-		}
-		if (previousGroup == group) {
-			if (group == null) {
-				return;
-			}
-			warnAboutNewlyAddedChromosomes(previousSeqCount, group);
-		}
+    public void itemStateChanged(ItemEvent evt) {
+        Object src = evt.getSource();
+        if (DEBUG_EVENTS) {
+            System.out.println("####### GeneralLoadView received itemStateChanged event: " + evt);
+        }
+        try {
+            if ((src == speciesCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                speciesCBChanged(); // make sure display gets updated
+                toogleView(false);
+            } else if ((src == versionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                versionCBChanged();
+            }
+        } catch (Throwable t) {
+            // some out-of-memory errors could happen during this code, so
+            // this catch block will report that to the user.
+            ErrorHandler.errorPanel("Error ", t, Level.SEVERE);
+        }
+    }
 
-		previousGroup = group;
-		previousSeqCount = group == null ? 0 : group.getSeqCount();
+    /**
+     * The species combo box changed. If the species changes to SELECT, the
+     * SelectedSeqGroup is set to null. If the species changes to a specific
+     * organism and there's only one choice for the genome versionName, the
+     * SelectedSeqGroup is set to that versionName. Otherwise, the
+     * SelectedSetGroup is set to null.
+     */
+    private void speciesCBChanged() {
+        String speciesName = (String) speciesCB.getSelectedItem();
 
+        // Populate the versionName CB
+        refreshVersionCB(speciesName);
 
-		SeqGroupTableModel mod = new SeqGroupTableModel(group);
+        // Select the null group (and the null seq), if it's not already selected.
+        if (curGroup != null) {
+            gmodel.setSelectedSeqGroup(null); // This method is being called on purpose to fire group selection event.
+            gmodel.setSelectedSeq(null);	  // which in turns calls refreshTreeView method.
+        }
+    }
 
-		sorter = new TableRowSorter<SeqGroupTableModel>(mod) {
+    /**
+     * This method is used to toggle view in the gViewer when the user has only
+     * selected the
+     * species and yet to choose the version.
+     * The method considers that the gviewer has the seqmap as the last
+     * component added.
+     *
+     * @param isVersionSelected
+     */
+    private void toogleView(boolean isVersionSelected) {
+        int index = gviewer.getComponentCount() - 1;
+        gviewer.remove(index);
+        gviewer.add(isVersionSelected ? gviewer.getSeqMap() : selectVersionPanel);
+        gviewer.repaint();
 
-			@Override
-			public Comparator<?> getComparator(int column) {
-				if (column == 0) {
-					return new BioSeqAlphanumComparator();
-				}
-				return new SeqLengthComparator();
-			}
-		};
+    }
 
-		selected_seq = null;
-		seqtable.setModel(mod);
-		//Disabled for now
-		//seqtable.setRowSorter(sorter);
-		sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
-		
-		TableColumn c = seqtable.getColumnModel().getColumn(1);
-		c.setCellRenderer(new ColumnRenderer());
+    /**
+     * The versionName combo box changed. This changes the selected group
+     * (either to null, or to a valid group). It is assumed that at this point,
+     * the species is valid.
+     */
+    private void versionCBChanged() {
+        String versionName = (String) versionCB.getSelectedItem();
+        if (DEBUG_EVENTS) {
+            System.out.println("Selected version: " + versionName);
+        }
 
-		refreshTable();
+        if (curGroup != null) {
+            gmodel.setSelectedSeqGroup(null);
+            gmodel.setSelectedSeq(null);
+        }
 
-		if (group != null && most_recent_seq_id != null) {
-			// When changing genomes, try to keep the same chromosome selected when possible
-			BioSeq aseq = group.getSeq(most_recent_seq_id);
-			if (aseq != null) {
-				gmodel.setSelectedSeq(aseq);
-			}
-		}
+        if (versionName.equals(SELECT_GENOME)) {
+            // Select the null group (and the null seq), if it's not already selected.
+            toogleView(false);
+            return;
+        }
 
-		versionNameChanged(evt);
-	}
+        setSelectedGroup(versionName);
+    }
 
-	/**
-	 * This gets called when the genome versionName is changed. This occurs via
-	 * the combo boxes, or by an external event like bookmarks, or
-	 * LoadFileAction
-	 *
-	 * @param evt
-	 */
-	public void versionNameChanged(GroupSelectionEvent evt) {
-		AnnotatedSeqGroup group = evt.getSelectedGroup();
+    public void setSelectedGroup(String versionName) {
+        toogleView(true);
+        AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
+        if (group == null) {
+            System.out.println("Group was null -- trying species instead");
+            group = gmodel.getSeqGroup(GeneralLoadUtils.getVersionName2Species().get(versionName));
+            if (group == null) {
+                return;
+            }
+        }
 
-		if (DEBUG_EVENTS) {
-			System.out.println("GeneralLoadView.groupSelectionChanged() called, group: " + (group == null ? null : group.getID()));
-		}
-		if (group == null) {
-			if (versionCB.getSelectedItem() != SELECT_GENOME) {
-				versionCB.removeItemListener(this);
-				versionCB.setEnabled(false);
-				versionCB.addItemListener(this);
-			}
-			curGroup = null;
-			return;
-		}
-		if (curGroup == group) {
-			if (DEBUG_EVENTS) {
-				System.out.println("GeneralLoadView.groupSelectionChanged(): group was same as previous.");
-			}
-			return;
-		}
-		curGroup = group;
+        speciesCB.setEnabled(false);
+        versionCB.setEnabled(false);
 
-		Set<GenericVersion> gVersions = group.getEnabledVersions();
-		if (gVersions.isEmpty()) {
-			createUnknownVersion(group);
-			return;
-		}
-		final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
-		if (versionName == null) {
-			System.out.println("ERROR -- couldn't find version");
-			return;
-		}
-		final String speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
-		if (speciesName == null) {
-			// Couldn't find species matching this versionName -- we have problems.
-			System.out.println("ERROR - Couldn't find species for version " + versionName);
-			return;
-		}
+        InitVersionWorker worker = new InitVersionWorker(versionName, group);
+        CThreadHolder.getInstance().execute(versionName, worker);
+    }
 
-		if (!speciesName.equals(speciesCB.getSelectedItem())) {
-			// Set the selected species (the combo box is already populated)
-			ThreadUtils.runOnEventQueue(() -> {
+    public void valueChanged(ListSelectionEvent evt) {
+        Object src = evt.getSource();
+        if ((src == lsm) && (!evt.getValueIsAdjusting())) { // ignore extra messages
+            if (SeqGroupView.DEBUG_EVENTS) {
+                System.out.println("SeqGroupView received valueChanged() ListSelectionEvent");
+            }
+            int srow = seqtable.getSelectedRow();
+            if (srow >= 0) {
+                String seq_name = (String) seqtable.getValueAt(srow, 0);
+                selected_seq = gmodel.getSelectedSeqGroup().getSeq(seq_name);
+                if (selected_seq != gmodel.getSelectedSeq()) {
+                    gmodel.setSelectedSeq(selected_seq);
+                }
+            }
+        }
+    }
+
+    public void groupSelectionChanged(GroupSelectionEvent evt) {
+        toogleView(true);
+        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        if (SeqGroupView.DEBUG_EVENTS) {
+            System.out.println("SeqGroupView received groupSelectionChanged() event");
+            if (group == null) {
+                System.out.println("  group is null");
+            } else {
+                System.out.println("  group: " + group.getID());
+                System.out.println("  seq count: " + group.getSeqCount());
+            }
+        }
+        if (previousGroup == group) {
+            if (group == null) {
+                return;
+            }
+            warnAboutNewlyAddedChromosomes(previousSeqCount, group);
+        }
+
+        previousGroup = group;
+        previousSeqCount = group == null ? 0 : group.getSeqCount();
+
+        SeqGroupTableModel mod = new SeqGroupTableModel(group);
+
+        sorter = new TableRowSorter<SeqGroupTableModel>(mod) {
+
+            @Override
+            public Comparator<?> getComparator(int column) {
+                if (column == 0) {
+                    return new BioSeqAlphanumComparator();
+                }
+                return new SeqLengthComparator();
+            }
+        };
+
+        selected_seq = null;
+        seqtable.setModel(mod);
+        //Disabled for now
+        //seqtable.setRowSorter(sorter);
+        sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
+
+        TableColumn c = seqtable.getColumnModel().getColumn(1);
+        c.setCellRenderer(new ColumnRenderer());
+
+        refreshTable();
+
+        if (group != null && most_recent_seq_id != null) {
+            // When changing genomes, try to keep the same chromosome selected when possible
+            BioSeq aseq = group.getSeq(most_recent_seq_id);
+            if (aseq != null) {
+                gmodel.setSelectedSeq(aseq);
+            }
+        }
+
+        versionNameChanged(evt);
+    }
+
+    /**
+     * This gets called when the genome versionName is changed. This occurs via
+     * the combo boxes, or by an external event like bookmarks, or
+     * LoadFileAction
+     *
+     * @param evt
+     */
+    public void versionNameChanged(GroupSelectionEvent evt) {
+        AnnotatedSeqGroup group = evt.getSelectedGroup();
+
+        if (DEBUG_EVENTS) {
+            System.out.println("GeneralLoadView.groupSelectionChanged() called, group: " + (group == null ? null : group.getID()));
+        }
+        if (group == null) {
+            if (versionCB.getSelectedItem() != SELECT_GENOME) {
+                versionCB.removeItemListener(this);
+                versionCB.setEnabled(false);
+                versionCB.addItemListener(this);
+            }
+            curGroup = null;
+            return;
+        }
+        if (curGroup == group) {
+            if (DEBUG_EVENTS) {
+                System.out.println("GeneralLoadView.groupSelectionChanged(): group was same as previous.");
+            }
+            return;
+        }
+        curGroup = group;
+
+        Set<GenericVersion> gVersions = group.getEnabledVersions();
+        if (gVersions.isEmpty()) {
+            createUnknownVersion(group);
+            return;
+        }
+        final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
+        if (versionName == null) {
+            System.out.println("ERROR -- couldn't find version");
+            return;
+        }
+        final String speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
+        if (speciesName == null) {
+            // Couldn't find species matching this versionName -- we have problems.
+            System.out.println("ERROR - Couldn't find species for version " + versionName);
+            return;
+        }
+
+        if (!speciesName.equals(speciesCB.getSelectedItem())) {
+            // Set the selected species (the combo box is already populated)
+            ThreadUtils.runOnEventQueue(() -> {
                 speciesCB.removeItemListener(SeqGroupView.this);
                 speciesCB.setSelectedItem(speciesName);
                 speciesCB.addItemListener(SeqGroupView.this);
             });
-		}
-		if (!versionName.equals(versionCB.getSelectedItem())) {
-			refreshVersionCB(speciesName);			// Populate the versionName CB
-			ThreadUtils.runOnEventQueue(() -> {
+        }
+        if (!versionName.equals(versionCB.getSelectedItem())) {
+            refreshVersionCB(speciesName);			// Populate the versionName CB
+            ThreadUtils.runOnEventQueue(() -> {
                 versionCB.removeItemListener(SeqGroupView.this);
                 versionCB.setSelectedItem(versionName);
                 versionCB.addItemListener(SeqGroupView.this);
             });
-		}
+        }
 
-		GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
-		// refreshTreeView should only be called if feature table
-		// needs to be cleared.
-		GeneralLoadView.getLoadView().disableAllButtons();
-		GeneralLoadView.AutoloadQuickloadFeature();
-	}
+        GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
+        // refreshTreeView should only be called if feature table
+        // needs to be cleared.
+        GeneralLoadView.getLoadView().disableAllButtons();
+        GeneralLoadView.AutoloadQuickloadFeature();
+    }
 
-	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		if (SeqGroupView.DEBUG_EVENTS) {
-			System.out.println("SeqGroupView received seqSelectionChanged() event: seq is " + evt.getSelectedSeq());
-		}
-		synchronized (seqtable) {  // or should synchronize on lsm?
-			lsm.removeListSelectionListener(this);
-			selected_seq = evt.getSelectedSeq();
-			if (selected_seq == null) {
-				seqtable.clearSelection();
-			} else {
-				most_recent_seq_id = selected_seq.getID();
+    public void seqSelectionChanged(SeqSelectionEvent evt) {
+        if (SeqGroupView.DEBUG_EVENTS) {
+            System.out.println("SeqGroupView received seqSelectionChanged() event: seq is " + evt.getSelectedSeq());
+        }
+        synchronized (seqtable) {  // or should synchronize on lsm?
+            lsm.removeListSelectionListener(this);
+            selected_seq = evt.getSelectedSeq();
+            if (selected_seq == null) {
+                seqtable.clearSelection();
+            } else {
+                most_recent_seq_id = selected_seq.getID();
 
-				int rowCount = seqtable.getRowCount();
-				for (int i = 0; i < rowCount; i++) {
-					// should be able to use == here instead of equals(), because table's model really returns seq.getID()
-					if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
-						if (seqtable.getSelectedRow() != i) {
-							seqtable.setRowSelectionInterval(i, i);
-							scrollTableLater(seqtable, i);
-						}
-						break;
-					}
-				}
-			}
-			lsm.addListSelectionListener(this);
-		}
+                int rowCount = seqtable.getRowCount();
+                for (int i = 0; i < rowCount; i++) {
+                    // should be able to use == here instead of equals(), because table's model really returns seq.getID()
+                    if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
+                        if (seqtable.getSelectedRow() != i) {
+                            seqtable.setRowSelectionInterval(i, i);
+                            scrollTableLater(seqtable, i);
+                        }
+                        break;
+                    }
+                }
+            }
+            lsm.addListSelectionListener(this);
+        }
 
-		chromosomeChanged(evt);
-	}
+        chromosomeChanged(evt);
+    }
 
-	/**
-	 * Changed the selected chromosome.
-	 *
-	 * @param evt
-	 */
-	public void chromosomeChanged(SeqSelectionEvent evt) {
-		BioSeq aseq = evt.getSelectedSeq();
+    /**
+     * Changed the selected chromosome.
+     *
+     * @param evt
+     */
+    public void chromosomeChanged(SeqSelectionEvent evt) {
+        BioSeq aseq = evt.getSelectedSeq();
 
-		if (DEBUG_EVENTS) {
-			System.out.println("GeneralLoadView.seqSelectionChanged() called, aseq: " + (aseq == null ? null : aseq.getID()));
-		}
+        if (DEBUG_EVENTS) {
+            System.out.println("GeneralLoadView.seqSelectionChanged() called, aseq: " + (aseq == null ? null : aseq.getID()));
+        }
 
-		if (aseq == null) {
-			GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
+        if (aseq == null) {
+            GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
 //			GeneralLoadView.getLoadView().refreshDataManagementView();
-			// refreshTreeView should only be called if feature table
-			// needs to be cleared.
-			GeneralLoadView.getLoadView().disableAllButtons();
-			return;
-		}
+            // refreshTreeView should only be called if feature table
+            // needs to be cleared.
+            GeneralLoadView.getLoadView().disableAllButtons();
+            return;
+        }
 
-		// validate that this sequence is in our group.
-		AnnotatedSeqGroup group = aseq.getSeqGroup();
-		if (group == null) {
-			if (DEBUG_EVENTS) {
-				System.out.println("sequence was null");
-			}
-			return;
-		}
-		Set<GenericVersion> gVersions = group.getEnabledVersions();
-		if (gVersions.isEmpty()) {
-			createUnknownVersion(group);
-			return;
-		}
+        // validate that this sequence is in our group.
+        AnnotatedSeqGroup group = aseq.getSeqGroup();
+        if (group == null) {
+            if (DEBUG_EVENTS) {
+                System.out.println("sequence was null");
+            }
+            return;
+        }
+        Set<GenericVersion> gVersions = group.getEnabledVersions();
+        if (gVersions.isEmpty()) {
+            createUnknownVersion(group);
+            return;
+        }
 
-		String speciesName = (String) this.speciesCB.getSelectedItem();
-		String versionName = (String) this.versionCB.getSelectedItem();
-		if (speciesName == null || versionName == null || speciesName.equals(SELECT_SPECIES) || versionName.equals(SELECT_GENOME)) {
-			return;
-		}
+        String speciesName = (String) this.speciesCB.getSelectedItem();
+        String versionName = (String) this.versionCB.getSelectedItem();
+        if (speciesName == null || versionName == null || speciesName.equals(SELECT_SPECIES) || versionName.equals(SELECT_GENOME)) {
+            return;
+        }
 
-		if (!(GeneralUtils.getPreferredVersionName(gVersions).equals(versionName))) {
-			/*
-			 * System.out.println("ERROR - versions don't match: " + versionName
-			 * + "," + GeneralLoadUtils.getPreferredVersionName(gVersions));
-			 */
-			return;
-		}
+        if (!(GeneralUtils.getPreferredVersionName(gVersions).equals(versionName))) {
+            /*
+             * System.out.println("ERROR - versions don't match: " + versionName
+             * + "," + GeneralLoadUtils.getPreferredVersionName(gVersions));
+             */
+            return;
+        }
 
-		GeneralLoadView.getLoadView().refreshDataManagementView();
-		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
-		GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS);
-	}
+        GeneralLoadView.getLoadView().refreshDataManagementView();
+        GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
+        GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS);
+    }
 
-	public void genericServerInit(GenericServerInitEvent evt) {
-		GenericServer gServer = (GenericServer) evt.getSource();
-		
-		if (gServer.getServerStatus() == ServerStatus.NotResponding) {
-			((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
-			GeneralLoadView.getLoadView().refreshTreeView();
-			refreshSpeciesCB();
-			return;
-		}
+    public void genericServerInit(GenericServerInitEvent evt) {
+        GenericServer gServer = (GenericServer) evt.getSource();
 
-		if (gServer.getServerStatus() != ServerStatus.Initialized) {
-			return;	// ignore uninitialized servers
-		}
+        if (gServer.getServerStatus() == ServerStatus.NotResponding) {
+            ((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
+            GeneralLoadView.getLoadView().refreshTreeView();
+            refreshSpeciesCB();
+            return;
+        }
 
-		if (gServer.serverType != ServerTypeI.LocalFiles) {
-			if (gServer.serverType != null) {
-				igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.getName() + ")");
-			}
-		}
+        if (gServer.getServerStatus() != ServerStatus.Initialized) {
+            return;	// ignore uninitialized servers
+        }
 
-		String speciesName = (String) this.speciesCB.getSelectedItem();
-		synchronized(this){
-			refreshSpeciesCB();
-		}
+        if (gServer.serverType != ServerTypeI.LocalFiles) {
+            if (gServer.serverType != null) {
+                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.getName() + ")");
+            }
+        }
 
-		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
-			lookForPersistentGenome = false;
-			String versionName = (String) this.versionCB.getSelectedItem();
+        String speciesName = (String) this.speciesCB.getSelectedItem();
+        synchronized (this) {
+            refreshSpeciesCB();
+        }
 
-			//refresh version names if a species is selected
-			//refreshVersionCB(speciesName); //possibly not a permanent fix for bug which causes the genome version combo to be reset
+        if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
+            lookForPersistentGenome = false;
+            String versionName = (String) this.versionCB.getSelectedItem();
 
-			if (versionName != null && !versionName.equals(SELECT_GENOME)) {
-				// refresh this version
-				initVersion(versionName);
+            //refresh version names if a species is selected
+            //refreshVersionCB(speciesName); //possibly not a permanent fix for bug which causes the genome version combo to be reset
+            if (versionName != null && !versionName.equals(SELECT_GENOME)) {
+                // refresh this version
+                initVersion(versionName);
 
-				// TODO: refresh feature tree view if a version is selected
-				GeneralLoadView.getLoadView().refreshTreeView();
-				if (AutoLoadFeatureAction.getActionCB().isSelected()) {
-					GeneralLoadView.loadWholeRangeFeatures(null);
-				}
-				((AbstractTableModel)seqtable.getModel()).fireTableDataChanged();
-			}
-		}
+                // TODO: refresh feature tree view if a version is selected
+                GeneralLoadView.getLoadView().refreshTreeView();
+                if (AutoLoadFeatureAction.getActionCB().isSelected()) {
+                    GeneralLoadView.loadWholeRangeFeatures(null);
+                }
+                ((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
+            }
+        }
 
-	}
+    }
 
-	private void populateSpeciesData() {
-//		final Set<GenericServer> servers = new HashSet<GenericServer>();
-//		servers.addAll(ServerList.getServerInstance().getEnabledServers());
-		for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
-			CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
+    private void populateSpeciesData() {
+        for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
+            CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
+                @Override
+                protected Void runInBackground() {
+                    GeneralLoadUtils.discoverServer(gServer);
+                    return null;
+                }
 
-				protected Void runInBackground() {
-					GeneralLoadUtils.discoverServer(gServer);
-					return null;
-				}
+                @Override
+                public void finished() {
+                }
+            };
+            CThreadHolder.getInstance().execute(gServer, worker);
+        }
+    }
 
-				@Override
-				public void finished() {
-//					synchronized (servers) {
-//						servers.remove(gServer);
-//
-//						if (servers.isEmpty()) {
-//							runBatchOrRestore();
-//						}
-//					}
-				}
-			};
+    /**
+     * group has been created independently of the discovery process (probably
+     * by loading a file). create new "unknown" species/versionName.
+     */
+    private void createUnknownVersion(AnnotatedSeqGroup group) {
+        gmodel.removeGroupSelectionListener(this);
+        gmodel.removeSeqSelectionListener(this);
 
-			CThreadHolder.getInstance().execute(gServer, worker);
-		}
-	}
+        speciesCB.removeItemListener(this);
+        versionCB.removeItemListener(this);
+        GenericVersion gVersion = GeneralLoadUtils.getUnknownVersion(group);
+        String species = GeneralLoadUtils.getVersionName2Species().get(gVersion.versionName);
+        refreshSpeciesCB();
+        if (DEBUG_EVENTS) {
+            System.out.println("Species is " + species + ", version is " + gVersion.versionName);
+        }
 
-	/**
-	 * group has been created independently of the discovery process (probably
-	 * by loading a file). create new "unknown" species/versionName.
-	 */
-	private void createUnknownVersion(AnnotatedSeqGroup group) {
-		gmodel.removeGroupSelectionListener(this);
-		gmodel.removeSeqSelectionListener(this);
+        if (!species.equals(speciesCB.getSelectedItem())) {
+            gmodel.removeGroupSelectionListener(this);
+            gmodel.removeSeqSelectionListener(this);
 
-		speciesCB.removeItemListener(this);
-		versionCB.removeItemListener(this);
-		GenericVersion gVersion = GeneralLoadUtils.getUnknownVersion(group);
-		String species = GeneralLoadUtils.getVersionName2Species().get(gVersion.versionName);
-		refreshSpeciesCB();
-		if (DEBUG_EVENTS) {
-			System.out.println("Species is " + species + ", version is " + gVersion.versionName);
-		}
+            speciesCB.removeItemListener(this);
+            versionCB.removeItemListener(this);
 
-		if (!species.equals(speciesCB.getSelectedItem())) {
-			gmodel.removeGroupSelectionListener(this);
-			gmodel.removeSeqSelectionListener(this);
+            // Set the selected species (the combo box is already populated)
+            speciesCB.setSelectedItem(species);
+            // populate the versionName combo box.
+            refreshVersionCB(species);
+        }
 
-			speciesCB.removeItemListener(this);
-			versionCB.removeItemListener(this);
+        initVersion(gVersion.versionName);
 
-			// Set the selected species (the combo box is already populated)
-			speciesCB.setSelectedItem(species);
-			// populate the versionName combo box.
-			refreshVersionCB(species);
-		}
+        versionCB.setSelectedItem(gVersion.versionName);
+        versionCB.setEnabled(true);
+        gviewer.getPartial_residuesButton().setEnabled(false);
+        gviewer.getRefreshDataAction().setEnabled(false);
+        addListeners();
+    }
 
-		initVersion(gVersion.versionName);
+    private void refreshSpeciesCB() {
+        int speciesListLength = GeneralLoadUtils.getSpecies2Generic().keySet().size();
+        if (speciesListLength == speciesCB.getItemCount() - 1) {
+            String speciesName = (String) speciesCB.getSelectedItem();
+            // Check if new version has been added
+            if (!speciesName.equals(SELECT_SPECIES)) {
+                int versionListLength = getAllVersions(speciesName).size();
+                if (versionListLength != versionCB.getItemCount() - 1) {
+                    refreshVersionCB(speciesName);
+                }
+            }
+            // No new species.  Don't bother refreshing.
+            return;
+        }
 
-		versionCB.setSelectedItem(gVersion.versionName);
-		versionCB.setEnabled(true);
-		gviewer.getPartial_residuesButton().setEnabled(false);
-		gviewer.getRefreshDataAction().setEnabled(false);
-		addListeners();
-	}
-
-	private void refreshSpeciesCB() {
-		int speciesListLength = GeneralLoadUtils.getSpecies2Generic().keySet().size();
-		if (speciesListLength == speciesCB.getItemCount() - 1) {
-			String speciesName = (String) speciesCB.getSelectedItem();
-			// Check if new version has been added
-			if(!speciesName.equals(SELECT_SPECIES)){
-				int versionListLength = getAllVersions(speciesName).size();
-				if(versionListLength != versionCB.getItemCount() - 1){
-					refreshVersionCB(speciesName);
-				}
-			}
-			// No new species.  Don't bother refreshing.
-			return;
-		}
-
-		ThreadUtils.runOnEventQueue(() -> {
+        ThreadUtils.runOnEventQueue(() -> {
             final List<String> speciesList = GeneralLoadUtils.getSpeciesList();
 
             speciesCB.removeItemListener(SeqGroupView.this);
@@ -727,38 +719,37 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             }
             speciesCB.addItemListener(SeqGroupView.this);
         });
-	}
+    }
 
-	public List<String> getAllVersions(final String speciesName) {
-		final Set<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
-		final List<String> versionNames = new ArrayList<>();
-		if (versionList != null) {
-			for (GenericVersion gVersion : versionList) {
-				// the same versionName name may occur on multiple servers
-				String versionName = gVersion.versionName;
-				if (!versionNames.contains(versionName)) {
-					versionNames.add(versionName);
-				}
-			}
-			Collections.sort(versionNames, new StringVersionDateComparator());
-		}
-		return versionNames;
-	}
-	
-	/**
-	 * Refresh the genome versions.
-	 *
-	 * @param speciesName
-	 */
-	private void refreshVersionCB(final String speciesName) {
-		final List<String> versionNames = getAllVersions(speciesName);
-		for (String versionName : versionNames) {
-			versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
-		}
-		
-		// Sort the versions (by date)
+    public List<String> getAllVersions(final String speciesName) {
+        final Set<GenericVersion> versionList = GeneralLoadUtils.getSpecies2Generic().get(speciesName);
+        final List<String> versionNames = new ArrayList<>();
+        if (versionList != null) {
+            for (GenericVersion gVersion : versionList) {
+                // the same versionName name may occur on multiple servers
+                String versionName = gVersion.versionName;
+                if (!versionNames.contains(versionName)) {
+                    versionNames.add(versionName);
+                }
+            }
+            Collections.sort(versionNames, new StringVersionDateComparator());
+        }
+        return versionNames;
+    }
 
-		ThreadUtils.runOnEventQueue(() -> {
+    /**
+     * Refresh the genome versions.
+     *
+     * @param speciesName
+     */
+    private void refreshVersionCB(final String speciesName) {
+        final List<String> versionNames = getAllVersions(speciesName);
+        for (String versionName : versionNames) {
+            versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
+        }
+
+        // Sort the versions (by date)
+        ThreadUtils.runOnEventQueue(() -> {
             versionCB.removeItemListener(SeqGroupView.this);
             String oldVersion = (String) versionCB.getSelectedItem();
 
@@ -771,7 +762,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             // Add names to combo boxes.
             versionCB.removeAllItems();
             versionCB.addItem(SELECT_GENOME);
-			versionNames.forEach(versionCB::addItem);
+            versionNames.forEach(versionCB::addItem);
             versionCB.setEnabled(true);
             if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.getVersionName2Species().containsKey(oldVersion)) {
                 versionCB.setSelectedItem(oldVersion);
@@ -782,214 +773,214 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
                 versionCB.addItemListener(SeqGroupView.this);
             }
         });
-	}
+    }
 
-	public void initVersion(String versionName) {
-		igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
-		try {
-			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-		} finally {
-			igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
-		}
-	}
+    public void initVersion(String versionName) {
+        igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
+        try {
+            GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
+        } finally {
+            igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
+        }
+    }
 
-	private void runBatchOrRestore() {
-		try {
-			// Only run batch script or restore persistent genome once all the server responses have come back.
-			String batchFile = IGB.commandLineBatchFileStr;
-			if (batchFile != null) {
-				IGB.commandLineBatchFileStr = null;	// we're not using this again!
-				lookForPersistentGenome = false;
-				Thread.sleep(1000);	// hack so event queue finishes
-				ScriptManager.getInstance().runScript(batchFile);
-			} else {
-				if (lookForPersistentGenome) {
-					lookForPersistentGenome = false;
-					//Thread.sleep(1000);	// hack so event queue finishes
-					RestorePersistentGenome();
-				}
-			}
-		} catch (Exception ex) {
-			Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
+    private void runBatchOrRestore() {
+        try {
+            // Only run batch script or restore persistent genome once all the server responses have come back.
+            String batchFile = IGB.commandLineBatchFileStr;
+            if (batchFile != null) {
+                IGB.commandLineBatchFileStr = null;	// we're not using this again!
+                lookForPersistentGenome = false;
+                Thread.sleep(1000);	// hack so event queue finishes
+                ScriptManager.getInstance().runScript(batchFile);
+            } else {
+                if (lookForPersistentGenome) {
+                    lookForPersistentGenome = false;
+                    //Thread.sleep(1000);	// hack so event queue finishes
+                    RestorePersistentGenome();
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-	/**
-	 * bootstrap bookmark from Preferences for last species/versionName/genome /
-	 * sequence / region
-	 */
-	private void RestorePersistentGenome() {
-		// Get group and seq info from persistent preferences.
-		// (Recovering as much data as possible before activating listeners.)
-		final AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
-		if (group == null) {
-			return;
-		}
+    /**
+     * bootstrap bookmark from Preferences for last species/versionName/genome /
+     * sequence / region
+     */
+    private void RestorePersistentGenome() {
+        // Get group and seq info from persistent preferences.
+        // (Recovering as much data as possible before activating listeners.)
+        final AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
+        if (group == null) {
+            return;
+        }
 
-		Set<GenericVersion> gVersions = group.getEnabledVersions();
-		if (gVersions == null || gVersions.isEmpty()) {
-			return;
-		}
-		final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
-		if (versionName == null || GeneralLoadUtils.getVersionName2Species().get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
-			return;
-		}
+        Set<GenericVersion> gVersions = group.getEnabledVersions();
+        if (gVersions == null || gVersions.isEmpty()) {
+            return;
+        }
+        final String versionName = GeneralUtils.getPreferredVersionName(gVersions);
+        if (versionName == null || GeneralLoadUtils.getVersionName2Species().get(versionName) == null || gmodel.getSeqGroup(versionName) != group) {
+            return;
+        }
 
-		if (gmodel.getSelectedSeqGroup() != null || gmodel.getSelectedSeq() != null) {
-			return;
-		}
+        if (gmodel.getSelectedSeqGroup() != null || gmodel.getSelectedSeq() != null) {
+            return;
+        }
 
-		final CThreadWorker<BioSeq, Void> worker = new CThreadWorker<BioSeq, Void>("Loading previous genome " + versionName + " ...") {
+        final CThreadWorker<BioSeq, Void> worker = new CThreadWorker<BioSeq, Void>("Loading previous genome " + versionName + " ...") {
 
-			@Override
-			protected BioSeq runInBackground() {
+            @Override
+            protected BioSeq runInBackground() {
 
-				initVersion(versionName);
+                initVersion(versionName);
 
-				if (Thread.currentThread().isInterrupted()) {
-					return null;
-				}
+                if (Thread.currentThread().isInterrupted()) {
+                    return null;
+                }
 
-				gmodel.setSelectedSeqGroup(group);
+                gmodel.setSelectedSeqGroup(group);
 
-				List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
-				if (features == null || features.isEmpty()) {
-					return null;
-				}
+                List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+                if (features == null || features.isEmpty()) {
+                    return null;
+                }
 
-				BioSeq seq = Persistence.restoreSeqSelection(group);
-				if (seq == null) {
-					seq = group.getSeq(0);
-					if (seq == null) {
-						return null;
-					}
-				}
+                BioSeq seq = Persistence.restoreSeqSelection(group);
+                if (seq == null) {
+                    seq = group.getSeq(0);
+                    if (seq == null) {
+                        return null;
+                    }
+                }
 
+                // Try/catch may not be needed.
+                try {
+                    Persistence.restoreSeqVisibleSpan(gviewer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-				// Try/catch may not be needed.
-				try {
-					Persistence.restoreSeqVisibleSpan(gviewer);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+                return seq;
+            }
 
-				return seq;
-			}
+            @Override
+            protected void finished() {
+                try {
+                    if (Thread.currentThread().isInterrupted() || isCancelled()) {
+                        return;
+                    }
 
-			@Override
-			protected void finished() {
-				try {
-					if (Thread.currentThread().isInterrupted() || isCancelled()) {
-						return;
-					}
+                    BioSeq seq = get();
+                    if (seq != null) {
+                        gmodel.setSelectedSeq(seq);
+                    }
 
-					BioSeq seq = get();
-					if (seq != null) {
-						gmodel.setSelectedSeq(seq);
-					}
+                } catch (Exception ex) {
+                    Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
 
-				} catch (Exception ex) {
-					Logger.getLogger(GeneralLoadView.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}
-		};
+        GroupSelectionListener listener = new GroupSelectionListener() {
 
-		GroupSelectionListener listener = new GroupSelectionListener() {
+            public void groupSelectionChanged(GroupSelectionEvent evt) {
+                if (evt.getSelectedGroup() != group) {
+                    worker.cancel(true);
+                }
+                gmodel.removeGroupSelectionListener(this);
+            }
+        };
 
-			public void groupSelectionChanged(GroupSelectionEvent evt) {
-				if (evt.getSelectedGroup() != group) {
-					worker.cancel(true);
-				}
-				gmodel.removeGroupSelectionListener(this);
-			}
-		};
+        gmodel.addGroupSelectionListener(listener);
 
-		gmodel.addGroupSelectionListener(listener);
-		
-		if(IGB.getSingleton().getFrame().isVisible()){
-			CThreadHolder.getInstance().execute(versionName, worker);
-		}else{
-			final ComponentListener componentListener = new ComponentAdapter() {
-				
-				@Override
-				public void componentShown(ComponentEvent e) {
-					IGB.getSingleton().getFrame().removeComponentListener(this);
-					CThreadHolder.getInstance().execute(versionName, worker);
-				}
-			};
-			IGB.getSingleton().getFrame().addComponentListener(componentListener);
-		}
-	}
+        if (IGB.getSingleton().getFrame().isVisible()) {
+            CThreadHolder.getInstance().execute(versionName, worker);
+        } else {
+            final ComponentListener componentListener = new ComponentAdapter() {
 
-	/**
-	 * Run initialization of version on thread, so we don't lock up the GUI.
-	 * Merge with initVersion();
-	 */
-	private class InitVersionWorker extends CThreadWorker<Void, Void> {
+                @Override
+                public void componentShown(ComponentEvent e) {
+                    IGB.getSingleton().getFrame().removeComponentListener(this);
+                    CThreadHolder.getInstance().execute(versionName, worker);
+                }
+            };
+            IGB.getSingleton().getFrame().addComponentListener(componentListener);
+        }
+    }
 
-		private final String versionName;
-		private final AnnotatedSeqGroup group;
+    /**
+     * Run initialization of version on thread, so we don't lock up the GUI.
+     * Merge with initVersion();
+     */
+    private class InitVersionWorker extends CThreadWorker<Void, Void> {
 
-		InitVersionWorker(String versionName, AnnotatedSeqGroup group) {
-			super("init " + versionName);
-			this.versionName = versionName;
-			this.group = group;
-		}
+        private final String versionName;
+        private final AnnotatedSeqGroup group;
 
-		@Override
-		public Void runInBackground() {
-			igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
-			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-			return null;
-		}
+        InitVersionWorker(String versionName, AnnotatedSeqGroup group) {
+            super("init " + versionName);
+            this.versionName = versionName;
+            this.group = group;
+        }
 
-		@Override
-		protected void finished() {
-			igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
-			speciesCB.setEnabled(true);
-			versionCB.setEnabled(true);
-			if ((curGroup != null || group != null) && curGroup != group) {
-				// avoid calling these a half-dozen times
-				gmodel.setSelectedSeqGroup(group);
-				// TODO: Need to be certain that the group is selected at this point!
-				gmodel.setSelectedSeq(group.getSeq(0));
-			}
-		}
-	}
+        @Override
+        public Void runInBackground() {
+            igbService.addNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
+            GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
+            return null;
+        }
 
-	private void addListeners() {
-		ServerList.getServerInstance().addServerInitListener(this);
-		gmodel.addGroupSelectionListener(this);
-		gmodel.addSeqSelectionListener(this);
+        @Override
+        protected void finished() {
+            igbService.removeNotLockedUpMsg(MessageFormat.format(BUNDLE.getString("loadingChr"), versionName));
+            speciesCB.setEnabled(true);
+            versionCB.setEnabled(true);
+            if ((curGroup != null || group != null) && curGroup != group) {
+                // avoid calling these a half-dozen times
+                gmodel.setSelectedSeqGroup(group);
+                // TODO: Need to be certain that the group is selected at this point!
+                gmodel.setSelectedSeq(group.getSeq(0));
+            }
+        }
+    }
 
-		speciesCB.setEnabled(true);
-		versionCB.setEnabled(true);
-		speciesCB.addItemListener(this);
-		versionCB.addItemListener(this);
-		speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
-	}
+    private void addListeners() {
+        ServerList.getServerInstance().addServerInitListener(this);
+        gmodel.addGroupSelectionListener(this);
+        gmodel.addSeqSelectionListener(this);
 
-	public JRPStyledTable getTable() {
-		return seqtable;
-	}
+        speciesCB.setEnabled(true);
+        versionCB.setEnabled(true);
+        speciesCB.addItemListener(this);
+        versionCB.addItemListener(this);
+        speciesCB.addItemListener(MainWorkspaceManager.getWorkspaceManager());
+    }
 
-	public JComboBox getSpeciesCB() {
-		return speciesCB;
-	}
+    public JRPStyledTable getTable() {
+        return seqtable;
+    }
 
-	public JComboBox getVersionCB() {
-		return versionCB;
-	}
-	
-	private static class BioSeqAlphanumComparator extends AlphanumComparator {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if(o1.toString().equals("genome")) {
-				return 1;
-			} else if (o2.toString().equals("genome")) {
-				return -1;
-			}
-			return super.compare(o1, o2);
-		}
-	}
+    public JComboBox getSpeciesCB() {
+        return speciesCB;
+    }
+
+    public JComboBox getVersionCB() {
+        return versionCB;
+    }
+
+    private static class BioSeqAlphanumComparator extends AlphanumComparator {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            if (o1.toString().equals("genome")) {
+                return 1;
+            } else if (o2.toString().equals("genome")) {
+                return -1;
+            }
+            return super.compare(o1, o2);
+        }
+    }
 }

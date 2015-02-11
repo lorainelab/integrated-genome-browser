@@ -12,8 +12,10 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import java.awt.Component;
 import java.awt.Font;
-
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,8 @@ public abstract class Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     private static final int delay = 2; //delay in seconds
+    private static final String COMMAND_KEY = "meta";
+    private static final String CONTROL_KEY = "ctrl";
 
     private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
     private ActionListener status_alert_listener = e -> {
@@ -54,6 +58,45 @@ public abstract class Application {
     public Application() {
         singleton = this;
         status_bar = new StatusBar(status_alert_listener);
+        loadDefaultToolbarActionsAndKeystrokeBindings();
+    }
+
+    private void loadDefaultToolbarActionsAndKeystrokeBindings() {
+        String fileName = IGBConstants.DEFAULT_PREFS_API_RESOURCE;
+        /**
+         * load default prefs from jar (with Preferences API). This will be the
+         * standard method soon.
+         */
+        try (InputStream default_prefs_stream = IGB.class.getResourceAsStream(fileName);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+            //Save current preferences
+            PreferenceUtils.getTopNode().exportSubtree(outputStream);
+            if (default_prefs_stream != null) {
+                logger.debug("loading default User preferences from: " + fileName);
+                Preferences.importPreferences(default_prefs_stream);
+
+                /**
+                 * Use 'command' instead of 'control' in keystrokes for Mac OS.
+                 */
+                if (IGB.IS_MAC) {
+                    String[] keys = PreferenceUtils.getKeystrokesNode().keys();
+                    for (int i = 0; i < keys.length; i++) {
+                        String action = PreferenceUtils.getKeystrokesNode().keys()[i];
+                        String keyStroke = PreferenceUtils.getKeystrokesNode().get(action, "");
+                        if (keyStroke.contains(CONTROL_KEY)) {
+                            keyStroke = keyStroke.replace(CONTROL_KEY, COMMAND_KEY);
+                            PreferenceUtils.getKeystrokesNode().put(action, keyStroke);
+                        }
+                    }
+                }
+                //Load back saved preferences
+                try (ByteArrayInputStream outputInputStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                    Preferences.importPreferences(outputInputStream);
+                }
+            }
+        } catch (Exception ex) {
+            logger.debug("Problem parsing prefs from: {}", fileName, ex);
+        }
     }
 
     public static Application getSingleton() {

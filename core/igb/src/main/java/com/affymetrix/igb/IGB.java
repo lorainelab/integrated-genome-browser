@@ -45,7 +45,6 @@ import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
-import com.affymetrix.igb.view.SeqGroupViewGUI;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
@@ -322,7 +321,6 @@ public final class IGB extends Application
 
         GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
-        SeqGroupViewGUI.init(IgbServiceImpl.getInstance());
         checkInternetConnection();
         notifyCounter();
         openQuickStart();
@@ -399,7 +397,7 @@ public final class IGB extends Application
         }
         windowService.setToolBar(tool_bar);
         windowService.setTabsMenu(mbar);
-        return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), SeqGroupViewGUI.getInstance(), AltSpliceView.getSingleton()};
+        return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), AltSpliceView.getSingleton()};
     }
 
     public JRPMenu addTopMenu(String id, String text, int index) {

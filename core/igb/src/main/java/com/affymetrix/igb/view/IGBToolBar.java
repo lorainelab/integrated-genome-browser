@@ -11,9 +11,9 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.JRPButton;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -164,27 +164,38 @@ public class IGBToolBar extends JToolBar {
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {
-        JRPButton button = new JRPButtonTLP(genericAction, index);
-        button.setHideActionText(true);
-        //button.setBorder(new LineBorder(Color.BLACK));
-        button.setMargin(new Insets(0, 0, 0, 0));
-        if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
-            UIDefaults def = new UIDefaults();
-            def.put("Button.contentMargins", new Insets(4, 4, 4, 4));
-            button.putClientProperty("Nimbus.Overrides", def);
-        }
-        if (genericAction instanceof ContinuousAction) {
-            button.addMouseListener(continuousActionListener);
-        }
+        if (!checkIfAlreadyAdded(genericAction)) {
+            JRPButton button = new JRPButtonTLP(genericAction, index);
+            button.setHideActionText(true);
+            //button.setBorder(new LineBorder(Color.BLACK));
+            button.setMargin(new Insets(0, 0, 0, 0));
+            if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
+                UIDefaults def = new UIDefaults();
+                def.put("Button.contentMargins", new Insets(4, 4, 4, 4));
+                button.putClientProperty("Nimbus.Overrides", def);
+            }
+            if (genericAction instanceof ContinuousAction) {
+                button.addMouseListener(continuousActionListener);
+            }
 
-        int local_index = 0;
-        while (local_index < index && local_index < toolbarItemPanel.getComponentCount()
-                && index >= getOrdinal(toolbarItemPanel.getComponent(local_index))) {
-            local_index++;
-        }
+            int local_index = 0;
+            while (local_index < index && local_index < toolbarItemPanel.getComponentCount()
+                    && index >= getOrdinal(toolbarItemPanel.getComponent(local_index))) {
+                local_index++;
+            }
 
-        toolbarItemPanel.add(button, local_index);
-        refreshToolbar();
+            toolbarItemPanel.add(button, local_index);
+            refreshToolbar();
+        }
+    }
+
+    private boolean checkIfAlreadyAdded(GenericAction action) {
+        for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
+            if (((JButton) toolbarItemPanel.getComponent(i)).getAction() == action) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void removeToolbarAction(GenericAction action) {

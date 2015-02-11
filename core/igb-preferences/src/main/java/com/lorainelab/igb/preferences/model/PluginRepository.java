@@ -65,6 +65,14 @@ public class PluginRepository {
         this.enabled = value;
     }
 
+    public void setEnabled(boolean value) {
+        this.enabled = Boolean.toString(value);
+    }
+
+    public boolean isEnabled() {
+        return Boolean.valueOf(enabled);
+    }
+
     public String getDefault() {
         return _default;
     }

@@ -225,6 +225,7 @@ extbundles/*
 /core/window-service/target/
 /plugins/window-service-def/target/
 /core/igb-swing-ext/target/
+/core/igb-preferences/target/
 /core/shared-lib-wrapper/target/
 /core/genometry/target/
 /optionalPlugins/geometric-mean/target/

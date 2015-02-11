@@ -1,0 +1,210 @@
+package com.lorainelab.igb.plugins.repos.view;
+
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
+import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.igb.service.api.PreferencesPanelProvider;
+import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
+import java.util.Enumeration;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
+/**
+ *
+ * @author dcnorris
+ */
+@Component(name = BundleRepositoryPrefsView.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+public class BundleRepositoryPrefsView extends JPanel implements PreferencesPanelProvider {
+
+    public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
+    public static final String TAB_NAME = "Plugin Repositories";
+    private BundleRepositoryTableModel tableModel;
+    private PluginRepositoryListProvider pluginRepositoryListProvider;
+    private final Icon refresh_icon;
+    private AddBundleRepositoryFrame addBundleRepositoryFrame;
+
+    public BundleRepositoryPrefsView() {
+        refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
+    }
+
+    @Activate
+    public void activate() {
+        tableModel = new BundleRepositoryTableModel(pluginRepositoryListProvider);
+        addBundleRepositoryFrame = new AddBundleRepositoryFrame(this, pluginRepositoryListProvider);
+        initComponents();
+    }
+
+    private StyledJTable createTable() {
+        final StyledJTable table = new StyledJTable(tableModel);
+
+        table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+        TableCellRenderer renderer = new DefaultTableCellRenderer() {
+
+            @Override
+            public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
+
+                int modelRow = table.convertRowIndexToModel(row);
+                this.setEnabled((Boolean) tableModel.getValueAt(modelRow, tableModel.getColumnIndex(BundleRepositoryTableModel.ENABLED_COLOMN)));
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            }
+        };
+        table.setDefaultRenderer(String.class, renderer);
+        table.setDefaultRenderer(ServerTypeI.class, renderer);
+
+        TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
+
+            private static final long serialVersionUID = -1l;
+
+            @Override
+            public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
+
+                java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+                int modelRow = table.convertRowIndexToModel(row);
+                this.setEnabled((Boolean) tableModel.getValueAt(modelRow, tableModel.getColumnIndex(BundleRepositoryTableModel.ENABLED_COLOMN)));
+                return ret;
+            }
+        };
+
+        for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
+            TableColumn column = e.nextElement();
+
+            switch ((String) column.getHeaderValue()) {
+                case BundleRepositoryTableModel.REFRESH_COLOMN:
+                    column.setMaxWidth(20);
+                    column.setCellRenderer(refresh_renderer);
+                    column.setCellEditor(new ButtonTableCellEditor(refresh_icon));
+                    break;
+                case BundleRepositoryTableModel.NAME_COLOMN:
+                    column.setPreferredWidth(100);
+                    break;
+                case BundleRepositoryTableModel.URL_COLOMN:
+                    column.setPreferredWidth(300);
+                    break;
+                case BundleRepositoryTableModel.ENABLED_COLOMN:
+                    column.setPreferredWidth(30);
+                    break;
+                default:
+                    column.setPreferredWidth(50);
+                    break;
+            }
+        }
+
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(true);
+
+        return table;
+    }
+
+    @Reference(optional = false)
+    public void setPluginRepositoryList(PluginRepositoryListProvider pluginRepositoryListProvider) {
+        this.pluginRepositoryListProvider = pluginRepositoryListProvider;
+    }
+
+    /**
+     * This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        pluginRepositoryTable = createTable();
+        removeButton = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
+
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Plugin Repositories"));
+
+        pluginRepositoryTable.setModel(tableModel);
+        jScrollPane1.setViewportView(pluginRepositoryTable);
+
+        removeButton.setText("Remove");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+
+        addButton.setText("Add...");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(addButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(removeButton))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(removeButton)
+                    .addComponent(addButton))
+                .addContainerGap())
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        addBundleRepositoryFrame.init(false, null);
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_removeButtonActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable pluginRepositoryTable;
+    private javax.swing.JButton removeButton;
+    // End of variables declaration//GEN-END:variables
+
+    @Override
+    public String getName() {
+        return TAB_NAME;
+    }
+
+    @Override
+    public int getTabWeight() {
+        return 6;
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public void refresh() {
+        //do nothing
+    }
+
+}

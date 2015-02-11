@@ -1,9 +1,13 @@
 package com.affymetrix.igb.view;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -11,12 +15,13 @@ import java.awt.Rectangle;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 
+@Component(name = SeqGroupViewGUI.COMPONENT_NAME, immediate = true, provide = IgbTabPanelI.class, properties = "name=" + SeqGroupViewGUI.COMPONENT_NAME)
 public class SeqGroupViewGUI extends IgbTabPanel {
 
+    public static final String COMPONENT_NAME = "SeqGroupViewGUI";
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = 7;
-    private final JRPStyledTable seqtable;
-    private static SeqGroupViewGUI singleton;
+    private JRPStyledTable seqtable;
     private SeqGroupView seqGroupModel;
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;
     private IgbService igbService;
@@ -27,28 +32,24 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
     }
 
-    public static void init(IgbService _igbService) {
-        singleton = new SeqGroupViewGUI(_igbService);
-    }
-
-    public static SeqGroupViewGUI getInstance() {
-        return singleton;
-    }
-
-    private SeqGroupViewGUI(IgbService _igbService) {
+    public SeqGroupViewGUI() {
         super(BUNDLE.getString("genomeTab"), BUNDLE.getString("genomeTab"), BUNDLE.getString("currentGenomeTooltip"), true, TAB_POSITION);
-        this.igbService = igbService;
-        SeqGroupView.init(_igbService);
+    }
+
+    @Activate
+    public void activate() {
+        SeqGroupView.init(igbService);
         seqGroupModel = SeqGroupView.getInstance();
-
         seqtable = seqGroupModel.getTable();
-
         JScrollPane scroller = new JScrollPane(seqtable);
-
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(scroller);
-
         initComponents();
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 
     @Override
@@ -162,23 +163,23 @@ public class SeqGroupViewGUI extends IgbTabPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void speciesPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMousePressed
-            Rectangle bounds = new Rectangle(10, 5, 50, 12);
-            if (bounds.contains(evt.getX(), evt.getY())) {
-                seqGroupModel.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
-            }// TODO add your handling code here:
+        Rectangle bounds = new Rectangle(10, 5, 50, 12);
+        if (bounds.contains(evt.getX(), evt.getY())) {
+            seqGroupModel.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+        }// TODO add your handling code here:
 	}//GEN-LAST:event_speciesPanelMousePressed
 
 	private void speciesPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMouseMoved
-            Rectangle bounds = new Rectangle(10, 5, 50, 12);
-            if (bounds.contains(evt.getX(), evt.getY())) {
-                this.setCursor(openHandCursor);
-            } else {
-                this.setCursor(defaultCursor);
-            }
+        Rectangle bounds = new Rectangle(10, 5, 50, 12);
+        if (bounds.contains(evt.getX(), evt.getY())) {
+            this.setCursor(openHandCursor);
+        } else {
+            this.setCursor(defaultCursor);
+        }
 	}//GEN-LAST:event_speciesPanelMouseMoved
 
 	private void speciesCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesCBActionPerformed
-            // TODO add your handling code here:
+        // TODO add your handling code here:
 	}//GEN-LAST:event_speciesCBActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

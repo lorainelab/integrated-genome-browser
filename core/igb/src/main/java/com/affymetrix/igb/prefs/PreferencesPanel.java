@@ -38,7 +38,6 @@ import javax.swing.JTabbedPane;
 public final class PreferencesPanel extends JPanel {
 
     public static int TAB_TIER_PREFS_VIEW = -1;
-    public static int TAB_KEY_STROKES_VIEW = -1;
     public static int TAB_OTHER_OPTIONS_VIEW = -1;
     public static int TAB_DATALOAD_PREFS = -1;
     private static final long serialVersionUID = 1L;
@@ -81,7 +80,6 @@ public final class PreferencesPanel extends JPanel {
         });
 
         TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
-        TAB_KEY_STROKES_VIEW = singleton.addPrefEditorComponent(new KeyStrokesViewGUI());
         TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(new OtherOptionsView());
         TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
         return singleton;

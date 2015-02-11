@@ -22,7 +22,6 @@ import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.lorainelab.igb.preferences.model.DataProvider;
-import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -159,12 +158,6 @@ public final class ServerList {
 
         addServer(serverType, dataProvider.getName(), dataProvider.getUrl(), Boolean.valueOf(dataProvider.getEnabled()),
                 Boolean.valueOf(dataProvider.getPrimary()), dataProvider.getOrder(), Boolean.valueOf(dataProvider.getDefault()), dataProvider.getMirror());
-    }
-
-    public void addServer(PluginRepository pluginRepository) {
-        addServer(null, pluginRepository.getName(), pluginRepository.getUrl(), Boolean.valueOf(pluginRepository.getEnabled()),
-                false, 0, Boolean.valueOf(pluginRepository.getDefault()), null);
-
     }
 
     private static ServerTypeI getServerType(String type) {
@@ -306,7 +299,7 @@ public final class ServerList {
     }
 
     private Preferences getPreferencesNode() {
-        return hasTypes() ? PreferenceUtils.getServersNode() : PreferenceUtils.getRepositoriesNode();
+        return PreferenceUtils.getServersNode();
     }
 
     public void updateServerURLsInPrefs() {
@@ -377,25 +370,6 @@ public final class ServerList {
     }
 
     /**
-     * Add or update a repository in the preferences subsystem. This only
-     * modifies the preferences nodes, it does not affect any other part of the
-     * application.
-     *
-     * @param url SERVER_URL of this server.
-     * @param name name of this server.
-     * @return an anemic GenericServer object whose sole purpose is to aid in
-     * setting of additional preferences
-     */
-    private GenericServer addRepositoryToPrefs(String url, String name, boolean isDefault) {
-        Preferences node = PreferenceUtils.getRepositoriesNode().node(GenericServer.getHash(url));
-
-        node.put(SERVER_NAME, name);
-        node.put(SERVER_URL, GeneralUtils.URLEncode(url));
-
-        return new GenericServer(node, null, null, isDefault, null); //qlmirror
-    }
-
-    /**
      * Add or update a server in the preferences subsystem. This only modifies
      * the preferences nodes, it does not affect any other part of the
      * application.
@@ -403,17 +377,18 @@ public final class ServerList {
      * @param server GenericServer object of the server to add or update.
      */
     public void addServerToPrefs(GenericServer server, int order, boolean isDefault) {
-        if (server.serverType == null) {
-            addRepositoryToPrefs(server.URL, server.serverName, isDefault);
-        } else if (server.serverType.isSaveServersInPrefs()) {
+        if (server.serverType.isSaveServersInPrefs()) {
             addServerToPrefs(server.URL, server.serverName,
                     server.serverType, order, server.isDefault());
+
         }
     }
 
     /**
-     * Remove a server from the preferences subsystem. This only modifies the
-     * preference nodes, it does not affect any other part of the application.
+     * Remove a server from the preferences subsystem. This only modifies
+     * the
+     * preference nodes, it does not affect any other part of the
+     * application.
      *
      * @param url SERVER_URL of the server to remove
      */

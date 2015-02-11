@@ -3,26 +3,27 @@
  *
  * Created on Dec 30, 2011, 12:26:34 PM
  */
-package com.lorainelab.igb.preferences.view;
+package com.lorainelab.igb.plugins.repos.view;
 
-import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.google.common.base.Strings;
+import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
 import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.awt.Component;
 import java.awt.HeadlessException;
+import java.awt.Point;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -31,8 +32,13 @@ public class AddBundleRepositoryFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private boolean isEditPanel;
+    private JPanel parent;
+    private PluginRepository currentRepo;
+    private PluginRepositoryListProvider pluginRepositoryListProvider;
 
-    public AddBundleRepositoryFrame() {
+    public AddBundleRepositoryFrame(JPanel parent, PluginRepositoryListProvider pluginRepositoryListProvider) {
+        this.parent = parent;
+        this.pluginRepositoryListProvider = pluginRepositoryListProvider;
         initComponents();
         DocumentListener dl = new MyDocumentListener();
         nameText.getDocument().addDocumentListener(dl);
@@ -41,7 +47,7 @@ public class AddBundleRepositoryFrame extends JFrame {
     }
 
     private void checkFieldsChange() {
-        if (nameText.getText().trim().isEmpty() || urlText.getText().trim().isEmpty()) {
+        if (Strings.isNullOrEmpty(nameText.getText()) || Strings.isNullOrEmpty(urlText.getText())) {
             addServerButton.setEnabled(false);
             return;
         }
@@ -68,6 +74,7 @@ public class AddBundleRepositoryFrame extends JFrame {
     }
 
     public void init(boolean isEditP, PluginRepository pluginRepository) {
+        currentRepo = pluginRepository;
         isEditPanel = isEditP;
         if (isEditPanel) {
             setTitle("Edit Plugin Repository");
@@ -84,10 +91,10 @@ public class AddBundleRepositoryFrame extends JFrame {
     }
 
     private void display() {
-//        JFrame frame = PreferencesPanel.getSingleton().getFrame();
-//        Point location = frame.getLocation();
-//        setLocation(location.x + frame.getWidth() / 2 - getWidth() / 2,
-//                location.y + getHeight() / 2 - getHeight() / 2);
+        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(parent);
+        Point location = topFrame.getLocation();
+        setLocation(location.x + topFrame.getWidth() / 2 - getWidth() / 2,
+                location.y + getHeight() / 2 - getHeight() / 2);
         setVisible(true);
     }
 
@@ -200,34 +207,17 @@ public class AddBundleRepositoryFrame extends JFrame {
 	}//GEN-LAST:event_openDirActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
-
-        CThreadWorker<Boolean, Void> worker;
-        worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText()) {
-            @Override
-            protected Boolean runInBackground() {
-                if (isEditPanel) {
-
-                } else {
-
-                }
-                return true;
-            }
-
-            @Override
-            protected void finished() {
-                boolean serverAdded = true;
-                try {
-                    serverAdded = get();
-                } catch (InterruptedException | ExecutionException ex) {
-                    Logger.getLogger(AddBundleRepositoryFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (serverAdded) {
-                    infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
-
-                }
-            }
-        };
+        if (isEditPanel) {
+            currentRepo.setName(nameText.getText());
+            currentRepo.setUrl(urlText.getText());
+        } else {
+            PluginRepository pluginRepository = new PluginRepository();
+            pluginRepository.setName(nameText.getText());
+            pluginRepository.setUrl(urlText.getText());
+            pluginRepository.setEnabled(true);
+            pluginRepository.setDefault(Boolean.toString(Boolean.FALSE));
+            pluginRepositoryListProvider.addPluginRepository(pluginRepository);
+        }
 
         this.setVisible(false);
 	}//GEN-LAST:event_addServerButtonActionPerformed

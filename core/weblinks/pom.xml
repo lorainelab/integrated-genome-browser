@@ -110,10 +110,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>
-                            com.lorainelab.igb.preferences.weblink,
-                            com.lorainelab.igb.preferences.weblink.action
-                        </Export-Package>
+                        <Export-Package/>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

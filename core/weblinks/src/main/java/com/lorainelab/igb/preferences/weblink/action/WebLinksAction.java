@@ -13,7 +13,7 @@ import javax.swing.JMenuItem;
 /**
  * A panel for viewing and editing weblinks.
  */
-@Component(name = WebLinksAction.COMPONENT_NAME, immediate = true)
+@Component(name = WebLinksAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
 public final class WebLinksAction extends GenericAction implements IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "WebLinksAction";

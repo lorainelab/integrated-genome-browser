@@ -1,5 +1,14 @@
 package com.affymetrix.igb.tutorial;
 
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.igb.service.api.IgbService;
+import com.affymetrix.igb.service.api.IgbTabPanelI;
+import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
+import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.window.service.IWindowService;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,19 +18,12 @@ import java.util.Properties;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 import javax.swing.JMenuItem;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-
-import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
-import com.affymetrix.igb.service.api.XServiceRegistrar;
-import com.affymetrix.igb.window.service.IWindowService;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.LoggerFactory;
 
 public class Activator extends SimpleServiceRegistrar implements BundleActivator {
@@ -43,9 +45,9 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
             Preferences.importPreferences(default_prefs_stream);
             //prefs_parser.parse(default_prefs_stream, "", prefs_hash);
         } catch (InvalidPreferencesFormatException ex) {
-            logger.error( DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
+            logger.error(DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
         } catch (IOException ex) {
-            logger.error( DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
+            logger.error(DEFAULT_PREFS_TUTORIAL_RESOURCE, ex);
         } finally {
             GeneralUtils.safeClose(default_prefs_stream);
         }
@@ -66,37 +68,51 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
 
     private ServiceRegistration<?>[] getServices(final BundleContext bundleContext,
             final IgbService igbService, final IWindowService windowService) throws Exception {
-        final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
-        GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
-        JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
-        Properties tutorials = new Properties();
-        loadDefaultTutorialPrefs();
-        Preferences tutorialsNode = getTutorialsNode();
 
-        try {
-            for (String key : tutorialsNode.keys()) {
-                String tutorialUri = tutorialsNode.get(key, null);
-                tutorials.clear();
-                tutorials.load(new URL(tutorialUri + "/tutorials.properties").openStream());
-                Enumeration<?> tutorialNames = tutorials.propertyNames();
-                while (tutorialNames.hasMoreElements()) {
-                    String name = (String) tutorialNames.nextElement();
-                    String description = (String) tutorials.get(name);
-                    RunTutorialAction rta = new RunTutorialAction(tutorialManager, description, tutorialUri + "/" + name);
-                    JMenuItem item = new JMenuItem(rta);
-                    tutorialMenu.add(item);
+        //Filter for making sure SeqGroupView is available.... a hack for now...
+        Filter filter = bundleContext.createFilter(String.format("(&(%s=%s))", "component.name", "SeqGroupViewGUI"));
+        ServiceTracker<IgbTabPanelI, Object> serviceTracker;
+        serviceTracker = new ServiceTracker<IgbTabPanelI, Object>(bundleContext, filter, null) {
+            @Override
+            public Object addingService(ServiceReference<IgbTabPanelI> seqGroupViewReference) {
+
+                final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
+                GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
+                JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
+                Properties tutorials = new Properties();
+                loadDefaultTutorialPrefs();
+                Preferences tutorialsNode = getTutorialsNode();
+
+                try {
+                    for (String key : tutorialsNode.keys()) {
+                        String tutorialUri = tutorialsNode.get(key, null);
+                        tutorials.clear();
+                        tutorials.load(new URL(tutorialUri + "/tutorials.properties").openStream());
+                        Enumeration<?> tutorialNames = tutorials.propertyNames();
+                        while (tutorialNames.hasMoreElements()) {
+                            String name = (String) tutorialNames.nextElement();
+                            String description = (String) tutorials.get(name);
+                            RunTutorialAction rta = new RunTutorialAction(tutorialManager, description, tutorialUri + "/" + name);
+                            JMenuItem item = new JMenuItem(rta);
+                            tutorialMenu.add(item);
+                        }
+                    }
+
+                    bundleContext.registerService(AMenuItem.class, new AMenuItem(tutorialMenu, "help"), null);
+
+                } catch (FileNotFoundException fnfe) {
+                    logger.error("Could not find file {0}.\n          coninuing...", fnfe.getMessage());
+                } catch (java.net.ConnectException ce) {
+                    logger.error("Could not connect: {0}.\n          coninuing...", ce.getMessage());
+                } catch (Exception ex) {
+                    logger.error("Could not connect: {0}.\n          coninuing...", ex.getMessage());
                 }
+
+                return super.addingService(seqGroupViewReference);
+
             }
-
-            return new ServiceRegistration[]{bundleContext.registerService(AMenuItem.class, new AMenuItem(tutorialMenu, "help"), null)};
-
-        } catch (FileNotFoundException fnfe) {
-            logger.error( "Could not find file {0}.\n          coninuing...", fnfe.getMessage());
-        } catch (java.net.ConnectException ce) {
-            logger.error( "Could not connect: {0}.\n          coninuing...", ce.getMessage());
-        } catch (Exception ex) {
-            logger.error( "Could not connect: {0}.\n          coninuing...", ex.getMessage());
-        }
+        };
+        serviceTracker.open();
 
         return null;
     }

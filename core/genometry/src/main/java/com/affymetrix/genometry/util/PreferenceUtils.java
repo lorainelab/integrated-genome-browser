@@ -9,6 +9,11 @@
  */
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.common.CommonUtils;
+import com.google.common.base.Charsets;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -17,15 +22,20 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
@@ -33,25 +43,14 @@ import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import javax.swing.Action;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-
-import com.affymetrix.common.CommonUtils;
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.Action;
 import javax.swing.JRadioButton;
+import javax.swing.KeyStroke;
 
 /**
  * Helps to save and load preferences such as locations of windows. The
@@ -135,7 +134,7 @@ public abstract class PreferenceUtils {
     }
 
     public static Preferences getRepositoriesNode() {
-        return PreferenceUtils.getTopNode().node("repositories");
+        return PreferenceUtils.getTopNode().node("pluginRepositories");
     }
 
     public static Preferences getGraphPrefsNode() {

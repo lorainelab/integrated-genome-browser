@@ -22,6 +22,7 @@ import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.lorainelab.igb.preferences.model.DataProvider;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -240,27 +241,51 @@ public final class ServerList {
      */
     public void loadServerPrefs() {
         logger.info("Loading server preferences from the Java preferences subsystem");
-        ServerTypeI serverType;
-        Preferences node;
 
         try {
-            //serverURL not an actual url now, it is a long hash instead.
-            for (String serverURL : getPreferencesNode().childrenNames()) {
-                node = getPreferencesNode().node(serverURL);
-                serverType = null;
-                if (node.get(SERVER_TYPE, null) != null) {
-                    serverType = getServerType(node.get(SERVER_TYPE, ServerTypeI.DEFAULT.getName()));
-                }
-
-                if (serverType == ServerTypeI.LocalFiles) {
-                    continue;
-                }
-
-                addServer(node);
+            for (String nodeName : getPreferencesNode().childrenNames()) {
+                Preferences node = getPreferencesNode().node(nodeName);
+                processPreferenceNode(node);
             }
             logger.info("Completed loading server preferences from the Java preferences subsystem");
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
+        }
+    }
+
+    public void processPreferenceNode(Preferences node) {
+        try {
+            if (!removeIfInvalid(node)) {
+                ServerTypeI serverType = null;
+                if (node.get(SERVER_TYPE, null) != null) {
+                    serverType = getServerType(node.get(SERVER_TYPE, ServerTypeI.DEFAULT.getName()));
+                }
+
+                if (!(serverType == ServerTypeI.LocalFiles)) {
+                    addServer(node);
+                }
+            }
+        } catch (BackingStoreException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+    }
+
+    private boolean removeIfInvalid(Preferences node) throws BackingStoreException {
+        if (!isValidUrl(node.get(SERVER_URL, ""))) {
+            //its not clear why, but sometimes a possible race condition seems to produce invalid duplicate currupt nodes
+            //... we delete them here
+            node.removeNode();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isValidUrl(String url) {
+        try {
+            URL testUrl = new URL(url);
+            return true;
+        } catch (MalformedURLException ex) {
+            return false;
         }
     }
 

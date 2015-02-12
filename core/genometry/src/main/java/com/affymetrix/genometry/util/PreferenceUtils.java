@@ -129,8 +129,12 @@ public abstract class PreferenceUtils {
         return PreferenceUtils.getTopNode().node("genomes");
     }
 
-    public static Preferences getServersNode() {
+    public static Preferences getOldServersNode() {
         return PreferenceUtils.getTopNode().node("servers");
+    }
+
+    public static Preferences getServersNode() {
+        return PreferenceUtils.getTopNode().node("dataSourceProviders");
     }
 
     public static Preferences getRepositoriesNode() {

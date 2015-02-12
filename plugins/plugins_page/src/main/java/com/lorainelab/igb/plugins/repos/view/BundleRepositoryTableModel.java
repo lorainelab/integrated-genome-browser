@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class BundleRepositoryTableModel extends AbstractTableModel {
 
-    private PluginRepositoryListProvider pluginRepositoryListProvider;
+    private final PluginRepositoryListProvider pluginRepositoryListProvider;
     private List<PluginRepository> pluginRepositories;
     public static final String REFRESH_COLOMN = "Refresh";
     public static final String NAME_COLOMN = "Name";
@@ -19,6 +19,7 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
     public static final String ENABLED_COLOMN = "Enabled";
     private final String NAMES[] = {REFRESH_COLOMN, NAME_COLOMN, URL_COLOMN, ENABLED_COLOMN};
     private final Class CLASSES[] = {String.class, String.class, String.class, Boolean.class};
+    private PluginRepository selectedPluginRepository;
 
     public BundleRepositoryTableModel(PluginRepositoryListProvider pluginRepositoryListProvider) {
         this.pluginRepositoryListProvider = pluginRepositoryListProvider;
@@ -40,16 +41,19 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
         }
     }
 
-    public void addPluginRepository(PluginRepository pluginRepository) {
-        pluginRepositories.add(pluginRepository);
+    public void updateRepositories(List<PluginRepository> pluginRepositories) {
+        this.pluginRepositories = pluginRepositories;
         fireTableDataChanged();
     }
 
-    public void removePluginRepository(PluginRepository pluginRepository) {
-        if (pluginRepositories.contains(pluginRepository)) {
-            pluginRepositories.remove(pluginRepository);
+    public void setSelectedRow(int selectedRow) {
+        if (selectedRow != -1 && selectedRow <= pluginRepositories.size() - 1) {
+            selectedPluginRepository = pluginRepositories.get(selectedRow);
         }
-        fireTableDataChanged();
+    }
+
+    public PluginRepository getSelectedPluginRepository() {
+        return selectedPluginRepository;
     }
 
     @Override

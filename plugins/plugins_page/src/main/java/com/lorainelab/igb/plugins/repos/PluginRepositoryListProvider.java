@@ -1,5 +1,6 @@
 package com.lorainelab.igb.plugins.repos;
 
+import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.util.List;
 
@@ -20,5 +21,7 @@ public interface PluginRepositoryListProvider {
     public void pluginRepositoryRefreshed();
 
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository);
+
+    public BundleRepositoryTableModel getBundleRepositoryTableModel();
 
 }

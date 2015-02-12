@@ -15,6 +15,9 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.google.common.eventbus.EventBus;
+import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -33,7 +36,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.swing.Box;
@@ -67,14 +69,13 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     public static final String COMPONENT_NAME = "PluginsView";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(PluginsView.class);
-
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
-    private static final ResourceBundle BUNDLE_PROPERTIES = ResourceBundle.getBundle("bundles");
     private static final int TAB_POSITION = 7;
     private static final BundleFilter BOTH_BUNDLE_FILTER = bundle -> true;
     private static final BundleFilter INSTALLED_BUNDLE_FILTER = PluginsView::isInstalled;
     private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = bundle -> !isInstalled(bundle);
     private static final BundleFilter NEITHER_BUNDLE_FILTER = bundle -> false;
+    private BundleFilter DEFAULT_BUNDLES;
 
     /**
      * determins if a given bundle is installed
@@ -105,35 +106,44 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
-
+    List< Bundle> defaultBundles;
     private IgbService igbService;
+    private EventBus eventBus;
 
     private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
     private final Cursor defaultCursor = null;
 
-    private final BundleFilter SYSTEM_BUNDLE_FILTER = bundle -> {
-        if (bundle.getBundleId() == 0) { // system bundle
-            return false;
-        }
-        try {
-            //will automate soon
-            logger.debug(bundle.getSymbolicName() + ";" + bundle.getVersion());
-            BUNDLE_PROPERTIES.getString(bundle.getSymbolicName() + ";" + bundle.getVersion());
-        } catch (MissingResourceException x) {
-            return true;
-        }
-        return false;
-    };
-
     public PluginsView() {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
         latest = new HashMap<>();
+        defaultBundles = new ArrayList<>();
     }
 
     @Activate
     public void activate(BundleContext context) {
         this.bundleContext = context;
+        initializeDefaultBundleFilter();
         init();
+    }
+
+    @Reference
+    public void setEventBus(PluginRepositoryEventPublisher eventManager) {
+        this.eventBus = eventManager.getPluginRepositoryEventBus();
+        eventBus.register(this);
+    }
+
+//    @Subscribe
+//    public void pluginRepositoryAdded(PluginRepositoryAddedEvent addEvent) {
+//        addPluginRepository(addEvent.addedRepository.getUrl());
+//    }
+//
+//    @Subscribe
+//    public void pluginRepositoryRemoved(PluginRepositoryRemovedEvent removedEvent) {
+//        removePluginRepository(removedEvent.removedRepository.getUrl());
+//    }
+    private void initializeDefaultBundleFilter() {
+        defaultBundles.addAll(Arrays.asList(bundleContext.getBundles()));
+        DEFAULT_BUNDLES = (Bundle bundle) -> !defaultBundles.contains(bundle);
     }
 
     private void init() {
@@ -209,7 +219,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
             }
         };
         setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-        igbService.getRepositoryChangerHolder().getRepositories().values().forEach(this::repositoryAdded);
         setRepositoryBundles();
         bundleContext.addBundleListener(bundleListener);
     }
@@ -292,12 +301,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         repositoryPrefsButton = new JRPButton("PluginsView_repositoryPrefsButton", BUNDLE.getString("repositoryButton"));
         repositoryPrefsButton.addActionListener(
                 evt -> {
-                    final Object src = evt.getSource();
-
-                    if (src == PluginsView.this.repositoryPrefsButton) {
-                        // Go to repository prefs tab.
-                        // igbService.getRepositoryChangerHolder().displayRepositoryPreferences();
-                    }
+                    eventBus.post(new ShowBundleRepositoryPanelEvent());
                 });
         repositoryPrefsButton.setToolTipText(BUNDLE.getString("repositoryTooltip"));
         buttonPanel.add(repositoryPrefsButton);
@@ -606,7 +610,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private synchronized void filterBundles() {
         filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
-            if (SYSTEM_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
+            if (DEFAULT_BUNDLES.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
                 filteredBundles.add(bundle);
             }
         }
@@ -634,12 +638,15 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         this.bundleFilter = bundleFilter;
     }
 
-    public boolean repositoryAdded(final String url) {
+    public boolean addPluginRepository(final String url) {
+        if (defaultBundles.isEmpty()) {
+            initializeDefaultBundleFilter();
+        }
         CThreadWorker< Void, Void> worker = new CThreadWorker< Void, Void>("repositoryAdded") {
             @Override
             protected Void runInBackground() {
                 try {
-                    repoAdmin.addRepository(new URL(url + "/repository.xml"));
+                    repoAdmin.addRepository(new URL(url + REPOSITORY_XML_FILE_PATH));
                     setRepositoryBundles();
                     reloadBundleTable();
                 } catch (ConnectException x) {
@@ -661,10 +668,11 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         CThreadHolder.getInstance().execute(this, worker);
         return true;
     }
+    private static final String REPOSITORY_XML_FILE_PATH = "/repository.xml";
 
-    public void repositoryRemoved(String url) {
+    public void removePluginRepository(String url) {
         try {
-            repoAdmin.removeRepository(new URL(url + "/repository.xml").toURI().toString());
+            repoAdmin.removeRepository(new URL(url + REPOSITORY_XML_FILE_PATH).toURI().toString());
         } catch (MalformedURLException | URISyntaxException ex) {
             logger.error("Error removing repository.", ex);
         }

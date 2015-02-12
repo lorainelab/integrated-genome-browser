@@ -4,18 +4,23 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.igb.service.api.IgbService;
 import com.affymetrix.igb.service.api.PreferencesPanelProvider;
 import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
+import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import java.util.Enumeration;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -29,10 +34,13 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "Plugin Repositories";
+    private static final int TAB_POSITION = 6;
     private BundleRepositoryTableModel tableModel;
     private PluginRepositoryListProvider pluginRepositoryListProvider;
     private final Icon refresh_icon;
     private AddBundleRepositoryFrame addBundleRepositoryFrame;
+    private StyledJTable table;
+    private IgbService igbService;
 
     public BundleRepositoryPrefsView() {
         refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
@@ -40,17 +48,47 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
 
     @Activate
     public void activate() {
-        tableModel = new BundleRepositoryTableModel(pluginRepositoryListProvider);
+        tableModel = pluginRepositoryListProvider.getBundleRepositoryTableModel();
+        initializeTable();
         addBundleRepositoryFrame = new AddBundleRepositoryFrame(this, pluginRepositoryListProvider);
         initComponents();
+        initializeSelectionListener();
     }
 
-    private StyledJTable createTable() {
-        final StyledJTable table = new StyledJTable(tableModel);
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Reference
+    public void setEventBus(PluginRepositoryEventPublisher eventManager) {
+        eventManager.getPluginRepositoryEventBus().register(this);
+    }
+
+    @Subscribe
+    public void showTabPanelEvent(ShowBundleRepositoryPanelEvent event) {
+        int tabIndex = igbService.getPreferencesPanelTabIndex(this); //should probably be the same as TAB_POSITION but might not be
+        if (tabIndex != -1) {
+            igbService.openPreferencesPanelTab(tabIndex);
+        }
+    }
+
+    private void initializeSelectionListener() {
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                ListSelectionModel lsm = (ListSelectionModel) event.getSource();
+                tableModel.setSelectedRow(lsm.getMinSelectionIndex());
+            }
+        });
+    }
+
+    private void initializeTable() {
+        table = new StyledJTable(tableModel);
 
         table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
         TableCellRenderer renderer = new DefaultTableCellRenderer() {
-
             @Override
             public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int col) {
@@ -61,12 +99,7 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
             }
         };
         table.setDefaultRenderer(String.class, renderer);
-        table.setDefaultRenderer(ServerTypeI.class, renderer);
-
         TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
-
-            private static final long serialVersionUID = -1l;
-
             @Override
             public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int col) {
@@ -80,7 +113,6 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
 
         for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements();) {
             TableColumn column = e.nextElement();
-
             switch ((String) column.getHeaderValue()) {
                 case BundleRepositoryTableModel.REFRESH_COLOMN:
                     column.setMaxWidth(20);
@@ -101,12 +133,9 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
                     break;
             }
         }
-
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(true);
-
-        return table;
     }
 
     @Reference(optional = false)
@@ -125,7 +154,7 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        pluginRepositoryTable = createTable();
+        pluginRepositoryTable = table;
         removeButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
 
@@ -177,7 +206,9 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         // TODO add your handling code here:
-
+        if (tableModel.getSelectedPluginRepository() != null) {
+            pluginRepositoryListProvider.removePluginRepository(tableModel.getSelectedPluginRepository());
+        }
     }//GEN-LAST:event_removeButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -194,7 +225,7 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
 
     @Override
     public int getTabWeight() {
-        return 6;
+        return TAB_POSITION;
     }
 
     @Override

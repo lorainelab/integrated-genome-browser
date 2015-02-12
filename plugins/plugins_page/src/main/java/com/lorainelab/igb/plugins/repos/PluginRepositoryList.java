@@ -9,6 +9,7 @@ import com.affymetrix.igb.plugins.PluginsView;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import com.lorainelab.igb.preferences.model.PluginRepository;
@@ -33,6 +34,7 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     private IgbPreferencesService igbPreferencesService;
     private final List<PluginRepository> pluginRepositories;
     private PluginsView pluginsView;
+    private BundleRepositoryTableModel bundleRepositoryTableModel;
 
     public PluginRepositoryList() {
         pluginRepositories = new ArrayList<>();
@@ -53,9 +55,10 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         loadPersistedRepos();
         pluginRepositories.stream().forEach(repo -> {
             if (repo.isEnabled()) {
-                pluginsView.repositoryAdded(repo.getUrl());
+                pluginsView.addPluginRepository(repo.getUrl());
             }
         });
+        bundleRepositoryTableModel = new BundleRepositoryTableModel(this);
     }
 
     private void loadPersistedRepos() {
@@ -100,19 +103,21 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     public void addPluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.add(pluginRepository);
         if (pluginRepository.isEnabled()) {
-            if (pluginsView.repositoryAdded(pluginRepository.getUrl())) {
+            if (pluginsView.addPluginRepository(pluginRepository.getUrl())) {
                 addRepositoryToPrefs(pluginRepository);
             } else {
                 pluginRepositories.remove(pluginRepository);
             }
         }
+        bundleRepositoryTableModel.updateRepositories(pluginRepositories);
     }
 
     @Override
     public void removePluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.remove(pluginRepository);
         removeRepositoryToPrefs(pluginRepository);
-        pluginsView.repositoryRemoved(pluginRepository.getUrl());
+        pluginsView.removePluginRepository(pluginRepository.getUrl());
+        bundleRepositoryTableModel.updateRepositories(pluginRepositories);
     }
 
     private boolean preferenceNodeExist(PluginRepository pluginRepository) {
@@ -175,9 +180,15 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     @Override
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository) {
         if (pluginRepository.isEnabled()) {
-            pluginsView.repositoryAdded(pluginRepository.getUrl());
+            pluginsView.addPluginRepository(pluginRepository.getUrl());
         } else {
-            pluginsView.repositoryRemoved(pluginRepository.getUrl());
+            pluginsView.removePluginRepository(pluginRepository.getUrl());
         }
     }
+
+    @Override
+    public BundleRepositoryTableModel getBundleRepositoryTableModel() {
+        return bundleRepositoryTableModel;
+    }
+
 }

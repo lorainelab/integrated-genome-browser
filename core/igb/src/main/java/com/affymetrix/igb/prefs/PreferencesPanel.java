@@ -100,6 +100,16 @@ public final class PreferencesPanel extends JPanel {
         }
     }
 
+    public int getTabIndex(Component component) {
+        for (int i = 0; i < tab_pane.getComponentCount(); i++) {
+            Component c = tab_pane.getComponentAt(i);
+            if (component == c) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Adds the given component as a panel to the tab pane of preference
      * editors.

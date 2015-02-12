@@ -487,4 +487,18 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         f.setAlwaysOnTop(tmp);
     }
 
+    @Override
+    public void openPreferencesPanelTab(int tabIndex) {
+        PreferencesPanel pv = PreferencesPanel.getSingleton();
+        pv.setTab(tabIndex);
+        JFrame f = pv.getFrame();
+        f.setVisible(true);
+    }
+
+    @Override
+    public int getPreferencesPanelTabIndex(Component c) {
+        PreferencesPanel pv = PreferencesPanel.getSingleton();
+        return pv.getTabIndex(c);
+    }
+
 }

@@ -29,6 +29,7 @@ import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
@@ -282,7 +283,7 @@ public final class IGB extends Application
                 JFrame frame = (JFrame) evt.getComponent();
                 String message = "Do you really want to exit?";
 
-                if (confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
+                if (ModalUtils.confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
                     try {
                         TrackStyle.autoSaveUserStylesheet();
                         Persistence.saveCurrentView(map_view);

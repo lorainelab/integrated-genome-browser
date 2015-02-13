@@ -11,6 +11,7 @@ import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.Application;
@@ -718,7 +719,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                  *
                                  */
                                 GenericServer gServer = feature.gVersion.gServer;
-                                if (gServer.useMirrorSite() && IGB.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
+                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
                                     gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
                                     feature.gVersion.getFeatures().stream().filter(gFeature -> !gFeature.isVisible() && gFeature.getMethods().isEmpty()).forEach(gFeature -> {
                                         URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL, gServer.mirrorURL));
@@ -746,7 +747,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         } else {
                             message = "Unchecking " + feature.featureName
                                     + " will remove all loaded data. \nDo you want to continue? ";
-                            if (feature.getMethods().isEmpty() || Application.confirmPanel(message,
+                            if (feature.getMethods().isEmpty() || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                                 GeneralLoadView.getLoadView().removeFeature(feature, true, false);
                             } else {

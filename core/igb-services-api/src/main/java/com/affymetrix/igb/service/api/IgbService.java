@@ -71,24 +71,6 @@ public interface IgbService {
     public void setStatus(String message);
 
     /**
-     * Shows a panel asking for the user to confirm something.
-     *
-     * @param text the message to display to the user.
-     * @return true if the user confirms, else false.
-     */
-    public boolean confirmPanel(String text);
-
-    /**
-     * Shows a panel asking for the user to confirm something.
-     */
-    public boolean confirmPanel(final String message, final String check, final boolean def_val);
-
-    /**
-     * Shows a info panel to the user.
-     */
-    public void infoPanel(final String message, final String check, final boolean def_val);
-
-    /**
      * Get the specified icon.
      *
      * @param name of the icon

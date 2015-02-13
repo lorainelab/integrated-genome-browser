@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -41,7 +42,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
         super.actionPerformed(e);
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 
-        if (IGB.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()),
+        if (ModalUtils.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()),
                 PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 
             // First split the graph.

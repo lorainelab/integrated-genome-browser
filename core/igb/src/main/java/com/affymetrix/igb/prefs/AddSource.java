@@ -13,6 +13,7 @@ import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.Component;
@@ -269,7 +270,7 @@ public class AddSource extends JFrame {
                 }
 
                 if (serverAdded) {
-                    Application.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
                     //Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
                 }/*else{
 
@@ -285,7 +286,7 @@ public class AddSource extends JFrame {
         if (server == null) {
             CThreadHolder.getInstance().execute(evt, worker);
         } else {
-            Application.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
+            ModalUtils.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
         }
 
         this.setVisible(false);

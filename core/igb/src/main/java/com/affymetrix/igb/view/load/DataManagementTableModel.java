@@ -5,6 +5,7 @@ import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.Application;
@@ -428,7 +429,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         switch (col) {
             case DELETE_FEATURE_COLUMN:
                 String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
-                if (ScriptManager.SCRIPTING.equals(value) || Application.confirmPanel(message,
+                if (ScriptManager.SCRIPTING.equals(value) || ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                     features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(gFeature -> {
                         GeneralLoadView.getLoadView().removeFeature(gFeature, true);

@@ -16,6 +16,7 @@ import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_URL;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
@@ -480,7 +481,7 @@ public final class ServerList {
 
                     //If the server was previously not available give the user the option to disable permanently
                     if (previouslyUnavailable(node)) {
-                        if (Application.confirmPanel("The Quickload site named: " + server.serverName + " is still not responding. Would you like to ignore this site from now on?")) {
+                        if (ModalUtils.confirmPanel("The Quickload site named: " + server.serverName + " is still not responding. Would you like to ignore this site from now on?")) {
                             setEnableIfAvailable(node, false);
                         }
                     } else {

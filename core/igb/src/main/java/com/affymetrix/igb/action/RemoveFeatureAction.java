@@ -4,6 +4,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -48,7 +49,7 @@ public class RemoveFeatureAction extends SeqMapViewActionA implements SymSelecti
 
         super.actionPerformed(e);
         String message = "Really remove all selected data set ?";
-        if (Application.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+        if (ModalUtils.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
             allStyles.stream().filter(style -> style.getFeature() != null).forEach(style -> {
                 GeneralLoadView.getLoadView().removeFeature(style.getFeature(), true);
             });

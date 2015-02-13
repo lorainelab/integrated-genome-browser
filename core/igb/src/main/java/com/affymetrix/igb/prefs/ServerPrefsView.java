@@ -20,6 +20,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.swing.JRPButton;
@@ -250,7 +251,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
                 + "This means all data sets currently loaded from the server will be deleted.\n"
                 + "This is useful mainly for setting up or configuring a QuickLoad site.";
 
-        return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+        return ModalUtils.confirmPanel(DataLoadPrefsView.getSingleton(),
                 message, PreferenceUtils.getTopNode(),
                 PreferenceUtils.CONFIRM_BEFORE_REFRESH,
                 PreferenceUtils.default_confirm_before_refresh);
@@ -261,7 +262,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
                 + "Disabling or removing a server will cause any"
                 + " currently loaded data from that server to be removed from IGB.\n";
 
-        return Application.confirmPanel(DataLoadPrefsView.getSingleton(),
+        return ModalUtils.confirmPanel(DataLoadPrefsView.getSingleton(),
                 message, PreferenceUtils.getTopNode(),
                 PreferenceUtils.CONFIRM_BEFORE_DELETE,
                 PreferenceUtils.default_confirm_before_delete);

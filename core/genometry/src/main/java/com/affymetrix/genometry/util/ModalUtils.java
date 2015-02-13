@@ -6,8 +6,11 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,6 +18,22 @@ import javax.swing.JOptionPane;
  * @author dcnorris
  */
 public class ModalUtils {
+
+    /**
+     * Shows a panel asking for the user to confirm something.
+     *
+     * @param comp
+     * @param message the message String to display to the user
+     * @return true if the user confirms, else false.
+     */
+    public static boolean confirmPanel(String message) {
+        return ModalUtils.confirmPanel(getActiveWindow(), message, null, null, false);
+    }
+
+    public static boolean confirmPanel(final String message, final String check,
+            final boolean def_val) {
+        return ModalUtils.confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
+    }
 
     public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
             final String check, final boolean def_val) {
@@ -68,8 +87,45 @@ public class ModalUtils {
             return JOptionPane.NO_OPTION;
         }
         return (Integer) value;
+    }
 
-        //return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
+    public static void infoPanel(final String message, final String check, final boolean def_val) {
+
+        final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+        final Object[] params = new Object[]{message, checkbox};
+        final Preferences node = PreferenceUtils.getTopNode();
+
+        //If all parameters are provided then look up for boolean value from preference.
+        final boolean b = node.getBoolean(check, def_val);
+
+        //If user has already set preference then return true.
+        if (b != def_val) {
+            return;
+        }
+
+        JOptionPane.showMessageDialog(getActiveWindow(), params, "IGB", JOptionPane.INFORMATION_MESSAGE);
+
+        if (checkbox.isSelected()) {
+            node.putBoolean(check, checkbox.isSelected() != b);
+        }
+    }
+
+    public static void infoPanel(JLabel label) {
+        label.setFont(new Font("serif", Font.PLAIN, 14));
+        JOptionPane.showMessageDialog(null, label);
+    }
+
+    public static void infoPanel(String message) {
+        JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private static Component getActiveWindow() {
+        Component comp = KeyboardFocusManager.getCurrentKeyboardFocusManager().
+                getActiveWindow();
+        if(comp == null) {
+            comp = KeyboardFocusManager.getCurrentKeyboardFocusManager().getCurrentFocusCycleRoot();
+        }
+        return comp;
     }
 
 }

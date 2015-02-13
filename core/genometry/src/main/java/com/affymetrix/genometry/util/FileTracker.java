@@ -9,20 +9,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to cache info on current directory.
  */
 public final class FileTracker {
-
+    
     public static final String CONTROL_GRAPH_DIRECTORY = "control graph directory";
     public static final String DATA_DIRECTORY = "data directory";
     public static final String OUTPUT_DIRECTORY = "output directory";
     public static final String GENOME_DIRECTORY = "genome directory";
     public static final String EXPORT_DIRECTORY = "export directory";
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(FileTracker.class);
+    
     private static List<String> FILENAMES;
-
+    
     static {
         List<String> filenames = new ArrayList<>();
         filenames.add(CONTROL_GRAPH_DIRECTORY);
@@ -32,7 +36,7 @@ public final class FileTracker {
         filenames.add(EXPORT_DIRECTORY);
         FILENAMES = Collections.unmodifiableList(filenames);
     }
-
+    
     private final String name;
 
     /**
@@ -62,11 +66,11 @@ public final class FileTracker {
      */
     public final static FileTracker EXPORT_DIR_TRACKER
             = new FileTracker(EXPORT_DIRECTORY);
-
+    
     private FileTracker(String name) {
         this.name = name;
     }
-
+    
     public void setFile(File f) {
         if (!FILENAMES.contains(name)) {
             throw new IllegalArgumentException("'" + name + "' is not a known name for a file preference");
@@ -87,7 +91,7 @@ public final class FileTracker {
         } catch (BackingStoreException bse) {
         }
     }
-
+    
     public File getFile() {
         if (!FILENAMES.contains(name)) {
             throw new IllegalArgumentException("'" + name + "' is not a known name for a file preference");
@@ -96,12 +100,12 @@ public final class FileTracker {
             PreferenceUtils.getTopNode().sync();
         } catch (BackingStoreException bse) {
         }
-        String path = PreferenceUtils.getTopNode().get(name, System.getProperty("user.dir"));
+        String path = PreferenceUtils.getTopNode().get(name, System.getProperty("user.home"));
         File f = new File(path);
         if (!f.exists()) {
             f = new File(System.getProperty("user.dir"));
         }
         return f;
     }
-
-}
+    
+        }

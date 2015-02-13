@@ -30,7 +30,7 @@ public class SeqMapViewSymSelectionListenerImpl implements SymSelectionListener 
         Object src = evt.getSource();
 
         // ignore self-generated xym selection -- already handled internally
-        if (src == this) {
+        if (src instanceof SeqMapView) {
             String title = seqMapView.getSelectionTitle(seqmap.getSelected());
             seqMapView.setSelectionStatus(title);
         } // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this

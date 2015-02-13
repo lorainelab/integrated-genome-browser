@@ -2,6 +2,7 @@ package com.affymetrix.igb;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.view.SeqMapView;
@@ -202,105 +203,19 @@ public abstract class Application {
      * @return true if the user confirms, else false.
      */
     public static boolean confirmPanel(String message) {
-        return confirmPanel(getActiveWindow(), message, null, null, false);
+        return ModalUtils.confirmPanel(getActiveWindow(), message, null, null, false);
     }
 
     public static boolean confirmPanel(final String message, final String check,
             final boolean def_val) {
-        return confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
+        return ModalUtils.confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
     }
-
-    public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
-            final String check, final boolean def_val) {
-        return confirmPanel(comp, message, node, check, def_val, "Do not show this message again");
-    }
-
-    public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
-            final String check, final boolean def_val, final String save_string) {
-        Object[] params;
-
-        //If no node is provided then show default message
-        if (node == null) {
-            params = new Object[]{message};
-            return JOptionPane.YES_OPTION == showConfirmDialog(comp, params);
-        }
-        //Large key does not work in preferences. So convert key into md5 value.
-        HashFunction hf = Hashing.md5();
-        HashCode hc = hf.newHasher().putString(check, Charsets.UTF_8).hash();
-        final String md5_check = hc.toString();
-        //If all parameters are provided then look up for boolean value from preference.
-        final boolean b = node.getBoolean(md5_check, def_val);
-
-        //If user has already set preference then return true.
-        if (b != def_val) {
-            return true;
-        }
-
-        //If preference is not set then show message with option to disable it.
-        final JCheckBox checkbox = new JCheckBox(save_string);
-        params = new Object[]{message, checkbox};
-
-        int ret = showConfirmDialog(comp, params);
-
-        if (JOptionPane.YES_OPTION == ret) {
-            if (checkbox.isSelected()) {
-                node.putBoolean(md5_check, checkbox.isSelected() != b);
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    private static int showConfirmDialog(final Component comp, Object[] params) {
-        JOptionPane pane = new JOptionPane(params, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, getSingleton().getSmallIcon());
-        javax.swing.JDialog dialog = pane.createDialog(comp, "Confirm");
-        dialog.setVisible(true);
-
-        Object value = pane.getValue();
-        if (value == null) {
-            return JOptionPane.NO_OPTION;
-        }
-        return (Integer) value;
-
-        //return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
-    }
-
-    public static void infoPanel(final String message, final String check, final boolean def_val) {
-//		if(node == null){
-//			JOptionPane.showMessageDialog(comp, message, "IGB", JOptionPane.INFORMATION_MESSAGE);
-//			return;
-//		}
-
-        final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
-        final Object[] params = new Object[]{message, checkbox};
-        final Preferences node = PreferenceUtils.getTopNode();
-
-        //If all parameters are provided then look up for boolean value from preference.
-        final boolean b = node.getBoolean(check, def_val);
-
-        //If user has already set preference then return true.
-        if (b != def_val) {
-            return;
-        }
-
-        JOptionPane.showMessageDialog(getActiveWindow(), params, "IGB", JOptionPane.INFORMATION_MESSAGE);
-
-        if (checkbox.isSelected()) {
-            node.putBoolean(check, checkbox.isSelected() != b);
-        }
-    }
-
+    
     public static void infoPanel(String message) {
         JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void infoPanel(JLabel label) {
-        label.setFont(new Font("serif", Font.PLAIN, 14));
-        JOptionPane.showMessageDialog(null, label);
-    }
-
-    private static Component getActiveWindow() {
+    public static Component getActiveWindow() {
         Component comp = FocusManager.getCurrentManager().getActiveWindow();
         if (comp == null) {
             Application app = getSingleton();

@@ -21,6 +21,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -121,7 +122,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void infoPanel(final String message, final String check, final boolean def_val) {
-        Application.infoPanel(message, check, def_val);
+        ModalUtils.infoPanel(Application.getActiveWindow(), message, check, def_val);
     }
 
     @Override

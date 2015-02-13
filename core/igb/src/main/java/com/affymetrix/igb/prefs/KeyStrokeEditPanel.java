@@ -11,6 +11,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -98,7 +99,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                             GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
                             String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
                             key_field.removeFocusListener(lois);
-                            if (!IGB.confirmPanel(KeyStrokeEditPanel.this,
+                            if (!ModalUtils.confirmPanel(KeyStrokeEditPanel.this,
                                     "This shortcut is currently in use; \n"
                                             + "reassigning this will remove the shortcut for '"
                                             + actionDisplayName + "'.\n"

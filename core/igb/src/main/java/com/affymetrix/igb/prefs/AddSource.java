@@ -13,6 +13,7 @@ import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.Component;
@@ -269,7 +270,7 @@ public class AddSource extends JFrame {
                 }
 
                 if (serverAdded) {
-                    Application.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    ModalUtils.infoPanel(Application.getActiveWindow(), "<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
                     //Application.confirmPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>");//TK
                 }/*else{
 

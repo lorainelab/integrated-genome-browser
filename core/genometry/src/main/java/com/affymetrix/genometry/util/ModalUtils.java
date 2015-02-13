@@ -6,8 +6,11 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import java.awt.Component;
+import java.awt.Font;
 import java.util.prefs.Preferences;
+import javax.swing.FocusManager;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -72,4 +75,30 @@ public class ModalUtils {
         //return JOptionPane.showConfirmDialog(comp, params, "Confirm", JOptionPane.YES_NO_OPTION);
     }
 
+    public static void infoPanel(Component comp, final String message, final String check, final boolean def_val) {
+
+        final JCheckBox checkbox = new JCheckBox("Do not show this message again.");
+        final Object[] params = new Object[]{message, checkbox};
+        final Preferences node = PreferenceUtils.getTopNode();
+
+        //If all parameters are provided then look up for boolean value from preference.
+        final boolean b = node.getBoolean(check, def_val);
+
+        //If user has already set preference then return true.
+        if (b != def_val) {
+            return;
+        }
+
+        JOptionPane.showMessageDialog(comp, params, "IGB", JOptionPane.INFORMATION_MESSAGE);
+
+        if (checkbox.isSelected()) {
+            node.putBoolean(check, checkbox.isSelected() != b);
+        }
+    }
+
+    public static void infoPanel(JLabel label) {
+        label.setFont(new Font("serif", Font.PLAIN, 14));
+        JOptionPane.showMessageDialog(null, label);
+    }
+    
 }

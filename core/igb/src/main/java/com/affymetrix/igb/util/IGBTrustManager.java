@@ -1,6 +1,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import java.security.GeneralSecurityException;
@@ -45,7 +46,7 @@ public class IGBTrustManager implements X509TrustManager {
             }
 		Application app = Application.getSingleton();
 		JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
-		boolean response = Application.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
+		boolean response = ModalUtils.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
 				PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true, "Do not show this again for the publisher above");
 
 		if (!response) {

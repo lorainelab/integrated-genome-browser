@@ -33,6 +33,7 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
@@ -1318,9 +1319,9 @@ public final class GeneralLoadUtils {
                 if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved) {
                     if (gFeature.isReferenceSequence()) {
                         JLabel label = new JLabel(GenericFeature.REFERENCE_SEQUENCE_LOAD_MESSAGE);
-                        Application.infoPanel(label);
+                        ModalUtils.infoPanel(label);
                     } else {
-                        Application.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+                        ModalUtils.infoPanel(Application.getActiveWindow(), GenericFeature.LOAD_WARNING_MESSAGE,
                                 GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
                     }
                 }

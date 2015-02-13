@@ -23,6 +23,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -405,7 +406,7 @@ public final class BookmarkUnibrowControlServlet {
         igbService.updateGeneralLoadView();
 
         if (show_message) {
-            igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+            ModalUtils.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
                     GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
         }
         return gFeatures;
@@ -439,7 +440,7 @@ public final class BookmarkUnibrowControlServlet {
 
         // Show message on how to load
         if (show_message) {
-            igbService.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
+            ModalUtils.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
                     GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
         }
 

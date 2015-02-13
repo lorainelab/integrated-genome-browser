@@ -38,6 +38,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.igb.service.api.IgbService;
@@ -136,7 +137,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         }
 
         if (vseq != igbService.getSeqMapView().getAnnotatedSeq()) {
-            boolean confirm = igbService.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"),
+            boolean confirm = ModalUtils.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"),
                     vseq.getID(), vseq.getID()), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
             if (!confirm) {
                 return BUNDLE.getString("searchCancelled");

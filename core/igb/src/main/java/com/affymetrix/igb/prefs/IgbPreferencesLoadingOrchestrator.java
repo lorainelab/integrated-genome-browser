@@ -31,7 +31,6 @@ public class IgbPreferencesLoadingOrchestrator {
     @Activate
     public void activate(BundleContext bundleContext) {
         loadIGBPrefs();
-
     }
 
     @Reference(optional = false)
@@ -100,7 +99,6 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private static void loadPreferences(Optional<IgbPreferences> igbPreferences) {
         if (igbPreferences.isPresent()) {
-//            processPluginRepositories(igbPreferences.get().getRepository());
             processDataProviders(igbPreferences.get().getDataProviders());
         }
     }

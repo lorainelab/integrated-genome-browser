@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.CustomLabelledTierMap;
@@ -36,6 +35,7 @@ import static com.affymetrix.igb.view.SeqMapView.axisFont;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.google.common.math.IntMath;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Font;
@@ -207,6 +207,9 @@ public class AnnotationStation extends javax.swing.JFrame {
         rowTextLabel = new javax.swing.JLabel();
         glyphRowTextField = new javax.swing.JTextField();
         autoLayoutCheckBox = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
+        labelSizeTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         neoMap2 = tieredMap;
         jSlider1 = tieredMap.getXzoomer();
@@ -235,17 +238,38 @@ public class AnnotationStation extends javax.swing.JFrame {
         startTextField.setText("245");
 
         addButton.setText("Add");
-        addButton.addActionListener(this::addButtonActionPerformed);
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
 
         clearButton.setText("Clear Map");
-        clearButton.addActionListener(this::clearButtonActionPerformed);
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Color");
 
         rowTextLabel.setText("Row");
 
         autoLayoutCheckBox.setText("AutoLayoutRow");
-        autoLayoutCheckBox.addActionListener(this::autoLayoutCheckBoxActionPerformed);
+        autoLayoutCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoLayoutCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Label Size");
+
+        jButton1.setText("update");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -265,24 +289,33 @@ public class AnnotationStation extends javax.swing.JFrame {
                     .addComponent(stopFieldLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(glyphRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(113, 113, 113)
-                .addComponent(typeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(colorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(clearButton)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(stopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(113, 113, 113)
+                        .addComponent(typeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(colorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(clearButton))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(glyphRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addGap(3, 3, 3)
+                        .addComponent(labelSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, startFieldLabel, stopFieldLabel);
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {startFieldLabel, stopFieldLabel});
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, startTextField, stopTextField);
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {startTextField, stopTextField});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -302,13 +335,16 @@ public class AnnotationStation extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(rowTextLabel)
                     .addComponent(glyphRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(autoLayoutCheckBox))
+                    .addComponent(autoLayoutCheckBox)
+                    .addComponent(jLabel2)
+                    .addComponent(labelSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addContainerGap(68, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, startFieldLabel, stopFieldLabel);
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {startFieldLabel, stopFieldLabel});
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, startTextField, stopTextField);
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {startTextField, stopTextField});
 
         jPanel3.setLayout(new java.awt.BorderLayout());
         jPanel3.add(neoMap2, java.awt.BorderLayout.CENTER);
@@ -324,11 +360,19 @@ public class AnnotationStation extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jCheckBox1.setText("stretchXToFit");
-        jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jCheckBox1, new java.awt.GridBagConstraints());
 
         jCheckBox2.setText("stretchYToFit");
-        jCheckBox2.addActionListener(this::jCheckBox2ActionPerformed);
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox2ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jCheckBox2, new java.awt.GridBagConstraints());
 
         jPanel3.add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -336,7 +380,11 @@ public class AnnotationStation extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(this::exitMenuItemActionPerformed);
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(exitMenuItem);
 
         jMenuBar1.add(fileMenu);
@@ -344,7 +392,11 @@ public class AnnotationStation extends javax.swing.JFrame {
         editMenu.setText("edit");
 
         addAnnotationTier.setText("addAnnotationTierGlyph");
-        addAnnotationTier.addActionListener(this::addAnnotationTierActionPerformed);
+        addAnnotationTier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addAnnotationTierActionPerformed(evt);
+            }
+        });
         editMenu.add(addAnnotationTier);
 
         jMenuBar1.add(editMenu);
@@ -429,8 +481,13 @@ public class AnnotationStation extends javax.swing.JFrame {
         glyphRowTextField.setEnabled(!autoLayoutCheckBox.isSelected());
     }//GEN-LAST:event_autoLayoutCheckBoxActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        EfficientLabelledLineGlyph.setBaseFont(new Font("Monospaced", Font.PLAIN, Integer.parseInt(labelSizeTextField.getText())));
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void addItemToAnnotationTrack(int start, int end, Class glyph_class) {
-        addPairedEndStyleGlyphSet(start, end);
+        addPairedEndStyleGlyphSet(start, end, "Test");
         tieredMap.stretchToFit(stretchXTofit, stretchYToFit);
         tieredMap.updateWidget();
     }
@@ -474,14 +531,17 @@ public class AnnotationStation extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JTextField glyphRowTextField;
+    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSlider jSlider1;
+    private javax.swing.JTextField labelSizeTextField;
     private com.affymetrix.genoviz.widget.NeoMap neoMap2;
     private javax.swing.JLabel rowTextLabel;
     private javax.swing.JLabel startFieldLabel;
@@ -586,18 +646,18 @@ public class AnnotationStation extends javax.swing.JFrame {
     }
 
     private void addSomeGlyphs() {
-        addPairedEndStyleGlyphSet(100, 200);
-        addPairedEndStyleGlyphSet(100, 250);
-        addPairedEndStyleGlyphSet(50, 90);
-        addPairedEndStyleGlyphSet(100, 150);
+        addPairedEndStyleGlyphSet(100, 200, "Label");
+        addPairedEndStyleGlyphSet(100, 250, "Longer Label");
+        addPairedEndStyleGlyphSet(50, 90, "abc");
+        addPairedEndStyleGlyphSet(100, 150, "abcdef");
     }
 
-    private void addPairedEndStyleGlyphSet(int start, int end) {
-        addPairedEndStyleGlyphSet(start, end, -1);
+    private void addPairedEndStyleGlyphSet(int start, int end, String label) {
+        addPairedEndStyleGlyphSet(start, end, -1, label);
     }
 
     //assumes forwardness for the moment
-    private void addPairedEndStyleGlyphSet(int start, int end, int offsetRows) {
+    private void addPairedEndStyleGlyphSet(int start, int end, int offsetRows, String label) {
         if (offsetRows == -1) {
             offsetRows = getOffset(start, end);
         }
@@ -607,7 +667,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         int halfWidth = IntMath.divide(width, 2, RoundingMode.UP);
         tieredMap.getFactory().setGlyphtype(EfficientLabelledLineGlyph.class);
         EfficientLabelledLineGlyph labelGlyph = (EfficientLabelledLineGlyph) tieredMap.getFactory().makeGlyph(start, end);
-        labelGlyph.setLabel("Label");
+        labelGlyph.setLabel(label);
         labelGlyph.setLabelLocation(NORTH);
         offsetRows = 25 + (25 * offsetRows);
         labelGlyph.setCoords(start, DEFAULT_ANNOTATION_TRACK_HEIGHT - offsetRows, width, annotationTierGlyph.getChildHeight());

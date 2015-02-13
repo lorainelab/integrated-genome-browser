@@ -4,6 +4,7 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
@@ -44,7 +45,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
             message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().featureName + " data set?";
         }
 
-        if (Application.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
+        if (ModalUtils.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
 
             super.actionPerformed(e);
             // First split the graph.

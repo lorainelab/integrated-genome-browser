@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.genometry.util.ModalUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -33,7 +33,7 @@ public class ClearAllAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        if (IGB.confirmPanel("Really clear entire view?")) {
+        if (ModalUtils.confirmPanel("Really clear entire view?")) {
             //IGB.getSingleton().getMapView().clear();
         }
     }

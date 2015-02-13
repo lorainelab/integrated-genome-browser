@@ -984,7 +984,7 @@ public final class GeneralLoadUtils {
                 }
 
                 GeneralLoadView.getLoadView().setShowLoadingConfirm(!check);
-                return !(Application.confirmPanel(message,
+                return !(ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
             }
         }
@@ -1284,7 +1284,7 @@ public final class GeneralLoadUtils {
             }
 
             private boolean removeFeature(String msg) {
-                if (Application.confirmPanel(msg)) {
+                if (ModalUtils.confirmPanel(msg)) {
                     if (gFeature.gVersion.removeFeature(gFeature)) {
                         SeqGroupView.getInstance().refreshTable();
                     }
@@ -1321,7 +1321,7 @@ public final class GeneralLoadUtils {
                         JLabel label = new JLabel(GenericFeature.REFERENCE_SEQUENCE_LOAD_MESSAGE);
                         ModalUtils.infoPanel(label);
                     } else {
-                        ModalUtils.infoPanel(Application.getActiveWindow(), GenericFeature.LOAD_WARNING_MESSAGE,
+                        ModalUtils.infoPanel(GenericFeature.LOAD_WARNING_MESSAGE,
                                 GenericFeature.show_how_to_load, GenericFeature.default_show_how_to_load);
                     }
                 }
@@ -1331,7 +1331,7 @@ public final class GeneralLoadUtils {
     }
 
     private static boolean removeFeatureAndRefresh(GenericFeature gFeature, String msg) {
-        if (Application.confirmPanel(msg)) {
+        if (ModalUtils.confirmPanel(msg)) {
             GeneralLoadView.getLoadView().removeFeature(gFeature, true);
             return true;
         }
@@ -1427,7 +1427,7 @@ public final class GeneralLoadUtils {
             GenericVersion newVersion = getLocalFilesVersion(loadGroup, loadGroup.getOrganism());
             if (GenometryModel.getInstance().getSelectedSeqGroup() == null
                     || version == newVersion
-                    || Application.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
+                    || ModalUtils.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
                                     version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
                             PreferenceUtils.CONFIRM_BEFORE_GROUP_CHANGE,
                             PreferenceUtils.default_confirm_before_group_change)) {

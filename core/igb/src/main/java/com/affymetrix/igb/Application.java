@@ -2,17 +2,10 @@ package com.affymetrix.igb;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
-import javax.swing.FocusManager;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +32,7 @@ public abstract class Application {
             removeStatusAlert((StatusAlert) e.getSource());
         }
     };
+
     private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
     ActionListener update_status_bar = ae -> {
         synchronized (progressStringList) {
@@ -196,31 +186,4 @@ public abstract class Application {
         status_bar.showError(title, message, actions, level);
     }
 
-    /**
-     * Shows a panel asking for the user to confirm something.
-     *
-     * @param message the message String to display to the user
-     * @return true if the user confirms, else false.
-     */
-    public static boolean confirmPanel(String message) {
-        return ModalUtils.confirmPanel(getActiveWindow(), message, null, null, false);
-    }
-
-    public static boolean confirmPanel(final String message, final String check,
-            final boolean def_val) {
-        return ModalUtils.confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
-    }
-    
-    public static void infoPanel(String message) {
-        JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public static Component getActiveWindow() {
-        Component comp = FocusManager.getCurrentManager().getActiveWindow();
-        if (comp == null) {
-            Application app = getSingleton();
-            comp = (app == null) ? null : app.getFrame().getRootPane();
-        }
-        return comp;
-    }
 }

@@ -112,17 +112,17 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public boolean confirmPanel(String text) {
-        return Application.confirmPanel(text);
+        return ModalUtils.confirmPanel(text);
     }
 
     @Override
     public boolean confirmPanel(final String message, final String check, final boolean def_val) {
-        return Application.confirmPanel(message, check, def_val);
+        return ModalUtils.confirmPanel(message, check, def_val);
     }
 
     @Override
     public void infoPanel(final String message, final String check, final boolean def_val) {
-        ModalUtils.infoPanel(Application.getActiveWindow(), message, check, def_val);
+        ModalUtils.infoPanel(message, check, def_val);
     }
 
     @Override

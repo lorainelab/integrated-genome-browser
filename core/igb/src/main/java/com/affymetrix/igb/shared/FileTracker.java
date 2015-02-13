@@ -1,7 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.PreferenceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,8 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used to cache info on current directory.
@@ -22,8 +18,6 @@ public final class FileTracker {
     public static final String OUTPUT_DIRECTORY = "output directory";
     public static final String GENOME_DIRECTORY = "genome directory";
     public static final String EXPORT_DIRECTORY = "export directory";
-    
-    private static final Logger logger = LoggerFactory.getLogger(FileTracker.class);
     
     private static List<String> FILENAMES;
     

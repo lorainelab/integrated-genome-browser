@@ -10,6 +10,8 @@ import com.affymetrix.igb.general.ServerList;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.DataProvider;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +64,7 @@ public class IgbPreferencesLoadingOrchestrator {
                         break;
                     }
                 }
-                if (!nodeRemoved) {
+                if (!nodeRemoved && isValidUrl(url)) {
                     DataProvider dataProvider = new DataProvider();
                     dataProvider.setUrl(url);
                     dataProvider.setDefault(Boolean.FALSE.toString());
@@ -73,13 +75,22 @@ public class IgbPreferencesLoadingOrchestrator {
                     dataProvider.setType(node.get("type", ""));
                     dataProvider.setPassword(node.get("password", ""));
                     ServerList.getServerInstance().addServer(dataProvider);
-                    node.removeNode();
                 }
+                node.removeNode();
             }
         } catch (BackingStoreException ex) {
             logger.error("Error migrating old datasource providers to new format", ex);
         }
 
+    }
+
+    private boolean isValidUrl(String url) {
+        try {
+            URL testUrl = new URL(url);
+            return true;
+        } catch (MalformedURLException ex) {
+            return false;
+        }
     }
 
     private void loadDefaultPrefs() {

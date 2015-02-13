@@ -140,7 +140,10 @@ public final class LoadFileAction extends OpenURIAction {
         super.actionPerformed(e);
         
         FileDialog fileChooser = new FileDialog(igbService.getFrame());
-        File currDir = new File(System.getProperty("user.home"));
+        File currDir = load_dir_tracker.getFile();
+        if (currDir == null) {
+            currDir = new File(System.getProperty("user.home"));
+        }
         fileChooser.setDirectory(currDir.getAbsolutePath());
         fileChooser.setMultipleMode(true);
         

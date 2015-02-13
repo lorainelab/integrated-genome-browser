@@ -132,15 +132,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         eventBus.register(this);
     }
 
-//    @Subscribe
-//    public void pluginRepositoryAdded(PluginRepositoryAddedEvent addEvent) {
-//        addPluginRepository(addEvent.addedRepository.getUrl());
-//    }
-//
-//    @Subscribe
-//    public void pluginRepositoryRemoved(PluginRepositoryRemovedEvent removedEvent) {
-//        removePluginRepository(removedEvent.removedRepository.getUrl());
-//    }
     private void initializeDefaultBundleFilter() {
         defaultBundles.addAll(Arrays.asList(bundleContext.getBundles()));
         DEFAULT_BUNDLES = (Bundle bundle) -> !defaultBundles.contains(bundle);

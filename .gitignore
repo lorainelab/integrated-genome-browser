@@ -84,7 +84,6 @@ www/release_notes/images/Thumbs.db
 .gradle/1.12/
 /developmentPlugins/NCBIPrimer/target/
 /plugins/PairedEndDataPreprocessor/target/
-.ant-targets-build.xml
 /plugins/IGBR/target/
 extbundles/*
 /plugins/ConsoleGui/target/

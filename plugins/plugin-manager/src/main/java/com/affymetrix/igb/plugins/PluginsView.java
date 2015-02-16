@@ -8,9 +8,6 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.MenuUtil;
@@ -18,6 +15,10 @@ import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
+import com.lorainelab.igb.preferences.model.PluginRepository;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanelI;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -35,7 +36,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.swing.Box;
@@ -106,7 +106,8 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
     private HashMap< String, Bundle> latest;
     private BundleFilter bundleFilter;
-    List< Bundle> defaultBundles;
+    private List<PluginRepository> externalRepositories;
+    private List< Bundle> defaultBundles;
     private IgbService igbService;
     private EventBus eventBus;
 
@@ -117,6 +118,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
         latest = new HashMap<>();
         defaultBundles = new ArrayList<>();
+        externalRepositories = new ArrayList<>();
     }
 
     @Activate
@@ -629,7 +631,8 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         this.bundleFilter = bundleFilter;
     }
 
-    public boolean addPluginRepository(final String url) {
+    public boolean addPluginRepository(PluginRepository pluginRepository) {
+        String url = pluginRepository.getUrl();
         if (defaultBundles.isEmpty()) {
             initializeDefaultBundleFilter();
         }
@@ -638,6 +641,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
             protected Void runInBackground() {
                 try {
                     repoAdmin.addRepository(new URL(url + REPOSITORY_XML_FILE_PATH));
+                    externalRepositories.add(pluginRepository);
                     setRepositoryBundles();
                     reloadBundleTable();
                 } catch (ConnectException x) {
@@ -661,9 +665,11 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     }
     private static final String REPOSITORY_XML_FILE_PATH = "/repository.xml";
 
-    public void removePluginRepository(String url) {
+    public void removePluginRepository(PluginRepository pluginRepository) {
+        String url = pluginRepository.getUrl();
         try {
             repoAdmin.removeRepository(new URL(url + REPOSITORY_XML_FILE_PATH).toURI().toString());
+            externalRepositories.remove(pluginRepository);
         } catch (MalformedURLException | URISyntaxException ex) {
             logger.error("Error removing repository.", ex);
         }
@@ -687,28 +693,27 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         if (bundle != null) {
             String location = bundle.getLocation();
             if (location != null) {
-                Map< String, String> repositories = igbService.getRepositoryChangerHolder().getRepositories();
-                for (String name : repositories.keySet()) {
-                    if (location.startsWith(repositories.get(name)) && ("".equals(repository) || repositories.get(name).length() > repositories.get(repository).length())) {
-                        repository = name;
+                for (PluginRepository repo : externalRepositories) {
+                    if (location.startsWith(repo.getUrl())) {
+                        repository = repo.getName();
                     }
                 }
 
                 // The 'Repository' column in 'Plug-ins' tab will be set to empty after plug-in installed
                 // The following code is trying to find the installed bundles in repository by comparing the symbolic name and version,
                 // use the name from repository for 'Repository' column if a matched record found
-                if (repository.length() == 0) {
+                if (repository.isEmpty()) {
                     for (Bundle b : repositoryBundles) {
                         if (b != null && b.getLocation() != null && bundle.getSymbolicName().equals(b.getSymbolicName()) && bundle.getVersion().equals(b.getVersion())) {
-                            for (String name : repositories.keySet()) {
-                                if (b.getLocation().startsWith(repositories.get(name)) && ("".equals(repository) || repositories.get(name).length() > repositories.get(repository).length())) {
-                                    repository = name;
+                            for (PluginRepository repo : externalRepositories) {
+                                String repoUrl = repo.getUrl();
+                                if (b.getLocation().startsWith(repoUrl)) {
+                                    repository = repo.getName();
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
         return repository;

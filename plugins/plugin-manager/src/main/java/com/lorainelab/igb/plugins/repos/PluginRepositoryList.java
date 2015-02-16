@@ -55,7 +55,7 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         loadPersistedRepos();
         pluginRepositories.stream().forEach(repo -> {
             if (repo.isEnabled()) {
-                pluginsView.addPluginRepository(repo.getUrl());
+                pluginsView.addPluginRepository(repo);
             }
         });
         bundleRepositoryTableModel = new BundleRepositoryTableModel(this);
@@ -103,7 +103,7 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     public void addPluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.add(pluginRepository);
         if (pluginRepository.isEnabled()) {
-            if (pluginsView.addPluginRepository(pluginRepository.getUrl())) {
+            if (pluginsView.addPluginRepository(pluginRepository)) {
                 addRepositoryToPrefs(pluginRepository);
             } else {
                 pluginRepositories.remove(pluginRepository);
@@ -116,7 +116,7 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     public void removePluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.remove(pluginRepository);
         removeRepositoryToPrefs(pluginRepository);
-        pluginsView.removePluginRepository(pluginRepository.getUrl());
+        pluginsView.removePluginRepository(pluginRepository);
         bundleRepositoryTableModel.updateRepositories(pluginRepositories);
     }
 
@@ -180,9 +180,9 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     @Override
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository) {
         if (pluginRepository.isEnabled()) {
-            pluginsView.addPluginRepository(pluginRepository.getUrl());
+            pluginsView.addPluginRepository(pluginRepository);
         } else {
-            pluginsView.removePluginRepository(pluginRepository.getUrl());
+            pluginsView.removePluginRepository(pluginRepository);
         }
     }
 

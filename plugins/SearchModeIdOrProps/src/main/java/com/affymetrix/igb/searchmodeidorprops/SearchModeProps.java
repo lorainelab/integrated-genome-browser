@@ -3,11 +3,12 @@ package com.affymetrix.igb.searchmodeidorprops;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
 
-@Component(name = SearchModeProps.COMPONENT_NAME, provide = ISearchModeSym.class, immediate = true)
+@Component(name = SearchModeProps.COMPONENT_NAME, provide = ISearchMode.class, immediate = true)
 public class SearchModeProps extends SearchModeIDOrProps implements ISearchModeSym {
 
     public static final String COMPONENT_NAME = "SearchModeProps";

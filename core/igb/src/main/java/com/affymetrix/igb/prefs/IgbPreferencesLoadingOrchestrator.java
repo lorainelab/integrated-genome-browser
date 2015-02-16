@@ -79,6 +79,8 @@ public class IgbPreferencesLoadingOrchestrator {
             }
         } catch (BackingStoreException ex) {
             logger.error("Error migrating old datasource providers to new format", ex);
+        } catch (IllegalStateException ex) {
+            //do nothing for node already removed illegalstateexceptions
         }
 
     }

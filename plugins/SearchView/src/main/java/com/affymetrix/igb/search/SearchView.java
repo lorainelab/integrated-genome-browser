@@ -2,63 +2,83 @@ package com.affymetrix.igb.search;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import javax.swing.*;
-import java.awt.Dimension;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-import javax.swing.table.TableColumn;
-
-import com.affymetrix.common.ExtensionPointHandler;
-
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.thread.CThreadEvent;
-import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericServerInitEvent;
 import com.affymetrix.genometry.event.GenericServerInitListener;
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.igb.shared.SearchListener;
-import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
+import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
-import com.affymetrix.genometry.util.Constants;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.ThreadUtils;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.thread.CThreadEvent;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadListener;
 import com.affymetrix.genometry.thread.CThreadWorker;
-
+import com.affymetrix.genometry.util.Constants;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.CCPUtils;
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
-import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.swing.JRPCheckBox;
-import com.affymetrix.igb.swing.JRPTable;
-import com.affymetrix.igb.swing.JRPTextField;
-
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
+import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.igb.shared.SearchResults;
+import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPCheckBox;
+import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.affymetrix.igb.swing.JRPTable;
+import com.affymetrix.igb.swing.JRPTextField;
+import com.affymetrix.igb.swing.MenuUtil;
 import com.jidesoft.hints.ListDataIntelliHints;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanelI;
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 
 @aQute.bnd.annotation.component.Component(name = SearchView.COMPONENT_NAME, provide = {IgbTabPanelI.class, SearchListener.class, GenericServerInitListener.class})
 public final class SearchView extends IgbTabPanel implements
@@ -356,7 +376,6 @@ public final class SearchView extends IgbTabPanel implements
         searchButton.addActionListener(searchAction);
         clearButton.addActionListener(clearAction);
         optionCheckBox.addItemListener(itemListener);
-        searchModes.add(new SearchModeResidue(igbService));
     }
 
     @Reference(optional = false)
@@ -444,13 +463,13 @@ public final class SearchView extends IgbTabPanel implements
         });
     }
 
-    public void removeSearchModeService(ISearchModeSym searchMode) {
+    public void removeSearchModeService(ISearchMode searchMode) {
         searchModes.remove(searchMode);
         initSearchCB();
     }
 
     @Reference(multiple = true, optional = true, unbind = "removeSearchModeService")
-    public void addSearchModeService(ISearchModeSym searchMode) {
+    public void addSearchModeService(ISearchMode searchMode) {
         searchModes.add(searchMode);
         initSearchCB();
     }

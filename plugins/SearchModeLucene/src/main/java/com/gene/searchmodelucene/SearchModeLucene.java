@@ -1,13 +1,6 @@
 package com.gene.searchmodelucene;
 
 import aQute.bnd.annotation.component.Component;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Fieldable;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -17,11 +10,18 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Fieldable;
 
-@Component(name = SearchModeLucene.COMPONENT_NAME, immediate = true)
+@Component(name = SearchModeLucene.COMPONENT_NAME, immediate = true, provide = ISearchMode.class)
 public class SearchModeLucene implements ISearchModeSym {
 
     public static final String COMPONENT_NAME = "SearchModeLucene";

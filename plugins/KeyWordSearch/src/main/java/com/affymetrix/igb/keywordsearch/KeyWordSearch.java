@@ -5,6 +5,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
  *
  * @author hiralv
  */
-@Component(name = KeyWordSearch.COMPONENT_NAME, provide = ISearchModeSym.class, immediate = true)
+@Component(name = KeyWordSearch.COMPONENT_NAME, provide = ISearchMode.class, immediate = true)
 public class KeyWordSearch implements ISearchModeSym {
 
     public static final String COMPONENT_NAME = "KeyWordSearch";

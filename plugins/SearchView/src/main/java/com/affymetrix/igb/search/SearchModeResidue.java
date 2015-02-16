@@ -1,23 +1,8 @@
 package com.affymetrix.igb.search;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -41,14 +26,33 @@ import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.lorainelab.igb.service.api.IgbService;
+import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
+import com.lorainelab.igb.service.api.IgbService;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
-public class SearchModeResidue implements ISearchModeExtended,
-        SeqMapRefreshed, SeqSelectionListener {
+@Component(name = SearchModeResidue.COMPONENT_NAME, immediate = true, provide = ISearchMode.class)
+public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, SeqSelectionListener {
 
+    public static final String COMPONENT_NAME = "SearchModeResidue";
     private static final int SEARCH_ALL_ORDINAL = 3;
     private static final String CONFIRM_BEFORE_SEQ_CHANGE = "Confirm before sequence change";
     private static final boolean default_confirm_before_seq_change = true;
@@ -112,11 +116,15 @@ public class SearchModeResidue implements ISearchModeExtended,
         }
     };
 
-    public SearchModeResidue(IgbService igbService) {
-        super();
-        this.igbService = igbService;
+    @Activate
+    public void activate() {
         igbService.getSeqMapView().addToRefreshList(this);
         gmodel.addSeqSelectionListener(this);
+    }
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 
     public String checkInput(String search_text, final BioSeq vseq, final String seq) {

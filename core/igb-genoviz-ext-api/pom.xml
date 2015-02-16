@@ -14,7 +14,7 @@
     <packaging>bundle</packaging>
 
 
-    <name>IGB Genoviz Extensions Api</name>
+    <name>IGB Genoviz Extensions</name>
 
     <dependencies>
         <dependency>

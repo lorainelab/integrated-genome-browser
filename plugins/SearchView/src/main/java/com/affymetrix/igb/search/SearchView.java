@@ -46,9 +46,9 @@ import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTable;
 import com.affymetrix.igb.swing.JRPTextField;
 
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IgbTabPanelI;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.ISearchHints;
 import com.affymetrix.igb.shared.ISearchMode;
 import com.affymetrix.igb.shared.ISearchModeExtended;

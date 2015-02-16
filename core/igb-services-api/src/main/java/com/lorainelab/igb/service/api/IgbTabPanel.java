@@ -1,4 +1,4 @@
-package com.affymetrix.igb.service.api;
+package com.lorainelab.igb.service.api;
 
 import java.awt.Container;
 import java.awt.Rectangle;

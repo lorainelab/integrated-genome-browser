@@ -1,4 +1,4 @@
-package com.affymetrix.igb.service.api;
+package com.lorainelab.igb.service.api;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.SeqSpan;

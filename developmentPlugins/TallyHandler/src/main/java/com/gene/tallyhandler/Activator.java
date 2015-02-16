@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
+import com.lorainelab.igb.service.api.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends SimpleServiceRegistrar implements BundleActivator {

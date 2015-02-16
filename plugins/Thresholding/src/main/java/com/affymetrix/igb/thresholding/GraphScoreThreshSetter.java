@@ -18,7 +18,7 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.genometry.operator.Operator;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;

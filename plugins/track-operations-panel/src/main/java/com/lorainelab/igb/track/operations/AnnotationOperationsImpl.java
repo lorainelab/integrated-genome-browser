@@ -10,7 +10,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import java.util.ArrayList;
 import java.util.List;

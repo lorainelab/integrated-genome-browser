@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
-import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
+import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

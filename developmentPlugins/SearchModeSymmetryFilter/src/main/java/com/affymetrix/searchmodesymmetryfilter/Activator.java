@@ -4,8 +4,8 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.genometry.filter.SymmetryFilterProps;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.XServiceRegistrar;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import org.osgi.framework.BundleContext;
 

@@ -12,8 +12,8 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Cursor;
 import java.awt.Rectangle;

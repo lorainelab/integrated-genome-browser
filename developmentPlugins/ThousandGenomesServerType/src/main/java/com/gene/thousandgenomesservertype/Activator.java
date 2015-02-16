@@ -5,8 +5,8 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {

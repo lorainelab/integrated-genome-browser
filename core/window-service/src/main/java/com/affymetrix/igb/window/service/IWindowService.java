@@ -1,7 +1,7 @@
 package com.affymetrix.igb.window.service;
 
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;

@@ -13,7 +13,7 @@ import com.affymetrix.genometry.style.SimpleTrackStyle;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 
 import static com.affymetrix.igb.shared.Selections.*;
 

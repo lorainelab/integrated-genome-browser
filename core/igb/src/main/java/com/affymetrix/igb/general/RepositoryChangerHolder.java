@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.event.RepositoryChangeListener;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
-import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
+import com.lorainelab.igb.service.api.RepositoryChangeHolderI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

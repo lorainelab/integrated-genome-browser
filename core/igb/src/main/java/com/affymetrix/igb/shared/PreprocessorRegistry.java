@@ -5,7 +5,7 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
+import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
 
 /**
  *

@@ -6,7 +6,7 @@
 package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.igb.service.api.PreferencesPanelProvider;
+import com.lorainelab.igb.service.api.PreferencesPanelProvider;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import javax.swing.JPanel;
 import org.slf4j.Logger;

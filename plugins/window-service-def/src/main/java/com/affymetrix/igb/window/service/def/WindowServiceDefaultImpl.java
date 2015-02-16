@@ -5,11 +5,11 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.service.api.IWindowRoutine;
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
-import com.affymetrix.igb.service.api.IgbTabPanelI;
-import com.affymetrix.igb.service.api.TabHolder;
+import com.lorainelab.igb.service.api.IWindowRoutine;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
+import com.lorainelab.igb.service.api.IgbTabPanelI;
+import com.lorainelab.igb.service.api.TabHolder;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
@@ -182,7 +182,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // Save the main window location
         PreferenceUtils.saveWindowLocation(frame, "main window");
 
-        tabHolders.values().forEach(com.affymetrix.igb.service.api.TabHolder::close);
+        tabHolders.values().forEach(com.lorainelab.igb.service.api.TabHolder::close);
         for (IgbTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getIGBTabPanels()) {
             PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
         }
@@ -282,7 +282,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             frame.setVisible(true);
 
             // Resize all tab holder after frame is set to visible.
-            tabHolders.values().forEach(com.affymetrix.igb.service.api.TabHolder::resize);
+            tabHolders.values().forEach(com.lorainelab.igb.service.api.TabHolder::resize);
         });
     }
 

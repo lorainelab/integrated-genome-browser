@@ -20,7 +20,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;

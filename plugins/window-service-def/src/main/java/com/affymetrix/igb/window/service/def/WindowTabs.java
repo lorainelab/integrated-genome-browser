@@ -11,9 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.TabHolder;
-import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.TabHolder;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 
 /**
  * TabHolder implementation for all tabs that are in separate popup windows

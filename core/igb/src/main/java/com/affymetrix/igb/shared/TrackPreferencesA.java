@@ -23,7 +23,7 @@ import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import static com.affymetrix.igb.shared.Selections.annotStyles;

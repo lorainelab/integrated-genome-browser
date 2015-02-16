@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.affymetrix.igb.service.api.IgbTabPanel.TabState;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 
 /**
  * JTabbedTrayPane that is on the left or right

@@ -2,7 +2,7 @@ package com.lorainelab.igb.track.operations;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.GraphGlyph;
 
 import static com.affymetrix.igb.shared.Selections.*;

@@ -17,7 +17,7 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
-import com.affymetrix.igb.service.api.PreferencesPanelProvider;
+import com.lorainelab.igb.service.api.PreferencesPanelProvider;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.swing.MenuUtil;
 import java.awt.BorderLayout;

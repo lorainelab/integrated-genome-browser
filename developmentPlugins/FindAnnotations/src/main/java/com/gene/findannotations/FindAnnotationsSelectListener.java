@@ -15,7 +15,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 
 public class FindAnnotationsSelectListener implements MouseListener {

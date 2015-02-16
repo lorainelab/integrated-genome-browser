@@ -2,8 +2,8 @@ package apollo;
 
 import apollo.analysis.NCBIPrimerBlastPane;
 import com.affymetrix.genometry.event.ContextualPopupListener;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

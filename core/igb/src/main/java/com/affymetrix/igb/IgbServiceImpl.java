@@ -31,9 +31,9 @@ import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.RepositoryChangeHolderI;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -229,7 +229,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     public void saveState() {
         ((IGB) IGB.getSingleton()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IgbTabPanel::saveSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.lorainelab.igb.service.api.IgbTabPanel::saveSession);
     }
 
     @Override
@@ -237,7 +237,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         ((IGB) IGB.getSingleton()).getWindowService().restoreState();
         SeqMapView mapView = Application.getSingleton().getMapView();
         mapView.loadSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.affymetrix.igb.service.api.IgbTabPanel::loadSession);
+        ((IGB) Application.getSingleton()).getTabs().forEach(com.lorainelab.igb.service.api.IgbTabPanel::loadSession);
     }
 
     @Override

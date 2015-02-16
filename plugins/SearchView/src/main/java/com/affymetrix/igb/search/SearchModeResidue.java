@@ -41,7 +41,7 @@ import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeExtended;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;

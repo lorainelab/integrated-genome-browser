@@ -5,7 +5,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.lorainelab.igb.track.operations.api.OperationsPanel;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyJoined;
 import javax.swing.GroupLayout;

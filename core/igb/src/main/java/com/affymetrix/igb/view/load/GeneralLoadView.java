@@ -32,7 +32,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;

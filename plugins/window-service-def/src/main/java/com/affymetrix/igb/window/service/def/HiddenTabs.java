@@ -3,8 +3,8 @@ package com.affymetrix.igb.window.service.def;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.affymetrix.igb.service.api.IgbTabPanel;
-import com.affymetrix.igb.service.api.TabHolder;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.TabHolder;
 
 /**
  * TabHolder implementation for all tabs that are hidden

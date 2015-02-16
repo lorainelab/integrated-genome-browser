@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.bookmarks.*;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;

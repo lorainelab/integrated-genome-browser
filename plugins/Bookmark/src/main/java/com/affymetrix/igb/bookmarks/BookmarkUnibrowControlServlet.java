@@ -28,7 +28,7 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;

@@ -9,7 +9,7 @@ import com.affymetrix.genometry.filter.SymmetryFilter;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;

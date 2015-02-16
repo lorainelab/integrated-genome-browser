@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.GenericActionDoneCallback;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.SequenceLoader;
 
 public class DefaultSequenceViewer extends AbstractSequenceViewer {

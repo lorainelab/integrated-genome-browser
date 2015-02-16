@@ -11,7 +11,7 @@ import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.util.ErrorHandler;
 
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 
 public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
 

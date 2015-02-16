@@ -4,7 +4,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 
 import java.awt.BorderLayout;
 import java.awt.Font;

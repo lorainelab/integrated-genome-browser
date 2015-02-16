@@ -1,4 +1,4 @@
-package com.affymetrix.igb.service.api;
+package com.lorainelab.igb.service.api;
 
 import com.affymetrix.genometry.event.RepositoryChangeListener;
 import java.util.Map;

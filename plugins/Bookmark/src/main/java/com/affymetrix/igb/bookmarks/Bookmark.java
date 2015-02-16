@@ -11,7 +11,7 @@ package com.affymetrix.igb.bookmarks;
 
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVLET_URL;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.VALID_CONTEXT_ROOT_VALUES;
-import static com.affymetrix.igb.service.api.IgbService.UTF8;
+import static com.lorainelab.igb.service.api.IgbService.UTF8;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import static com.google.common.base.Preconditions.checkNotNull;

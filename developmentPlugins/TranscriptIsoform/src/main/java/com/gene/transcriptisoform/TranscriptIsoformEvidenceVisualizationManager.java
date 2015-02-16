@@ -13,7 +13,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.event.MouseEvent;

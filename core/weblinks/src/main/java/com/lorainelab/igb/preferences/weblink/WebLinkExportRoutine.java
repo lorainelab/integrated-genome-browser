@@ -2,7 +2,7 @@ package com.lorainelab.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.igb.service.api.IWindowRoutine;
+import com.lorainelab.igb.service.api.IWindowRoutine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

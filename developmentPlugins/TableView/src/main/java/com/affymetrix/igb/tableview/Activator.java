@@ -18,7 +18,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 
-import com.affymetrix.igb.service.api.SimpleServiceRegistrar;
+import com.lorainelab.igb.service.api.SimpleServiceRegistrar;
 import org.osgi.framework.BundleContext;
 
 public class Activator extends SimpleServiceRegistrar implements BundleActivator {

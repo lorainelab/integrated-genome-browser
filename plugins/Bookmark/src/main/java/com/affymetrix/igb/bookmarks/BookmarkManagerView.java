@@ -16,7 +16,7 @@ import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.ImmutableListMultimap;
 import java.awt.Container;

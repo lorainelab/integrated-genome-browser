@@ -53,7 +53,7 @@ import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.affymetrix.igb.service.api.SeqSymmetryPreprocessorI;
+import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;

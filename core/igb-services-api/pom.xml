@@ -72,9 +72,9 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package>
-                            com.affymetrix.igb.service.api
+                            com.lorainelab.igb.service.api
                         </Export-Package>
-                        <Import-Package>*,com.affymetrix.igb;resolution:=optional</Import-Package>
+                        <Import-Package>*</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                     </instructions>
                 </configuration>

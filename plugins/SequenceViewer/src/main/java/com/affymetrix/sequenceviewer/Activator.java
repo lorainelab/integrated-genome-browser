@@ -9,8 +9,8 @@ import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.XServiceRegistrar;
 
 /**
  * @author hiralv

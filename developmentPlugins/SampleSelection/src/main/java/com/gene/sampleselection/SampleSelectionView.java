@@ -23,8 +23,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.service.api.IgbService;
-import com.affymetrix.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbTabPanel;
 
 public class SampleSelectionView extends IgbTabPanel {
 

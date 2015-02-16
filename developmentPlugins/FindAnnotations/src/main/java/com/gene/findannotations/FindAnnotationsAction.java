@@ -23,7 +23,7 @@ import javax.swing.table.TableRowSorter;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.igb.service.api.IgbService;
+import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;

@@ -3,7 +3,7 @@ package com.lorainelab.igb.preferences.weblink.action;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.igb.service.api.IgbMenuItemProvider;
+import com.lorainelab.igb.service.api.IgbMenuItemProvider;
 import com.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;

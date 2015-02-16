@@ -72,7 +72,7 @@ public class OSGiHandler {
             logger.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
         } catch (Exception ex) {
-            logger.warn("Could not create framework, plugins disabled: {}", ex.getMessage());
+            logger.warn("Could not create framework, plugins disabled: {}", ex);
         }
     }
 

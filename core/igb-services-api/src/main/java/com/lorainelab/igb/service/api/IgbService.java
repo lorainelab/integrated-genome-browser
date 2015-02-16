@@ -164,8 +164,6 @@ public interface IgbService {
 
     public List<TierGlyph> getVisibleTierGlyphs();
 
-    public RepositoryChangeHolderI getRepositoryChangerHolder();
-
     // ServerList
     public GenericServer loadServer(String server_url);
 

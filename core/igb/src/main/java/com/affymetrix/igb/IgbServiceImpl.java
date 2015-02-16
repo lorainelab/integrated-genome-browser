@@ -21,19 +21,16 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.RepositoryChangeHolderI;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -282,11 +279,6 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     @Override
     public List<TierGlyph> getVisibleTierGlyphs() {
         return ((SeqMapView) getSeqMapView()).getTierManager().getVisibleTierGlyphs();
-    }
-
-    @Override
-    public RepositoryChangeHolderI getRepositoryChangerHolder() {
-        return RepositoryChangerHolder.getInstance();
     }
 
     @Override

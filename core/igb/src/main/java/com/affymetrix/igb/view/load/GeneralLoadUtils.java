@@ -44,7 +44,6 @@ import com.affymetrix.genometry.util.Timer;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -71,7 +70,6 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -212,9 +210,6 @@ public final class GeneralLoadUtils {
         }
 
         server.setEnabled(false);
-        if (server.serverType == null) {
-            IgbServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(server.URL);
-        }
     }
 
     private static final VersionDiscoverer versionDiscoverer = new VersionDiscoverer() {

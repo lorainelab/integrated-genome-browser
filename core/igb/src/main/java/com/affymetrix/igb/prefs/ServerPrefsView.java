@@ -16,8 +16,6 @@ import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -275,9 +273,6 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
             return;
         }
 
-        if (serverList.getServer(url).serverType == null) {
-            IgbServiceImpl.getInstance().getRepositoryChangerHolder().repositoryRemoved(serverList.getServer(url).URL);
-        }
         serverList.removeServer(url);
         serverList.removeServerFromPrefs(url);	// this is done last; other methods can depend upon the preference node
     }

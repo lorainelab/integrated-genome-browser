@@ -38,6 +38,7 @@ public class WebLinkUtils implements WebLinkExporter {
     private static IgbPreferencesService igbPreferencesService;
 
     public WebLinkUtils() {
+
     }
 
     /**

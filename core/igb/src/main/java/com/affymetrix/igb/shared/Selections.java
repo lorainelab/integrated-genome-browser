@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;

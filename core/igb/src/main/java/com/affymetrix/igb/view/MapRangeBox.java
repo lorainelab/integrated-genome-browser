@@ -36,7 +36,7 @@ import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchListener;
 import com.affymetrix.igb.shared.SearchResults;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.jidesoft.hints.ListDataIntelliHints;
 import java.awt.Dimension;

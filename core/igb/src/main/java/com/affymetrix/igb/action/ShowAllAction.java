@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.RepackTiersAction;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;

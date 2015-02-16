@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions.api;
+package com.lorainelab.igb.genoviz.extensions;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 

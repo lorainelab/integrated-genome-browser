@@ -7,7 +7,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.SeqMapView;

@@ -29,7 +29,7 @@ import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.Bookmark.SYM;
 import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.google.common.base.Optional;

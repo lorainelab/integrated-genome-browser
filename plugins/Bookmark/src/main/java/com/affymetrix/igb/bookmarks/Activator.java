@@ -6,7 +6,7 @@ import com.affymetrix.igb.bookmarks.action.BookmarkActionManager;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ExportBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
-import com.lorainelab.igb.service.api.WindowManagerLifecylceHook;
+import com.lorainelab.igb.service.api.WindowServiceLifecylceHook;
 import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.service.api.IgbTabPanel;
 import com.lorainelab.igb.service.api.IgbTabPanelI;
@@ -85,8 +85,8 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 
         BookmarkActionManager.init(igbService, bookmark_menu, main_bookmark_list);
         final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
-        bundleContext.registerService(WindowManagerLifecylceHook.class.getName(),
-                new WindowManagerLifecylceHook() {
+        bundleContext.registerService(WindowServiceLifecylceHook.class.getName(),
+                new WindowServiceLifecylceHook() {
                     @Override
                     public void stop() {
                         bmark_action.autoSaveBookmarks();

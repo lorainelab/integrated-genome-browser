@@ -10,7 +10,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
 

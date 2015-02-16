@@ -13,7 +13,7 @@ import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;

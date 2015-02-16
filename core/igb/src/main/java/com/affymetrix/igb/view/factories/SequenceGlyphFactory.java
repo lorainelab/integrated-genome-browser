@@ -12,9 +12,9 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.google.common.collect.ImmutableSet;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.Set;
 
 @Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})

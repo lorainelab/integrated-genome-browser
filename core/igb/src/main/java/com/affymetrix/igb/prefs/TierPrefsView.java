@@ -17,7 +17,7 @@ import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;

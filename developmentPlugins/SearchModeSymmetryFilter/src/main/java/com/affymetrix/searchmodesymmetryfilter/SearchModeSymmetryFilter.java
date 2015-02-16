@@ -13,7 +13,7 @@ import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.ISearchModeSym;
 import com.affymetrix.igb.shared.IStatus;
 import com.affymetrix.igb.shared.SearchResults;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 

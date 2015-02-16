@@ -295,7 +295,7 @@
         </dependency>
         <dependency> 
             <groupId>com.lorainelab</groupId>
-            <artifactId>igb-genoviz-extensions-api</artifactId>
+            <artifactId>igb-genoviz-extensions</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

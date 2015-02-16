@@ -62,7 +62,7 @@
         <windows-service-version>2.0.0</windows-service-version>
         <shared-lib-wrapper-version>2.0.0</shared-lib-wrapper-version>
         <logging-config-version>1.0.0</logging-config-version>        
-        <igb-genoviz-extensions-api-version>1.0.0</igb-genoviz-extensions-api-version>
+        <igb-genoviz-extensions-version>1.0.0</igb-genoviz-extensions-version>
         <igb-preferences-version>1.0.0</igb-preferences-version>
         <weblinks-version>1.0.0</weblinks-version>
         <!-- End of included core bundle version declarations -->      
@@ -180,7 +180,7 @@
         <module>core/window-service</module>
         <module>core/shared-lib-wrapper</module>
         <module>core/logging-config</module>
-        <module>core/igb-genoviz-ext-api</module>
+        <module>core/igb-genoviz-ext</module>
         <module>core/igb-preferences</module>
         <module>core/weblinks</module>
         <module>plugins/ApolloLibrary</module>
@@ -251,7 +251,7 @@
                 <module>core/window-service</module>
                 <module>core/shared-lib-wrapper</module>
                 <module>core/logging-config</module>
-                <module>core/igb-genoviz-ext-api</module>
+                <module>core/igb-genoviz-ext</module>
                 <module>core/igb-preferences</module>
                 <module>core/weblinks</module>
                 <module>plugins/ApolloLibrary</module>
@@ -509,8 +509,8 @@
             </dependency>
             <dependency> 
                 <groupId>com.lorainelab</groupId>
-                <artifactId>igb-genoviz-extensions-api</artifactId>
-                <version>${igb-genoviz-extensions-api-version}</version>
+                <artifactId>igb-genoviz-extensions</artifactId>
+                <version>${igb-genoviz-extensions-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

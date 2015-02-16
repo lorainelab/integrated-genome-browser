@@ -23,10 +23,10 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.*;
 import static com.affymetrix.igb.shared.Selections.*;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.FORWARD;
-import static com.lorainelab.igb.genoviz.extensions.api.StyledGlyph.Direction.REVERSE;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 /**
  *

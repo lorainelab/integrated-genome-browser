@@ -66,7 +66,7 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.lorainelab.igb.service.api.WindowManagerLifecylceHook;
+import com.lorainelab.igb.service.api.WindowServiceLifecylceHook;
 import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
@@ -414,8 +414,8 @@ public class Activator implements BundleActivator {
 
     private void registerServices(final BundleContext bundleContext) {
 
-        bundleContext.registerService(WindowManagerLifecylceHook.class,
-                new WindowManagerLifecylceHook() {
+        bundleContext.registerService(WindowServiceLifecylceHook.class,
+                new WindowServiceLifecylceHook() {
                     @Override
                     public void stop() {
                         ((IGB) Application.getSingleton()).saveToolBar();

@@ -13,7 +13,7 @@ import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.JRPButton;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;

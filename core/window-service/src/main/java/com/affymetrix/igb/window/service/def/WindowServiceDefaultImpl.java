@@ -15,7 +15,7 @@ import com.lorainelab.igb.service.api.IgbTabPanel;
 import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.lorainelab.igb.service.api.TabHolder;
-import com.lorainelab.igb.service.api.WindowManagerLifecylceHook;
+import com.lorainelab.igb.service.api.WindowServiceLifecylceHook;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -54,7 +54,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private Map<TabState, TabHolder> tabHolders;
     private Map<IgbTabPanel, JMenu> tabMenus;
     private Map<JMenu, Integer> tabMenuPositions;
-    private volatile HashSet<WindowManagerLifecylceHook> stopRoutines = new HashSet<>();
+    private volatile HashSet<WindowServiceLifecylceHook> stopRoutines = new HashSet<>();
     private Container cpane;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
@@ -241,6 +241,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     private void updateMainFrame() {
         //don't show anything until a few tabs have been added to prevent flashing at startup
+        //TODO add explicit dependency on required tabs
         if (tabMenus.keySet().size() > 8) {
             showTabs();
         }
@@ -356,7 +357,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void shutdown() {
         saveWindowLocations();
-        stopRoutines.forEach(WindowManagerLifecylceHook::stop);
+        stopRoutines.forEach(WindowServiceLifecylceHook::stop);
     }
 
     @Override
@@ -429,11 +430,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     @Reference(multiple = true, unbind = "removeStopRoutine", optional = true, dynamic = true)
-    void addStopRoutine(WindowManagerLifecylceHook routine) {
+    void addStopRoutine(WindowServiceLifecylceHook routine) {
         stopRoutines.add(routine);
     }
 
-    void removeStopRoutine(WindowManagerLifecylceHook routine) {
+    void removeStopRoutine(WindowServiceLifecylceHook routine) {
         stopRoutines.remove(routine);
     }
 

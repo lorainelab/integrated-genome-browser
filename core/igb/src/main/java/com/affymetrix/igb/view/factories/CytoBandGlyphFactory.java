@@ -7,8 +7,8 @@ import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import java.util.Set;
 

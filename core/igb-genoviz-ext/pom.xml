@@ -9,8 +9,8 @@
     </parent>
 
     <groupId>com.lorainelab</groupId>
-    <artifactId>igb-genoviz-extensions-api</artifactId>
-    <version>${igb-genoviz-extensions-api-version}</version>
+    <artifactId>igb-genoviz-extensions</artifactId>
+    <version>${igb-genoviz-extensions-version}</version>
     <packaging>bundle</packaging>
 
 
@@ -46,7 +46,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Export-Package>com.lorainelab.igb.genoviz.extensions.api</Export-Package>
+                        <Export-Package>com.lorainelab.igb.genoviz.extensions</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

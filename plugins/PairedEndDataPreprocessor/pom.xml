@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
-            <artifactId>igb-genoviz-extensions-api</artifactId>
+            <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

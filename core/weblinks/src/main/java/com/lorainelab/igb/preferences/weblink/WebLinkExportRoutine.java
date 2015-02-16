@@ -2,7 +2,7 @@ package com.lorainelab.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.service.api.WindowManagerLifecylceHook;
+import com.lorainelab.igb.service.api.WindowServiceLifecylceHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = WebLinkExportRoutine.COMPONENT_NAME, immediate = true, provide = WindowManagerLifecylceHook.class)
-public class WebLinkExportRoutine implements WindowManagerLifecylceHook {
+@Component(name = WebLinkExportRoutine.COMPONENT_NAME, immediate = true, provide = WindowServiceLifecylceHook.class)
+public class WebLinkExportRoutine implements WindowServiceLifecylceHook {
 
     private static final Logger logger = LoggerFactory.getLogger(WebLinkExportRoutine.class);
     public static final String COMPONENT_NAME = "WebLinkExportRoutine";

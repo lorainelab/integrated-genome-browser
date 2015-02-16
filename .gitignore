@@ -117,3 +117,4 @@ extbundles/*
 /core/igb-preferences/target/
 /core/weblinks/target/
 /core/window-service-def/target/
+/core/igb-genoviz-ext/target/

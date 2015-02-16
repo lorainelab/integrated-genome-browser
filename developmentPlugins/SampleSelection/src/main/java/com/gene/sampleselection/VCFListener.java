@@ -24,7 +24,7 @@ import com.affymetrix.genometry.symloader.VCF;
 import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {
 

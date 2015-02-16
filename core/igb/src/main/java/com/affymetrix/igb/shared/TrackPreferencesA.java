@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.style.DynamicStyleHeatMap;
 import com.affymetrix.genometry.style.GraphState;

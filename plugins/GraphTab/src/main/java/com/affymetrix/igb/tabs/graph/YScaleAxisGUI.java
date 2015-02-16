@@ -12,7 +12,7 @@ import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.Optional;
 
 public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.RefreshSelectionListener {

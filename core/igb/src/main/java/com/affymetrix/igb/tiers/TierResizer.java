@@ -253,7 +253,7 @@ public class TierResizer extends MouseInputAdapter {
         boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 
         if (this.upperGl != null) {
-            com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.upperGl.getReferenceTier();
+            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.upperGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.upperGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()
@@ -261,7 +261,7 @@ public class TierResizer extends MouseInputAdapter {
         }
 
         if (this.lowerGl != null) {
-            com.lorainelab.igb.genoviz.extensions.api.TierGlyph gl = this.lowerGl.getReferenceTier();
+            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.lowerGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.lowerGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()

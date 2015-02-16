@@ -7,7 +7,7 @@ import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;

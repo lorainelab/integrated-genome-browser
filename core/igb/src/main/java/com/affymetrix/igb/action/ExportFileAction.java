@@ -12,7 +12,7 @@ import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ExportFileModel;
 import com.affymetrix.genometry.util.FileTypeCategoryUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.util.ArrayList;

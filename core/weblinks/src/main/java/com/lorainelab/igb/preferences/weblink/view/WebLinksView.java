@@ -7,6 +7,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.jidesoft.grid.JideTable;
 import com.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
 import com.lorainelab.igb.preferences.weblink.model.WebLink.RegexType;
@@ -48,8 +49,8 @@ import javax.swing.table.AbstractTableModel;
 public final class WebLinksView {
 
     private final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    public StyledJTable serverTable;
-    public StyledJTable localTable;
+    public JideTable serverTable;
+    public JideTable localTable;
     public WebLinksTableModel serverModel;
     public WebLinksTableModel localModel;
     private static JFileChooser static_chooser = null;

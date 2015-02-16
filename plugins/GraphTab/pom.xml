@@ -23,16 +23,6 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>thresholding</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -44,11 +34,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>window-service</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -76,6 +61,11 @@
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

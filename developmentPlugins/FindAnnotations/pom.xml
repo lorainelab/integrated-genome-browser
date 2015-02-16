@@ -16,20 +16,10 @@
 
     <name>Find Annotations</name>
 
-    <dependencies>        
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>provided</scope>
-        </dependency>    
+    <dependencies>    
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>sam-ext</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -41,7 +31,7 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>igb-services-api</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igbSwingExt</artifactId>
@@ -55,11 +45,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genometry</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>window-service</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

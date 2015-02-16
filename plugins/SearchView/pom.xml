@@ -52,11 +52,6 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
           <groupId>org.slf4j</groupId>

@@ -16,17 +16,7 @@
 
     <name>transcriptIsoForm</name>
     
-    <dependencies>        
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>provided</scope>
-        </dependency>    
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependencies>    
         <dependency>
             <groupId>net.sf</groupId>
             <artifactId>sam-ext</artifactId>
@@ -40,16 +30,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb-services-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>igb-picard</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

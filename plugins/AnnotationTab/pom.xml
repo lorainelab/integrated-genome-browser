@@ -22,27 +22,12 @@
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb-services-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>window-service</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -80,6 +65,11 @@
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

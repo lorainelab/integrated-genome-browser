@@ -16,11 +16,6 @@
     <name>Apollo Library</name>
 
     <dependencies>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -32,6 +32,11 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

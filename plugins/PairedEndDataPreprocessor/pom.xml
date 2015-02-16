@@ -75,8 +75,6 @@
                             !com.lorainelab.igb.preprocessor,
                             *
                         </Import-Package>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package/>
                         <Bundle-Description>A plugin to allow a custom visualization for paired read data from sam/bam files</Bundle-Description>
                         <Service-Component>*</Service-Component>

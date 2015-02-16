@@ -1,17 +1,13 @@
-<repository lastmodified='20150127050651.658'>
+<repository lastmodified='20150216095415.508'>
   <resource id='findAnnotations/0.0.1' symbolicname='findAnnotations' presentationname='Find Annotations' uri='/home/dcnorris/.m2/repository/com/affymetrix/findAnnotations/0.0.1/findAnnotations-0.0.1.jar' version='0.0.1'>
     <description>A simple search panel that uses all search modes</description>
-    <size>28812</size>
+    <size>28876</size>
     <capability name='bundle'>
       <p n='symbolicname' v='findAnnotations'/>
       <p n='presentationname' v='Find Annotations'/>
       <p n='version' t='version' v='0.0.1'/>
       <p n='manifestversion' v='2'/>
     </capability>
-    <capability name='service'>
-      <p n='service' v='com.affymetrix.igb.service.api.IgbTabPanelI'/>
-    </capability>
-    <require name='service' filter='(service=com.affymetrix.igb.service.api.IGBService)' extend='false' multiple='true' optional='false'>Import Service com.affymetrix.igb.service.api.IGBService</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.common)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.common;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.genometry)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.genometry;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.genometry.event)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.genometry.event;version="[2.0,3)"</require>
@@ -19,9 +15,9 @@
     <require name='package' filter='(&amp;(package=com.affymetrix.genometry.symmetry)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.genometry.symmetry;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.genometry.symmetry.impl)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.genometry.symmetry.impl;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.genoviz.bioviews)(version&gt;=1.1.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.genoviz.bioviews;version="[1.1,2)"</require>
-    <require name='package' filter='(&amp;(package=com.affymetrix.igb.service.api)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.igb.service.api;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=com.affymetrix.igb.shared)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.affymetrix.igb.shared;version="[2.0,3)"</require>
-    <require name='package' filter='(&amp;(package=com.lorainelab.igb.genoviz.extensions.api)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package com.lorainelab.igb.genoviz.extensions.api;version="[1.0,2)"</require>
+    <require name='package' filter='(&amp;(package=com.lorainelab.igb.genoviz.extensions)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))' extend='false' multiple='false' optional='false'>Import package com.lorainelab.igb.genoviz.extensions;version="[1.0,2)"</require>
+    <require name='package' filter='(&amp;(package=com.lorainelab.igb.service.api)(version&gt;=2.0.0)(!(version&gt;=3.0.0)))' extend='false' multiple='false' optional='false'>Import package com.lorainelab.igb.service.api;version="[2.0,3)"</require>
     <require name='package' filter='(&amp;(package=javax.swing))' extend='false' multiple='false' optional='false'>Import package javax.swing</require>
     <require name='package' filter='(&amp;(package=javax.swing.table))' extend='false' multiple='false' optional='false'>Import package javax.swing.table</require>
     <require name='package' filter='(&amp;(package=org.apache.commons.lang3)(version&gt;=3.1.0)(!(version&gt;=4.0.0)))' extend='false' multiple='false' optional='false'>Import package org.apache.commons.lang3;version="[3.1,4)"</require>

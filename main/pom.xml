@@ -247,11 +247,6 @@
             <scope>runtime</scope>
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
-            <artifactId>windowsServiceDef</artifactId>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency> 
             <groupId>com.lorainelab</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>       

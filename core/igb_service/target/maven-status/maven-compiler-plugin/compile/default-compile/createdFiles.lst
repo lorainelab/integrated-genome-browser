@@ -1,0 +1,11 @@
+com/affymetrix/igb/osgi/service/SimpleServiceRegistrar.class
+com/affymetrix/igb/osgi/service/IWindowRoutine.class
+com/affymetrix/igb/osgi/service/IGBService.class
+com/affymetrix/igb/osgi/service/IGBTabPanel$TabState.class
+com/affymetrix/igb/osgi/service/IGBTabPanel$SelectAction.class
+com/affymetrix/igb/osgi/service/IGBTabPanel$1.class
+com/affymetrix/igb/osgi/service/XServiceRegistrar$1.class
+com/affymetrix/igb/osgi/service/TabHolder.class
+com/affymetrix/igb/osgi/service/IGBTabPanel.class
+com/affymetrix/igb/osgi/service/XServiceRegistrar.class
+com/affymetrix/igb/osgi/service/RepositoryChangeHolderI.class

@@ -5,7 +5,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.lorainelab.igb.service.api.IWindowRoutine;
+import com.lorainelab.igb.service.api.WindowManagerLifecylceHook;
 import com.lorainelab.igb.service.api.IgbTabPanel;
 import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 import com.lorainelab.igb.service.api.IgbTabPanelI;
@@ -54,7 +54,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private Map<TabState, TabHolder> tabHolders;
     private Map<IgbTabPanel, JMenu> tabMenus;
     private Map<JMenu, Integer> tabMenuPositions;
-    private volatile HashSet<IWindowRoutine> stopRoutines = new HashSet<>();
+    private volatile HashSet<WindowManagerLifecylceHook> stopRoutines = new HashSet<>();
     private Container cpane;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
@@ -356,7 +356,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void shutdown() {
         saveWindowLocations();
-        stopRoutines.forEach(IWindowRoutine::stop);
+        stopRoutines.forEach(WindowManagerLifecylceHook::stop);
     }
 
     @Override
@@ -429,11 +429,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     @Reference(multiple = true, unbind = "removeStopRoutine", optional = true, dynamic = true)
-    void addStopRoutine(IWindowRoutine routine) {
+    void addStopRoutine(WindowManagerLifecylceHook routine) {
         stopRoutines.add(routine);
     }
 
-    void removeStopRoutine(IWindowRoutine routine) {
+    void removeStopRoutine(WindowManagerLifecylceHook routine) {
         stopRoutines.remove(routine);
     }
 

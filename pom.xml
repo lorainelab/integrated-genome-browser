@@ -90,7 +90,6 @@
         <tutorial-version>2.0.0</tutorial-version>
         <update-version>2.0.1</update-version>
         <pluginsPage-version>2.0.0</pluginsPage-version>
-        <windowsServiceDef-version>2.0.0</windowsServiceDef-version>
         <paired-data-preprocessor-version>2.0.0</paired-data-preprocessor-version>
         
         <console-gui-version>1.0.0</console-gui-version>        
@@ -206,7 +205,6 @@
         <module>plugins/Tutorial</module>
         <module>plugins/Update</module>
         <module>plugins/plugins_page</module>
-        <module>plugins/window-service-def</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
         <module>main</module>
@@ -278,7 +276,6 @@
                 <module>plugins/Tutorial</module>
                 <module>plugins/Update</module>
                 <module>plugins/plugins_page</module>
-                <module>plugins/window-service-def</module>
                 <module>plugins/PairedEndDataPreprocessor</module>                          
                 <!-- end of core modules-->
                 
@@ -496,12 +493,6 @@
                 <groupId>com.affymetrix</groupId>
                 <artifactId>pluginsPage</artifactId>
                 <version>${pluginsPage-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>windowsServiceDef</artifactId>
-                <version>${windowsServiceDef-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

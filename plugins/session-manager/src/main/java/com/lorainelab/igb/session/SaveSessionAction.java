@@ -88,7 +88,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
         try {
             igbService.saveState();
             Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
-            if (!bookmark.isPresent()) {
+            if (bookmark.isPresent()) {
                 String bk = URLEncoder.encode(bookmark.get().getURL().toString(), Charsets.UTF_8.displayName());
                 if (bk.length() < Preferences.MAX_VALUE_LENGTH) {
                     PreferenceUtils.getSessionPrefsNode().put("bookmark", bk);

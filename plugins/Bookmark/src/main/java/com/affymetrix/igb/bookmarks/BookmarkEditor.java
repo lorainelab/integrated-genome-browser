@@ -3,8 +3,8 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
+import com.google.common.base.Optional;
 import java.util.logging.Level;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -103,29 +103,23 @@ public class BookmarkEditor {
         }
 
         if (result == JOptionPane.OK_OPTION) {
-            try {
-                Bookmark bookmark = BookmarkController.getCurrentBookmark(
-                        positionDataB.isSelected(), span);
+            Optional<Bookmark> currentBookmark = BookmarkController.getCurrentBookmark(
+                    positionDataB.isSelected(), span);
 
-                if (bookmark == null) {
-                    ErrorHandler.errorPanel("Error", "Nothing to bookmark", Level.INFO);
-                    return;
-                }
-                String name = nameField.getText();
-                String comment = commentField.getText();
-
-                if (StringUtils.isBlank(name)) {
-                    name = "IGB BOOKMARK";
-                }
-                bookmark.setName(name);
-                bookmark.setComment(comment);
-                BookmarkManagerView.getSingleton().insert(new BookmarkList(bookmark));
-
-            } catch (MalformedURLException m) {
-                ErrorHandler.errorPanel("Couldn't add bookmark", m, Level.SEVERE);
-            } catch (UnsupportedEncodingException ex) {
-                ErrorHandler.errorPanel("Couldn't add bookmark", ex, Level.SEVERE);
+            if (!currentBookmark.isPresent()) {
+                ErrorHandler.errorPanel("Error", "Nothing to bookmark", Level.INFO);
+                return;
             }
+            Bookmark bookmark = currentBookmark.get();
+            String name = nameField.getText();
+            String comment = commentField.getText();
+
+            if (StringUtils.isBlank(name)) {
+                name = "IGB BOOKMARK";
+            }
+            bookmark.setName(name);
+            bookmark.setComment(comment);
+            BookmarkManagerView.getSingleton().insert(new BookmarkList(bookmark));
         }
     }
 

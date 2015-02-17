@@ -7,17 +7,17 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.bookmarks;
+package com.affymetrix.igb.bookmarks.model;
 
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVLET_URL;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.VALID_CONTEXT_ROOT_VALUES;
-import static com.lorainelab.igb.service.api.IgbService.UTF8;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import static com.lorainelab.igb.service.api.IgbService.UTF8;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
  * Holds a bookmark, which is simply a name associated with a URL.
  */
 public final class Bookmark implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(Bookmark.class);
-    
+
     public static final String SEQID = "seqid";
     public static final String VERSION = "version";
     public static final String START = "start";
@@ -62,9 +62,9 @@ public final class Bookmark implements Serializable {
      * one paramater for each of the {@link #DATA_URL} parameters given
      */
     public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
-    
+
     public static enum SYM {
-        
+
         FEATURE_URL("feature_url_"),
         METHOD("sym_method_"),
         YPOS("sym_ypos_"),
@@ -73,11 +73,11 @@ public final class Bookmark implements Serializable {
         BG("sym_bg_"),
         NAME("sym_name_");
         private String name;
-        
+
         SYM(String name) {
             this.name = name;
         }
-        
+
         @Override
         public String toString() {
             return name;
@@ -85,7 +85,7 @@ public final class Bookmark implements Serializable {
     }
 
     public static enum GRAPH {
-        
+
         FLOAT("graph_float_"),
         SHOW_LABEL("graph_show_label_"),
         SHOW_AXIS("graph_show_axis_"),
@@ -100,11 +100,11 @@ public final class Bookmark implements Serializable {
         HEATMAP("graph_heatmap_"),
         COMBO("graph_combo_");
         private String name;
-        
+
         GRAPH(String name) {
             this.name = name;
         }
-        
+
         @Override
         public String toString() {
             return name;
@@ -114,7 +114,7 @@ public final class Bookmark implements Serializable {
     private String name;
     private String comment;
     private URL url;
-    
+
     public Bookmark(String name, String comment, String url) throws MalformedURLException {
         logger.trace("Creating bookmark");
         this.name = name;
@@ -159,7 +159,7 @@ public final class Bookmark implements Serializable {
         checkNotNull(url);
         return parseParametersFromQuery(url.getQuery());
     }
-    
+
     public static ListMultimap<String, String> parseParametersFromQuery(String queryString) {
         checkNotNull(queryString);
         ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.<String, String>builder();
@@ -234,7 +234,7 @@ public final class Bookmark implements Serializable {
         sb.append(joinedResult);
         return sb.toString();
     }
-    
+
     public ListMultimap<String, String> getParameters() {
         return parseParameters(url);
     }
@@ -258,33 +258,33 @@ public final class Bookmark implements Serializable {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         return "Bookmark: '" + this.name + "' -> '" + this.url.toExternalForm() + "'";
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     public String getComment() {
         return this.comment;
     }
-    
+
     public URL getURL() {
         return this.url;
     }
-    
-    void setURL(URL url) {
+
+    public void setURL(URL url) {
         this.url = url;
     }
 }

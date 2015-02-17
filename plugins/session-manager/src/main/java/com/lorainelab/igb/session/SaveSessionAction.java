@@ -1,17 +1,17 @@
-package com.affymetrix.igb.bookmarks.action;
+package com.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.bookmarks.BookmarkManagerView;
-import com.lorainelab.igb.service.api.IgbMenuItemProvider;
-import com.lorainelab.igb.service.api.IgbService;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
+import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
+import com.lorainelab.igb.service.api.IgbMenuItemProvider;
+import com.lorainelab.igb.service.api.IgbService;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -30,15 +31,17 @@ import javax.swing.JMenuItem;
 public class SaveSessionAction extends GenericAction implements IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "SaveSessionAction";
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
+    private BookmarkService bookmarkService;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
     FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
     public SaveSessionAction() {
-        super(BookmarkManagerView.BUNDLE.getString("saveSession"), BookmarkManagerView.BUNDLE.getString("saveSessionTooltip"),
+        super(BUNDLE.getString("saveSession"), BUNDLE.getString("saveSessionTooltip"),
                 "16x16/actions/save_session.png", "22x22/actions/save_session.png",
                 KeyEvent.VK_S, null, true);
     }
@@ -84,10 +87,9 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     public void saveSession(File f) {
         try {
             igbService.saveState();
-            Bookmark bookmark = BookmarkController.getCurrentBookmark(true,
-                    igbService.getSeqMapView().getVisibleSpan());
-            if (bookmark != null) {
-                String bk = URLEncoder.encode(bookmark.getURL().toString(), Charsets.UTF_8.displayName());
+            Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
+            if (!bookmark.isPresent()) {
+                String bk = URLEncoder.encode(bookmark.get().getURL().toString(), Charsets.UTF_8.displayName());
                 if (bk.length() < Preferences.MAX_VALUE_LENGTH) {
                     PreferenceUtils.getSessionPrefsNode().put("bookmark", bk);
                 } else {
@@ -125,6 +127,11 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
+    }
+
+    @Reference
+    public void setBookmarkService(BookmarkService bookmarkService) {
+        this.bookmarkService = bookmarkService;
     }
 
     @Override

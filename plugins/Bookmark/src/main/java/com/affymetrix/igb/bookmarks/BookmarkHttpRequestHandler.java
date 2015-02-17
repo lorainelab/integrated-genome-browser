@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;

@@ -117,3 +117,4 @@ extbundles/*
 /core/window-service-def/target/
 /core/igb-genoviz-ext/target/
 /plugins/plugin-manager/target/
+/plugins/session-manager/target/

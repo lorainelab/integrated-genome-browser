@@ -95,6 +95,7 @@
         
         <console-gui-version>1.0.0</console-gui-version>        
         <main-version>2.0.0</main-version>
+        <session-manager-version>1.0.0</session-manager-version>
         <!-- End of included plugin version declarations -->
         
         <!-- Start of optional plugin version declarations -->
@@ -207,6 +208,7 @@
         <module>plugins/plugin-manager</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
+        <module>plugins/session-manager</module>
         <module>main</module>
     </modules>
 
@@ -275,7 +277,9 @@
                 <module>plugins/Tutorial</module>
                 <module>plugins/Update</module>
                 <module>plugins/plugin-manager</module>
-                <module>plugins/PairedEndDataPreprocessor</module>                          
+                <module>plugins/PairedEndDataPreprocessor</module>    
+                <module>plugins/ConsoleGui</module>
+                <module>plugins/session-manager</module>                     
                 <!-- end of core modules-->
                 
                 <!-- start of dev plugin modules-->
@@ -528,6 +532,11 @@
                 <artifactId>console-gui</artifactId>
                 <version>${console-gui-version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>session-manager</artifactId>
+                <version>${session-manager-version}</version>
             </dependency>
             <!--End of plugin module dependencies-->
             

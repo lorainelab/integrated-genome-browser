@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import java.awt.Font;
 

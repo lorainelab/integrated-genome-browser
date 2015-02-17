@@ -493,7 +493,7 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>pluginsPage</artifactId>
+                <artifactId>plugins-manager</artifactId>
                 <version>${plugin-manager-version}</version>
                 <scope>provided</scope>
             </dependency>

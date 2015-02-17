@@ -248,7 +248,7 @@
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
-            <artifactId>pluginsPage</artifactId>
+            <artifactId>plugins-manager</artifactId>
             <scope>runtime</scope>
         </dependency> 
         <dependency> 

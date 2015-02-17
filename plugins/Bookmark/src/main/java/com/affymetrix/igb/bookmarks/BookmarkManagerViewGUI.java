@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.igb.bookmarks.action.AddBookmarkAction;
 import com.affymetrix.igb.bookmarks.action.AddFolderAction;

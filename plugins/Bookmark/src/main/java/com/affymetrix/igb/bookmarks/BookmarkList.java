@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.common.CommonUtils;
 import java.io.BufferedWriter;
 import java.io.File;

@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -27,7 +28,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.bookmarks.Bookmark.SYM;
+import com.affymetrix.igb.bookmarks.model.Bookmark.SYM;
 import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;

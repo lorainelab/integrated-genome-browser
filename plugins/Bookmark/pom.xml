@@ -111,7 +111,7 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>*</Import-Package>
-                        <Export-Package/>
+                        <Export-Package>com.affymetrix.igb.bookmarks.model,com.affymetrix.igb.bookmarks.service</Export-Package>
                         <Bundle-Activator>com.affymetrix.igb.bookmarks.Activator</Bundle-Activator>                        
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>

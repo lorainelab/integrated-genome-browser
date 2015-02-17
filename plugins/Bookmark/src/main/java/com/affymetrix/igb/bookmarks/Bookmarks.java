@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.SymWithProps;

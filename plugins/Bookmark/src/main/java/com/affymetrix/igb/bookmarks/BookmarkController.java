@@ -11,7 +11,6 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.general.GenericFeature;
@@ -23,19 +22,22 @@ import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.Delegate;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.igb.bookmarks.Bookmark.GRAPH;
-import com.affymetrix.igb.bookmarks.Bookmark.SYM;
-import com.lorainelab.igb.service.api.IgbService;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
+import com.affymetrix.igb.bookmarks.model.Bookmark.GRAPH;
+import com.affymetrix.igb.bookmarks.model.Bookmark.SYM;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.lorainelab.igb.service.api.IgbService;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -60,8 +62,8 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id: BookmarkController.java 7007 2010-10-11 14:26:55Z hiralv $
  */
-public abstract class BookmarkController {
-    
+public class BookmarkController {
+
     private static final Logger logger = LoggerFactory.getLogger(BookmarkController.class);
     public static final String DEFAULT_BOOKMARK_NAME_FORMAT = "{0}, {1} : {2} - {3}";
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -291,8 +293,8 @@ public abstract class BookmarkController {
             for (GenericVersion version : group.getEnabledVersions()) {
                 version.getFeatures().stream().filter(feature -> feature.getLoadStrategy() != LoadStrategy.NO_LOAD
                         && !Delegate.EXT.equals(feature.getExtension())).forEach(feature -> {
-                    bookmark.add(feature, false);
-                });
+                            bookmark.add(feature, false);
+                        });
             }
         }
     }
@@ -453,11 +455,10 @@ public abstract class BookmarkController {
         }
     }
 
-    public static Bookmark getCurrentBookmark(boolean include_sym_and_props, SeqSpan span)
-            throws MalformedURLException, UnsupportedEncodingException {
+    public static Optional<Bookmark> getCurrentBookmark(boolean include_sym_and_props, SeqSpan span) {
         BioSeq aseq = span.getBioSeq();
         if (aseq == null) {
-            return null;
+            return Optional.absent();
         }
 
         String version = aseq.getSeqGroup().getID();
@@ -483,9 +484,15 @@ public abstract class BookmarkController {
             BookmarkController.addProperties(mark_sym);
         }
         bookmarks.set(mark_sym);
+        Bookmark bookmark = null;
+        try {
+            String url = Bookmark.constructURL(convertSymPropMapToMultiMap(mark_sym.getProperties()));
+            bookmark = new Bookmark(default_name, "", url);
+        } catch (UnsupportedEncodingException | MalformedURLException ex) {
+            logger.error("Could not create bookmark", ex);
+        }
 
-        String url = Bookmark.constructURL(convertSymPropMapToMultiMap(mark_sym.getProperties()));
-        return new Bookmark(default_name, "", url);
+        return Optional.fromNullable(bookmark);
     }
 
     private static ListMultimap<String, String> convertSymPropMapToMultiMap(Map<String, Object> symPropertyMap) {

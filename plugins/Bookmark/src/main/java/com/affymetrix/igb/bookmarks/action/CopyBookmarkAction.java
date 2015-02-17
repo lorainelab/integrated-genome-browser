@@ -7,7 +7,7 @@ package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkManagerView;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 import java.awt.Toolkit;

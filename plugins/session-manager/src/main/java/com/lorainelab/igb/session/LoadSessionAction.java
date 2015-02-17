@@ -1,22 +1,22 @@
-package com.affymetrix.igb.bookmarks.action;
+package com.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.bookmarks.BookmarkManagerView;
-import com.lorainelab.igb.service.api.IgbMenuItemProvider;
-import com.lorainelab.igb.service.api.IgbService;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
+import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
+import com.lorainelab.igb.service.api.IgbMenuItemProvider;
+import com.lorainelab.igb.service.api.IgbService;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URLDecoder;
+import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -25,14 +25,16 @@ import javax.swing.JMenuItem;
 public class LoadSessionAction extends GenericAction implements IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "LoadSessionAction";
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
+    private BookmarkService bookmarkService;
 
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
     public LoadSessionAction() {
-        super(BookmarkManagerView.BUNDLE.getString("loadSession"), BookmarkManagerView.BUNDLE.getString("openSessionTooltip"),
+        super(BUNDLE.getString("loadSession"), BUNDLE.getString("openSessionTooltip"),
                 "16x16/actions/load_session.png", "22x22/actions/load_session.png",
                 KeyEvent.VK_L, null, true);
     }
@@ -99,9 +101,15 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
         String url = URLDecoder.decode(bk_url, Charsets.UTF_8.displayName());
         if (url != null && url.trim().length() > 0) {
-            BookmarkController.viewBookmark(igbService, new Bookmark(null, "", url));
+            Bookmark bookmark = new Bookmark(null, "", url);
+            bookmarkService.loadBookmark(bookmark);
         }
         PreferenceUtils.getSessionPrefsNode().removeNode();
+    }
+
+    @Reference
+    public void setBookmarkService(BookmarkService bookmarkService) {
+        this.bookmarkService = bookmarkService;
     }
 
     @Override

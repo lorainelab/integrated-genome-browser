@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.collect.ListMultimap;
 import java.awt.Component;
 import java.awt.Font;

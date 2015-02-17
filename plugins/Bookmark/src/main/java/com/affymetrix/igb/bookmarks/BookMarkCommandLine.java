@@ -1,5 +1,6 @@
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.lorainelab.igb.service.api.IgbService;

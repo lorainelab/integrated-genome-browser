@@ -15,20 +15,10 @@
 
     <name>Session Manager</name>
     
-    <dependencies>     
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb-services-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -41,11 +31,6 @@
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -53,11 +38,6 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>
@@ -81,11 +61,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

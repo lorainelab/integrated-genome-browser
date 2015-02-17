@@ -458,7 +458,7 @@ public class BookmarkController {
     public static Optional<Bookmark> getCurrentBookmark(boolean include_sym_and_props, SeqSpan span) {
         BioSeq aseq = span.getBioSeq();
         if (aseq == null) {
-            return null;
+            return Optional.absent();
         }
 
         String version = aseq.getSeqGroup().getID();

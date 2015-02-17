@@ -129,7 +129,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
         this.igbService = igbService;
     }
 
-    @Reference
+    @Reference(optional = false)
     public void setBookmarkService(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;
     }

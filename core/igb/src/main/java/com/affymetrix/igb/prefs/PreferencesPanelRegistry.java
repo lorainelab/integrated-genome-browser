@@ -20,6 +20,6 @@ public class PreferencesPanelRegistry {
     }
 
     public void removePreferencesPanel(PreferencesPanelProvider panelProvider) {
-
+        PreferencesPanel.getSingleton().removePrefEditorComponent(panelProvider);
     }
 }

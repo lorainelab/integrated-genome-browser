@@ -17,9 +17,9 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
-import com.lorainelab.igb.service.api.PreferencesPanelProvider;
 import com.affymetrix.igb.shared.IPrefEditorComponent;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.lorainelab.igb.service.api.PreferencesPanelProvider;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -139,6 +139,10 @@ public final class PreferencesPanel extends JPanel {
                 panelProvider.refresh();
             }
         });
+    }
+
+    public void removePrefEditorComponent(PreferencesPanelProvider panelProvider) {
+        tab_pane.remove(panelProvider.getPanel());
     }
 
     public IPrefEditorComponent[] getPrefEditorComponents() {

@@ -1,6 +1,7 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -80,14 +81,6 @@ public class OSGiHandler {
         return (bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) != 0;
     }
 
-    private boolean isDevelopmentMode() {
-        String developmentMode = System.getProperty("developmentMode");
-        if (developmentMode != null && !developmentMode.isEmpty()) {
-            return System.getProperty("developmentMode").equals("true");
-        }
-        return false;
-    }
-
     private String getCacheFolder() {
         return CommonUtils.getInstance().getAppDataDirectory() + "bundles/";
     }
@@ -152,6 +145,8 @@ public class OSGiHandler {
                 configProps.put("org.apache.felix.http.jettyEnabled", "true");
                 configProps.put("felix.webconsole.username", "igbdev");
                 configProps.put("felix.webconsole.password", "igbdev");
+                //File Install Properties
+                configProps.put("felix.fileinstall.dir", "../bundles/dynamic");
             }
             configProps.put("args", argArray);
             FrameworkFactory factory = getFrameworkFactory();

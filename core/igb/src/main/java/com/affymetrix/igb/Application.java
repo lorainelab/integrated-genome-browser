@@ -44,11 +44,11 @@ public abstract class Application {
     Timer timer = new Timer(delay * 1000, update_status_bar);
 
     static Application singleton = null;
-    public final StatusBar status_bar;
+    protected final StatusBar statusBar;
 
     public Application() {
         singleton = this;
-        status_bar = new StatusBar(status_alert_listener);
+        statusBar = new StatusBar(status_alert_listener);
         loadDefaultToolbarActionsAndKeystrokeBindings();
     }
 
@@ -94,6 +94,10 @@ public abstract class Application {
         return singleton;
     }
 
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
     abstract public java.awt.Image getIcon();
 
     abstract public javax.swing.ImageIcon getSmallIcon();
@@ -131,7 +135,7 @@ public abstract class Application {
      * @param s text of the message
      */
     private synchronized void setNotLockedUpStatus(String s) {
-        status_bar.setStatus(s);
+        statusBar.setStatus(s);
     }
 
     /**
@@ -151,7 +155,7 @@ public abstract class Application {
      * @param echo Whether to echo a copy to System.out.
      */
     public final void setStatus(final String s, final boolean echo) {
-        status_bar.setStatus(s);
+        statusBar.setStatus(s);
         if (echo && s != null && !s.isEmpty()) {
             logger.info(s);
         }
@@ -177,13 +181,13 @@ public abstract class Application {
     }
 
     private synchronized void setStatusAlert(StatusAlert s) {
-        status_bar.setStatusAlert(s);
+        statusBar.setStatusAlert(s);
     }
 
     public abstract void setSelField(Map<String, Object> properties, String s, SeqSymmetry sym);
 
     public void showError(String title, String message, List<GenericAction> actions, Level level) {
-        status_bar.showError(title, message, actions, level);
+        statusBar.showError(title, message, actions, level);
     }
 
 }

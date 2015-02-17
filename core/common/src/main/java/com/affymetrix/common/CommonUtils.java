@@ -9,9 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
-
 import javax.swing.ImageIcon;
-
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,6 +223,14 @@ public class CommonUtils {
 
     public static boolean equals(String str1, String str2) {
         return str1 == null ? str2 == null : str1.equals(str2);
+    }
+
+    public static boolean isDevelopmentMode() {
+        String developmentMode = System.getProperty("developmentMode");
+        if (developmentMode != null && !developmentMode.isEmpty()) {
+            return System.getProperty("developmentMode").equals("true");
+        }
+        return false;
     }
 
 }

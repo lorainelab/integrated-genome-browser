@@ -35,8 +35,6 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
@@ -54,6 +52,8 @@ import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanelI;
 import com.lorainelab.logging.console.ConsoleLoggerGUI;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -103,8 +103,8 @@ public final class IGB extends Application
     public static final String NODE_PLUGINS = "plugins";
     private JFrame frm;
     private JMenuBar mbar;
-    private IGBToolBar tool_bar;
-    private SeqMapView map_view;
+    private IGBToolBar toolbar;
+    private SeqMapView mapView;
     private AnnotatedSeqGroup prev_selected_group = null;
     private BioSeq prev_selected_seq = null;
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
@@ -123,7 +123,7 @@ public final class IGB extends Application
 
     @Override
     public SeqMapView getMapView() {
-        return map_view;
+        return mapView;
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class IGB extends Application
         loadSynonyms("/" + Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
         loadSynonyms("/" + Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
 
-        if ("Mac OS X".equals(System.getProperty("os.name"))) {
+        if (IS_MAC) {
             MacIntegration mi = MacIntegration.getInstance();
             if (this.getIcon() != null) {
                 mi.setDockIconImage(this.getIcon());
@@ -264,10 +264,10 @@ public final class IGB extends Application
                     }
                 }
         );
-        map_view = new SeqMapView(true, "SeqMapView", getFrame());
-        gmodel.addSeqSelectionListener(map_view);
-        gmodel.addGroupSelectionListener(map_view);
-        gmodel.addSymSelectionListener(map_view.getSymSelectionListener());
+        mapView = new SeqMapView(true, "SeqMapView", getFrame());
+        gmodel.addSeqSelectionListener(mapView);
+        gmodel.addGroupSelectionListener(mapView);
+        gmodel.addSymSelectionListener(mapView.getSymSelectionListener());
 
         Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
                 new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
@@ -286,7 +286,7 @@ public final class IGB extends Application
                 if (ModalUtils.confirmPanel(message, PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting)) {
                     try {
                         TrackStyle.autoSaveUserStylesheet();
-                        Persistence.saveCurrentView(map_view);
+                        Persistence.saveCurrentView(mapView);
                         defaultCloseOperations();
                         bundleContext.getBundle(0).stop();
                         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -321,7 +321,7 @@ public final class IGB extends Application
         });
 
         GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
-        MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(map_view);
+        MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(mapView);
         checkInternetConnection();
         notifyCounter();
         openQuickStart();
@@ -392,11 +392,11 @@ public final class IGB extends Application
 
         windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
 
-        windowService.setStatusBar(status_bar);
-        if (tool_bar == null) {
-            tool_bar = new IGBToolBar();
+        windowService.setStatusBar(statusBar);
+        if (toolbar == null) {
+            toolbar = new IGBToolBar();
         }
-        windowService.setToolBar(tool_bar);
+        windowService.setToolBar(toolbar);
         windowService.setTabsMenu(mbar);
         return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), AltSpliceView.getSingleton()};
     }
@@ -406,34 +406,34 @@ public final class IGB extends Application
     }
 
     public int addToolbarAction(GenericAction genericAction) {
-        if (tool_bar == null) {
-            tool_bar = new IGBToolBar();
+        if (toolbar == null) {
+            toolbar = new IGBToolBar();
         }
-        addToolbarAction(genericAction, tool_bar.getItemCount());
+        addToolbarAction(genericAction, toolbar.getItemCount());
 
-        return tool_bar.getItemCount();
+        return toolbar.getItemCount();
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {
-        if (tool_bar == null) {
-            tool_bar = new IGBToolBar();
+        if (toolbar == null) {
+            toolbar = new IGBToolBar();
         }
-        tool_bar.addToolbarAction(genericAction, index);
+        toolbar.addToolbarAction(genericAction, index);
     }
 
     public void removeToolbarAction(GenericAction action) {
-        if (tool_bar == null) {
+        if (toolbar == null) {
             return;
         }
-        tool_bar.removeToolbarAction(action);
+        toolbar.removeToolbarAction(action);
     }
 
     void saveToolBar() {
-        if (tool_bar == null) {
+        if (toolbar == null) {
             return;
         }
 
-        tool_bar.saveToolBar();
+        toolbar.saveToolBar();
     }
 
     @Override
@@ -461,7 +461,7 @@ public final class IGB extends Application
         AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
         if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
             Persistence.saveSeqSelection(prev_selected_seq);
-            Persistence.saveSeqVisibleSpan(map_view);
+            Persistence.saveSeqVisibleSpan(mapView);
         }
         prev_selected_group = selected_group;
     }
@@ -470,7 +470,7 @@ public final class IGB extends Application
     public void seqSelectionChanged(SeqSelectionEvent evt) {
         BioSeq selected_seq = evt.getSelectedSeq();
         if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
-            Persistence.saveSeqVisibleSpan(map_view);
+            Persistence.saveSeqVisibleSpan(mapView);
         }
         prev_selected_seq = selected_seq;
         getFrame().setTitle(getTitleBar(selected_seq));
@@ -486,7 +486,7 @@ public final class IGB extends Application
 
     @Override
     public void setSelField(Map<String, Object> properties, String message, SeqSymmetry sym) {
-        tool_bar.setSelectionText(properties, message, sym);
+        toolbar.setSelectionText(properties, message, sym);
     }
 
     /**

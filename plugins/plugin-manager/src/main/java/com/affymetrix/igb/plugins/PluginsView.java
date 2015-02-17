@@ -3,6 +3,7 @@ package com.affymetrix.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -714,8 +715,12 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
                         }
                     }
                 }
+                if (repository.isEmpty() && isDevelopmentMode()) {
+                    repository = "Development Mode";
+                }
             }
         }
         return repository;
     }
+
 }

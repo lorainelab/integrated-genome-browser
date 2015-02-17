@@ -150,27 +150,7 @@
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.scr</artifactId>
                                     <version>${felix-scr-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.http.bundle</artifactId>
-                                    <version>${felix-http-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.configadmin</artifactId>
-                                    <version>${felix-configadmin-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.metatype</artifactId>
-                                    <version>${felix-metatype-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.webconsole.all</artifactId>
-                                    <version>${felix-webconsole-version}</version>
-                                </artifactItem>
+                                </artifactItem>                               
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>
                                     <artifactId>org.osgi.compendium</artifactId>
@@ -225,7 +205,34 @@
                                     <groupId>ch.qos.logback</groupId>
                                     <artifactId>logback-classic</artifactId>
                                     <version>1.1.2</version>
-                                </artifactItem>                        
+                                </artifactItem>  
+                                <!-- Start of development only bundles (i.e. they will not be included in main pom for igb_exe.jar)-->
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.http.bundle</artifactId>
+                                    <version>${felix-http-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.configadmin</artifactId>
+                                    <version>${felix-configadmin-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.metatype</artifactId>
+                                    <version>${felix-metatype-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.fileinstall</artifactId>
+                                    <version>${felix-file-install-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.webconsole.all</artifactId>
+                                    <version>${felix-webconsole-version}</version>
+                                </artifactItem>
+                                <!-- End of development only bundles -->                                                                      
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>

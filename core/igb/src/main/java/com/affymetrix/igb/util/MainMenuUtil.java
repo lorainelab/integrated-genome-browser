@@ -38,8 +38,6 @@ import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
 import com.affymetrix.igb.action.ToggleHairlineAction;
 import com.affymetrix.igb.action.ToggleHairlineLabelAction;
 import com.affymetrix.igb.action.ToggleToolTipAction;
-import com.lorainelab.igb.service.api.IgbMenuItemProvider;
-import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.DeselectAllAction;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.SelectAllAction;
@@ -47,6 +45,8 @@ import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.lorainelab.igb.service.api.IgbMenuItemProvider;
+import com.lorainelab.igb.service.api.IgbService;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -262,6 +262,7 @@ public class MainMenuUtil implements MainMenuManager {
             return;
         }
         MenuUtil.removeFromMenu(parent, igbMenuItemProvider.getMenuItem());
+        parent.revalidate();
     }
 
     private void loadTopMenu(Preferences menuPrefs) {

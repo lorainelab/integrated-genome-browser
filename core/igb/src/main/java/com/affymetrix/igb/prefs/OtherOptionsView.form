@@ -355,7 +355,7 @@
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="PreferenceUtils.createCheckBox(&quot;Display Errors on Status Bar&quot;,&#xa;    PreferenceUtils.DISPLAY_ERRORS_STATUS_BAR, PreferenceUtils.default_display_errors)"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().status_bar);&#xa;else&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="if(displayOption.isSelected())&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().getStatusBar());&#xa;else&#xa;    com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">

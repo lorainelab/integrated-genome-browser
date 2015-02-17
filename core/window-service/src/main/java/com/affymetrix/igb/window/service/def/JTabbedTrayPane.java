@@ -1,5 +1,12 @@
 package com.affymetrix.igb.window.service.def;
 
+import com.affymetrix.genometry.event.EventUtils;
+import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
+import com.lorainelab.igb.service.api.TabHolder;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -16,24 +23,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-
-import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.event.EventUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.TabHolder;
-import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 
 /**
  * TabHolder implementation for all tabs that are in a tab panel. This consists
@@ -45,24 +43,8 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     private static final long serialVersionUID = 1L;
     protected static final int MINIMUM_WIDTH = 40;
 
-    protected enum TrayState {
-
-        HIDDEN,
-        RETRACTED,
-        EXTENDED,
-        WINDOW;
-
-        /**
-         * get the default state of all trays
-         *
-         * @return the default tray state
-         */
-        public static TrayState getDefaultTrayState() {
-            return HIDDEN;
-        }
-    }
-    protected final JComponent _baseComponent;
     private static final int DIVIDER_SIZE = 8;
+    protected final JComponent _baseComponent;
     private double saveDividerProportionalLocation; // saved as percent, but implemented as pixels, due to problems with Swing
     protected final JRPTabbedPane tab_pane;
     private final TabState tabState;
@@ -73,6 +55,129 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     private boolean minSizeSet;
     private JFrame frame;
     private boolean initialized = false;
+
+    public JTabbedTrayPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
+        super(splitOrientation);
+        this._baseComponent = _baseComponent;
+        this.tabState = tabState;
+        retractDividerSet = false;
+        trayStateChangeListeners = new ArrayList<>();
+        trayState = TrayState.HIDDEN;
+        title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
+        saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
+        if (saveDividerProportionalLocation < 0) {
+            saveDividerProportionalLocation = _saveDividerProportionalLocation;
+        }
+        tab_pane = createTabbedPane(id, orientation);
+        tab_pane.addAncestorListener(
+                new AncestorListener() {
+
+                    @Override
+                    public void ancestorAdded(AncestorEvent event) {
+                    }
+
+                    @Override
+                    public void ancestorRemoved(AncestorEvent event) {
+                    }
+
+                    @Override
+                    public void ancestorMoved(AncestorEvent event) {
+                        if (trayState == TrayState.EXTENDED && initialized) {
+                            saveDividerLocation();
+                        }
+                    }
+                });
+        tab_pane.addChangeListener(e -> {
+            IgbTabPanel sel = (IgbTabPanel) tab_pane.getSelectedComponent();
+            if (sel != null) {
+                GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
+            }
+        });
+        setOneTouchExpandable(false);
+        setDividerSize(0);
+        // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
+        // pop-up menu (or any other mouse listener) on the tab handles.
+        // (A pop-up with "Open tab in a new window" would be nice.)
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
+        tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        tab_pane.setMinimumSize(new Dimension(0, 0));
+        setTabComponent();
+        tab_pane.addTab(null, null); // extend / retract
+        MouseListener[] mouseListeners = tab_pane.getMouseListeners();
+        if (mouseListeners == null) {
+        } else {
+            final MouseListener originalMouseListener = mouseListeners[0];
+            tab_pane.removeMouseListener(originalMouseListener);
+            tab_pane.addMouseListener(
+                    new MouseListener() {
+
+                        private int beforeIndex = -1;
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            originalMouseListener.mouseReleased(e);
+                            int index = tab_pane.indexAtLocation(e.getX(), e.getY());
+                            if (index > -1) {
+                                if (trayState == TrayState.EXTENDED) {
+                                    if (index == 0) {
+                                        retractTray();
+                                    }
+                                } else if (trayState == TrayState.RETRACTED) {
+                                    extendTray();
+                                }
+                            }
+                            if (index == 0) {
+                                tab_pane.setSelectedIndex(beforeIndex);
+                            } else if (EventUtils.isOurPopupTrigger(e)) {
+                                if (tab_pane.getSelectedComponent() instanceof JComponent) {
+                                    JComponent jc = (JComponent) tab_pane.getSelectedComponent();
+                                    JPopupMenu popup = jc.getComponentPopupMenu();
+                                    if (popup != null && popup.getComponentCount() > 0) {
+                                        popup.show(e.getComponent(), e.getX(), e.getY());
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            beforeIndex = tab_pane.getSelectedIndex();
+                            originalMouseListener.mousePressed(e);
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                            originalMouseListener.mouseExited(e);
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            originalMouseListener.mouseEntered(e);
+                        }
+
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            originalMouseListener.mouseClicked(e);
+                        }
+                    }
+            );
+        }
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                resize();
+            }
+//		    public void componentResized(ComponentEvent e) {
+//		    	resize();
+//		    }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                resize();
+            }
+        });
+    }
 
     /**
      * set the JTabbedPane in the JSplitPane - different for different
@@ -152,133 +257,6 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
             return;
         }
         saveDividerProportionalLocation = (double) getDividerLocation() / (double) getFullSize();
-    }
-
-    public JTabbedTrayPane(String id, TabState tabState, JComponent _baseComponent, int orientation, int splitOrientation, double _saveDividerProportionalLocation) {
-        super(splitOrientation);
-        this._baseComponent = _baseComponent;
-        this.tabState = tabState;
-        retractDividerSet = false;
-        trayStateChangeListeners = new ArrayList<>();
-        trayState = TrayState.HIDDEN;
-        title = MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("tabbedPanesTitle"), WindowServiceDefaultImpl.BUNDLE.getString(tabState.name()));
-        saveDividerProportionalLocation = PreferenceUtils.getDividerLocation(title);
-        if (saveDividerProportionalLocation < 0) {
-            saveDividerProportionalLocation = _saveDividerProportionalLocation;
-        }
-        tab_pane = createTabbedPane(id, orientation);
-        tab_pane.addAncestorListener(
-                new AncestorListener() {
-
-                    @Override
-                    public void ancestorAdded(AncestorEvent event) {
-                    }
-
-                    @Override
-                    public void ancestorRemoved(AncestorEvent event) {
-                    }
-
-                    @Override
-                    public void ancestorMoved(AncestorEvent event) {
-                        if (trayState == TrayState.EXTENDED && initialized) {
-                            saveDividerLocation();
-                        }
-                    }
-                });
-        tab_pane.addChangeListener(e -> {
-            IgbTabPanel sel = (IgbTabPanel) tab_pane.getSelectedComponent();
-            if (sel != null) {
-                GenericActionHolder.getInstance().notifyActionPerformed(sel.getSelectAction());
-            }
-        });
-
-        setOneTouchExpandable(false);
-        setDividerSize(0);
-
-        // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
-        // pop-up menu (or any other mouse listener) on the tab handles.
-        // (A pop-up with "Open tab in a new window" would be nice.)
-        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
-        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
-        tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        tab_pane.setMinimumSize(new Dimension(0, 0));
-        setTabComponent();
-        tab_pane.addTab(null, null); // extend / retract
-
-        MouseListener[] mouseListeners = tab_pane.getMouseListeners();
-        if (mouseListeners == null) {
-            System.out.println(MessageFormat.format(WindowServiceDefaultImpl.BUNDLE.getString("internalError"), this.getClass().getName()));
-        } else {
-            final MouseListener originalMouseListener = mouseListeners[0];
-            tab_pane.removeMouseListener(originalMouseListener);
-            tab_pane.addMouseListener(
-                    new MouseListener() {
-
-                        private int beforeIndex = -1;
-
-                        @Override
-                        public void mouseReleased(MouseEvent e) {
-                            originalMouseListener.mouseReleased(e);
-                            int index = tab_pane.indexAtLocation(e.getX(), e.getY());
-                            if (index > -1) {
-                                if (trayState == TrayState.EXTENDED) {
-                                    if (index == 0) {
-                                        retractTray();
-                                    }
-                                } else if (trayState == TrayState.RETRACTED) {
-                                    extendTray();
-                                }
-                            }
-                            if (index == 0) {
-                                tab_pane.setSelectedIndex(beforeIndex);
-                            } else if (EventUtils.isOurPopupTrigger(e)) {
-                                if (tab_pane.getSelectedComponent() instanceof JComponent) {
-                                    JComponent jc = (JComponent) tab_pane.getSelectedComponent();
-                                    JPopupMenu popup = jc.getComponentPopupMenu();
-                                    if (popup != null && popup.getComponentCount() > 0) {
-                                        popup.show(e.getComponent(), e.getX(), e.getY());
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                            beforeIndex = tab_pane.getSelectedIndex();
-                            originalMouseListener.mousePressed(e);
-                        }
-
-                        @Override
-                        public void mouseExited(MouseEvent e) {
-                            originalMouseListener.mouseExited(e);
-                        }
-
-                        @Override
-                        public void mouseEntered(MouseEvent e) {
-                            originalMouseListener.mouseEntered(e);
-                        }
-
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            originalMouseListener.mouseClicked(e);
-                        }
-                    }
-            );
-        }
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                resize();
-            }
-//		    public void componentResized(ComponentEvent e) {
-//		    	resize();
-//		    }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-                resize();
-            }
-        });
     }
 
     private void unWindow() {
@@ -649,5 +627,19 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
     @Override
     public String getName() {
         return title;
+    }
+
+    protected enum TrayState {
+
+        HIDDEN, RETRACTED, EXTENDED, WINDOW;
+
+        /**
+         * get the default state of all trays
+         *
+         * @return the default tray state
+         */
+        public static TrayState getDefaultTrayState() {
+            return HIDDEN;
+        }
     }
 }

@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -22,7 +21,7 @@ import javax.swing.UIManager;
 public class VerticalTextIcon implements Icon, SwingConstants {
 
     private Font font = UIManager.getFont("Label.font");
-//	private FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(font); 
+//	private FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
     private FontMetrics fm = new JLabel().getFontMetrics(font);
     private String text;
     private int width, height;
@@ -35,6 +34,7 @@ public class VerticalTextIcon implements Icon, SwingConstants {
         this.clockwize = clockwize;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g;
         Font oldFont = g.getFont();
@@ -57,10 +57,12 @@ public class VerticalTextIcon implements Icon, SwingConstants {
         g2.setTransform(oldTransform);
     }
 
+    @Override
     public int getIconWidth() {
         return height;
     }
 
+    @Override
     public int getIconHeight() {
         return width;
     }

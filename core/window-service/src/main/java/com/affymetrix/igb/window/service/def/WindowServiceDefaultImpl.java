@@ -49,7 +49,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private Map<TabState, JRPMenuItem> move_tab_to_window_items;
     private Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
-    private JRPMenu tabs_menu;
+    private JRPMenu tabsMenu;
     private JFrame frame;
     private Map<TabState, TabHolder> tabHolders;
     private Map<IgbTabPanel, JMenu> tabMenus;
@@ -133,7 +133,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public void setTabsMenu(JMenuBar mbar) {
-        this.tabs_menu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"), 5);
+        this.tabsMenu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"), 5);
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(
@@ -148,7 +148,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                         }
                 );
                 change_tab_state_item.setEnabled(false);
-                MenuUtil.addToMenu(tabs_menu, change_tab_state_item);
+                MenuUtil.addToMenu(tabsMenu, change_tab_state_item);
                 move_tab_to_window_items.put(tabState, change_tab_state_item);
             }
         }
@@ -166,12 +166,12 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                         }
                 );
                 move_tabbed_panel_to_window_item.setEnabled(false);
-                MenuUtil.addToMenu(tabs_menu, move_tabbed_panel_to_window_item);
+                MenuUtil.addToMenu(tabsMenu, move_tabbed_panel_to_window_item);
                 move_tabbed_panel_to_window_items.put(tabState, move_tabbed_panel_to_window_item);
                 trayStateChanged((JTabbedTrayPane) tabHolders.get(tabState), ((JTabbedTrayPane) tabHolders.get(tabState)).getTrayState());
             }
         }
-        tabs_menu.addSeparator();
+        tabsMenu.addSeparator();
     }
 
     /**
@@ -206,12 +206,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         if (igbTabPanel.isFocus()) {
             tabHolder.selectTab(igbTabPanel);
         }
-//		if (PreferenceUtils.getSelectedTab(tabHolder.getName()) == null && tabPanel.isFocus()) {
-//			tabHolder.selectTab(tabPanel);
-//		}
-//		else if (tabPanel.getName().equals(PreferenceUtils.getSelectedTab(tabHolder.getName()))) {
-//			tabHolder.selectTab(tabPanel);
-//		}
         JPopupMenu popup = new JPopupMenu();
         JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + igbTabPanel.getName().replaceAll(" ", "_"), igbTabPanel.getDisplayName());
         tabMenus.put(igbTabPanel, pluginMenu);
@@ -227,13 +221,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         setTabMenu(igbTabPanel);
         if (igbTabPanel.getPosition() == igbTabPanel.DEFAULT_TAB_POSITION) {
             if (!tabSeparatorSet) {
-                tabs_menu.addSeparator();
+                tabsMenu.addSeparator();
                 tabSeparatorSet = true;
             }
-            tabs_menu.add(pluginMenu);
+            tabsMenu.add(pluginMenu);
         } else {
             int menuPosition = findMenuItemPosition(igbTabPanel);
-            tabs_menu.insert(pluginMenu, menuPosition);
+            tabsMenu.insert(pluginMenu, menuPosition);
         }
         igbTabPanel.setComponentPopupMenu(popup);
         updateMainFrame();
@@ -249,11 +243,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     private int findMenuItemPosition(final IgbTabPanel tabPanel) {
         int menuPosition = 0;
-        for (int i = 0; i < tabs_menu.getItemCount(); i++) {
+        for (int i = 0; i < tabsMenu.getItemCount(); i++) {
             boolean menuPositionAvailable = isMenuPositionAvailable(tabPanel, i);
             boolean withinValidRange = isWithinValidRange(tabPanel, i);
             if (menuPositionAvailable || withinValidRange) {
-                if (tabMenuPositions.get(tabs_menu.getItem(i)) != null) {
+                if (tabMenuPositions.get(tabsMenu.getItem(i)) != null) {
                     menuPosition = i;
                     break;
                 }
@@ -263,14 +257,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     private boolean isMenuPositionAvailable(final IgbTabPanel tabPanel, int i) {
-        boolean menuPositionAvailable = tabMenuPositions.get(tabs_menu.getItem(i)) == null;
+        boolean menuPositionAvailable = tabMenuPositions.get(tabsMenu.getItem(i)) == null;
         return menuPositionAvailable;
     }
 
     private boolean isWithinValidRange(final IgbTabPanel tabPanel, int i) {
         boolean validIndex = false;
-        if (tabMenuPositions.get(tabs_menu.getItem(i)) != null) {
-            validIndex = tabPanel.getPosition() > tabMenuPositions.get(tabs_menu.getItem(i));
+        if (tabMenuPositions.get(tabsMenu.getItem(i)) != null) {
+            validIndex = tabPanel.getPosition() > tabMenuPositions.get(tabsMenu.getItem(i));
         }
         return validIndex;
     }
@@ -313,9 +307,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         for (TabState tabState : tabHolders.keySet()) {
             tabHolders.get(tabState).removeTab(igbTabPanel);
         }
-        for (java.awt.Component item : Arrays.asList(tabs_menu.getMenuComponents())) {
+        for (java.awt.Component item : Arrays.asList(tabsMenu.getMenuComponents())) {
             if (item instanceof JMenuItem && ((JMenuItem) item).getText().equals(igbTabPanel.getDisplayName())) {
-                tabs_menu.remove(item);
+                tabsMenu.remove(item);
             }
         }
 

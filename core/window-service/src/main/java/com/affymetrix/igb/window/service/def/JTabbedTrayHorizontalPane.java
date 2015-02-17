@@ -1,16 +1,14 @@
 package com.affymetrix.igb.window.service.def;
 
+import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.affymetrix.igb.swing.MenuUtil;
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 import java.awt.Component;
 import java.awt.Insets;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
-
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.JRPTabbedPane;
-import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 
 /**
  * JTabbedTrayPane that is on the left or right
@@ -18,6 +16,10 @@ import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
 
     private static final long serialVersionUID = 1L;
+
+    protected static boolean isMac() {
+        return  System.getProperty("os.name").toLowerCase().contains("mac");
+    }
     protected final Icon LEFT_ICON = MenuUtil.getIcon(getLeftIconString());
     protected final Icon RIGHT_ICON = MenuUtil.getIcon(getRightIconString());
 
@@ -56,12 +58,9 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
         return tabPane;
     }
 
-    protected static boolean isMac() {
-        return  System.getProperty("os.name").toLowerCase().contains("mac");
-    }
-
     protected abstract String getLeftIconString();
 
     protected abstract String getRightIconString();
+
 
 }

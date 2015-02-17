@@ -1,15 +1,13 @@
 package com.affymetrix.igb.window.service.def;
 
+import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-
-import com.lorainelab.igb.service.api.IgbTabPanel.TabState;
 
 /**
  * JTabbedTrayPane that is on the right
@@ -74,6 +72,7 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
         return LEFT_ICON;
     }
 
+    @Override
     protected String getLeftIconString() {
         if (isMac()) {
             return "16x16/actions/down.png";
@@ -81,6 +80,7 @@ public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
         return "16x16/actions/left.png";
     }
 
+    @Override
     protected String getRightIconString() {
         if (isMac()) {
             return "16x16/actions/up.png";

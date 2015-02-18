@@ -137,7 +137,7 @@
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="widthSpinnerStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.widthSpinner"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getWidthSpinner()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JSpinner" name="heightSpinner">
@@ -145,7 +145,7 @@
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="heightSpinnerStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.heightSpinner"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getHeightSpinner()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="resolutionLabel">
@@ -158,7 +158,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="resolutionComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.resolutionComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getResolutionComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="unitComboBox">
@@ -166,7 +166,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="unitComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.unitComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getUnitComboBox()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="sizeLabel">
@@ -174,7 +174,7 @@
             <Property name="text" type="java.lang.String" value="  "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.sizeLabel"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getSizeLabel()"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -230,12 +230,12 @@
             <Property name="text" type="java.lang.String" value="   "/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.previewLabel"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getPreviewLabel()"/>
           </AuxValues>
         </Component>
         <Container class="javax.swing.JPanel" name="buttonsPanel">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.buttonsPanel"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getButtonsPanel()"/>
           </AuxValues>
 
           <Layout>
@@ -270,7 +270,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="svRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.svRadioButton"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getSvRadioButton()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(svRadioButton);"/>
               </AuxValues>
             </Component>
@@ -282,7 +282,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvRadioButton"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getMvRadioButton()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvRadioButton);"/>
               </AuxValues>
             </Component>
@@ -294,7 +294,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wfRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.wfRadioButton"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getWfRadioButton()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(wfRadioButton);"/>
               </AuxValues>
             </Component>
@@ -306,7 +306,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mvlRadioButtonActionPerformed"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.mvlRadioButton"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getMvlRadioButton()"/>
                 <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="buttonGroup.add(mvlRadioButton);"/>
               </AuxValues>
             </Component>
@@ -320,9 +320,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshButtonActionPerformed"/>
           </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.refreshButton"/>
-          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -370,16 +367,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="browseButtonActionPerformed"/>
           </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.browseButton"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="filePathTextField">
           <Events>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="filePathTextFieldFocusLost"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.filePathTextField"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getFilePathTextField()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="okButton">
@@ -390,7 +384,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okButtonActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.okButton"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getOkButton()"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="cancelButton">
@@ -400,16 +394,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
           </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.cancelButton"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="extComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="extComboBoxActionPerformed"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.extComboBox"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ed.getExtComboBox()"/>
           </AuxValues>
         </Component>
       </SubComponents>

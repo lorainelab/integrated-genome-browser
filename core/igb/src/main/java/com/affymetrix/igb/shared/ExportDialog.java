@@ -5,26 +5,20 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.igb.IGB;
+import static com.affymetrix.igb.IGB.IS_MAC;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphicsUtil;
 import com.affymetrix.igb.view.AltSpliceView;
-import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FileDialog;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -41,6 +35,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -57,95 +52,20 @@ import org.slf4j.LoggerFactory;
 public class ExportDialog extends HeadLessExport {
 
     private static ExportDialog singleton;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ExportDialog.class);
-    private static final int DEFAULT_RESOLUTION = 300;
-    static float FONT_SIZE = 13.0f;
-    static final String TITLE = "Save Image";
-    static final String DEFAULT_FILE = "igb.png";
-    static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
-    static final Object[] UNIT = {"pixels", "inches"};
-    static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
-    static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
-    static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-    private String currentUnit;
-    private JFrame static_frame = null;
-    private File defaultDir;
-    private AffyTieredMap seqMap;
-    private AffyTieredMap svseqMap;
-    private Component wholeFrame;
-    private Component mainView;
-    private Component mainViewWithLabels;
-    private Component slicedView;
-    private Component component; // Export component
-    private String unit = "";
-    private boolean isWidthSpinner = false; // Prevent multiple triggering each other
-    private boolean isHeightSpinner = false;
-    private File exportFile;
-    private FileFilter extFilter;
-    private File defaultExportFile;
-    private String selectedExt;
-    private LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
-    JComboBox extComboBox = new JComboBox();
-    JComboBox resolutionComboBox = new JComboBox(RESOLUTION);
-    JComboBox unitComboBox = new JComboBox(UNIT);
-    JTextField filePathTextField = new JTextField();
-    JSpinner widthSpinner = new JSpinner();
-    JSpinner heightSpinner = new JSpinner();
-    JLabel previewLabel = new JLabel();
-    JLabel sizeLabel = new JLabel();
-    JButton browseButton = new JButton();
-    JButton cancelButton = new JButton();
-    JButton okButton = new JButton();
-    JButton refreshButton = new JButton();
-    JRadioButton svRadioButton = new JRadioButton();
-    JRadioButton wfRadioButton = new JRadioButton();
-    JRadioButton mvRadioButton = new JRadioButton();
-    JRadioButton mvlRadioButton = new JRadioButton();
-    JPanel buttonsPanel = new JPanel();
-    final public static boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
+    private static final Logger logger = LoggerFactory.getLogger(ExportDialog.class);
     private static final double SPINNER_MIN = 1;
     private static final double SPINNER_MAX = 10_000;
     private static final int DEFAULT_SPINNER_HEIGHT = 800;
     private static final int DEFAULT_SPINNER_WIDTH = 600;
-
-    // detect export view size changed and activate refresh button.
-    private final ComponentListener resizelistener = new ComponentListener() {
-        public void componentResized(ComponentEvent e) {
-            if (isVisible()) {
-//				enableRefreshButton();
-            }
-        }
-
-        public void componentMoved(ComponentEvent ce) {
-        }
-
-        public void componentShown(ComponentEvent ce) {
-        }
-
-        public void componentHidden(ComponentEvent ce) {
-        }
-    };
-    // detect export view range changed and activate refresh button.
-    private final NeoRangeListener rangeListener = evt -> {
-        if (isVisible()) {
-            //			enableRefreshButton();
-        }
-    };
-    // detect export view changed and activate refresh button. (Just for Seq View)
-    private final AdjustmentListener adjustmentlistener = ae -> {
-        if (isVisible()) {
-            //		enableRefreshButton();
-        }
-    };
-
-    public ExportDialog() {
-        FILTER_LIST = new LinkedHashMap<>();
-        FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
-        FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-        FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
-        defaultDir = new File(System.getProperty("user.home"));
-    }
+    private static final int DEFAULT_RESOLUTION = 300;
+    public static float FONT_SIZE = 13.0f;
+    private static final String TITLE = "Save Image";
+    private static final String DEFAULT_FILE = "igb.png";
+    private static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
+    private static final Object[] UNIT = {"pixels", "inches"};
+    private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
+    private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
+    private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
 
     /**
      * @return ExportDialog instance
@@ -158,6 +78,64 @@ public class ExportDialog extends HeadLessExport {
         return singleton;
     }
 
+    private String currentUnit;
+    private JFrame staticFrame;
+    private File defaultDir;
+    private AffyTieredMap seqMap;
+    private AffyTieredMap svseqMap;
+    private Component wholeFrame;
+    private Component mainView;
+    private Component mainViewWithLabels;
+    private Component slicedView;
+    private Component exportComponent;
+    private String unit;
+    private boolean isWidthSpinner; // Prevent multiple triggering each other
+    private boolean isHeightSpinner;
+    private File exportFile;
+    private FileFilter extFilter;
+    private File defaultExportFile;
+    private String selectedExt;
+    private final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
+    private final JComboBox extComboBox;
+    private final JComboBox resolutionComboBox;
+    private final JComboBox unitComboBox;
+    private final JTextField filePathTextField;
+    private final JSpinner widthSpinner;
+    private final JSpinner heightSpinner;
+    private final JLabel previewLabel;
+    private final JLabel sizeLabel;
+    private final JButton okButton;
+    private final JRadioButton svRadioButton;
+    private final JRadioButton wfRadioButton;
+    private final JRadioButton mvRadioButton;
+    private final JRadioButton mvlRadioButton;
+    private final JPanel buttonsPanel;
+
+    public ExportDialog() {
+        FILTER_LIST = new LinkedHashMap<>();
+        FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
+        FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
+        FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
+        defaultDir = new File(System.getProperty("user.home"));
+        extComboBox = new JComboBox();
+        resolutionComboBox = new JComboBox(RESOLUTION);
+        unitComboBox = new JComboBox(UNIT);
+        filePathTextField = new JTextField();
+        widthSpinner = new JSpinner();
+        heightSpinner = new JSpinner();
+        previewLabel = new JLabel();
+        sizeLabel = new JLabel();
+        okButton = new JButton();
+        svRadioButton = new JRadioButton();
+        wfRadioButton = new JRadioButton();
+        mvRadioButton = new JRadioButton();
+        mvlRadioButton = new JRadioButton();
+        buttonsPanel = new JPanel();
+        isWidthSpinner = false;
+        isHeightSpinner = false;
+        unit = "";
+    }
+
     /**
      * Display the export panel and initialize all related objects for export
      * process.
@@ -167,26 +145,15 @@ public class ExportDialog extends HeadLessExport {
     public synchronized void display(boolean isSequenceViewer) {
         initRadioButton(isSequenceViewer);
         initFrame();
-        DisplayUtils.bringFrameToFront(static_frame);
+        DisplayUtils.bringFrameToFront(staticFrame);
         previewImage();
     }
 
     /**
-     * @return whether the export panel is initialized and visible or not.
-     */
-    private boolean isVisible() {
-        return static_frame != null && static_frame.isVisible();
-    }
-
-//	private void enableRefreshButton() {
-//		if (!refreshButton.isEnabled()) {
-//			refreshButton.setEnabled(true);
-//		}
-//	}
-    /**
-     * Set export component by determined which radio button is selected. If the
+     * Set export exportComponent by determined which radio button is selected.
+     * If the
      * method is triggered by sequence viewer, radio buttons panel will be set
-     * to invisible and set sequence viewer as export component.
+     * to invisible and set sequence viewer as export exportComponent.
      *
      * @param isSequenceViewer
      */
@@ -221,21 +188,13 @@ public class ExportDialog extends HeadLessExport {
     private void initView() {
         if (seqMap == null) {
             seqMap = IGB.getSingleton().getMapView().getSeqMap();
-            seqMap.addComponentListener(resizelistener);
-            seqMap.addRangeListener(rangeListener);
-
             wholeFrame = IGB.getSingleton().getFrame();
-
             mainView = seqMap.getNeoCanvas();
-
             AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
             mainViewWithLabels = tm.getSplitPane();
-
             AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
             slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
-            slicedView.addComponentListener(resizelistener);
             svseqMap = slice_view.getSplicedView().getSeqMap();
-            slice_view.getSplicedView().getSeqMap().addRangeListener(rangeListener);
         }
     }
 
@@ -243,7 +202,7 @@ public class ExportDialog extends HeadLessExport {
      * Initialize export panel.
      */
     private void initFrame() {
-        if (static_frame == null) {
+        if (staticFrame == null) {
             String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
             if (file.equals(DEFAULT_FILE)) {
                 exportFile = new File(defaultDir, file);
@@ -268,23 +227,12 @@ public class ExportDialog extends HeadLessExport {
             currentUnit = unit;
             initSpinner(unit);
 
-            static_frame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
-            static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
-            static_frame.getRootPane().setDefaultButton(okButton);
+            staticFrame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
+            staticFrame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+            staticFrame.getRootPane().setDefaultButton(okButton);
         } else {
             initSpinner((String) unitComboBox.getSelectedItem());
         }
-    }
-
-    /**
-     * Bind two listeners(detect size and view changed) to current export seq
-     * view.
-     *
-     * @param seqView
-     */
-    public void initSeqViewListener(Component seqView, Adjustable scroller) {
-        seqView.addComponentListener(resizelistener);
-        scroller.addAdjustmentListener(adjustmentlistener);
     }
 
     public FileFilter[] getAllExportFileFilters() {
@@ -325,27 +273,28 @@ public class ExportDialog extends HeadLessExport {
     }
 
     /**
-     * Set component to export: Whole frame, main view, main view with label,
+     * Set exportComponent to export: Whole frame, main view, main view with
+     * label,
      * sliced view and seq view.
      *
      * @param c
      */
     public void setComponent(Component c) {
-        component = c;
+        exportComponent = c;
     }
 
     /**
-     * Saved image information basis on component.
+     * Saved image information basis on exportComponent.
      */
     public void initImageInfo() {
-        if (component == null) {
-            component = mainViewWithLabels;
+        if (exportComponent == null) {
+            exportComponent = mainViewWithLabels;
         }
         if (imageInfo == null) {
-            imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
+            imageInfo = new ImageInfo(exportComponent.getWidth(), exportComponent.getHeight());
         } else {
-            imageInfo.setWidth(component.getWidth());
-            imageInfo.setHeight(component.getHeight());
+            imageInfo.setWidth(exportComponent.getWidth());
+            imageInfo.setHeight(exportComponent.getHeight());
         }
     }
 
@@ -384,7 +333,7 @@ public class ExportDialog extends HeadLessExport {
     }
 
     public void cancelButtonActionPerformed() {
-        static_frame.setVisible(false);
+        staticFrame.setVisible(false);
     }
 
     /**
@@ -436,7 +385,7 @@ public class ExportDialog extends HeadLessExport {
         if (StringUtils.isBlank(ext)) {
             defaultFileName += selectedExt;
         }
-        FileDialog dialog = new FileDialog(static_frame, "Save Image", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(staticFrame, "Save Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);
@@ -452,11 +401,8 @@ public class ExportDialog extends HeadLessExport {
             }
             File imageFile = new File(dialog.getDirectory(), fileName);
             completeBrowseButtonAction(imageFile);
-            try {
-                okButtonActionPerformed(true);
-            } catch (IOException ex) {
-                Logger.getLogger(ExportDialog.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            okButtonActionPerformed(true);
+
         }
     }
 
@@ -517,7 +463,7 @@ public class ExportDialog extends HeadLessExport {
         }
     }
 
-    private void okButtonActionPerformed(boolean keepWindowOpen) throws IOException {
+    private void okButtonActionPerformed(boolean keepWindowOpen) {
         String previousPath = exportFile.getAbsolutePath();
         String newPath = filePathTextField.getText();
         exportFile = new File(newPath);
@@ -552,7 +498,7 @@ public class ExportDialog extends HeadLessExport {
             }
         }
 
-        exportScreenshot(component, exportFile, selectedExt, false);
+        exportScreenshot(exportComponent, exportFile, selectedExt, false);
 
         String des = getDescription(ext);
         extComboBox.setSelectedItem(getType(des));
@@ -563,7 +509,7 @@ public class ExportDialog extends HeadLessExport {
         exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
         exportNode.put(PREF_UNIT, unit);
 
-        static_frame.setVisible(keepWindowOpen);
+        staticFrame.setVisible(keepWindowOpen);
     }
 
     /**
@@ -614,16 +560,15 @@ public class ExportDialog extends HeadLessExport {
     }
 
     /**
-     * Creates a new buffered image by component and reset label's icon.
+     * Creates a new buffered image by exportComponent and reset label's icon.
      */
     private void previewImage() {
-        exportImage = GraphicsUtil.getDeviceCompatibleImage(
-                component.getWidth(), component.getHeight());
+        exportImage = GraphicsUtil.getDeviceCompatibleImage(exportComponent.getWidth(), exportComponent.getHeight());
         Graphics2D g = exportImage.createGraphics();
-        if (component instanceof JFrame) {
+        if (exportComponent instanceof JFrame) {
             drawTitleBar(g);
         }
-        component.printAll(g);
+        exportComponent.printAll(g);
 
         Image previewImage = GraphicsUtil.resizeImage(exportImage,
                 previewLabel.getWidth(), previewLabel.getHeight());
@@ -638,18 +583,18 @@ public class ExportDialog extends HeadLessExport {
      */
     private void drawTitleBar(Graphics2D g) {
         // Draw Background
-        g.setColor(component.getBackground().darker());
-        g.fillRect(0, 0, component.getWidth(), component.getHeight());
+        g.setColor(exportComponent.getBackground().darker());
+        g.fillRect(0, 0, exportComponent.getWidth(), exportComponent.getHeight());
 
         // Draw Border
         g.setColor(Color.BLACK);
-        g.fillRect(0, 20, component.getWidth(), 2);
+        g.fillRect(0, 20, exportComponent.getWidth(), 2);
 
         // Draw Title
         g.setFont(g.getFont().deriveFont(FONT_SIZE));
-        int x_offset = (component.getWidth() - g.getFontMetrics().stringWidth(((JFrame) component).getTitle())) / 2;
+        int x_offset = (exportComponent.getWidth() - g.getFontMetrics().stringWidth(((JFrame) exportComponent).getTitle())) / 2;
         int y_offset = 14;
-        g.drawString(((JFrame) component).getTitle(), x_offset, y_offset);
+        g.drawString(((JFrame) exportComponent).getTitle(), x_offset, y_offset);
     }
 
     /**
@@ -817,22 +762,22 @@ public class ExportDialog extends HeadLessExport {
     }
 
     public void mvRadioButtonActionPerformed() {
-        component = mainView;
+        exportComponent = mainView;
         refreshPreview();
     }
 
     public void mvlRadioButtonActionPerformed() {
-        component = mainViewWithLabels;
+        exportComponent = mainViewWithLabels;
         refreshPreview();
     }
 
     public void wfRadioButtonActionPerformed() {
-        component = wholeFrame;
+        exportComponent = wholeFrame;
         refreshPreview();
     }
 
     public void svRadioButtonActionPerformed() {
-        component = slicedView;
+        exportComponent = slicedView;
         refreshPreview();
     }
 
@@ -845,12 +790,73 @@ public class ExportDialog extends HeadLessExport {
         initSpinner((String) unitComboBox.getSelectedItem());
         previewImage();
     }
+
+    public JTextField getFilePathTextField() {
+        return filePathTextField;
+    }
+
+    public JSpinner getWidthSpinner() {
+        return widthSpinner;
+    }
+
+    public JSpinner getHeightSpinner() {
+        return heightSpinner;
+    }
+
+    public JComboBox getExtComboBox() {
+        return extComboBox;
+    }
+
+    public JComboBox getResolutionComboBox() {
+        return resolutionComboBox;
+    }
+
+    public JLabel getSizeLabel() {
+        return sizeLabel;
+    }
+
+    public String getCurrentUnit() {
+        return currentUnit;
+    }
+
+    public JComboBox getUnitComboBox() {
+        return unitComboBox;
+    }
+
+    public JLabel getPreviewLabel() {
+        return previewLabel;
+    }
+
+    public JButton getOkButton() {
+        return okButton;
+    }
+
+    public JRadioButton getSvRadioButton() {
+        return svRadioButton;
+    }
+
+    public JRadioButton getWfRadioButton() {
+        return wfRadioButton;
+    }
+
+    public JRadioButton getMvRadioButton() {
+        return mvRadioButton;
+    }
+
+    public JRadioButton getMvlRadioButton() {
+        return mvlRadioButton;
+    }
+
+    public JPanel getButtonsPanel() {
+        return buttonsPanel;
+    }
+
 }
 
 class ExportFileType {
 
-    private String fileExtension;
-    private String fileDescription;
+    private final String fileExtension;
+    private final String fileDescription;
 
     ExportFileType(String extension, String description) {
         fileExtension = extension;
@@ -875,10 +881,11 @@ class ExportFileFilter extends FileFilter {
 
     public ExportFileType type;
 
-    public ExportFileFilter(ExportFileType type) {
+    ExportFileFilter(ExportFileType type) {
         this.type = type;
     }
 
+    @Override
     public boolean accept(File file) {
 
         if (file.isDirectory()) {
@@ -888,6 +895,7 @@ class ExportFileFilter extends FileFilter {
         return file.getName().toLowerCase().endsWith(type.getExtension());
     }
 
+    @Override
     public String getDescription() {
         return type.getDescription();
     }

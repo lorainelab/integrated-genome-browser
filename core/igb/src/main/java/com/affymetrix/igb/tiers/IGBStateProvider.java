@@ -25,7 +25,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
     private static boolean showFullFilePathInTrack = PreferenceUtils.getTopNode().getBoolean(TrackConstants.PREF_SHOW_FULL_FILE_PATH_IN_TRACK, TrackConstants.default_show_full_file_path_in_track);//TK
     private static final Map<String, TrackStyle> static_map = new LinkedHashMap<>();
-    private static TrackStyle default_instance = null;
+    private static TrackStyle defaultTrackStyle = null;
 
     /**
      * Returns all (persistent and temporary) instances of AnnotStyle.
@@ -55,15 +55,15 @@ public final class IGBStateProvider extends DefaultStateProvider {
         return result;
     }
 
-    public static TrackStyle getDefaultInstance() {
-        if (default_instance == null) {
+    public static TrackStyle getDefaultTrackStyle() {
+        if (defaultTrackStyle == null) {
             TrackStyle instance = new TrackStyle(TrackConstants.NAME_OF_DEFAULT_INSTANCE, TrackConstants.NAME_OF_DEFAULT_INSTANCE, null, null, null);
             instance.setTrackName("");
             instance.setShow(true);
-            default_instance = instance;
-            static_map.put(default_instance.getUniqueName(), default_instance);
+            defaultTrackStyle = instance;
+            static_map.put(defaultTrackStyle.getUniqueName(), defaultTrackStyle);
         }
-        return default_instance;
+        return defaultTrackStyle;
     }
 
     public static void setShowIGBTrackMark(boolean b) {
@@ -133,7 +133,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
             if (logger.isDebugEnabled()) {
                 logger.debug("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name);
             }
-            TrackStyle template = getDefaultInstance();
+            TrackStyle template = getDefaultTrackStyle();
 
             if (!getShowFullFilePathInTrackMark()) {
                 if (track_name != null) {

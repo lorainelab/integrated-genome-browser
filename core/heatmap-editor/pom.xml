@@ -10,7 +10,6 @@
     
     <groupId>com.affymetrix</groupId>
     <artifactId>heatmap-editor</artifactId>
-    <version>${heatmap-editor-version}</version>
 
     <packaging>bundle</packaging>
 

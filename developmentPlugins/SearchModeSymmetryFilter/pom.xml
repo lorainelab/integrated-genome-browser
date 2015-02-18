@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>searchModeSymetryFilter</artifactId>
-    <version>${searchModeSymetryFilter-version}</version>
     
     <packaging>bundle</packaging>
 

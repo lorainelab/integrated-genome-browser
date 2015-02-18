@@ -10,7 +10,6 @@
 
     <groupId>com.lorainelab</groupId>
     <artifactId>paired-data-preprocessor</artifactId>
-    <version>${paired-data-preprocessor-version}</version>
     <packaging>bundle</packaging>
 
 

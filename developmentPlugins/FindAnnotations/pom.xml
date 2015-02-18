@@ -10,7 +10,7 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>findAnnotations</artifactId>
-    <version>${findAnnotations-version}</version>
+    
     
     <packaging>bundle</packaging>
 

@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>geometric-mean</artifactId>
-    <version>${geometric-mean-version}</version>
     
     
     <packaging>bundle</packaging>

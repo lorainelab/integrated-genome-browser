@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>shared-lib-wrapper</artifactId>
-    <version>${shared-lib-wrapper-version}</version>
     
     <packaging>bundle</packaging>
     

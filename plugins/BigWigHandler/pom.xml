@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>bigWigHandler</artifactId>
-    <version>${bigWigHandler-version}</version>
     <packaging>bundle</packaging>
 
 

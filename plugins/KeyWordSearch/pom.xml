@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>keyWordSearch</artifactId>
-    <version>${keyWordSearch-version}</version>
     <packaging>bundle</packaging>
 
     <name>KeyWord Search</name>

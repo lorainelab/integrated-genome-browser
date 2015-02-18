@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>igb-preferences</artifactId>
-    <version>${igb-preferences-version}</version>
     <packaging>bundle</packaging>
 
     <name>IGB Preferences</name>

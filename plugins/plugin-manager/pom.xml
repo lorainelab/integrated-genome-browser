@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>plugins-manager</artifactId>
-    <version>${plugin-manager-version}</version>
     <packaging>bundle</packaging>
 
     <name>Plugin Manager</name>

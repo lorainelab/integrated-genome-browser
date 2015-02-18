@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>apollo-library</artifactId>
-    <version>${apollo-library-version}</version>
 
     <packaging>bundle</packaging>
 

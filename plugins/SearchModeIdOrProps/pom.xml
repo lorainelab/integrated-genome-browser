@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>searchModelIdOrProps</artifactId>
-    <version>${searchModelIdOrProps-version}</version>
     <packaging>bundle</packaging>
 
     <name>searchModelIdOrProps</name>

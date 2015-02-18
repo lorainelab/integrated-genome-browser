@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>searchModeLucene</artifactId>
-    <version>${searchModeLucene-version}</version>
     <packaging>bundle</packaging>
 
     <name>searchModeLucene</name>

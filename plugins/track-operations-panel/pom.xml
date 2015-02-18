@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>track-operations-panel</artifactId>
-    <version>${track-operations-panel-version}</version>
     <packaging>bundle</packaging>
 
     <name>Track Operations</name>

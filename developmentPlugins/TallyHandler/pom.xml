@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>talleyHandler</artifactId>
-    <version>${talleyHandler-version}</version>
     
     <packaging>bundle</packaging>
 

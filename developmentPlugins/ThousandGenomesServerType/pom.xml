@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>thousandGenomesServerType</artifactId>
-    <version>${thousandGenomesServerType-version}</version>
     
     <packaging>bundle</packaging>
 

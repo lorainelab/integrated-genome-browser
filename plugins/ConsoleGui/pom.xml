@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>console-gui</artifactId>
-    <version>${console-gui-version}</version>
     <packaging>bundle</packaging>
 
     <name>Console Gui</name>

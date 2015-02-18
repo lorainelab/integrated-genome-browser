@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>update</artifactId>
-    <version>${update-version}</version>
     <packaging>bundle</packaging>
 
     <name>update</name>

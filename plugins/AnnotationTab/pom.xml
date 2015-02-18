@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.affymetrix</groupId>
     <artifactId>annotation-tab</artifactId>
-    <version>${annotation-tab-version}</version>
     <packaging>bundle</packaging>
 
     <name>Annotation Tab</name>

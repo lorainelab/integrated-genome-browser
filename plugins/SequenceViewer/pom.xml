@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>sequenceViewer</artifactId>
-    <version>${sequenceViewer-version}</version>
     <packaging>bundle</packaging>
 
     <name>sequenceViewer</name>

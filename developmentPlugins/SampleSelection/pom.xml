@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>sampleSelection</artifactId>
-    <version>${sampleSelection-version}</version>
     
     <packaging>bundle</packaging>
 

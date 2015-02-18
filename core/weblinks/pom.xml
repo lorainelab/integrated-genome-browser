@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>weblinks</artifactId>
-    <version>${weblinks-version}</version>
     <packaging>bundle</packaging>
 
     <name>WebLinks</name>

@@ -9,7 +9,6 @@
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>logging-config</artifactId>
-    <version>${logging-config-version}</version>
     <packaging>bundle</packaging>
 
     <name>Logging Config Fragment Bundle</name>

@@ -10,7 +10,6 @@
     
     <groupId>com.affymetrix</groupId>
     <artifactId>igb</artifactId>
-    <version>${igb-version}</version>
     
     <packaging>bundle</packaging>
 

@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>propertyView</artifactId>
-    <version>${propertyView-version}</version>
     <packaging>bundle</packaging>
 
     <name>Property View	</name>

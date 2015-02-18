@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>graphTab</artifactId>
-    <version>${graphTab-version}</version>
     <packaging>bundle</packaging>
 
     <name>Graph Tab</name>

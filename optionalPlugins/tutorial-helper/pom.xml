@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>tutorial-helper</artifactId>
-    <version>${tutorial-helper-version}</version>
     
     <packaging>bundle</packaging>
 

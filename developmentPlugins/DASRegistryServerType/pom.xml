@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>DasRegistryServerType</artifactId>
-    <version>${DasRegistryServerType-version}</version>
     
     <packaging>bundle</packaging>
 

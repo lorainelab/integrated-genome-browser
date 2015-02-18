@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>merge-annotation-operator</artifactId>
-    <version>${merge-annotation-operator-version}</version>
     
     <packaging>bundle</packaging>
 

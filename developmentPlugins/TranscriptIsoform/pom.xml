@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>transcriptIsoForm</artifactId>
-    <version>${transcriptIsoForm-version}</version>
     
     <packaging>bundle</packaging>
 

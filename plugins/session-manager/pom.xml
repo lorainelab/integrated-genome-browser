@@ -10,7 +10,6 @@
 
     <groupId>com.lorainelab</groupId>
     <artifactId>session-manager</artifactId>
-    <version>${session-manager-version}</version>
     <packaging>bundle</packaging>
 
     <name>Session Manager</name>

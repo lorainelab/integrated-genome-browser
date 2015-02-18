@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>parentOperators</artifactId>
-    <version>${parentOperators-version}</version>
     
     <packaging>bundle</packaging>
 

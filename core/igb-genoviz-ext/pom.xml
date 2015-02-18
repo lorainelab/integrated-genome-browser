@@ -10,7 +10,6 @@
 
     <groupId>com.lorainelab</groupId>
     <artifactId>igb-genoviz-extensions</artifactId>
-    <version>${igb-genoviz-extensions-version}</version>
     <packaging>bundle</packaging>
 
 

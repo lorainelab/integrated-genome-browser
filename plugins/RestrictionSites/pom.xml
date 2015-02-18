@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>restrictionSites</artifactId>
-    <version>${restrictionSites-version}</version>
     <packaging>bundle</packaging>
 
     <name>Restriction Sites</name>

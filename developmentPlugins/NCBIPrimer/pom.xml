@@ -10,7 +10,6 @@
 
     <groupId>com.affymetrix</groupId>
     <artifactId>ncbiPrimer</artifactId>
-    <version>${ncbiPrimer-version}</version>
     
     <packaging>bundle</packaging>
 

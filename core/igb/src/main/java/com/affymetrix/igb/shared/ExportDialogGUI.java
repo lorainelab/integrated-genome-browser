@@ -34,26 +34,26 @@ public class ExportDialogGUI extends JPanel {
         imageSizePanel = new javax.swing.JPanel();
         widthLabel = new javax.swing.JLabel();
         heightLabel = new javax.swing.JLabel();
-        widthSpinner = ed.widthSpinner;
-        heightSpinner = ed.heightSpinner;
+        widthSpinner = ed.getWidthSpinner();
+        heightSpinner = ed.getHeightSpinner();
         resolutionLabel = new javax.swing.JLabel();
-        resolutionComboBox = ed.resolutionComboBox;
-        unitComboBox = ed.unitComboBox;
-        sizeLabel = ed.sizeLabel;
+        resolutionComboBox = ed.getResolutionComboBox();
+        unitComboBox = ed.getUnitComboBox();
+        sizeLabel = ed.getSizeLabel();
         previewPanel = new javax.swing.JPanel();
-        previewLabel = ed.previewLabel;
-        buttonsPanel = ed.buttonsPanel;
-        svRadioButton = ed.svRadioButton;
-        mvRadioButton = ed.mvRadioButton;
-        wfRadioButton = ed.wfRadioButton;
-        mvlRadioButton = ed.mvlRadioButton;
-        refreshButton = ed.refreshButton;
+        previewLabel = ed.getPreviewLabel();
+        buttonsPanel = ed.getButtonsPanel();
+        svRadioButton = ed.getSvRadioButton();
+        mvRadioButton = ed.getMvRadioButton();
+        wfRadioButton = ed.getWfRadioButton();
+        mvlRadioButton = ed.getMvlRadioButton();
+        refreshButton = new javax.swing.JButton();
         topPanel = new javax.swing.JPanel();
-        browseButton = ed.browseButton;
-        filePathTextField = ed.filePathTextField;
-        okButton = ed.okButton;
-        cancelButton = ed.cancelButton;
-        extComboBox = ed.extComboBox;
+        browseButton = new javax.swing.JButton();
+        filePathTextField = ed.getFilePathTextField();
+        okButton = ed.getOkButton();
+        cancelButton = new javax.swing.JButton();
+        extComboBox = ed.getExtComboBox();
 
         setMinimumSize(new java.awt.Dimension(506, 329));
 
@@ -63,15 +63,31 @@ public class ExportDialogGUI extends JPanel {
 
         heightLabel.setText("Height:");
 
-        widthSpinner.addChangeListener(this::widthSpinnerStateChanged);
+        widthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                widthSpinnerStateChanged(evt);
+            }
+        });
 
-        heightSpinner.addChangeListener(this::heightSpinnerStateChanged);
+        heightSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                heightSpinnerStateChanged(evt);
+            }
+        });
 
         resolutionLabel.setText("Resolution:");
 
-        resolutionComboBox.addActionListener(this::resolutionComboBoxActionPerformed);
+        resolutionComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resolutionComboBoxActionPerformed(evt);
+            }
+        });
 
-        unitComboBox.addActionListener(this::unitComboBoxActionPerformed);
+        unitComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unitComboBoxActionPerformed(evt);
+            }
+        });
 
         sizeLabel.setText("  ");
 
@@ -127,19 +143,35 @@ public class ExportDialogGUI extends JPanel {
 
         svRadioButton.setText("Sliced View (with Labels)");
         buttonGroup.add(svRadioButton);
-        svRadioButton.addActionListener(this::svRadioButtonActionPerformed);
+        svRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                svRadioButtonActionPerformed(evt);
+            }
+        });
 
         mvRadioButton.setText("Main View");
         buttonGroup.add(mvRadioButton);
-        mvRadioButton.addActionListener(this::mvRadioButtonActionPerformed);
+        mvRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mvRadioButtonActionPerformed(evt);
+            }
+        });
 
         wfRadioButton.setText("Whole Frame");
         buttonGroup.add(wfRadioButton);
-        wfRadioButton.addActionListener(this::wfRadioButtonActionPerformed);
+        wfRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wfRadioButtonActionPerformed(evt);
+            }
+        });
 
         mvlRadioButton.setText("Main View (with Labels)");
         buttonGroup.add(mvlRadioButton);
-        mvlRadioButton.addActionListener(this::mvlRadioButtonActionPerformed);
+        mvlRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mvlRadioButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
@@ -164,7 +196,11 @@ public class ExportDialogGUI extends JPanel {
 
         refreshButton.setText("Update Preview Image");
         refreshButton.setToolTipText("Click to update Preview and image dimensions after changing IGB.");
-        refreshButton.addActionListener(this::refreshButtonActionPerformed);
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout previewPanelLayout = new org.jdesktop.layout.GroupLayout(previewPanel);
         previewPanel.setLayout(previewPanelLayout);
@@ -195,7 +231,11 @@ public class ExportDialogGUI extends JPanel {
         );
 
         browseButton.setText("Browse...");
-        browseButton.addActionListener(this::browseButtonActionPerformed);
+        browseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonActionPerformed(evt);
+            }
+        });
 
         filePathTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -204,12 +244,24 @@ public class ExportDialogGUI extends JPanel {
         });
 
         okButton.setText("OK");
-        okButton.addActionListener(this::okButtonActionPerformed);
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(this::cancelButtonActionPerformed);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
-        extComboBox.addActionListener(this::extComboBoxActionPerformed);
+        extComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                extComboBoxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout topPanelLayout = new org.jdesktop.layout.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -268,64 +320,64 @@ public class ExportDialogGUI extends JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-            ed.browseButtonActionPerformed(this);
+        ed.browseButtonActionPerformed(this);
 	}//GEN-LAST:event_browseButtonActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-            ed.cancelButtonActionPerformed();
+        ed.cancelButtonActionPerformed();
 	}//GEN-LAST:event_cancelButtonActionPerformed
 
 	private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-            try {
-                ed.okButtonActionPerformed();
-            } catch (IOException ex) {
-                Logger.getLogger(ExportDialogGUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            ed.okButtonActionPerformed();
+        } catch (IOException ex) {
+            Logger.getLogger(ExportDialogGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 	}//GEN-LAST:event_okButtonActionPerformed
 
 	private void widthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_widthSpinnerStateChanged
-            ed.widthSpinnerStateChanged();
+        ed.widthSpinnerStateChanged();
 	}//GEN-LAST:event_widthSpinnerStateChanged
 
 	private void heightSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_heightSpinnerStateChanged
-            ed.heightSpinnerStateChanged();
+        ed.heightSpinnerStateChanged();
 	}//GEN-LAST:event_heightSpinnerStateChanged
 
 	private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-            ed.refreshButtonActionPerformed();
+        ed.refreshButtonActionPerformed();
 	}//GEN-LAST:event_refreshButtonActionPerformed
 
 	private void mvRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvRadioButtonActionPerformed
-            ed.mvRadioButtonActionPerformed();
+        ed.mvRadioButtonActionPerformed();
 	}//GEN-LAST:event_mvRadioButtonActionPerformed
 
 	private void mvlRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mvlRadioButtonActionPerformed
-            ed.mvlRadioButtonActionPerformed();
+        ed.mvlRadioButtonActionPerformed();
 	}//GEN-LAST:event_mvlRadioButtonActionPerformed
 
 	private void wfRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wfRadioButtonActionPerformed
-            ed.wfRadioButtonActionPerformed();
+        ed.wfRadioButtonActionPerformed();
 	}//GEN-LAST:event_wfRadioButtonActionPerformed
 
 	private void svRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_svRadioButtonActionPerformed
-            ed.svRadioButtonActionPerformed();
+        ed.svRadioButtonActionPerformed();
 	}//GEN-LAST:event_svRadioButtonActionPerformed
 
 	private void resolutionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resolutionComboBoxActionPerformed
-            ed.resolutionComboBoxActionPerformed();
+        ed.resolutionComboBoxActionPerformed();
 	}//GEN-LAST:event_resolutionComboBoxActionPerformed
 
 	private void unitComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unitComboBoxActionPerformed
-            ed.unitComboBoxActionPerformed();
+        ed.unitComboBoxActionPerformed();
 	}//GEN-LAST:event_unitComboBoxActionPerformed
 
 	private void extComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extComboBoxActionPerformed
-            ed.extComboBoxActionPerformed();
+        ed.extComboBoxActionPerformed();
 	}//GEN-LAST:event_extComboBoxActionPerformed
 
     private void filePathTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_filePathTextFieldFocusLost
-        ed.filePathTextField.setText(filePathTextField.getText());
+        ed.getFilePathTextField().setText(filePathTextField.getText());
     }//GEN-LAST:event_filePathTextFieldFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

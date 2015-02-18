@@ -48,46 +48,52 @@ public class HeadLessExport {
     protected BufferedImage exportImage;
     protected ImageInfo imageInfo;
 
-    public void exportScreenshot(Component component, File f, String ext, boolean isScript) throws IOException {
-        // From Script Loader, need to initialize the export image
-        if (isScript) {
-            exportImage = GraphicsUtil.getDeviceCompatibleImage(
-                    component.getWidth(), component.getHeight());
-            Graphics g = exportImage.createGraphics();
-            component.paintAll(g);
-            imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
-            imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
-        }
-
-        if (ext.equals(EXTENSION[0])) {
-            svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
-                    (int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
-            svgExport.exportToFile(f, component, null, svgProperties, "");
-        } else {
-            exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-            Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
-            while (iw.hasNext()) {
-                ImageWriter writer = iw.next();
-                ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                ImageTypeSpecifier typeSpecifier
-                        = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
-                IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-                if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                    continue;
-                }
-
-                if (ext.equals(EXTENSION[1])) {
-                    setPNG_DPI(metadata);
-                } else {
-                    setJPEG_DPI(metadata);
-                }
-
-                try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
-                    writer.setOutput(stream);
-                    writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
-                }
-                break;
+    public void exportScreenshot(Component component, File f, String ext, boolean isScript) {
+        try {
+            // From Script Loader, need to initialize the export image
+            if (isScript) {
+                exportImage = GraphicsUtil.getDeviceCompatibleImage(
+                        component.getWidth(), component.getHeight());
+                Graphics g = exportImage.createGraphics();
+                component.paintAll(g);
+                imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
+                imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
             }
+
+            if (ext.equals(EXTENSION[0])) {
+
+                svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
+                        (int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
+                svgExport.exportToFile(f, component, null, svgProperties, "");
+
+            } else {
+                exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+                Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
+                while (iw.hasNext()) {
+                    ImageWriter writer = iw.next();
+                    ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                    ImageTypeSpecifier typeSpecifier
+                            = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+                    IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+                    if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                        continue;
+                    }
+
+                    if (ext.equals(EXTENSION[1])) {
+                        setPNG_DPI(metadata);
+                    } else {
+                        setJPEG_DPI(metadata);
+                    }
+
+                    try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
+                        writer.setOutput(stream);
+                        writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
+                    }
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            logger.error("Error while attempting to export an image.", ex);
         }
     }
     private static final int DEFAULT_RESOLUTION = 300;

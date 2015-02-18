@@ -58,6 +58,7 @@ public class ExportDialog extends HeadLessExport {
 
     private static ExportDialog singleton;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ExportDialog.class);
+    private static final int DEFAULT_RESOLUTION = 300;
     static float FONT_SIZE = 13.0f;
     static final String TITLE = "Save Image";
     static final String DEFAULT_FILE = "igb.png";
@@ -274,7 +275,6 @@ public class ExportDialog extends HeadLessExport {
             initSpinner((String) unitComboBox.getSelectedItem());
         }
     }
-    private static final int DEFAULT_RESOLUTION = 300;
 
     /**
      * Bind two listeners(detect size and view changed) to current export seq

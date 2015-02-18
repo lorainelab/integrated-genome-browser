@@ -148,13 +148,14 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>
+                    <instructions>  
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Import-Package>
                             com.jidesoft.*,
                             com.apple.eawt;resolution:=optional,
                             javax.swing.plaf.windows;resolution:=optional,
+                            javax.swing.plaf.metal;resolution:=optional,
                             sun.reflect;resolution:=optional,
                             com.sun.awt;resolution:=optional,
                             *;resolution:=optional

@@ -11,7 +11,7 @@
     <artifactId>logging-config</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Logging Config Fragment Bundle</name>
+    <name>Logging Config</name>
 
     <dependencies>
     </dependencies>

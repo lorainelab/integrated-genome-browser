@@ -241,6 +241,8 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         labelColorComboBox.setEnabled(b);
         trackNameSizeComboBox.setEnabled(b);
         applyButton.setEnabled(b);
+        annotationLabelAutoSizeCheckBox.setEnabled(b);
+        annotationLabelSizeComboBox.setEnabled(b);
     }
 
     /**

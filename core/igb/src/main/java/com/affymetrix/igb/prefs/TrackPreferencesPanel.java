@@ -96,6 +96,9 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         labelColorComboBox = tdv.labelColorComboBox;
         labelColorLabel = new javax.swing.JLabel();
         applyButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        annotationLabelSizeCombobox = tdv.getAnnotationLabelSizeComboBox();
+        annotationLabelAutoResizeCheckbox = tdv.getannotationLabelAutoSizeCheckBox();
 
         jButton2.setText("jButton2");
 
@@ -122,10 +125,18 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         jScrollPane1.setViewportView(table);
 
         selectAndAddButton.setText(tdv.b1Text);
-        selectAndAddButton.addActionListener(this::selectAndAddButtonActionPerformed);
+        selectAndAddButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAndAddButtonActionPerformed(evt);
+            }
+        });
 
         deleteAndRestoreButton.setText(tdv.b2Text);
-        deleteAndRestoreButton.addActionListener(this::deleteAndRestoreButtonActionPerformed);
+        deleteAndRestoreButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteAndRestoreButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout tablePanelLayout = new org.jdesktop.layout.GroupLayout(tablePanel);
         tablePanel.setLayout(tablePanelLayout);
@@ -149,10 +160,18 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         showStrandPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Show Strand"));
 
         arrowCheckBox.setText("Arrow");
-        arrowCheckBox.addActionListener(this::arrowCheckBoxActionPerformed);
+        arrowCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                arrowCheckBoxActionPerformed(evt);
+            }
+        });
 
         colorCheckBox.setText("Color");
-        colorCheckBox.addActionListener(this::colorCheckBoxActionPerformed);
+        colorCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorCheckBoxActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("+");
 
@@ -160,7 +179,11 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         positiveColorComboBox.setButtonVisible(false);
         positiveColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         positiveColorComboBox.setStretchToFit(true);
-        positiveColorComboBox.addActionListener(this::positiveColorComboBoxActionPerformed);
+        positiveColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                positiveColorComboBoxActionPerformed(evt);
+            }
+        });
 
         jLabel9.setText("-");
 
@@ -168,10 +191,18 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         negativeColorComboBox.setButtonVisible(false);
         negativeColorComboBox.setMaximumSize(new java.awt.Dimension(150, 20));
         negativeColorComboBox.setStretchToFit(true);
-        negativeColorComboBox.addActionListener(this::negativeColorComboBoxActionPerformed);
+        negativeColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                negativeColorComboBoxActionPerformed(evt);
+            }
+        });
 
         show2TracksCheckBox.setText("+/-");
-        show2TracksCheckBox.addActionListener(this::show2TracksCheckBoxActionPerformed);
+        show2TracksCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                show2TracksCheckBoxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout showStrandPanelLayout = new org.jdesktop.layout.GroupLayout(showStrandPanel);
         showStrandPanel.setLayout(showStrandPanelLayout);
@@ -214,11 +245,19 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 
         refreshButton = new javax.swing.JButton();
         refreshButton.setText("Refresh");
-        refreshButton.addActionListener(this::refreshButtonPressed);
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonPressed(evt);
+            }
+        });
 
         autoRefreshCheckBox.setVisible(false);
         autoRefreshCheckBox.setText("Auto Refresh");
-        autoRefreshCheckBox.addActionListener(this::autoRefreshCheckBoxActionPerformed);
+        autoRefreshCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoRefreshCheckBoxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -256,48 +295,74 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
 
         bgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         bgColorComboBox.setButtonVisible(false);
-        bgColorComboBox.addActionListener(this::bgColorComboBoxActionPerformed);
+        bgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bgColorComboBoxActionPerformed(evt);
+            }
+        });
 
         fgColorLabel.setText("Foreground:");
 
         fgColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         fgColorComboBox.setButtonVisible(false);
-        fgColorComboBox.addActionListener(this::fgColorComboBoxActionPerformed);
+        fgColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fgColorComboBoxActionPerformed(evt);
+            }
+        });
 
         nameSizeLabel.setText("Track Label Font:");
 
-        nameSizeComboBox.addActionListener(this::trackNameSizeComboBoxActionPerformed);
+        nameSizeComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trackNameSizeComboBoxActionPerformed(evt);
+            }
+        });
 
         FieldLabel.setText("Annotation Label Field:");
 
-        labelFieldComboBox.addActionListener(this::labelComboBoxActionPerformed);
+        labelFieldComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                labelComboBoxActionPerformed(evt);
+            }
+        });
 
         labelColorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
         labelColorComboBox.setButtonVisible(false);
-        labelColorComboBox.addActionListener(this::labelColorComboBoxActionPerformed);
+        labelColorComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                labelColorComboBoxActionPerformed(evt);
+            }
+        });
 
         labelColorLabel.setText("Track Label:");
 
         applyButton.setText("Apply");
-        applyButton.addActionListener(this::applyButtonActionPerformed);
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Annotation Label Font:");
+
+        annotationLabelSizeCombobox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                annotationLabelSizeComboboxActionPerformed(evt);
+            }
+        });
+
+        annotationLabelAutoResizeCheckbox.setText("AutoSize");
+        annotationLabelAutoResizeCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                annotationLabelAutoResizeCheckboxActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(propertiesPanelLayout.createSequentialGroup()
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(64, 64, 64)
-                        .add(FieldLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(propertiesPanelLayout.createSequentialGroup()
-                        .add(101, 101, 101)
-                        .add(nameSizeLabel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 82, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
             .add(propertiesPanelLayout.createSequentialGroup()
                 .add(trackTypeNameLabel)
                 .add(5, 5, 5)
@@ -305,19 +370,38 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                 .add(0, 0, Short.MAX_VALUE)
                 .add(applyButton))
             .add(propertiesPanelLayout.createSequentialGroup()
-                .add(14, 14, 14)
-                .add(fgColorLabel)
-                .add(0, 0, 0)
-                .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(30, 30, 30)
-                .add(bgColorLabel)
-                .add(0, 0, 0)
-                .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(30, 30, 30)
-                .add(labelColorLabel)
-                .add(0, 0, 0)
-                .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(24, 24, 24))
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .add(14, 14, 14)
+                        .add(fgColorLabel)
+                        .add(0, 0, 0)
+                        .add(fgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(30, 30, 30)
+                        .add(bgColorLabel)
+                        .add(0, 0, 0)
+                        .add(bgColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .add(30, 30, 30)
+                        .add(labelColorLabel)
+                        .add(0, 0, 0)
+                        .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 16, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(propertiesPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(propertiesPanelLayout.createSequentialGroup()
+                                .add(37, 37, 37)
+                                .add(nameSizeLabel))
+                            .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                .add(jLabel1)
+                                .add(FieldLabel)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(propertiesPanelLayout.createSequentialGroup()
+                                .add(annotationLabelSizeCombobox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(annotationLabelAutoResizeCheckbox))
+                            .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -336,14 +420,19 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
                     .add(labelColorLabel)
                     .add(labelColorComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(10, 10, 10)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(nameSizeLabel)
                     .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(FieldLabel)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
+                    .add(jLabel1)
+                    .add(annotationLabelSizeCombobox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(annotationLabelAutoResizeCheckbox))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -441,8 +530,18 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
         }
 	}//GEN-LAST:event_applyButtonActionPerformed
 
+    private void annotationLabelAutoResizeCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationLabelAutoResizeCheckboxActionPerformed
+        tdv.annotationLabelAutoSizeCheckBoxActionPerformed();
+    }//GEN-LAST:event_annotationLabelAutoResizeCheckboxActionPerformed
+
+    private void annotationLabelSizeComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationLabelSizeComboboxActionPerformed
+        tdv.annotationLabelSizeComboBoxActionPerformed();
+    }//GEN-LAST:event_annotationLabelSizeComboboxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel FieldLabel;
+    private javax.swing.JCheckBox annotationLabelAutoResizeCheckbox;
+    private javax.swing.JComboBox annotationLabelSizeCombobox;
     private javax.swing.JButton applyButton;
     private javax.swing.JCheckBox arrowCheckBox;
     protected javax.swing.JCheckBox autoRefreshCheckBox;
@@ -455,6 +554,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox6;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;

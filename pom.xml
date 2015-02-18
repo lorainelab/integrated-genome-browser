@@ -921,6 +921,13 @@
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                         <fileset>
+                            <directory>${basedir}/bundles/dynamic</directory>
+                            <includes>
+                                <include>*.jar</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
                             <directory>${basedir}/extbundles</directory>
                             <includes>
                                 <include>*.jar</include>

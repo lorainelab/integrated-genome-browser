@@ -1,8 +1,8 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -41,6 +41,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * An Export Image class for IGB. It is designed to export different part of IGB
@@ -56,6 +57,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ExportDialog extends HeadLessExport {
 
     private static ExportDialog singleton;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ExportDialog.class);
     static float FONT_SIZE = 13.0f;
     static final String TITLE = "Save Image";
     static final String DEFAULT_FILE = "igb.png";
@@ -101,6 +103,10 @@ public class ExportDialog extends HeadLessExport {
     JPanel buttonsPanel = new JPanel();
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
+    private static final double SPINNER_MIN = 1;
+    private static final double SPINNER_MAX = 10_000;
+    private static final int DEFAULT_SPINNER_HEIGHT = 800;
+    private static final int DEFAULT_SPINNER_WIDTH = 600;
 
     // detect export view size changed and activate refresh button.
     private final ComponentListener resizelistener = new ComponentListener() {
@@ -246,7 +252,7 @@ public class ExportDialog extends HeadLessExport {
 
             defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
 
-            imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, imageInfo.getResolution()));
+            imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
 
             filePathTextField.setText(exportFile.getAbsolutePath());
 
@@ -268,6 +274,7 @@ public class ExportDialog extends HeadLessExport {
             initSpinner((String) unitComboBox.getSelectedItem());
         }
     }
+    private static final int DEFAULT_RESOLUTION = 300;
 
     /**
      * Bind two listeners(detect size and view changed) to current export seq
@@ -297,13 +304,24 @@ public class ExportDialog extends HeadLessExport {
             width /= imageInfo.getResolution();
             height /= imageInfo.getResolution();
         }
-
-        SpinnerModel sm = new SpinnerNumberModel(width, 1, 10000, 1);
+        if (!isValidSpinnerValue(width)) {
+            width = DEFAULT_SPINNER_WIDTH;
+            logger.warn("Error detected, invalid image width, reverting to default width.");
+        }
+        SpinnerModel sm = new SpinnerNumberModel(width, SPINNER_MIN, SPINNER_MAX, 1);
         widthSpinner.setModel(sm);
-        sm = new SpinnerNumberModel(height, 1, 10000, 1);
+        if (!isValidSpinnerValue(height)) {
+            height = DEFAULT_SPINNER_HEIGHT;
+            logger.warn("Error detected, invalid image height, reverting to default height.");
+        }
+        sm = new SpinnerNumberModel(height, SPINNER_MIN, SPINNER_MAX, 1);
         heightSpinner.setModel(sm);
 
         resetWidthHeight(width, height);
+    }
+
+    private boolean isValidSpinnerValue(double value) {
+        return SPINNER_MIN <= value && value <= SPINNER_MAX;
     }
 
     /**
@@ -320,6 +338,9 @@ public class ExportDialog extends HeadLessExport {
      * Saved image information basis on component.
      */
     public void initImageInfo() {
+        if (component == null) {
+            component = mainViewWithLabels;
+        }
         if (imageInfo == null) {
             imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
         } else {

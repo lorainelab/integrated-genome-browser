@@ -34,7 +34,6 @@ public class ExportSequenceViewerAction extends GenericAction {
         try {
             ExportDialog.getSingleton().setComponent(comp);
             ExportDialog.getSingleton().initImageInfo();
-            ExportDialog.getSingleton().initSeqViewListener(comp, scroller);
             ExportDialog.getSingleton().display(true);
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);

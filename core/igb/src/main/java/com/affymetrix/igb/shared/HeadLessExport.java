@@ -43,10 +43,15 @@ public class HeadLessExport {
         "Portable Network Graphics (*.png)",
         "Joint Photographic Experts Group (*.jpeg)",};
 
-    protected final Properties svgProperties = new Properties();
-    protected final SVGExportFileType svgExport = new SVGExportFileType();
+    protected final Properties svgProperties;
+    protected final SVGExportFileType svgExport;
     protected BufferedImage exportImage;
-    protected ImageInfo imageInfo;
+    protected ExportImageInfo imageInfo;
+
+    public HeadLessExport() {
+        svgProperties = new Properties();
+        svgExport = new SVGExportFileType();
+    }
 
     public void exportScreenshot(Component component, File f, String ext, boolean isScript) {
         try {
@@ -56,8 +61,8 @@ public class HeadLessExport {
                         component.getWidth(), component.getHeight());
                 Graphics g = exportImage.createGraphics();
                 component.paintAll(g);
-                imageInfo = new ImageInfo(component.getWidth(), component.getHeight());
-                imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
+                imageInfo = new ExportImageInfo(component.getWidth(), component.getHeight());
+                imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, -1));
             }
 
             if (ext.equals(EXTENSION[0])) {
@@ -96,7 +101,6 @@ public class HeadLessExport {
             logger.error("Error while attempting to export an image.", ex);
         }
     }
-    private static final int DEFAULT_RESOLUTION = 300;
 
     /**
      * Passed meta data of PNG image and reset its DPI
@@ -136,90 +140,4 @@ public class HeadLessExport {
         metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
     }
 
-    public static class ImageInfo {
-
-        private double width;
-        private double height;
-        private int resolution = DEFAULT_RESOLUTION;
-        private static final int DEFAULT_IMAGE_HEIGHT = 800;
-        private static final int DEFAULT_IMAGE_WIDTH = 600;
-
-        public ImageInfo(double w, double h) {
-            this(w, h, DEFAULT_IMAGE_WIDTH);
-        }
-
-        private void validateDimensions() {
-            if (width <= 0) {
-                logger.warn("Invalid image width, setting to default value.  Please report this error if the problem persist.");
-                width = DEFAULT_IMAGE_WIDTH;
-            }
-            if (height <= 0) {
-                height = DEFAULT_IMAGE_HEIGHT;
-            }
-            if (resolution <= 0) {
-                resolution = DEFAULT_RESOLUTION;
-            }
-        }
-
-        public ImageInfo(double w, double h, int r) {
-            width = w;
-            height = h;
-            resolution = r;
-            validateDimensions();
-        }
-
-        public void reset(int w, int h, int r) {
-            width = w;
-            height = h;
-            resolution = r;
-            validateDimensions();
-        }
-
-        public void setWidth(double w) {
-            if (w > 0) {
-                width = w;
-            } else {
-                logger.warn("Invalid state detected, image width must be greater than 0.  Setting to default width of {}", DEFAULT_IMAGE_WIDTH);
-                width = DEFAULT_IMAGE_WIDTH;
-            }
-        }
-
-        public double getWidth() {
-            return width;
-        }
-
-        public void setHeight(double h) {
-            if (h > 0) {
-                height = h;
-            } else {
-                logger.warn("Invalid state detected, image height must be greater than 0.  Setting to default height of {}", DEFAULT_IMAGE_HEIGHT);
-                height = DEFAULT_IMAGE_HEIGHT;
-            }
-        }
-
-        public double getHeight() {
-            return height;
-        }
-
-        public void setResolution(int r) {
-            if (r > 0) {
-                resolution = r;
-            } else {
-                logger.warn("Invalid Image resolution, setting to default resolution.");
-                resolution = DEFAULT_RESOLUTION;
-            }
-        }
-
-        public int getResolution() {
-            return resolution;
-        }
-
-        public double getWidthHeightRate() {
-            return width / height;
-        }
-
-        public double getHeightWidthRate() {
-            return height / width;
-        }
-    }
 }

@@ -112,6 +112,7 @@ public class ExportDialog extends HeadLessExport {
     private final JPanel buttonsPanel;
 
     public ExportDialog() {
+        super();
         FILTER_LIST = new LinkedHashMap<>();
         FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
         FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
@@ -291,7 +292,7 @@ public class ExportDialog extends HeadLessExport {
             exportComponent = mainViewWithLabels;
         }
         if (imageInfo == null) {
-            imageInfo = new ImageInfo(exportComponent.getWidth(), exportComponent.getHeight());
+            imageInfo = new ExportImageInfo(exportComponent.getWidth(), exportComponent.getHeight());
         } else {
             imageInfo.setWidth(exportComponent.getWidth());
             imageInfo.setHeight(exportComponent.getHeight());

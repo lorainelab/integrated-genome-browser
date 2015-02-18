@@ -22,27 +22,44 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Translatable;
-import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.util.Selection;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.igb.service.api.IGBService;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.affymetrix.igb.shared.FileTracker;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.sequenceviewer.actions.ExitSeqViewerAction;
 import com.affymetrix.sequenceviewer.actions.ExportFastaSequenceAction;
 import com.affymetrix.sequenceviewer.actions.ExportSequenceViewerAction;
 import com.affymetrix.sequenceviewer.actions.SelectAllInSeqViewerAction;
-import java.awt.*;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.FileWriter;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -150,7 +167,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             if (syms.size() == 1) {
                 residues_sym = syms.get(0);
                 txMin = residues_sym.getSpan(seqmapview.getAnnotatedSeq()).getMin();
-                checkNegativeStrand(residues_sym.getSpan(seqmapview.getAnnotatedSeq()));//check for negative strand and 
+                checkNegativeStrand(residues_sym.getSpan(seqmapview.getAnnotatedSeq()));//check for negative strand and
                 if (residues_sym.getChildCount() == 0) {//for single child
                     SeqSymmetry residues_syms1 = residues_sym;
                     if ((residues_syms1 instanceof SupportsCdsSpan) && ((SupportsCdsSpan) residues_syms1).hasCdsSpan()) {
@@ -279,7 +296,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
      CreateValueSet cv = it.next();
      int start = cv.getSpan().getStart();
      int end = cv.getSpan().getEnd();
-     //			if ((start > end) && it.hasNext() && (start < (((CreateValueSet) it.next()).getSpan().getStart()))) { 
+     //			if ((start > end) && it.hasNext() && (start < (((CreateValueSet) it.next()).getSpan().getStart()))) {
      //above condition gives some kind of exception, not sure why? so i have to write below two separate if conditions
      //this handles for the positive and negative strand
      if (start > end) {
@@ -741,7 +758,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     private String getSelectedResidues(int frame) {
         return ((NASequence) seqview.getSequence()).getTranslation(frame).substring(seqview.getSelectedStart(), seqview.getSelectedEnd()).trim();
     }
-    
+
     public void copyAnnotatedTransAction() {
 
         StringBuilder annotatedSeqStringBuffer = new StringBuilder();
@@ -758,8 +775,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                 continue;
             }
             if (!(cv.si.getType() == SequenceViewerItems.TYPE.INTRON.ordinal())) {
-                int start = cv.si.getCdsStart()>0?  cv.si.getCdsStart():0;
-                int end = cv.si.getCdsEnd() > 0 ? cv.si.getCdsEnd():residues.length();
+                int start = cv.si.getCdsStart() > 0 ? cv.si.getCdsStart() : 0;
+                int end = cv.si.getCdsEnd() > 0 ? cv.si.getCdsEnd() : residues.length();
                 annotatedSeqStringBuffer.append(residues.substring(start, end));
             }
             if (cv.si.getCdsEnd() >= 0) {

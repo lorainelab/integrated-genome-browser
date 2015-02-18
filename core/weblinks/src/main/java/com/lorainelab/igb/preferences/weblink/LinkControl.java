@@ -1,14 +1,17 @@
-package com.affymetrix.igb.view;
+package com.lorainelab.igb.preferences.weblink;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.lorainelab.igb.preferences.weblink.model.WebLink;
-import com.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import com.google.common.base.Strings;
+import com.lorainelab.igb.preferences.weblink.model.WebLink;
+import com.lorainelab.igb.service.api.IgbService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,9 +20,25 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-final class LinkControl implements ContextualPopupListener {
+@Component(name = LinkControl.COMPONENT_NAME, immediate = true)
+public class LinkControl implements ContextualPopupListener {
 
-    private static String searchWebIconPath = "16x16/actions/searchweb.png";
+    public static final String COMPONENT_NAME = "LinkControl";
+    private static final String searchWebIconPath = "16x16/actions/searchweb.png";
+    private IgbService igbService;
+
+    public LinkControl() {
+    }
+
+    @Activate
+    public void activate() {
+        igbService.getSeqMapView().addPopupListener(this);
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
 
     @Override
     public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {

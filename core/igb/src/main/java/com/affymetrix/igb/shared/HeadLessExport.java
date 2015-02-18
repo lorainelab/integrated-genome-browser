@@ -57,8 +57,7 @@ public class HeadLessExport {
         try {
             // From Script Loader, need to initialize the export image
             if (isScript) {
-                exportImage = GraphicsUtil.getDeviceCompatibleImage(
-                        component.getWidth(), component.getHeight());
+                exportImage = GraphicsUtil.getDeviceCompatibleImage(component.getWidth(), component.getHeight());
                 Graphics g = exportImage.createGraphics();
                 component.paintAll(g);
                 imageInfo = new ExportImageInfo(component.getWidth(), component.getHeight());

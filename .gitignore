@@ -84,7 +84,6 @@ www/release_notes/images/Thumbs.db
 /developmentPlugins/NCBIPrimer/target/
 /plugins/PairedEndDataPreprocessor/target/
 /plugins/IGBR/target/
-extbundles/*
 /plugins/ConsoleGui/target/
 /core/SeqMapViewExtendedApi/target/
 /core/SeqSymmetryPreprocessorApi/target/

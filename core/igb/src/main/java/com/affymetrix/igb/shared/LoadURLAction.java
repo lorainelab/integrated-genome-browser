@@ -97,7 +97,7 @@ public final class LoadURLAction extends OpenURIAction {
         });
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
-        
+
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
         AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
 

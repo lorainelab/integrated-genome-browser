@@ -4,12 +4,12 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.3.0</version>
+        <version>8.3.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>com.lorainelab</groupId>
     <artifactId>console-gui</artifactId>
-    <version>${console-gui-version}</version>
+
     <packaging>bundle</packaging>
 
     <name>Console Gui</name>

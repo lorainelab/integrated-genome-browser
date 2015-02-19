@@ -143,13 +143,21 @@
         <module>plugins/plugin-manager</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
-        <module>plugins/session-manager</module>
-        <module>main</module>        
+        <module>plugins/session-manager</module>               
     </modules>
 
     <profiles>
-        <profile>
-            <id>externalBundles</id>
+        <profile> <!-- profile for jenkins -->
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>               
+                <module>main</module>
+            </modules>            
+        </profile>
+        <profile> <!-- profile for jenkins -->
+            <id>development</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -157,8 +165,7 @@
                 <module>optionalPlugins/merge-annotation-operator</module>
                 <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module>
-                
+                <module>optionalPlugins/igb-command-socket</module> 
                 <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/FindAnnotations</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>                
@@ -168,72 +175,21 @@
                 <module>developmentPlugins/ThousandGenomesServerType</module>
                 <module>developmentPlugins/TranscriptIsoform</module>               
                 <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/NCBIPrimer</module>                
-            </modules>
+                <module>developmentPlugins/NCBIPrimer</module>
+                
+                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
+            </modules>            
         </profile>
-        <profile> <!-- profile for jenkins -->
+        <profile>
             <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
-                <!-- start of core modules-->
-                <module>core/heatmap-editor</module>
-                <module>core/common</module>
-                <module>core/genometry</module>
-                <module>core/igb</module>
-                <module>core/igb-swing-ext</module>
-                <module>core/igb-services-api</module>
-                <module>core/window-service</module>
-                <module>core/shared-lib-wrapper</module>
-                <module>core/logging-config</module>
-                <module>core/igb-genoviz-ext</module>
-                <module>core/igb-preferences</module>
-                <module>core/weblinks</module>
-                <module>plugins/ApolloLibrary</module>
-                <module>plugins/AnnotationTab</module>
-                <module>plugins/track-operations-panel</module>
-                <module>plugins/BigBedHandler</module>
-                <module>plugins/BigWigHandler</module>
-                <module>plugins/Bookmark</module>
-                <module>plugins/ExternalView</module>
-                <module>plugins/GraphTab</module>
-                <module>plugins/IGBScript</module>
-                <module>plugins/KeyWordSearch</module>
-                <module>plugins/NCBIBlast</module>
-                <module>plugins/PropertyView</module>
-                <module>plugins/RestrictionSites</module>
-                <module>plugins/SearchModeIdOrProps</module>
-                <module>plugins/SearchModeLucene</module>
-                <module>plugins/SearchView</module>
-                <module>plugins/SequenceViewer</module>
-                <module>plugins/Survey</module>
-                <module>plugins/Thresholding</module>
-                <module>plugins/Tutorial</module>
-                <module>plugins/Update</module>
-                <module>plugins/plugin-manager</module>
-                <module>plugins/PairedEndDataPreprocessor</module>    
-                <module>plugins/ConsoleGui</module>
-                <module>plugins/session-manager</module>                     
-                <!-- end of core modules-->
-                
-                <!-- start of dev plugin modules-->
                 <module>optionalPlugins/merge-annotation-operator</module>
                 <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module>                
-                <module>developmentPlugins/DASRegistryServerType</module>
-                <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/OverlapAnnotationOperator</module>
-                <module>developmentPlugins/SampleSelection</module>
-                <module>developmentPlugins/SearchModeSymmetryFilter</module>
-                <module>developmentPlugins/TallyHandler</module>
-                <module>developmentPlugins/ThousandGenomesServerType</module>
-                <module>developmentPlugins/TranscriptIsoform</module>
-                <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/NCBIPrimer</module>                                 
-                <!-- end of dev plugin modules-->
-                
+                <module>optionalPlugins/igb-command-socket</module>
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
         </profile>

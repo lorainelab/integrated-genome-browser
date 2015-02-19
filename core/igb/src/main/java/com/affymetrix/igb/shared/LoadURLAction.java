@@ -9,9 +9,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.util.OptionChooserImpl;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -24,8 +22,6 @@ import java.util.logging.Level;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -66,35 +62,15 @@ public final class LoadURLAction extends OpenURIAction {
 
         List<UniFileFilter> filters = getSupportedFiles(FileTypeCategory.Sequence);
         Set<String> all_known_endings = new HashSet<>();
-        for (UniFileFilter filter : filters) {
+        filters.stream().forEach((filter) -> {
             all_known_endings.addAll(filter.getExtensions());
-        }
-        final UniFileFilter seq_ref_filter = new UniFileFilter(all_known_endings.toArray(new String[all_known_endings.size()]), "Known Types");
+        });
         final UniFileFilter all_known_types = getAllKnowFilter();
 
-        final OptionChooserImpl optionChooser = new OptionChooserImpl();
-        optionChooser.refreshSpeciesList();
         String clipBoardContent = GeneralUtils.getClipboard();
         if (LocalUrlCacher.isURL(clipBoardContent)) {
             urlTextField.setText(clipBoardContent);
-            checkLoadSeqCB(false, clipBoardContent, seq_ref_filter, optionChooser);
         }
-
-        urlTextField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent de) {
-                checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent de) {
-                checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent de) {
-                checkLoadSeqCB(true, urlTextField.getText(), seq_ref_filter, optionChooser);
-            }
-        });
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
         
@@ -104,7 +80,6 @@ public final class LoadURLAction extends OpenURIAction {
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
             JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
             dialog.setModal(true);
-            dialog.getContentPane().add(optionChooser, BorderLayout.SOUTH);
             dialog.pack();
             dialog.setLocationRelativeTo(igbService.getFrame());
             dialog.setVisible(true);
@@ -145,7 +120,7 @@ public final class LoadURLAction extends OpenURIAction {
             return;
         }
 
-        openURI(uri, friendlyName, true, loadGroup, (String) optionChooser.getSpeciesCB().getSelectedItem(), optionChooser.getLoadAsSeqCB().isSelected());
+        openURI(uri, friendlyName, true, loadGroup, speciesName, false);
 
     }
 
@@ -161,19 +136,4 @@ public final class LoadURLAction extends OpenURIAction {
         return urlStr;
     }
 
-    private void checkLoadSeqCB(boolean checkURL, String fileName, UniFileFilter filter, OptionChooserImpl optionChooser) {
-        if (checkURL && LocalUrlCacher.isURL(fileName)) {
-            checkLoadSeqCB(fileName, filter, optionChooser);
-        } else {
-            checkLoadSeqCB(fileName, filter, optionChooser);
-        }
-    }
-
-    private void checkLoadSeqCB(String fileName, UniFileFilter filter, OptionChooserImpl optionChooser) {
-        boolean enableLoadAsSeqCB = filter.accept(new File(fileName));
-        optionChooser.getLoadAsSeqCB().setEnabled(enableLoadAsSeqCB);
-        if (!enableLoadAsSeqCB) {
-            optionChooser.getLoadAsSeqCB().setSelected(false);
-        } // Uncheck for disabled
-    }
 }

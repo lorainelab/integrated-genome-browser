@@ -1,14 +1,16 @@
 package com.gene.tutorialhelper;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.JComponent;
-
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.JRPWidgetDecorator;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.JComponent;
 
+@Component(name = WidgetIdTooltip.COMPONENT_NAME, immediate = true, provide = JRPWidgetDecorator.class)
 public class WidgetIdTooltip implements JRPWidgetDecorator {
+
+    public static final String COMPONENT_NAME = "WidgetIdTooltip";
 
     @Override
     public void widgetAdded(final JRPWidget widget) {

@@ -192,9 +192,9 @@ public final class GeneralLoadUtils {
             return null;
         }
 
-//        if (!discoverServer(gServer)) {
-//            return null;
-//        }
+        if (!discoverServer(gServer)) {
+            return null;
+        }
         return gServer;
     }
 

@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.PairedBamSymWrapper;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.util.ArrayList;
@@ -26,13 +26,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = PairedReadPreprocessor.COMPONENT_NAME, provide = {SeqSymmetryPreprocessorI.class})
+@Component(name = PairedReadPreprocessor.COMPONENT_NAME, immediate = true, provide = {SeqSymmetryPreprocessorI.class})
 public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
 
     public static final String COMPONENT_NAME = "PairedReadPreprocessor";
     private static final Logger logger = LoggerFactory.getLogger(PairedReadPreprocessor.class);
     private List<BAMSym> bamSyms;
     private SeqMapViewExtendedI gviewer;
+
+    public PairedReadPreprocessor() {
+        logger.info("Initializaing PairedReadPreprocessor");
+    }
 
     @Override
     public void process(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
@@ -97,12 +101,9 @@ public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
                 }
             }
         }
+
         //add anything remaining
-        for (List<BAMSym> bamSymList : pairMap.values()) {
-            for (BAMSym bamSym : bamSymList) {
-                toReturn.add(bamSym);
-            }
-        }
+        pairMap.values().stream().forEach(list -> toReturn.addAll(list));
         return toReturn;
     }
 

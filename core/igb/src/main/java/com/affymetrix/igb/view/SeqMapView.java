@@ -386,7 +386,6 @@ public class SeqMapView extends JPanel
         gstate.getTierStyle().setJoin(false);
         gstate.getTierStyle().setFloatTier(false);
     }
-    private final PropertyHolder propertyHolder;
     private final SymSelectionListener symSelectionListener;
     protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
     protected boolean coord_shift = false;
@@ -608,7 +607,6 @@ public class SeqMapView extends JPanel
 
         pref_change_listener = new SeqMapViewPrefChangeListenerImpl(this);
         symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
-        propertyHolder = this;
 
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
     }
@@ -1571,7 +1569,7 @@ public class SeqMapView extends JPanel
         if (tier_used_in_selection_info != null) {
             props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
         } else {
-            props = propertyHolder.determineProps(sym_used_for_title);
+            props = determineProps(sym_used_for_title);
         }
         Application.getSingleton().setSelField(props, title, sym_used_for_title);
     }
@@ -2042,9 +2040,9 @@ public class SeqMapView extends JPanel
             Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
-                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, propertyHolder);
+                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, this);
                 } else {
-                    properties = propertyHandler.getPropertiesRow(toolTipSym, propertyHolder);
+                    properties = propertyHandler.getPropertiesRow(toolTipSym, this);
                 }
             }
             if (evt != null && properties != null) {
@@ -2067,7 +2065,7 @@ public class SeqMapView extends JPanel
 
         if (!sym.isEmpty()) {
             if (propertyHandler != null) {
-                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, propertyHolder);
+                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, this);
             }
         }
     }

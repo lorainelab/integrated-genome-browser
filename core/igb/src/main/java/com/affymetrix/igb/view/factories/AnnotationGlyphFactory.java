@@ -42,17 +42,16 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.AlignedResidueGlyph;
 import com.affymetrix.igb.shared.CodonGlyphProcessor;
 import com.affymetrix.igb.shared.DeletionGlyph;
-
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
 import com.affymetrix.igb.shared.PreprocessorRegistryImpl;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -71,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman
  * $
  */
-@Component(name = AnnotationGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = AnnotationGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "AnnotationGlyphFactory";
@@ -320,7 +319,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             }
         }
 
-//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, viewSeq, viewSeq, 0.0, 
+//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, sym, pglyph, viewSeq, viewSeq, 0.0,
 //			thin_height, the_style.getDirectionType() == DirectionType.ARROW.ordinal());
         // call out to handle rendering to indicate if any of the children of the
         //    orginal annotation are completely outside the view

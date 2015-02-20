@@ -14,13 +14,13 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.view.SeqMapView;
 import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Set;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *
  * @author hiralv
  */
-@Component(name = AxisGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = AxisGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "AxisGlyphFactory";

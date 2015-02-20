@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-@Component
+@Component(name = MapTierTypeHolder.COMPONENT_NAME, immediate = true)
 public class MapTierTypeHolder {
+
+    public static final String COMPONENT_NAME = "MapTierTypeHolder";
 
     private static final Table<String, FileTypeCategory, MapTierGlyphFactoryI> mapTierTypeReferenceTable = HashBasedTable.create();
 

@@ -2,14 +2,14 @@ package com.affymetrix.igb.view.factories;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
@@ -23,11 +23,11 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.google.common.collect.ImmutableSet;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Set;
@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  *
  * @author hiralv
  */
-@Component(name = ProbeSetGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = ProbeSetGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "ProbeSetGlyphFactory";
@@ -205,7 +205,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
             }
         }
 
-//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq, 
+//		ArrowHeadGlyph.addDirectionGlyphs(gviewer, transformed_consensus_sym, pglyph, coordseq, coordseq,
 //				child_y + child_height / 4, child_height/2, the_style.getDirectionType() == TrackConstants.DirectionType.ARROW.ordinal());
         // call out to handle rendering to indicate if any of the children of the
         //    orginal annotation are completely outside the view
@@ -551,7 +551,7 @@ public class ProbeSetGlyphFactory extends MapTierGlyphFactoryA {
         return "probeset";
     }
 
-       @Override
+    @Override
     public Set<FileTypeCategory> getSupportedCategories() {
         return ImmutableSet.<FileTypeCategory>builder()
                 .add(FileTypeCategory.ProbeSet).build();

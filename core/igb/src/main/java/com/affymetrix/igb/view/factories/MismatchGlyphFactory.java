@@ -16,7 +16,7 @@ import java.util.Set;
  *
  * @author hiralv
  */
-@Component(name = MismatchGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = MismatchGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class MismatchGlyphFactory extends GraphGlyphFactory {
 
     public static final String COMPONENT_NAME = "MismatchGlyphFactory";

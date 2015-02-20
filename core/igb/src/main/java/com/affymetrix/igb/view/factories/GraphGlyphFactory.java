@@ -8,8 +8,8 @@ import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.igb.graphTypes.DotGraphType;
@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component(name = GraphGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = GraphGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class GraphGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "GraphGlyphFactory";

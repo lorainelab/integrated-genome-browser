@@ -10,10 +10,10 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.IndexedSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.ScoredContainerSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
@@ -29,7 +29,7 @@ import java.util.Set;
  *
  * @author hiralv
  */
-@Component(name = ScoredContainerGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = ScoredContainerGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "ScoredContainerGlyphFactory";

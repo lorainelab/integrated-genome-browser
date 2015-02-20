@@ -12,12 +12,12 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.google.common.collect.ImmutableSet;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.Set;
 
-@Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class})
+@Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "SequenceGlyphFactory";
@@ -37,7 +37,7 @@ public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
                 SeqSpan pspan = smv.getViewSeqSpan(childSym);
                 if (pspan == null || pspan.getLength() == 0) {
                     return;
-                }  // if no span corresponding to seq, then return;	
+                }  // if no span corresponding to seq, then return;
                 GlyphI residueGlyph = getAlignedResiduesGlyph(childSym, smv.getAnnotatedSeq(), false);
                 if (residueGlyph != null) {
                     FillRectGlyph childGlyph = new FillRectGlyph();

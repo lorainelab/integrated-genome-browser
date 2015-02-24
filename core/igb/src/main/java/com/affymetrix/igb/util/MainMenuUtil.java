@@ -87,7 +87,7 @@ public class MainMenuUtil implements MainMenuManager {
     public void activate() {
         componentActivated = true;
         menuBar = (JRPMenuBar) igbService.getFrame().getJMenuBar();
-        
+
         loadMenu();
         loadQueuedMenuItems();
     }
@@ -119,74 +119,79 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void fileMenu() {
-        JMenu fileMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "fileMenu", BUNDLE.getString("fileMenu"), 0);
+        int menuItemCounter = 0;
+        JRPMenu fileMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "fileMenu", BUNDLE.getString("fileMenu"), 0);
         fileMenu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction()));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction()));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_newGenome", NewGenomeAction.getAction()));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_saveImage", SaveImageAction.getAction()));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction()));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction()));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_newGenome", NewGenomeAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_saveImage", SaveImageAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
         fileMenu.addSeparator();
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction()));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), menuItemCounter++));
         fileMenu.addSeparator();
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction()));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), menuItemCounter++));
     }
 
     private void editMenu() {
-        JMenu editMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "editMenu", BUNDLE.getString("editMenu"), 1);
+        int menuItemCounter = 0;
+        JRPMenu editMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "editMenu", BUNDLE.getString("editMenu"), 1);
         editMenu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(editMenu, new JRPMenuItem(ID_PREFIX + "editMenu_copyResidues", CopyResiduesAction.getAction()));
+        MenuUtil.addToMenu(editMenu, new JRPMenuItem(ID_PREFIX + "editMenu_copyResidues", CopyResiduesAction.getAction(), menuItemCounter++));
         JMenu select_menu = new JRPMenu(ID_PREFIX + "editMenu_select", IGBConstants.BUNDLE.getString("selectTracks"));
         select_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
-        select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_select_all", SelectAllAction.getAction()));
-        select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_deselect_all", DeselectAllAction.getAction()));
+        select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_select_all", SelectAllAction.getAction(), menuItemCounter++));
+        select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_deselect_all", DeselectAllAction.getAction(), menuItemCounter++));
         editMenu.add(select_menu);
     }
 
     private void viewMenu() {
-        JMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
+        int menuItemCounter = 0;
+        JRPMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
         viewMenu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
+        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_setThreshold", AutoLoadThresholdAction.getAction(), menuItemCounter++));
         viewMenu.addSeparator();
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_clampView", ClampViewAction.getAction()));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_clampView", ClampViewAction.getAction(), menuItemCounter++));
         viewMenu.addSeparator();
-        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_clearVisualTools", ClearVisualTools.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_showVisualTools", ShowAllVisualToolsAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showHairline", ToggleHairlineAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleToolTip", ToggleToolTipAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showIGBTrackMark", ShowIGBTrackMarkAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showFilterMark", ShowFilterMarkAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleHairlineLabel", ToggleEdgeMatchingAction.getAction()));
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showLockTrackIcon", ShowLockedTrackIconAction.getAction()));
+        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_clearVisualTools", ClearVisualTools.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_showVisualTools", ShowAllVisualToolsAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showHairline", ToggleHairlineAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleHairlineLabel", ToggleHairlineLabelAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleToolTip", ToggleToolTipAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_drawCollapseControl", DrawCollapseControlAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showIGBTrackMark", ShowIGBTrackMarkAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showFilterMark", ShowFilterMarkAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_toggleHairlineLabel", ToggleEdgeMatchingAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showLockTrackIcon", ShowLockedTrackIconAction.getAction(), menuItemCounter++));
 
-        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showFullFilePathInTrack", ShowFullFilePathInTrack.getAction()));//TK
+        MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showFullFilePathInTrack", ShowFullFilePathInTrack.getAction(), menuItemCounter++));//TK
     }
 
     private void toolMenu() {
+        int menuItemCounter = 0;
         JRPMenu toolsMenu;
         toolsMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "toolsMenu", BUNDLE.getString("toolsMenu"), 3);
         toolsMenu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction()));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction()));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction()));
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction(), menuItemCounter++));
         toolsMenu.addSeparator();
         JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"));
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
-        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction()));
-        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));
+        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
         toolsMenu.add(scripts_menu);
     }
 
     private void helpMenu() {
-        JMenu helpMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "helpMenu", BUNDLE.getString("helpMenu"), 7);
+        int menuItemCounter = 0;
+        JRPMenu helpMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "helpMenu", BUNDLE.getString("helpMenu"), 7);
         helpMenu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_aboutIGB", AboutIGBAction.getAction()));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_IGBSupport", IGBSupportAction.getAction()));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_documentation", DocumentationAction.getAction()));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_showConsole", ShowConsoleAction.getAction()));
+        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_aboutIGB", AboutIGBAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_IGBSupport", IGBSupportAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_documentation", DocumentationAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_showConsole", ShowConsoleAction.getAction(), menuItemCounter++));
     }
 
     private void loadDefaultMenu() {
@@ -314,7 +319,7 @@ public class MainMenuUtil implements MainMenuManager {
             Method m = clazz.getDeclaredMethod("getAction");
             GenericAction action = (GenericAction) m.invoke(null);
             String id = menu.getId() + "_" + menuItemPrefs.get("item", "???");
-            JMenuItem item = action.isToggle() ? new JRPCheckBoxMenuItem(id, action) : new JRPMenuItem(id, action);
+            JMenuItem item = action.isToggle() ? new JRPCheckBoxMenuItem(id, action, -1) : new JRPMenuItem(id, action, -1);
             if (action.usePrefixInMenu()) {
                 MenuUtil.addToMenu(menu, item, menu.getText());
             } else {

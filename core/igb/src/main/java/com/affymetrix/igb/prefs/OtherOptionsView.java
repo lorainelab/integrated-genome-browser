@@ -68,11 +68,11 @@ public class OtherOptionsView extends IPrefEditorComponent {
         gLabel = new javax.swing.JLabel();
         cLabel = new javax.swing.JLabel();
         otherLabel = new javax.swing.JLabel();
-        AColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, null);
-        TColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, null);
-        GColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, null);
-        CColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, null);
-        OtherColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.default_other_color, null);
+        AColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.DEFAULT_A_COLOR, null);
+        TColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.DEFAULT_T_COLOR, null);
+        GColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.DEFAULT_G_COLOR, null);
+        CColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.DEFAULT_C_COLOR, null);
+        OtherColorComboBox = ColorUtils.createColorComboBox(ResidueColorHelper.PREF_OTHER_COLOR, ResidueColorHelper.DEFAULT_OTHER_COLOR, null);
         askBeforeExitCheckBox = PreferenceUtils.createCheckBox("Ask Before Exit",
             PreferenceUtils.ASK_BEFORE_EXITING, PreferenceUtils.default_ask_before_exiting);
         confirmBeforeDeleteCheckBox = PreferenceUtils.createCheckBox("Confirm Before Delete",

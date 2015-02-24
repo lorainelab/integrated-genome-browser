@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.swing;
 
+import com.affymetrix.igb.swing.util.WeightUtil;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JMenu;
@@ -16,7 +17,7 @@ import javax.swing.JMenuBar;
  */
 public class JRPMenuBar extends JMenuBar {
 
-    List<JRPMenu> menuComponents;
+    private List<WeightedJRPWidget> menuComponents;
 
     public JRPMenuBar() {
         menuComponents = new ArrayList<>();
@@ -24,26 +25,12 @@ public class JRPMenuBar extends JMenuBar {
 
     public void add(JMenu newMenu, int index) {
 
-        if (newMenu instanceof JRPMenu) {
-            JMenu prevMenu = null;
-            for (JRPMenu menu : menuComponents) {
-                if (menu.getIndex() > index) {
-                    break;
-                } else {
-                    prevMenu = menu;
-                }
-            }
-            if (prevMenu == null) {
-                super.add(newMenu, 0);
-            } else {
-                super.add(newMenu, menuComponents.indexOf(prevMenu) + 1);
-            }
-            menuComponents.add(menuComponents.indexOf(prevMenu) + 1, (JRPMenu)newMenu);
+        if (newMenu instanceof WeightedJRPWidget) {
+            int loc = WeightUtil.locationToAdd(menuComponents, (WeightedJRPWidget)newMenu);
+            super.add(newMenu, loc);
+            menuComponents.add(loc, (WeightedJRPWidget)newMenu);
         } else {
             super.add(newMenu, -1);
         }
-        
-        
     }
-
 }

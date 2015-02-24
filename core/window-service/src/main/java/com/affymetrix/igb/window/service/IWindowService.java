@@ -2,6 +2,7 @@ package com.affymetrix.igb.window.service;
 
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
+import com.affymetrix.igb.swing.JRPMenuBar;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -50,7 +51,7 @@ public interface IWindowService {
      *
      * @param view_menu the view menu
      */
-    public void setTabsMenu(JMenuBar mbar);
+    public void setTabsMenu(JRPMenuBar mbar);
 
     /**
      * pass in the status bar of the application, this is where

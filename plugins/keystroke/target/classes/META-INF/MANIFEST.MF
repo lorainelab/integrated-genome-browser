@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1425397997807
+Build-Jdk: 1.8.0_31
+Built-By: tarun
+Bundle-ManifestVersion: 2
+Bundle-Name: Keystroke View
+Bundle-SymbolicName: keystroke
+Bundle-Version: 8.4.0
+Created-By: Apache Maven Bundle Plugin
+Import-Package: com.affymetrix.genometry.event;version="[8.4,9)",com.aff
+ ymetrix.genometry.util;version="[8.4,9)",com.affymetrix.genoviz.swing;v
+ ersion="[1.1,2)",com.affymetrix.genoviz.util;version="[1.1,2)",com.affy
+ metrix.igb.swing;version="[8.4,9)",com.affymetrix.igb.swing.jide;versio
+ n="[8.4,9)",com.lorainelab.igb.services;version="[8.4,9)",com.lorainela
+ b.igb.services.window.preferences;version="[8.4,9)",javax.swing,javax.s
+ wing.event,javax.swing.table,org.jdesktop.layout,org.slf4j;version="[1.
+ 7,2)"
+Provide-Capability: osgi.service;effective:=active;objectClass="com.lora
+ inelab.igb.keystrokes.KeyStrokesView",osgi.service;effective:=active;ob
+ jectClass="com.lorainelab.igb.services.window.preferences.PreferencesPa
+ nelProvider"
+Require-Capability: osgi.service;effective:=active;resolution:=optional;
+ filter:="(objectClass=com.affymetrix.genometry.event.GenericAction)",os
+ gi.service;effective:=active;filter:="(objectClass=com.lorainelab.igb.k
+ eystrokes.model.KeyStrokeViewTableModel)",osgi.service;effective:=activ
+ e;filter:="(objectClass=com.lorainelab.igb.keystrokes.KeyStrokesView)",
+ osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Service-Component: OSGI-INF/KeyStrokeEditPanel.xml,OSGI-INF/KeyStrokesVi
+ ew.xml,OSGI-INF/KeyStrokesViewGUI.xml,OSGI-INF/KeyStrokeViewTableModel.
+ xml
+Tool: Bnd-2.3.0.201405100607

@@ -71,7 +71,7 @@ public abstract class MenuUtil {
         return null;
     }
 
-    private static void addMenu(JMenuBar main_menu_bar, JMenu new_menu, int index) {
+    private static void addMenu(JRPMenuBar main_menu_bar, JMenu new_menu, int index) {
         try {
             main_menu_bar.add(new_menu, index);
         } catch (IllegalArgumentException ex) {
@@ -95,12 +95,12 @@ public abstract class MenuUtil {
         return new_menu;
     }
 
-    public static JRPMenu getRPMenu(JMenuBar menuBar, String id, String name, int index) {
+    public static JRPMenu getRPMenu(JRPMenuBar menuBar, String id, String name, int index) {
         JRPMenu new_menu = (JRPMenu) findMenu(menuBar, name);
         if (new_menu != null) {
             return new_menu;
         }
-        new_menu = new JRPMenu(id, name);
+        new_menu = new JRPMenu(id, name, index);
         new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
         addMenu(menuBar, new_menu, index);
         return new_menu;

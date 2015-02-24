@@ -8,6 +8,7 @@ public class JRPMenu extends JMenu implements JRPWidget {
 
 	private static final long serialVersionUID = 1L;
 	private final String id;
+        private int index;
 
 	public JRPMenu(String id) {
 		super();
@@ -26,6 +27,11 @@ public class JRPMenu extends JMenu implements JRPWidget {
 		this.id = id;
 		init();
 	}
+        
+        public JRPMenu(String id, String s, int index) {
+            this(id, s);
+            this.index = index;
+        }
 
 	public JRPMenu(String id, String s, boolean b) {
 		super(s, b);
@@ -47,4 +53,8 @@ public class JRPMenu extends JMenu implements JRPWidget {
 	public boolean consecutiveOK() {
 		return true;
 	}
+        
+        public int getIndex() {
+            return index;
+        }
 }

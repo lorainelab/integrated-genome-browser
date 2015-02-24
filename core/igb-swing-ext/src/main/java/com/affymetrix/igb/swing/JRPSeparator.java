@@ -5,7 +5,11 @@
  */
 package com.affymetrix.igb.swing;
 
+import java.util.PrimitiveIterator;
+import java.util.stream.IntStream;
 import javax.swing.JSeparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -16,12 +20,12 @@ public class JRPSeparator extends JSeparator implements WeightedJRPWidget {
     private String id;
     private int weight;
     
-    public JRPSeparator(String id) {
-        this(id, -1);
-    }
+    private static final Logger logger = LoggerFactory.getLogger(JRPSeparator.class);
+    
+    private static PrimitiveIterator.OfInt ids = IntStream.iterate(0, i -> i + 1).iterator();
     
     public JRPSeparator(int weight) {
-        this("", weight);
+        this(ids.next().toString(), weight);
     }
     
     public JRPSeparator(String id, int weight) {
@@ -41,7 +45,7 @@ public class JRPSeparator extends JSeparator implements WeightedJRPWidget {
 
     @Override
     public boolean consecutiveOK() {
-        return false;
+        return true;
     }
     
 }

@@ -5,10 +5,11 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JRadioButtonMenuItem;
 
-public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements JRPWidget {
+public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements WeightedJRPWidget {
 
 	private static final long serialVersionUID = 1L;
 	private final String id;
+        private int weight;
 
 	public JRPRadioButtonMenuItem(String id) {
 		super();
@@ -34,7 +35,12 @@ public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements JRPW
 		init();
 	}
 
+        /**/
 	public JRPRadioButtonMenuItem(String id, String text) {
+            this(id, text, -1);
+	}
+        
+        public JRPRadioButtonMenuItem(String id, String text, int weight) {
 		super(text);
 		this.id = id;
 		init();
@@ -72,4 +78,9 @@ public class JRPRadioButtonMenuItem extends JRadioButtonMenuItem implements JRPW
 	public boolean consecutiveOK() {
 		return true;
 	}
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
 }

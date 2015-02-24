@@ -5,6 +5,7 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
@@ -35,6 +36,18 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.GENE_NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATCH;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_END;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_START;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.END;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.LENGTH;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.METHOD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SEQ_ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.START;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DIRECTION;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.REVERSE_DIRECTION;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -125,9 +138,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +173,7 @@ import org.slf4j.LoggerFactory;
  * panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
-        implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, JRPWidget {
+        implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(SeqMapView.class);
@@ -371,7 +386,6 @@ public class SeqMapView extends JPanel
         gstate.getTierStyle().setJoin(false);
         gstate.getTierStyle().setFloatTier(false);
     }
-    private final PropertyHolder propertyHolder;
     private final SymSelectionListener symSelectionListener;
     protected boolean subselectSequence = true;  // try to visually select range along seq glyph based on rubberbanding
     protected boolean coord_shift = false;
@@ -593,7 +607,6 @@ public class SeqMapView extends JPanel
 
         pref_change_listener = new SeqMapViewPrefChangeListenerImpl(this);
         symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
-        propertyHolder = new SeqMapViewPropertyHolderImpl(this);
 
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
     }
@@ -1556,7 +1569,7 @@ public class SeqMapView extends JPanel
         if (tier_used_in_selection_info != null) {
             props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
         } else {
-            props = propertyHolder.determineProps(sym_used_for_title);
+            props = determineProps(sym_used_for_title);
         }
         Application.getSingleton().setSelField(props, title, sym_used_for_title);
     }
@@ -2027,9 +2040,9 @@ public class SeqMapView extends JPanel
             Map<String, Object> properties = null;
             if (toolTipSym != null && propertyHandler != null) {
                 if (toolTipSym instanceof GraphSym) {
-                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, propertyHolder);
+                    properties = propertyHandler.getGraphPropertiesRowColumn((GraphSym) toolTipSym, x, this);
                 } else {
-                    properties = propertyHandler.getPropertiesRow(toolTipSym, propertyHolder);
+                    properties = propertyHandler.getPropertiesRow(toolTipSym, this);
                 }
             }
             if (evt != null && properties != null) {
@@ -2052,7 +2065,7 @@ public class SeqMapView extends JPanel
 
         if (!sym.isEmpty()) {
             if (propertyHandler != null) {
-                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, propertyHolder);
+                propertyHandler.showGraphProperties((GraphSym) sym.get(0), x, this);
             }
         }
     }
@@ -2125,6 +2138,97 @@ public class SeqMapView extends JPanel
                 autoload.loadData();
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Map<String, Object>> getProperties() {
+        List<Map<String, Object>> propList = new ArrayList<>();
+        List<SeqSymmetry> selected_syms = getSelectedSyms();
+        for (GlyphI glyph : getSeqMap().getSelected()) {
+
+            if (glyph.getInfo() instanceof SeqSymmetry
+                    && selected_syms.contains(glyph.getInfo())) {
+                continue;
+            }
+
+            Map<String, Object> props = null;
+            if (glyph.getInfo() instanceof Map) {
+                props = (Map<String,    Object>) glyph.getInfo();
+            } else {
+                props = new HashMap<>();
+            }
+
+            boolean direction = true;
+            if (props.containsKey(DIRECTION)) {
+                if (props.get(DIRECTION).equals(REVERSE_DIRECTION)) {
+                    direction = false;
+                }
+            }
+
+            Rectangle2D.Double boundary = glyph.getSelectedRegion();
+            int start = (int) boundary.getX();
+            int length = (int) boundary.getWidth();
+            int end = start + length;
+            if (!direction) {
+                int temp = start;
+                start = end;
+                end = temp;
+            }
+            props.put(START, start);
+            props.put(END, end);
+            props.put(LENGTH, length);
+
+            propList.add(props);
+        }
+        propList.addAll(getTierManager().getProperties());
+        return propList;
+    }
+
+    @Override
+    public Map<String, Object> determineProps(SeqSymmetry sym) {
+        Map<String, Object> props = new HashMap<>();
+        if (sym == null) {
+            return props;
+        }
+        Map<String, Object> tierprops = getTierManager().determineProps(sym);
+        if (tierprops != null) {
+            props.putAll(tierprops);
+        }
+        SeqSpan span = getViewSeqSpan(sym);
+        if (span != null) {
+            String chromID = span.getBioSeq().getID();
+            props.put(CHROMOSOME, chromID);
+            props.put(START,
+                    NumberFormat.getIntegerInstance().format(span.getStart()));
+            props.put(END,
+                    NumberFormat.getIntegerInstance().format(span.getEnd()));
+            props.put(LENGTH,
+                    NumberFormat.getIntegerInstance().format(span.getLength()));
+            props.put(STRAND,
+                    span.isForward() ? "+" : "-");
+            props.remove(SEQ_ID); // this is redundant if "chromosome" property is set
+            if (props.containsKey(METHOD)) {
+                props.remove(METHOD);
+            }
+            if (props.containsKey(TYPE)) {
+                props.remove(TYPE);
+            }
+        }
+        if (sym instanceof CdsSeqSymmetry) {
+            sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+        }
+        if (sym instanceof SupportsCdsSpan) {
+            span = ((SupportsCdsSpan) sym).getCdsSpan();
+            if (span != null) {
+                props.put(CDS_START,
+                        NumberFormat.getIntegerInstance().format(span.getStart()));
+                props.put(CDS_END,
+                        NumberFormat.getIntegerInstance().format(span.getEnd()));
+
+            }
+        }
+        return props;
     }
 
     public MapRangeBox getMapRangeBox() {

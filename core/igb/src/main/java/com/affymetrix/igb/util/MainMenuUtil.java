@@ -87,7 +87,6 @@ public class MainMenuUtil implements MainMenuManager {
     public void activate() {
         componentActivated = true;
         menuBar = (JRPMenuBar) igbService.getFrame().getJMenuBar();
-
         loadMenu();
         loadQueuedMenuItems();
     }

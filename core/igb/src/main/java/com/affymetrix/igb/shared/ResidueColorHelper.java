@@ -46,9 +46,8 @@ public class ResidueColorHelper implements PreferenceChangeListener {
 
     private final Color[] colors;
 
-
     public ResidueColorHelper() {
-        
+
         int i = 0;
         colors = new Color[5];
         PreferenceUtils.getTopNode().addPreferenceChangeListener(this);

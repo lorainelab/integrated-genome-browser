@@ -46,7 +46,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
             boolean child_placed = false;
             int start_slot_index = 0;
             if (prev_min_xmax >= child_min) {
-				// no point in checking slots prior to and including prev_slot_index, so
+                // no point in checking slots prior to and including prev_slot_index, so
                 //  modify start_slot_index to be prev_slot_index++;
                 start_slot_index = prev_slot_index + 1;
             }
@@ -75,7 +75,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
                 }
             }
             if (!child_placed) {
-				// make new slot for child (unless already have max number of slots allowed,
+                // make new slot for child (unless already have max number of slots allowed,
                 //   in which case layer at top/bottom depending on movetype
                 double new_ycoord = determineYCoord(this.getMoveType(), slot_maxes.size(), slot_height, spacing);
                 child.moveAbsolute(child_min, new_ycoord);
@@ -83,7 +83,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
 //				if (max_slots_allowed > 0 && slot_maxes.size() >= max_slots_allowed) {
 //					child.setOverlapped(true);
 //				}
-//				
+//
                 slot_maxes.add(child_max);
                 int slot_index = slot_maxes.size() - 1;
                 if (child_max < prev_min_xmax) {
@@ -105,7 +105,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
          *     in pack(parent, child, view);
          *
          */
-		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
+        // move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
         //    (y+height) of bottom-most (ymax) child is at
         for (GlyphI child : parent.getChildren()) {
             child.moveRelative(0, parent_spacer - ymin);
@@ -122,7 +122,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
                     parent.getCoordBox().width, (Math.min(getActualSlots(), getMaxSlots()) + 1) * slot_height);
         }
 
-		// Make sure the parent is not too short.
+        // Make sure the parent is not too short.
         // This was needed for tiers in tiered maps.
         int minPixelHeight = ((Glyph) parent).getMinPixelsHeight();
         // P.S. Why isn't getMinPixelsHeight in GlyphI?
@@ -130,7 +130,7 @@ public class ScrollableFasterExpandPacker extends FasterExpandPacker {
         if (currentPixelHeight < minPixelHeight) {
             if (parent instanceof TierGlyph) {
                 TierGlyph g = (TierGlyph) parent;
-				// Only do this for resizable tiers for now.
+                // Only do this for resizable tiers for now.
                 // It would screw up the axis tier, for one.
                 if (g.isManuallyResizable()) {
                     Rectangle2D.Double oldBox = parent.getCoordBox();

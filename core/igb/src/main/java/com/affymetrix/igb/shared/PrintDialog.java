@@ -42,7 +42,7 @@ public class PrintDialog {
         if (singleton == null) {
             singleton = new PrintDialog();
         }
-        
+
         return singleton;
     }
     private JFrame static_frame = null;

@@ -61,6 +61,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     private static final float per_offset = 0.1f;
     private static final float val_offset = 0.1f;
     private static final boolean show_min_and_max = false;
+
     static {
         val_format = new DecimalFormat();
         val_format.setMinimumIntegerDigits(1);
@@ -85,7 +86,7 @@ public class GraphVisibleBoundsSetter extends JPanel
         cpane.setLayout(new BorderLayout());
         cpane.add("Center", thresher);
         frm.addWindowListener(new WindowAdapter() {
-            
+
             @Override
             public void windowClosing(WindowEvent evt) {
                 Window w = evt.getWindow();
@@ -93,7 +94,7 @@ public class GraphVisibleBoundsSetter extends JPanel
                 w.dispose();
             }
         });
-        
+
         frm.pack();
         frm.setVisible(true);
         return thresher;
@@ -107,7 +108,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     public JRPTextField max_valT;
     public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", BUNDLE.getString("byValue"));
     public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", BUNDLE.getString("byPercentile"));
-	// info2pscores is a hash of GraphGlyphs' data model
+    // info2pscores is a hash of GraphGlyphs' data model
     //   (usually a GraphSym if using genometry) to float[] arrays, each of length
     //   (sliders_per_percent * total_percent), and each value v at index i is
     //   value at which (i * sliders_per_percent) percent of the y values in the graph
@@ -350,6 +351,7 @@ public class GraphVisibleBoundsSetter extends JPanel
         prev_min_per = avg_of_vismins;
         prev_max_per = avg_of_vismaxes;
     }
+
     @Override
     public void stateChanged(ChangeEvent evt) {
         if (graphs.size() <= 0) {
@@ -461,8 +463,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     private void setVisibleMinValue(float val) {
         int gcount = graphs.size();
         if (gcount > 0 /*
-                * && (val != prev_min_val)
-                */) {
+                 * && (val != prev_min_val)
+                 */) {
             turnOffListening();
 
             float min_of_mins = Float.POSITIVE_INFINITY;
@@ -506,8 +508,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     private void setVisibleMaxValue(float val) {
         int gcount = graphs.size();
         if (gcount > 0 /*
-                * && (val != prev_max_val)
-                */) {
+                 * && (val != prev_max_val)
+                 */) {
             turnOffListening();
 
             float min_of_maxes = Float.POSITIVE_INFINITY;
@@ -554,8 +556,8 @@ public class GraphVisibleBoundsSetter extends JPanel
         //    System.out.println("setting min percent: " + percent + ", previous: " + prev_min_per);
         int gcount = graphs.size();
         if (gcount > 0 /*
-                * && (percent != prev_min_per)
-                */) {
+                 * && (percent != prev_min_per)
+                 */) {
             turnOffListening();
 
             if (percent > prev_max_per - per_offset) {
@@ -612,8 +614,8 @@ public class GraphVisibleBoundsSetter extends JPanel
         int gcount = graphs.size();
 
         if (gcount > 0 /*
-                * && (percent != prev_max_per)
-                */) {
+                 * && (percent != prev_max_per)
+                 */) {
             turnOffListening();
 
             if (percent < prev_min_per + per_offset) {

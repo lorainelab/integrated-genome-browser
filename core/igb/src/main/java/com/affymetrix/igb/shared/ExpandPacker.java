@@ -68,7 +68,7 @@ public class ExpandPacker extends ExpandedTierPacker {
          *     in pack(parent, child, view);
          *
          */
-		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
+        // move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
         //    (y+height) of bottom-most (ymax) child is at
         for (GlyphI child : parent.getChildren()) {
             child.moveRelative(0, parent_spacer - ymin);
@@ -130,7 +130,7 @@ public class ExpandPacker extends ExpandedTierPacker {
             child.moveAbsolute(childbox.x,
                     pbox.y + pbox.height - childbox.height - parent_spacer);
         } else {
-			// assuming if movetype != UP then it is DOWN
+            // assuming if movetype != UP then it is DOWN
             //    (ignoring LEFT, RIGHT, MIRROR_VERTICAL, etc. for now)
             child.moveAbsolute(childbox.x, pbox.y + parent_spacer);
         }
@@ -194,7 +194,7 @@ public class ExpandPacker extends ExpandedTierPacker {
     }
 
     private void adjustTierBounds(GlyphI child, GlyphI parent, Double pbox, Double childbox) {
-		// adjusting tier bounds to encompass child (plus spacer)
+        // adjusting tier bounds to encompass child (plus spacer)
         // maybe can get rid of this now?
         //   since also handled in pack(parent, view)
         childbox = child.getCoordBox();

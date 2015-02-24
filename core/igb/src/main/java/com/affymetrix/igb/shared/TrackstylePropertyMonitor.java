@@ -48,7 +48,6 @@ public class TrackstylePropertyMonitor implements TableModelListener, ActionList
         }
     }
 
-
     public interface TrackStylePropertyListener {
 
         public void trackstylePropertyChanged(EventObject eo);

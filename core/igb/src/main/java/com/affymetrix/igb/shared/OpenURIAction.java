@@ -82,14 +82,14 @@ public class OpenURIAction extends SeqMapViewActionA {
     }
 
     public void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
-        
+
         if (ScriptManager.getInstance().isScript(uri.toString())) {
             RunScriptAction.getAction().runScript(uri.toString());
             return;
         }
-        
+
         igbService.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
-        
+
         if (!mergeSelected) {
             unknown_group_count++;
             gmodel.setSelectedSeqGroup(loadGroup);

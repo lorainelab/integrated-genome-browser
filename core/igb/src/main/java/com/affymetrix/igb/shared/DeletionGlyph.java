@@ -61,7 +61,7 @@ public class DeletionGlyph extends SolidGlyph {
             if (original_child_span == null) {
                 continue;
             }  // shouldn't happen, but just in case, ignore this child
-            
+
             // if no other children have already triggered leftward parent extension,
             //   and child span is left of entire view, then extend parent to LEFT
             if (!already_left_extended
@@ -96,21 +96,21 @@ public class DeletionGlyph extends SolidGlyph {
         Rectangle pbox = view.getScratchPixBox();
         view.transformToPixels(this.getCoordBox(), pbox);
         Graphics g = view.getGraphics();
-        
+
         //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
         pbox.height = Math.max(pbox.height, getMinPixelsHeight());
-        
+
         final int half_height = pbox.height / 2;
         final int h = Math.min(half_height, 4);
-        
+
         final int x1 = pbox.x - h;
         final int x2 = pbox.x + h;
-        
+
         final int y1 = pbox.y + half_height - h;
         final int y2 = pbox.y + half_height + h;
-        
+
         g.setColor(getBackgroundColor()); // this is the tier foreground color
-        
+
         g.drawLine(x1, y1, x2, y2);
         g.drawLine(x1, y2, x2, y1);
 

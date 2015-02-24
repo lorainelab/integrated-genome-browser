@@ -18,6 +18,7 @@ public class LockTierHeightAction extends TierHeightAction {
 
     private static final long serialVersionUID = 1L;
     private final static LockTierHeightAction lockTierAction = new LockTierHeightAction();
+
     static {
         GenericActionHolder.getInstance().addGenericAction(lockTierAction);
         Selections.addRefreshSelectionListener(lockTierAction.enabler);
@@ -38,7 +39,6 @@ public class LockTierHeightAction extends TierHeightAction {
     private LockTierHeightAction() {
         super(BUNDLE.getString("lockTierHeightAction"), "16x16/actions/lock_track.png", "22x22/actions/lock_track.png");
     }
-
 
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {

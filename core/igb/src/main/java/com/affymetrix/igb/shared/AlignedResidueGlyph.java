@@ -109,7 +109,7 @@ public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
             g.setColor(helper.determineResidueColor(charArray[j]));
 
-			//Create a colored rectangle.
+            //Create a colored rectangle.
             //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
             int offset = (int) (j * pixelsPerBase);
             //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.

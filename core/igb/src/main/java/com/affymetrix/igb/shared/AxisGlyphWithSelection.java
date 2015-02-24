@@ -14,8 +14,8 @@ import java.awt.geom.Rectangle2D;
 public class AxisGlyphWithSelection extends AxisGlyph {
 
     private GlyphI sel_glyph;
-    private Color jumpZoomColor = new Color(180,250,250);
-            
+    private Color jumpZoomColor = new Color(180, 250, 250);
+
     public AxisGlyphWithSelection() {
         super();
         setSelectable(true);

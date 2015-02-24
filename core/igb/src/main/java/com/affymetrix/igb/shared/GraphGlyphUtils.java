@@ -130,7 +130,7 @@ public class GraphGlyphUtils {
         float[] percent2score = getPercents2Scores(gl);
         int index = Math.round(percent * sliders_per_percent);
 
-		// I have actually seen a case where index was calculated as -1,
+        // I have actually seen a case where index was calculated as -1,
         // and an exception was thrown. That is why I added this check. (Ed)
         if (index < 0) {
             index = 0;

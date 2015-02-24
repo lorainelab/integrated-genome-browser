@@ -53,6 +53,7 @@ public class MapTierTypeHolder {
             return factory.supportsTwoTrack();
         }
     }
+
     @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
     public void addViewFactory(MapTierGlyphFactoryI factory) {
         checkNotNull(factory);
@@ -60,6 +61,7 @@ public class MapTierTypeHolder {
             mapTierTypeReferenceTable.put(factory.getName(), category, factory);
         });
     }
+
     public void removeViewFactory(MapTierGlyphFactoryI factory) {
         checkNotNull(factory);
         if (mapTierTypeReferenceTable.containsValue(factory)) {

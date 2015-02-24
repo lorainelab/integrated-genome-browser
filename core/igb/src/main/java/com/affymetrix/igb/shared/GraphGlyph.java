@@ -59,14 +59,14 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         double range = max - min;
         double interval = Math.pow(10, Math.floor(Math.log10(range)));
         double start = Math.floor(min / interval) * interval;
-        
+
         List<Double> coords = new ArrayList<>(10);
         for (double d = start; d <= max; d += interval) {
             if (d >= min && d <= max) {
                 coords.add(d);
             }
         }
-        
+
         // If there are not at least 4 ticks, then
         if (coords.size() < 4) { // try original interval divided by 2
             coords.clear();
@@ -78,7 +78,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
                 }
             }
         }
-        
+
         // If there are not at least 4 ticks, then
         if (coords.size() < 4) { // take original interval divided by 5
             coords.clear();
@@ -90,7 +90,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
                 }
             }
         }
-        
+
         return coords.toArray(new Double[coords.size()]);
     }
 
@@ -127,8 +127,8 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     protected final GraphState state;
     private final LinearTransform scratch_trans = new LinearTransform();
 
-	// specified in coords_per_pixel
-	// average # of points per entry in flat graph compression cache
+    // specified in coords_per_pixel
+    // average # of points per entry in flat graph compression cache
 	/*
      *  may need to try a new approach to minimize switching graphics color
      *  (testing is showing that graph draws ~5x _slower_ if have to alternate colors with
@@ -191,7 +191,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
             setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
         }
-		//		if(graf instanceof MisMatchGraphSym){
+        //		if(graf instanceof MisMatchGraphSym){
         //			helper = ResidueColorHelper.getColorHelper();
         //			residues = graf.getGraphSeq().getResidues(graf.getMinXCoord(), graf.getMaxXCoord()).getBytes();
         //		}
@@ -380,7 +380,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         draw(view);
         // HV : 26/09/13
         // Use graph's pixelbox values rather than view's. Using view's pixelbox
-        // cause bug while on genome sequence. It cannot draw handle at correct 
+        // cause bug while on genome sequence. It cannot draw handle at correct
         // location.
 //		Rectangle view_pixbox = view.getPixelBox();
         Graphics g = view.getGraphics();
@@ -454,7 +454,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         //    have multiple views on same scene / glyph hierarchy
         // therefore reconstructing handle pixel bounds here... (although reusing same object to
         //    cut down on object creation)
-        
+
         // if full view differs from current view, and current view doesn't left align with full view,
         //   don't draw handle (only want handle at left side of full view)
         if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
@@ -538,10 +538,10 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     }
 
     /*
-    public boolean getShowGraph() {
-    return state.getShowGraph();
-    }
-    */
+     public boolean getShowGraph() {
+     return state.getShowGraph();
+     }
+     */
     public boolean getShowBounds() {
         return state.getShowBounds();
     }
@@ -559,9 +559,9 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     }
 
     /*
-    public void setShowGraph(boolean show) {
-    state.setShowGraph(show);
-    }
+     public void setShowGraph(boolean show) {
+     state.setShowGraph(show);
+     }
      */
     public void setShowBounds(boolean show) {
         state.setShowBounds(show);
@@ -625,8 +625,8 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
      */
     private double getLowerYCoordInset(ViewI view) {
         /* This original super to this function had had its return value
-        * changed from 0 to 5 by GAH 3-21-2005.  bottom_ycoord_inset
-        * is set to five to mirror the original call to super */
+         * changed from 0 to 5 by GAH 3-21-2005.  bottom_ycoord_inset
+         * is set to five to mirror the original call to super */
         double bottom_ycoord_inset = 5;
         if (getShowThreshold()) {
             thresh_pix_box.height = thresh_contig_height + thresh_contig_yoffset;
@@ -680,7 +680,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     public double getMaxGapThreshold() {
         return state.getMaxGapThreshold();
     }
-    
+
     public float getMaxScoreThreshold() {
         return state.getMaxScoreThreshold();
     }
@@ -734,7 +734,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     public void setMinRunThreshold(int thresh) {
         state.setMinRunThreshold(thresh);
     }
-    
+
     public void setMinScoreThreshold(float thresh) {
         state.setMinScoreThreshold(thresh);
         resetThreshLabel();
@@ -1054,6 +1054,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     public ITrackStyleExtended getAnnotStyle() {
         return state.getTierStyle();
     }
+
     @Override
     public Optional<FileTypeCategory> getFileTypeCategory() {
         if (graf != null) {
@@ -1061,17 +1062,16 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         }
         return Optional.ofNullable(FileTypeCategory.Graph);
     }
-    
+
     @Override
     public Direction getDirection() {
         return direction;
     }
 
-
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
-    
+
     @Override
     public boolean withinView(ViewI view) {
         if (!getAnnotStyle().isFloatTier()) {
@@ -1079,10 +1079,10 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
         }
         return this.getCoordBox().intersects(this.getParent().getCoordBox());
     }
-    
+
     /*
-    * Sub-Class for different graph styles
-    */
+     * Sub-Class for different graph styles
+     */
     public abstract class GraphStyle {
 
         private static final boolean TIME_DRAWING = false;
@@ -1204,7 +1204,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
             getInternalLinearTransform(view, scratch_trans);
             double yscale = scratch_trans.getScaleY();
             double offset = scratch_trans.getTranslateY();
-            
+
             // plot_top_ypixel and plot_bottom_ypixel are replacements for pixelbox.y and pbox_yheight in many
             //   (but not all) calculations, they take into account an internal transform to shrink the graph rendering
             //   if necessary to allow space for the graph label and thresholded regions

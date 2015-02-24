@@ -92,11 +92,11 @@ public class CollapsePacker extends CollapsedTierPacker {
     @Override
     public Rectangle pack(GlyphI parent, ViewI view) {
         List<GlyphI> children = parent.getChildren();
-        
+
         if (children != null) {
             maxHeight = getMaxHeightAndSkipDraw(parent);
         }
-        
+
         adjustHeight(parent);
         moveAllChildren(parent);
 

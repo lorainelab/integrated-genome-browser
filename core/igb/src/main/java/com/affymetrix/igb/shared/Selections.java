@@ -63,7 +63,7 @@ public class Selections {
 
     private static synchronized void refreshSelection() {
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-                List<StyledGlyph> selected = (List) smv.getAllSelectedTiers();
+        List<StyledGlyph> selected = (List) smv.getAllSelectedTiers();
         allStyles.clear();
         annotStyles.clear();
         graphStyles.clear();
@@ -133,7 +133,7 @@ public class Selections {
             }
         }
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-                List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
+        List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
         selectedGraphs.stream().filter(glyph -> glyph instanceof GraphGlyph).forEach(glyph -> {
             GraphGlyph gg = (GraphGlyph) glyph;
             graphStates.add(gg.getGraphState());

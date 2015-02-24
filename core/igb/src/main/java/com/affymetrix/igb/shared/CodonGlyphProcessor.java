@@ -56,7 +56,7 @@ public class CodonGlyphProcessor {
 
     /*
      * TODO: Remove dependency on glyph parent.
-     * 
+     *
      * note - if the transcript has UTR, it will have two glyphs, one with the UTR and one without.
      * the one without should be used, but it is created first, so it would be covered by the one
      * with. So this kludge causes the one without to not be drawn on its turn, but the one with
@@ -74,6 +74,5 @@ public class CodonGlyphProcessor {
             }
         }
     }
-
 
 }

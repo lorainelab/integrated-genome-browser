@@ -35,11 +35,11 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         if (vg.getAnnotStyle().isGraphTier()) {
             return null;
         }
-        
+
         if (vg.getDirection() == StyledGlyph.Direction.BOTH || vg.getDirection() == StyledGlyph.Direction.NONE) {
             return null;
         }
-        
+
         return vg.getDirection() == StyledGlyph.Direction.FORWARD;
     }
 
@@ -153,7 +153,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             } else {
                 Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "Illegal character in string {0}", method);
             }
-            
+
             //method = GeneralUtils.URLEncode(featureName);
             //method = TrackStyle.getUniqueName("file:/"+method);
             uri = java.net.URI.create(GeneralUtils.URLEncode(method));

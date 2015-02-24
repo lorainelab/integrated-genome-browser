@@ -46,10 +46,10 @@ public class LoadURLAction extends OpenURIAction {
         if (urlStr.endsWith("/")) {
             urlStr = urlStr.substring(0, urlStr.length() - 1);
         }
-        
+
         //strip off all earlier slashes.
         urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-        
+
         return urlStr;
     }
 
@@ -85,7 +85,7 @@ public class LoadURLAction extends OpenURIAction {
         }
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
-        
+
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
         AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
 

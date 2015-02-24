@@ -9,7 +9,6 @@ import java.util.Set;
 public interface ISearchHints {
 
     //Maximum mumber of search items
-
     public static int MAX_HITS = 20;
 
     /**

@@ -62,7 +62,7 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
         Rectangle compbox = view.getComponentSizeRect();
         setPixelBox(getPixelBox().intersection(compbox));
 
-		// If the coordbox was specified with negative width or height,
+        // If the coordbox was specified with negative width or height,
         // convert pixelbox to equivalent one with positive width and height.
         // Constrain abs(width) or abs(height) by min_pixels.
         // Here I'm relying on the fact that min_pixels is positive.

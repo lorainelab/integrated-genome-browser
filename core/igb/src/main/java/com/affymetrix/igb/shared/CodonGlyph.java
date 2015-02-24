@@ -100,7 +100,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
         }
     }
 
-
     private ResidueRange getResidueRange() {
         SymSpanWithCds parentSym = (SymSpanWithCds) getParent().getParent().getInfo();
 //		BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
@@ -245,7 +244,7 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
      public Boolean doInBackground() {
      return GeneralLoadView.getLoadView().loadResidues(useSpan, true);
      }
-	
+
      @Override
      public synchronized void done() {
      String residues = getResidue(null);

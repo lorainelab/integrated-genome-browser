@@ -24,12 +24,14 @@ import java.util.logging.Logger;
  *
  */
 public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
+
     private static final Font mono_default_font = NeoConstants.default_bold_font;
 
     protected SearchableCharIterator chariter;
     private int residue_length = 0;
 //	private final BitSet residueMask = new BitSet();
     protected BitSet residueMask;
+
     public AbstractAlignedTextGlyph() {
         super();
         setResidueFont(mono_default_font);
@@ -151,7 +153,7 @@ public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
         }
 
         int visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
-		// adding 1 to visible ref_end to make sure base is drawn if only
+        // adding 1 to visible ref_end to make sure base is drawn if only
         // part of it is visible
         visible_ref_end += 1;
         int visible_seq_end = Math.min(seq_end, visible_ref_end);

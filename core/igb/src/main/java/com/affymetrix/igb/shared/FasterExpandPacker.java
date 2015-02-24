@@ -235,7 +235,7 @@ public class FasterExpandPacker extends ExpandPacker {
          *     in pack(parent, child, view);
          *
          */
-		// move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
+        // move children so "top" edge (y) of top-most child (ymin) is "bottom" edge
         //    (y+height) of bottom-most (ymax) child is at
 
         if (ymin != Double.POSITIVE_INFINITY) {
@@ -312,7 +312,7 @@ public class FasterExpandPacker extends ExpandPacker {
             boolean child_placed = false;
             int start_slot_index = 0;
             if (prev_min_xmax >= child_min) {
-				// no point in checking slots prior to and including prev_slot_index, so
+                // no point in checking slots prior to and including prev_slot_index, so
                 //  modify start_slot_index to be prev_slot_index++;
                 start_slot_index = prev_slot_index + 1;
             }
@@ -387,6 +387,5 @@ public class FasterExpandPacker extends ExpandPacker {
     protected int getMaxSlots() {
         return this.max_slots_allowed;
     }
-
 
 }

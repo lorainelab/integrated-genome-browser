@@ -16,6 +16,7 @@ public class UnlockTierHeightAction extends TierHeightAction {
 
     private static final long serialVersionUID = 1L;
     private final static UnlockTierHeightAction unlockTierAction = new UnlockTierHeightAction();
+
     static {
         GenericActionHolder.getInstance().addGenericAction(unlockTierAction);
         Selections.addRefreshSelectionListener(unlockTierAction.enabler);
@@ -32,7 +33,6 @@ public class UnlockTierHeightAction extends TierHeightAction {
             setEnabled(false);
         }
     };
-
 
     private UnlockTierHeightAction() {
         super(BUNDLE.getString("unlockTierHeightAction"), "16x16/actions/unlock_track.png", "22x22/actions/unlock_track.png");

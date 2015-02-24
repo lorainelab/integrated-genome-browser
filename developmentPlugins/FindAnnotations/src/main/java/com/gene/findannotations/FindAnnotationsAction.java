@@ -25,8 +25,8 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
-import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.IStatus;
+import com.lorainelab.igb.service.search.ISearchModeSym;
+import com.lorainelab.igb.service.search.IStatus;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 public class FindAnnotationsAction extends GenericAction {

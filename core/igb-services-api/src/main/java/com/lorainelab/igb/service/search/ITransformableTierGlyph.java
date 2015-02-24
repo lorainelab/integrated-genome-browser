@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.service.search;
 
 /**
  *

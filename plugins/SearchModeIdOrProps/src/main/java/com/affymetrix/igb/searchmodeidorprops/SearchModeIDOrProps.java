@@ -1,6 +1,17 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import aQute.bnd.annotation.component.Component;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.search.SearchUtils;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.Constants;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.igb.shared.SearchResults;
+import com.lorainelab.igb.service.search.ISearchModeSym;
+import com.lorainelab.igb.service.search.IStatus;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,19 +20,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.genometry.util.Constants;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.shared.SearchUtils;
-import com.affymetrix.igb.shared.ISearchModeSym;
-import com.affymetrix.igb.shared.IStatus;
-import com.affymetrix.igb.shared.SearchResults;
 
 public abstract class SearchModeIDOrProps implements ISearchModeSym {
 

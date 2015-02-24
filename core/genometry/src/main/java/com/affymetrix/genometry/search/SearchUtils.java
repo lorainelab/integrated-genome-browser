@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometry.search;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
@@ -48,20 +48,20 @@ public class SearchUtils {
 //		} else {
 //			chrs = group.getSeqList();
 //		}
-//		
+//
 //		Matcher match = regex.matcher("");
 //		SymWithProps sym = null;
 //		Thread current_thread = Thread.currentThread();
-//		
+//
 //		for (BioSeq chr : chrs) {
 //			if(current_thread.isInterrupted())
 //				break;
-//			
+//
 //			int annotCount = chr.getAnnotationCount();
 //			for (int i=0;i<annotCount;i++) {
 //				sym = (SymWithProps)chr.getAnnotation(i);
 //				findIDsInSym(syms, sym, match);
-//				
+//
 //				if(current_thread.isInterrupted())
 //					break;
 //			}

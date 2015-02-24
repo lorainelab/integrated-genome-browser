@@ -6,7 +6,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
+import com.lorainelab.igb.service.search.IPrefEditorComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

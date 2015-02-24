@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
+import com.lorainelab.igb.service.search.IPrefEditorComponent;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

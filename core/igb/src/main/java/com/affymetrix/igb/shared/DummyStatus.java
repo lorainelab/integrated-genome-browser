@@ -1,5 +1,7 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.service.search.IStatus;
+
 public class DummyStatus implements IStatus {
 
     private static DummyStatus instance = new DummyStatus();

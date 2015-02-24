@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb-services-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-vfs2</artifactId>
             <scope>compile</scope>
@@ -25,11 +30,6 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sf</groupId>
@@ -43,9 +43,9 @@
         </dependency>
         <!--Start of logging dependencies-->
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <scope>provided</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
         <dependency>

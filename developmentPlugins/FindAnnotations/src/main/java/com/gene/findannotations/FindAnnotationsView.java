@@ -9,7 +9,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import com.affymetrix.igb.shared.IStatus;
+import com.lorainelab.igb.service.search.IStatus;
 
 @Component(name = FindAnnotationsView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public class FindAnnotationsView extends FindAnnotationsGUI {

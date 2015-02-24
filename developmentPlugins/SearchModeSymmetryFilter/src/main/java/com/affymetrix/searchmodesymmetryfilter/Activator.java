@@ -1,7 +1,7 @@
 package com.affymetrix.searchmodesymmetryfilter;
 
 import com.affymetrix.genometry.filter.SymmetryFilterProps;
-import com.affymetrix.igb.shared.ISearchMode;
+import com.lorainelab.igb.service.search.ISearchMode;
 import com.lorainelab.igb.service.api.IgbService;
 import com.lorainelab.igb.service.api.XServiceRegistrar;
 import org.osgi.framework.BundleActivator;

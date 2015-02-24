@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
+import com.lorainelab.igb.service.search.IPrefEditorComponent;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;

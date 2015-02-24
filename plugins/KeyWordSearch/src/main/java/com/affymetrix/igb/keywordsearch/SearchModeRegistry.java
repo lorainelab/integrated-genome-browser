@@ -7,7 +7,7 @@ package com.affymetrix.igb.keywordsearch;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.igb.shared.ISearchModeSym;
+import com.lorainelab.igb.service.search.ISearchModeSym;
 import java.util.ArrayList;
 import java.util.List;
 

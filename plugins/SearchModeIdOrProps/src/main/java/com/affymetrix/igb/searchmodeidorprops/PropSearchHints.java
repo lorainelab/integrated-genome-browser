@@ -2,8 +2,8 @@ package com.affymetrix.igb.searchmodeidorprops;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.igb.shared.SearchUtils;
-import com.affymetrix.igb.shared.ISearchHints;
+import com.affymetrix.genometry.search.SearchUtils;
+import com.lorainelab.igb.service.search.ISearchHints;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -21,11 +21,11 @@ public class PropSearchHints implements ISearchHints {
             // Not much of a regular expression.  Assume the user wants to match at the start and end
             regexText = ".*" + regexText + ".*";
         }
-            Pattern regex;
-        try{
+        Pattern regex;
+        try {
             regex = Pattern.compile(regexText, Pattern.CASE_INSENSITIVE);
-        }catch(Exception e){
-            regex =  Pattern.compile("");
+        } catch (Exception e) {
+            regex = Pattern.compile("");
         }
         return SearchUtils.findLocalSyms(GenometryModel.getInstance().getSelectedSeqGroup(), regex, true, 20);
     }

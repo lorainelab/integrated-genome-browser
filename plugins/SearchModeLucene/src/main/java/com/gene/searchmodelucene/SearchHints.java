@@ -4,7 +4,7 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.shared.ISearchHints;
+import com.lorainelab.igb.service.search.ISearchHints;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

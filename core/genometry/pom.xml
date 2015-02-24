@@ -161,7 +161,8 @@
                             com.affymetrix.genometry.thread,
                             com.affymetrix.genometry.util,
                             com.affymetrix.genometry.weblink,
-                            com.affymetrix.genometry.tooltip
+                            com.affymetrix.genometry.tooltip,
+                            com.affymetrix.genometry.search
                         </Export-Package>
                         <Import-Package>com.apple.laf,*;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

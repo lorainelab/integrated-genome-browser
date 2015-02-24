@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.IPrefEditorComponent;
+import com.lorainelab.igb.service.search.IPrefEditorComponent;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

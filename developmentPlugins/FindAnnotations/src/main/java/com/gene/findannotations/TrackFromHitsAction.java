@@ -10,7 +10,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 
 public class TrackFromHitsAction extends GenericAction {
 

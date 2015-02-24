@@ -37,7 +37,7 @@ import com.affymetrix.igb.bookmarks.model.Bookmark.SYM;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

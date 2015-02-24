@@ -1,5 +1,37 @@
 package com.affymetrix.igb.tabs.annotation;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.ThreadUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.shared.Actions;
+import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
+import com.affymetrix.igb.shared.LockTierHeightAction;
+import com.affymetrix.igb.shared.Selections;
+import static com.affymetrix.igb.shared.Selections.allGlyphs;
+import static com.affymetrix.igb.shared.Selections.annotStyles;
+import static com.affymetrix.igb.shared.Selections.annotSyms;
+import static com.affymetrix.igb.shared.Selections.getLockedHeight;
+import static com.affymetrix.igb.shared.Selections.getOptimum;
+import static com.affymetrix.igb.shared.Selections.isAllAnnot;
+import static com.affymetrix.igb.shared.Selections.isAllButOneLocked;
+import static com.affymetrix.igb.shared.Selections.isAllStrandsArrow;
+import static com.affymetrix.igb.shared.Selections.isAllStrandsColor;
+import static com.affymetrix.igb.shared.Selections.isAllSupportTwoTrack;
+import static com.affymetrix.igb.shared.Selections.isAnyLockable;
+import static com.affymetrix.igb.shared.Selections.isAnyLocked;
+import static com.affymetrix.igb.shared.Selections.isAnyShowAsPaired;
+import com.affymetrix.igb.shared.UnlockTierHeightAction;
+import com.jidesoft.combobox.ColorComboBox;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Map;
@@ -10,23 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-import com.jidesoft.combobox.ColorComboBox;
-
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.lorainelab.igb.service.api.IgbService;
-import com.affymetrix.igb.shared.*;
-import static com.affymetrix.igb.shared.Selections.*;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
-import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 /**
  *
@@ -50,15 +65,8 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
     private void updateDisplay(final boolean preserveX, final boolean preserveY) {
         ThreadUtils.runOnEventQueue(() -> {
-//				igbService.getSeqMap().updateWidget();
-//				igbService.getSeqMapView().setTierStyles();
-//				igbService.getSeqMapView().repackTheTiers(true, true);
             igbService.getSeqMapView().updatePanel(preserveX, preserveY);
         });
-    }
-
-    private void refreshView() {
-        ThreadUtils.runOnEventQueue(() -> igbService.getSeqMap().updateWidget());
     }
 
     private void setStackDepth() {

@@ -29,7 +29,7 @@
         </dependency>   
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services-api</artifactId>
+            <artifactId>igb-services</artifactId>
             <scope>runtime</scope>
         </dependency>       
         <dependency>

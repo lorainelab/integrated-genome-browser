@@ -22,8 +22,8 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
 
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.XServiceRegistrar;
 import static com.affymetrix.igb.survey.ShowSurvey.*;
 import com.google.common.io.Resources;
 import java.io.ByteArrayInputStream;

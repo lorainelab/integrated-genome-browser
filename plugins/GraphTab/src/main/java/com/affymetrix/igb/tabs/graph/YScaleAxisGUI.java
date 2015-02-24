@@ -7,7 +7,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;

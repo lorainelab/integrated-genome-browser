@@ -2,7 +2,7 @@ package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.service.api.PreferencesPanelProvider;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 
 /**
  *

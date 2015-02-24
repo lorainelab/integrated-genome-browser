@@ -11,7 +11,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.HeadLessExport;
 import java.awt.Component;
 import java.io.File;

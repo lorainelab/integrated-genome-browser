@@ -9,9 +9,9 @@ import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
 
 import com.affymetrix.igb.swing.JRPComboBox;
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.IgbTabPanelI;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 
 /**
  * Container panel for the external views Shows up as tab in IGB Allows

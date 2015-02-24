@@ -5,7 +5,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.shared.CodonGlyph;
-import com.lorainelab.igb.service.search.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.CoordinateStyle;

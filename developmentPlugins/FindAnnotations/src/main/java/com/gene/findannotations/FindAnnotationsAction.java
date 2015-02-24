@@ -23,10 +23,10 @@ import javax.swing.table.TableRowSorter;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.DummyRootSeqSymmetry;
-import com.lorainelab.igb.service.search.ISearchModeSym;
-import com.lorainelab.igb.service.search.IStatus;
+import com.lorainelab.igb.services.search.ISearchModeSym;
+import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 public class FindAnnotationsAction extends GenericAction {

@@ -21,18 +21,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.main</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services-api</artifactId>
+            <artifactId>igb-services</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -47,6 +42,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,15 +63,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
+                        <Import-Package>*</Import-Package>
                         <Export-Package/>
-                        <Bundle-Category>FileTypeHandler-com.gene.bigbedhandler.BigBedHandler</Bundle-Category>
-                        <Bundle-Activator>com.gene.bigbedhandler.Activator</Bundle-Activator>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>plugin to allow the user to load BigBed files</Bundle-Description>
+                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

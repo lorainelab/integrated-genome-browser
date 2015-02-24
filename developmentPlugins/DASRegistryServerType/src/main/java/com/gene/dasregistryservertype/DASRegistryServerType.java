@@ -45,7 +45,7 @@ import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.genometry.util.XMLUtils;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.util.Collections;
 
 /**

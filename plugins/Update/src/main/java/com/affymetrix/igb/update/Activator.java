@@ -2,8 +2,8 @@ package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.StatusAlert;
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.XServiceRegistrar;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import java.net.URL;

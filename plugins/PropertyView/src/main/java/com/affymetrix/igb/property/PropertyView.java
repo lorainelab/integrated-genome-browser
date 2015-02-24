@@ -23,9 +23,9 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PropertyViewHelper;
 import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.IgbTabPanelI;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 
 @Component(name = PropertyView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)

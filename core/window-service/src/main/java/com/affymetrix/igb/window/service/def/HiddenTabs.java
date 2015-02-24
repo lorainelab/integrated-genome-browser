@@ -1,7 +1,7 @@
 package com.affymetrix.igb.window.service.def;
 
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.TabHolder;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.TabHolder;
 import java.util.HashSet;
 import java.util.Set;
 

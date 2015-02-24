@@ -8,7 +8,7 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.shared.CollapsePacker;
 import com.affymetrix.igb.shared.FasterExpandPacker;
-import com.lorainelab.igb.service.search.ITransformableTierGlyph;
+import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import com.affymetrix.igb.shared.ScrollableFasterExpandPacker;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.awt.AlphaComposite;

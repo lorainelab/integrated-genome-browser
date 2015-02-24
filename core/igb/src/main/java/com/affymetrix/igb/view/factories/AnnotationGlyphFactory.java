@@ -45,14 +45,14 @@ import com.affymetrix.igb.shared.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import static com.affymetrix.igb.shared.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
-import com.affymetrix.igb.shared.PreprocessorRegistryImpl;
+import com.affymetrix.igb.shared.PreprocessorRegistry;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
+import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -510,7 +510,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         checkNotNull(seq);
         checkNotNull(gviewer);
         //apply preprocessors
-        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorRegistryImpl.getPreprocessorsForType(FileTypeCategory.Annotation)) {
+        for (SeqSymmetryPreprocessorI preprocessor : PreprocessorRegistry.getPreprocessorsForType(FileTypeCategory.Annotation)) {
             preprocessor.process(sym, style, gviewer, seq);
         }
         setSeqMap(gviewer);

@@ -21,7 +21,7 @@ import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;

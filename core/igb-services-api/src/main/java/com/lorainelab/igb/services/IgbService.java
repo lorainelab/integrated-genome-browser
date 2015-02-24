@@ -1,5 +1,6 @@
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services;
 
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;

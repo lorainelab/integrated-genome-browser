@@ -1,4 +1,4 @@
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services.window.menus;
 
 import javax.swing.JMenuItem;
 

@@ -3,7 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.jidesoft.combobox.ColorComboBox;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;

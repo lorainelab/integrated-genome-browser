@@ -1,5 +1,6 @@
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services.window.tabs;
 
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.util.Set;
 
 /**

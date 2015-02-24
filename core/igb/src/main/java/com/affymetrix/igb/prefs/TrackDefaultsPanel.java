@@ -5,7 +5,7 @@
 package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.igb.service.api.PreferencesPanelProvider;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import javax.swing.JPanel;
 
 @Component(name = TrackDefaultsPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)

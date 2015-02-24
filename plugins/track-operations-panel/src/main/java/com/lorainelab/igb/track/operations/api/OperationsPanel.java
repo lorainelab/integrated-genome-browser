@@ -10,7 +10,7 @@ import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TrackOperationAction;

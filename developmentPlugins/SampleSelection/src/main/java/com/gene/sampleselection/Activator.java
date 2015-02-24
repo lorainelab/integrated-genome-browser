@@ -4,9 +4,9 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.lorainelab.igb.service.api.IgbService;
-import com.lorainelab.igb.service.api.IgbTabPanel;
-import com.lorainelab.igb.service.api.XServiceRegistrar;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.XServiceRegistrar;
 import com.affymetrix.igb.shared.TrackClickListener;
 
 public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {

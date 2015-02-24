@@ -4,7 +4,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
-import com.lorainelab.igb.service.api.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.swing.Action;

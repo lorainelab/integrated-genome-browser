@@ -10,7 +10,7 @@ import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.DynamicStyleHeatMap;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.Actions;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;

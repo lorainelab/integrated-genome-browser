@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
+import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;

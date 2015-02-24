@@ -9,11 +9,11 @@
     </parent>
     
     <groupId>com.affymetrix</groupId>
-    <artifactId>igb-services-api</artifactId>
+    <artifactId>igb-services</artifactId>
     
     <packaging>bundle</packaging>
 
-    <name>igb services api</name>
+    <name>IGB Services</name>
 
     <dependencies>
         <dependency>
@@ -68,11 +68,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package>
-                            com.lorainelab.igb.service.api,
-                            com.lorainelab.igb.service.search
+                            com.lorainelab.igb.services.*                            
                         </Export-Package>
                         <Import-Package>*</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

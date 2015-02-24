@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.service.search.IStatus;
+import com.lorainelab.igb.services.search.IStatus;
 
 public class DummyStatus implements IStatus {
 

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.services.search;
 
 import java.util.List;
 

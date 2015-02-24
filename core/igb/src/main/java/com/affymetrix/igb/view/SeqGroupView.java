@@ -31,7 +31,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;

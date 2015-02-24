@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.igb.service.search;
+package com.lorainelab.igb.services.window.preferences;
 
 import javax.swing.JPanel;
 

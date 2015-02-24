@@ -1,4 +1,4 @@
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services.visualization;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;

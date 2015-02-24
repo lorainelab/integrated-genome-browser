@@ -1,6 +1,6 @@
 package com.gene.igbscript;
 
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

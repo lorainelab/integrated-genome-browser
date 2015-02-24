@@ -1,7 +1,7 @@
 package apollo.analysis;
 
 import apollo.util.GuiUtil;
-import com.lorainelab.igb.service.search.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;

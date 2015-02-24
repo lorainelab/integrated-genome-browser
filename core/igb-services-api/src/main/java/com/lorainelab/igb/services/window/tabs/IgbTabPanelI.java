@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services.window.tabs;
 
 /**
  *

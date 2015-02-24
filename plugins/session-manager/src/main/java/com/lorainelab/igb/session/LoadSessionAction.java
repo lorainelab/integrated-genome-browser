@@ -9,8 +9,8 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
-import com.lorainelab.igb.service.api.IgbMenuItemProvider;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -26,6 +26,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     public static final String COMPONENT_NAME = "LoadSessionAction";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
+    private static final int MENU_POSITION = 8;
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
     private BookmarkService bookmarkService;
@@ -124,6 +125,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public int getMenuItemPosition() {
-        return 8;
+        return MENU_POSITION;
     }
+
 }

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.event.SeqMapRefreshed;
-import com.lorainelab.igb.service.search.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.TrackConstants;
 
 /**

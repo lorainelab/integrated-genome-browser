@@ -15,7 +15,7 @@ package com.gene.findannotations;
  * @author frohmanl
  */
 //public class FindAnnotationsGUI extends javax.swing.JFrame {
-public class FindAnnotationsGUI extends com.lorainelab.igb.service.api.IgbTabPanel {
+public class FindAnnotationsGUI extends com.lorainelab.igb.services.window.tabs.IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
 

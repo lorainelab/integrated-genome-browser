@@ -21,7 +21,7 @@ import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.VCF;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;

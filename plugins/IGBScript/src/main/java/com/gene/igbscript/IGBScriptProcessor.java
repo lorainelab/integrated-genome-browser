@@ -4,7 +4,7 @@ import javax.script.ScriptEngineFactory;
 
 import com.affymetrix.igb.swing.Operation;
 import com.affymetrix.igb.swing.script.ScriptProcessor;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 
 public class IGBScriptProcessor implements ScriptProcessor {
 

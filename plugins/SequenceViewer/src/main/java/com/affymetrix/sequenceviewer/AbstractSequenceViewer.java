@@ -34,7 +34,7 @@ import com.affymetrix.sequenceviewer.actions.ExportFastaSequenceAction;
 import com.affymetrix.sequenceviewer.actions.ExportSequenceViewerAction;
 import com.affymetrix.sequenceviewer.actions.SelectAllInSeqViewerAction;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;

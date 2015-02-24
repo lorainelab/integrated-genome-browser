@@ -4,7 +4,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.DisplayUtils;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Point;
 import javax.swing.JFrame;
 

@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

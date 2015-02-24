@@ -1,20 +1,46 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.service.api.SeqSymmetryPreprocessorI;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
+import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  *
  * @author dcnorris
  */
-public interface PreprocessorRegistry {
+@Component(name = PreprocessorRegistry.COMPONENT_NAME)
+public class PreprocessorRegistry {
 
-    void addPreprocessor(SeqSymmetryPreprocessorI factory);
+    public static final String COMPONENT_NAME = "PreprocessorRegistryImpl";
+    private final static Table<String, FileTypeCategory, SeqSymmetryPreprocessorI> preprocessorTypeReferenceTable = HashBasedTable.create();
 
-    void removePreprocessor(SeqSymmetryPreprocessorI factory);
+    public static Collection<SeqSymmetryPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
+        checkNotNull(category);
+        if (preprocessorTypeReferenceTable.columnMap().containsKey(category)) {
+            return preprocessorTypeReferenceTable.columnMap().get(category).values();
+        }
+        return Collections.<SeqSymmetryPreprocessorI>emptyList();
+    }
+
+    @Reference(multiple = true, optional = true, dynamic = true, unbind = "removePreprocessor")
+    public void addPreprocessor(SeqSymmetryPreprocessorI factory) {
+        checkNotNull(factory);
+        if (!preprocessorTypeReferenceTable.contains(factory.getName(), factory.getCategory())) {
+            preprocessorTypeReferenceTable.put(factory.getName(), factory.getCategory(), factory);
+        }
+    }
+
+    public void removePreprocessor(SeqSymmetryPreprocessorI factory) {
+        checkNotNull(factory);
+        if (preprocessorTypeReferenceTable.containsValue(factory)) {
+            preprocessorTypeReferenceTable.remove(factory.getName(), factory.getCategory());
+        }
+    }
 
 }

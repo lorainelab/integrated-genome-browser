@@ -3,7 +3,7 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericServerInitListener;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.net.MalformedURLException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

@@ -1,4 +1,4 @@
-package com.lorainelab.igb.service.api;
+package com.lorainelab.igb.services.window.tabs;
 
 import java.awt.Container;
 import java.awt.Rectangle;

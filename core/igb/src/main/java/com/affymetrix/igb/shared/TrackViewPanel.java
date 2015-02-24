@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import com.lorainelab.igb.service.api.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
 /**
  *

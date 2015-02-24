@@ -226,7 +226,7 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>igb-services-api</artifactId>
+                <artifactId>igb-services</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>

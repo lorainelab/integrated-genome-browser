@@ -20,7 +20,7 @@ import com.affymetrix.igb.bookmarks.BookmarksParser;
 import com.affymetrix.igb.bookmarks.Separator;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.service.api.IgbService;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;

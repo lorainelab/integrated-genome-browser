@@ -1,4 +1,4 @@
-package com.lorainelab.igb.service.search;
+package com.lorainelab.igb.services.search;
 
 import java.util.Set;
 

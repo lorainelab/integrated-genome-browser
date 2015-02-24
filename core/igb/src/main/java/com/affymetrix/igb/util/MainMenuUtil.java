@@ -128,9 +128,9 @@ public class MainMenuUtil implements MainMenuManager {
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_saveImage", SaveImageAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
-        fileMenu.addSeparator();
+        fileMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), menuItemCounter++));
-        fileMenu.addSeparator();
+        fileMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), menuItemCounter++));
     }
 
@@ -151,9 +151,9 @@ public class MainMenuUtil implements MainMenuManager {
         JRPMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
         viewMenu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_setThreshold", AutoLoadThresholdAction.getAction(), menuItemCounter++));
-        viewMenu.addSeparator();
+        viewMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_clampView", ClampViewAction.getAction(), menuItemCounter++));
-        viewMenu.addSeparator();
+        viewMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_clearVisualTools", ClearVisualTools.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_showVisualTools", ShowAllVisualToolsAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(viewMenu, new JRPCheckBoxMenuItem(ID_PREFIX + "viewMenu_showHairline", ToggleHairlineAction.getAction(), menuItemCounter++));
@@ -176,12 +176,13 @@ public class MainMenuUtil implements MainMenuManager {
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction(), menuItemCounter++));
-        toolsMenu.addSeparator();
-        JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"));
+        toolsMenu.addSeparator(menuItemCounter++);
+        JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), menuItemCounter++);
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
         toolsMenu.add(scripts_menu);
+        toolsMenu.addSeparator(menuItemCounter++);
     }
 
     private void helpMenu() {
@@ -246,15 +247,15 @@ public class MainMenuUtil implements MainMenuManager {
     @Reference(optional = true, multiple = true, unbind = "removeMenuItem", dynamic = true)
     public void addMenuItem(IgbMenuItemProvider igbMenuItemProvider) {
         if (componentActivated) {
-            JMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
+            JRPMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
             if (parent == null) {
                 logger.warn("No menu found with name {}. {} is not added.", new Object[]{igbMenuItemProvider.getParentMenuName(), igbMenuItemProvider.getMenuItem()});
                 return;
             }
-            if (igbMenuItemProvider.getMenuItemPosition() == -1) {
+            if (igbMenuItemProvider.getMenuItemWeight() == -1) {
                 MenuUtil.addToMenu(parent, igbMenuItemProvider.getMenuItem());
             } else {
-                MenuUtil.insertIntoMenu(parent, igbMenuItemProvider.getMenuItem(), igbMenuItemProvider.getMenuItemPosition());
+                MenuUtil.insertIntoMenu(parent, igbMenuItemProvider.getMenuItem(), igbMenuItemProvider.getMenuItemWeight());
             }
         } else {
             igbMenuItemProviderQueue.add(igbMenuItemProvider);

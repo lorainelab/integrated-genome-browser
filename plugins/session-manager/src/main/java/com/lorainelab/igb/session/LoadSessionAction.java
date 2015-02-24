@@ -118,12 +118,12 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     @Override
-    public JMenuItem getMenuItem() {
+    public JRPMenuItem getMenuItem() {
         return new JRPMenuItem("Bookmark_loadSession", this);
     }
 
     @Override
-    public int getMenuItemPosition() {
+    public int getMenuItemWeight() {
         return 8;
     }
 }

@@ -30,7 +30,7 @@ public class JRPMenuBar extends JMenuBar {
             super.add(newMenu, loc);
             menuComponents.add(loc, (WeightedJRPWidget)newMenu);
         } else {
-            super.add(newMenu, -1);
+            throw new IllegalArgumentException("Only add WeightedJRPWidget to menu");
         }
     }
 }

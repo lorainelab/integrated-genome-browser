@@ -145,13 +145,13 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     }
 
     @Override
-    public JMenuItem getMenuItem() {
+    public JRPMenuItem getMenuItem() {
         JRPMenuItem menuItem = new JRPMenuItem("ExternalViewer_ucscView", this);
         return menuItem;
     }
 
     @Override
-    public int getMenuItemPosition() {
+    public int getMenuItemWeight() {
         return VIEW_MENU_POS;
     }
 }

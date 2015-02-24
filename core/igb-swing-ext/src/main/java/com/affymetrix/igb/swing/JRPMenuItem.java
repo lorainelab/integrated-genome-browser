@@ -17,11 +17,6 @@ public class JRPMenuItem extends JMenuItem implements WeightedJRPWidget {
         init();
     }
 
-//	public JRPMenuItem(String id, Action a) {
-//		super(a);
-//		this.id = id;
-//		init();
-//	}
     public JRPMenuItem(String id, Action a, int weight) {
         super(a);
         this.id = id;

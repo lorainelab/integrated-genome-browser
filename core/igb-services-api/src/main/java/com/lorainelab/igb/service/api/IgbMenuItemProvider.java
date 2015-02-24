@@ -1,5 +1,6 @@
 package com.lorainelab.igb.service.api;
 
+import com.affymetrix.igb.swing.JRPMenuItem;
 import javax.swing.JMenuItem;
 
 /**
@@ -10,7 +11,7 @@ public interface IgbMenuItemProvider {
 
     public String getParentMenuName();
 
-    public JMenuItem getMenuItem();
+    public JRPMenuItem getMenuItem();
 
-    public int getMenuItemPosition();
+    public int getMenuItemWeight();
 }

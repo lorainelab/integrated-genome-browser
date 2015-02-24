@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author jnicol
  */
-public final class LoadURLAction extends OpenURIAction {
+public class LoadURLAction extends OpenURIAction {
 
     private static final long serialVersionUID = 1l;
     private static final LoadURLAction ACTION = new LoadURLAction();
@@ -39,6 +39,18 @@ public final class LoadURLAction extends OpenURIAction {
 
     public static LoadURLAction getAction() {
         return ACTION;
+    }
+
+    private static String getFriendlyName(String urlStr) {
+        // strip off final "/" character, if it exists.
+        if (urlStr.endsWith("/")) {
+            urlStr = urlStr.substring(0, urlStr.length() - 1);
+        }
+        
+        //strip off all earlier slashes.
+        urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+        
+        return urlStr;
     }
 
     private LoadURLAction() {
@@ -122,18 +134,6 @@ public final class LoadURLAction extends OpenURIAction {
 
         openURI(uri, friendlyName, true, loadGroup, speciesName, false);
 
-    }
-
-    private static String getFriendlyName(String urlStr) {
-        // strip off final "/" character, if it exists.
-        if (urlStr.endsWith("/")) {
-            urlStr = urlStr.substring(0, urlStr.length() - 1);
-        }
-
-        //strip off all earlier slashes.
-        urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-
-        return urlStr;
     }
 
 }

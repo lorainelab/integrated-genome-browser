@@ -31,15 +31,16 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
         setDirectionType(direction_type);
     }
 
-    public final void setDirectionType(DirectionType type) {
+    public void setDirectionType(DirectionType type) {
         this.type = type;
     }
 
-    public final void setPosition(boolean isFirst, boolean isLast) {
+    public void setPosition(boolean isFirst, boolean isLast) {
         this.isFirst = isFirst;
         this.isLast = isLast;
     }
 
+    @Override
     public void draw(ViewI view) {
         if (type == DirectionType.ARROW) {
             drawArrow(view);
@@ -149,6 +150,7 @@ public class DualDirectedGlyph extends DirectedGlyph implements TrackConstants {
         g.fillPolygon(x, y, 5);
     }
 
+    @Override
     public void setCoords(double x, double y, double width, double height) {
         super.setCoords(x, y, width, height);
         if (HORIZONTAL == this.getOrientation()) {

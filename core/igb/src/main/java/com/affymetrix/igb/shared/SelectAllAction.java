@@ -17,8 +17,6 @@ public class SelectAllAction extends SeqMapViewActionA {
             FileTypeCategory.Sequence);
     private static Map<FileTypeCategory, SelectAllAction> CATEGORY_ACTION
             = new EnumMap<>(FileTypeCategory.class);
-    private FileTypeCategory[] categories;
-
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
@@ -35,6 +33,8 @@ public class SelectAllAction extends SeqMapViewActionA {
         }
         return selectAllAction;
     }
+    private FileTypeCategory[] categories;
+
 
     protected SelectAllAction(FileTypeCategory... categories) {
         super(categories.length > 1 ? IGBConstants.BUNDLE.getString("selectAllTracks") : categories[0].toString(), null, null);
@@ -50,4 +50,5 @@ public class SelectAllAction extends SeqMapViewActionA {
     public void execute(FileTypeCategory... categories) {
         getSeqMapView().selectAll(categories);
     }
+
 }

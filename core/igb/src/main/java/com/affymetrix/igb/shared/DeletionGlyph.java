@@ -13,36 +13,7 @@ import java.awt.Rectangle;
  * A small x-shaped glyph that can be used to indicate a deleted exon in the
  * slice view.
  */
-public final class DeletionGlyph extends SolidGlyph {
-
-    /**
-     * Draws a small "X".
-     */
-    @Override
-    public void draw(ViewI view) {
-        Rectangle pbox = view.getScratchPixBox();
-        view.transformToPixels(this.getCoordBox(), pbox);
-        Graphics g = view.getGraphics();
-
-        //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
-        pbox.height = Math.max(pbox.height, getMinPixelsHeight());
-
-        final int half_height = pbox.height / 2;
-        final int h = Math.min(half_height, 4);
-
-        final int x1 = pbox.x - h;
-        final int x2 = pbox.x + h;
-
-        final int y1 = pbox.y + half_height - h;
-        final int y2 = pbox.y + half_height + h;
-
-        g.setColor(getBackgroundColor()); // this is the tier foreground color
-
-        g.drawLine(x1, y1, x2, y2);
-        g.drawLine(x1, y2, x2, y1);
-
-        super.draw(view);
-    }
+public class DeletionGlyph extends SolidGlyph {
 
     /**
      * Static method to use DeletionGlyphs to indicate cases where a parent
@@ -60,9 +31,7 @@ public final class DeletionGlyph extends SolidGlyph {
      * @param deletion_y y coord location for deletion glyph
      * @param deletion_height y coord height for deletion glyph
      */
-    public static void handleEdgeRendering(java.util.List<SeqSymmetry> outside_children, GlyphI pglyph,
-            BioSeq annotseq, BioSeq coordseq,
-            double deletion_y, double deletion_height) {
+    public static void handleEdgeRendering(java.util.List<SeqSymmetry> outside_children, GlyphI pglyph, BioSeq annotseq, BioSeq coordseq, double deletion_y, double deletion_height) {
         /**
          * GAH 2009-02-23 BUG FIX for issues 2390626, 1832822 found splice view
          * deletion rendering bug when annotation is on negative strand Problem
@@ -92,8 +61,8 @@ public final class DeletionGlyph extends SolidGlyph {
             if (original_child_span == null) {
                 continue;
             }  // shouldn't happen, but just in case, ignore this child
-
-      // if no other children have already triggered leftward parent extension,
+            
+            // if no other children have already triggered leftward parent extension,
             //   and child span is left of entire view, then extend parent to LEFT
             if (!already_left_extended
                     && original_child_span.getMax() <= viewedges.getMin()) {
@@ -117,6 +86,35 @@ public final class DeletionGlyph extends SolidGlyph {
             }
 
         }
+    }
+
+    /**
+     * Draws a small "X".
+     */
+    @Override
+    public void draw(ViewI view) {
+        Rectangle pbox = view.getScratchPixBox();
+        view.transformToPixels(this.getCoordBox(), pbox);
+        Graphics g = view.getGraphics();
+        
+        //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
+        pbox.height = Math.max(pbox.height, getMinPixelsHeight());
+        
+        final int half_height = pbox.height / 2;
+        final int h = Math.min(half_height, 4);
+        
+        final int x1 = pbox.x - h;
+        final int x2 = pbox.x + h;
+        
+        final int y1 = pbox.y + half_height - h;
+        final int y2 = pbox.y + half_height + h;
+        
+        g.setColor(getBackgroundColor()); // this is the tier foreground color
+        
+        g.drawLine(x1, y1, x2, y2);
+        g.drawLine(x1, y2, x2, y1);
+
+        super.draw(view);
     }
 
 }

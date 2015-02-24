@@ -26,6 +26,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
     public static final Color default_G_color = new Color(255, 210, 0);
     public static final Color default_C_color = new Color(255, 176, 102);
     public static final Color default_other_color = Color.LIGHT_GRAY;
+    private static final ResidueColorHelper singleton = new ResidueColorHelper();
 
     static {
         Map<String, Color> defaultColors = new LinkedHashMap<>();
@@ -39,16 +40,15 @@ public class ResidueColorHelper implements PreferenceChangeListener {
         DEFAULT_COLORS = Collections.unmodifiableMap(defaultColors);
     }
 
-    private final Color[] colors;
-
-    private static final ResidueColorHelper singleton = new ResidueColorHelper();
-
     public static ResidueColorHelper getColorHelper() {
         return singleton;
     }
 
-    public ResidueColorHelper() {
+    private final Color[] colors;
 
+
+    public ResidueColorHelper() {
+        
         int i = 0;
         colors = new Color[5];
         PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -58,6 +58,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
         }
     }
 
+    @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
         int i = 0;
         for (Map.Entry<String, Color> entry : DEFAULT_COLORS.entrySet()) {
@@ -87,4 +88,5 @@ public class ResidueColorHelper implements PreferenceChangeListener {
                 return colors[4];
         }
     }
+
 }

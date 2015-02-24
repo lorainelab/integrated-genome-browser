@@ -5,8 +5,8 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.TierHeightAction;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyLocked;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
 
 /**
  *
@@ -16,6 +16,10 @@ public class UnlockTierHeightAction extends TierHeightAction {
 
     private static final long serialVersionUID = 1L;
     private final static UnlockTierHeightAction unlockTierAction = new UnlockTierHeightAction();
+    static {
+        GenericActionHolder.getInstance().addGenericAction(unlockTierAction);
+        Selections.addRefreshSelectionListener(unlockTierAction.enabler);
+    }
 
     public static UnlockTierHeightAction getAction() {
         return unlockTierAction;
@@ -29,10 +33,6 @@ public class UnlockTierHeightAction extends TierHeightAction {
         }
     };
 
-    static {
-        GenericActionHolder.getInstance().addGenericAction(unlockTierAction);
-        Selections.addRefreshSelectionListener(unlockTierAction.enabler);
-    }
 
     private UnlockTierHeightAction() {
         super(BUNDLE.getString("unlockTierHeightAction"), "16x16/actions/unlock_track.png", "22x22/actions/unlock_track.png");

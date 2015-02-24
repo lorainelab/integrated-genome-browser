@@ -23,4 +23,7 @@ public class DataManagementTableInfo {
         }
         return builder.build();
     }
+
+    private DataManagementTableInfo() {
+    }
 }

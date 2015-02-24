@@ -92,6 +92,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class FasterExpandPacker extends ExpandPacker {
 
+    protected static double determineYCoord(int moveType, int slot_index, double slot_height, double spacing) {
+        if (moveType == NeoConstants.UP) {
+            return -((slot_index * slot_height) + spacing);		// stacking up for layout
+        }
+        return (slot_index * slot_height) + spacing;	// stacking down for layout
+    }
+
     private int max_slots_allowed = 1000;
     private boolean constant_heights = true;
     protected int actual_slots;
@@ -370,14 +377,6 @@ public class FasterExpandPacker extends ExpandPacker {
         return max;
     }
 
-    protected static double determineYCoord(int moveType, int slot_index,
-            double slot_height, double spacing) {
-        if (moveType == NeoConstants.UP) {
-            return -((slot_index * slot_height) + spacing);		// stacking up for layout
-        }
-        return (slot_index * slot_height) + spacing;	// stacking down for layout
-    }
-
     protected void setActualSlots(int theNumber) {
         actual_slots = theNumber;
         if (0 < max_slots_allowed) {
@@ -388,5 +387,6 @@ public class FasterExpandPacker extends ExpandPacker {
     protected int getMaxSlots() {
         return this.max_slots_allowed;
     }
+
 
 }

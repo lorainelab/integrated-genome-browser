@@ -2,8 +2,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -12,6 +12,23 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 public class CodonGlyphProcessor {
+
+    private static boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym, BioSeq seq) {
+        SeqSpan cdsSpan = parentSym.getCdsSpan();
+        if (cdsSpan != null) {
+            if (parentSym.isForward() && exonSym.getSpan(seq) != null
+                    && (cdsSpan.getStart() > exonSym.getSpan(seq).getStart()
+                    || cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
+                return true;
+            }
+            if (!parentSym.isForward() && exonSym.getSpan(seq) != null
+                    && (cdsSpan.getStart() < exonSym.getSpan(seq).getStart()
+                    || cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
+                return true;
+            }
+        }
+        return parentSym.isCdsStartStopSame();
+    }
 
     private int codeSize;
 
@@ -58,21 +75,5 @@ public class CodonGlyphProcessor {
         }
     }
 
-    private static boolean hasUTR(SymSpanWithCds parentSym, SeqSymmetry exonSym, BioSeq seq) {
-        SeqSpan cdsSpan = parentSym.getCdsSpan();
-        if (cdsSpan != null) {
-            if (parentSym.isForward() && exonSym.getSpan(seq) != null
-                    && (cdsSpan.getStart() > exonSym.getSpan(seq).getStart()
-                    || cdsSpan.getEnd() < exonSym.getSpan(seq).getEnd())) {
-                return true;
-            }
-            if (!parentSym.isForward() && exonSym.getSpan(seq) != null
-                    && (cdsSpan.getStart() < exonSym.getSpan(seq).getStart()
-                    || cdsSpan.getEnd() > exonSym.getSpan(seq).getEnd())) {
-                return true;
-            }
-        }
-        return parentSym.isCdsStartStopSame();
-    }
 
 }

@@ -2,8 +2,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.lorainelab.igb.service.api.IgbService;
 import com.jidesoft.combobox.ColorComboBox;
+import com.lorainelab.igb.service.api.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;

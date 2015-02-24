@@ -226,7 +226,7 @@ public abstract class StylePanel extends javax.swing.JPanel {
 //	protected abstract void hideButtonReset();
 //	protected abstract void clearButtonReset();
 //	protected abstract void restoreToDefaultButtonReset();
-    protected final void resetAll() {
+    protected void resetAll() {
         is_listening = false;
         //getStylePanel().setEnabled(allStyles.size() > 0);
         //getAnnotationsPanel().setEnabled(annotStyles.size() > 0);

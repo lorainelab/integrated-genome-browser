@@ -1,7 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.TierHeightAction;
@@ -9,6 +7,8 @@ import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAllButOneLocked;
 import static com.affymetrix.igb.shared.Selections.isAnyLockable;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 /**
  *
@@ -18,6 +18,14 @@ public class LockTierHeightAction extends TierHeightAction {
 
     private static final long serialVersionUID = 1L;
     private final static LockTierHeightAction lockTierAction = new LockTierHeightAction();
+    static {
+        GenericActionHolder.getInstance().addGenericAction(lockTierAction);
+        Selections.addRefreshSelectionListener(lockTierAction.enabler);
+    }
+
+    public static LockTierHeightAction getAction() {
+        return lockTierAction;
+    }
 
     private Selections.RefreshSelectionListener enabler = () -> {
         if ((!isAllButOneLocked() && isAnyLockable())) {
@@ -27,18 +35,10 @@ public class LockTierHeightAction extends TierHeightAction {
         }
     };
 
-    public static LockTierHeightAction getAction() {
-        return lockTierAction;
-    }
-
-    static {
-        GenericActionHolder.getInstance().addGenericAction(lockTierAction);
-        Selections.addRefreshSelectionListener(lockTierAction.enabler);
-    }
-
     private LockTierHeightAction() {
         super(BUNDLE.getString("lockTierHeightAction"), "16x16/actions/lock_track.png", "22x22/actions/lock_track.png");
     }
+
 
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -61,4 +61,5 @@ public class LockTierHeightAction extends TierHeightAction {
     protected void setHeightFixed(DefaultTierGlyph dtg) {
         dtg.setHeightFixed(true);
     }
+
 }

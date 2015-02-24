@@ -1,7 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
@@ -19,6 +17,8 @@ import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
@@ -52,9 +52,6 @@ public class Selections {
         addListeners(new Listeners());
     }
 
-    private Selections() {
-    }
-
     private static void addListeners(Listeners listeners) {
         GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addSeqSelectionListener(listeners);
@@ -64,9 +61,9 @@ public class Selections {
 //		igbService.addListSelectionListener(this);
     }
 
-    private synchronized static void refreshSelection() {
+    private static synchronized void refreshSelection() {
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-        List<StyledGlyph> selected = (List) smv.getAllSelectedTiers();
+                List<StyledGlyph> selected = (List) smv.getAllSelectedTiers();
         allStyles.clear();
         annotStyles.clear();
         graphStyles.clear();
@@ -136,7 +133,7 @@ public class Selections {
             }
         }
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-        List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
+                List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
         selectedGraphs.stream().filter(glyph -> glyph instanceof GraphGlyph).forEach(glyph -> {
             GraphGlyph gg = (GraphGlyph) glyph;
             graphStates.add(gg.getGraphState());
@@ -353,6 +350,9 @@ public class Selections {
         listenerList.add(RefreshSelectionListener.class, listener);
     }
 
+    private Selections() {
+    }
+
     /*
      * Interface to notify selection has been updated.
      */
@@ -390,6 +390,7 @@ public class Selections {
             refreshSelection();
         }
 
+        @Override
         public void mapRefresh() {
             refreshSelection();
         }

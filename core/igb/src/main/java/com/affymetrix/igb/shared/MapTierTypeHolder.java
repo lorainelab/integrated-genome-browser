@@ -25,23 +25,6 @@ public class MapTierTypeHolder {
 
     private static final Logger logger = LoggerFactory.getLogger(MapTierTypeHolder.class);
 
-    @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
-    public final void addViewFactory(MapTierGlyphFactoryI factory) {
-        checkNotNull(factory);
-        factory.getSupportedCategories().stream().filter(category -> !mapTierTypeReferenceTable.contains(factory.getName(), category)).forEach(category -> {
-            mapTierTypeReferenceTable.put(factory.getName(), category, factory);
-        });
-    }
-
-    public final void removeViewFactory(MapTierGlyphFactoryI factory) {
-        checkNotNull(factory);
-        if (mapTierTypeReferenceTable.containsValue(factory)) {
-            for (FileTypeCategory category : factory.getSupportedCategories()) {
-                mapTierTypeReferenceTable.remove(factory.getName(), category);
-            }
-        }
-    }
-
     public static Collection<MapTierGlyphFactoryI> getPreprocessorsForType(FileTypeCategory category) {
         checkNotNull(category);
         if (mapTierTypeReferenceTable.columnMap().containsKey(category)) {
@@ -68,6 +51,21 @@ public class MapTierTypeHolder {
             return false;
         } else {
             return factory.supportsTwoTrack();
+        }
+    }
+    @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
+    public void addViewFactory(MapTierGlyphFactoryI factory) {
+        checkNotNull(factory);
+        factory.getSupportedCategories().stream().filter(category -> !mapTierTypeReferenceTable.contains(factory.getName(), category)).forEach(category -> {
+            mapTierTypeReferenceTable.put(factory.getName(), category, factory);
+        });
+    }
+    public void removeViewFactory(MapTierGlyphFactoryI factory) {
+        checkNotNull(factory);
+        if (mapTierTypeReferenceTable.containsValue(factory)) {
+            for (FileTypeCategory category : factory.getSupportedCategories()) {
+                mapTierTypeReferenceTable.remove(factory.getName(), category);
+            }
         }
     }
 

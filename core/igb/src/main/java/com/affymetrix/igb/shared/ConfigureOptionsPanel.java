@@ -162,14 +162,17 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     }
                     tf.setText(String.valueOf(cp.getParameterValue(label)));
                     tf.getDocument().addDocumentListener(new DocumentListener() {
+                        @Override
                         public void insertUpdate(DocumentEvent e) {
                             setParameter();
                         }
 
+                        @Override
                         public void removeUpdate(DocumentEvent e) {
                             setParameter();
                         }
 
+                        @Override
                         public void changedUpdate(DocumentEvent e) {
                             setParameter();
                         }

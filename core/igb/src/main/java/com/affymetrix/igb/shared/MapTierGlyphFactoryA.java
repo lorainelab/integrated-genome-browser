@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.general.GenericFeature;
@@ -17,37 +16,13 @@ import com.affymetrix.igb.IGBConstants;
 import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
 public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
-
-    @Override
-    public void init(Map<String, Object> options) {
-    }
-
-    @Override
-    public String getDisplayName() {
-        String displayName = null;
-        try {
-            displayName = IGBConstants.BUNDLE.getString("viewmode_" + getName());
-        } catch (MissingResourceException x) {
-            displayName = getName();
-        }
-        return displayName;
-    }
-
-    @Override
-    public boolean supportsTwoTrack() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return getDisplayName();
-    }
 
     protected static void doMiddlegroundShading(TierGlyph tierGlyph, SeqMapViewExtendedI gviewer, BioSeq seq) {
         tierGlyph.clearMiddleGlyphs();
@@ -120,7 +95,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
         return csg;
 
         // SEQ array has unexpected behavior;  commenting out for now.
-		/*if (((SymWithProps) sym).getProperty("SEQ") != null) {
+        /*if (((SymWithProps) sym).getProperty("SEQ") != null) {
          byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
          for (int i = 0; i < seqArr.length; i++) {
          System.out.print((char) seqArr[i]);
@@ -128,11 +103,6 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
          System.out.println();
          isg.setResidueMask(seqArr);
          }*/
-    }
-
-    @Override
-    public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
-
     }
 
     //Determines residue mismatches
@@ -159,12 +129,42 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
         return sym;
     }
 
-    protected class Track {
+    @Override
+    public void init(Map<String, Object> options) {
+    }
+
+    @Override
+    public String getDisplayName() {
+        String displayName = null;
+        try {
+            displayName = IGBConstants.BUNDLE.getString("viewmode_" + getName());
+        } catch (MissingResourceException x) {
+            displayName = getName();
+        }
+        return displayName;
+    }
+
+    @Override
+    public boolean supportsTwoTrack() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
+
+    @Override
+    public void createGlyphs(RootSeqSymmetry rootSym, List<? extends SeqSymmetry> syms, ITrackStyleExtended style, SeqMapViewExtendedI smv, BioSeq seq) {
+
+    }
+
+    public class Track {
 
         private final TierGlyph forwardTier;
         private final TierGlyph reverseTier;
 
-        public Track(TierGlyph forwardTier) {            
+        public Track(TierGlyph forwardTier) {
             this(forwardTier, null);
         }
 

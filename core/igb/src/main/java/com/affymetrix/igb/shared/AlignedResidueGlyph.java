@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
  * Residues can be masked out if they agree with a reference sequence.
  *
  */
-public final class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
+public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
     private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
     private static final Map<Float, AlphaComposite> alphaCompositeCache = new WeakHashMap<>();

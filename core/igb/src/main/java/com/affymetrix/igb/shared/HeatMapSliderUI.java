@@ -24,6 +24,13 @@ import javax.swing.plaf.basic.BasicSliderUI;
  */
 class HeatMapSliderUI extends BasicSliderUI {
 
+    private static final int TRACK_HEIGHT = 5;
+    //Color Preferences	
+    private static final Color TRACK_BACKGROUND_COLOR = new Color(138, 130, 129, 100);
+    private static final Color TRACK_BORDER_COLOR = new Color(255, 255, 255, 200);
+    private static final Color TOP_SLIDER_KNOB_COLOR = Color.gray;
+    private static final Color BOTTOM_SLIDER_KNOB_COLOR = Color.lightGray;
+    public static final Color BORDER_COLOR = new Color(0xc5c8cf);
     /**
      * Location and size of thumb for upper value.
      */
@@ -41,20 +48,13 @@ class HeatMapSliderUI extends BasicSliderUI {
      */
 //	private transient boolean middleDragging;
     private boolean isMac = false;
-    private static final int TRACK_HEIGHT = 5;
-    //Color Preferences	
-    private static final Color TRACK_BACKGROUND_COLOR = new Color(138, 130, 129, 100);
-    private static final Color TRACK_BORDER_COLOR = new Color(255, 255, 255, 200);
-    private static final Color TOP_SLIDER_KNOB_COLOR = Color.gray;
-    private static final Color BOTTOM_SLIDER_KNOB_COLOR = Color.lightGray;
-    public static final Color BORDER_COLOR = new Color(0xc5c8cf);
 
     /**
      * Constructs a HeatMapSliderUI for the specified slider component.
      *
      * @param b HeatMapSlider
      */
-    public HeatMapSliderUI(HeatMapSlider b, int noOfThumbs) {
+    HeatMapSliderUI(HeatMapSlider b, int noOfThumbs) {
         super(b);
         if ("Mac OS X".equals(System.getProperty("os.name"))) {
             isMac = true;

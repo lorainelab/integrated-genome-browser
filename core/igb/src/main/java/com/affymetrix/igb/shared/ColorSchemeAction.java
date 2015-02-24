@@ -8,13 +8,13 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
 import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.List;
 public class ColorSchemeAction extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1L;
-    private AffyLabelledTierMap ltm = null;
     private static ColorSchemeAction ACTION;
 
     /**
@@ -45,6 +44,7 @@ public class ColorSchemeAction extends SeqMapViewActionA {
         }
         return ACTION;
     }
+    private AffyLabelledTierMap ltm = null;
 
     /**
      * Create a default action for setting a color scheme. The icons are by Mark

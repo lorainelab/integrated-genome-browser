@@ -24,35 +24,38 @@ import java.util.logging.Logger;
  *
  */
 public abstract class AbstractAlignedTextGlyph extends AbstractResiduesGlyph {
+    private static final Font mono_default_font = NeoConstants.default_bold_font;
 
     protected SearchableCharIterator chariter;
     private int residue_length = 0;
 //	private final BitSet residueMask = new BitSet();
     protected BitSet residueMask;
-    private static final Font mono_default_font = NeoConstants.default_bold_font;
-
-	//public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
-    public void setParentSeqStart(int beg) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setParentSeqEnd(int end) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getParentSeqStart() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getParentSeqEnd() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public AbstractAlignedTextGlyph() {
         super();
         setResidueFont(mono_default_font);
         // default to true for backward compatability
         setHitable(true);
+    }
+
+    //public boolean packerClip = false;	// if we're in an overlapped glyph (top of packer), don't draw residues -- for performance
+    @Override
+    public void setParentSeqStart(int beg) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setParentSeqEnd(int end) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getParentSeqStart() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getParentSeqEnd() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

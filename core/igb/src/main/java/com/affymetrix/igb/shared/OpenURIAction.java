@@ -19,9 +19,9 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SeqMapViewActionA;
-import com.lorainelab.igb.service.api.IgbService;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
+import com.lorainelab.igb.service.api.IgbService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,30 +37,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("customSpecies");
     public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
     protected static final GenometryModel gmodel = GenometryModel.getInstance();
-    protected final IgbService igbService;
     protected static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
-
-    public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
-        super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
-        igbService = IgbServiceImpl.getInstance();
-    }
-
-    public void openURI(URI uri, final String fileName, final boolean mergeSelected,
-            final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
-
-        if (ScriptManager.getInstance().isScript(uri.toString())) {
-            RunScriptAction.getAction().runScript(uri.toString());
-            return;
-        }
-
-        igbService.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
-
-        if (!mergeSelected) {
-            unknown_group_count++;
-            gmodel.setSelectedSeqGroup(loadGroup);
-        }
-
-    }
 
     public static UniFileFilter getAllKnowFilter() {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
@@ -96,6 +73,28 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     public static AnnotatedSeqGroup retrieveSeqGroup(String name) {
         return gmodel.addSeqGroup(name);
+    }
+    protected final IgbService igbService;
+
+    public OpenURIAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic, Object extraInfo, boolean popup) {
+        super(text, tooltip, iconPath, largeIconPath, mnemonic, extraInfo, popup);
+        igbService = IgbServiceImpl.getInstance();
+    }
+
+    public void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
+        
+        if (ScriptManager.getInstance().isScript(uri.toString())) {
+            RunScriptAction.getAction().runScript(uri.toString());
+            return;
+        }
+        
+        igbService.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
+        
+        if (!mergeSelected) {
+            unknown_group_count++;
+            gmodel.setSelectedSeqGroup(loadGroup);
+        }
+
     }
 
 }

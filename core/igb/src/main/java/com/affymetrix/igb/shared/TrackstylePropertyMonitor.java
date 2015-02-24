@@ -15,13 +15,13 @@ import javax.swing.event.TableModelListener;
 public class TrackstylePropertyMonitor implements TableModelListener, ActionListener {
 
     private static TrackstylePropertyMonitor singleton = new TrackstylePropertyMonitor();
-    private final Set<TrackStylePropertyListener> listeners = new CopyOnWriteArraySet<>();
-
-    private TrackstylePropertyMonitor() {
-    }
 
     public static TrackstylePropertyMonitor getPropertyTracker() {
         return singleton;
+    }
+    private final Set<TrackStylePropertyListener> listeners = new CopyOnWriteArraySet<>();
+
+    private TrackstylePropertyMonitor() {
     }
 
     @Override
@@ -47,6 +47,7 @@ public class TrackstylePropertyMonitor implements TableModelListener, ActionList
             listener.trackstylePropertyChanged(eo);
         }
     }
+
 
     public interface TrackStylePropertyListener {
 

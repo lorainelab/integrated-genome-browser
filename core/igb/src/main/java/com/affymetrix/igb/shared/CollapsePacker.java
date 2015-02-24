@@ -9,21 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class CollapsePacker extends CollapsedTierPacker {
-
-    @Override
-    public Rectangle pack(GlyphI parent, ViewI view) {
-        List<GlyphI> children = parent.getChildren();
-
-        if (children != null) {
-            maxHeight = getMaxHeightAndSkipDraw(parent);
-        }
-
-        adjustHeight(parent);
-        moveAllChildren(parent);
-
-        return null;
-    }
+public class CollapsePacker extends CollapsedTierPacker {
 
     public static double getMaxHeightAndSkipDraw(GlyphI parent) {
         double maxHeight = 0;
@@ -54,7 +40,7 @@ public final class CollapsePacker extends CollapsedTierPacker {
             boolean child_placed = false;
             int start_slot_index = 0;
             if (prev_min_xmax >= child_min) {
-				// no point in checking slots prior to and including prev_slot_index, so
+                // no point in checking slots prior to and including prev_slot_index, so
                 //  modify start_slot_index to be prev_slot_index++;
                 start_slot_index = prev_slot_index + 1;
             }
@@ -101,5 +87,19 @@ public final class CollapsePacker extends CollapsedTierPacker {
             }
         }
         return maxHeight;
+    }
+
+    @Override
+    public Rectangle pack(GlyphI parent, ViewI view) {
+        List<GlyphI> children = parent.getChildren();
+        
+        if (children != null) {
+            maxHeight = getMaxHeightAndSkipDraw(parent);
+        }
+        
+        adjustHeight(parent);
+        moveAllChildren(parent);
+
+        return null;
     }
 }

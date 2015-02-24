@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class GraphGlyphUtils {
+public class GraphGlyphUtils {
 
     private static final float sliders_per_percent = 10.0f;
 
@@ -162,5 +162,8 @@ public final class GraphGlyphUtils {
         }
 
         return percent;
+    }
+
+    private GraphGlyphUtils() {
     }
 }

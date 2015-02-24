@@ -55,7 +55,6 @@ public class ExpandPacker extends ExpandedTierPacker {
                 ymax = Math.max(cbox.y + cbox.height, ymax);
                 prev_xmax = Math.max(cbox.x + cbox.width, prev_xmax);
                 if (DEBUG_CHECKS) {
-                    System.out.println(child);
                 }
             }
         }
@@ -153,7 +152,6 @@ public class ExpandPacker extends ExpandedTierPacker {
                 }
             }
             if (DEBUG_CHECKS) {
-                System.out.println("sibs in range: " + sibsinrange.size());
             }
 
             this.before.x = childbox.x;
@@ -179,11 +177,9 @@ public class ExpandPacker extends ExpandedTierPacker {
                 }
                 Double siblingbox = sibling.getCoordBox();
                 if (DEBUG_CHECKS) {
-                    System.out.println("checking against: " + sibling);
                 }
                 if (child.hit(siblingbox, view)) {
                     if (DEBUG_CHECKS) {
-                        System.out.println("hit sib");
                     }
                     Double cb = child.getCoordBox();
                     this.before.x = cb.x;

@@ -15,4 +15,7 @@ public class IGBScriptAction {
     public static void executeScriptAction(String tutorialArg) {
         ScriptManager.getInstance().runScriptString(tutorialArg, "igb");
     }
+
+    private IGBScriptAction() {
+    }
 }

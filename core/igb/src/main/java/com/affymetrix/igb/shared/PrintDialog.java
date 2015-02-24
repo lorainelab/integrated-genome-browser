@@ -33,8 +33,19 @@ import javax.swing.JRadioButton;
 public class PrintDialog {
 
     private static PrintDialog singleton;
-    private JFrame static_frame = null;
     static final String TITLE = "Print Image";
+
+    /**
+     * @return PrintDialog instance
+     */
+    public static PrintDialog getSingleton() {
+        if (singleton == null) {
+            singleton = new PrintDialog();
+        }
+        
+        return singleton;
+    }
+    private JFrame static_frame = null;
     protected BufferedImage exportImage;
 
     private AffyTieredMap seqMap;
@@ -54,17 +65,6 @@ public class PrintDialog {
     JRadioButton mvRadioButton = new JRadioButton();
     JRadioButton mvlRadioButton = new JRadioButton();
     JRadioButton wholeFrameRB = new JRadioButton();
-
-    /**
-     * @return PrintDialog instance
-     */
-    public static PrintDialog getSingleton() {
-        if (singleton == null) {
-            singleton = new PrintDialog();
-        }
-
-        return singleton;
-    }
 
     public synchronized void display() {
         initRadioButton();
@@ -179,4 +179,5 @@ public class PrintDialog {
         static_frame.setVisible(false);
         //static_frame = null;
     }
+
 }

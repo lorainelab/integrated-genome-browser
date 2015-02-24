@@ -124,4 +124,7 @@ public class Actions {
         action.performAction(style, name);
     }
 
+    private Actions() {
+    }
+
 }

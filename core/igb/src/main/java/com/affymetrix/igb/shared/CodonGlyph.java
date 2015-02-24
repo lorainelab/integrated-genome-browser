@@ -6,8 +6,8 @@ import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.ColorUtils;
@@ -19,12 +19,12 @@ import java.util.BitSet;
 public class CodonGlyph extends AbstractAlignedTextGlyph {
 
     private static final double STAGGER_COLOR_PCT = 0.8;
-    private int offset;
-//	private static SeqSpan waitingSpan = null;
-//	private static boolean loading = false;
 
     public static final String CODON_GLYPH_CODE_SIZE = "Codon glyph code size";
     public static final int default_codon_glyph_code_size = 1;
+    private int offset;
+//	private static SeqSpan waitingSpan = null;
+//	private static boolean loading = false;
 
     private int codeSize;
     private boolean tried = false;
@@ -49,7 +49,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
                 super.drawTraversal(view);
             }
         } catch (Exception ex) {
-            System.out.println("Exception in CodonGlyph :" + ex);
         }
     }
 
@@ -101,31 +100,6 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
         }
     }
 
-    private class ResidueRange {
-
-        private final int startPos;
-        private final int endPos;
-        private final String residue;
-
-        private ResidueRange(int startPos, int endPos, String residue) {
-            super();
-            this.startPos = startPos;
-            this.endPos = endPos;
-            this.residue = residue;
-        }
-
-        public int getStartPos() {
-            return startPos;
-        }
-
-        public int getEndPos() {
-            return endPos;
-        }
-
-        public String getResidue() {
-            return residue;
-        }
-    }
 
     private ResidueRange getResidueRange() {
         SymSpanWithCds parentSym = (SymSpanWithCds) getParent().getParent().getInfo();
@@ -294,4 +268,30 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
      }
      }
      */
+
+    private class ResidueRange {
+
+        private final int startPos;
+        private final int endPos;
+        private final String residue;
+
+        private ResidueRange(int startPos, int endPos, String residue) {
+            super();
+            this.startPos = startPos;
+            this.endPos = endPos;
+            this.residue = residue;
+        }
+
+        public int getStartPos() {
+            return startPos;
+        }
+
+        public int getEndPos() {
+            return endPos;
+        }
+
+        public String getResidue() {
+            return residue;
+        }
+    }
 }

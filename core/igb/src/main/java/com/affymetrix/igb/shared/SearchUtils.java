@@ -2,10 +2,10 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  *
  * @author jnicol
  */
-public final class SearchUtils {
+public class SearchUtils {
 
     /**
      * Due to disagreements between group ID search and BioSeq ID search, do
@@ -173,5 +173,8 @@ public final class SearchUtils {
         }
 
         return med;
+    }
+
+    private SearchUtils() {
     }
 }

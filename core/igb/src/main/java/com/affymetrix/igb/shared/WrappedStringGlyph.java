@@ -13,6 +13,22 @@ import java.awt.Rectangle;
  */
 public class WrappedStringGlyph extends StringGlyph {
 
+    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox) {
+        int pbBuffer_x = 3;
+        int maxLines = (upperY - lowerY) / text_height;
+        if (maxLines == 0) {
+            return;
+        }
+        String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
+        pixelbox.x += pbBuffer_x;
+        int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
+        for (String line : lines) {
+            //Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
+            g.drawString(line, pixelbox.x, height - 3);
+            height += text_height;
+        }
+    }
+
     public WrappedStringGlyph(String str) {
         super(str);
     }
@@ -50,22 +66,6 @@ public class WrappedStringGlyph extends StringGlyph {
             // if glyph's pixelbox wider than text, then center text
             getPixelBox().x += getPixelBox().width / 2 - text_width / 2;
             g.drawString(label, getPixelBox().x, (lowerY + upperY + text_height) / 2);
-        }
-    }
-
-    private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox) {
-        int pbBuffer_x = 3;
-        int maxLines = (upperY - lowerY) / text_height;
-        if (maxLines == 0) {
-            return;
-        }
-        String[] lines = IgbStringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
-        pixelbox.x += pbBuffer_x;
-        int height = (upperY + lowerY - text_height * (lines.length - 2)) / 2;
-        for (String line : lines) {
-            //Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
-            g.drawString(line, pixelbox.x, height - 3);
-            height += text_height;
         }
     }
 }

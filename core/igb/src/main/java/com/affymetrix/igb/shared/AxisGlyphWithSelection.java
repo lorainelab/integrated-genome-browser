@@ -26,10 +26,12 @@ public class AxisGlyphWithSelection extends AxisGlyph {
         setSelectable(true);
     }
 
+    @Override
     public boolean supportsSubSelection() {
         return true;
     }
 
+    @Override
     public Rectangle2D.Double getSelectedRegion() {
         if (sel_glyph == null) {
             if (isSelected()) {
@@ -45,6 +47,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
      * Calls super.setCoords and resets the reference space. Also resets the
      * coords for all the children.
      */
+    @Override
     public void setCoords(double x, double y, double width, double height) {
         super.setCoords(x, y, width, height);
         if (getChildren() != null) {
@@ -65,6 +68,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
     /**
      * This turns around and calls setCoords.
      */
+    @Override
     public void setCoordBox(Rectangle2D.Double theBox) {
         super.setCoordBox(theBox);
         setCoords(theBox.x, theBox.y, theBox.width, theBox.height);
@@ -75,6 +79,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
      * x start and end (x+width). Should probably go in a LinearGlyph
      * superclass...
      */
+    @Override
     public void select(double x, double y, double width, double height) {
         if (orient == HORIZONTAL) {
             select(x, x + width);
@@ -164,6 +169,7 @@ public class AxisGlyphWithSelection extends AxisGlyph {
 
     private static class TransientFillRectGlyph extends FillRectGlyph {
 
+        @Override
         public void drawTraversal(ViewI view) {
             view.getGraphics().setXORMode(view.getComponent().getBackground());
             super.drawTraversal(view);

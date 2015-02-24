@@ -38,28 +38,29 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.AbstractDocument;
 
-public final class GraphVisibleBoundsSetter extends JPanel
+public class GraphVisibleBoundsSetter extends JPanel
         implements ChangeListener, ActionListener, FocusListener {
 
     private static final long serialVersionUID = 1L;
     private final static DecimalFormat val_format;
     private final static DecimalFormat per_format;
-    private NeoAbstractWidget widg;
-    public RangeSlider PercentSlider = new RangeSlider(0, 100);
-    public RangeSlider ValueSlider = new RangeSlider(0, 100);
-    public JRPTextField min_perT;
-    public JRPTextField max_perT;
-    public JRPTextField min_valT;
-    public JRPTextField max_valT;
-    public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", BUNDLE.getString("byValue"));
-    public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", BUNDLE.getString("byPercentile"));
-    private final static int max_chars = 8;
-    private final static int max_pix_per_char = 6;
+    private static final int max_chars = 8;
+    private static final int max_pix_per_char = 6;
     private static final int tf_min_xpix = max_chars * max_pix_per_char;
     private static final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-    private final static int tf_min_ypix = 10;
-    private final static int tf_max_ypix = 25;
-
+    private static final int tf_min_ypix = 10;
+    private static final int tf_max_ypix = 25;
+    /*
+     * Now trying to map slider values to percentages, such that each slider
+     * unit = 0.1 percent (or in other words slider units per percent = 10)
+     */
+    private static final float sliders_per_percent = 10.0f;
+    private static final float abs_min_percent = 0.0f;
+    private static final float abs_max_percent = 100.0f;
+    private static final int total_val_sliders = 1000;
+    private static final float per_offset = 0.1f;
+    private static final float val_offset = 0.1f;
+    private static final boolean show_min_and_max = false;
     static {
         val_format = new DecimalFormat();
         val_format.setMinimumIntegerDigits(1);
@@ -73,6 +74,39 @@ public final class GraphVisibleBoundsSetter extends JPanel
         per_format.setPositiveSuffix("%");
         per_format.setGroupingUsed(false);
     }
+
+    static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
+        GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
+        List<GraphGlyph> glist = new ArrayList<>();
+        glist.add(sgg);
+        thresher.setGraphs(glist);
+        JFrame frm = new JFrame(BUNDLE.getString("graphPercentileAdjuster"));
+        Container cpane = frm.getContentPane();
+        cpane.setLayout(new BorderLayout());
+        cpane.add("Center", thresher);
+        frm.addWindowListener(new WindowAdapter() {
+            
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                Window w = evt.getWindow();
+                w.setVisible(false);
+                w.dispose();
+            }
+        });
+        
+        frm.pack();
+        frm.setVisible(true);
+        return thresher;
+    }
+    private NeoAbstractWidget widg;
+    public RangeSlider PercentSlider = new RangeSlider(0, 100);
+    public RangeSlider ValueSlider = new RangeSlider(0, 100);
+    public JRPTextField min_perT;
+    public JRPTextField max_perT;
+    public JRPTextField min_valT;
+    public JRPTextField max_valT;
+    public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", BUNDLE.getString("byValue"));
+    public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", BUNDLE.getString("byPercentile"));
 	// info2pscores is a hash of GraphGlyphs' data model
     //   (usually a GraphSym if using genometry) to float[] arrays, each of length
     //   (sliders_per_percent * total_percent), and each value v at index i is
@@ -92,49 +126,13 @@ public final class GraphVisibleBoundsSetter extends JPanel
     //    sort) every time a graph is selected...
     private final List<GraphGlyph> graphs = new ArrayList<>();
 
-    /*
-     * Now trying to map slider values to percentages, such that each slider
-     * unit = 0.1 percent (or in other words slider units per percent = 10)
-     */
-    private static final float sliders_per_percent = 10.0f;
-    private static final float abs_min_percent = 0.0f;
-    private static final float abs_max_percent = 100.0f;
     private float prev_min_per = 0;
     private float prev_max_per = 100;
-    private final static int total_val_sliders = 1000;
     private float sliders_per_val; // slider units per yval unit
     private float prev_min_val;
     private float prev_max_val;
-    private static final float per_offset = 0.1f;
-    private static final float val_offset = 0.1f;
-    private static final boolean show_min_and_max = false;
     private boolean includePercentileControls = true;
     public ButtonGroup by_val_group = new ButtonGroup();
-
-    static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
-
-        GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-        List<GraphGlyph> glist = new ArrayList<>();
-        glist.add(sgg);
-        thresher.setGraphs(glist);
-        JFrame frm = new JFrame(BUNDLE.getString("graphPercentileAdjuster"));
-        Container cpane = frm.getContentPane();
-        cpane.setLayout(new BorderLayout());
-        cpane.add("Center", thresher);
-        frm.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                Window w = evt.getWindow();
-                w.setVisible(false);
-                w.dispose();
-            }
-        });
-
-        frm.pack();
-        frm.setVisible(true);
-        return thresher;
-    }
 
     public GraphVisibleBoundsSetter(NeoAbstractWidget w) {
         this(w, true);
@@ -352,7 +350,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
         prev_min_per = avg_of_vismins;
         prev_max_per = avg_of_vismaxes;
     }
-
+    @Override
     public void stateChanged(ChangeEvent evt) {
         if (graphs.size() <= 0) {
             return;
@@ -372,12 +370,14 @@ public final class GraphVisibleBoundsSetter extends JPanel
     /**
      * When a JTextField gains focus, do nothing special.
      */
+    @Override
     public void focusGained(FocusEvent e) {
     }
 
     /**
      * When a JTextField loses focus, process its value.
      */
+    @Override
     public void focusLost(FocusEvent e) {
         Object src = e.getSource();
         if (src instanceof JTextField) {
@@ -385,6 +385,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent evt) {
         doAction(evt.getSource());
     }
@@ -401,7 +402,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
                 if (minval > prev_max_val - val_offset) {
                     minval = prev_max_val - val_offset;
                 }
-				// do not enforce an absolute minimum in the text field.
+                // do not enforce an absolute minimum in the text field.
                 // let the user enter any value to get the desired scaling.
                 // this flexibility was requested on SourceForge.
                 //else if (minval < abs_min_val) { minval = abs_min_val; }
@@ -415,7 +416,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
                 if (maxval < prev_min_val + val_offset) {
                     maxval = prev_min_val + val_offset;
                 }
-				// do not enforce an absolute maximum in the text field.
+                // do not enforce an absolute maximum in the text field.
                 // let the user enter any value to get the desired scaling
                 //else if (maxval > abs_max_val) { maxval = abs_max_val; }
                 setVisibleMaxValue(maxval);
@@ -460,8 +461,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
     private void setVisibleMinValue(float val) {
         int gcount = graphs.size();
         if (gcount > 0 /*
-                 * && (val != prev_min_val)
-                 */) {
+                * && (val != prev_min_val)
+                */) {
             turnOffListening();
 
             float min_of_mins = Float.POSITIVE_INFINITY;
@@ -505,8 +506,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
     private void setVisibleMaxValue(float val) {
         int gcount = graphs.size();
         if (gcount > 0 /*
-                 * && (val != prev_max_val)
-                 */) {
+                * && (val != prev_max_val)
+                */) {
             turnOffListening();
 
             float min_of_maxes = Float.POSITIVE_INFINITY;
@@ -553,8 +554,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
         //    System.out.println("setting min percent: " + percent + ", previous: " + prev_min_per);
         int gcount = graphs.size();
         if (gcount > 0 /*
-                 * && (percent != prev_min_per)
-                 */) {
+                * && (percent != prev_min_per)
+                */) {
             turnOffListening();
 
             if (percent > prev_max_per - per_offset) {
@@ -611,8 +612,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
         int gcount = graphs.size();
 
         if (gcount > 0 /*
-                 * && (percent != prev_max_per)
-                 */) {
+                * && (percent != prev_max_per)
+                */) {
             turnOffListening();
 
             if (percent < prev_min_per + per_offset) {
@@ -683,4 +684,5 @@ public final class GraphVisibleBoundsSetter extends JPanel
         min_valT.addFocusListener(this);
         max_valT.addFocusListener(this);
     }
+
 }

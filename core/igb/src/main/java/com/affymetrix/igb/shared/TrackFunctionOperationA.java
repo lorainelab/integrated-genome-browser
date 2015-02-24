@@ -1,8 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericVersion;
@@ -15,6 +13,7 @@ import com.affymetrix.genometry.symloader.Delegate.DelegateParent;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.action.SeqMapViewActionA;
@@ -22,6 +21,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +30,27 @@ import java.util.logging.Logger;
 public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1L;
+
+    private static Boolean isForward(StyledGlyph vg) {
+        if (vg.getAnnotStyle().isGraphTier()) {
+            return null;
+        }
+        
+        if (vg.getDirection() == StyledGlyph.Direction.BOTH || vg.getDirection() == StyledGlyph.Direction.NONE) {
+            return null;
+        }
+        
+        return vg.getDirection() == StyledGlyph.Direction.FORWARD;
+    }
+
+    private static String removeIllegalCharacters(String string) {
+        string = string.replaceAll("\\s+", "_");
+        string = string.replaceAll("\\|", "_");
+        string = string.replaceAll("\u221E", "infinite");
+        string = string.replaceAll("\\[", "(");
+        string = string.replaceAll("\\]", ")");
+        return string;
+    }
     private final Operator mOperator;
 
     protected TrackFunctionOperationA(Operator operator, String text) {
@@ -119,18 +140,6 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
     }
 
-    private static Boolean isForward(StyledGlyph vg) {
-        if (vg.getAnnotStyle().isGraphTier()) {
-            return null;
-        }
-
-        if (vg.getDirection() == StyledGlyph.Direction.BOTH || vg.getDirection() == StyledGlyph.Direction.NONE) {
-            return null;
-        }
-
-        return vg.getDirection() == StyledGlyph.Direction.FORWARD;
-    }
-
     private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
         method = IGBStateProvider.getUniqueName("file:/" + removeIllegalCharacters(method));
 
@@ -144,8 +153,8 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             } else {
                 Logger.getLogger(TrackFunctionOperationA.class.getName()).log(Level.INFO, "Illegal character in string {0}", method);
             }
-
-			//method = GeneralUtils.URLEncode(featureName);
+            
+            //method = GeneralUtils.URLEncode(featureName);
             //method = TrackStyle.getUniqueName("file:/"+method);
             uri = java.net.URI.create(GeneralUtils.URLEncode(method));
         }
@@ -173,12 +182,4 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         return feature;
     }
 
-    private static String removeIllegalCharacters(String string) {
-        string = string.replaceAll("\\s+", "_");
-        string = string.replaceAll("\\|", "_");
-        string = string.replaceAll("\u221E", "infinite");
-        string = string.replaceAll("\\[", "(");
-        string = string.replaceAll("\\]", ")");
-        return string;
-    }
 }

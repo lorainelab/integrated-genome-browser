@@ -20,6 +20,14 @@ public class PreprocessorRegistryImpl implements PreprocessorRegistry {
     public static final String COMPONENT_NAME = "PreprocessorRegistryImpl";
     private final static Table<String, FileTypeCategory, SeqSymmetryPreprocessorI> preprocessorTypeReferenceTable = HashBasedTable.create();
 
+    public static Collection<SeqSymmetryPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
+        checkNotNull(category);
+        if (preprocessorTypeReferenceTable.columnMap().containsKey(category)) {
+            return preprocessorTypeReferenceTable.columnMap().get(category).values();
+        }
+        return Collections.<SeqSymmetryPreprocessorI>emptyList();
+    }
+
     @Reference(multiple = true, optional = true, dynamic = true, unbind = "removePreprocessor")
     @Override
     public void addPreprocessor(SeqSymmetryPreprocessorI factory) {
@@ -35,14 +43,6 @@ public class PreprocessorRegistryImpl implements PreprocessorRegistry {
         if (preprocessorTypeReferenceTable.containsValue(factory)) {
             preprocessorTypeReferenceTable.remove(factory.getName(), factory.getCategory());
         }
-    }
-
-    public static Collection<SeqSymmetryPreprocessorI> getPreprocessorsForType(FileTypeCategory category) {
-        checkNotNull(category);
-        if (preprocessorTypeReferenceTable.columnMap().containsKey(category)) {
-            return preprocessorTypeReferenceTable.columnMap().get(category).values();
-        }
-        return Collections.<SeqSymmetryPreprocessorI>emptyList();
     }
 
 }

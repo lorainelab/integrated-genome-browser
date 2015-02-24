@@ -43,6 +43,7 @@ import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.lorainelab.igb.service.api.IgbMenuItemProvider;
@@ -69,9 +70,8 @@ public class MainMenuUtil implements MainMenuManager {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainMenuUtil.class);
     public static final String COMPONENT_NAME = "MainMenuUtil";
     private static final String ID_PREFIX = "IGB_main_";
-    private JMenuBar menuBar;
+    private JRPMenuBar menuBar;
     private IgbService igbService;
-    private JRPMenu toolsMenu;
     private final List<IgbMenuItemProvider> igbMenuItemProviderQueue;
     private final List<AMenuItem> aMenuItemQueue;
     private boolean componentActivated;
@@ -86,10 +86,8 @@ public class MainMenuUtil implements MainMenuManager {
     @Activate
     public void activate() {
         componentActivated = true;
-        menuBar = igbService.getFrame().getJMenuBar();
-
-        toolsMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "toolsMenu", BUNDLE.getString("toolsMenu"), TOOLS_MENU_POSITION);
-        toolsMenu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
+        menuBar = (JRPMenuBar) igbService.getFrame().getJMenuBar();
+        
         loadMenu();
         loadQueuedMenuItems();
     }
@@ -136,10 +134,10 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void editMenu() {
-        JRPMenu editMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "editMenu", BUNDLE.getString("editMenu"), 1);
+        JMenu editMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "editMenu", BUNDLE.getString("editMenu"), 1);
         editMenu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(editMenu, new JRPMenuItem(ID_PREFIX + "editMenu_copyResidues", CopyResiduesAction.getAction()));
-        JRPMenu select_menu = new JRPMenu(ID_PREFIX + "editMenu_select", IGBConstants.BUNDLE.getString("selectTracks"));
+        JMenu select_menu = new JRPMenu(ID_PREFIX + "editMenu_select", IGBConstants.BUNDLE.getString("selectTracks"));
         select_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_select_all", SelectAllAction.getAction()));
         select_menu.add(new JRPMenuItem(ID_PREFIX + "editMenu_deselect_all", DeselectAllAction.getAction()));
@@ -147,7 +145,7 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void viewMenu() {
-        JRPMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
+        JMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
         viewMenu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_setThreshold", AutoLoadThresholdAction.getAction()));
         viewMenu.addSeparator();
@@ -168,11 +166,14 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void toolMenu() {
+        JRPMenu toolsMenu;
+        toolsMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "toolsMenu", BUNDLE.getString("toolsMenu"), 3);
+        toolsMenu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction()));
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction()));
         MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction()));
         toolsMenu.addSeparator();
-        JRPMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"));
+        JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"));
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction()));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));
@@ -180,7 +181,7 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void helpMenu() {
-        JRPMenu helpMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "helpMenu", BUNDLE.getString("helpMenu"), 7);
+        JMenu helpMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "helpMenu", BUNDLE.getString("helpMenu"), 7);
         helpMenu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_aboutIGB", AboutIGBAction.getAction()));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_IGBSupport", IGBSupportAction.getAction()));

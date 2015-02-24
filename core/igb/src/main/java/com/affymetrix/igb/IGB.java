@@ -36,6 +36,7 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -102,7 +103,7 @@ public final class IGB extends Application
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
     private JFrame frm;
-    private JMenuBar mbar;
+    private JRPMenuBar mbar;
     private IGBToolBar toolbar;
     private SeqMapView mapView;
     private AnnotatedSeqGroup prev_selected_group = null;
@@ -228,7 +229,7 @@ public final class IGB extends Application
         }
 
         frm = new JFrame(APP_NAME + " " + APP_VERSION);
-        mbar = new JMenuBar();
+        mbar = new JRPMenuBar();
         frm.setJMenuBar(mbar);
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default

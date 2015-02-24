@@ -125,7 +125,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public int getMenuItemWeight() {
-        return 8;
+        return MENU_POSITION;
     }
 
 }

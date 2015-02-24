@@ -40,6 +40,12 @@ import java.util.Optional;
 
 public class GraphGlyph extends Glyph implements StyledGlyph {
 
+    public static final String INITIAL_MAX_Y = "initialMaxY";
+    public static final String INITIAL_MIN_Y = "initialMinY";
+    public static final String INITIAL_COLOR = "initialColor";
+    public static final String INITIAL_BACKGROUND = "initialBackground";
+    public static final String INITIAL_GRAPH_STYLE = "initialGraphStyle";
+
     private static Font default_font = NeoConstants.default_plain_font;
     private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
     private static final NumberFormat nformat = new DecimalFormat();
@@ -200,13 +206,13 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
 
     private void setColor(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {
         if (toInitialize && map != null) {
-            Object value = map.get(ViewPropertyNames.INITIAL_COLOR);
+            Object value = map.get(INITIAL_COLOR);
             if (value != null) {
                 setColor(Color.decode(value.toString()));
             } else {
                 setColor(state.getTierStyle().getForeground());
             }
-            value = map.get(ViewPropertyNames.INITIAL_BACKGROUND);
+            value = map.get(INITIAL_BACKGROUND);
             if (value != null) {
                 setBackgroundColor(Color.decode(value.toString()));
             } else {
@@ -237,12 +243,12 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     private void checkVisibleBoundsY(boolean toInitialize, Map<String, Object> map) {
         boolean rangeInit = false;
         if (toInitialize && map != null) {
-            Object value = map.get(ViewPropertyNames.INITIAL_MAX_Y);
+            Object value = map.get(INITIAL_MAX_Y);
             if (value != null) {
                 point_max_ycoord = Float.parseFloat(value.toString());
                 rangeInit = true;
             }
-            value = map.get(ViewPropertyNames.INITIAL_MIN_Y);
+            value = map.get(INITIAL_MIN_Y);
             if (value != null) {
                 point_min_ycoord = Float.parseFloat(value.toString());
                 rangeInit = true;

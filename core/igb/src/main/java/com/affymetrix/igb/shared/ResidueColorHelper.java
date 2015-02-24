@@ -14,31 +14,19 @@ import java.util.prefs.PreferenceChangeListener;
  */
 public class ResidueColorHelper implements PreferenceChangeListener {
 
-    private static final Map<String, Color> DEFAULT_COLORS;
+    private static Map<String, Color> DEFAULT_COLORS;
 
     public static final String PREF_A_COLOR = "Adenine color";
     public static final String PREF_T_COLOR = "Thymine color";
     public static final String PREF_G_COLOR = "Guanine color";
     public static final String PREF_C_COLOR = "Cytosine color";
     public static final String PREF_OTHER_COLOR = "Other color";
-    public static final Color default_A_color = new Color(151, 255, 179);
-    public static final Color default_T_color = new Color(102, 211, 255);
-    public static final Color default_G_color = new Color(255, 210, 0);
-    public static final Color default_C_color = new Color(255, 176, 102);
-    public static final Color default_other_color = Color.LIGHT_GRAY;
+    public static final Color DEFAULT_A_COLOR = new Color(151, 255, 179);
+    public static final Color DEFAULT_T_COLOR = new Color(102, 211, 255);
+    public static final Color DEFAULT_G_COLOR = new Color(255, 210, 0);
+    public static final Color DEFAULT_C_COLOR = new Color(255, 176, 102);
+    public static final Color DEFAULT_OTHER_COLOR = Color.LIGHT_GRAY;
     private static final ResidueColorHelper singleton = new ResidueColorHelper();
-
-    static {
-        Map<String, Color> defaultColors = new LinkedHashMap<>();
-
-        defaultColors.put(PREF_A_COLOR, default_A_color);
-        defaultColors.put(PREF_T_COLOR, default_T_color);
-        defaultColors.put(PREF_G_COLOR, default_G_color);
-        defaultColors.put(PREF_C_COLOR, default_C_color);
-        defaultColors.put(PREF_OTHER_COLOR, default_other_color);
-
-        DEFAULT_COLORS = Collections.unmodifiableMap(defaultColors);
-    }
 
     public static ResidueColorHelper getColorHelper() {
         return singleton;
@@ -47,7 +35,7 @@ public class ResidueColorHelper implements PreferenceChangeListener {
     private final Color[] colors;
 
     public ResidueColorHelper() {
-
+        initializeDefaultColors();
         int i = 0;
         colors = new Color[5];
         PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -55,6 +43,18 @@ public class ResidueColorHelper implements PreferenceChangeListener {
             colors[i] = PreferenceUtils.getColor(entry.getKey(), entry.getValue());
             i++;
         }
+    }
+
+    private static void initializeDefaultColors() {
+        Map<String, Color> defaultColors = new LinkedHashMap<>();
+
+        defaultColors.put(PREF_A_COLOR, DEFAULT_A_COLOR);
+        defaultColors.put(PREF_T_COLOR, DEFAULT_T_COLOR);
+        defaultColors.put(PREF_G_COLOR, DEFAULT_G_COLOR);
+        defaultColors.put(PREF_C_COLOR, DEFAULT_C_COLOR);
+        defaultColors.put(PREF_OTHER_COLOR, DEFAULT_OTHER_COLOR);
+
+        DEFAULT_COLORS = Collections.unmodifiableMap(defaultColors);
     }
 
     @Override

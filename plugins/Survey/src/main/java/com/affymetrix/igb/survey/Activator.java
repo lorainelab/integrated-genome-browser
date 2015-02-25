@@ -1,6 +1,20 @@
 package com.affymetrix.igb.survey;
 
+import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genoviz.swing.AMenuItem;
+import static com.affymetrix.igb.survey.ShowSurvey.showSurvey;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.XServiceRegistrar;
+import java.awt.event.ActionEvent;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,26 +24,9 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JMenuItem;
-import java.awt.event.ActionEvent;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
-
-import com.affymetrix.genoviz.swing.AMenuItem;
-import com.affymetrix.igb.swing.JRPMenu;
-
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.XServiceRegistrar;
-import static com.affymetrix.igb.survey.ShowSurvey.*;
-import com.google.common.io.Resources;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +49,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 
         InputStream inputStream = null;
         try {
-            //inputStream = Activator.class.getResourceAsStream("/surveys.xml");        
+//            inputStream = Activator.class.getClassLoader().getResourceAsStream("surveys.xml");
             URL url = new URL(BUNDLE.getString("surveys"));
             inputStream = new ByteArrayInputStream(Resources.toByteArray(url));
             if (inputStream != null) {
@@ -68,17 +65,17 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
                 Date today = Calendar.getInstance().getTime();
                 surveys.stream().filter(survey -> today.compareTo(survey.getStart()) >= 0
                         && today.compareTo(survey.getEnd()) < 0).forEach(survey -> {
-                    JMenuItem item = new JMenuItem(
-                            new GenericAction(survey.getName(), null, null) {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    super.actionPerformed(e);
-                                    GeneralUtils.browse(survey.getLink());
-                                }
-                            }
-                    );
-                    surveysMenu.add(item);
-                });
+                            JMenuItem item = new JMenuItem(
+                                    new GenericAction(survey.getName(), null, null) {
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            super.actionPerformed(e);
+                                            GeneralUtils.browse(survey.getLink());
+                                        }
+                                    }
+                            );
+                            surveysMenu.add(item);
+                        });
                 for (final Survey survey : surveys) {
                     if (today.compareTo(survey.getStart()) >= 0
                             && today.compareTo(survey.getEnd()) < 0
@@ -102,8 +99,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             }
         } catch (FileNotFoundException ex) {
             logger.info("There are currently no surveys available.");
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logger.info("Error reading survey.xml");
         }
 

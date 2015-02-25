@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <surveys>
-    <survey id="Survey1">
-        <name>Survey 1</name>
-        <description>This is survey 1. It ends on Feb 25, 2013</description>
+    <survey id="1">
+        <name>User Survey</name>
+        <description>Help make IGB better! Take a short survey telling us how you use IGB.</description>
         <link>http://wiki.transvar.org</link>
-        <startdate>Jan 25, 2013</startdate>
-        <enddate>Feb 25, 2013</enddate>
+        <startdate>Jan 25, 2015</startdate>
+        <enddate>Mar 25, 2015</enddate>
     </survey>	
-    <survey id="Survey2">
-        <name>Survey 2</name>
-        <description>This is survey 2. It ends on Feb 15, 2013</description>
-        <link>http://wiki.transvar.org</link>
-        <startdate>Nov 25, 2014</startdate>
-        <enddate>Dec 15, 2014</enddate>
-    </survey>
 </surveys>

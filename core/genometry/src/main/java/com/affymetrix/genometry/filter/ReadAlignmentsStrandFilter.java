@@ -20,21 +20,6 @@ import java.util.List;
  */
 public class ReadAlignmentsStrandFilter extends SymmetryFilter {
 
-    private static enum READ_ALIGNMENT {
-
-        POSITIVE("+ only"), NEGATIVE("- only");
-
-        String name;
-
-        READ_ALIGNMENT(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
     private final static String COMPARATOR = "show";
     private final static List<READ_ALIGNMENT> COMPARATOR_VALUES = new LinkedList<>();
 
@@ -71,6 +56,21 @@ public class ReadAlignmentsStrandFilter extends SymmetryFilter {
         }
         return false;
 
+    }
+
+    private static enum READ_ALIGNMENT {
+
+        POSITIVE("+ only"), NEGATIVE("- only");
+        String name;
+
+        READ_ALIGNMENT(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
 }

@@ -15,22 +15,6 @@ import java.util.List;
  */
 public class PairedByRunNoFilter extends SymmetryFilter {
 
-    private static enum RUN_NO {
-
-        FIRST("First"), SECOND("Second");
-
-        String name;
-
-        RUN_NO(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
     private final static String COMPARATOR = "run_number";
     private final static List<RUN_NO> COMPARATOR_VALUES = new LinkedList<>();
 
@@ -68,6 +52,21 @@ public class PairedByRunNoFilter extends SymmetryFilter {
             }
         }
         return false;
+    }
+
+    private static enum RUN_NO {
+
+        FIRST("First"), SECOND("Second");
+        String name;
+
+        RUN_NO(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
 }

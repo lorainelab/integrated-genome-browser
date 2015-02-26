@@ -25,7 +25,7 @@ public abstract class SymmetryFilter implements SymmetryFilterI, IParameters {
     }
 
     @Override
-    public final boolean setParametersValue(Map<String, Object> params) {
+    public boolean setParametersValue(Map<String, Object> params) {
         return parameters.setParametersValue(params);
     }
 

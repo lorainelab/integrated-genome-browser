@@ -15,28 +15,6 @@ import java.util.List;
  */
 public class DuplicateFilter extends SymmetryFilter {
 
-    private static enum SHOW {
-
-        DUPLICATES("Duplicates only", Boolean.TRUE), NON_DUPLICATES("Non-Duplicates only", Boolean.FALSE);
-
-        String name;
-        boolean value;
-
-        SHOW(String name, boolean value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public boolean value() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    }
-
     private final static String COMPARATOR = "show";
     private final static List<SHOW> COMPARATOR_VALUES = new LinkedList<>();
 
@@ -67,6 +45,27 @@ public class DuplicateFilter extends SymmetryFilter {
             return comparator.get().value() == ((BAMSym) ss).getDuplicateReadFlag();
         }
         return false;
+    }
+
+    private static enum SHOW {
+
+        DUPLICATES("Duplicates only", Boolean.TRUE), NON_DUPLICATES("Non-Duplicates only", Boolean.FALSE);
+        String name;
+        boolean value;
+
+        SHOW(String name, boolean value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public boolean value() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
 }

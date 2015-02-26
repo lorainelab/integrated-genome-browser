@@ -15,10 +15,10 @@ import com.affymetrix.genometry.util.SeqUtils;
  */
 public class SymmetryFilterIntersecting extends SymmetryFilter {
 
-    private final MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
 
     private final static String SEQSYMMETRY = "seqsymmetry";
     private final static SeqSymmetry DEFAULT_SEQSYMMETRY = null;
+    private final MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();
 
     private Parameter<SeqSymmetry> original_sym = new Parameter<>(DEFAULT_SEQSYMMETRY);
 
@@ -27,6 +27,7 @@ public class SymmetryFilterIntersecting extends SymmetryFilter {
         parameters.addParameter(SEQSYMMETRY, SeqSymmetry.class, original_sym);
     }
 
+    @Override
     public String getName() {
         return "existing";
     }
@@ -36,6 +37,7 @@ public class SymmetryFilterIntersecting extends SymmetryFilter {
         return getName();
     }
 
+    @Override
     public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym) {
         /**
          * Since GraphSym is only SeqSymmetry containing all points.

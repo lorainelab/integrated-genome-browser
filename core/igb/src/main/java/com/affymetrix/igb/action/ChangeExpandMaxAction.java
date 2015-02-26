@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;

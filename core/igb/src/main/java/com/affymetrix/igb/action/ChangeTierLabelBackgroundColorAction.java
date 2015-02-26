@@ -6,7 +6,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 

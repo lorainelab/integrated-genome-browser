@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.glyph.ThreshGlyph;
 import com.affymetrix.genoviz.util.AbbreviationsFormat;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.Timer;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -127,7 +126,7 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
     private float point_max_ycoord = Float.POSITIVE_INFINITY;
     private float point_min_ycoord = Float.NEGATIVE_INFINITY;
     // assumes sorted points, each x corresponding to y
-    protected GraphSym graf;
+    public GraphSym graf;
     private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
     private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
     protected final GraphState state;
@@ -1323,7 +1322,6 @@ public class GraphGlyph extends Glyph implements StyledGlyph {
                 // flipping about yaxis... should probably make this optional
                 // also offsetting to place within glyph bounds
                 if (DEBUG) {
-                    System.out.println("i = " + i);
                 }
                 int xtemp = graphSym.getGraphXCoord(i);
                 if (DEBUG) {

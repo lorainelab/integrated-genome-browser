@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;

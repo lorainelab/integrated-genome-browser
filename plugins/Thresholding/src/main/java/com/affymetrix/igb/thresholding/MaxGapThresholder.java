@@ -23,7 +23,7 @@ import javax.swing.event.ChangeEvent;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 
 public final class MaxGapThresholder extends JPanel
         implements ChangeListener, ActionListener, FocusListener {

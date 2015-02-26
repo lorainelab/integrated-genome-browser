@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import static com.affymetrix.igb.shared.Selections.graphStates;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
 import java.awt.event.ActionEvent;
 

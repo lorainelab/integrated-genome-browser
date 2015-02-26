@@ -1,8 +1,9 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.util.ImprovedStringCharIter;
 import com.affymetrix.genometry.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.shared.ResidueColorHelper;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.glyph.CodonGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;

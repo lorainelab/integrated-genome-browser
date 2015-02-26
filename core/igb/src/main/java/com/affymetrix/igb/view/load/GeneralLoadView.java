@@ -36,7 +36,7 @@ import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.view.SeqGroupView;

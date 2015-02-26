@@ -14,7 +14,7 @@
             <exec.mainClass>com.affymetrix.main.Main</exec.mainClass>
             <exec.args>-Xmx1g -DdevelopmentMode=true -Dapple.laf.useScreenMenuBar=true -Dsun.java2d.opengl=true -classpath %classpath com.affymetrix.main.Main</exec.args>
         </properties>
-    </action>
+    </action>   
     <action>
         <actionName>debug</actionName>
         <packagings>
@@ -40,7 +40,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xmx1g -DdevelopmentMode=true -Dapple.laf.useScreenMenuBar=true -Dsun.java2d.opengl=true -classpath %classpath com.affymetrix.main.Main</exec.args>
+            <exec.args>-Xbootclasspath:/opt/java/jdk1.8.0_25/jre/lib/resources.jar:/opt/java/jdk1.8.0_25/jre/lib/rt.jar:/opt/java/jdk1.8.0_25/jre/lib/sunrsasign.jar:/opt/java/jdk1.8.0_25/jre/lib/jsse.jar:/opt/java/jdk1.8.0_25/jre/lib/jce.jar:/opt/java/jdk1.8.0_25/jre/lib/charsets.jar:/opt/java/jdk1.8.0_25/jre/lib/jfr.jar:/opt/java/jdk1.8.0_25/jre/classes -Xmx1g -DdevelopmentMode=true -Dapple.laf.useScreenMenuBar=true -Dsun.java2d.opengl=true -classpath %classpath com.affymetrix.main.Main</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
     </action>

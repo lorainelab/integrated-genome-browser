@@ -3,8 +3,8 @@
     <survey id="1">
         <name>User Survey</name>
         <description>Help make IGB better! Take a short survey telling us how you use IGB.</description>
-        <link>http://wiki.transvar.org</link>
-        <startdate>Jan 25, 2015</startdate>
-        <enddate>Mar 25, 2015</enddate>
+        <link>https://www.surveymonkey.com/s/igb15</link>
+        <startdate>Feb 25, 2015</startdate>
+        <enddate>Apr 1, 2015</enddate>
     </survey>	
 </surveys>

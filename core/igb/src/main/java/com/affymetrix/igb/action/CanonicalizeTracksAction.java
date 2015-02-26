@@ -13,7 +13,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;

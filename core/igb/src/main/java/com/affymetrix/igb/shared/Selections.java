@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
@@ -15,6 +16,8 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.tiers.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
@@ -364,7 +367,7 @@ public class Selections {
     /**
      * Inner class to fire selection refreshed events.
      */
-    private static class Listeners implements SeqSelectionListener, SymSelectionListener, TrackstylePropertyMonitor.TrackStylePropertyListener, SeqMapRefreshed {
+    private static class Listeners implements SeqSelectionListener, SymSelectionListener, TrackStylePropertyListener, SeqMapRefreshed {
 
         @Override
         public void symSelectionChanged(SymSelectionEvent evt) {

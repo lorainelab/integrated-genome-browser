@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.tiers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,10 +46,5 @@ public class TrackstylePropertyMonitor implements TableModelListener, ActionList
         for (TrackStylePropertyListener listener : listeners) {
             listener.trackstylePropertyChanged(eo);
         }
-    }
-
-    public interface TrackStylePropertyListener {
-
-        public void trackstylePropertyChanged(EventObject eo);
     }
 }

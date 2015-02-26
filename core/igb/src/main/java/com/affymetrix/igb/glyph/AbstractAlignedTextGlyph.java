@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.util.ImprovedStringCharIter;
 import com.affymetrix.genometry.util.SearchableCharIterator;

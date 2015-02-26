@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.jidesoft.combobox.ColorComboBox;

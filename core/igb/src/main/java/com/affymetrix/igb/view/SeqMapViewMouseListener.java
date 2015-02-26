@@ -12,7 +12,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.StopAutoScrollAction;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;

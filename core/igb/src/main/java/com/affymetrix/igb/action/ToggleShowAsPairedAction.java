@@ -10,7 +10,7 @@ import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 

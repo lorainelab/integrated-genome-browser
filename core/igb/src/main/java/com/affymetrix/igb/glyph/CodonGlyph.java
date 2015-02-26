@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.genometry.BioSeq;

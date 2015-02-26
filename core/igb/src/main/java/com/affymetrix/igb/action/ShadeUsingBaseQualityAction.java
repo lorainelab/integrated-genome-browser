@@ -5,7 +5,7 @@ import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 
 /**
  *

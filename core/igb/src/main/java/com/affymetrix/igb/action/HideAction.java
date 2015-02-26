@@ -6,7 +6,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;

@@ -11,7 +11,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.JRPTextFieldTableCellRenderer;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;

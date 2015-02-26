@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Predicate;
 import javax.swing.JMenuItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -63,19 +64,20 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
                 });
 
                 Date today = Calendar.getInstance().getTime();
-                surveys.stream().filter(survey -> today.compareTo(survey.getStart()) >= 0
-                        && today.compareTo(survey.getEnd()) < 0).forEach(survey -> {
-                            JMenuItem item = new JMenuItem(
-                                    new GenericAction(survey.getName(), null, null) {
-                                        @Override
-                                        public void actionPerformed(ActionEvent e) {
-                                            super.actionPerformed(e);
-                                            GeneralUtils.browse(survey.getLink());
-                                        }
-                                    }
-                            );
-                            surveysMenu.add(item);
-                        });
+                final Predicate<Survey> isExpiredSurvey = survey -> today.compareTo(survey.getStart()) >= 0 && today.compareTo(survey.getEnd()) < 0;
+
+                surveys.stream().filter(isExpiredSurvey).forEach(survey -> {
+                    JMenuItem item = new JMenuItem(
+                            new GenericAction(survey.getName(), null, null) {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    super.actionPerformed(e);
+                                    GeneralUtils.browse(survey.getLink());
+                                }
+                            }
+                    );
+                    surveysMenu.add(item);
+                });
                 for (final Survey survey : surveys) {
                     if (today.compareTo(survey.getStart()) >= 0
                             && today.compareTo(survey.getEnd()) < 0

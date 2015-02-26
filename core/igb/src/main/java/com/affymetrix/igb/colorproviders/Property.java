@@ -24,6 +24,7 @@ public class Property extends ColorProvider {
     private final static Color DEFAULT_MATCH_COLOR = Color.GREEN;
     private final static String NOT_MATCH_COLOR = "not_match";
     private final static Color DEFAULT_NOT_MATCH_COLOR = Color.RED;
+
     static {
         PROPERTY_VALUES.add("id");
         PROPERTY_VALUES.add("name");
@@ -31,7 +32,6 @@ public class Property extends ColorProvider {
         PROPERTY_VALUES.add("gene name");
     }
     private Float float_property_value = null;
-
 
     protected Parameter<String> property = new BoundedParameter<>(PROPERTY_VALUES);
     protected Parameter<String> property_value = new Parameter<String>(DEFAULT_PROPERTY_VALUE) {

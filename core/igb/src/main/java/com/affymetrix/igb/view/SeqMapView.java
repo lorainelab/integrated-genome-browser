@@ -87,7 +87,7 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.affymetrix.igb.swing.JRPPopupMenu;

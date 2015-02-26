@@ -6,7 +6,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JOptionPane;

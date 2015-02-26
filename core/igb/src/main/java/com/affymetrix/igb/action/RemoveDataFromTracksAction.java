@@ -8,7 +8,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.allStyles;
 

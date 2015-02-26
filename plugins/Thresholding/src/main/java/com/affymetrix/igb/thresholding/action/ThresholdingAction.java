@@ -6,7 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.IgbService;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;

@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;

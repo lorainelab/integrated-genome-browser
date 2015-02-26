@@ -7,7 +7,7 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.graphStates;
 import com.affymetrix.igb.view.SeqMapView;

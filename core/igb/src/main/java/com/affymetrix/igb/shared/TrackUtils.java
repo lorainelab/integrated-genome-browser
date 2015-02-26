@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.operator.Operator;

@@ -19,7 +19,7 @@ import com.affymetrix.igb.graphTypes.HeatMapGraphType;
 import com.affymetrix.igb.graphTypes.LineGraphType;
 import com.affymetrix.igb.graphTypes.MinMaxAvgGraphType;
 import com.affymetrix.igb.graphTypes.StairStepGraphType;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.google.common.collect.ImmutableSet;

@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGBConstants;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.ThresholdReader;
 import java.awt.event.ActionEvent;

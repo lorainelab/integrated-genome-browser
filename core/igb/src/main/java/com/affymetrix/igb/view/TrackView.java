@@ -16,7 +16,7 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;

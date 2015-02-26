@@ -1,11 +1,11 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.ParameteredAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

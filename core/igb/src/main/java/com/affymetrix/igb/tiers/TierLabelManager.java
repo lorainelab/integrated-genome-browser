@@ -24,7 +24,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.shared.TrackClickListener;

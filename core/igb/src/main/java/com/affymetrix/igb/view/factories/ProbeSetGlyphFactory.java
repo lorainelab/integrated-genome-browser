@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
-import com.affymetrix.igb.shared.DeletionGlyph;
+import com.affymetrix.igb.glyph.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.tiers.TrackConstants;

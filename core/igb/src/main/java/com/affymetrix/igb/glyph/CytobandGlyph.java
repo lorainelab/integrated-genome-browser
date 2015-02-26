@@ -1,16 +1,16 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -68,28 +68,30 @@ public abstract class CytobandGlyph {
             if (cyto_span == null) {
                 continue;
             }
-            if (null != cyto_sym.getBand()) switch (cyto_sym.getBand()) {
-                case CytobandParser.BAND_ACEN:
-                    efg = new EfficientPaintRectGlyph();
-                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                    ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
-                    break;
-                case CytobandParser.BAND_STALK:
-                    efg = new EfficientPaintRectGlyph();
-                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                    ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
-                    break;
-                case "":
-                    efg = new EfficientOutlinedRectGlyph();
-                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                    break;
-                default:
-                    efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-                    efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-                    efg.setForegroundColor(cyto_sym.getTextColor());
-                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
-                    ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
-                    break;
+            if (null != cyto_sym.getBand()) {
+                switch (cyto_sym.getBand()) {
+                    case CytobandParser.BAND_ACEN:
+                        efg = new EfficientPaintRectGlyph();
+                        efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                        ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
+                        break;
+                    case CytobandParser.BAND_STALK:
+                        efg = new EfficientPaintRectGlyph();
+                        efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                        ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
+                        break;
+                    case "":
+                        efg = new EfficientOutlinedRectGlyph();
+                        efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                        break;
+                    default:
+                        efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
+                        efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+                        efg.setForegroundColor(cyto_sym.getTextColor());
+                        ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
+                        ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
+                        break;
+                }
             }
             efg.setColor(cyto_sym.getColor());
             //smv.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
@@ -166,5 +168,8 @@ public abstract class CytobandGlyph {
         cytobandGlyph.addChild(efg);
         cytobandGlyph.getCoordBox().add(efg.getCoordBox());
         return cytobandGlyph;
+    }
+
+    private CytobandGlyph() {
     }
 }

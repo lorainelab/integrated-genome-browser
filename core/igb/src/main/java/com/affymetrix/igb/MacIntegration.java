@@ -19,16 +19,30 @@ import javax.swing.JFrame;
  * @author sgblanch
  * @version $Id: MacIntegration.java 11085 2012-04-13 16:09:40Z lfrohman $
  */
-public final class MacIntegration {
+public class MacIntegration {
 
     /**
      * private instance of MacIntegration for singleton pattern
      */
     private static MacIntegration instance = null;
+    private static final Logger ourLogger = Logger.getLogger(MacIntegration.class.getPackage().getName());
+
+    /**
+     * Initialize the singleton copy of MacIntegration. This should only be
+     * called once by the application, but it protects itself against multiple
+     * invocations. Do not call this function on anything platform other than
+     * Macintosh: Undefined things will happen.
+     *
+     * @return a singleton instance of MacIntegration
+     */
+    public static synchronized MacIntegration getInstance() {
+        if (instance == null) {
+            instance = new MacIntegration();
+        }
+        return instance;
+    }
     private Class<?> applicationClass;
     private Object application;
-    private static final Logger ourLogger
-            = Logger.getLogger(MacIntegration.class.getPackage().getName());
 
     /**
      * Private constructor to enforce singleton pattern
@@ -59,21 +73,6 @@ public final class MacIntegration {
     }
 
     /**
-     * Initialize the singleton copy of MacIntegration. This should only be
-     * called once by the application, but it protects itself against multiple
-     * invocations. Do not call this function on anything platform other than
-     * Macintosh: Undefined things will happen.
-     *
-     * @return a singleton instance of MacIntegration
-     */
-    public static synchronized MacIntegration getInstance() {
-        if (instance == null) {
-            instance = new MacIntegration();
-        }
-        return instance;
-    }
-
-    /**
      * Wrapper around Apple's com.apple.eawt.setDockIconImage.
      *
      * @param image the Image to use as the Dock icon.
@@ -86,11 +85,11 @@ public final class MacIntegration {
             ourLogger.log(Level.SEVERE, "?", ex);
         }
     }
+
 }
 
-final class ApplicationListenerProxy implements InvocationHandler {
+class ApplicationListenerProxy implements InvocationHandler {
 
-    private final Object o;
     private static final Logger ourLogger
             = Logger.getLogger(ApplicationListenerProxy.class.getPackage().getName());
 
@@ -100,6 +99,7 @@ final class ApplicationListenerProxy implements InvocationHandler {
                 o.getClass().getInterfaces(),
                 new ApplicationListenerProxy(o));
     }
+    private final Object o;
 
     private ApplicationListenerProxy(Object o) {
         this.o = o;

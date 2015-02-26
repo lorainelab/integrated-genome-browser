@@ -25,6 +25,11 @@ public abstract class Application {
     private static final int delay = 2; //delay in seconds
     private static final String COMMAND_KEY = "meta";
     private static final String CONTROL_KEY = "ctrl";
+    static Application singleton = null;
+
+    public static Application getSingleton() {
+        return singleton;
+    }
 
     private final LinkedList<StatusAlert> statusAlertList = new LinkedList<>(); // list of status alert messages.
     private ActionListener status_alert_listener = e -> {
@@ -43,7 +48,6 @@ public abstract class Application {
     };
     Timer timer = new Timer(delay * 1000, update_status_bar);
 
-    static Application singleton = null;
     protected final StatusBar statusBar;
 
     public Application() {
@@ -90,15 +94,11 @@ public abstract class Application {
         }
     }
 
-    public static Application getSingleton() {
-        return singleton;
-    }
-
     public StatusBar getStatusBar() {
         return statusBar;
     }
 
-    abstract public java.awt.Image getIcon();
+    public abstract java.awt.Image getIcon();
 
     abstract public javax.swing.ImageIcon getSmallIcon();
 
@@ -106,7 +106,7 @@ public abstract class Application {
 
     abstract public SeqMapView getMapView();
 
-    public final void addNotLockedUpMsg(final String s) {
+    public void addNotLockedUpMsg(final String s) {
         synchronized (progressStringList) {
             progressStringList.addFirst(s);
         }
@@ -117,7 +117,7 @@ public abstract class Application {
         }
     }
 
-    public final void removeNotLockedUpMsg(final String s) {
+    public void removeNotLockedUpMsg(final String s) {
         synchronized (progressStringList) {
             progressStringList.remove(s);
 
@@ -143,7 +143,7 @@ public abstract class Application {
      * System.out. It is safe to call this method even if the status bar is not
      * being displayed.
      */
-    public final void setStatus(String s) {
+    public void setStatus(String s) {
         setStatus(s, true);
     }
 
@@ -154,21 +154,21 @@ public abstract class Application {
      *
      * @param echo Whether to echo a copy to System.out.
      */
-    public final void setStatus(final String s, final boolean echo) {
+    public void setStatus(final String s, final boolean echo) {
         statusBar.setStatus(s);
         if (echo && s != null && !s.isEmpty()) {
             logger.info(s);
         }
     }
 
-    public final void addStatusAlert(final StatusAlert s) {
+    public void addStatusAlert(final StatusAlert s) {
         synchronized (statusAlertList) {
             statusAlertList.addFirst(s);
         }
         setStatusAlert(s);
     }
 
-    public final void removeStatusAlert(final StatusAlert s) {
+    public void removeStatusAlert(final StatusAlert s) {
         synchronized (statusAlertList) {
             statusAlertList.remove(s);
         }
@@ -189,5 +189,6 @@ public abstract class Application {
     public void showError(String title, String message, List<GenericAction> actions, Level level) {
         statusBar.showError(title, message, actions, level);
     }
+
 
 }

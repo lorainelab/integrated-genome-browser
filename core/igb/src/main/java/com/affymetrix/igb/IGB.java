@@ -93,7 +93,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id: IGB.java 11452 2012-05-07 22:32:36Z lfrohman $
  */
-public final class IGB extends Application
+public class IGB extends Application
         implements GroupSelectionListener, SeqSelectionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(IGB.class);
@@ -101,35 +101,10 @@ public final class IGB extends Application
     private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
-    private JFrame frm;
-    private JMenuBar mbar;
-    private IGBToolBar toolbar;
-    private SeqMapView mapView;
-    private AnnotatedSeqGroup prev_selected_group = null;
-    private BioSeq prev_selected_seq = null;
-    public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
-    private IWindowService windowService;
-    private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
-    final public static boolean IS_WINDOWS
-            = System.getProperty("os.name").toLowerCase().contains("windows");
-    final public static boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
-    final public static boolean IS_LINUX
-            = System.getProperty("os.name").toLowerCase().contains("linux");
-
-    public IGB() {
-        super();
-    }
-
-    @Override
-    public SeqMapView getMapView() {
-        return mapView;
-    }
-
-    @Override
-    public JFrame getFrame() {
-        return frm;
-    }
+    public static volatile String commandLineBatchFileStr = null; // Used to run batch file actions if passed via command-line
+    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    public static final boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac");
+    public static final boolean IS_LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
 
     private static void loadSynonyms(String file, SynonymLookup lookup) {
         InputStream istr = null;
@@ -146,7 +121,6 @@ public final class IGB extends Application
 
     //TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
     public static void setLaf() {
-
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
         System.setProperty("swing.aatext", "true");
 
@@ -196,60 +170,132 @@ public final class IGB extends Application
                 }
             }
         }
+    }
 
+    //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
+    private static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    private static String getTitleBar(BioSeq seq) {
+        StringBuilder title = new StringBuilder(128);
+        if (seq != null) {
+            if (title.length() > 0) {
+                title.append(" - ");
+            }
+            String seqid = seq.getID().trim();
+            Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
+            if (pattern.matcher(seqid).matches()) {
+                seqid = seqid.replace("chr", "Chromosome ");
+            }
+            
+            title.append(seqid);
+            String version_info = getVersionInfo(seq);
+            if (version_info != null) {
+                title.append("  (").append(version_info).append(')');
+            }
+        }
+        if (title.length() > 0) {
+            title.append(" - ");
+        }
+        title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+        return title.toString();
+    }
+    
+    private static String getVersionInfo(BioSeq seq) {
+        if (seq == null) {
+            return null;
+        }
+        String version_info = null;
+        if (seq.getSeqGroup() != null) {
+            AnnotatedSeqGroup group = seq.getSeqGroup();
+            if (group.getDescription() != null) {
+                version_info = group.getDescription();
+            } else {
+                version_info = group.getID();
+            }
+        }
+        if (null != version_info) {
+            switch (version_info) {
+                case "hg17":
+                    version_info = "hg17 = NCBI35";
+                    break;
+                case "hg18":
+                    version_info = "hg18 = NCBI36";
+                    break;
+            }
+        }
+        return version_info;
+    }
+    private JFrame frm;
+    private JMenuBar mbar;
+    private IGBToolBar toolbar;
+    private SeqMapView mapView;
+    private AnnotatedSeqGroup prev_selected_group = null;
+    private BioSeq prev_selected_seq = null;
+    private IWindowService windowService;
+    private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
+
+    public IGB() {
+        super();
+    }
+
+    @Override
+    public SeqMapView getMapView() {
+        return mapView;
+    }
+
+    @Override
+    public JFrame getFrame() {
+        return frm;
     }
 
     public void init(String[] args, BundleContext bundleContext) {
         logger.debug("Setting look and feel");
-
         setLaf();
-
         // Set up a custom trust manager so that user is prompted
         // to accept or reject untrusted (self-signed) certificates
         // when connecting to server over HTTPS
         logger.debug("installTrustManager");
         IGBTrustManager.installTrustManager();
-
         // Initialize the ConsoleView right off, so that ALL output will
         // be captured there.
         logger.debug("Setting up ConsoleView");
         ConsoleLoggerGUI.getInstance();
         printDetails(args);
         logger.debug("Done setting up ConsoleView");
-
         loadSynonyms("/" + Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
         loadSynonyms("/" + Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
-
         if (IS_MAC) {
             MacIntegration mi = MacIntegration.getInstance();
             if (this.getIcon() != null) {
                 mi.setDockIconImage(this.getIcon());
             }
         }
-
         frm = new JFrame(APP_NAME + " " + APP_VERSION);
         mbar = new JMenuBar();
         frm.setJMenuBar(mbar);
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default
         Authenticator.setDefault(new IGBAuthenticator(frm));
-
         StateProvider stateProvider = new IGBStateProvider();
         DefaultStateProvider.setGlobalStateProvider(stateProvider);
-
         frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
         Image icon = getIcon();
         if (icon != null) {
             frm.setIconImage(icon);
         }
-
         GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addGroupSelectionListener(this);
         gmodel.addSeqSelectionListener(this);
         // WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
         //    otherwise assumptions for persisting group / seq / span prefs are not valid!
-
         MenuUtil.setAccelerators(
                 new AbstractMap<String, KeyStroke>() {
 
@@ -268,11 +314,9 @@ public final class IGB extends Application
         gmodel.addSeqSelectionListener(mapView);
         gmodel.addGroupSelectionListener(mapView);
         gmodel.addSymSelectionListener(mapView.getSymSelectionListener());
-
         Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
                 new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
         PreferenceUtils.setWindowSize(frm, frame_bounds);
-
         // Show the frame before loading the plugins.  Thus any error panel
         // that is created by an exception during plugin set-up will appear
         // on top of the main frame, not hidden by it.
@@ -298,14 +342,14 @@ public final class IGB extends Application
                 }
             }
         });
-
         ScriptManager.getInstance().setInputHandler(new ScriptManager.InputHandler() {
+            @Override
             public InputStream getInputStream(String fileName) throws Exception {
                 return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
             }
 
             /* This method is used to convert the given file path from relative to absolute.
-             */
+            */
             private URI relativeToAbsolute(String path) throws URISyntaxException {
                 if (!(path.startsWith(FILE_PROTOCOL)) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(HTTPS_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL))) {
                     return getAbsoluteFile(path).toURI();
@@ -314,12 +358,11 @@ public final class IGB extends Application
             }
 
             /*Returns the File object at given path
-             */
+            */
             private File getAbsoluteFile(String path) {
                 return new File(path).getAbsoluteFile();
             }
         });
-
         GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(mapView);
         checkInternetConnection();
@@ -327,24 +370,12 @@ public final class IGB extends Application
         openQuickStart();
         ToolTipManager.sharedInstance().setDismissDelay(10000);
     }
-
     private void printDetails(String[] args) {
         logger.info("Starting: " + APP_NAME + " " + APP_VERSION);
         logger.info("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
         Runtime runtime = Runtime.getRuntime();
         logger.info("System memory: " + humanReadableByteCount(runtime.maxMemory(), true));
 
-    }
-
-    //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
-    private static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) {
-            return bytes + " B";
-        }
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     private void notifyCounter() {
@@ -373,7 +404,6 @@ public final class IGB extends Application
             ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
         }
     }
-
     private void openQuickStart() {
         String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
         if (version == null || !version.equals(IGBConstants.APP_VERSION)) {
@@ -572,54 +602,4 @@ public final class IGB extends Application
         }
     }
 
-    private static String getTitleBar(BioSeq seq) {
-        StringBuilder title = new StringBuilder(128);
-        if (seq != null) {
-            if (title.length() > 0) {
-                title.append(" - ");
-            }
-            String seqid = seq.getID().trim();
-            Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
-            if (pattern.matcher(seqid).matches()) {
-                seqid = seqid.replace("chr", "Chromosome ");
-            }
-
-            title.append(seqid);
-            String version_info = getVersionInfo(seq);
-            if (version_info != null) {
-                title.append("  (").append(version_info).append(')');
-            }
-        }
-        if (title.length() > 0) {
-            title.append(" - ");
-        }
-        title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
-        return title.toString();
-    }
-
-    private static String getVersionInfo(BioSeq seq) {
-        if (seq == null) {
-            return null;
-        }
-        String version_info = null;
-        if (seq.getSeqGroup() != null) {
-            AnnotatedSeqGroup group = seq.getSeqGroup();
-            if (group.getDescription() != null) {
-                version_info = group.getDescription();
-            } else {
-                version_info = group.getID();
-            }
-        }
-        if (null != version_info) {
-            switch (version_info) {
-                case "hg17":
-                    version_info = "hg17 = NCBI35";
-                    break;
-                case "hg18":
-                    version_info = "hg18 = NCBI36";
-                    break;
-            }
-        }
-        return version_info;
-    }
 }

@@ -68,11 +68,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
-import com.lorainelab.igb.services.search.ISearchHints;
-import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.affymetrix.igb.shared.LockTierHeightAction;
-import com.lorainelab.igb.services.search.SearchListener;
 import com.affymetrix.igb.shared.TrackClickListener;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.script.ScriptManager;
@@ -80,8 +76,12 @@ import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import com.lorainelab.igb.services.search.ISearchHints;
+import com.lorainelab.igb.services.search.ISearchModeSym;
+import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -530,6 +530,12 @@ public class Activator implements BundleActivator {
         );
     }
 
+
+    @Override
+    public void stop(BundleContext context) throws Exception {
+
+    }
+
     private class ScriptExecutor extends Thread {
 
         private boolean timeup = false;
@@ -567,10 +573,5 @@ public class Activator implements BundleActivator {
             return IgbServiceImpl.getInstance().areAllServersInited()
                     && IgbServiceImpl.getInstance().getFrame().isVisible();
         }
-    }
-
-    @Override
-    public void stop(BundleContext context) throws Exception {
-
     }
 }

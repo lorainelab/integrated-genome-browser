@@ -40,10 +40,13 @@ public abstract class BarGraphType extends GraphGlyph.GraphStyle {
         }
     }
 
+    @Override
     public abstract String getName();
 
+    @Override
     public abstract GraphType getGraphStyle();
 
+    @Override
     protected abstract void doBigDraw(Graphics g, GraphSym graphSym,
             Point curr_x_plus_width, Point max_x_plus_width, float ytemp,
             int draw_end_index, double offset, double yscale, ViewI view, int i);

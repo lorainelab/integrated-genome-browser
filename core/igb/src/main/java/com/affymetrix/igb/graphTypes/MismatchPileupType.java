@@ -14,10 +14,12 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class MismatchPileupType extends MismatchGraphType {
+public class MismatchPileupType extends MismatchGraphType {
 
     private static final Map<Character, int[]> BAR_ORDERS = new HashMap<>();
 
+    private static final Color MATCH_COLOR = Color.GRAY;
+    private static Color[] baseColors;
     static {
         BAR_ORDERS.put('A', new int[]{1, 2, 3, 4});
         BAR_ORDERS.put('T', new int[]{0, 2, 3, 4});
@@ -25,8 +27,6 @@ public final class MismatchPileupType extends MismatchGraphType {
         BAR_ORDERS.put('C', new int[]{0, 1, 2, 4});
         BAR_ORDERS.put('N', new int[]{0, 1, 2, 3});
     }
-    private static final Color MATCH_COLOR = Color.GRAY;
-    private static Color[] baseColors;
 
     private static void setBaseColor() {
         baseColors = new Color[]{

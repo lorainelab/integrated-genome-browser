@@ -32,22 +32,22 @@ import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.GENE_NAME;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATCH;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_END;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DIRECTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.END;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.GENE_NAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.LENGTH;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATCH;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.METHOD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.REVERSE_DIRECTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SEQ_ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.DIRECTION;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.REVERSE_DIRECTION;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -87,11 +87,9 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
-import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.MenuUtil;
@@ -103,6 +101,8 @@ import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.tiers.TierResizer;
+import com.affymetrix.igb.tiers.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_FUZZY_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_SHOW_TOOLTIP;
@@ -149,6 +149,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Predicate;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -352,27 +353,21 @@ public class SeqMapView extends JPanel
         return g;
     }
 
+    final static Predicate<? super GlyphI> isTierGlyph = child -> child instanceof TierGlyph;
+    final static Predicate<? super GlyphI> hasChildren = glyph -> glyph.getChildCount() > 0;
+    final static Predicate<? super GlyphI> isGraphTierGlyph = isTierGlyph.and(tierGlyph -> ((TierGlyph) tierGlyph).getTierType() == TierGlyph.TierType.GRAPH);
+    final static Predicate<? super GlyphI> isGraphGlyph = child -> child instanceof GraphGlyph;
+
     /**
      * Recurse through glyph hierarchy and collect graphs.
      */
     private static void collectGraphs(GlyphI gl, List<GraphGlyph> graphs) {
-        int max = gl.getChildCount();
-        for (int i = 0; i < max; i++) {
-            GlyphI child = gl.getChild(i);
-            if (child instanceof TierGlyph
-                    && ((TierGlyph) child).getTierType() == TierGlyph.TierType.GRAPH) {
-                TierGlyph agg = (TierGlyph) child;
-                if (agg.getChildCount() > 0) {
-                    for (GlyphI g : agg.getChildren()) {
-                        if (g instanceof GraphGlyph) {
-                            graphs.add((GraphGlyph) g);
-                        }
-                    }
-                }
-            }
-            if (child.getChildCount() > 0) {
-                collectGraphs(child, graphs);
-            }
+        if (gl.getChildren() != null) {
+            gl.getChildren().stream()
+                    .filter(isGraphTierGlyph)
+                    .filter(hasChildren)
+                    .filter(isGraphGlyph)
+                    .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
         }
     }
 
@@ -2154,7 +2149,7 @@ public class SeqMapView extends JPanel
 
             Map<String, Object> props = null;
             if (glyph.getInfo() instanceof Map) {
-                props = (Map<String,    Object>) glyph.getInfo();
+                props = (Map<String, Object>) glyph.getInfo();
             } else {
                 props = new HashMap<>();
             }

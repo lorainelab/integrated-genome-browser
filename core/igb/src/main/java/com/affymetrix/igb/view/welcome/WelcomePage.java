@@ -31,127 +31,127 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 
 /**
- * 
- * This JPanel composes the welcome page.  The bottom panel is filled with a 
+ *
+ * This JPanel composes the welcome page. The bottom panel is filled with a
  * CoverFlow class.
- * 
+ *
  * @author jfvillal
  */
 public class WelcomePage extends javax.swing.JPanel {
 
-	private static final long serialVersionUID = 1L;
-	static final double SHIFT_BY = -0.3333333333333333;
-	final JFlowPanel flow_panel;
-	private boolean scrollLeft;
-	private Timer timer = new Timer(100, new ActionListener() {
+    private static final long serialVersionUID = 1L;
+    static final double SHIFT_BY = -0.3333333333333333;
+    final JFlowPanel flow_panel;
+    private boolean scrollLeft;
+    private Timer timer = new Timer(100, new ActionListener() {
 
-		public void actionPerformed(ActionEvent e) {
-			if (scrollLeft) {
-				flow_panel.shiftBy(-SHIFT_BY);
-			} else {
-				flow_panel.shiftBy(SHIFT_BY);
-			}
-		}
-	});
+        public void actionPerformed(ActionEvent e) {
+            if (scrollLeft) {
+                flow_panel.shiftBy(-SHIFT_BY);
+            } else {
+                flow_panel.shiftBy(SHIFT_BY);
+            }
+        }
+    });
 
-	/** Creates new form MainWorkspaceManager2 */
-	public WelcomePage(JPanel cover_flow) {
-		initComponents();
-		flow_panel = (JFlowPanel) cover_flow;
-		CoverFlowPane.setLayout(new BorderLayout());
-		CoverFlowPane.add(cover_flow);
-		URL url = CommonUtils.class.getClassLoader().getResource("welcome.html");
+    /**
+     * Creates new form MainWorkspaceManager2
+     */
+    public WelcomePage(JPanel cover_flow) {
+        initComponents();
+        flow_panel = (JFlowPanel) cover_flow;
+        CoverFlowPane.setLayout(new BorderLayout());
+        CoverFlowPane.add(cover_flow);
+        URL url = CommonUtils.class.getClassLoader().getResource("welcome.html");
 
-		TitlePane.setLayout(new BorderLayout());
-		TitlePane.add(new WelcomeTitle());
-		TitlePane.setPreferredSize(new Dimension(400, 150));
-		TitlePane.setMaximumSize(new Dimension(3000, 150));
+        TitlePane.setLayout(new BorderLayout());
+        TitlePane.add(new WelcomeTitle());
+        TitlePane.setPreferredSize(new Dimension(400, 150));
+        TitlePane.setMaximumSize(new Dimension(3000, 150));
 
-		UIManager.put("Button.select", Color.TRANSLUCENT);
-		try {
-			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/wright.png"));
-			RightSlide.setIcon(icon);
-			ImageIcon icon2 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/right_selected.png"));
-			RightSlide.setPressedIcon(icon2);
-			RightSlide.setSelectedIcon(icon2);
-			RightSlide.setRolloverEnabled(true); // turn on before rollovers work
-			RightSlide.setRolloverIcon(icon2);
-			RightSlide.setBorderPainted(false);
-			RightSlide.setFocusPainted(false);
-			RightSlide.setContentAreaFilled(false);
+        UIManager.put("Button.select", Color.TRANSLUCENT);
+        try {
+            ImageIcon icon = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/wright.png"));
+            RightSlide.setIcon(icon);
+            ImageIcon icon2 = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/right_selected.png"));
+            RightSlide.setPressedIcon(icon2);
+            RightSlide.setSelectedIcon(icon2);
+            RightSlide.setRolloverEnabled(true); // turn on before rollovers work
+            RightSlide.setRolloverIcon(icon2);
+            RightSlide.setBorderPainted(false);
+            RightSlide.setFocusPainted(false);
+            RightSlide.setContentAreaFilled(false);
 
-			ImageIcon icon3 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/right_more_selected.png"));
-			RightSlide.setPressedIcon(icon3);
-		} catch (IOException ex) {
-			Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
-		}
+            ImageIcon icon3 = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/right_more_selected.png"));
+            RightSlide.setPressedIcon(icon3);
+        } catch (IOException ex) {
+            Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+        try {
+            ImageIcon icon = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/wleft.png"));
+            LeftSlide.setIcon(icon);
 
-		try {
-			ImageIcon icon = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/wleft.png"));
-			LeftSlide.setIcon(icon);
+            ImageIcon icon2 = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/left_selected.png"));
+            LeftSlide.setPressedIcon(icon2);
+            LeftSlide.setSelectedIcon(icon2);
+            LeftSlide.setRolloverEnabled(true);
+            LeftSlide.setRolloverIcon(icon2);
+            LeftSlide.setBorderPainted(false);
+            LeftSlide.setFocusPainted(false);
+            LeftSlide.setContentAreaFilled(false);
+            ImageIcon icon3 = createImageIcon(
+                    CommonUtils.class.getClassLoader().getResource("images/left_more_selected.png"));
+            LeftSlide.setPressedIcon(icon3);
 
-			ImageIcon icon2 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/left_selected.png"));
-			LeftSlide.setPressedIcon(icon2);
-			LeftSlide.setSelectedIcon(icon2);
-			LeftSlide.setRolloverEnabled(true);
-			LeftSlide.setRolloverIcon(icon2);
-			LeftSlide.setBorderPainted(false);
-			LeftSlide.setFocusPainted(false);
-			LeftSlide.setContentAreaFilled(false);
-			ImageIcon icon3 = createImageIcon(
-					CommonUtils.class.getClassLoader().getResource("images/left_more_selected.png"));
-			LeftSlide.setPressedIcon(icon3);
+        } catch (IOException ex) {
+            Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-		} catch (IOException ex) {
-			Logger.getLogger(WelcomePage.class.getName()).log(Level.SEVERE, null, ex);
-		}
+    }
 
+    /**
+     * Returns an ImageIcon, or null if the path was invalid.
+     */
+    protected ImageIcon createImageIcon(URL imgURL) throws IOException {
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, "");
+        } else {
+            throw new IOException("file not found");
+        }
+    }
 
+    public static String getContent(JPanel context, InputStream resource) {
 
+        BufferedReader stream = new BufferedReader(
+                new InputStreamReader(
+                        new DataInputStream(
+                                resource)));
 
+        String content = "";
+        String line = "";
+        try {
+            while ((line = stream.readLine()) != null) {
+                content += line + "\n";
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return content;
+    }
 
-	}
-
-	/** Returns an ImageIcon, or null if the path was invalid. */
-	protected ImageIcon createImageIcon(URL imgURL) throws IOException {
-		if (imgURL != null) {
-			return new ImageIcon(imgURL, "");
-		} else {
-			throw new IOException("file not found");
-		}
-	}
-
-	public static String getContent(JPanel context, InputStream resource) {
-
-		BufferedReader stream = new BufferedReader(
-				new InputStreamReader(
-				new DataInputStream(
-				resource)));
-
-		String content = "";
-		String line = "";
-		try {
-			while ((line = stream.readLine()) != null) {
-				content += line + "\n";
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return content;
-	}
-
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -358,29 +358,29 @@ public class WelcomePage extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void LeftSlideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMousePressed
-		scrollLeft = true;
-		timer.start();
+        scrollLeft = true;
+        timer.start();
 	}//GEN-LAST:event_LeftSlideMousePressed
 
 	private void LeftSlideMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMouseClicked
-		flow_panel.shiftBy(-SHIFT_BY);
+        flow_panel.shiftBy(-SHIFT_BY);
 	}//GEN-LAST:event_LeftSlideMouseClicked
 
 	private void RightSlideMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMouseClicked
-		flow_panel.shiftBy(SHIFT_BY);
+        flow_panel.shiftBy(SHIFT_BY);
 	}//GEN-LAST:event_RightSlideMouseClicked
 
 	private void RightSlideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMousePressed
-		scrollLeft = false;
-		timer.start();
+        scrollLeft = false;
+        timer.start();
 	}//GEN-LAST:event_RightSlideMousePressed
 
 	private void RightSlideMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightSlideMouseReleased
-		timer.stop();
+        timer.stop();
 	}//GEN-LAST:event_RightSlideMouseReleased
 
 	private void LeftSlideMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LeftSlideMouseReleased
-		timer.stop();
+        timer.stop();
 	}//GEN-LAST:event_LeftSlideMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CoverFlowPane;

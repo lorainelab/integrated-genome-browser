@@ -188,46 +188,47 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
     }
 
 	private void UnlimitterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UnlimitterMouseClicked
-            maxSlots.setText(this.unlimitted.toString());
-            okButtonMouseClicked(evt);
+        maxSlots.setText(this.unlimitted.toString());
+        okButtonMouseClicked(evt);
 	}//GEN-LAST:event_UnlimitterMouseClicked
 
 	private void OptimizerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OptimizerMouseClicked
-            maxSlots.setText(this.optimum.toString());
-            okButtonMouseClicked(evt);
+        maxSlots.setText(this.optimum.toString());
+        okButtonMouseClicked(evt);
 	}//GEN-LAST:event_OptimizerMouseClicked
 
 	private void okButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okButtonMouseClicked
-            dispose();
-            change();
+        dispose();
+        change();
 
 	}//GEN-LAST:event_okButtonMouseClicked
 
 	private void cancelButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseClicked
-            maxSlots.setText(this.initial.toString());
-            dispose();
+        maxSlots.setText(this.initial.toString());
+        dispose();
 	}//GEN-LAST:event_cancelButtonMouseClicked
 
 	private void maxSlotsKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_maxSlotsKeyPressed
-            if (evt.getKeyCode() == 10) {
-                dispose();
-                change();
-            }
+        if (evt.getKeyCode() == 10) {
+            dispose();
+            change();
+        }
 	}//GEN-LAST:event_maxSlotsKeyPressed
 
 	private void optimizerKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_optimizerKeyPressed
-            if (evt.getKeyCode() == 10) {
-                dispose();
-                change();
-            }
+        if (evt.getKeyCode() == 10) {
+            dispose();
+            change();
+        }
 	}//GEN-LAST:event_optimizerKeyPressed
 
 	private void unlimitterKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_unlimitterKeyPressed
-            if (evt.getKeyCode() == 10) {
-                dispose();
-                change();
-            }
+        if (evt.getKeyCode() == 10) {
+            dispose();
+            change();
+        }
 	}//GEN-LAST:event_unlimitterKeyPressed
+
     public void change() {
         try {
             ac.changeExpandMaxForAll(Integer.parseInt(maxSlots.getText()));

@@ -13,28 +13,40 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Stands for the input stream that decorates given input stream and replaces its content during reading
+ * Stands for the input stream that decorates given input stream and replaces
+ * its content during reading
  * according to the specified rules.
  * <p/>
- * This class applies replacement rules in particular order based on replacement <code>'from'</code> data length.
+ * This class applies replacement rules in particular order based on replacement
+ * <code>'from'</code> data length.
  * I.e. if this class is provided with replacements like
- * <code>({1, 2} -> {3, 4}; {2, 3, 4} -> {5, 6, 7}; {4, 5} - > {7, 8})</code> it guarantees that
- * <code>'{2, 3, 4} -> {5, 6, 7}'</code> replacement is applied before anothers. Processing order of same
+ * <code>({1, 2} -> {3, 4}; {2, 3, 4} -> {5, 6, 7}; {4, 5} - > {7, 8})</code> it
+ * guarantees that
+ * <code>'{2, 3, 4} -> {5, 6, 7}'</code> replacement is applied before anothers.
+ * Processing order of same
  * <code>'from'</code>-length replacements is unspecified.
  * <p/>
- * When particular replacement rule is applied, it's <code>'to'</code> clause is not processed via another
- * replacement rules. I.e. if we have a mappings like <code>'{1, 2, 3} -> {4, 5, 6}'</code> and
- * <code>{5} -> {7}</code>, last rule is not applied to the <code>'5'</code> byte that appeared at the
+ * When particular replacement rule is applied, it's <code>'to'</code> clause is
+ * not processed via another
+ * replacement rules. I.e. if we have a mappings like
+ * <code>'{1, 2, 3} -> {4, 5, 6}'</code> and
+ * <code>{5} -> {7}</code>, last rule is not applied to the <code>'5'</code>
+ * byte that appeared at the
  * <code>'5, 6, 7'</code> group.
  * <b>Memory overhead</b>
- * This class uses internal buffering similar to the one used by {@link PushbackInputStream}
- * and uses a dedicated buffer for single-byte reads ({@link InputStream#read()}). I.e. it creates two buffers in
- * addition to the given stream. One buffer has a size that is max of replacements <code>'from'</code>
- * and <code>'to'</code> buffers size, another is guaranteed to be not more than size of the buffer used by client
+ * This class uses internal buffering similar to the one used by
+ * {@link PushbackInputStream}
+ * and uses a dedicated buffer for single-byte reads
+ * ({@link InputStream#read()}). I.e. it creates two buffers in
+ * addition to the given stream. One buffer has a size that is max of
+ * replacements <code>'from'</code>
+ * and <code>'to'</code> buffers size, another is guaranteed to be not more than
+ * size of the buffer used by client
  * for buffered reading ({@link #read(byte[], int, int)}).
  * <p/>
  * <b>CPU overhead</b>
- * Generally speaking this class matches every read byte against configured replacement rules and performs
+ * Generally speaking this class matches every read byte against configured
+ * replacement rules and performs
  * replacement if necessary.
  * <p/>
  * Not thread-safe.
@@ -61,11 +73,13 @@ import java.util.TreeMap;
 public class ReplaceFilterInputStream extends FilterInputStream {
 
     private enum ReplacementResult {
+
         REPLACED, NOT_MATCHED, NOT_ENOUGH_DATA
     }
 
     /**
-     * We use exactly {@link TreeMap} here in order to process all replacements in particular order - starting from
+     * We use exactly {@link TreeMap} here in order to process all replacements
+     * in particular order - starting from
      * the replacements which <code>'from'</code> data has a larger length.
      */
     private final Map<byte[], byte[]> replacements = new TreeMap<>(new Comparator<byte[]>() {
@@ -83,24 +97,32 @@ public class ReplaceFilterInputStream extends FilterInputStream {
         }
     });
 
-
     /**
-     * Is used for <code>'unreading'</code> data if necessary (e.g. there is a possible situation that the buffer
-     * ends with the data that matches to particular replacement start but the data is not enough to understand
-     * if replacement should be processed. We push back such ambiguous data then).
+     * Is used for <code>'unreading'</code> data if necessary (e.g. there is a
+     * possible situation that the buffer
+     * ends with the data that matches to particular replacement start but the
+     * data is not enough to understand
+     * if replacement should be processed. We push back such ambiguous data
+     * then).
      * <p/>
-     * Another case is that replacement value is much greater than replacement key and the client performs buffered
-     * reading. If there are many replacement 'from' matches at the read data, given client buffer may be not large
-     * enough to hold read data with 'replacement to' rule applied. We want to holds unprocessed data at this buffer
+     * Another case is that replacement value is much greater than replacement
+     * key and the client performs buffered
+     * reading. If there are many replacement 'from' matches at the read data,
+     * given client buffer may be not large
+     * enough to hold read data with 'replacement to' rule applied. We want to
+     * holds unprocessed data at this buffer
      * then.
      * <p/>
-     * The data is assumed to be located from the end to the start of the buffer. I.e. if following bytes are pushed
-     * to this buffer - '1', '2', '3' they are located at the buffer end - {..., 1, 2, 3}.
+     * The data is assumed to be located from the end to the start of the
+     * buffer. I.e. if following bytes are pushed
+     * to this buffer - '1', '2', '3' they are located at the buffer end - {...,
+     * 1, 2, 3}.
      */
     private byte[] pushBackBuffer;
 
     /**
-     * Holds index of the next position to be used for data insertion to the {@link #pushBackBuffer}.
+     * Holds index of the next position to be used for data insertion to the
+     * {@link #pushBackBuffer}.
      */
     private int pushBackPosition;
 
@@ -110,9 +132,12 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     private final ByteBuffer singleByteReadBuffer;
 
     /**
-     * {@link ByteBuffer} wrapper for the buffer used during buffered reading ({@link #read(byte[])}
-     * and {@link #read(byte[], int, int)}). It is assumed that the client of this class reuses the same raw
-     * heap buffer for multiple <code>'read()'</code> calls, so, it's worth to try to reuse {@link ByteBuffer}
+     * {@link ByteBuffer} wrapper for the buffer used during buffered reading
+     * ({@link #read(byte[])}
+     * and {@link #read(byte[], int, int)}). It is assumed that the client of
+     * this class reuses the same raw
+     * heap buffer for multiple <code>'read()'</code> calls, so, it's worth to
+     * try to reuse {@link ByteBuffer}
      * if possible.
      * <p/>
      * This property holds reference to that reused buffer wrapper.
@@ -120,27 +145,37 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     private ByteBuffer cachedClientBuffer;
 
     /**
-     * This property holds index of the first buffer position that should not be used.
+     * This property holds index of the first buffer position that should not be
+     * used.
      * <p/>
-     * When the user provides a buffer he or she may specify offset and leength. This property holds that
+     * When the user provides a buffer he or she may specify offset and leength.
+     * This property holds that
      * <code>'offset + length'</code> value.
      */
     private int endIndex;
 
     /**
-     * This property defines if particular number of subsequent bytes stored at the underlying input stream
-     * should be processed as is, i.e. not processed using current replacement mapppings.
+     * This property defines if particular number of subsequent bytes stored at
+     * the underlying input stream
+     * should be processed as is, i.e. not processed using current replacement
+     * mapppings.
      * <p/>
-     * This property may be more than zero if, for example, particular mapping <code>'to'</code> clause overlaps
-     * another mapping's <code>'from'</code> clause. Suppose we have the following mappings:
+     * This property may be more than zero if, for example, particular mapping
+     * <code>'to'</code> clause overlaps
+     * another mapping's <code>'from'</code> clause. Suppose we have the
+     * following mappings:
      * <pre>
      * {1, 2, 3} -> {4, 5, 6}
      * {5} -> {7}
      * </pre>
-     * and the input '{1, 2, 3, 4, 5, 6, 7}'. There is a possible case that the client uses single byte reading,
-     * so, when the first '1' byte is read, input is analyzed and <code>'{1, 2, 3} -> {4, 5, 6}'</code> rule
-     * is applied, we need to return <code>'4'</code> byte and push back <code>'5'</code> and <code>'6'</code>.
-     * However, that <code>'5'</code> should not be processed by <code>'{5} -> {7}'</code> rule, so, we remember
+     * and the input '{1, 2, 3, 4, 5, 6, 7}'. There is a possible case that the
+     * client uses single byte reading,
+     * so, when the first '1' byte is read, input is analyzed and
+     * <code>'{1, 2, 3} -> {4, 5, 6}'</code> rule
+     * is applied, we need to return <code>'4'</code> byte and push back
+     * <code>'5'</code> and <code>'6'</code>.
+     * However, that <code>'5'</code> should not be processed by
+     * <code>'{5} -> {7}'</code> rule, so, we remember
      * that next two bytes should be skipped.
      */
     private int skip;
@@ -148,16 +183,21 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     /**
      * This flag is set if any replacement rule is applied.
      * <p/>
-     * It's primary purpose is to correctly resolve the situations when, for example, last stream byte matches to
-     * particular replacement's <code>'from'</code> clause and that clause size if more than one. So, we read
-     * the data from the stream, check that single byte is read and that byte matches to the replacement's
-     * <code>'from'</code> first byte. But we don't have enough information to answer is the rule should be applied,
+     * It's primary purpose is to correctly resolve the situations when, for
+     * example, last stream byte matches to
+     * particular replacement's <code>'from'</code> clause and that clause size
+     * if more than one. So, we read
+     * the data from the stream, check that single byte is read and that byte
+     * matches to the replacement's
+     * <code>'from'</code> first byte. But we don't have enough information to
+     * answer is the rule should be applied,
      * so, we push back that byte. Cycle.
      */
     private boolean replacementOccurred;
 
     /**
-     * Holds number of bytes actually read from the underlying stream. Is necessary to understand
+     * Holds number of bytes actually read from the underlying stream. Is
+     * necessary to understand
      * if end of stream is reached.
      */
     private int readFromStream;
@@ -165,11 +205,13 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     /**
      * Creates new <code>ReplacementInputStream</code> object.
      *
-     * @param in           input stream which content should be replaced if necessary
-     * @param replacements replacements to use with the given input stream; may be empty map,
-     *                     may not be <code>null</code>
-     * @throws IllegalArgumentException if given input stream to process or <code>'replacements'</code> argument
-     *                                  is <code>null</code>
+     * @param in input stream which content should be replaced if necessary
+     * @param replacements replacements to use with the given input stream; may
+     * be empty map,
+     * may not be <code>null</code>
+     * @throws IllegalArgumentException if given input stream to process or
+     * <code>'replacements'</code> argument
+     * is <code>null</code>
      */
     public ReplaceFilterInputStream(InputStream in, Map<byte[], byte[]> replacements) throws IllegalArgumentException {
         super(in);
@@ -199,25 +241,26 @@ public class ReplaceFilterInputStream extends FilterInputStream {
 
         this.replacements.putAll(replacements);
         @SuppressWarnings("unchecked")
-		int length = getMaxLength(replacements.keySet(), replacements.values());
+        int length = getMaxLength(replacements.keySet(), replacements.values());
         singleByteReadBuffer = ByteBuffer.allocate(length);
         pushBackBuffer = new byte[(2 * length)];
         pushBackPosition = pushBackBuffer.length - 1;
     }
 
-	/**
-	 * added to original class for convinience
-	 * @param in input stream to wrap
-	 * @param from original String
-	 * @param to replacement String
-	 * @throws IOException
-	 */
-	public ReplaceFilterInputStream(InputStream in,
-			String from, String to) throws IOException {
-		this(in, Collections.singletonMap(from.getBytes(), to.getBytes()));
-	}
+    /**
+     * added to original class for convinience
+     *
+     * @param in input stream to wrap
+     * @param from original String
+     * @param to replacement String
+     * @throws IOException
+     */
+    public ReplaceFilterInputStream(InputStream in,
+            String from, String to) throws IOException {
+        this(in, Collections.singletonMap(from.getBytes(), to.getBytes()));
+    }
 
-	/**
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -314,12 +357,15 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * This method allows to get {@link ByteBuffer} object to be used for {@link #read(byte[], int, int)} processing.
-     * It tries to use {@link #singleByteReadBuffer} if possible or wraps given buffer and caches the reference.
+     * This method allows to get {@link ByteBuffer} object to be used for
+     * {@link #read(byte[], int, int)} processing.
+     * It tries to use {@link #singleByteReadBuffer} if possible or wraps given
+     * buffer and caches the reference.
      * <p/>
-     * Returned buffer has correctly defined <code>'limit'</code> and <code>'position'</code> properties.
+     * Returned buffer has correctly defined <code>'limit'</code> and
+     * <code>'position'</code> properties.
      *
-     * @param b   buffer given by client for the reading
+     * @param b buffer given by client for the reading
      * @param off offset to use within given buffer as specified by the client
      * @param len length to use within given buffer as specified by the client
      * @return {@link ByteBuffer} object to use for buffered reading
@@ -355,14 +401,19 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * Performs actual data reading and replacement using given buffer. It is assumed that the buffer has its
-     * <code>'position'</code> and <code>'length'</code> specified, i.e. <code>'position'</code> defines offset
-     * to be used and <code>'limit' - 'position'</code> defines buffer work length.
+     * Performs actual data reading and replacement using given buffer. It is
+     * assumed that the buffer has its
+     * <code>'position'</code> and <code>'length'</code> specified, i.e.
+     * <code>'position'</code> defines offset
+     * to be used and <code>'limit' - 'position'</code> defines buffer work
+     * length.
      *
-     * @param buffer            buffer to use during processing
-     * @param targetBytesNumber number of bytes that are enough to stop the processing
+     * @param buffer buffer to use during processing
+     * @param targetBytesNumber number of bytes that are enough to stop the
+     * processing
      * @return number of bytes read during processing
-     * @throws IOException in the case of unexpected I/O exception occurred during processing
+     * @throws IOException in the case of unexpected I/O exception occurred
+     * during processing
      */
     private int doRead(ByteBuffer buffer, int targetBytesNumber) throws IOException {
         replacementOccurred = false;
@@ -405,12 +456,14 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * Reads the data from the input stream, defines buffer <code>'limit'</code> proeprty according to the number
+     * Reads the data from the input stream, defines buffer <code>'limit'</code>
+     * proeprty according to the number
      * of read bytes and returns read bytes number.
      *
      * @param buffer buffer to read the data
      * @return number of read bytes
-     * @throws IOException in the case of unexpected I/O exception duirng reading
+     * @throws IOException in the case of unexpected I/O exception duirng
+     * reading
      */
     private int prepare(ByteBuffer buffer) throws IOException {
         // Read data from the internal buffer if any.
@@ -473,19 +526,24 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * Performs given data replacement at the given buffer. I.e. replaces given <code>'replacementFrom'</code> data
-     * with the given <code>'replacementTo'</code> at the given buffer starting from the
-     * <code>'startPosition'</code> offset. Buffer <code>'position'</code> and <code>'limit'</code> are updated
+     * Performs given data replacement at the given buffer. I.e. replaces given
+     * <code>'replacementFrom'</code> data
+     * with the given <code>'replacementTo'</code> at the given buffer starting
+     * from the
+     * <code>'startPosition'</code> offset. Buffer <code>'position'</code> and
+     * <code>'limit'</code> are updated
      * as necessary.
      * <p/>
-     * <b>Note:</b> this method supposes that <code>'replacementFrom'</code> length is greater or equal to the
-     * <code>'replacementTo'</code> length. It's also assumed that current buffer position points to the index
+     * <b>Note:</b> this method supposes that <code>'replacementFrom'</code>
+     * length is greater or equal to the
+     * <code>'replacementTo'</code> length. It's also assumed that current
+     * buffer position points to the index
      * just after <code>'replacementFrom'</code> matched section.
      *
-     * @param data            data buffer
-     * @param startPosition   start replacement position
+     * @param data data buffer
+     * @param startPosition start replacement position
      * @param replacementFrom replacement key data
-     * @param replacementTo   replacement value data
+     * @param replacementTo replacement value data
      */
     private void replaceWithReduce(ByteBuffer data, int startPosition, byte[] replacementFrom, byte[] replacementTo) {
         // Copy 'replacementTo' data.
@@ -504,19 +562,24 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * Performs given data replacement at the given buffer. I.e. replaces given <code>'replacementFrom'</code> data
-     * with the given <code>'replacementTo'</code> at the given buffer starting from the
-     * <code>'startPosition'</code> offset. Buffer <code>'position'</code> and <code>'limit'</code> are updated
+     * Performs given data replacement at the given buffer. I.e. replaces given
+     * <code>'replacementFrom'</code> data
+     * with the given <code>'replacementTo'</code> at the given buffer starting
+     * from the
+     * <code>'startPosition'</code> offset. Buffer <code>'position'</code> and
+     * <code>'limit'</code> are updated
      * as necessary.
      * <p/>
-     * <b>Note:</b> this method supposes that <code>'replacementTo'</code> length is greater than
-     * <code>'replacementFrom'</code> length. It's also assumed that current buffer position points to the index
+     * <b>Note:</b> this method supposes that <code>'replacementTo'</code>
+     * length is greater than
+     * <code>'replacementFrom'</code> length. It's also assumed that current
+     * buffer position points to the index
      * just after <code>'replacementFrom'</code> matched section.
      *
-     * @param data            data buffer
+     * @param data data buffer
      * @param initialPostiion start replacement position
      * @param replacementFrom replacement key data
-     * @param replacementTo   replacement value data
+     * @param replacementTo replacement value data
      */
     private void replaceWithExpand(ByteBuffer data, int initialPostiion, byte[] replacementFrom, byte[] replacementTo) {
         int diff = replacementTo.length - replacementFrom.length;
@@ -565,7 +628,8 @@ public class ReplaceFilterInputStream extends FilterInputStream {
     }
 
     /**
-     * Stores <code>'length'</code> bytes starting from the given offset from the given buffer at the internal
+     * Stores <code>'length'</code> bytes starting from the given offset from
+     * the given buffer at the internal
      * buffer expanding if as necessary.
      *
      * @param buffer buffer which data should be stored

@@ -7,10 +7,10 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.graphStates;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.SwingUtilities;
@@ -35,7 +35,7 @@ public class UnFloatTiersAction extends SeqMapViewActionA {
         @Override
         public void symSelectionChanged(SymSelectionEvent evt) {
 
-			// Only pay attention to selections from the main SeqMapView or its map.
+            // Only pay attention to selections from the main SeqMapView or its map.
             // Ignore the splice view as well as events coming from this class itself.
             Object src = evt.getSource();
             SeqMapView gviewer = getSeqMapView();

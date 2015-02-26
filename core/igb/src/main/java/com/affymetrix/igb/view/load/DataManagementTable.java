@@ -9,14 +9,14 @@ import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.swing.jide.JRPStyledTable;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.JRPTextFieldTableCellRenderer;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorExComboBox;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
@@ -51,7 +51,7 @@ public final class DataManagementTable {
     static final Icon error_icon = CommonUtils.getInstance().getIcon("16x16/actions/stop.png");
     static final Icon igb_icon = CommonUtils.getInstance().getIcon("16x16/actions/warning.png");
 
-	//public static boolean iconTest;
+    //public static boolean iconTest;
     /**
      * Set the columns to use the ComboBox DAScb and renderer. (which also
      * depends on the row/server type)
@@ -71,7 +71,7 @@ public final class DataManagementTable {
         RowEditorModel color = new RowEditorModel(featureSize);
         RowEditorModel bool = new RowEditorModel(featureSize);
 
-        // tell the JTableX which RowEditorModel we are using		
+        // tell the JTableX which RowEditorModel we are using
         table.setRowEditorModel(DataManagementTableModel.REFRESH_FEATURE_COLUMN, action);
         table.setRowEditorModel(DataManagementTableModel.HIDE_FEATURE_COLUMN, action);
         table.setRowEditorModel(DataManagementTableModel.BACKGROUND_COLUMN, color);
@@ -99,7 +99,7 @@ public final class DataManagementTable {
             if (vFeature.getStyle() != null) {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
-            } else {               
+            } else {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
             }
@@ -134,7 +134,7 @@ public final class DataManagementTable {
             gtextField.setHorizontalAlignment(JRPTextField.CENTER);
 
             dtextField = new JRPTextField("LoadModeTable_textField", LoadStrategy.NO_LOAD.toString());
-            //dtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));	
+            //dtextField.setToolTipText(IGBConstants.BUNDLE.getString("genomeCBToolTip"));
             dtextField.setBorder(null);
             dtextField.setHorizontalAlignment(JRPTextField.CENTER);
         }
@@ -240,7 +240,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         } else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
             if (vFeature.getStyle() != null) {
 //				if(vFeature.getStyle().getFileTypeCategory() == null){
-//					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName, 
+//					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName,
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
                 return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());

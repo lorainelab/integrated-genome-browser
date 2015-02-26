@@ -99,7 +99,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
             sortChildren(true);  // forcing sort
             //    sortChildren(false); // not forcing sort (relying on sorted field instead...)
 
-			// now construct the max list, which is:
+            // now construct the max list, which is:
             //   for each entry in min sorted children list, the maximum max
             //     value up to (and including) that position
             // could do max list as int array or as symmetry list, for now doing symmetry list
@@ -141,7 +141,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
     private void sortChildren(boolean force) {
         int child_count = this.getChildCount();
         if (((!sorted) || force) && (child_count > 0)) {
-			// make sure child symmetries are sorted by ascending min along search_seq
+            // make sure child symmetries are sorted by ascending min along search_seq
             // to avoid unecessary sort, first go through child list and see if it's
             //     already in ascending order -- if so, then no need to sort
             //     (not sure if this is necessary -- Collections.sort() may already
@@ -188,7 +188,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
         if (shouldDrawLabel()) {
 			// Add extra space to make room for the label.
 
-			// Although the space SHOULD be computed based on font metrics, etc,
+            // Although the space SHOULD be computed based on font metrics, etc,
             // that doesn't really work any better than a fixed coord value
             this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
         } else {
@@ -268,7 +268,7 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
         // therefore reconstructing handle pixel bounds here... (although reusing same object to
         //    cut down on object creation)
 
-		// if full view differs from current view, and current view doesn't left align with full view,
+        // if full view differs from current view, and current view doesn't left align with full view,
         //   don't draw handle (only want handle at left side of full view)
         if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
             return null;
@@ -375,12 +375,12 @@ public class AnnotationTierGlyph extends AbstractTierGlyph {
     @Override
     public void setPreferredHeight(double height, ViewI view) {
 
-		// Remove the padding at top and bottom.
+        // Remove the padding at top and bottom.
         // Shouldn't we get this info from the packer?
         height -= 2 * getSpacing();
 
         if (getPacker() == expand_packer) {
-			// Now figure out how deep to set max depth.
+            // Now figure out how deep to set max depth.
             // Get current slot height. Should actually get this from the packer.
             double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
             long depth = (long) Math.floor(height / h);

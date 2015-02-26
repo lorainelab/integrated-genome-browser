@@ -9,9 +9,9 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ class MatchElement implements DrawableElement {
         PropertyMap oldContext = propertyMap.getContext();
         propertyMap.setContext(context);
 
-    // If a sub_matcher matches, use it to make the glyph, 
+        // If a sub_matcher matches, use it to make the glyph,
         // otherwise if this matches, make it ourselves,
         // otherwise, if no match, return null
         GlyphI result = null;

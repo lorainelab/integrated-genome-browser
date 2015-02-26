@@ -1,4 +1,3 @@
-
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.BioSeq;
@@ -18,59 +17,59 @@ import java.util.List;
  */
 public abstract class AbstractMismatchOperator extends AbstractAnnotationTransformer implements Operator {
 
-	public AbstractMismatchOperator(){
-		super(FileTypeCategory.Alignment);
-	}
-	
-	public abstract SeqSymmetry getMismatch(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end);
-	
-	public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-		if (symList.size() != 1 || !(symList.get(0) instanceof TypeContainerAnnot)) {
-			return null;
-		}
-		
-		int[] startEnd = getStartEnd(symList.get(0), aseq);
-		SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
+    public AbstractMismatchOperator() {
+        super(FileTypeCategory.Alignment);
+    }
 
-		//Load Residues
-		if(!aseq.isAvailable(loadSpan)){
-			if(!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)){
-				return null;
-			}
-		}
-		
-		return getMismatch(symList, aseq, false, "", startEnd[0], startEnd[1]);
-	}
+    public abstract SeqSymmetry getMismatch(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int start, int end);
 
-	@Override
-	public FileTypeCategory getOutputCategory() {
-		return FileTypeCategory.Mismatch;
-	}
-	
-	private static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq){
-		int start = Integer.MAX_VALUE, end = Integer.MIN_VALUE;
+    public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
+        if (symList.size() != 1 || !(symList.get(0) instanceof TypeContainerAnnot)) {
+            return null;
+        }
 
-		for(int i=0; i<tsym.getChildCount(); i++){
-			SeqSymmetry childSym = tsym.getChild(i);
-			SeqSpan span = childSym.getSpan(aseq);
-			if(span.getMax() > end){
-				end = span.getMax();
-			}
+        int[] startEnd = getStartEnd(symList.get(0), aseq);
+        SeqSpan loadSpan = new SimpleSeqSpan(startEnd[0], startEnd[1], aseq);
 
-			if(span.getMin() < start){
-				start = span.getMin();
-			}
-		}
+        //Load Residues
+        if (!aseq.isAvailable(loadSpan)) {
+            if (!GeneralLoadView.getLoadView().loadResidues(loadSpan, true)) {
+                return null;
+            }
+        }
 
-		return new int[]{start, end};
-	}
-	
-	@Override
-	public Operator newInstance(){
-		try {
-			return getClass().getConstructor().newInstance();
-		} catch (Exception ex) {
-		}
-		return null;
-	}
+        return getMismatch(symList, aseq, false, "", startEnd[0], startEnd[1]);
+    }
+
+    @Override
+    public FileTypeCategory getOutputCategory() {
+        return FileTypeCategory.Mismatch;
+    }
+
+    private static int[] getStartEnd(SeqSymmetry tsym, BioSeq aseq) {
+        int start = Integer.MAX_VALUE, end = Integer.MIN_VALUE;
+
+        for (int i = 0; i < tsym.getChildCount(); i++) {
+            SeqSymmetry childSym = tsym.getChild(i);
+            SeqSpan span = childSym.getSpan(aseq);
+            if (span.getMax() > end) {
+                end = span.getMax();
+            }
+
+            if (span.getMin() < start) {
+                start = span.getMin();
+            }
+        }
+
+        return new int[]{start, end};
+    }
+
+    @Override
+    public Operator newInstance() {
+        try {
+            return getClass().getConstructor().newInstance();
+        } catch (Exception ex) {
+        }
+        return null;
+    }
 }

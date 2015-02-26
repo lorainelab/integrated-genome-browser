@@ -12,9 +12,9 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Cursor;
 import java.awt.Rectangle;
 
@@ -135,22 +135,22 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-            Rectangle bounds = new Rectangle(100, 5, 70, 12);
-            if (bounds.contains(evt.getX(), evt.getY())) {
-                PreferencesPanel pp = PreferencesPanel.getSingleton();
-                pp.setTab(PreferencesPanel.TAB_DATALOAD_PREFS);
-                javax.swing.JFrame f = pp.getFrame();
-                f.setVisible(true);
-            }
+        Rectangle bounds = new Rectangle(100, 5, 70, 12);
+        if (bounds.contains(evt.getX(), evt.getY())) {
+            PreferencesPanel pp = PreferencesPanel.getSingleton();
+            pp.setTab(PreferencesPanel.TAB_DATALOAD_PREFS);
+            javax.swing.JFrame f = pp.getFrame();
+            f.setVisible(true);
+        }
 	}//GEN-LAST:event_jPanel1MouseClicked
 
 	private void jPanel1MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseMoved
-            Rectangle bounds = new Rectangle(110, 5, 70, 12);
-            if (bounds.contains(evt.getX(), evt.getY())) {
-                this.setCursor(openHandCursor);
-            } else {
-                this.setCursor(defaultCursor);
-            }
+        Rectangle bounds = new Rectangle(110, 5, 70, 12);
+        if (bounds.contains(evt.getX(), evt.getY())) {
+            this.setCursor(openHandCursor);
+        } else {
+            this.setCursor(defaultCursor);
+        }
 	}//GEN-LAST:event_jPanel1MouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable dataManagementTable;
@@ -166,5 +166,5 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
     public boolean isEmbedded() {
         return true;
     }
-    
+
 }

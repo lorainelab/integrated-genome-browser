@@ -32,7 +32,7 @@ public class ClearPreferencesAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-		// The option pane used differs from the confirmDialog only in
+        // The option pane used differs from the confirmDialog only in
         // that "No" is the default choice.
         String[] options = {"Yes", "No"};
         if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GlyphEdgeMatcher {
+
     private static GlyphEdgeMatcher singleton_matcher = null;
 
     public static GlyphEdgeMatcher getSingleton() {

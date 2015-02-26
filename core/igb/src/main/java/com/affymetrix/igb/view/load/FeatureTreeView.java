@@ -14,8 +14,6 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
@@ -249,10 +247,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
             /*
-                     * !feature.visible &&
-                     *//*
-                     * && canHandleFeature(feature)
-                     */
+             * !feature.visible &&
+             *//*
+             * && canHandleFeature(feature)
+             */
             features.stream().filter(feature -> feature.gVersion.gServer.equals(server)).forEach(feature -> {
                 addOrFindNode(serverRoot, feature, feature.featureName);
             });
@@ -300,7 +298,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             String candidateName = candidateFeature.featureName;
             // See if this can go under a previous node.  Be sure we're working with the same version/server.
             if (candidateName.equals(featureLeft) && candidateFeature.gVersion.equals(feature.gVersion)) {
-				// Make sure we are really dealing with a non-leaf node.  This will
+                // Make sure we are really dealing with a non-leaf node.  This will
                 // fix bug caused by name collision when a folder and feature are
                 // named the same thing.
                 if (candidate.getAllowsChildren()) {
@@ -313,7 +311,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         boolean autoload = PreferenceUtils.getBooleanParam(
                 PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
-		// Couldn't find matching node.  Add new one.
+        // Couldn't find matching node.  Add new one.
         // John -- not really sure what the following code is for. ?
         GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null, autoload);
         TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);

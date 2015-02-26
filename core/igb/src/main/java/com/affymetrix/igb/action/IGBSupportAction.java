@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;

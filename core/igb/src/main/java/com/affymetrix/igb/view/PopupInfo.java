@@ -200,7 +200,7 @@ public class PopupInfo extends JWindow {
             timer.stop();
         }
 
-		// If the main window is not in focus then return else the tooltip window 
+        // If the main window is not in focus then return else the tooltip window
         // would grab the focus.
         if (!getOwner().isActive() /*|| !getOwner().isFocused()*/) {
             return;
@@ -220,7 +220,7 @@ public class PopupInfo extends JWindow {
                 }
             }
         } else if (isVisible() && preferredLocationSet) {
-            // Do Nothing 
+            // Do Nothing
         } else {
             this.properties = properties;
             //title.setText(null);

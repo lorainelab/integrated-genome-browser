@@ -47,7 +47,7 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph {
         incoming_view_transform = view.getTransform();
         incoming_view_coordbox = view.getCoordBox();
 
-		// figure out draw transform by combining tier transform with view transform
+        // figure out draw transform by combining tier transform with view transform
         // should allow for arbitrarily deep nesting of transforms too, since cumulative
         //     transform is set to be view transform, and view transform is restored after draw...
         AffineTransform trans2D = new AffineTransform();
@@ -62,7 +62,7 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph {
                 incoming_view_transform.getTranslateX(), trans2D.getTranslateY());
         view.setTransform(modified_view_transform);
 
-		// need to set view coordbox based on nested transformation
+        // need to set view coordbox based on nested transformation
         //   (for methods like withinView(), etc.)
         setModifiedViewCoords(view);
         view.setCoordBox(modified_view_coordbox);
@@ -90,7 +90,7 @@ public abstract class AbstractTransformTierGlyph extends AbstractTierGlyph {
         }
 
         if (getChildren() != null) {
-			// modify pickRect on the way in
+            // modify pickRect on the way in
             //   (transform from view coords to local (tier) coords)
             //    [ an inverse transform? ]
             LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);

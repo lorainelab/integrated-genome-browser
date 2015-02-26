@@ -2,8 +2,8 @@ package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -104,8 +104,8 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private void initForSearching() {
         int child_count = getChildCount();
         if (child_count > 0) {
-            sortChildren(true); 
-        } 
+            sortChildren(true);
+        }
     }
 
     /**
@@ -126,7 +126,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private void sortChildren(boolean force) {
         int child_count = this.getChildCount();
         if (((!sorted) || force) && (child_count > 0)) {
-			// make sure child symmetries are sorted by ascending min along search_seq
+            // make sure child symmetries are sorted by ascending min along search_seq
             // to avoid unecessary sort, first go through child list and see if it's
             //     already in ascending order -- if so, then no need to sort
             //     (not sure if this is necessary -- Collections.sort() may already
@@ -173,7 +173,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         if (shouldDrawLabel()) {
 			// Add extra space to make room for the label.
 
-			// Although the space SHOULD be computed based on font metrics, etc,
+            // Although the space SHOULD be computed based on font metrics, etc,
             // that doesn't really work any better than a fixed coord value
             this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
         } else {
@@ -311,7 +311,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         // therefore reconstructing handle pixel bounds here... (although reusing same object to
         //    cut down on object creation)
 
-		// if full view differs from current view, and current view doesn't left align with full view,
+        // if full view differs from current view, and current view doesn't left align with full view,
         //   don't draw handle (only want handle at left side of full view)
         if (view.getFullView().getCoordBox().x != view.getCoordBox().x) {
             return null;
@@ -459,19 +459,19 @@ public class DefaultTierGlyph extends TransformTierGlyph {
             GlyphI child = getChild(0);
             Rectangle2D.Double c = child.getCoordBox();
             child.setCoords(c.x, c.y, c.width, height);
-			//Note : Fix to handle height in a view mode.
+            //Note : Fix to handle height in a view mode.
             // But this also causes minor change in height while switching back to default view mode.
             setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
             this.style.setHeight(height + 2 * getSpacing());
             child.pack(view);
         } else if (this.tierType == TierType.ANNOTATION) {
 
-			// Remove the padding at top and bottom.
+            // Remove the padding at top and bottom.
             // Shouldn't we get this info from the packer?
             height -= 2 * getSpacing();
 
             if (getPacker() == expand_packer) {
-				// Now figure out how deep to set max depth.
+                // Now figure out how deep to set max depth.
                 // Get current slot height. Should actually get this from the packer.
                 double h = this.getMaxChildHeight() + 2 * expand_packer.getSpacing();
                 long depth = (long) Math.floor(height / h);
@@ -560,19 +560,20 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     }
 
     /**
-	 * Determine the extreme values of <var>y</var> in theView.
-	 * We do not need to translate between scene coordinates
-	 * to those of the graph symmetry.
-	 * They are essentially the same thing(?), just different precisions.
-	 * Graph symmetry coordinates are not pixels.
-	 * TODO Maybe this should be a method of GraphSym?
-	 * TODO Could use a "Range" or "Interval" object instead of float[2].
-	 * TODO Should a null view be an illegal argument?
-	 * @param theData containing points (<var>x</var>,<var>y</var>).
-	 * @return the minimum and maximum values of <var>y</var>
-	 *         restricted to the <var>x</var> values in theView.
-	 */
-	private float[] getRangeInView(GraphSym theData, ViewI theView) {
+     * Determine the extreme values of <var>y</var> in theView.
+     * We do not need to translate between scene coordinates
+     * to those of the graph symmetry.
+     * They are essentially the same thing(?), just different precisions.
+     * Graph symmetry coordinates are not pixels.
+     * TODO Maybe this should be a method of GraphSym?
+     * TODO Could use a "Range" or "Interval" object instead of float[2].
+     * TODO Should a null view be an illegal argument?
+     *
+     * @param theData containing points (<var>x</var>,<var>y</var>).
+     * @return the minimum and maximum values of <var>y</var>
+     * restricted to the <var>x</var> values in theView.
+     */
+    private float[] getRangeInView(GraphSym theData, ViewI theView) {
         if (null == theData) {
             throw new IllegalArgumentException("theData cannot be null.");
         }

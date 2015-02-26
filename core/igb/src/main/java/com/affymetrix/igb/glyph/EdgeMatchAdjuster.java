@@ -87,11 +87,11 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener {
 
     private static JPanel addColorChooser(String label_str, String pref_name, Color default_color) {
         JComponent component = ColorUtils.createColorComboBox(pref_name, default_color, null);
-        
+
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 2));
         JPanel inner_panel = new JPanel();
-        
+
         inner_panel.add(component);
         panel.add(new JLabel(label_str + ": "));
         panel.add(inner_panel);
@@ -105,7 +105,7 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener {
     JPanel adjustFuzziness;
     JPanel textP;
     JPanel sliderP;
-    
+
     private EdgeMatchAdjuster(
             GlyphEdgeMatcher matcher, SeqMapView view) {
         gviewer = view;

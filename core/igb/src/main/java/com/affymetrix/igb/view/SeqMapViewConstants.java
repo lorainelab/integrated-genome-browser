@@ -10,6 +10,7 @@ package com.affymetrix.igb.view;
  * @author tarun
  */
 public class SeqMapViewConstants {
+
     public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
     public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
     /**

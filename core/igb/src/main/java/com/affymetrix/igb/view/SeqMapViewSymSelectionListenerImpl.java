@@ -24,7 +24,7 @@ public class SeqMapViewSymSelectionListenerImpl implements SymSelectionListener 
         this.seqMapView = seqMapView;
         this.seqmap = seqMapView.getSeqMap();
     }
-    
+
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
         Object src = evt.getSource();
@@ -53,5 +53,5 @@ public class SeqMapViewSymSelectionListenerImpl implements SymSelectionListener 
             seqMapView.setSelectionStatus(title);
         }
     }
-    
+
 }

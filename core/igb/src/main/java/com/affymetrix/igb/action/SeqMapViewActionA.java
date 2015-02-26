@@ -2,13 +2,13 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.Application;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -79,7 +79,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
 
     protected void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
         if (getSeqMapView() != null) {
-			// if an AnnotatedSeqViewer is being used, ask it to update itself.
+            // if an AnnotatedSeqViewer is being used, ask it to update itself.
             // later this can be made more specific to just update the tiers that changed
             boolean preserve_view_x = !stretch_vertically;
             boolean preserve_view_y = !stretch_horizonatally;

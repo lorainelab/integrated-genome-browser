@@ -5,8 +5,8 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -20,6 +20,7 @@ public class MismatchPileupType extends MismatchGraphType {
 
     private static final Color MATCH_COLOR = Color.GRAY;
     private static Color[] baseColors;
+
     static {
         BAR_ORDERS.put('A', new int[]{1, 2, 3, 4});
         BAR_ORDERS.put('T', new int[]{0, 2, 3, 4});
@@ -69,7 +70,7 @@ public class MismatchPileupType extends MismatchGraphType {
         g.setColor(MATCH_COLOR);
         super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, offset, yscale, view, i);
 
-		// now draw the mismatches, piled up
+        // now draw the mismatches, piled up
         // flipping about yaxis... should probably make this optional
         // also offsetting to place within glyph bounds
         int xtemp = graphSym.getGraphXCoord(i);

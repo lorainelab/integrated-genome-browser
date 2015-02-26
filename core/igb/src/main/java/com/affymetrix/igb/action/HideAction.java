@@ -5,9 +5,9 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class HideAction extends RepackTiersAction {
          * appear at same position.
          *
          */
-		// NOTE: Below call to stretchToFit is not redundancy. It is there
+        // NOTE: Below call to stretchToFit is not redundancy. It is there
         //       to solve above mentioned bug.
         repack(false, true);
     }

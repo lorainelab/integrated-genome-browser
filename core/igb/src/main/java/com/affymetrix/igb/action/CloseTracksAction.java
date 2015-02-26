@@ -6,7 +6,6 @@ import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
@@ -21,7 +20,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
     private static final long serialVersionUID = 1L;
     private static final CloseTracksAction ACTION = new CloseTracksAction();
 
-	//static{
+    //static{
     //	GenericActionHolder.getInstance().addGenericAction(ACTION);
     //	ACTION.setEnabled(false);
     //	GenometryModel.getInstance().addSymSelectionListener(ACTION);

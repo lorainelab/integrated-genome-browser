@@ -31,14 +31,14 @@ import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.swing.JRPTextField;
+import com.jidesoft.hints.ListDataIntelliHints;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.search.SearchResults;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.swing.JRPTextField;
-import com.jidesoft.hints.ListDataIntelliHints;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -73,9 +73,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     private List<SeqSpan> foundSpans;
     private int spanPointer;
     private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<>();
-//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk 
+//	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk
 
-	// Use the ENGLISH locale here because we want the user to be able to
+    // Use the ENGLISH locale here because we want the user to be able to
     // cut and paste this text into the UCSC browser.
     // (Also, the Pattern's below were written to work for the English locale.)
     private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
@@ -110,7 +110,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class ChromStartEndSearch extends EmptySearch {
-		// accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
+        // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -145,7 +145,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class ChromStartWidthSearch extends EmptySearch {
-		// accepts a pattern like: "chr2 : 3,040,000 + 20000"
+        // accepts a pattern like: "chr2 : 3,040,000 + 20000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -180,7 +180,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class ChromPositionSearch extends EmptySearch {
-		// accepts a pattern like: "chr2 :10000"
+        // accepts a pattern like: "chr2 :10000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -236,7 +236,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class StartEndSearch extends EmptySearch {
-		// accepts a pattern like: "10000-20000"
+        // accepts a pattern like: "10000-20000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -267,7 +267,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class StartWidthSearch extends EmptySearch {
-		// accepts a pattern like: "3,040,000 + 20000"
+        // accepts a pattern like: "3,040,000 + 20000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -298,7 +298,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private static class CenterSearch extends EmptySearch {
-		// accepts a pattern like: "3,040,000 + 20000"
+        // accepts a pattern like: "3,040,000 + 20000"
         // (The chromosome name cannot contain any spaces.)
 
         protected Matcher getMatcher(String search_text) {
@@ -398,7 +398,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
     public void actionPerformed(ActionEvent evt) {
         setRange(range_box.getText().trim());
-		// But if the user tries to zoom to something illogical, this can be helpful
+        // But if the user tries to zoom to something illogical, this can be helpful
         // generally this is redundant, because zooming the view will make
         // a call back to change this text.
         // But if the user tries to zoom to something illogical, this can be helpful

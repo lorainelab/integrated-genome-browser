@@ -194,7 +194,7 @@ public class IGB extends Application
             if (pattern.matcher(seqid).matches()) {
                 seqid = seqid.replace("chr", "Chromosome ");
             }
-            
+
             title.append(seqid);
             String version_info = getVersionInfo(seq);
             if (version_info != null) {
@@ -207,7 +207,7 @@ public class IGB extends Application
         title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
         return title.toString();
     }
-    
+
     private static String getVersionInfo(BioSeq seq) {
         if (seq == null) {
             return null;
@@ -349,7 +349,7 @@ public class IGB extends Application
             }
 
             /* This method is used to convert the given file path from relative to absolute.
-            */
+             */
             private URI relativeToAbsolute(String path) throws URISyntaxException {
                 if (!(path.startsWith(FILE_PROTOCOL)) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(HTTPS_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL))) {
                     return getAbsoluteFile(path).toURI();
@@ -358,7 +358,7 @@ public class IGB extends Application
             }
 
             /*Returns the File object at given path
-            */
+             */
             private File getAbsoluteFile(String path) {
                 return new File(path).getAbsoluteFile();
             }
@@ -370,6 +370,7 @@ public class IGB extends Application
         openQuickStart();
         ToolTipManager.sharedInstance().setDismissDelay(10000);
     }
+
     private void printDetails(String[] args) {
         logger.info("Starting: " + APP_NAME + " " + APP_VERSION);
         logger.info("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
@@ -404,6 +405,7 @@ public class IGB extends Application
             ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
         }
     }
+
     private void openQuickStart() {
         String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
         if (version == null || !version.equals(IGBConstants.APP_VERSION)) {

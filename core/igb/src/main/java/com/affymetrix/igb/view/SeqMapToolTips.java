@@ -9,8 +9,16 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.tooltip.ToolTipCategory;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
 import com.affymetrix.genometry.tooltip.ToolTipOperations;
+import static com.affymetrix.genometry.util.SeqUtils.isBamSym;
+import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
+import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
+import static com.affymetrix.genometry.util.SeqUtils.isLinkPSL;
+import static com.affymetrix.genometry.util.SeqUtils.isMultiStrandWrapperType;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Window;
 import java.util.List;
@@ -22,10 +30,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.apache.commons.lang3.text.WordUtils;
-import static com.affymetrix.genometry.util.SeqUtils.*;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Insets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +73,7 @@ public class SeqMapToolTips extends JWindow {
 
     private String wrappedString(String key, String value) {
         String input = key + "*" + value;
-        if(maxLength < input.length()){
+        if (maxLength < input.length()) {
             maxLength = input.length();
         }
         String output = WordUtils.wrap(input, MAX_CHAR_PER_LINE, "\n", true);
@@ -147,7 +151,7 @@ public class SeqMapToolTips extends JWindow {
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), propKey + " ", NAME);
                     tooltip.getDocument().insertString(tooltip.getDocument().getLength(), wrappedString(propKey, propValue), null);
                 }
-                
+
             }
         } catch (BadLocationException e) {
             logger.debug("Accessing invalid location in tooltip text: ", e);
@@ -177,7 +181,7 @@ public class SeqMapToolTips extends JWindow {
         int start = 0;
         int noOfLines = 1;
         String tooltipText = tooltip.getText();
-        while((start=tooltipText.indexOf(LINE_SEPARATOR, start)) > -1) {
+        while ((start = tooltipText.indexOf(LINE_SEPARATOR, start)) > -1) {
             noOfLines++;
             start++;
         }

@@ -9,9 +9,9 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.PropertyHandler;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.OrderComparator;
+import static com.affymetrix.genometry.util.SelectionInfoUtils.orderProperties;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import static com.affymetrix.genometry.util.SelectionInfoUtils.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.Comparator;
@@ -101,8 +101,6 @@ public class SelectionRuleAction extends GenericAction {
                 + "5. Control-SHIFT click to remove an item from the currently selected items.\n"
                 + "6. Click-drag the axis to zoom in on a region.\n";
     }
-
-    
 
     public SymWithProps getSym() {
         return sym;

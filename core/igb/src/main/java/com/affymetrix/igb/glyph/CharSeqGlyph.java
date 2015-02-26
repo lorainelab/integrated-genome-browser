@@ -48,8 +48,8 @@ public class CharSeqGlyph extends SequenceGlyph {
     // xpix2fonts: index is char width in pixels, entry is Font that gives that char width (or smaller)
     static final Font[] xpix2fonts = new Font[max_char_xpix + 1];
 
-
     private static final ResidueColorHelper helper = ResidueColorHelper.getColorHelper();
+
     static {
         setBaseFont(mono_default_font);
     }
@@ -83,7 +83,7 @@ public class CharSeqGlyph extends SequenceGlyph {
         int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
         for (int j = 0; j < charArray.length; j++) {
             g.setColor(helper.determineResidueColor(charArray[j]));
-            
+
             //Create a colored rectangle.
             //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
             int offset = (int) (j * pixelsPerBase);
@@ -159,13 +159,14 @@ public class CharSeqGlyph extends SequenceGlyph {
     }
     private SearchableCharIterator chariter;
     private int residue_length = 0;
-    
+
     public CharSeqGlyph() {
         super();
         setResidueFont(mono_default_font);
         // default to true for backward compatability
         setHitable(true);
     }
+
     @Override
     public void setResidues(String residues) {
         setResiduesProvider(new ImprovedStringCharIter(residues), residues.length());

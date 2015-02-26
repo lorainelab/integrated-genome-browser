@@ -45,7 +45,7 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
     }
 
     protected void fixPixHeight() {
-	// trying to transform according to tier's internal transform
+        // trying to transform according to tier's internal transform
         //   (since packing is done based on tier's children)
         if (this.getPacker() != null) {
             Rectangle2D.Double newbox = new Rectangle2D.Double();
@@ -57,13 +57,13 @@ public class TransformTierGlyph extends AbstractTransformTierGlyph {
 
     @Override
     protected void setModifiedViewCoords(ViewI view) {
-	// This works fine too. But for now not modifying it. HV 05/19/12
+        // This works fine too. But for now not modifying it. HV 05/19/12
         // view.transformToCoords(this.getPixelBox(), modified_view_coordbox);
         view.transformToCoords(view.getPixelBox(), modified_view_coordbox);
     }
 
     public void fitToPixelHeight(ViewI view) {
-    // use view transform to determine how much "more" scaling must be
+        // use view transform to determine how much "more" scaling must be
         //       done within tier to keep its
         LinearTransform view_transform = view.getTransform();
         double yscale = 0.0d;

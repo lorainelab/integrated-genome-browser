@@ -2,7 +2,7 @@
  *  A copy of the license must be included
  *  with any distribution of this source code.
  *  Distributions from Genentech, Inc. place this in the IGB_LICENSE.html file.
- * 
+ *
  *  The license is also available at
  *  http://www.opensource.org/licenses/CPL
  */
@@ -88,7 +88,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
             this.hiddenAction = this.shownAction;
             this.shownAction = a;
         } else {
-			//java.util.logging.Logger.getLogger(this.getClass().getPackage().getName())
+            //java.util.logging.Logger.getLogger(this.getClass().getPackage().getName())
             //		.warning("What!? switching to shown action?");
             return;
         }

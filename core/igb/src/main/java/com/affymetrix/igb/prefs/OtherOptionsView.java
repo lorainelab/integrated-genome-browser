@@ -5,7 +5,6 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.glyph.CodonGlyph;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.affymetrix.igb.shared.ResidueColorHelper;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.CoordinateStyle;
@@ -15,6 +14,7 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import static com.affymetrix.igb.view.SeqMapView.default_edge_match_color;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 
 /**
  *

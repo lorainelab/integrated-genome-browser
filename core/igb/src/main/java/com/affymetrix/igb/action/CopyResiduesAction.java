@@ -112,7 +112,7 @@ public class CopyResiduesAction extends GenericAction {
             }
         }
         if (!success) {
-			// null out clipboard if unsuccessful (otherwise might get fooled into thinking
+            // null out clipboard if unsuccessful (otherwise might get fooled into thinking
             //   the copy operation worked...)
             // GAH 12-16-2003
             // for some reason, can't null out clipboard with [null] or [new StringSelection("")],

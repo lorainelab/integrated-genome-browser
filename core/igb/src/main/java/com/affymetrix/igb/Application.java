@@ -190,5 +190,4 @@ public abstract class Application {
         statusBar.showError(title, message, actions, level);
     }
 
-
 }

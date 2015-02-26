@@ -3,10 +3,10 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public abstract class CollapseExpandActionA extends SeqMapViewActionA implements
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
 
-		// Only pay attention to selections from the main SeqMapView or its map.
+        // Only pay attention to selections from the main SeqMapView or its map.
         // Ignore the splice view as well as events coming from this class itself.
         Object src = evt.getSource();
         SeqMapView gviewer = getSeqMapView();

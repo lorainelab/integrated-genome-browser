@@ -101,9 +101,9 @@ public final class KeyStrokeEditPanel extends JPanel {
                             key_field.removeFocusListener(lois);
                             if (!ModalUtils.confirmPanel(KeyStrokeEditPanel.this,
                                     "This shortcut is currently in use; \n"
-                                            + "reassigning this will remove the shortcut for '"
-                                            + actionDisplayName + "'.\n"
-                                            + "Do you want to proceed?", null, null, false)) {
+                                    + "reassigning this will remove the shortcut for '"
+                                    + actionDisplayName + "'.\n"
+                                    + "Do you want to proceed?", null, null, false)) {
                                 key_field.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
@@ -113,7 +113,8 @@ public final class KeyStrokeEditPanel extends JPanel {
                             }
                             key_field.addFocusListener(lois);
                             return;
-                        }   key_field.setText(command);
+                        }
+                        key_field.setText(command);
                         lastCommand = command;
                         break;
                 }
@@ -192,7 +193,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             return;
         }
         if (str.length() > 0 && (str.indexOf(' ') <= 0 || str.startsWith("shift "))) {
-			// Checking that there is a modifier (ctrl, alt, or meta) present.
+            // Checking that there is a modifier (ctrl, alt, or meta) present.
             // Without this restriction bad things can happen. For instance,
             // if the user wants to use "Z" too mean "zoom" in the SeqMapView,
             // then any time the letter "Z" is pressed in any input box,
@@ -211,7 +212,7 @@ public final class KeyStrokeEditPanel extends JPanel {
         }
         lastCommand = null;
         PreferenceUtils.getKeystrokesNode().put(this.key, str);
-		// The following seems to put the accelerator in the menu,
+        // The following seems to put the accelerator in the menu,
         // but the action does not seem to be invoked by the key stroke.
         Action a = GenericActionHolder.getInstance().getGenericAction(this.key);
         KeyStroke previousKeyStroke = null;
@@ -222,7 +223,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             a.putValue(Action.ACCELERATOR_KEY, k);
 //			}
         }
-		// Ah, the above handles things when the action is in a menu
+        // Ah, the above handles things when the action is in a menu
         // for the window (JFrame) with the focus.
         // Here we add "orphan" actions that are not in a window's menu.
         // i.e. the ones in the popup or the tool bar.
@@ -259,7 +260,7 @@ public final class KeyStrokeEditPanel extends JPanel {
         lastCommand = "";
         toolbar_field.setSelected(false);
 //		this.the_keystroke_node.put(this.the_key, "");
-        //TO DO:  Fix cell update 
+        //TO DO:  Fix cell update
         //KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeyStrokeColumn);
     }
 
@@ -307,7 +308,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             s.append("button3 ");
         }
         if ((m & (InputEvent.SHIFT_DOWN_MASK)) != 0) {
-			// It is important that the shift key be appended after the others, so that
+            // It is important that the shift key be appended after the others, so that
             // above I can easily check that there is at least one modifier other
             // than "shift" in the keystroke.
             s.append("shift ");

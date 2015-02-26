@@ -13,7 +13,6 @@ import java.util.Map;
 public class SequenceTierGlyph extends AbstractTierGlyph {
 
     // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
-
     private static final Map<String, Class<?>> PREFERENCES;
 
     static {

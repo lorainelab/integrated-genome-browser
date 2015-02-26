@@ -14,13 +14,13 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
 import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.Action;
@@ -81,7 +81,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 //				for(GlyphI g : t.getChildren()){
 //					if(!(g instanceof com.affymetrix.igb.shared.GraphGlyph))
 //						continue;
-//					
+//
 //					// So far this has only been tested with annotation depth graphs.
 //					com.affymetrix.igb.shared.GraphGlyph gg
 //							= (com.affymetrix.igb.shared.GraphGlyph) g;
@@ -93,7 +93,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
         boolean fullRepack = true, stretchMap = true, fireTierPositionChanged = false;
         gviewer.getSeqMap().repackTheTiers(fullRepack, stretchMap, fireTierPositionChanged);
         gviewer.redoEdgeMatching();
-		// Full update doesn't seem to happen.
+        // Full update doesn't seem to happen.
         // Or, rather, it happens when the user clicks on the map.
     }
 }

@@ -43,16 +43,16 @@ public class ExportFileAction
         this.ordinal = -9007100;
     }
 
-  @Override
+    @Override
     protected void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException {
         List<SeqSymmetry> syms = new ArrayList<>();
         RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) atier.getInfo();
         FileTypeCategory category = rootSeqSymmetry.getCategory();
-        if (FileTypeCategoryUtils.isFileTypeCategoryContainer(category) && (rootSeqSymmetry instanceof TypeContainerAnnot) ) {
+        if (FileTypeCategoryUtils.isFileTypeCategoryContainer(category) && (rootSeqSymmetry instanceof TypeContainerAnnot)) {
             AnnotatedSeqGroup group = aseq.getSeqGroup();
             List<BioSeq> seql = group.getSeqList();
             for (BioSeq aseql : seql) {
-                RootSeqSymmetry rootSym = aseql.getAnnotation(((TypeContainerAnnot)atier.getInfo()).getType());
+                RootSeqSymmetry rootSym = aseql.getAnnotation(((TypeContainerAnnot) atier.getInfo()).getType());
                 if (rootSym != null) {
                     syms = new ArrayList<>();
                     ExportFileModel.collectSyms(rootSym, syms, atier.getAnnotStyle().getGlyphDepth());

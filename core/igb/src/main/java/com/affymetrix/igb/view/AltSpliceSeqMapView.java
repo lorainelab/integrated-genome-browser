@@ -17,11 +17,11 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
     @Override
     public TierGlyph getTrack(final ITrackStyleExtended style, final StyledGlyph.Direction tier_direction) {
         ITrackStyleExtended style_copy = getStyle(style);
-		// super.getTrack() may have created a brand new tier, in which case
+        // super.getTrack() may have created a brand new tier, in which case
         // the style is already set to "style_copy", or it may have re-used
         // a tier, in which case it may still have an old copy of the style
         // associated with it.  Reset the style to be certain.
@@ -121,7 +121,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
         return style_copy;
     }
 
-	//@Override
+    //@Override
     //protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
     //popup.add(CenterAtHairlineAction.getAction());
     //}
@@ -249,7 +249,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
             seq2viewSym.clear();
         }
 
-		// rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
+        // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
         //    mapped to viewseq
         int prev_max = 0;
         int slice_offset = 0;
@@ -277,7 +277,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
                     = new SimpleMutableSeqSpan(slice_offset, slice_offset + slice_length, viewseq);
 
             if (prev_seq_slice != null && SeqUtils.looseOverlap(prev_seq_slice, seq_slice_span)) {
-				// if new seq slice span abuts the old one, then just
+                // if new seq slice span abuts the old one, then just
                 // lengthen existing spans (seq and view) rather than adding new ones
                 SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
                 SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);
@@ -323,7 +323,7 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
         if (prev_seq_slice != null) {
             SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), seq_slice_span.getMin(), aseq);
             SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
-			// SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
+            // SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
             // since there will be frequent calls to getSpan(BioSeq)
             seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
         }

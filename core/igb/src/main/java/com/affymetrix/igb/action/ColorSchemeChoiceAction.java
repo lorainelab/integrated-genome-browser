@@ -4,7 +4,7 @@
  *  A copy of the license must be included
  *  with any distribution of this source code.
  *  Distributions from Genentech, Inc. place this in the IGB_LICENSE.html file.
- * 
+ *
  *  The license is also available at
  *  http://www.opensource.org/licenses/CPL
  */
@@ -12,10 +12,10 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genoviz.color.ColorScheme;
 import com.affymetrix.genoviz.color.ColorSchemeComboBox;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -117,15 +117,15 @@ public class ColorSchemeChoiceAction extends SeqMapViewActionA {
                     List<TierLabelGlyph> l = ltm.getOrderedTierLabels();
                     int j = 0;
                     int colors = s.numberOfForegrounds();
-            for (TierLabelGlyph tlg : l) {
-                TierGlyph g = tlg.getReferenceTier();
-                if (tlg.isSelected()) {
-                    Color c = Color.decode(s.getForeground(j));
-                    g.getAnnotStyle().setBackground(bg);
-                    g.getAnnotStyle().setForeground(c);
-                    j = (j + 1) % colors;
-                }
-            }
+                    for (TierLabelGlyph tlg : l) {
+                        TierGlyph g = tlg.getReferenceTier();
+                        if (tlg.isSelected()) {
+                            Color c = Color.decode(s.getForeground(j));
+                            g.getAnnotStyle().setBackground(bg);
+                            g.getAnnotStyle().setForeground(c);
+                            j = (j + 1) % colors;
+                        }
+                    }
                     refreshMap(false, false);
                 }
                 break;

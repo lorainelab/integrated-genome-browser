@@ -130,7 +130,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
             int last;
             StringBuffer sbuff = null;
 
-			// Read in a block at a time, mapping \r\n to \n, as well as single
+            // Read in a block at a time, mapping \r\n to \n, as well as single
             // \r to \n.
             while ((nch = in.read(buff, 0, buff.length)) != -1) {
                 if (sbuff == null) {
@@ -155,7 +155,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
                                 if (counter > (last + 1)) {
                                     sbuff.append(buff, last, counter - last - 1);
                                 }
-								// else nothing to do, can skip \r, next write will
+                                // else nothing to do, can skip \r, next write will
                                 // write \n
                                 lastWasCR = false;
                                 last = counter;
@@ -240,7 +240,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
      * @param action The actual action that was performed.
      */
     protected void exportDone(JComponent source, Transferable data, int action) {
-		// only remove the text if shouldRemove has not been set to
+        // only remove the text if shouldRemove has not been set to
         // false by importData and only if the action is a move
         if (shouldRemove && action == MOVE) {
             TextTransferable t = (TextTransferable) data;
@@ -289,7 +289,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
         int pos = modeBetween
                 ? c.getDropLocation().getIndex() : c.getCaretPosition();
 
-		// if we are importing to the same component that we exported from
+        // if we are importing to the same component that we exported from
         // then don't actually do anything if the drop location is inside
         // the drag location and set shouldRemove to false so that exportDone
         // knows not to remove any data

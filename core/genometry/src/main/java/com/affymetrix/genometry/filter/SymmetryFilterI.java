@@ -7,5 +7,6 @@ import com.affymetrix.genometry.general.SupportsFileTypeCategory;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
 public interface SymmetryFilterI extends ID, SupportsFileTypeCategory, NewInstance<SymmetryFilterI> {
-	public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym);
+
+    public boolean filterSymmetry(BioSeq seq, SeqSymmetry sym);
 }

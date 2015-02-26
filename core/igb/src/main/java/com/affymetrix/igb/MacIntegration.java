@@ -110,20 +110,18 @@ final class ApplicationListenerProxy implements InvocationHandler {
         Object result = null;
         try {
             switch (method.getName()) {
-                case "handleAbout":
-                    {
-                        AboutIGBAction a = AboutIGBAction.getAction();
-                        a.actionPerformed(null);
-                        Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
-                        setHandled.invoke(args[0], true);
-                        break;
-                    }
-                case "handleQuit":
-                    {
-                        ExitAction a = ExitAction.getAction();
-                        a.actionPerformed(null);
-                        break;
-                    }
+                case "handleAbout": {
+                    AboutIGBAction a = AboutIGBAction.getAction();
+                    a.actionPerformed(null);
+                    Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
+                    setHandled.invoke(args[0], true);
+                    break;
+                }
+                case "handleQuit": {
+                    ExitAction a = ExitAction.getAction();
+                    a.actionPerformed(null);
+                    break;
+                }
                 case "handlePreferences":
                     PreferencesPanel pv = PreferencesPanel.getSingleton();
                     JFrame f = pv.getFrame();

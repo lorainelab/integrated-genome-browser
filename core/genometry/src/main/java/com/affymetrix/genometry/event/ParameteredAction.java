@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.genometry.event;
 
 /**
  *

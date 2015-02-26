@@ -44,7 +44,9 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.igb.view.load.VirtualFeature;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
@@ -477,6 +479,15 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     public int getPreferencesPanelTabIndex(Component c) {
         PreferencesPanel pv = PreferencesPanel.getSingleton();
         return pv.getTabIndex(c);
+    }
+
+    @Override
+    public List<String> getLoadedFeatureNames() {
+        ImmutableList.Builder<String> builder = new ImmutableList.Builder<>();
+        for (VirtualFeature vFeature : GeneralLoadView.getLoadView().getTableModel().virtualFeatures) {
+            builder.add(vFeature.getFeature().featureName);
+        }
+        return builder.build();
     }
 
 }

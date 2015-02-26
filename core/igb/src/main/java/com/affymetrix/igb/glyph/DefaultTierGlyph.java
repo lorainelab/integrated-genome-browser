@@ -11,7 +11,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.shared.CollapsePacker;
+import com.affymetrix.igb.scene.layout.CollapsePacker;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;

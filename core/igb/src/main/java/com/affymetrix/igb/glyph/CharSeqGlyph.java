@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.ResidueColorHelper;
+import com.affymetrix.igb.util.ResidueColorHelper;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

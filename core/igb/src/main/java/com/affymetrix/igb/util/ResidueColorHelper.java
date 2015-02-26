@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.util;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
 import java.awt.Color;

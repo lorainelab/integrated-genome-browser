@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.ParameteredAction;
+import com.affymetrix.genometry.event.ParameteredAction;
 import com.affymetrix.igb.shared.RepackTiersAction;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.MaxSlotsChooser;

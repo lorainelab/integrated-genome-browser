@@ -1,27 +1,25 @@
 /**
  * Copyright (c) 2007 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
-import com.lorainelab.igb.services.IgbService;
-import com.affymetrix.igb.shared.DataManagementTableInfo;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.collect.ListMultimap;
+import com.lorainelab.igb.services.IgbService;
 import fi.iki.elonen.NanoHTTPD;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-
 import javax.swing.JFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +33,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_HEADER = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-    private static final Logger logger = LoggerFactory.getLogger(BookmarkHttpRequestHandler.class);    
+    private static final Logger logger = LoggerFactory.getLogger(BookmarkHttpRequestHandler.class);
 
     public BookmarkHttpRequestHandler(IgbService igbService, int port) {
         super(port);
@@ -90,12 +88,12 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
                 //do nothing send back welcome message
                 response = new Response(getWelcomeMessage());
                 response.setStatus(Response.Status.OK);
-            return response;
+                return response;
             case FOCUS_IGB_COMMAND:
                 response = new Response("OK");
                 bringIgbToFront();
                 response.setStatus(Response.Status.NO_CONTENT);
-            return response;
+                return response;
             case IGB_STATUS_CHECK:
                 response = new Response(handleStatusCheckRequests(session));
                 response.setStatus(Response.Status.OK);
@@ -103,7 +101,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
             default:
                 response = new Response(getBadRequestMessage());
                 response.setStatus(Response.Status.BAD_REQUEST);
-            return response;
+                return response;
         }
     }
 
@@ -149,7 +147,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         if (StringUtils.isBlank(featureName)) {
             return false;
         }
-        return DataManagementTableInfo.getDataManagementTableTrackNames().contains(featureName);
+        return igbService.getLoadedFeatureNames().contains(featureName);
     }
 
     private String getIgbJs() {

@@ -1,5 +1,6 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.scene.layout;
 
+import com.affymetrix.igb.scene.layout.FasterExpandPacker;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;

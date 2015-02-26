@@ -1,6 +1,5 @@
 package com.lorainelab.igb.services;
 
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
@@ -17,6 +16,7 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.google.common.base.Optional;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -229,6 +229,8 @@ public interface IgbService {
     public Component determineSlicedComponent();
 
     public GenericFeature createFeature(String featureName, SymLoader loader);
+
+    public List<String> getLoadedFeatureNames();
 
     public void bringToFront();
 }

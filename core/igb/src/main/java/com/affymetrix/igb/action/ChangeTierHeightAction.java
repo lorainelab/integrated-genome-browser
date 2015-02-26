@@ -7,7 +7,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.ParameteredAction;
+import com.affymetrix.genometry.event.ParameteredAction;
 import com.affymetrix.igb.shared.Selections;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;

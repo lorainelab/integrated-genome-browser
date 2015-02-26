@@ -24,7 +24,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Component;

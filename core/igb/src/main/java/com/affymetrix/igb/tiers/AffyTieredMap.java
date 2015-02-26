@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMixedStrandAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
-import com.affymetrix.igb.shared.AxisGlyphWithSelection;
+import com.lorainelab.igb.genoviz.extensions.AxisGlyphWithSelection;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.view.factories.DefaultTierGlyph;

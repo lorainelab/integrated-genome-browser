@@ -7,15 +7,11 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions;
 
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.swing.JRPRadioButton;
-import com.affymetrix.igb.swing.JRPTextField;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -31,9 +27,11 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -43,6 +41,7 @@ public class GraphVisibleBoundsSetter extends JPanel
         implements ChangeListener, ActionListener, FocusListener {
 
     private static final long serialVersionUID = 1L;
+    private static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private final static DecimalFormat val_format;
     private final static DecimalFormat per_format;
     private static final int max_chars = 8;
@@ -103,12 +102,12 @@ public class GraphVisibleBoundsSetter extends JPanel
     private NeoAbstractWidget widg;
     public RangeSlider PercentSlider = new RangeSlider(0, 100);
     public RangeSlider ValueSlider = new RangeSlider(0, 100);
-    public JRPTextField min_perT;
-    public JRPTextField max_perT;
-    public JRPTextField min_valT;
-    public JRPTextField max_valT;
-    public final JRPRadioButton by_valRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_valRB", BUNDLE.getString("byValue"));
-    public final JRPRadioButton by_percentileRB = new JRPRadioButton("GraphVisibleBoundsSetter_by_percentileRB", BUNDLE.getString("byPercentile"));
+    public JTextField min_perT;
+    public JTextField max_perT;
+    public JTextField min_valT;
+    public JTextField max_valT;
+    public final JRadioButton by_valRB = new JRadioButton(BUNDLE.getString("byValue"));
+    public final JRadioButton by_percentileRB = new JRadioButton(BUNDLE.getString("byPercentile"));
     // info2pscores is a hash of GraphGlyphs' data model
     //   (usually a GraphSym if using genometry) to float[] arrays, each of length
     //   (sliders_per_percent * total_percent), and each value v at index i is
@@ -146,10 +145,10 @@ public class GraphVisibleBoundsSetter extends JPanel
 
         widg = w;
 
-        min_valT = new JRPTextField("GraphVisibleBoundsSetter_min_valT", max_chars);
-        max_valT = new JRPTextField("GraphVisibleBoundsSetter_max_valT", max_chars);
-        min_perT = new JRPTextField("GraphVisibleBoundsSetter_min_perT", max_chars);
-        max_perT = new JRPTextField("GraphVisibleBoundsSetter_max_perT", max_chars);
+        min_valT = new JTextField(max_chars);
+        max_valT = new JTextField(max_chars);
+        min_perT = new JTextField(max_chars);
+        max_perT = new JTextField(max_chars);
 
         ((AbstractDocument) min_valT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
         ((AbstractDocument) max_valT.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());

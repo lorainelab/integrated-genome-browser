@@ -1,9 +1,10 @@
-package com.affymetrix.igb.view.factories;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.igb.view.factories.AbstractTierGlyph;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;

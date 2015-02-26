@@ -16,7 +16,7 @@ import com.affymetrix.genometry.symloader.LineProcessor;
 import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import org.broad.tribble.readers.LineReader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 
 public class TallyLineProcessor implements LineProcessor {
 

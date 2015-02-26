@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions;
 
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.style.GraphState;

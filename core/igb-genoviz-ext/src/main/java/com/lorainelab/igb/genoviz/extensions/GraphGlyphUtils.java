@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.genoviz.extensions;
 
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.util.GraphSymUtils;

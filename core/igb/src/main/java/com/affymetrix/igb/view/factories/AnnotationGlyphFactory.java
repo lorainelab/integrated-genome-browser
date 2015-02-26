@@ -40,7 +40,6 @@ import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
-import com.affymetrix.igb.shared.CodonGlyphProcessor;
 import com.affymetrix.igb.glyph.DeletionGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;

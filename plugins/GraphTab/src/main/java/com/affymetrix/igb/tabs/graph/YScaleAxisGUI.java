@@ -9,7 +9,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
-import com.affymetrix.igb.shared.GraphVisibleBoundsSetter;
+import com.lorainelab.igb.genoviz.extensions.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;

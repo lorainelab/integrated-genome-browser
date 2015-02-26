@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.thresholding;
 
+import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.igb.swing.JRPButton;

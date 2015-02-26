@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
+import com.affymetrix.igb.glyph.AbstractTransformTierGlyph;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;

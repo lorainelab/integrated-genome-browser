@@ -195,7 +195,6 @@ public class AnnotationStation extends javax.swing.JFrame {
             "com.affymetrix.igb.shared.DeletionGlyph",
             "com.affymetrix.igb.shared.AlignedResidueGlyph",
             "com.affymetrix.igb.shared.CodonGlyph",
-            "com.affymetrix.igb.shared.WrappedStringGlyph",
             "com.affymetrix.igb.shared.StyledGlyph"
         };
         typeComboBox = new javax.swing.JComboBox(glyphtypes);

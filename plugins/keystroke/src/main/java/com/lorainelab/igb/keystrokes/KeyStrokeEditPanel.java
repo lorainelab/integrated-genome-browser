@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.keystrokes;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
@@ -15,6 +15,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
+
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;

@@ -77,6 +77,11 @@
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
+            <artifactId>keystroke</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>runtime</scope>
         </dependency>

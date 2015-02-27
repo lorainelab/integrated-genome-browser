@@ -3,9 +3,10 @@
  *
  * Created on Jan 19, 2012, 10:11:49 AM
  */
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.keystrokes.form;
 
 import aQute.bnd.annotation.component.Component;
+import com.lorainelab.igb.keystrokes.KeyStrokesView;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import javax.swing.JPanel;

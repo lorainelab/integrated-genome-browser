@@ -118,3 +118,4 @@ www/release_notes/images/Thumbs.db
 /plugins/plugin-manager/target/
 /plugins/session-manager/target/
 extbundles/
+/plugins/keystroke/target/

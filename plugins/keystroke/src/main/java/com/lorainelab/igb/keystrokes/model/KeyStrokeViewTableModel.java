@@ -6,13 +6,14 @@
  *  The license is also available at
  *  http://www.opensource.org/licenses/CPL
  */
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.keystrokes.model;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.igb.IGB;
+import com.lorainelab.igb.keystrokes.KeyStrokesView;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 

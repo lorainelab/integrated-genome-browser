@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.keystrokes;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
@@ -37,6 +37,7 @@ import com.affymetrix.igb.action.UnFloatTiersAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;

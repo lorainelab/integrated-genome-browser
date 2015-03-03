@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 
 public class PreferencesHelpAction extends HelpActionA {
 
-    public static final String COMPONENT_NAME = "PreferencesHelpAction";
     private static final long serialVersionUID = 1L;
     private static final PreferencesHelpAction ACTION = new PreferencesHelpAction();
     private final static String HELP_ACTION_COMMAND = PreferencesPanel.WINDOW_NAME + " / " + BUNDLE.getString("PreferencesHelp");

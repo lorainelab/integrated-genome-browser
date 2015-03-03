@@ -12,7 +12,7 @@
     <artifactId>Keybinding-registry</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Keystroke View</name>
+    <name>Keybinding-registry</name>
     
     <dependencies>
         <dependency>

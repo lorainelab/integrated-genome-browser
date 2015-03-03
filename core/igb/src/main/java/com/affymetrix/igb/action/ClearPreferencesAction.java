@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -13,7 +12,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
-@Component(name = ClearPreferencesAction.COMPONENT_NAME, immediate = true, provide = GenericAction.class)
 public class ClearPreferencesAction extends GenericAction {
     
     public static final String COMPONENT_NAME = "ClearPreferencesAction";

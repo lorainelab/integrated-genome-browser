@@ -36,6 +36,7 @@ import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -101,10 +102,35 @@ public class IGB extends Application
     private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
-    public static volatile String commandLineBatchFileStr = null; // Used to run batch file actions if passed via command-line
-    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-    public static final boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac");
-    public static final boolean IS_LINUX = System.getProperty("os.name").toLowerCase().contains("linux");
+    private JFrame frm;
+    private JRPMenuBar mbar;
+    private IGBToolBar toolbar;
+    private SeqMapView mapView;
+    private AnnotatedSeqGroup prev_selected_group = null;
+    private BioSeq prev_selected_seq = null;
+    public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
+    private IWindowService windowService;
+    private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
+    final public static boolean IS_WINDOWS
+            = System.getProperty("os.name").toLowerCase().contains("windows");
+    final public static boolean IS_MAC
+            = System.getProperty("os.name").toLowerCase().contains("mac");
+    final public static boolean IS_LINUX
+            = System.getProperty("os.name").toLowerCase().contains("linux");
+
+    public IGB() {
+        super();
+    }
+
+    @Override
+    public SeqMapView getMapView() {
+        return mapView;
+    }
+
+    @Override
+    public JFrame getFrame() {
+        return frm;
+    }
 
     private static void loadSynonyms(String file, SynonymLookup lookup) {
         InputStream istr = null;
@@ -233,28 +259,6 @@ public class IGB extends Application
         }
         return version_info;
     }
-    private JFrame frm;
-    private JMenuBar mbar;
-    private IGBToolBar toolbar;
-    private SeqMapView mapView;
-    private AnnotatedSeqGroup prev_selected_group = null;
-    private BioSeq prev_selected_seq = null;
-    private IWindowService windowService;
-    private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
-
-    public IGB() {
-        super();
-    }
-
-    @Override
-    public SeqMapView getMapView() {
-        return mapView;
-    }
-
-    @Override
-    public JFrame getFrame() {
-        return frm;
-    }
 
     public void init(String[] args, BundleContext bundleContext) {
         logger.debug("Setting look and feel");
@@ -279,7 +283,7 @@ public class IGB extends Application
             }
         }
         frm = new JFrame(APP_NAME + " " + APP_VERSION);
-        mbar = new JMenuBar();
+        mbar = new JRPMenuBar();
         frm.setJMenuBar(mbar);
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default

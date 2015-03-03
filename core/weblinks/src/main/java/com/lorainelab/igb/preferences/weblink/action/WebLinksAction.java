@@ -3,6 +3,7 @@ package com.lorainelab.igb.preferences.weblink.action;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
@@ -19,14 +20,14 @@ public class WebLinksAction extends GenericAction implements IgbMenuItemProvider
     public static final String COMPONENT_NAME = "WebLinksAction";
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private WebLinkDisplayProvider webLinkDisplayProvider;
-    private JMenuItem webLinksMenuEntry;
+    private JRPMenuItem webLinksMenuEntry;
 
     public WebLinksAction() {
         super(BUNDLE.getString("configureWebLinks"),
                 "16x16/categories/applications-internet.png",
                 "22x22/categories/applications-internet.png");
         putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
-        webLinksMenuEntry = new JMenuItem(this);
+        webLinksMenuEntry = new JRPMenuItem("IGB_PLUGIN" + COMPONENT_NAME, this);
     }
 
     @Reference(optional = false)
@@ -46,12 +47,12 @@ public class WebLinksAction extends GenericAction implements IgbMenuItemProvider
     }
 
     @Override
-    public JMenuItem getMenuItem() {
+    public JRPMenuItem getMenuItem() {
         return webLinksMenuEntry;
     }
 
     @Override
-    public int getMenuItemPosition() {
+    public int getMenuItemWeight() {
         return -1;
     }
 

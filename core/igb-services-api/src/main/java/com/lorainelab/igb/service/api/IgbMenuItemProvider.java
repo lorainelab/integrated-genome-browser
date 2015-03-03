@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services.window.menus;
+package com.lorainelab.igb.service.api;
 
 import com.affymetrix.igb.swing.JRPMenuItem;
 import javax.swing.JMenuItem;

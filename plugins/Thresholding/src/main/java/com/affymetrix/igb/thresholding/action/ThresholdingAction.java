@@ -69,12 +69,12 @@ public class ThresholdingAction extends GenericAction implements IgbMenuItemProv
     }
 
     @Override
-    public JMenuItem getMenuItem() {
+    public JRPMenuItem getMenuItem() {
         return thresholdingMenuItem;
     }
 
     @Override
-    public int getMenuItemPosition() {
+    public int getMenuItemWeight() {
         return -1;
     }
 

@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
@@ -132,7 +133,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     @Override
-    public void setTabsMenu(JMenuBar mbar) {
+    public void setTabsMenu(JRPMenuBar mbar) {
+        int menuItemCounter = 0;
         this.tabsMenu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"), 5);
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
@@ -145,7 +147,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                             public void actionPerformed(ActionEvent e) {
                                 setTabState(((JTabbedTrayPane) tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
                             }
-                        }
+                        },
+                        menuItemCounter++
                 );
                 change_tab_state_item.setEnabled(false);
                 MenuUtil.addToMenu(tabsMenu, change_tab_state_item);
@@ -163,7 +166,8 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                             public void actionPerformed(ActionEvent e) {
                                 ((JTabbedTrayPane) tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);
                             }
-                        }
+                        },
+                        menuItemCounter++
                 );
                 move_tabbed_panel_to_window_item.setEnabled(false);
                 MenuUtil.addToMenu(tabsMenu, move_tabbed_panel_to_window_item);

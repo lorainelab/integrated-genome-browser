@@ -69,11 +69,7 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
         if (newMenuItem instanceof WeightedJRPWidget) {
             if (((WeightedJRPWidget) newMenuItem).getWeight() != -1) {
                 int loc = WeightUtil.locationToAdd(menuItemComponents, (WeightedJRPWidget) newMenuItem);
-                if (loc == -1) {
-                    menuItemComponents.add((WeightedJRPWidget) newMenuItem);
-                } else {
                     menuItemComponents.add(loc, (WeightedJRPWidget) newMenuItem);
-                }
                 return (JMenuItem) super.add(newMenuItem, loc);
             } else {
                 return (JMenuItem) super.add(newMenuItem, -1);

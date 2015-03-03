@@ -3,12 +3,13 @@ package com.affymetrix.igb.tutorial;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
+import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.services.SimpleServiceRegistrar;
 import com.lorainelab.igb.services.XServiceRegistrar;
-import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.window.service.IWindowService;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +94,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
                             String name = (String) tutorialNames.nextElement();
                             String description = (String) tutorials.get(name);
                             RunTutorialAction rta = new RunTutorialAction(tutorialManager, description, tutorialUri + "/" + name);
-                            JMenuItem item = new JMenuItem(rta);
+                            JMenuItem item = new JRPMenuItem(rta.getId(), rta);
                             tutorialMenu.add(item);
                         }
                     }

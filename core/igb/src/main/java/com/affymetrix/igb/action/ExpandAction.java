@@ -29,4 +29,9 @@ public class ExpandAction extends CollapseExpandActionA {
         setEnabled(hasCollapsed);
         CollapseAction.getAction().setEnabled(hasExpanded);
     }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

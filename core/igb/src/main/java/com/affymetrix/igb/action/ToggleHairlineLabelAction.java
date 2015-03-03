@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
  * anuj4159 $
  */
 public class ToggleHairlineLabelAction extends GenericAction {
-
+    
     private static final long serialVersionUID = 1;
     private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 
@@ -37,5 +37,10 @@ public class ToggleHairlineLabelAction extends GenericAction {
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

@@ -7,40 +7,21 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.prefs;
+package com.lorainelab.igb.keystrokes;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
-import com.affymetrix.igb.action.ClampViewAction;
-import com.affymetrix.igb.action.ClearPreferencesAction;
-import com.affymetrix.igb.action.CollapseAction;
-import com.affymetrix.igb.action.DrawCollapseControlAction;
-import com.affymetrix.igb.action.ExpandAction;
-import com.affymetrix.igb.action.FloatTiersAction;
-import com.affymetrix.igb.action.PreferencesHelpAction;
-import com.affymetrix.igb.action.PreferencesHelpTabAction;
-import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
-import com.affymetrix.igb.action.ShowLockedTrackIconAction;
-import com.affymetrix.igb.action.ShowMinusStrandAction;
-import com.affymetrix.igb.action.ShowOneTierAction;
-import com.affymetrix.igb.action.ShowPlusStrandAction;
-import com.affymetrix.igb.action.ShowTwoTiersAction;
-import com.affymetrix.igb.action.StartAutoScrollAction;
-import com.affymetrix.igb.action.StopAutoScrollAction;
-import com.affymetrix.igb.action.ToggleEdgeMatchingAction;
-import com.affymetrix.igb.action.ToggleHairlineAction;
-import com.affymetrix.igb.action.ToggleHairlineLabelAction;
-import com.affymetrix.igb.action.UnFloatTiersAction;
-import com.affymetrix.igb.shared.LockTierHeightAction;
-import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -60,14 +41,17 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import org.slf4j.LoggerFactory;
 
 /**
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
+@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = KeyStrokesView.class)
 public final class KeyStrokesView {
 
+    public static final String COMPONENT_NAME = "KeyStrokesView";
     public final JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
-    public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
+    public KeyStrokeViewTableModel model;
     public static final int IconColumn = 0;
     public static final int ToolbarColumn = 1;
     public static final int ActionColumn = 2;
@@ -78,6 +62,7 @@ public final class KeyStrokesView {
     // private final TableRowSorter<DefaultTableModel> sorter;
     public KeyStrokeEditPanel edit_panel = null;
     private int selected = -1;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
 
     private ListSelectionListener listSelectionListener = new ListSelectionListener() {
         /**
@@ -113,6 +98,10 @@ public final class KeyStrokesView {
     public KeyStrokesView() {
         super();
         lsm = table.getSelectionModel();
+    }
+
+    @Activate
+    public void activate() {
         lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         table.setCellSelectionEnabled(false);
@@ -170,18 +159,6 @@ public final class KeyStrokesView {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
                             errMsg);
                 }
-//				if(ga1 != null && ga2 != null){
-//					boolean ga1cnb = ga1.getLargeIconPath() == null || smallTimeActions.contains(ga1);
-//					boolean ga2cnb = ga2.getLargeIconPath() == null || smallTimeActions.contains(ga2);
-//
-//					if(ga1cnb && !ga2cnb){
-//						return 1;
-//					}
-//
-//					if(!ga1cnb && ga2cnb){
-//						return -1;
-//					}
-//				}
                 return getSortField(ga1).compareTo(getSortField(ga2));
             }
         });
@@ -204,46 +181,6 @@ public final class KeyStrokesView {
             }
         }
         return actions;
-    }
-
-    /**
-     * These are actions that are inappropriate for the tool bar. This is kind
-     * of a kludge until we can figure out a better way.
-     */
-    static final Set<GenericAction> smallTimeActions = new HashSet<>();
-
-    static {
-        // Prefs Panel Only
-        //smallTimeActions.add(ExportPreferencesAction.getAction());
-        //smallTimeActions.add(ImportPreferencesAction.getAction());
-        smallTimeActions.add(ClearPreferencesAction.getAction());
-        smallTimeActions.add(PreferencesHelpAction.getAction());
-        smallTimeActions.add(PreferencesHelpTabAction.getAction());
-        // Actions that have a toggle should not be in the tool bar.
-        // Their toggles can be, but the actions have large icons (for the toggle).
-        // No. Michael says leave these in. 2012-06-15
-        smallTimeActions.add(ExpandAction.getAction());
-        smallTimeActions.add(CollapseAction.getAction());
-        smallTimeActions.add(ShowOneTierAction.getAction());
-        smallTimeActions.add(ShowTwoTiersAction.getAction());
-        smallTimeActions.add(FloatTiersAction.getAction());
-        smallTimeActions.add(UnFloatTiersAction.getAction());
-        smallTimeActions.add(LockTierHeightAction.getAction());
-        smallTimeActions.add(UnlockTierHeightAction.getAction());
-        smallTimeActions.add(StartAutoScrollAction.getAction());
-        smallTimeActions.add(StopAutoScrollAction.getAction());
-
-        //Do not show any of selectable actions
-        smallTimeActions.add(ShowPlusStrandAction.getAction());
-        smallTimeActions.add(ShowMinusStrandAction.getAction());
-        smallTimeActions.add(ClampViewAction.getAction());
-//		smallTimeActions.add(ShrinkWrapAction.getAction());
-        smallTimeActions.add(ToggleHairlineAction.getAction());
-        smallTimeActions.add(ToggleHairlineLabelAction.getAction());
-        smallTimeActions.add(DrawCollapseControlAction.getAction());
-        smallTimeActions.add(ShowIGBTrackMarkAction.getAction());
-        smallTimeActions.add(ToggleEdgeMatchingAction.getAction());
-        smallTimeActions.add(ShowLockedTrackIconAction.getAction());
     }
 
     /**
@@ -275,7 +212,7 @@ public final class KeyStrokesView {
                 if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
-                if (smallTimeActions.contains(genericAction)) {
+                if(!genericAction.isToolbarAction()) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
                 rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
@@ -283,6 +220,11 @@ public final class KeyStrokesView {
             }
         }
         return rows;
+    }
+
+    @Reference(optional = false)
+    public void setModel(KeyStrokeViewTableModel model) {
+        this.model = model;
     }
 
     /**

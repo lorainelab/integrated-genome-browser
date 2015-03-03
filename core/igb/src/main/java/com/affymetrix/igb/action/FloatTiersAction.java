@@ -98,4 +98,9 @@ public class FloatTiersAction extends SeqMapViewActionA {
             v.postSelections(); // to disable partner.
         });
     }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

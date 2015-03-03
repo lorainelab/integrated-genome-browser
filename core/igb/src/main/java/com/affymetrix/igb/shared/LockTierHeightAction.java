@@ -63,4 +63,8 @@ public class LockTierHeightAction extends TierHeightAction {
         dtg.setHeightFixed(true);
     }
 
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

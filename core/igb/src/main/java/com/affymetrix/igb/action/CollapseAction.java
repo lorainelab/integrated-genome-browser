@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
 
 public class CollapseAction extends CollapseExpandActionA {
-
+    
     private static final long serialVersionUID = 1L;
     private static final CollapseAction ACTION = new CollapseAction();
 
@@ -28,5 +28,10 @@ public class CollapseAction extends CollapseExpandActionA {
     protected void processChange(boolean hasCollapsed, boolean hasExpanded) {
         setEnabled(hasExpanded);
         ExpandAction.getAction().setEnabled(hasCollapsed);
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

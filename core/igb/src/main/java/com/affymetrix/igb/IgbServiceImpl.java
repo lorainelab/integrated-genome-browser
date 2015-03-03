@@ -490,4 +490,16 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         return builder.build();
     }
 
+    @Override
+    public int addToolbarAction(GenericAction genericAction) {
+        IGB igb = (IGB) IGB.getSingleton();
+        return igb.addToolbarAction(genericAction);
+    }
+
+    @Override
+    public void removeToolbarAction(GenericAction action) {
+        IGB igb = (IGB) IGB.getSingleton();
+        igb.removeToolbarAction(action);
+    }
+
 }

@@ -27,5 +27,9 @@ public class ToggleEdgeMatchingAction extends GenericAction {
     public static ToggleEdgeMatchingAction getAction() {
         return ACTION;
     }
-
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

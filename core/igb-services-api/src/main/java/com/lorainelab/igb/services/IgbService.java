@@ -233,4 +233,8 @@ public interface IgbService {
     public List<String> getLoadedFeatureNames();
 
     public void bringToFront();
+    
+    public int addToolbarAction(GenericAction genericAction);
+    
+    public void removeToolbarAction(GenericAction action);
 }

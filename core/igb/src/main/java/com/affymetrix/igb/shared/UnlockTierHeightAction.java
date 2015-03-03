@@ -54,4 +54,9 @@ public class UnlockTierHeightAction extends TierHeightAction {
     protected void setHeightFixed(DefaultTierGlyph dtg) {
         dtg.setHeightFixed(false);
     }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

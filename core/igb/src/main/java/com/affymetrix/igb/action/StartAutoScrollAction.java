@@ -54,4 +54,9 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 //	public boolean isEnabled(){
 //		return getSeqMapView().getViewSeq() != null;
 //	}
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

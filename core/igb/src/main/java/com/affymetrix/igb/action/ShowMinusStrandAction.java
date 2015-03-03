@@ -9,8 +9,6 @@ import java.awt.event.ActionEvent;
 
 public class ShowMinusStrandAction extends GenericAction {
     
-    public static final String COMPONENT_NAME = "ShowMinusStrandAction";
-
     private static final long serialVersionUID = 1L;
     private static final ShowMinusStrandAction ACTION = new ShowMinusStrandAction();
 

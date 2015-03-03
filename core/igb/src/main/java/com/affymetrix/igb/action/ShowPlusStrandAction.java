@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 
 public class ShowPlusStrandAction extends GenericAction {
 
-    public static final String COMPONENT_NAME = "ShowPlusStrandAction";
     private static final long serialVersionUID = 1L;
     private static final ShowPlusStrandAction ACTION = new ShowPlusStrandAction();
 

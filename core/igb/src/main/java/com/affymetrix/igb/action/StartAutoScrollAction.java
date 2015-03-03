@@ -12,7 +12,6 @@ import java.awt.geom.Rectangle2D;
  */
 public class StartAutoScrollAction extends SeqMapViewActionA {
 
-    public static final String COMPONENT_NAME = "StartAutoScrollAction";
     private static final long serialVersionUID = 1l;
     private static StartAutoScrollAction ACTION = new StartAutoScrollAction();
 

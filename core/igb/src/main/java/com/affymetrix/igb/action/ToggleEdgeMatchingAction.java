@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
  */
 public class ToggleEdgeMatchingAction extends GenericAction {
 
-    public static final String COMPONENT_NAME = "ToggleEdgeMatchingAction";
     private static final long serialVersionUID = 1;
     private static final ToggleEdgeMatchingAction ACTION = new ToggleEdgeMatchingAction();
 

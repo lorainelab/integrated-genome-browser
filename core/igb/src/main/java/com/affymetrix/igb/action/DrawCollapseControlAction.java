@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
  */
 public class DrawCollapseControlAction extends GenericAction {
 
-    public static final String COMPONENT_NAME = "DrawCollapseControlAction";
     private static final long serialVersionUID = 1L;
     private static final DrawCollapseControlAction ACTION = new DrawCollapseControlAction();
 

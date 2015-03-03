@@ -16,7 +16,6 @@ import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
  */
 public class UnlockTierHeightAction extends TierHeightAction {
 
-    public static final String COMPONENT_NAME = "UnlockTierHeightAction";
     private static final long serialVersionUID = 1L;
     private final static UnlockTierHeightAction unlockTierAction = new UnlockTierHeightAction();
 

@@ -7,7 +7,6 @@ import com.affymetrix.igb.IGBConstants;
 
 public class ExpandAction extends CollapseExpandActionA {
 
-    public static final String COMPONENT_NAME = "ExpandAction";
     private static final long serialVersionUID = 1L;
     private static final ExpandAction ACTION = new ExpandAction();
 

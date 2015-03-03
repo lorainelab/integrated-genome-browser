@@ -18,7 +18,6 @@ import javax.swing.SwingUtilities;
 
 public class FloatTiersAction extends SeqMapViewActionA {
 
-    public static final String COMPONENT_NAME = "FloatTiersAction";
     private static final long serialVersionUID = 1L;
 
     private static final FloatTiersAction ACTION = new FloatTiersAction();

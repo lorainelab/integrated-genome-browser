@@ -6,7 +6,6 @@ import com.affymetrix.igb.IGBConstants;
 
 public class ShowOneTierAction extends ShowStrandActionA {
 
-    public static final String COMPONENT_NAME = "ShowOneTierAction";
     private static final long serialVersionUID = 1L;
     private static final ShowOneTierAction ACTION = new ShowOneTierAction();
 

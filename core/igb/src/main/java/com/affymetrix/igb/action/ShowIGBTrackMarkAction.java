@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
  */
 public class ShowIGBTrackMarkAction extends SeqMapViewActionA {
 
-    public static final String COMPONENT_NAME = "ShowIGBTrackMarkAction";
     private static final long serialVersionUID = 1;
     private static final ShowIGBTrackMarkAction ACTION = new ShowIGBTrackMarkAction();
 

@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
  */
 public class ShowLockedTrackIconAction extends SeqMapViewActionA {
 
-    public static final String COMPONENT_NAME = "ShowLockedTrackIconAction";
     private static final long serialVersionUID = 1L;
     private static final ShowLockedTrackIconAction ACTION = new ShowLockedTrackIconAction();
 

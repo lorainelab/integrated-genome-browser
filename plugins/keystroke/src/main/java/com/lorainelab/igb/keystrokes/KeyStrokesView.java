@@ -100,7 +100,7 @@ public final class KeyStrokesView {
         super();
         lsm = table.getSelectionModel();
     }
-    
+
     @Activate
     public void activate() {
         lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -190,6 +190,19 @@ public final class KeyStrokesView {
      */
     static final Set<GenericAction> smallTimeActions = new HashSet<>();
 
+    /**
+     * Actions to be excluded from Toolbar: ClearPreferencesAction,
+     * PreferencesHelpAction, PreferencesHelpTabAction, ExpandAction,
+     * CollapseAction, ShowOneTierAction, ShowTwoTiersAction, FloatTiersAction,
+     * UnFloatTiersAction, LockTierHeightAction, UnlockTierHeightAction,
+     * StartAutoScrollAction, StopAutoScrollAction, ShowPlusStrandAction,
+     * ShowMinusStrandAction, ClampViewAction, ToggleHairlineAction,
+     * ToggleHairlineLabelAction, DrawCollapseControlAction,
+     * ShowIGBTrackMarkAction, ToggleEdgeMatchingAction,
+     * ShowLockedTrackIconAction
+     *
+     * @param action
+     */
     @Reference(optional = true, multiple = true, unbind = "removeSmallTimeAction", dynamic = true)
     public void addSmallTimeAction(GenericAction action) {
         if (!action.isToolbarAction()) {
@@ -205,39 +218,6 @@ public final class KeyStrokesView {
         logger.info("Action removed");
     }
 
-//    static {
-//        // Prefs Panel Only
-//        //smallTimeActions.add(ExportPreferencesAction.getAction());
-//        //smallTimeActions.add(ImportPreferencesAction.getAction());
-//        smallTimeActions.add(ClearPreferencesAction.getAction());
-//        smallTimeActions.add(PreferencesHelpAction.getAction());
-//        smallTimeActions.add(PreferencesHelpTabAction.getAction());
-//        // Actions that have a toggle should not be in the tool bar.
-//        // Their toggles can be, but the actions have large icons (for the toggle).
-//        // No. Michael says leave these in. 2012-06-15
-//        smallTimeActions.add(ExpandAction.getAction());
-//        smallTimeActions.add(CollapseAction.getAction());
-//        smallTimeActions.add(ShowOneTierAction.getAction());
-//        smallTimeActions.add(ShowTwoTiersAction.getAction());
-//        smallTimeActions.add(FloatTiersAction.getAction());
-//        smallTimeActions.add(UnFloatTiersAction.getAction());
-//        smallTimeActions.add(LockTierHeightAction.getAction());
-//        smallTimeActions.add(UnlockTierHeightAction.getAction());
-//        smallTimeActions.add(StartAutoScrollAction.getAction());
-//        smallTimeActions.add(StopAutoScrollAction.getAction());
-//
-//        //Do not show any of selectable actions
-//        smallTimeActions.add(ShowPlusStrandAction.getAction());
-//        smallTimeActions.add(ShowMinusStrandAction.getAction());
-//        smallTimeActions.add(ClampViewAction.getAction());
-////		smallTimeActions.add(ShrinkWrapAction.getAction());
-//        smallTimeActions.add(ToggleHairlineAction.getAction());
-//        smallTimeActions.add(ToggleHairlineLabelAction.getAction());
-//        smallTimeActions.add(DrawCollapseControlAction.getAction());
-//        smallTimeActions.add(ShowIGBTrackMarkAction.getAction());
-//        smallTimeActions.add(ToggleEdgeMatchingAction.getAction());
-//        smallTimeActions.add(ShowLockedTrackIconAction.getAction());
-//    }
     /**
      * Build the underlying data array. There is a fourth column, not shown in
      * the table, but needed by the setValue() method.
@@ -276,8 +256,8 @@ public final class KeyStrokesView {
         }
         return rows;
     }
-    
-    @Reference (optional = false)
+
+    @Reference(optional = false)
     public void setModel(KeyStrokeViewTableModel model) {
         this.model = model;
     }

@@ -16,7 +16,6 @@ import java.awt.event.KeyEvent;
  */
 public class ToggleHairlineLabelAction extends GenericAction {
     
-    public static final String COMPONENT_NAME = "ToggleHairlineLabelAction";
     private static final long serialVersionUID = 1;
     private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 

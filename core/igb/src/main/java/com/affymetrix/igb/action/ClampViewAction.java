@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
  * @version $Id: ClampViewAction.java 11335 2012-05-01 18:00:52Z anuj4159 $
  */
 public class ClampViewAction extends SeqMapViewActionA{
-    public static final String COMPONENT_NAME = "ClampViewAction";
     private static final long serialVersionUID = 1l;
     private static final ClampViewAction ACTION = new ClampViewAction();
 

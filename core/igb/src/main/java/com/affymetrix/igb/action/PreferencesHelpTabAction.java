@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 
 public class PreferencesHelpTabAction extends HelpActionA {
 
-    public static final String COMPONENT_NAME = "PreferencesHelpTabAction";
     private static final long serialVersionUID = 1L;
     private static final PreferencesHelpTabAction ACTION = new PreferencesHelpTabAction();
     private final static String HELP_TAB_ACTION_COMMAND = PreferencesPanel.WINDOW_NAME + " / " + BUNDLE.getString("PreferencesHelpForCurrentTab");

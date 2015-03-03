@@ -25,7 +25,7 @@ public class WeightUtil {
                 }
             }
             if(prevMenuItem == null) {
-                return 0;
+                return -1;
             } else {
                 return menuItems.indexOf(prevMenuItem) + 1;
             }

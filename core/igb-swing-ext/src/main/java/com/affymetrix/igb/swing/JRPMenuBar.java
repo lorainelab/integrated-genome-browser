@@ -26,9 +26,13 @@ public class JRPMenuBar extends JMenuBar {
     public void add(JMenu newMenu, int index) {
 
         if (newMenu instanceof WeightedJRPWidget) {
-            int loc = WeightUtil.locationToAdd(menuComponents, (WeightedJRPWidget)newMenu);
+            int loc = WeightUtil.locationToAdd(menuComponents, (WeightedJRPWidget) newMenu);
             super.add(newMenu, loc);
-            menuComponents.add(loc, (WeightedJRPWidget)newMenu);
+            if (loc == -1) {
+                menuComponents.add((WeightedJRPWidget) newMenu);
+            } else {
+                menuComponents.add(loc, (WeightedJRPWidget) newMenu);
+            }
         } else {
             throw new IllegalArgumentException("Only add WeightedJRPWidget to menu");
         }

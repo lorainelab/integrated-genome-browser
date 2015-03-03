@@ -33,9 +33,9 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
         init();
     }
 
-    public JRPMenu(String id, String s, int index) {
+    public JRPMenu(String id, String s, int weight) {
         this(id, s);
-        this.weight = index;
+        this.weight = weight;
     }
 
     public JRPMenu(String id, String s, boolean b) {
@@ -69,7 +69,11 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
         if (newMenuItem instanceof WeightedJRPWidget) {
             if (((WeightedJRPWidget) newMenuItem).getWeight() != -1) {
                 int loc = WeightUtil.locationToAdd(menuItemComponents, (WeightedJRPWidget) newMenuItem);
-                menuItemComponents.add(loc, (WeightedJRPWidget) newMenuItem);
+                if (loc == -1) {
+                    menuItemComponents.add((WeightedJRPWidget) newMenuItem);
+                } else {
+                    menuItemComponents.add(loc, (WeightedJRPWidget) newMenuItem);
+                }
                 return (JMenuItem) super.add(newMenuItem, loc);
             } else {
                 return (JMenuItem) super.add(newMenuItem, -1);

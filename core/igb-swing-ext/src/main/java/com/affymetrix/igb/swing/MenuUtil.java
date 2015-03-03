@@ -71,9 +71,9 @@ public abstract class MenuUtil {
         return null;
     }
 
-    private static void addMenu(JRPMenuBar main_menu_bar, JMenu new_menu, int index) {
+    private static void addMenu(JRPMenuBar main_menu_bar, JMenu new_menu, int weight) {
         try {
-            main_menu_bar.add(new_menu, index);
+            main_menu_bar.add(new_menu, weight);
         } catch (IllegalArgumentException ex) {
             addMenu(main_menu_bar, new_menu);
         }

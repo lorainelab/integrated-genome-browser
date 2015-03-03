@@ -6,6 +6,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import static com.affymetrix.igb.survey.ShowSurvey.showSurvey;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.io.Resources;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.XServiceRegistrar;
@@ -67,7 +68,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
                 final Predicate<Survey> isExpiredSurvey = survey -> today.compareTo(survey.getStart()) >= 0 && today.compareTo(survey.getEnd()) < 0;
 
                 surveys.stream().filter(isExpiredSurvey).forEach(survey -> {
-                    JMenuItem item = new JMenuItem(
+                    JMenuItem item = new JRPMenuItem(survey.getName(),
                             new GenericAction(survey.getName(), null, null) {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {

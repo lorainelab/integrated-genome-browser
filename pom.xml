@@ -432,7 +432,7 @@
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
-                <artifactId>Keybinding-registry</artifactId>
+                <artifactId>keybinding-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

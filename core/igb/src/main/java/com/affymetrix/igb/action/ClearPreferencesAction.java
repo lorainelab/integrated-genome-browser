@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 
 public class ClearPreferencesAction extends GenericAction {
     
-    public static final String COMPONENT_NAME = "ClearPreferencesAction";
     private static final long serialVersionUID = 1l;
     private static final ClearPreferencesAction ACTION = new ClearPreferencesAction();
 

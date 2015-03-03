@@ -77,7 +77,7 @@
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
-            <artifactId>Keybinding-registry</artifactId>
+            <artifactId>keybinding-registry</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

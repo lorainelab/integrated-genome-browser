@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.gui;
 
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;

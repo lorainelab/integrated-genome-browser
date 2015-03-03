@@ -1,9 +1,9 @@
-package com.affymetrix.igb.scene.layout;
+package com.affymetrix.igb.view.layout;
 
+import com.affymetrix.igb.view.layout.FasterExpandPacker;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyphPosComparator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.tieredmap.CollapsedTierPacker;
 import java.awt.Rectangle;
 import java.util.Collections;
 
@@ -11,7 +11,7 @@ import java.util.Collections;
  *
  * @author hiralv
  */
-public class GraphCollapsedPacker extends CollapsedTierPacker {
+public class GraphFasterExpandPacker extends FasterExpandPacker {
 
     private static final GraphGlyphPosComparator comparator = new GraphGlyphPosComparator();
 
@@ -22,9 +22,6 @@ public class GraphCollapsedPacker extends CollapsedTierPacker {
             return null;
         }
         Collections.sort(parent.getChildren(), comparator);
-        Collections.reverse(parent.getChildren());
-        maxHeight = 0;
         return super.pack(parent, view);
     }
-
 }

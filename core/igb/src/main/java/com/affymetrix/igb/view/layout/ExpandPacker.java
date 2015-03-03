@@ -1,4 +1,4 @@
-package com.affymetrix.igb.scene.layout;
+package com.affymetrix.igb.view.layout;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;

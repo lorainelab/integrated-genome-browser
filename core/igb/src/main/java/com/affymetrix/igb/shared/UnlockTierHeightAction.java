@@ -6,7 +6,7 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.TierHeightAction;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyLocked;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
 
 /**

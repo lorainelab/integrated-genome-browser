@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.gylph;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -26,20 +26,17 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
-import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.CustomLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
 import static com.affymetrix.igb.view.SeqMapView.axisFont;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.google.common.math.IntMath;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -223,9 +220,7 @@ public class AnnotationStation extends javax.swing.JFrame {
         addAnnotationTier = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(1100, 720));
         setMinimumSize(new java.awt.Dimension(1100, 0));
-        setPreferredSize(new Rectangle(0, 0, 1100, 720).getSize());
         setResizable(false);
 
         startFieldLabel.setText("Start");

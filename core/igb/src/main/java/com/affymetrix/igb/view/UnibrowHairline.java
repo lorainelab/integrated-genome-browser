@@ -58,18 +58,6 @@ public final class UnibrowHairline {
         }
 
         map = the_map;
-    //visible_range = new VisibleRange();
-
-        // Move the hairline when the user clicks with mouse button #1
-/*
-         mouse_listener = new MouseAdapter() {
-         public void mouseReleased( MouseEvent e ) {
-         if (0 != (e.getModifiers() & MouseEvent.BUTTON1_MASK)) {
-         setSpot(((NeoMouseEvent)e).getCoordX());
-         }
-         }
-         };
-         */
         pre_draw_listener = e -> {
             if (hairline.getShowHairLine()) {
                 double start = e.getCoordBox().x;
@@ -83,28 +71,22 @@ public final class UnibrowHairline {
         };
 
         hairline = new Shadow(map);
-        //hairline.setUseXOR(true);
         hairline.setSelectable(false);
         hairline.setLabeled(false);
-        // hairline.setFont(DEFAULT_FONT);
         setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
         setShowHairlineLabel(PreferenceUtils.getBooleanParam(PREF_HAIRLINE_LABELED, default_show_hairline_label));
 
-        //map.addMouseListener( mouse_listener );
-        //visible_range.addListener( hairline );
         map.getView().addPreDrawViewListener(pre_draw_listener);
 
-        pcl = new PreferenceChangeListener() {
-            public void preferenceChange(PreferenceChangeEvent pce) {
-                if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
-                    return;
-                }
-                if (pce.getKey().equals(PREF_KEEP_HAIRLINE_IN_VIEW)) {
-                    setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
-                }
-                if (pce.getKey().equals(PREF_HAIRLINE_LABELED)) {
-                    setShowHairlineLabel(PreferenceUtils.getBooleanParam(PREF_HAIRLINE_LABELED, default_show_hairline_label));
-                }
+        pcl = (PreferenceChangeEvent pce) -> {
+            if (!pce.getNode().equals(PreferenceUtils.getTopNode())) {
+                return;
+            }
+            if (pce.getKey().equals(PREF_KEEP_HAIRLINE_IN_VIEW)) {
+                setKeepHairlineInView(PreferenceUtils.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
+            }
+            if (pce.getKey().equals(PREF_HAIRLINE_LABELED)) {
+                setShowHairlineLabel(PreferenceUtils.getBooleanParam(PREF_HAIRLINE_LABELED, default_show_hairline_label));
             }
         };
 
@@ -153,13 +135,6 @@ public final class UnibrowHairline {
     }
 
     /**
-     * Returns the actual shadow glyph.
-     */
-    public Shadow getShadow() {
-        return hairline;
-    }
-
-    /**
      * Call this method to get rid of circular references, to make
      * garbage collection easier.
      */
@@ -167,17 +142,9 @@ public final class UnibrowHairline {
         if (map != null && pre_draw_listener != null) {
             map.getView().removePreDrawViewListener(pre_draw_listener);
         }
-        //if (visible_range != null && hairline != null) {
-        //  visible_range.removeListener(hairline);
-        //}
-        //if (map != null && mouse_listener != null) {
-        //  map.removeMouseListener(mouse_listener);
-        //}
         if (hairline != null) {
             hairline.destroy();
         }
-        //visible_range = null;
-        //mouse_listener = null;
         hairline = null;
         map = null;
         if (pcl != null) {

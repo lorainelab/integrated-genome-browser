@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.gui;
 
 /**
  *
@@ -44,15 +44,27 @@ public class PrintDialogGUI extends javax.swing.JPanel {
 
         wholeFrameRB.setText("Whole Frame");
         buttonGroup.add(wholeFrameRB);
-        wholeFrameRB.addActionListener(this::wholeFrameRBActionPerformed);
+        wholeFrameRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wholeFrameRBActionPerformed(evt);
+            }
+        });
 
         mainViewRB.setText("Main View");
         buttonGroup.add(mainViewRB);
-        mainViewRB.addActionListener(this::mainViewRBActionPerformed);
+        mainViewRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mainViewRBActionPerformed(evt);
+            }
+        });
 
         mainViewWithLabelRB.setText("Main View (With Labels)");
         buttonGroup.add(mainViewWithLabelRB);
-        mainViewWithLabelRB.addActionListener(this::mainViewWithLabelRBActionPerformed);
+        mainViewWithLabelRB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mainViewWithLabelRBActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout buttonsPanelLayout = new org.jdesktop.layout.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
@@ -99,10 +111,18 @@ public class PrintDialogGUI extends javax.swing.JPanel {
         );
 
         Print.setText("Ok");
-        Print.addActionListener(this::PrintActionPerformed);
+        Print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PrintActionPerformed(evt);
+            }
+        });
 
         Cancel.setText("Cancel");
-        Cancel.addActionListener(this::CancelActionPerformed);
+        Cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);

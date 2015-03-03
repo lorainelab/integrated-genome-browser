@@ -1,6 +1,6 @@
-package com.affymetrix.igb.scene.layout;
+package com.affymetrix.igb.view.layout;
 
-import com.affymetrix.igb.scene.layout.ExpandPacker;
+import com.affymetrix.igb.view.layout.ExpandPacker;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;

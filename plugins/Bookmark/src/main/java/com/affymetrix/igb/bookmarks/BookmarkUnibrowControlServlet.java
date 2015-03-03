@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -28,15 +27,16 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.model.Bookmark.SYM;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import com.lorainelab.igb.services.IgbService;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -151,7 +151,7 @@ public final class BookmarkUnibrowControlServlet {
                                 //get visible span
                                 SeqSpan currentSpan = currentSeqMap.getVisibleSpan();
                                 if (currentSpan != null && currentSpan.getBioSeq() != null) {
-                                    //check genome version, if same then set coordinates								
+                                    //check genome version, if same then set coordinates
                                     AnnotatedSeqGroup currentGroup = currentSpan.getBioSeq().getSeqGroup();
                                     if (!isGalaxyBookmark && (currentGroup != null && currentGroup.equals(bookMarkGroup))) {
                                         start = currentSpan.getStart();
@@ -253,7 +253,7 @@ public final class BookmarkUnibrowControlServlet {
                                         //combo_style.setCollapsed(true);
                                         //combo_style.setLabelBackground(igbService.getDefaultBackgroundColor());
                                         combo_style.setBackground(igbService.getDefaultBackgroundColor());
-                                        //combo_style.setLabelForeground(igbService.getDefaultForegroundColor());	
+                                        //combo_style.setLabelForeground(igbService.getDefaultForegroundColor());
                                         combo_style.setForeground(igbService.getDefaultForegroundColor());
                                         combo_style.setTrackNameSize(igbService.getDefaultTrackSize());
                                         combos.put(combo_name, combo_style);
@@ -564,7 +564,7 @@ public final class BookmarkUnibrowControlServlet {
         }
 
         if (book_group == null) {
-            return Optional.fromNullable(null);
+            return Optional.absent();
         }
 
         final BioSeq book_seq = determineSeq(seqid, book_group);

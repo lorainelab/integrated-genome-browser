@@ -16,8 +16,6 @@ import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.ScoredContainerSym;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;

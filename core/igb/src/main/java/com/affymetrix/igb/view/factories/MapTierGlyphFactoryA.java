@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.view.factories;
 
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
 import com.affymetrix.genometry.BioSeq;

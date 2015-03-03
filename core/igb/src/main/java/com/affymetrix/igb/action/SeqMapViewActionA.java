@@ -2,15 +2,11 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import java.awt.event.ActionEvent;
-import java.util.List;
 
 /**
  * Superclass of all IGB actions that must refer to a {@link SeqMapView}. These
@@ -60,17 +56,6 @@ public abstract class SeqMapViewActionA extends GenericAction {
 
     protected AffyLabelledTierMap getTierMap() {
         return ((AffyLabelledTierMap) getSeqMapView().getSeqMap());
-    }
-
-    protected List<TierGlyph> getTrackList(ActionEvent e) {
-        List<TierGlyph> trackList;
-        Object src = e.getSource();
-        if (src instanceof TrackListProvider) {
-            trackList = ((TrackListProvider) src).getTrackList();
-        } else {
-            trackList = getTierManager().getSelectedTiers();
-        }
-        return trackList;
     }
 
     protected AffyTieredMap getLabelMap() {

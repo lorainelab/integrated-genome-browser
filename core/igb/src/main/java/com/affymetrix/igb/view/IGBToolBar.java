@@ -7,13 +7,10 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
-import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.swing.JRPButton;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -30,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,8 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 
 /**
  *
@@ -169,11 +163,6 @@ public class IGBToolBar extends JToolBar {
             button.setHideActionText(true);
             //button.setBorder(new LineBorder(Color.BLACK));
             button.setMargin(new Insets(0, 0, 0, 0));
-            if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
-                UIDefaults def = new UIDefaults();
-                def.put("Button.contentMargins", new Insets(4, 4, 4, 4));
-                button.putClientProperty("Nimbus.Overrides", def);
-            }
             if (genericAction instanceof ContinuousAction) {
                 button.addMouseListener(continuousActionListener);
             }
@@ -293,7 +282,7 @@ public class IGBToolBar extends JToolBar {
         }
     };
 
-    private class JRPButtonTLP extends JRPButton implements TrackListProvider {
+    private class JRPButtonTLP extends JRPButton {
 
         private static final long serialVersionUID = 1L;
         private int index;
@@ -321,10 +310,6 @@ public class IGBToolBar extends JToolBar {
             super.fireActionPerformed(evt);
         }
 
-        @Override
-        public List<TierGlyph> getTrackList() {
-            return Application.getSingleton().getMapView().getTierManager().getSelectedTiers();
-        }
     }
 
 }

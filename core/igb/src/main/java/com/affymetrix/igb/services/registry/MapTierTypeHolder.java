@@ -1,8 +1,9 @@
-package com.affymetrix.igb.shared;
+package com.affymetrix.igb.services.registry;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
+import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

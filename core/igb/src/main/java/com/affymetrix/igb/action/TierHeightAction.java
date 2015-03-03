@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 
 /**
  *

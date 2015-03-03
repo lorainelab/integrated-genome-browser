@@ -32,7 +32,7 @@ import com.affymetrix.genoviz.glyph.EfficientOutlineContGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
-import com.affymetrix.igb.scene.layout.ExpandPacker;
+import com.affymetrix.igb.view.layout.ExpandPacker;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;

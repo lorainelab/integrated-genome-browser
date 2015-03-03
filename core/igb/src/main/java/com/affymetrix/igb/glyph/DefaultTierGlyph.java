@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view.factories;
+package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -11,8 +11,17 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.scene.layout.CollapsePacker;
+import static com.affymetrix.igb.view.factories.AbstractTierGlyph.useLabel;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
+import com.affymetrix.igb.view.layout.CollapsePacker;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.AXIS;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.BOTH;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.NONE;
+import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -28,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 
 /**
  * copy / modification of TierGlyph for ViewModeGlyph for annotations
@@ -252,39 +262,38 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         }
     }
 
+    final Predicate<? super GlyphI> isTransientGlyph = child -> child instanceof TransientGlyph;
+    final Predicate<? super GlyphI> isNotTransientGlyph = isTransientGlyph.negate();
+    final Predicate<? super GlyphI> isOverlapped = child -> child.isOverlapped();
+
     @Override
     public void superDrawChildren(ViewI view) {
-        int max_depth = getStyleDepth();
-        try {
-            if (getChildren() != null) {
-                GlyphI child;
-                int numChildren = getChildren().size();
-                for (int i = 0; i < numChildren; i++) {
-                    child = getChildren().get(i);
-                    // TransientGlyphs are usually NOT drawn in standard drawTraversal
-                    if (!(child instanceof TransientGlyph) || drawTransients()) {
-                        if (child.isOverlapped() && this.tierType == TierType.ANNOTATION) {
-                            if (child.getRowNumber() < max_depth + MAX_CHILD_IN_SLOP_ROW) {
-                                if (!style.getCollapsed()) {
-                                    Graphics2D g = view.getGraphics();
-                                    Composite dac = g.getComposite();
-                                    g.setComposite(ac);
-                                    child.drawTraversal(view);
-                                    g.setComposite(dac);
-                                } else {
-                                    child.drawTraversal(view);
-                                }
-                            }
-                        } else {
-                            child.drawTraversal(view);
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception ex) {
-            System.out.println(ex);
+        if (getChildren() == null) {
+            return;
         }
+        if (!isAnnotationTier() || style.getCollapsed()) {
+            getChildren().stream().forEach(child -> child.drawTraversal(view));
+        } else {
+            getChildren().stream().forEach(child -> {
+                if (child.isOverlapped()) {
+                    int maxDepth = getStyleDepth();
+                    if (child.getRowNumber() < maxDepth + MAX_CHILD_IN_SLOP_ROW) {
+                        Graphics2D g = view.getGraphics();
+                        Composite dac = g.getComposite();
+                        g.setComposite(ac);
+                        child.drawTraversal(view);
+                        g.setComposite(dac);
+                    }
+                } else {
+                    child.drawTraversal(view);
+                }
+            });
+        }
+
+    }
+
+    private boolean isAnnotationTier() {
+        return tierType == TierType.ANNOTATION;
     }
 
     private boolean shouldDrawLabel() {
@@ -384,7 +393,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
 
     @Override
     public int getActualSlots() {
-        if (tierType == TierType.ANNOTATION && getPacker() == expand_packer) {
+        if (isAnnotationTier() && getPacker() == expand_packer) {
             return expand_packer.getActualSlots();
         }
         return 1;
@@ -433,7 +442,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
                     return (int) answer;
                 }
             }
-        } else if (tierType == TierType.ANNOTATION) {
+        } else if (isAnnotationTier()) {
             if (getPacker() == expand_packer) {
                 return expand_packer.getSlotsNeeded(this, theView);
             }
@@ -464,7 +473,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
             setCoords(getCoordBox().x, getCoordBox().y, getCoordBox().width, height + 2 * getSpacing());
             this.style.setHeight(height + 2 * getSpacing());
             child.pack(view);
-        } else if (this.tierType == TierType.ANNOTATION) {
+        } else if (isAnnotationTier()) {
 
             // Remove the padding at top and bottom.
             // Shouldn't we get this info from the packer?
@@ -538,7 +547,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
 
     @Override
     public Map<String, Class<?>> getPreferences() {
-        if (tierType == TierType.ANNOTATION) {
+        if (isAnnotationTier()) {
             return ANNOT_DEFAULT_PREFERENCES;
         } else if (tierType == TierType.GRAPH) {
             return GRAPH_DEFAULT_PREFERENCES;

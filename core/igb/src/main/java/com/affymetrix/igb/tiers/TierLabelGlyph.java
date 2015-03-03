@@ -7,7 +7,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.awt.Color;
 import java.awt.Dimension;

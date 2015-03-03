@@ -1,5 +1,13 @@
 package com.gene.tallyhandler;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symloader.LineProcessor;
+import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,16 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symloader.LineProcessor;
-import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import org.broad.tribble.readers.LineReader;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 
 public class TallyLineProcessor implements LineProcessor {
 

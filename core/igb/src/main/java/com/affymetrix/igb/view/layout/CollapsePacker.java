@@ -1,4 +1,4 @@
-package com.affymetrix.igb.scene.layout;
+package com.affymetrix.igb.view.layout;
 
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.GlyphI;

@@ -1,7 +1,6 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.RepackTiersAction;
 import java.awt.event.ActionEvent;
 
 public class RepackSelectedTiersAction extends RepackTiersAction {

@@ -37,23 +37,22 @@ import com.affymetrix.igb.action.FilterAction;
 import com.affymetrix.igb.action.HideAction;
 import com.affymetrix.igb.action.RemoveDataFromTracksAction;
 import com.affymetrix.igb.action.RenameTierAction;
+import com.affymetrix.igb.action.RepackTiersAction;
 import com.affymetrix.igb.action.ShadeUsingBaseQualityAction;
 import com.affymetrix.igb.action.ShowAllAction;
 import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMismatchAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
+import com.affymetrix.igb.action.TrackOperationWithParametersAction;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
-import com.affymetrix.igb.shared.RepackTiersAction;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.TrackListProvider;
 import com.affymetrix.igb.shared.TrackOperationAction;
-import com.affymetrix.igb.shared.TrackOperationWithParametersAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -442,17 +441,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     }
 
-    private class JRPMenuItemTLP extends JRPMenuItem implements TrackListProvider {
+    private class JRPMenuItemTLP extends JRPMenuItem {
 
         private static final long serialVersionUID = 1L;
 
         private JRPMenuItemTLP(GenericAction genericAction) {
             super("Toolbar_" + genericAction.getId(), genericAction);
-        }
-
-        @Override
-        public List<TierGlyph> getTrackList() {
-            return gviewer.getTierManager().getSelectedTiers();
         }
     }
 }

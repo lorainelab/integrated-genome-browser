@@ -20,8 +20,6 @@ import com.affymetrix.igb.graphTypes.LineGraphType;
 import com.affymetrix.igb.graphTypes.MinMaxAvgGraphType;
 import com.affymetrix.igb.graphTypes.StairStepGraphType;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryA;
-import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;

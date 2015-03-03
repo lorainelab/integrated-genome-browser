@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.scene.layout.ExpandPacker;
+import com.affymetrix.igb.view.layout.ExpandPacker;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.ArrayList;

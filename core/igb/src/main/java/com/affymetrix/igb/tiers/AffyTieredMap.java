@@ -23,7 +23,7 @@ import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.lorainelab.igb.genoviz.extensions.AxisGlyphWithSelection;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
-import com.affymetrix.igb.view.factories.DefaultTierGlyph;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.awt.Color;

@@ -1,15 +1,19 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.ActionEvent;
 
 /**
  *
  * @author hiralv
  */
-public class StopAutoScrollAction extends SeqMapViewActionA {
+@Component(name = StopAutoScrollAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class StopAutoScrollAction extends SeqMapViewActionA implements NoToolbarActions {
 
+    public static final String COMPONENT_NAME = "StopAutoScrollAction";
     private static final long serialVersionUID = 1l;
     private static StopAutoScrollAction ACTION = new StopAutoScrollAction();
 

@@ -1,12 +1,17 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
 
-public class ShowMinusStrandAction extends GenericAction {
+@Component(name = ShowMinusStrandAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ShowMinusStrandAction extends GenericAction implements NoToolbarActions {
+    
+    public static final String COMPONENT_NAME = "ShowMinusStrandAction";
 
     private static final long serialVersionUID = 1L;
     private static final ShowMinusStrandAction ACTION = new ShowMinusStrandAction();

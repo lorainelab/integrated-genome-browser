@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -8,12 +9,16 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
-public class ClearPreferencesAction extends GenericAction {
+@Component(name = ClearPreferencesAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
+public class ClearPreferencesAction extends GenericAction implements NoToolbarActions {
 
+    public static final String COMPONENT_NAME = "ClearPreferencesAction";
     private static final long serialVersionUID = 1l;
     private static final ClearPreferencesAction ACTION = new ClearPreferencesAction();
 

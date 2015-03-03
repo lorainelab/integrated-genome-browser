@@ -9,16 +9,18 @@
  */
 package com.lorainelab.igb.keystrokes;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.IGB;
 
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -31,8 +33,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+@Component(name = KeyStrokeEditPanel.COMPONENT_NAME, immediate = true, provide = KeyStrokeEditPanel.class)
 public final class KeyStrokeEditPanel extends JPanel {
 
+    public static final String COMPONENT_NAME = "KeyStrokeEditPanel";
     private static final long serialVersionUID = 1L;
     private static final boolean DEBUG = false;
     public final JRPTextField key_field
@@ -48,6 +52,13 @@ public final class KeyStrokeEditPanel extends JPanel {
     private String key = null;
     private String lastTimeFocusGained = "";
     private String lastCommand = "";
+    private IgbService igbService;
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
     private FocusListener lois = new FocusListener() {
 
         @Override
@@ -229,7 +240,7 @@ public final class KeyStrokeEditPanel extends JPanel {
         // Here we add "orphan" actions that are not in a window's menu.
         // i.e. the ones in the popup or the tool bar.
         // Should we check and return if it's not "orphaned"?
-        javax.swing.JFrame f = IGB.getSingleton().getFrame();
+        javax.swing.JFrame f = igbService.getFrame();
         javax.swing.JPanel p = (javax.swing.JPanel) f.getContentPane();
         InputMap im = p.getInputMap(WHEN_IN_FOCUSED_WINDOW);
 

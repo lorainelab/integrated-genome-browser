@@ -1,17 +1,20 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.view.UnibrowHairline;
 
 /**
  *
  * @author hiralv
  */
-public class ToggleHairlineAction extends GenericAction {
-
+@Component(name = ToggleHairlineAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ToggleHairlineAction extends GenericAction implements NoToolbarActions{
+    public static final String COMPONENT_NAME = "ToggleHairlineAction";
     private static final long serialVersionUID = 1;
     private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
 

@@ -1,17 +1,21 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.KeyEvent;
 
 /**
  *
  * @author hiralv
  */
-public class ToggleEdgeMatchingAction extends GenericAction {
+@Component(name = ToggleEdgeMatchingAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ToggleEdgeMatchingAction extends GenericAction implements NoToolbarActions {
 
+    public static final String COMPONENT_NAME = "ToggleEdgeMatchingAction";
     private static final long serialVersionUID = 1;
     private static final ToggleEdgeMatchingAction ACTION = new ToggleEdgeMatchingAction();
 

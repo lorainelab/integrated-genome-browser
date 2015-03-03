@@ -1,8 +1,10 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -12,8 +14,10 @@ import java.awt.event.ActionEvent;
  *
  * @author nick
  */
-public class ShowIGBTrackMarkAction extends SeqMapViewActionA {
+@Component(name = ShowIGBTrackMarkAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements NoToolbarActions{
 
+    public static final String COMPONENT_NAME = "ShowIGBTrackMarkAction";
     private static final long serialVersionUID = 1;
     private static final ShowIGBTrackMarkAction ACTION = new ShowIGBTrackMarkAction();
 

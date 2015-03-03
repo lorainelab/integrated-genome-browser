@@ -8,12 +8,14 @@
  */
 package com.lorainelab.igb.keystrokes.model;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
-import com.affymetrix.igb.IGB;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;
+import com.lorainelab.igb.services.IgbService;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -21,10 +23,19 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author dcnorris
  */
+@Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, provide = KeyStrokeViewTableModel.class)
 public class KeyStrokeViewTableModel extends AbstractTableModel {
 
+    public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
     private static final long serialVersionUID = 1L;
     private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
+    
+    private IgbService igbService;
+
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
 
     static {
         columnNames[KeyStrokesView.IconColumn] = "";
@@ -106,10 +117,10 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                         + pref_name + " action not found.");
             } else {
                 if (bValue) {
-                    int index = ((IGB) IGB.getSingleton()).addToolbarAction(genericAction);
+                    int index = igbService.addToolbarAction(genericAction);
                     PreferenceUtils.getToolbarNode().putInt(pref_name + ".index", index);
                 } else {
-                    ((IGB) IGB.getSingleton()).removeToolbarAction(genericAction);
+                    igbService.removeToolbarAction(genericAction);
                     PreferenceUtils.getToolbarNode().remove(pref_name + ".index");
                 }
             }

@@ -1,10 +1,15 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.NoToolbarActions;
 
-public class CollapseAction extends CollapseExpandActionA {
+@Component(name = CollapseAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
+public class CollapseAction extends CollapseExpandActionA implements NoToolbarActions{
+    
+    public static final String COMPONENT_NAME = "CollapseAction";
 
     private static final long serialVersionUID = 1L;
     private static final CollapseAction ACTION = new CollapseAction();

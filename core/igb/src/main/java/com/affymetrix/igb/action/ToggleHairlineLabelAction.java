@@ -1,9 +1,11 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.view.UnibrowHairline;
 import java.awt.event.KeyEvent;
 
@@ -13,8 +15,10 @@ import java.awt.event.KeyEvent;
  * @version $Id: ToggleHairlineLabelAction.java 11366 2012-05-02 14:57:55Z
  * anuj4159 $
  */
-public class ToggleHairlineLabelAction extends GenericAction {
-
+@Component(name = ToggleHairlineLabelAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ToggleHairlineLabelAction extends GenericAction implements NoToolbarActions {
+    
+    public static final String COMPONENT_NAME = "ToggleHairlineLabelAction";
     private static final long serialVersionUID = 1;
     private static final ToggleHairlineLabelAction ACTION = new ToggleHairlineLabelAction();
 

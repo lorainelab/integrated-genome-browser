@@ -1,5 +1,6 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
@@ -9,14 +10,17 @@ import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.graphStates;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.SwingUtilities;
 
-public class FloatTiersAction extends SeqMapViewActionA {
+@Component(name = FloatTiersAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class FloatTiersAction extends SeqMapViewActionA implements NoToolbarActions{
 
+    public static final String COMPONENT_NAME = "FloatTiersAction";
     private static final long serialVersionUID = 1L;
 
     private static final FloatTiersAction ACTION = new FloatTiersAction();

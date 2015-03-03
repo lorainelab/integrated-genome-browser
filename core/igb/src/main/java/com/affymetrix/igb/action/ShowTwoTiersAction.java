@@ -1,10 +1,14 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.shared.NoToolbarActions;
 
-public class ShowTwoTiersAction extends ShowStrandActionA {
+@Component(name = ShowTwoTiersAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class ShowTwoTiersAction extends ShowStrandActionA implements NoToolbarActions {
 
+    public static final String COMPONENT_NAME = "ShowTwoTiersAction";
     private static final long serialVersionUID = 1L;
     private static final ShowTwoTiersAction ACTION = new ShowTwoTiersAction();
 

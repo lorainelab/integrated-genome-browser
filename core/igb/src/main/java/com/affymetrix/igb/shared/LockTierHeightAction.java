@@ -1,5 +1,6 @@
 package com.affymetrix.igb.shared;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -15,8 +16,10 @@ import com.lorainelab.igb.genoviz.extensions.TierGlyph;
  *
  * @author hiralv
  */
-public class LockTierHeightAction extends TierHeightAction {
+@Component(name = LockTierHeightAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class LockTierHeightAction extends TierHeightAction implements NoToolbarActions{
 
+    public static final String COMPONENT_NAME = "LockTierHeightAction";
     private static final long serialVersionUID = 1L;
     private final static LockTierHeightAction lockTierAction = new LockTierHeightAction();
 

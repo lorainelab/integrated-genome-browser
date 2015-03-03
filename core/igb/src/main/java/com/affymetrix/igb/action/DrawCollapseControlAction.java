@@ -1,10 +1,12 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.event.ActionEvent;
@@ -13,8 +15,10 @@ import java.awt.event.ActionEvent;
  *
  * @author hiralv
  */
-public class DrawCollapseControlAction extends GenericAction {
+@Component(name = DrawCollapseControlAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
+public class DrawCollapseControlAction extends GenericAction implements NoToolbarActions{
 
+    public static final String COMPONENT_NAME = "DrawCollapseControlAction";
     private static final long serialVersionUID = 1L;
     private static final DrawCollapseControlAction ACTION = new DrawCollapseControlAction();
 

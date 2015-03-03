@@ -3,12 +3,10 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-@Component(name = PreferencesHelpAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
-public class PreferencesHelpAction extends HelpActionA implements NoToolbarActions {
+public class PreferencesHelpAction extends HelpActionA {
 
     public static final String COMPONENT_NAME = "PreferencesHelpAction";
     private static final long serialVersionUID = 1L;
@@ -28,5 +26,10 @@ public class PreferencesHelpAction extends HelpActionA implements NoToolbarActio
     public void actionPerformed(ActionEvent ae) {
         super.actionPerformed(ae);
         showHelpForPanel(PreferencesPanel.getSingleton(), PreferencesPanel.getSingleton());
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

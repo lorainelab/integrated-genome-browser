@@ -10,15 +10,13 @@ import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.graphStates;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.SwingUtilities;
 
-@Component(name = UnFloatTiersAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class UnFloatTiersAction extends SeqMapViewActionA implements NoToolbarActions {
+public class UnFloatTiersAction extends SeqMapViewActionA {
 
     public static final String COMPONENT_NAME = "UnFloatTiersAction";
     private static final long serialVersionUID = 1L;
@@ -110,5 +108,10 @@ public class UnFloatTiersAction extends SeqMapViewActionA implements NoToolbarAc
             v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
             v.postSelections(); // to disable partner.
         });
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

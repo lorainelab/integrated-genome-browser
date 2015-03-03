@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -12,8 +11,7 @@ import java.awt.event.KeyEvent;
  * @author sgblanch
  * @version $Id: ClampViewAction.java 11335 2012-05-01 18:00:52Z anuj4159 $
  */
-@Component(name = ClampViewAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class ClampViewAction extends SeqMapViewActionA implements NoToolbarActions{
+public class ClampViewAction extends SeqMapViewActionA{
     public static final String COMPONENT_NAME = "ClampViewAction";
     private static final long serialVersionUID = 1l;
     private static final ClampViewAction ACTION = new ClampViewAction();
@@ -40,5 +38,10 @@ public class ClampViewAction extends SeqMapViewActionA implements NoToolbarActio
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

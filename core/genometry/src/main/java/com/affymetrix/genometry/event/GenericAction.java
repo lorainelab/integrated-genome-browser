@@ -156,4 +156,8 @@ public abstract class GenericAction extends AbstractAction {
 	public final int getOrdinal() {
 		return this.ordinal;
 	}
+        
+        public boolean isToolbarAction() {
+            return true;
+        }
 }

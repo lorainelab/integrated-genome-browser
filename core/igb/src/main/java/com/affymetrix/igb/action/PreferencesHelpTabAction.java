@@ -2,15 +2,13 @@ package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
-@aQute.bnd.annotation.component.Component(name = PreferencesHelpTabAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
-public class PreferencesHelpTabAction extends HelpActionA implements NoToolbarActions{
+public class PreferencesHelpTabAction extends HelpActionA {
 
     public static final String COMPONENT_NAME = "PreferencesHelpTabAction";
     private static final long serialVersionUID = 1L;
@@ -41,5 +39,10 @@ public class PreferencesHelpTabAction extends HelpActionA implements NoToolbarAc
             JOptionPane.showMessageDialog(PreferencesPanel.getSingleton(), "No help available for this tab",
                     "No Help", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

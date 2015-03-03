@@ -4,12 +4,10 @@ import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
 
-@Component(name = ShowPlusStrandAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class ShowPlusStrandAction extends GenericAction implements NoToolbarActions {
+public class ShowPlusStrandAction extends GenericAction {
 
     public static final String COMPONENT_NAME = "ShowPlusStrandAction";
     private static final long serialVersionUID = 1L;
@@ -39,5 +37,10 @@ public class ShowPlusStrandAction extends GenericAction implements NoToolbarActi
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

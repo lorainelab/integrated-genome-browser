@@ -4,7 +4,6 @@ import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
@@ -14,8 +13,7 @@ import java.awt.event.ActionEvent;
  *
  * @author nick
  */
-@Component(name = ShowIGBTrackMarkAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements NoToolbarActions{
+public class ShowIGBTrackMarkAction extends SeqMapViewActionA {
 
     public static final String COMPONENT_NAME = "ShowIGBTrackMarkAction";
     private static final long serialVersionUID = 1;
@@ -43,5 +41,10 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA implements NoToolb
             glyph.setShowIGBTrack(b);
         }
         getSeqMapView().getSeqMap().updateWidget();
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

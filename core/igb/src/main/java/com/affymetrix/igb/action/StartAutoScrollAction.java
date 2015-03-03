@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 
@@ -11,8 +10,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author hiralv
  */
-@Component(name = StartAutoScrollAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class StartAutoScrollAction extends SeqMapViewActionA implements NoToolbarActions {
+public class StartAutoScrollAction extends SeqMapViewActionA {
 
     public static final String COMPONENT_NAME = "StartAutoScrollAction";
     private static final long serialVersionUID = 1l;
@@ -58,4 +56,9 @@ public class StartAutoScrollAction extends SeqMapViewActionA implements NoToolba
 //	public boolean isEnabled(){
 //		return getSeqMapView().getViewSeq() != null;
 //	}
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

@@ -41,13 +41,11 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent implements Preferenc
         initComponents();
     }
 
-    @Reference
+    @Reference (optional = false)
     public void setKsv(KeyStrokesView ksv) {
         this.ksv = ksv;
     }
     
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

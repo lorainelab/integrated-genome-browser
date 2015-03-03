@@ -14,8 +14,7 @@ import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
  *
  * @author hiralv
  */
-@Component(name = UnlockTierHeightAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class UnlockTierHeightAction extends TierHeightAction implements NoToolbarActions {
+public class UnlockTierHeightAction extends TierHeightAction {
 
     public static final String COMPONENT_NAME = "UnlockTierHeightAction";
     private static final long serialVersionUID = 1L;
@@ -56,5 +55,10 @@ public class UnlockTierHeightAction extends TierHeightAction implements NoToolba
     @Override
     protected void setHeightFixed(DefaultTierGlyph dtg) {
         dtg.setHeightFixed(false);
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

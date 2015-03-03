@@ -4,12 +4,10 @@ import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
 
-@Component(name = ShowMinusStrandAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class ShowMinusStrandAction extends GenericAction implements NoToolbarActions {
+public class ShowMinusStrandAction extends GenericAction {
     
     public static final String COMPONENT_NAME = "ShowMinusStrandAction";
 
@@ -40,5 +38,10 @@ public class ShowMinusStrandAction extends GenericAction implements NoToolbarAct
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

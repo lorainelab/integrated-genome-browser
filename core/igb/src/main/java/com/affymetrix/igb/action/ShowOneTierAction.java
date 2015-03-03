@@ -3,10 +3,8 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.NoToolbarActions;
 
-@Component(name = ShowOneTierAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
-public class ShowOneTierAction extends ShowStrandActionA implements NoToolbarActions {
+public class ShowOneTierAction extends ShowStrandActionA {
 
     public static final String COMPONENT_NAME = "ShowOneTierAction";
     private static final long serialVersionUID = 1L;
@@ -33,5 +31,10 @@ public class ShowOneTierAction extends ShowStrandActionA implements NoToolbarAct
     protected void processChange(boolean hasSeparate, boolean hasMixed) {
         setEnabled(hasSeparate);
         ShowTwoTiersAction.getAction().setEnabled(hasMixed);
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

@@ -3,15 +3,13 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.ActionEvent;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = StopAutoScrollAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class StopAutoScrollAction extends SeqMapViewActionA implements NoToolbarActions {
+public class StopAutoScrollAction extends SeqMapViewActionA {
 
     public static final String COMPONENT_NAME = "StopAutoScrollAction";
     private static final long serialVersionUID = 1l;
@@ -38,5 +36,10 @@ public class StopAutoScrollAction extends SeqMapViewActionA implements NoToolbar
         setEnabled(false);
         StartAutoScrollAction.getAction().setEnabled(true);
         getSeqMapView().getAutoLoadAction().loadData();
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

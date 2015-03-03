@@ -9,6 +9,7 @@
  */
 package com.lorainelab.igb.keystrokes;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
@@ -16,7 +17,6 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import java.awt.event.KeyEvent;
@@ -52,7 +52,7 @@ public final class KeyStrokesView {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
     public final JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
-    public static final KeyStrokeViewTableModel model = new KeyStrokeViewTableModel();
+    public KeyStrokeViewTableModel model;
     public static final int IconColumn = 0;
     public static final int ToolbarColumn = 1;
     public static final int ActionColumn = 2;
@@ -99,6 +99,10 @@ public final class KeyStrokesView {
     public KeyStrokesView() {
         super();
         lsm = table.getSelectionModel();
+    }
+    
+    @Activate
+    public void activate() {
         lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         table.setCellSelectionEnabled(false);
@@ -156,18 +160,6 @@ public final class KeyStrokesView {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
                             errMsg);
                 }
-//				if(ga1 != null && ga2 != null){
-//					boolean ga1cnb = ga1.getLargeIconPath() == null || smallTimeActions.contains(ga1);
-//					boolean ga2cnb = ga2.getLargeIconPath() == null || smallTimeActions.contains(ga2);
-//
-//					if(ga1cnb && !ga2cnb){
-//						return 1;
-//					}
-//
-//					if(!ga1cnb && ga2cnb){
-//						return -1;
-//					}
-//				}
                 return getSortField(ga1).compareTo(getSortField(ga2));
             }
         });
@@ -196,16 +188,20 @@ public final class KeyStrokesView {
      * These are actions that are inappropriate for the tool bar. This is kind
      * of a kludge until we can figure out a better way.
      */
-    static final Set<NoToolbarActions> smallTimeActions = new HashSet<>();
+    static final Set<GenericAction> smallTimeActions = new HashSet<>();
 
     @Reference(optional = true, multiple = true, unbind = "removeSmallTimeAction", dynamic = true)
-    public void addSmallTimeAction(NoToolbarActions action) {
-        smallTimeActions.add(action);
-        logger.info("Action received");
+    public void addSmallTimeAction(GenericAction action) {
+        if (!action.isToolbarAction()) {
+            smallTimeActions.add(action);
+        }
+        logger.info("Action received " + action.getId());
     }
 
-    public void removeSmallTimeAction(NoToolbarActions action) {
-        smallTimeActions.remove(action);
+    public void removeSmallTimeAction(GenericAction action) {
+        if (!action.isToolbarAction()) {
+            smallTimeActions.remove(action);
+        }
         logger.info("Action removed");
     }
 
@@ -279,6 +275,11 @@ public final class KeyStrokesView {
             }
         }
         return rows;
+    }
+    
+    @Reference (optional = false)
+    public void setModel(KeyStrokeViewTableModel model) {
+        this.model = model;
     }
 
     /**

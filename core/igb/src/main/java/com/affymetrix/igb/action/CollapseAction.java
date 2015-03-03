@@ -4,10 +4,8 @@ import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.shared.NoToolbarActions;
 
-@Component(name = CollapseAction.COMPONENT_NAME, immediate = true, provide = {NoToolbarActions.class})
-public class CollapseAction extends CollapseExpandActionA implements NoToolbarActions{
+public class CollapseAction extends CollapseExpandActionA {
     
     public static final String COMPONENT_NAME = "CollapseAction";
 
@@ -33,5 +31,10 @@ public class CollapseAction extends CollapseExpandActionA implements NoToolbarAc
     protected void processChange(boolean hasCollapsed, boolean hasExpanded) {
         setEnabled(hasExpanded);
         ExpandAction.getAction().setEnabled(hasCollapsed);
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

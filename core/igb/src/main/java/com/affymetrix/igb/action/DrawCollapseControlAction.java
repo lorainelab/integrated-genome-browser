@@ -6,7 +6,6 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
 import java.awt.event.ActionEvent;
@@ -15,8 +14,7 @@ import java.awt.event.ActionEvent;
  *
  * @author hiralv
  */
-@Component(name = DrawCollapseControlAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class DrawCollapseControlAction extends GenericAction implements NoToolbarActions{
+public class DrawCollapseControlAction extends GenericAction {
 
     public static final String COMPONENT_NAME = "DrawCollapseControlAction";
     private static final long serialVersionUID = 1L;
@@ -46,5 +44,10 @@ public class DrawCollapseControlAction extends GenericAction implements NoToolba
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
     }
 }

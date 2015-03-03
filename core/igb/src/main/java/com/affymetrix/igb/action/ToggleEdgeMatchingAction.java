@@ -5,15 +5,13 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.shared.NoToolbarActions;
 import java.awt.event.KeyEvent;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = ToggleEdgeMatchingAction.COMPONENT_NAME, immediate = true, provide = NoToolbarActions.class)
-public class ToggleEdgeMatchingAction extends GenericAction implements NoToolbarActions {
+public class ToggleEdgeMatchingAction extends GenericAction {
 
     public static final String COMPONENT_NAME = "ToggleEdgeMatchingAction";
     private static final long serialVersionUID = 1;
@@ -31,5 +29,9 @@ public class ToggleEdgeMatchingAction extends GenericAction implements NoToolbar
     public static ToggleEdgeMatchingAction getAction() {
         return ACTION;
     }
-
+    
+    @Override
+    public boolean isToolbarAction() {
+        return false;
+    }
 }

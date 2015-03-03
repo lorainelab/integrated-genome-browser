@@ -22,12 +22,12 @@ or override settings in the "system" stylesheet.
 
 <IGB_STYLESHEET>
   
-<STYLES>
+    <STYLES>
   
-</STYLES>
+    </STYLES>
 
-<ASSOCIATIONS>
+    <ASSOCIATIONS>
 
-</ASSOCIATIONS>
+    </ASSOCIATIONS>
 
 </IGB_STYLESHEET>

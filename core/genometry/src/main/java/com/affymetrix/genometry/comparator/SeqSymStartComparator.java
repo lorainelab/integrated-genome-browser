@@ -1,35 +1,37 @@
 package com.affymetrix.genometry.comparator;
 
-import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
 import java.util.Comparator;
 
 /**
- *  Sorts SeqSymmetries based on {@link SeqSpan#getStart()}.
+ * Sorts SeqSymmetries based on {@link SeqSpan#getStart()}.
  *
- *  @see  SeqSymMinComparator
+ * @see SeqSymMinComparator
  */
 public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
-	private final boolean ascending;
-	private final BioSeq seq;
 
-	/** Constructor.
-	 *  @param s  sequence to base the sorting on
-	 *  @param b  true to sort ascending, false for descending
-	 */
-	public SeqSymStartComparator(BioSeq s, boolean b) {
-		this.seq = s;
-		this.ascending = b;
-	}
+    private final boolean ascending;
+    private final BioSeq seq;
 
-	public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
-		final SeqSpan span1 = sym1.getSpan(seq);
-		final SeqSpan span2 = sym2.getSpan(seq);
-		if (ascending) {
-			return ((Integer) span1.getStart()).compareTo(span2.getStart());
-		}
-		return ((Integer) span2.getStart()).compareTo(span1.getStart());
-	}
+    /**
+     * Constructor.
+     *
+     * @param s sequence to base the sorting on
+     * @param b true to sort ascending, false for descending
+     */
+    public SeqSymStartComparator(BioSeq s, boolean b) {
+        this.seq = s;
+        this.ascending = b;
+    }
+
+    public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
+        final SeqSpan span1 = sym1.getSpan(seq);
+        final SeqSpan span2 = sym2.getSpan(seq);
+        if (ascending) {
+            return ((Integer) span1.getStart()).compareTo(span2.getStart());
+        }
+        return ((Integer) span2.getStart()).compareTo(span1.getStart());
+    }
 }

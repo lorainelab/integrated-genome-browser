@@ -1,16 +1,15 @@
 package com.affymetrix.sequenceviewer;
 
 import com.affymetrix.genometry.event.AxisPopupListener;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.XServiceRegistrar;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author hiralv
@@ -32,7 +31,6 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             bundleContext.registerService(AMenuItem.class, new AMenuItem(genomicSequenceMenuItem, "view", 0), null),
             bundleContext.registerService(AMenuItem.class, new AMenuItem(readSequenceMenuItem, "view", 0), null),
             bundleContext.registerService(ContextualPopupListener.class, new PopupListener(genomicSequenceAction, readSequencAction), null),
-            bundleContext.registerService(AxisPopupListener.class, new PopupListener(genomicSequenceAction, readSequencAction), null),
-        };
+            bundleContext.registerService(AxisPopupListener.class, new PopupListener(genomicSequenceAction, readSequencAction), null),};
     }
 }

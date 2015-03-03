@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class FileTypeCategoryUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileTypeCategoryUtils.class);
-    
+
     public static boolean isFileTypeCategoryContainer(FileTypeCategory category) {
         switch (category) {
             case Alignment:

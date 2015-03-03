@@ -45,7 +45,7 @@ public class UCSCLoader extends BrowserLoader {
             } catch (IOException e) {
                 Logger.getLogger(UCSCLoader.class.getName()).log(Level.FINE, "url was : " + file_name_url, e);
             }
-            String side_name_url = getImageUrl(base_url,userId, new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
+            String side_name_url = getImageUrl(base_url, userId, new UCSCURLFinder(sideNameBaseUrl, sideNamePattern));
             if (fileImage != null && side_name_url.startsWith(HTTP_PROTOCOL_SCHEME)) {
                 BufferedImage sideImage = null;
                 try {

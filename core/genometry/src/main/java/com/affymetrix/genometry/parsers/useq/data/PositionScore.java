@@ -1,25 +1,28 @@
 package com.affymetrix.genometry.parsers.useq.data;
 
-/** @author david.nix@hci.utah.edu*/
+/**
+ * @author david.nix@hci.utah.edu
+ */
 public class PositionScore extends Position {
-	//fields
-	protected float score;
 
-	//constructors
-	public PositionScore (int position, float score){
-		super(position);
-		this.score = score;
-	}
+    //fields
+    protected float score;
 
-	public String toString(){
-		return position+"\t"+score;
-	}
+    //constructors
+    public PositionScore(int position, float score) {
+        super(position);
+        this.score = score;
+    }
 
-	public float getScore() {
-		return score;
-	}
+    public String toString() {
+        return position + "\t" + score;
+    }
 
-	public void setScore(float score) {
-		this.score = score;
-	}
+    public float getScore() {
+        return score;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
+    }
 }

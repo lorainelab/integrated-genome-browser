@@ -56,4 +56,4 @@ public class ImportPreferencesAction extends GenericAction {
             component.refresh();
         }
     }
-    }
+}

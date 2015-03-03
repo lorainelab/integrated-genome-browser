@@ -44,7 +44,7 @@ public class GraphSym extends RootSeqSymmetry {
     private float yFirst = 0;		// Y value at 0th coord
 
     private boolean hasWidth = false;
-	// to prevent NPE when xCoords is null - after clear() -
+    // to prevent NPE when xCoords is null - after clear() -
     // use validData to indicate that xCoords would have been null
     private boolean validData = true;
 
@@ -356,7 +356,12 @@ public class GraphSym extends RootSeqSymmetry {
 
     /**
      * Find last point with value <= xmin.
-	 * @pa
+     * @
+     *
+     *
+     *
+     * pa
+     *
      *
      * ram xmin
      * @return 0
@@ -366,7 +371,7 @@ public class GraphSym extends RootSeqSymmetry {
         if (index >= 0) {
             return index;
         }
-		// negative, which means it's (-(first elt > key) - 1).
+        // negative, which means it's (-(first elt > key) - 1).
         // Thus first elt <= key = (-index - 1) -1 = (-index -2)
         return Math.max(0, (-index - 2));
 
@@ -392,7 +397,7 @@ public class GraphSym extends RootSeqSymmetry {
         if (index >= 0) {
             return index;
         }
-		// negative, which means it's (-(first elt > key) - 1).
+        // negative, which means it's (-(first elt > key) - 1).
         // We want that first elt.
         index = -index - 1;
 
@@ -440,7 +445,7 @@ public class GraphSym extends RootSeqSymmetry {
         validData = true;
         System.arraycopy(x, 0, this.xCoords, 0, this.pointCount);
 
-		// initialize buffers.
+        // initialize buffers.
         //xBuf = new int[BUFSIZE];
         yBuf = new float[BUFSIZE];
         //System.arraycopy(x, 0, xBuf, 0, Math.min(BUFSIZE, pointCount));
@@ -630,7 +635,7 @@ public class GraphSym extends RootSeqSymmetry {
         result = prime
                 * result
                 + ((graph_original_seq == null) ? 0 : graph_original_seq
-                .hashCode());
+                        .hashCode());
         result = prime * result + (hasWidth ? 1231 : 1237);
         result = prime * result + Float.floatToIntBits(max_ycoord);
         result = prime * result + Float.floatToIntBits(min_ycoord);
@@ -723,12 +728,12 @@ public class GraphSym extends RootSeqSymmetry {
         try {
 			// create indexed file.
 
-			//if (graphName.length() < 3) {
+            //if (graphName.length() < 3) {
             //graphName += "___";
             // fix for Java error with short names
             //}
             bufVal = File.createTempFile((Math.random() + "").substring(2), "idx");
-			//cannot use the graph name since this is sometimes too long and throws a IOException
+            //cannot use the graph name since this is sometimes too long and throws a IOException
             //bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
             bufVal.deleteOnExit(); // Delete this file when shutting down.
             dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));

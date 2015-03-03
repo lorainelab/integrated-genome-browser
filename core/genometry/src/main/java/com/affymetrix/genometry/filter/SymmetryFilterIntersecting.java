@@ -15,7 +15,6 @@ import com.affymetrix.genometry.util.SeqUtils;
  */
 public class SymmetryFilterIntersecting extends SymmetryFilter {
 
-
     private final static String SEQSYMMETRY = "seqsymmetry";
     private final static SeqSymmetry DEFAULT_SEQSYMMETRY = null;
     private final MutableSeqSymmetry dummySym = new SimpleMutableSeqSymmetry();

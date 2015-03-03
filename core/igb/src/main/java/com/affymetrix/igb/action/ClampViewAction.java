@@ -10,7 +10,8 @@ import java.awt.event.KeyEvent;
  * @author sgblanch
  * @version $Id: ClampViewAction.java 11335 2012-05-01 18:00:52Z anuj4159 $
  */
-public class ClampViewAction extends SeqMapViewActionA{
+public class ClampViewAction extends SeqMapViewActionA {
+
     private static final long serialVersionUID = 1l;
     private static final ClampViewAction ACTION = new ClampViewAction();
 
@@ -37,7 +38,7 @@ public class ClampViewAction extends SeqMapViewActionA{
     public boolean isToggle() {
         return true;
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

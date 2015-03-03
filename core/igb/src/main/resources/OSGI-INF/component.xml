@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="spellcheckscr">
 
-  <!-- xmlns="http://www.osgi.org/xmlns/scr/v1.0.0" -->
-  <!--
+    <!-- xmlns="http://www.osgi.org/xmlns/scr/v1.0.0" -->
+    <!--
      This metadata file instructs the Apache Felix Service Component
      Runtime to create one instance of "SpellCheckServiceImpl". It also
      tells the generic activator that this instance implements the
@@ -17,22 +17,22 @@
      generic activator which methods to call when adding and removing
      dictionary services.
     -->
-	<implementation class="org.apache.felix.examples.spellcheckscr.SpellCheckServiceImpl"/>
+    <implementation class="org.apache.felix.examples.spellcheckscr.SpellCheckServiceImpl"/>
 
-	<property name="category" value="demo" type="String"/>
+    <property name="category" value="demo" type="String"/>
 	
-	<properties entry="OSGI-INF/component.properties"/>	
+    <properties entry="OSGI-INF/component.properties"/>	
 	
-	<service>
-		<provide interface="org.apache.felix.examples.spellcheckservice.SpellCheckService"/>
-	</service>
+    <service>
+        <provide interface="org.apache.felix.examples.spellcheckservice.SpellCheckService"/>
+    </service>
 
-	<reference name="DICTONARY"
-	    interface="org.apache.felix.examples.dictionaryservice.DictionaryService"
-	    filter="(Language=*)"
-	    cardinality="1..n"
-	    policy="dynamic"
-	    bind="addDictionary"
-	    unbind="removeDictionary"
-	/>
+    <reference name="DICTONARY"
+               interface="org.apache.felix.examples.dictionaryservice.DictionaryService"
+               filter="(Language=*)"
+               cardinality="1..n"
+               policy="dynamic"
+               bind="addDictionary"
+               unbind="removeDictionary"
+    />
 </component>

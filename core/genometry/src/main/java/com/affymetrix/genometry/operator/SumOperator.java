@@ -1,37 +1,36 @@
 package com.affymetrix.genometry.operator;
 
+import com.affymetrix.genometry.GenometryConstants;
 import java.util.List;
 
-import com.affymetrix.genometry.GenometryConstants;
+public class SumOperator extends AbstractGraphOperator implements Operator, Operator.Order {
 
-public class SumOperator extends AbstractGraphOperator implements Operator, Operator.Order{
+    @Override
+    public String getName() {
+        return "sum";
+    }
 
-	@Override
-	public String getName() {
-		return "sum";
-	}
+    @Override
+    public String getDisplay() {
+        return GenometryConstants.BUNDLE.getString("operator_" + getName());
+    }
 
-	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
+    @Override
+    protected String getSymbol() {
+        return null;
+    }
 
-	@Override
-	protected String getSymbol() {
-		return null;
-	}
+    @Override
+    public float operate(List<Float> operands) {
+        float total = 0;
+        for (Float f : operands) {
+            total += f;
+        }
+        return total;
+    }
 
-	@Override
-	public float operate(List<Float> operands) {
-		float total = 0;
-		for (Float f : operands) {
-			total += f;
-		}
-		return total;
-	}
-	
-	@Override
-	public int getOrder() {
-		return 1;
-	}
+    @Override
+    public int getOrder() {
+        return 1;
+    }
 }

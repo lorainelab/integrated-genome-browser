@@ -173,7 +173,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 
         if (needRepacking) {
 
-			// This was in the code before, commented out.
+            // This was in the code before, commented out.
             // It was also suggested by Lance.
             // It doesn't work.
             // It seems to snap the axis back to the center.
@@ -193,7 +193,7 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
 			//lm.repackTiersToLabels();
             // The above repack (either one I think) changes (enlarges) the tier map's bounds. This probably affects the tiers' spacing. - elb 2012-02-21
 
-			// Vanilla repack seems to have worse symptoms.
+            // Vanilla repack seems to have worse symptoms.
             //m.repack();
             //m.packTiers(true, false, false, true);
             // This was also commented out.

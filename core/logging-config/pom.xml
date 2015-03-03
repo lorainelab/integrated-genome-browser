@@ -30,7 +30,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-			<Fragment-Host>ch.qos.logback.classic</Fragment-Host>
+                        <Fragment-Host>ch.qos.logback.classic</Fragment-Host>
                     </instructions>
                 </configuration>
             </plugin>

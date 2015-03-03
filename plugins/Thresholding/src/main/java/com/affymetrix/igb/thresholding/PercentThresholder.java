@@ -1,30 +1,41 @@
 /**
  * Copyright (c) 2001-2004 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.thresholding;
 
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public final class PercentThresholder extends JPanel
         implements ChangeListener, ActionListener {
@@ -40,7 +51,7 @@ public final class PercentThresholder extends JPanel
     private final JRPCheckBox syncCB;
     private boolean sync_min_max;
 
-  //System.out.println() statements do not show on the screen, they are not translated.
+    //System.out.println() statements do not show on the screen, they are not translated.
     // info2pscores is a hash of GraphGlyphs' data model
     //   (usually a GraphSym if using genometry) to float[] arrays, each of length
     //   (sliders_per_percent * total_percent), and each value v at index i is

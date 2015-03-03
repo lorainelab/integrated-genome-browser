@@ -27,18 +27,18 @@ import java.util.regex.Pattern;
  * Top-level annots attached to a BioSeq.
  */
 public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym {
-    
+
     private static final String[] PROPERTIES_TO_SEARCH = new String[]{"id", "gene name", "description"};
     private static final FileTypeCategory DEFAULT_CATEGORY = FileTypeCategory.Annotation;
     private TreeMap<String, Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
     private final String ext;
     private final boolean index;
     private final String type;
-    
+
     public TypeContainerAnnot(String type) {
         this(type, "", false);
     }
-    
+
     public TypeContainerAnnot(String type, String ext, boolean index) {
         super();
         this.setProperty("method", type);
@@ -48,11 +48,11 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         this.index = index;
         id2sym_hash = !index ? null : new TreeMap<>();
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     @Override
     public FileTypeCategory getCategory() {
         FileTypeCategory category = null;
@@ -65,7 +65,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         }
         return category;
     }
-    
+
     @Override
     public void addChild(SeqSymmetry sym) {
         super.addChild(sym);
@@ -81,13 +81,13 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             }
         }
     }
-    
+
     private void indexGeneName(SeqSymmetry sym) {
         if (sym instanceof SupportsGeneName) {
             addToIndex(((SupportsGeneName) sym).getGeneName(), sym);
         }
     }
-    
+
     private void addToIndex(String key, SeqSymmetry sym) {
         if (key != null && key.length() > 0) {
             Set<SeqSymmetry> seq_list = id2sym_hash.get(key);
@@ -98,7 +98,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             seq_list.add(sym);
         }
     }
-    
+
     @Override
     public void search(Set<SeqSymmetry> results, String id) {
         if (id2sym_hash == null || id == null) {
@@ -109,7 +109,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             results.addAll(sym_list);
         }
     }
-    
+
     @Override
     public void searchHints(Set<String> results, Pattern regex, int limit) {
         if (id2sym_hash == null || regex == null) {
@@ -118,12 +118,12 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         final Matcher matcher = regex.matcher("");
         int size = Math.min(limit, id2sym_hash.size());
         int count = results.size();
-        
+
         for (String key : id2sym_hash.keySet()) {
             matcher.reset(key);
             if (matcher.matches()) {
                 results.add(key);
-                
+
                 count++;
                 if (count > size) {
                     break;
@@ -131,7 +131,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             }
         }
     }
-    
+
     @Override
     public void search(Set<SeqSymmetry> results, Pattern regex, int limit) {
         if (id2sym_hash == null || regex == null) {
@@ -152,7 +152,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             if (current_thread.isInterrupted() || count > size) {
                 break;
             }
-            
+
             String seid = ent.getKey();
             Set<SeqSymmetry> val = ent.getValue();
             if (seid != null && val != null) {
@@ -164,7 +164,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             }
         }
     }
-    
+
     @Override
     public void searchProperties(Set<SeqSymmetry> results, Pattern regex, int limit) {
         if (id2sym_hash == null || regex == null) {
@@ -179,7 +179,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             size = -1;
             count = Integer.MIN_VALUE;
         }
-        
+
         final Matcher matcher = regex.matcher("");
         SymWithProps swp;
         String match;
@@ -188,12 +188,12 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             if (current_thread.isInterrupted()) {
                 break;
             }
-            
+
             for (SeqSymmetry seq : ent.getValue()) {
                 if (current_thread.isInterrupted()) {
                     break;
                 }
-                
+
                 if (seq instanceof SymWithProps) {
                     swp = (SymWithProps) seq;
 
@@ -203,7 +203,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
                             if (current_thread.isInterrupted() || count > size) {
                                 break;
                             }
-                            
+
                             if (prop.getValue() != null) {
                                 match = prop.getValue().toString();
                                 matcher.reset(match);
@@ -218,7 +218,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
             }
         }
     }
-    
+
     @Override
     public void clear() {
         super.clear();

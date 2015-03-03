@@ -251,7 +251,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
             br = new BufferedReader(new InputStreamReader(bis));
 
             while ((line = br.readLine()) != null && (!thread.isInterrupted())) {
-				// The "#gff-version 3" pragma is *required* to be on the first line.
+                // The "#gff-version 3" pragma is *required* to be on the first line.
                 // If it is not then it is not gff3
                 if (!line.startsWith("#")) {
                     return false;

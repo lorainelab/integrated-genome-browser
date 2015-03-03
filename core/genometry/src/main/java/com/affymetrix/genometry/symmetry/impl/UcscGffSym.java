@@ -47,7 +47,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
      */
     public static final Pattern gff1_regex = Pattern.compile("^(\\S+)\\s*($|#.*)");
 
-	// old, wrong pattern, required a tab before the comment
+    // old, wrong pattern, required a tab before the comment
     //public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
     String source;
     String method;

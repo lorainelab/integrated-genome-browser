@@ -42,5 +42,4 @@ public class JRPPopupMenu extends JPopupMenu {
         super.removeAll();
     }
 
-    
 }

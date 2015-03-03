@@ -76,7 +76,7 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-         <dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>

@@ -10,49 +10,70 @@ import java.util.List;
  * @version $Id: GroupBean.java 5343 2010-02-25 01:39:42Z sgblanch $
  */
 class GroupBean {
-	private String id, label, type;
-	private List<String> notes = new ArrayList<>(2);
-	private List<LinkBean> links = new ArrayList<>(2);
-	private List<TargetBean> targets = new ArrayList<>(2);
 
-	GroupBean() { this.clear(); }
+    private String id, label, type;
+    private List<String> notes = new ArrayList<>(2);
+    private List<LinkBean> links = new ArrayList<>(2);
+    private List<TargetBean> targets = new ArrayList<>(2);
 
-	void setID(String id) { this.id = id.intern(); }
+    GroupBean() {
+        this.clear();
+    }
 
-	String getID() { return this.id; }
+    void setID(String id) {
+        this.id = id.intern();
+    }
 
-	void setLabel(String label) { this.label = label.intern(); }
+    String getID() {
+        return this.id;
+    }
 
-	String getLabel() { return this.label; }
+    void setLabel(String label) {
+        this.label = label.intern();
+    }
 
-	void setType(String type) { this.type = type.intern(); }
+    String getLabel() {
+        return this.label;
+    }
 
-	String getType() { return this.type; }
+    void setType(String type) {
+        this.type = type.intern();
+    }
 
-	void addNote(String note) { this.notes.add(note.intern()); }
+    String getType() {
+        return this.type;
+    }
 
-	List<String> getNotes() {
-		return Collections.unmodifiableList(this.notes);
-	}
+    void addNote(String note) {
+        this.notes.add(note.intern());
+    }
 
-	void addLink(LinkBean link) { this.links.add(link); }
+    List<String> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
 
-	List<LinkBean> getLinks() {
-		return Collections.unmodifiableList(this.links);
-	}
+    void addLink(LinkBean link) {
+        this.links.add(link);
+    }
 
-	void addTarget(TargetBean target) { this.targets.add(target); }
+    List<LinkBean> getLinks() {
+        return Collections.unmodifiableList(this.links);
+    }
 
-	List<TargetBean> getTargets() {
-		return Collections.unmodifiableList(this.targets);
-	}
+    void addTarget(TargetBean target) {
+        this.targets.add(target);
+    }
 
-	void clear() {
-		id = "";
-		label = "";
-		type = "";
-		notes.clear();
-		links.clear();
-		targets.clear();
-	}
+    List<TargetBean> getTargets() {
+        return Collections.unmodifiableList(this.targets);
+    }
+
+    void clear() {
+        id = "";
+        label = "";
+        type = "";
+        notes.clear();
+        links.clear();
+        targets.clear();
+    }
 }

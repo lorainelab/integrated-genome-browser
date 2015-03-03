@@ -9,20 +9,19 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
 
 /**
  * DOCUMENT ME!
  *
  * @author $author$
-  */
+ */
 public class YValueLegendPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
 
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Creates a new IconPanel object.
      *
      * @param type DOCUMENT ME!
@@ -48,11 +47,11 @@ public class YValueLegendPanel extends JPanel {
         int top = 10;
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2d.setStroke(new BasicStroke(1.0f));
 
-        int center = this.getWidth() / 2 +4;
+        int center = this.getWidth() / 2 + 4;
 
         poly.addPoint(center, top);
         poly.addPoint(center - 6, top + 15);
@@ -70,12 +69,12 @@ public class YValueLegendPanel extends JPanel {
         AffineTransform af = new AffineTransform();
         af.rotate(Math.PI + (Math.PI / 2));
         g2d.setTransform(af);
-       
+
         g2d.setColor(Color.black);
         g2d.drawString(
-            label,
-            (-this.getHeight() / 2) - (width / 2),
-            (this.getWidth() / 2)+5);
+                label,
+                (-this.getHeight() / 2) - (width / 2),
+                (this.getWidth() / 2) + 5);
 
     }
 
@@ -85,4 +84,3 @@ public class YValueLegendPanel extends JPanel {
         super.paintComponent(g);
     }
 }
-

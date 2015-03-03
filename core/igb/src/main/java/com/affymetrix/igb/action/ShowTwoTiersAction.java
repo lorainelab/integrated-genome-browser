@@ -30,7 +30,7 @@ public class ShowTwoTiersAction extends ShowStrandActionA {
         setEnabled(hasMixed);
         ShowOneTierAction.getAction().setEnabled(hasSeparate);
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

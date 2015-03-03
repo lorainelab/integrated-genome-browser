@@ -9,8 +9,8 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +37,15 @@ public class KeyStrokesViewGUI extends IPrefEditorComponent implements Preferenc
     }
 
     @Activate
-    public void activate() {        
+    public void activate() {
         initComponents();
     }
 
-    @Reference (optional = false)
+    @Reference(optional = false)
     public void setKsv(KeyStrokesView ksv) {
         this.ksv = ksv;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

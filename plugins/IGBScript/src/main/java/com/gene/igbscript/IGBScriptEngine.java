@@ -11,8 +11,8 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.HeadLessExport;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,13 @@ import java.net.URISyntaxException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+import javax.script.SimpleScriptContext;
 
 /**
  * Java ScriptEngine to run scripts written in the IGB scripting language.
@@ -376,7 +382,7 @@ public class IGBScriptEngine implements ScriptEngine {
                     c = igbService.getFrame();
                     break;
                 case MAIN:
-                    c =  igbService.getSeqMapView().getSeqMap().getNeoCanvas();
+                    c = igbService.getSeqMapView().getSeqMap().getNeoCanvas();
                     break;
                 case MAINWITHLABELS:
                     c = igbService.getSeqMapView().getSeqMap();

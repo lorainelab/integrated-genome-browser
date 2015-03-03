@@ -15,10 +15,14 @@ import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.style.PropertyConstants;
-
 import java.awt.Color;
-import java.util.*;
-import java.util.regex.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class TrackLineParser {
 
@@ -111,7 +115,7 @@ public final class TrackLineParser {
     public Map<String, String> parseTrackLine(String track_line, String track_name_prefix) {
         track_hash.clear();
         Matcher matcher = track_line_parser.matcher(track_line);
-		// If performance becomes important, it is possible to save and re-use a Matcher,
+        // If performance becomes important, it is possible to save and re-use a Matcher,
         // but it isn't thread-safe
         while (matcher.find() && (!Thread.currentThread().isInterrupted())) {
             if (matcher.groupCount() == 2) {
@@ -219,7 +223,7 @@ public final class TrackLineParser {
         List<String> expanded_modes = Arrays.asList("2", "full", "3", "pack", "4", "squish");
 
         if (visibility != null) {
-			// 0 - hide, 1 - dense, 2 - full, 3 - pack, and 4 - squish.
+            // 0 - hide, 1 - dense, 2 - full, 3 - pack, and 4 - squish.
             // The numerical values or the words can be used, i.e. full mode may be
             // specified by "2" or "full". The default is "1".
             if (collapsed_modes.contains(visibility)) {
@@ -242,10 +246,10 @@ public final class TrackLineParser {
 //				Score score = new Score();
 ////				score.setTrackStyle(style);
 //				annot_style.setColorProvider(score);
-//			} 
+//			}
         }
 
-		// Probably shouldn't copy ALL keys to the extended values
+        // Probably shouldn't copy ALL keys to the extended values
         // since some are already included in the standard values above
         for (String key : track_hash.keySet()) {
             Object value = track_hash.get(key);

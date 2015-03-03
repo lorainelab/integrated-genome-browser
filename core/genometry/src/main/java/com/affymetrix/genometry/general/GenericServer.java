@@ -64,7 +64,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
     /**
      * Is this only a reference (no annotations) server?
      */
-    //	private final boolean referenceOnly;				 
+    //	private final boolean referenceOnly;
     /**
      * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
      */
@@ -97,7 +97,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
                 enabled,
                 false,
                 serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
+                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
                 serverObj, primary, isDefault, mirrorURL);
     }
 
@@ -110,7 +110,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
                 enabled,
                 false,
                 serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                : PreferenceUtils.getServersNode().node(getHash(URL)),
+                        : PreferenceUtils.getServersNode().node(getHash(URL)),
                 serverObj, false, isDefault, mirrorURL);
     }
 

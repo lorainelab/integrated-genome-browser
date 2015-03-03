@@ -40,7 +40,7 @@ public class ShowIGBTrackMarkAction extends SeqMapViewActionA {
         }
         getSeqMapView().getSeqMap().updateWidget();
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

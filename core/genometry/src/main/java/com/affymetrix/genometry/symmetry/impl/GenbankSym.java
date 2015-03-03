@@ -154,7 +154,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
         }
         // convert to interbase
         if (forward) {
-			// blockMins are in seq coordinates, NOT relative to txMin
+            // blockMins are in seq coordinates, NOT relative to txMin
             // convert to interbase
             return new GenbankChildSingletonSeqSym(blockMins.get(index) - 1, blockMaxs.get(index), seq);
         }
@@ -172,7 +172,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
     }
 
     public void addCDSBlock(int start, int end) {
-		// TODO: allow list of CDS blocks, rather than just start and end.
+        // TODO: allow list of CDS blocks, rather than just start and end.
 
         /*if (CDSblockMins == null) {
          CDSblockMins = new IntArrayList();
@@ -184,7 +184,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
                 cdsMin = start - 1;	//interbase
                 cdsMax = end;
             }
-			//CDSblockMins.add(start-1);	//interbase
+            //CDSblockMins.add(start-1);	//interbase
             //CDSblockMaxs.add(end);
             cdsMin = Math.min(cdsMin, start - 1);	//interbase
             cdsMax = Math.max(cdsMax, end);
@@ -195,7 +195,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
                 cdsMin = end - 1;	//interbase
                 cdsMax = start;
             }
-			//CDSblockMaxs.add(start);
+            //CDSblockMaxs.add(start);
             //CDSblockMins.add(end);	// interbase
             cdsMin = Math.min(cdsMin, end - 1);	//interbase
             cdsMax = Math.max(cdsMax, start);
@@ -208,7 +208,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
             super(start, end, seq);
         }
 
-		// For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getID(),
         // or must NOT implement SymWithProps.
         public String getID() {
             return GenbankSym.this.getID();

@@ -2,5 +2,5 @@ package com.affymetrix.igb.swing;
 
 public interface JRPWidgetDecorator {
 
-	public void widgetAdded(JRPWidget widget);
+    public void widgetAdded(JRPWidget widget);
 }

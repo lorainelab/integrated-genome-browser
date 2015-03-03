@@ -1,22 +1,22 @@
 package com.affymetrix.genometry.util;
 
 public final class ImprovedStringCharIter implements SearchableCharIterator {
-	private final String src;
 
-	public ImprovedStringCharIter(String src) {
-		this.src = src;
-	}
+    private final String src;
 
-	public String substring(int start, int end)  {
-		return src.substring(start, end);
-	}
+    public ImprovedStringCharIter(String src) {
+        this.src = src;
+    }
 
-	public int indexOf(String searchString, int offset) {
-		return src.indexOf(searchString, offset);
-	}
+    public String substring(int start, int end) {
+        return src.substring(start, end);
+    }
 
-	public int getLength() {
-		return src.length();
-	}
+    public int indexOf(String searchString, int offset) {
+        return src.indexOf(searchString, offset);
+    }
+
+    public int getLength() {
+        return src.length();
+    }
 }
-

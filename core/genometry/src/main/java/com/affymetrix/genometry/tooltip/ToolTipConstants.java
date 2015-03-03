@@ -60,7 +60,7 @@ public class ToolTipConstants {
     public static final String FAILED_QC = "failed qc";
 
     public static final String NA = "na";
-    
+
     // Constants added while SeqMapView refactoring
     public static final String SEQ_ID = "seq id";
     public static final String METHOD = "method";

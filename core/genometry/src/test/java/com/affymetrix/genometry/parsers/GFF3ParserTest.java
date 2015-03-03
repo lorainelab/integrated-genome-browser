@@ -9,10 +9,14 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.symloader.GFF3;
 import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
-import java.io.*;
-import java.util.*;
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -35,17 +39,17 @@ public class GFF3ParserTest {
 
         try (InputStream istr = new FileInputStream(filename)) {
             assertNotNull(istr);
-            
+
             AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
             assertNotNull(seq_group);
-            
+
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
 //			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
 //			List result = instance.parse(istr, seq_group, true);
 //			testResults(result);
             GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), seq_group, false);
             testResults(gff3.getGenome());
-            
+
             // Replacing test with above test. hiralv 08-16-10
 //			GFF3Sym mRNA1 = (GFF3Sym) gene.getChild(1);
 //			GFF3Sym mRNA2 = (GFF3Sym) gene.getChild(2);
@@ -68,7 +72,7 @@ public class GFF3ParserTest {
 
     public void testResults(List result) {
 
-			// Making result size 2, since now we are counting
+        // Making result size 2, since now we are counting
         // "TF_binding_site" too. : hiralv 08-16-10
         assertEquals(2, result.size());
 

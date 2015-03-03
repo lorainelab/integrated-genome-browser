@@ -5,7 +5,26 @@
  */
 package com.affymetrix.genometry.tooltip;
 
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_DETAILS_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_LOCATION_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_CIGAR_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_LOCATION_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_CIGAR_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_LOCATION_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_CIGAR_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_LOCATION_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.MISC_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_LOCATION_CATEGORY;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,7 +46,7 @@ public class ToolTipOperations {
         populateMisc(props, categories, BAM_IGNORE_LIST);
         return categories;
     }
-    
+
     public static List<ToolTipCategory> formatBED14SymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<>();
 
@@ -37,7 +56,7 @@ public class ToolTipOperations {
         populateMisc(props, categories, BED14_IGNORE_LIST);
         return categories;
     }
-    
+
     public static List<ToolTipCategory> formatLinkPSLSymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<>();
 
@@ -46,7 +65,7 @@ public class ToolTipOperations {
         populateMisc(props, categories, PSL_IGNORE_LIST);
         return categories;
     }
-    
+
     public static List<ToolTipCategory> formatDefaultSymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<>();
 
@@ -56,7 +75,7 @@ public class ToolTipOperations {
         populateMisc(props, categories, DEFAULT_IGNORE_LIST);
         return categories;
     }
-    
+
     public static List<ToolTipCategory> formatGFFSymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<>();
 

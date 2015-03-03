@@ -41,7 +41,7 @@
             <artifactId>org.apache.felix.main</artifactId>
             <scope>provided</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
@@ -50,7 +50,7 @@
 
     <build>
         <plugins>
-              <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>

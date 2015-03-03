@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
-        <action>
-            <actionName>CUSTOM-index development plugins</actionName>
-            <displayName>index development plugins</displayName>
-            <goals>
-                <goal>bundle:index</goal>
-            </goals>
-            <properties>
-                <mavenRepository>extbundles</mavenRepository>
-                <obrRepository>extbundles</obrRepository>
-            </properties>
-        </action>
-<!--    <action>
+    <action>
+        <actionName>CUSTOM-index development plugins</actionName>
+        <displayName>index development plugins</displayName>
+        <goals>
+            <goal>bundle:index</goal>
+        </goals>
+        <properties>
+            <mavenRepository>extbundles</mavenRepository>
+            <obrRepository>extbundles</obrRepository>
+        </properties>
+    </action>
+    <!--    <action>
         <actionName>run</actionName>
         <goals>
             <goal>process-classes</goal>                

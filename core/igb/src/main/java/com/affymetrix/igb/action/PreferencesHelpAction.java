@@ -25,7 +25,7 @@ public class PreferencesHelpAction extends HelpActionA {
         super.actionPerformed(ae);
         showHelpForPanel(PreferencesPanel.getSingleton(), PreferencesPanel.getSingleton());
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

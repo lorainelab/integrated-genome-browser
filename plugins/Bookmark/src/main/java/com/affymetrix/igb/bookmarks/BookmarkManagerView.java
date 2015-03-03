@@ -9,17 +9,17 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.lorainelab.igb.services.IgbService;
-import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.ImmutableListMultimap;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -240,7 +240,7 @@ public final class BookmarkManagerView {
         tree.setSelectionRow(0);
         tree.clearSelection();
     }
-    
+
     public Bookmark getSelectedBookmark() {
         Bookmark bookmark = null;
         if (selected_bl != null && selected_bl.getUserObject() instanceof Bookmark) {
@@ -249,7 +249,7 @@ public final class BookmarkManagerView {
         }
         return bookmark;
     }
-    
+
     private void initPopupMenu() {
         final JPopupMenu popup = new JPopupMenu() {
 
@@ -260,7 +260,7 @@ public final class BookmarkManagerView {
                 JMenuItem menu_item = super.add(a);
                 menu_item.setToolTipText(null);
                 return menu_item;
-            }            
+            }
         };
 
         popup.add(properties_action);
@@ -269,9 +269,9 @@ public final class BookmarkManagerView {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {                   
+                if (e.getButton() == MouseEvent.BUTTON3) {
                     TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-                    
+
                     if (path != null) {
                         tree.setSelectionPath(path);
                         popup.show(tree, e.getX(), e.getY());
@@ -280,7 +280,6 @@ public final class BookmarkManagerView {
                 if (processDoubleClick(e)) {
                     return;
                 }
-
 
             }
 
@@ -333,7 +332,7 @@ public final class BookmarkManagerView {
         main_bookmark_list = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
         //	}
 
-        if (main_bookmark_list == null) { // Support exporting from any node 
+        if (main_bookmark_list == null) { // Support exporting from any node
             ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
             return;
         }
@@ -396,7 +395,7 @@ public final class BookmarkManagerView {
     public Action getPropertiesAction() {
         return properties_action;
     }
-    
+
     private Action makePropertiesAction() {
         Action a = new GenericAction("Properties ...", null, null) {
             private static final long serialVersionUID = 1L;

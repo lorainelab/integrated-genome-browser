@@ -1,12 +1,20 @@
 package com.affymetrix.genometry.parsers;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
 public class FastaParserTest {
 
@@ -54,7 +62,7 @@ public class FastaParserTest {
 
         AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
-			//FastaParser instance = new FastaParser();
+        //FastaParser instance = new FastaParser();
         List<BioSeq> seqs = FastaParser.parseAll(istr_1, seq_group);
 
         assertEquals(1, seqs.size());
@@ -240,7 +248,7 @@ public class FastaParserTest {
         expected_fasta = "TCTTT".toCharArray(); // line 103
         testFASTASegment(filename, fasta, expected_fasta, 7979, 7984);
 
-			//expected_fasta = "TTTTTTTCATTTT".toCharArray(); // line 103
+        //expected_fasta = "TTTTTTTCATTTT".toCharArray(); // line 103
         //testFASTASegment(filename, fasta, expected_fasta, 8009, 8022);
         expected_fasta = "CATTTT".toCharArray(); // line 103
         testFASTASegment(filename, fasta, expected_fasta, 8016, 8022);
@@ -267,7 +275,7 @@ public class FastaParserTest {
 
         assertNotNull(fasta);
 
-		//System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
+        //System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
         assertTrue(end - start >= fasta.length - header_len);
 
         /*System.out.print("actual:");

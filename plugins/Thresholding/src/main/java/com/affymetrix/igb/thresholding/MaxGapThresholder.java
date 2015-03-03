@@ -1,29 +1,40 @@
 /**
  * Copyright (c) 2001-2006 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.thresholding;
 
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.igb.swing.JRPSlider;
+import com.affymetrix.igb.swing.JRPTextField;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
-
-import com.affymetrix.igb.swing.JRPSlider;
-import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import javax.swing.event.ChangeListener;
 
 public final class MaxGapThresholder extends JPanel
         implements ChangeListener, ActionListener, FocusListener {

@@ -18,7 +18,7 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
     private static final long serialVersionUID = 1L;
 
     protected static boolean isMac() {
-        return  System.getProperty("os.name").toLowerCase().contains("mac");
+        return System.getProperty("os.name").toLowerCase().contains("mac");
     }
     protected final Icon LEFT_ICON = MenuUtil.getIcon(getLeftIconString());
     protected final Icon RIGHT_ICON = MenuUtil.getIcon(getRightIconString());
@@ -61,6 +61,5 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
     protected abstract String getLeftIconString();
 
     protected abstract String getRightIconString();
-
 
 }

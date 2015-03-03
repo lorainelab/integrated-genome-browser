@@ -9,22 +9,33 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.Scored;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.HeatMap;
+import com.affymetrix.genometry.symmetry.TypedSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometry.symmetry.TypedSym;
-
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Paint;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -153,7 +164,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
             return STALK_SCORE;
         }
         if (s.startsWith("gpos")) {
-			// "gpos50" == 500
+            // "gpos50" == 500
             // "gpos100" == 1000
             // etc.
             float pos = 1000.0f;

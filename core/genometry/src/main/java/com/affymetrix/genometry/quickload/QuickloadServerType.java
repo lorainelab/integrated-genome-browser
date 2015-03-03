@@ -10,13 +10,21 @@ import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometry.symloader.BNIB;
-import com.affymetrix.genometry.symloader.SymLoader;
-import com.affymetrix.genometry.symloader.TwoBitNew;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symloader.TwoBitNew;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.*;
+import com.affymetrix.genometry.util.BioSeqUtils;
+import com.affymetrix.genometry.util.Constants;
+import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.SpeciesLookup;
+import com.affymetrix.genometry.util.SynonymLookup;
+import com.affymetrix.genometry.util.VersionDiscoverer;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -331,7 +339,7 @@ public class QuickloadServerType implements ServerTypeI {
             try {
                 SpeciesLookup.load(quickloadServer.getSpeciesTxt());
             } catch (IOException ex) {
-                logger.warn( "No species.txt found at this quickload server.", ex);
+                logger.warn("No species.txt found at this quickload server.", ex);
             }
         }
         for (String genomeID : genomeList) {

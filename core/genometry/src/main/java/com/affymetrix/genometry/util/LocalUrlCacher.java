@@ -6,16 +6,35 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.IGB_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.SUPPORTED_PROTOCOL_SCHEMES;
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
 import com.google.common.base.Optional;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Files;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import net.sf.samtools.seekablestream.SeekableFileStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
@@ -815,7 +834,7 @@ public final class LocalUrlCacher {
                         http_status = hcon.getResponseCode();
                     }
 
-                    //  So only consider URL reachable if 2xx or 3xx 
+                    //  So only consider URL reachable if 2xx or 3xx
                     boolean url_reachable = ((http_status >= 200) && (http_status < 400));
 
                     if (url_reachable) {
@@ -854,19 +873,19 @@ public final class LocalUrlCacher {
         try ( // Buffer the result into a string
                 BufferedReader rd = new BufferedReader(
                         new InputStreamReader(conn.getInputStream()))) {
-            sb = new StringBuilder();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
-        }
-        }
-        conn.disconnect();
+                    sb = new StringBuilder();
+                    String line;
+                    while ((line = rd.readLine()) != null) {
+                        sb.append(line);
+                    }
+                }
+                conn.disconnect();
 
-        if (DEBUG) {
-            logger.info("Result {}", sb.toString());
-        }
+                if (DEBUG) {
+                    logger.info("Result {}", sb.toString());
+                }
 
-        return sb.toString();
+                return sb.toString();
     }
 
     public static String httpPost(String urlStr, Map<String, String> params) throws IOException {

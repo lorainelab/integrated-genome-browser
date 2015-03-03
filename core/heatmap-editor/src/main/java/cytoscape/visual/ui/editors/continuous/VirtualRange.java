@@ -8,16 +8,16 @@ import java.awt.Color;
  */
 public interface VirtualRange {
 
-	public Color getAboveColor();
+    public Color getAboveColor();
 
-	public Color getBelowColor();
+    public Color getBelowColor();
 
-	public Color[] getColors();
+    public Color[] getColors();
 
-	public float getVirtualMaximum();
+    public float getVirtualMaximum();
 
-	public float getVirtualMinimum();
+    public float getVirtualMinimum();
 
-	public float[] getVirtualValues();
- 
+    public float[] getVirtualValues();
+
 }

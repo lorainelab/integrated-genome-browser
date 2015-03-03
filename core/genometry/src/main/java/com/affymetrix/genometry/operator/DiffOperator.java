@@ -4,39 +4,38 @@
  */
 package com.affymetrix.genometry.operator;
 
-import java.util.List;
-
 import com.affymetrix.genometry.GenometryConstants;
+import java.util.List;
 
 /**
  *
  * @author auser
  */
-public class DiffOperator extends AbstractGraphOperator implements Operator, Operator.Order{
+public class DiffOperator extends AbstractGraphOperator implements Operator, Operator.Order {
 
-	@Override
-	public String getName() {
-		return "diff" ;
-	}
+    @Override
+    public String getName() {
+        return "diff";
+    }
 
-	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
+    @Override
+    public String getDisplay() {
+        return GenometryConstants.BUNDLE.getString("operator_" + getName());
+    }
 
-	@Override
-	protected float operate(List<Float> operands) {
-		return operands.get(0) - operands.get(1);
-	}
+    @Override
+    protected float operate(List<Float> operands) {
+        return operands.get(0) - operands.get(1);
+    }
 
-	@Override
-	protected String getSymbol() {
-		return "-";
-	}
+    @Override
+    protected String getSymbol() {
+        return "-";
+    }
 
-	@Override
-	public int getOrder() {
-		return 2;
-	}
-	
+    @Override
+    public int getOrder() {
+        return 2;
+    }
+
 }

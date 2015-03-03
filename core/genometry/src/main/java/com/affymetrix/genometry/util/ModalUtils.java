@@ -118,11 +118,11 @@ public class ModalUtils {
     public static void infoPanel(String message) {
         JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     private static Component getActiveWindow() {
         Component comp = KeyboardFocusManager.getCurrentKeyboardFocusManager().
                 getActiveWindow();
-        if(comp == null) {
+        if (comp == null) {
             comp = KeyboardFocusManager.getCurrentKeyboardFocusManager().getCurrentFocusCycleRoot();
         }
         return comp;

@@ -138,7 +138,7 @@ public final class SeqSymmetryConverter {
             SeqSpan child_tspan = child.getSpan(targetseq);
             blockSizes[i] = child_tspan.getLength();
             tmins[i] = child_tspan.getMin();
-			// Throwing a null pointer exception with AnnotMapper during 
+            // Throwing a null pointer exception with AnnotMapper during
             // hg16-hg17 mapping used for exon array. --steve chervitz
             if (child_qspan != null) {
                 qmins[i] = child_qspan.getMin();

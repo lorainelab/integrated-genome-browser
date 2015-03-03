@@ -40,7 +40,7 @@ public class ShowLockedTrackIconAction extends SeqMapViewActionA {
     public boolean isToggle() {
         return true;
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

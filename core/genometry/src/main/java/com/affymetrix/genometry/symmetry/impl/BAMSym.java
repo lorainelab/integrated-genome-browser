@@ -3,6 +3,12 @@ package com.affymetrix.genometry.symmetry.impl;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithBaseQuality;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.AVERAGE_QUALITY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FORWARD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.MAPQ;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.RESIDUES;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORES;
 import com.affymetrix.genometry.util.SearchableCharIterator;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -11,13 +17,6 @@ import java.util.Map;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
-
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.MAPQ;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.RESIDUES;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.FORWARD;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORES;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.AVERAGE_QUALITY;
 
 /**
  *
@@ -112,7 +111,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (children == null) {
             children = new SeqSymmetry[blockMins.length];
         }
-        
+
         if (children[index] == null) {
             if (forward) {
                 children[index] = new BamChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
@@ -132,7 +131,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public int indexOf(String searchstring, int offset) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public static boolean isBamChildType(SeqSymmetry sym) {
         return sym instanceof BamChildSingletonSeqSym || sym instanceof BamInsChildSingletonSeqSym;
     }
@@ -213,8 +212,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put(ID, name);
             tprops.put(RESIDUES, getResidues());
             tprops.put(FORWARD, this.isForward());
-            tprops.put(SCORES,getBaseQuality());
-            tprops.put(AVERAGE_QUALITY,getAverageQuality());
+            tprops.put(SCORES, getBaseQuality());
+            tprops.put(AVERAGE_QUALITY, getAverageQuality());
             return tprops;
         }
 
@@ -303,7 +302,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put(RESIDUES, getResidues());
             tprops.put(FORWARD, this.isForward());
             tprops.put("feature_type", "insertion");
-            tprops.put(AVERAGE_QUALITY,getAverageQuality());
+            tprops.put(AVERAGE_QUALITY, getAverageQuality());
             return tprops;
         }
 
@@ -410,8 +409,8 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         }
         props.put(RESIDUES, getResidues().replaceAll("-", ""));
         props.put(MAPQ, mapq);
-        props.put(SCORES,getBaseQuality());
-        props.put(AVERAGE_QUALITY,getAverageQuality());
+        props.put(SCORES, getBaseQuality());
+        props.put(AVERAGE_QUALITY, getAverageQuality());
         return super.cloneProperties();
     }
 

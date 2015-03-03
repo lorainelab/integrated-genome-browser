@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.event;
 
 public interface GroupSelectionListener {
-	public void groupSelectionChanged(GroupSelectionEvent evt);
+
+    public void groupSelectionChanged(GroupSelectionEvent evt);
 }

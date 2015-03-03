@@ -574,7 +574,7 @@ public final class ChpParser {
             System.out.println("seq " + i + ", name = " + seq_name + ", group = " + seq_group_name
                     + ", version = " + seq_vers + ", datapoints = " + entry_count);
 
-			// try and match up chp seq to a BioSeq and AnnotatedSeqGroup in GenometryModel
+            // try and match up chp seq to a BioSeq and AnnotatedSeqGroup in GenometryModel
             // if seq group can't be matched, make a new seq group
             // if seq can't be matched, make a new seq
             // trying three different ways of matching up to AnnotatedSeqGroup

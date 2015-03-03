@@ -6,32 +6,33 @@ import java.util.Map;
 
 /**
  * Simple helper function to build URLs with query components from a base URL.
- * 
+ *
  * @author sgblanch
  * @version $Id: QueryBuilder.java 6838 2010-09-02 19:54:19Z jnicol $
  */
 public class QueryBuilder {
-	private final Map<String, String> parameters = new LinkedHashMap<>();
-	private final String u;
 
-	public QueryBuilder(String u) {
-		this.u = u;
-	}
+    private final Map<String, String> parameters = new LinkedHashMap<>();
+    private final String u;
 
-	public void add(String key, String value) {
-		parameters.put(GeneralUtils.URLEncode(key), GeneralUtils.URLEncode(value));
-	}
+    public QueryBuilder(String u) {
+        this.u = u;
+    }
 
-	public URI build() {
-		StringBuilder query = new StringBuilder(u);
+    public void add(String key, String value) {
+        parameters.put(GeneralUtils.URLEncode(key), GeneralUtils.URLEncode(value));
+    }
 
-		for (Map.Entry<String, String> parameter : parameters.entrySet()) {
-			query.append(parameter.getKey());
-			query.append("=");
-			query.append(parameter.getValue());
-			query.append(";");
-		}
+    public URI build() {
+        StringBuilder query = new StringBuilder(u);
 
-		return URI.create(query.toString());
-	}
+        for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+            query.append(parameter.getKey());
+            query.append("=");
+            query.append(parameter.getValue());
+            query.append(";");
+        }
+
+        return URI.create(query.toString());
+    }
 }

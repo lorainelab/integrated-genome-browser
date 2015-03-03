@@ -16,7 +16,7 @@ public class WeightUtil {
 
     public static int locationToAdd(List<WeightedJRPWidget> menuItems, WeightedJRPWidget newMenuItem) {
         int index = newMenuItem.getWeight();
-        if(index == -1) {
+        if (index == -1) {
             return menuItems.size();
         }
         WeightedJRPWidget prevMenuItem = null;

@@ -38,51 +38,51 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class SpeciesSynonymsLookup extends SynonymLookup {
 
-	/**
-	 * addSynonyms while making sure only one synonym exists for each species.
-	 *
-	 * @param row
-	 */
-	@Override
-	public synchronized void addSynonyms(Set<String> row) {
-		//we don't allow more than one common name.
-		//we reject the common name if we  already have one.
-		Set<String> synonymList = new HashSet<>();
+    /**
+     * addSynonyms while making sure only one synonym exists for each species.
+     *
+     * @param row
+     */
+    @Override
+    public synchronized void addSynonyms(Set<String> row) {
+        //we don't allow more than one common name.
+        //we reject the common name if we  already have one.
+        Set<String> synonymList = new HashSet<>();
 
-		String common_name = row.iterator().next();
-		Collection<String> values = thesaurus.get(common_name);
-		if (values != null) {
-			//this means we have common name from a previous species.txt
-			//but we are still interested in the genome_versions_that can point to this 
-			//common name 
-			//so we allow the process to continue, just make sure the common name is not included
-			//whether it is the same or not.
-			synonymList.addAll(values);
-			Iterator<String> itr = row.iterator();
-			if (itr.hasNext()) {
-				itr.next();
-				while (itr.hasNext()) {
-					String entry = itr.next();
-					if (StringUtils.isNotBlank(entry)) {
-						synonymList.add(entry);
-					}
-				}
-			}
-		} else {
-			synonymList = new LinkedHashSet<>();
-			for (String entry : row) {
-				synonymList.add(entry);
-			}
-		}
+        String common_name = row.iterator().next();
+        Collection<String> values = thesaurus.get(common_name);
+        if (values != null) {
+            //this means we have common name from a previous species.txt
+            //but we are still interested in the genome_versions_that can point to this
+            //common name
+            //so we allow the process to continue, just make sure the common name is not included
+            //whether it is the same or not.
+            synonymList.addAll(values);
+            Iterator<String> itr = row.iterator();
+            if (itr.hasNext()) {
+                itr.next();
+                while (itr.hasNext()) {
+                    String entry = itr.next();
+                    if (StringUtils.isNotBlank(entry)) {
+                        synonymList.add(entry);
+                    }
+                }
+            }
+        } else {
+            synonymList = new LinkedHashSet<>();
+            for (String entry : row) {
+                synonymList.add(entry);
+            }
+        }
 
-		for (String synonymCandidate : row) {
-			ImmutableSet<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonymCandidate)).build();
-			if (thesaurus.get(synonymCandidate).addAll(row)) {
-				for (String previousSynonym : previousSynonymList) {
-					thesaurus.get(previousSynonym).addAll(synonymList);
-				}
-			}
-		}
-	}
+        for (String synonymCandidate : row) {
+            ImmutableSet<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonymCandidate)).build();
+            if (thesaurus.get(synonymCandidate).addAll(row)) {
+                for (String previousSynonym : previousSynonymList) {
+                    thesaurus.get(previousSynonym).addAll(synonymList);
+                }
+            }
+        }
+    }
 
 }

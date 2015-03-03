@@ -85,7 +85,7 @@ public class MisMatchPileupGraphSym extends MisMatchGraphSym {
         }
     }
 
-	// this is overriden to "normalize" the y values, to merge consecutive
+    // this is overriden to "normalize" the y values, to merge consecutive
     // repeated values into one
     @Override
     public synchronized float[] normalizeGraphYCoords() {

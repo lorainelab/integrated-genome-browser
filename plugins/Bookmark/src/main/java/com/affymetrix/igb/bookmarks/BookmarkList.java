@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -318,7 +318,6 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     }
 
     // Used by exportAsNetscapeHTML
-
     private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
         // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
         @SuppressWarnings("unchecked")
@@ -343,7 +342,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
                 BookmarkList btn = e.nextElement();
                 Object o = btn.getUserObject();
                 if (o instanceof String) {
-                    bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + (btn.getComment() == null ? " " : btn.getComment()) + "</DD>" + "\n");//tK 
+                    bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + (btn.getComment() == null ? " " : btn.getComment()) + "</DD>" + "\n");//tK
                     bw.write(indent + "<DL><p>\n");
                     exportAsHTML_recursive(btn, bw, indent + "  ", false);
                     bw.write(indent + "</DL><p>\n");

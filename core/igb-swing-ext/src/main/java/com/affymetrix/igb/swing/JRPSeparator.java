@@ -16,23 +16,23 @@ import org.slf4j.LoggerFactory;
  * @author tarun
  */
 public class JRPSeparator extends JSeparator implements WeightedJRPWidget {
-    
+
     private String id;
     private int weight;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(JRPSeparator.class);
-    
+
     private static PrimitiveIterator.OfInt ids = IntStream.iterate(0, i -> i + 1).iterator();
-    
+
     public JRPSeparator(int weight) {
         this(ids.next().toString(), weight);
     }
-    
+
     public JRPSeparator(String id, int weight) {
         this.id = id;
         this.weight = weight;
     }
-    
+
     @Override
     public int getWeight() {
         return weight;
@@ -47,5 +47,5 @@ public class JRPSeparator extends JSeparator implements WeightedJRPWidget {
     public boolean consecutiveOK() {
         return true;
     }
-    
+
 }

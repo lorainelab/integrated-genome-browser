@@ -1,5 +1,11 @@
 package com.gene.transcriptisoform;
 
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -9,16 +15,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Set;
-
 import net.sf.samtools.Cigar;
 
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.impl.BAMSym;
-
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 /**
  * A glyph to connect exons to display isoforms.
  */

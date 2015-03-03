@@ -6,6 +6,6 @@ import java.awt.event.ActionListener;
  *
  * @author hiralv
  */
-public interface ContinuousAction extends ActionListener{
+public interface ContinuousAction extends ActionListener {
 	//Should use delay over here. But OK for now.
 }

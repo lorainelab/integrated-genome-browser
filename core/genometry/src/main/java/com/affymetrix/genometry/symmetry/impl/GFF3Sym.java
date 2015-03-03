@@ -99,7 +99,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
         this.frame = frame;
         this.attributes = attributes;
 
-		// in GFF3, the property "ID" is intended to have meaning only inside the file itself.
+        // in GFF3, the property "ID" is intended to have meaning only inside the file itself.
         // the property "Name" is more like what we think of as an ID in Genometry
         String[] possible_names = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_NAME, attributes);
         if (possible_names.length > 0) {
@@ -118,7 +118,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
      */
     @Override
     public String getID() {
-			// This is overridden because we only want to check the value of this.id,
+        // This is overridden because we only want to check the value of this.id,
         // we do NOT want to check for a property named "id".  This is because GFF3
         // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
         // only has meaning while processing the file and should be ignored later.
@@ -433,7 +433,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 //		String gff3ID;
 //		Map<String,MutableSeqSpan> cdsSpans = new LinkedHashMap<String,MutableSeqSpan>();
 //		MutableSeqSpan span = null;
-//		
+//
 //		for(SeqSymmetry child : children) {
 //			if (isCdsSym(child)) {
 //				gff3ID = getIdFromGFF3Attributes(((GFF3Sym)child).getAttributes());
@@ -527,7 +527,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 //		}
 //		dup.props = this.cloneProperties();
 //		dup.method = this.method;
-//		
+//
 //		return dup;
 //	}
 }

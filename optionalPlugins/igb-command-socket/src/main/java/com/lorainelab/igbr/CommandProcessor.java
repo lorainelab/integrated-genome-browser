@@ -2,7 +2,6 @@ package com.lorainelab.igbr;
 
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.script.ScriptManager;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -41,20 +40,20 @@ public class CommandProcessor implements Runnable {
 
     @Override
     public void run() {
-            try {
-                String input;
-                while ((input = in.readLine()) != null) {
-                    recieveIgbCommand(input);
-                }
-                connection.close();
-            } catch (SocketException ex) {
-                //do nothing
-            } catch (IOException ex) {
-                Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                GeneralUtils.safeClose(in);
-                GeneralUtils.safeClose(out);
+        try {
+            String input;
+            while ((input = in.readLine()) != null) {
+                recieveIgbCommand(input);
             }
+            connection.close();
+        } catch (SocketException ex) {
+            //do nothing
+        } catch (IOException ex) {
+            Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            GeneralUtils.safeClose(in);
+            GeneralUtils.safeClose(out);
+        }
 
     }
 }

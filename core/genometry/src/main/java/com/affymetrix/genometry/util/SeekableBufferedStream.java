@@ -21,17 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.affymetrix.genometry.util;
 
-import net.sf.samtools.seekablestream.SeekableStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import net.sf.samtools.seekablestream.SeekableStream;
 
 /**
- * A wrapper class to provide buffered read access to a SeekableStream.  Just wrapping such a stream with
- * a BufferedInputStream will not work as it does not support seeking.  In this implementation a
- * seek call is delegated to the wrapped stream, and the buffer reset. 
+ * A wrapper class to provide buffered read access to a SeekableStream. Just wrapping such a stream with
+ * a BufferedInputStream will not work as it does not support seeking. In this implementation a
+ * seek call is delegated to the wrapped stream, and the buffer reset.
  */
 public class SeekableBufferedStream extends SeekableStream {
 
@@ -78,19 +77,19 @@ public class SeekableBufferedStream extends SeekableStream {
         return position >= wrappedStream.length();
     }
 
-	public long position(){
-		return position;
-	}
+    public long position() {
+        return position;
+    }
 
-	public void position(long position) throws IOException{
-		seek(position);
-	}
+    public void position(long position) throws IOException {
+        seek(position);
+    }
 
-	@Override
-	public long skip(long n) throws IOException {
-		seek(position + n);
-		return position + n;
-	}
+    @Override
+    public long skip(long n) throws IOException {
+        seek(position + n);
+        return position + n;
+    }
 
     @Override
     public String getSource() {

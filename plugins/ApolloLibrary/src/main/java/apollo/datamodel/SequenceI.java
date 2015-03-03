@@ -1,107 +1,145 @@
 package apollo.datamodel;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
-import java.util.Date;
 
 public interface SequenceI extends java.io.Serializable {
 
-  public int       getLength();
-  public void      setLength(int length);
+    public int getLength();
 
-  public String    getResidues  ();
-  public String    getResidues  (int start, int end);
-  public void      setResidues (String residues);
-  /** clears out residues (set to empty string) */
-  public void clearResidues();
-  /** This will return false if there are no residues (null || "", cleared). */
-  public boolean hasResidues();
+    public void setLength(int length);
 
-  /* One of the reasons for the vague term residues
+    public String getResidues();
+
+    public String getResidues(int start, int end);
+
+    public void setResidues(String residues);
+
+    /**
+     * clears out residues (set to empty string)
+     */
+    public void clearResidues();
+
+    /**
+     * This will return false if there are no residues (null || "", cleared).
+     */
+    public boolean hasResidues();
+
+    /* One of the reasons for the vague term residues
      was so that we could support sequences of alternate types, e.g.
      peptides. To do this we need methods to set/get the residue type
-  */
-  public static final String AA = "AA";
-  public static final String DNA = "DNA";
-  public static final String RNA = "RNA";
+     */
+    public static final String AA = "AA";
+    public static final String DNA = "DNA";
+    public static final String RNA = "RNA";
 
-  /** These are SO terms (under general family of sequence_variation) 
-   changed insertion to nucleotide_insertion as its more specific and i
-   believe thats what we are doing here, same with deletion
-   eventually should come from SO (should this be in tiers file?)
-  */
-  public static final String INSERTION = "nucleotide_insertion";
-  public static final String DELETION = "nucleotide_deletion";
-  public static final String SUBSTITUTION = "substitution";
-  /** I question if CLEAR_EDIT shouold be a separate type - its just a deletion
-      of the above types - refactor? */
-  public static final String CLEAR_EDIT = "NOP";
+    /**
+     * These are SO terms (under general family of sequence_variation)
+     * changed insertion to nucleotide_insertion as its more specific and i
+     * believe thats what we are doing here, same with deletion
+     * eventually should come from SO (should this be in tiers file?)
+     */
+    public static final String INSERTION = "nucleotide_insertion";
+    public static final String DELETION = "nucleotide_deletion";
+    public static final String SUBSTITUTION = "substitution";
+    /**
+     * I question if CLEAR_EDIT shouold be a separate type - its just a deletion
+     * of the above types - refactor?
+     */
+    public static final String CLEAR_EDIT = "NOP";
 
-  public String  getResidueType ();
-  public void    setResidueType (String res_type);
-  /** Calculates residue type  by comparing seq length to feat length.
-      If there is more than 2 base pairs per residue than its assigned AA. */
-  public boolean hasResidueType();
-  /** Return true if getResidueType() == AA */
-  public boolean isAA();
+    public String getResidueType();
 
-  /** I can see this being a handy method but its actually not used at all - delete?*/
-  public SequenceI getSubSequence (int start, int end);
+    public void setResidueType(String res_type);
 
-  public String    getName  ();
-  public void      setName  (String id);
-  public boolean   hasName();
+    /**
+     * Calculates residue type by comparing seq length to feat length.
+     * If there is more than 2 base pairs per residue than its assigned AA.
+     */
+    public boolean hasResidueType();
 
-  public String    getAccessionNo();
-  public void      setAccessionNo(String id);
+    /**
+     * Return true if getResidueType() == AA
+     */
+    public boolean isAA();
 
-  public void      addDbXref(String db, String id, int isCurrent);
-  public void      addDbXref(String db, String id);
+    /**
+     * I can see this being a handy method but its actually not used at all - delete?
+     */
+    public SequenceI getSubSequence(int start, int end);
+
+    public String getName();
+
+    public void setName(String id);
+
+    public boolean hasName();
+
+    public String getAccessionNo();
+
+    public void setAccessionNo(String id);
+
+    public void addDbXref(String db, String id, int isCurrent);
+
+    public void addDbXref(String db, String id);
 //  public void      addDbXref(DbXref xref);
-  public Vector    getDbXrefs();
 
-  public String    getChecksum();
-  public void      setChecksum(String checksum);
+    public Vector getDbXrefs();
 
-  public char      getBaseAt(int loc);
+    public String getChecksum();
 
-  public String    getDescription();
-  public void      setDescription(String desc);
+    public void setChecksum(String checksum);
 
-  public String    getReverseComplement();
+    public char getBaseAt(int loc);
 
-  public boolean   isSequenceAvailable(long position);
-  public int       getFrame(long position, boolean forward);
+    public String getDescription();
 
-  public boolean   usesGenomicCoords();
-  public void      setRange (RangeI loc);
-  public RangeI    getRange ();
+    public void setDescription(String desc);
 
-  /** Cleanup dangling references when SequenceI not needed anymore. Is this funny to
-      have in SequenceI? (needed for AbstractLazySequence) */
+    public String getReverseComplement();
+
+    public boolean isSequenceAvailable(long position);
+
+    public int getFrame(long position, boolean forward);
+
+    public boolean usesGenomicCoords();
+
+    public void setRange(RangeI loc);
+
+    public RangeI getRange();
+
+    /**
+     * Cleanup dangling references when SequenceI not needed anymore. Is this funny to
+     * have in SequenceI? (needed for AbstractLazySequence)
+     */
 //  public void cleanup();
+    public boolean isLazy();
 
-  public boolean isLazy();
+    public HashMap getGenomicErrors();
 
-  public HashMap getGenomicErrors();
-  public boolean isSequencingErrorPosition(int base_position);
-  public SequenceEditI getSequencingErrorAtPosition(int base_position);
-  public boolean addSequencingErrorPosition(String operation, 
-                                            int pos, 
-                                            String residue);
-  public boolean addSequenceEdit(SequenceEditI seq_edit);
-  public boolean removeSequenceEdit(SequenceEditI seqEdit);
+    public boolean isSequencingErrorPosition(int base_position);
 
-  /* It is much more logical to attach the organism to the sequence
+    public SequenceEditI getSequencingErrorAtPosition(int base_position);
+
+    public boolean addSequencingErrorPosition(String operation,
+            int pos,
+            String residue);
+
+    public boolean addSequenceEdit(SequenceEditI seq_edit);
+
+    public boolean removeSequenceEdit(SequenceEditI seqEdit);
+
+    /* It is much more logical to attach the organism to the sequence
      because it is not an interval on a sequence that is associated
      (its origins) with an organism, but the sequence itself is the
      sequence of a particular organism */
-  public String getOrganism();
-  public void setOrganism(String organism);
+    public String getOrganism();
 
-  public void setDate(Date update_date);
+    public void setOrganism(String organism);
 
-  /* Sequences (such as peptides) need to be able to have properties.
+    public void setDate(Date update_date);
+
+    /* Sequences (such as peptides) need to be able to have properties.
      The methods for dealing with properties (addProperty etc.) are duplicated in several
      other classes--should we break them out as a separate class or something? */
 //   public void addProperty(String key, String value);
@@ -110,17 +148,17 @@ public interface SequenceI extends java.io.Serializable {
 //   public String getProperty(String key);
 //   public Vector getPropertyMulti(String key);
 //   public Hashtable getProperties();
-  // This is not used by classes that use SequenceI, so hopefully we can
-  // get away without it here (because if it's here, then all the classes
-  // that implement SequenceI need to have a getPropertiesMulti method).
-  //  public Hashtable getPropertiesMulti();
-
-  /** 10/2005: Sequences now can have synonyms.  Synonym methods copied from Identifer.
-      Could go in a separate class, but not sure it's worth the trouble. */
+    // This is not used by classes that use SequenceI, so hopefully we can
+    // get away without it here (because if it's here, then all the classes
+    // that implement SequenceI need to have a getPropertiesMulti method).
+    //  public Hashtable getPropertiesMulti();
+    /**
+     * 10/2005: Sequences now can have synonyms. Synonym methods copied from Identifer.
+     * Could go in a separate class, but not sure it's worth the trouble.
+     */
 //  public Vector getSynonyms();
 //  public Vector getSynonyms(boolean excludeInternalSynonyms);
 //  public void addSynonym(Synonym syn);
-  // Trying to stick to the minimum set of needed synonym methods.  Add more here
-  // if needed.
+    // Trying to stick to the minimum set of needed synonym methods.  Add more here
+    // if needed.
 }
-

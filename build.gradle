@@ -28,8 +28,8 @@ buildscript {
 
     dependencies {
         classpath group: 'com.install4j',
-                name: 'gradle-plugin',
-                version: '6.0'
+        name: 'gradle-plugin',
+        version: '6.0'
     }
 }
 

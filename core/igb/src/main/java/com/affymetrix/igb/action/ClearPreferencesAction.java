@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
 public class ClearPreferencesAction extends GenericAction {
-    
+
     private static final long serialVersionUID = 1l;
     private static final ClearPreferencesAction ACTION = new ClearPreferencesAction();
 
@@ -50,7 +50,7 @@ public class ClearPreferencesAction extends GenericAction {
             }
         }
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

@@ -53,12 +53,12 @@
         </dependency>
         <!--Start of logging dependencies-->
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <scope>provided</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-         <dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>

@@ -1,14 +1,17 @@
 package com.affymetrix.genometry.parsers;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGffSym;
-
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class GFFParserTest {
 
@@ -29,7 +32,7 @@ public class GFFParserTest {
         List expResult = null;
         List result = instance.parse(istr, seq_group, true);
 
-			//for (int i=0; i<result.size(); i++) {
+        //for (int i=0; i<result.size(); i++) {
         //  SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
         //}
         assertEquals(22, result.size());
@@ -44,7 +47,7 @@ public class GFFParserTest {
         assertEquals("Track A", sym.getProperty("method"));
 
         if (sym.getChildCount() == 1) {
-				// Currently the parser makes groups out of everything, even when there
+            // Currently the parser makes groups out of everything, even when there
             // is only one child per group.  In the future, it is possible that
             // the single symmetry will be used without a parent.
             sym = (SingletonSymWithProps) sym.getChild(0);

@@ -6,6 +6,7 @@ import java.util.EventListener;
  *
  * @author hiralv
  */
-public interface CThreadListener extends EventListener{
-	public void heardThreadEvent(CThreadEvent cte);
+public interface CThreadListener extends EventListener {
+
+    public void heardThreadEvent(CThreadEvent cte);
 }

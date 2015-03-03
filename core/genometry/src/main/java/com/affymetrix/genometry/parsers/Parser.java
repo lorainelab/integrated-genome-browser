@@ -1,10 +1,9 @@
 package com.affymetrix.genometry.parsers;
 
-import java.io.InputStream;
-import java.util.List;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * This is an interface for all the functionality needed to process a
@@ -16,15 +15,17 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
  * !!! all Parser implementations must have a zero argument constructor !!!
  */
 public interface Parser {
-	/**
-	 * parse the input stream (local or remote) to return a list of SeqSymmetry
-	 * @param is the input stream
-	 * @param group the AnnotatedSeqGroup
-	 * @param nameType either the feature name or annotation type
-	 * @param uri the URI
-	 * @param annotate_seq whether or not to use annotations
-	 * @return the list of SeqSymmetry in the data stream
-	 * @throws Exception
-	 */
-	public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq) throws Exception;
+
+    /**
+     * parse the input stream (local or remote) to return a list of SeqSymmetry
+     *
+     * @param is the input stream
+     * @param group the AnnotatedSeqGroup
+     * @param nameType either the feature name or annotation type
+     * @param uri the URI
+     * @param annotate_seq whether or not to use annotations
+     * @return the list of SeqSymmetry in the data stream
+     * @throws Exception
+     */
+    public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq) throws Exception;
 }

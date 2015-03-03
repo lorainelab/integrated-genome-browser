@@ -1,22 +1,30 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
- * 
-* Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ *
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- * 
-* The license is also available at http://www.opensource.org/licenses/cpl.php
+ *
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.property;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.event.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 /**
  * An adapter to add Excel-like cut and paste facilities to JTable. Started with

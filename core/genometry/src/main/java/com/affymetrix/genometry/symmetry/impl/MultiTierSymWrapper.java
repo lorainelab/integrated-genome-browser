@@ -9,12 +9,14 @@ package com.affymetrix.genometry.symmetry.impl;
  *
  * @author tarun
  */
-public interface MultiTierSymWrapper extends SeqSymmetry{
-    
+public interface MultiTierSymWrapper extends SeqSymmetry {
+
     public static final int CHILD_COUNT = 2;
-    
+
     public SeqSymmetry getPairConnector();
+
     public SeqSymmetry getFirstChild();
+
     public SeqSymmetry getSecondChild();
-    
+
 }

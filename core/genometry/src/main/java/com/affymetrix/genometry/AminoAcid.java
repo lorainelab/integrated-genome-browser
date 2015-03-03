@@ -101,8 +101,8 @@ public enum AminoAcid {
         CODON_TO_AMINO_ACID.put("TTG", AminoAcid.Leucine);
         CODON_TO_AMINO_ACID.put("TTT", AminoAcid.Phenylalanine);
 
-		//SPECIAL CASES WHERE TRANSLATION WAS FORCED.
-		// Using permutation and combination. 
+        //SPECIAL CASES WHERE TRANSLATION WAS FORCED.
+        // Using permutation and combination.
         // No of possibilites for first place
         CODON_TO_AMINO_ACID.put("A**", AminoAcid.STOP);
         CODON_TO_AMINO_ACID.put("T**", AminoAcid.STOP);

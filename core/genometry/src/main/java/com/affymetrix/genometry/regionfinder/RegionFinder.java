@@ -1,4 +1,3 @@
-
 package com.affymetrix.genometry.regionfinder;
 
 import com.affymetrix.genometry.BioSeq;
@@ -11,5 +10,6 @@ import java.util.List;
  * @author hiralv
  */
 public interface RegionFinder {
-	public SeqSpan findInterestingRegion(BioSeq aseq, List<SeqSymmetry> syms);
+
+    public SeqSpan findInterestingRegion(BioSeq aseq, List<SeqSymmetry> syms);
 }

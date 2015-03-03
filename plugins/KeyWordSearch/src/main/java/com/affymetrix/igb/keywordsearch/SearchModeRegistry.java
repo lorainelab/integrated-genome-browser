@@ -37,6 +37,5 @@ public class SearchModeRegistry {
     public List<ISearchModeSym> getSearchModes() {
         return searchModes;
     }
-    
-    
+
 }

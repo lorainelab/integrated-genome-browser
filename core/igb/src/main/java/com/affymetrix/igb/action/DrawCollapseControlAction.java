@@ -43,7 +43,7 @@ public class DrawCollapseControlAction extends GenericAction {
     public boolean isToggle() {
         return true;
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

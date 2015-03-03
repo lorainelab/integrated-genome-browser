@@ -2,10 +2,10 @@ package com.affymetrix.igb.update;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.StatusAlert;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.XServiceRegistrar;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.XServiceRegistrar;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(Activator.class);
-    
+
     public Activator() {
         super(IgbService.class);
     }
@@ -38,7 +38,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             URL url = new URL(BUNDLE.getString("updates"));
             String updateXml = Resources.toString(url, Charsets.UTF_8);
             //for testing only
-           // String updateXml = Resources.toString(Activator.class.getClassLoader().getResource("updates.xml"), Charsets.UTF_8);
+            // String updateXml = Resources.toString(Activator.class.getClassLoader().getResource("updates.xml"), Charsets.UTF_8);
             if (StringUtils.isNotBlank(updateXml)) {
                 final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getAppVersion());
                 final List<Update> updates = UpdateParser.parse(updateXml);

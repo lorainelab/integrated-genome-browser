@@ -27,94 +27,93 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author hiralv
  */
-public class DasResiduesHandler extends DefaultHandler{
+public class DasResiduesHandler extends DefaultHandler {
 
-	private static final Pattern white_space = Pattern.compile("\\s+");
-	private static final Matcher matcher = white_space.matcher("");
-	
-	private StringBuffer tempVal;
-	private String residues = null;
+    private static final Pattern white_space = Pattern.compile("\\s+");
+    private static final Matcher matcher = white_space.matcher("");
 
-	public String getDasResidues(GenericVersion version, String seqid, int min, int max) {
-		Set<String> segments = ((DasSource) version.versionSourceObj).getEntryPoints();
-		String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, seqid);
-		URI request;
-		InputStream result_stream = null;
-		try {
-			request = URI.create(version.gServer.URL);
-			URL url = new URL(request.toURL(), version.versionID + "/dna?");
-			QueryBuilder builder = new QueryBuilder(url.toExternalForm());
+    private StringBuffer tempVal;
+    private String residues = null;
 
-			builder.add("segment", segment + ":" + (min + 1) + "," + max);
-			request = builder.build();
-			result_stream = LocalUrlCacher.getInputStream(request.toString());
+    public String getDasResidues(GenericVersion version, String seqid, int min, int max) {
+        Set<String> segments = ((DasSource) version.versionSourceObj).getEntryPoints();
+        String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, seqid);
+        URI request;
+        InputStream result_stream = null;
+        try {
+            request = URI.create(version.gServer.URL);
+            URL url = new URL(request.toURL(), version.versionID + "/dna?");
+            QueryBuilder builder = new QueryBuilder(url.toExternalForm());
 
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			SAXParser saxParser = factory.newSAXParser();
-			saxParser.parse(new BufferedInputStream(result_stream), this);
-		
+            builder.add("segment", segment + ":" + (min + 1) + "," + max);
+            request = builder.build();
+            result_stream = LocalUrlCacher.getInputStream(request.toString());
 
-		} catch (MalformedURLException ex) {
-			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (ParserConfigurationException ex) {
-			Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SAXException ex) {
-			if (ex.getCause() != null && ex.getCause() instanceof InterruptedException) {
-				Logger.getLogger(DasLoader.class.getName()).log(Level.INFO, "Residue loading canclled by user.");
-			} else {
-				Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		} finally {
-			GeneralUtils.safeClose(result_stream);
-		}
-		return residues;
-	}
-	
-	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (qName.equalsIgnoreCase("DNA")) {
-			int length = Integer.parseInt(attributes.getValue("length"));
-			tempVal = new StringBuffer(length);
-		}else{
-			tempVal = new StringBuffer(10);
-		}
-		
-		if(Thread.currentThread().isInterrupted()){
-			tempVal = null;
-			residues = null;
-			throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
-		}
-	}
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(new BufferedInputStream(result_stream), this);
 
-	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException {
-		tempVal.append(new String(ch, start, length));
-		
-		if(Thread.currentThread().isInterrupted()){
-			tempVal = null;
-			residues = null;
-			throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
-		}
-	}
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            if (ex.getCause() != null && ex.getCause() instanceof InterruptedException) {
+                Logger.getLogger(DasLoader.class.getName()).log(Level.INFO, "Residue loading canclled by user.");
+            } else {
+                Logger.getLogger(DasLoader.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } finally {
+            GeneralUtils.safeClose(result_stream);
+        }
+        return residues;
+    }
 
-	@Override
-	public void endElement(String uri, String localName,
-			String qName) throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if (qName.equalsIgnoreCase("DNA")) {
+            int length = Integer.parseInt(attributes.getValue("length"));
+            tempVal = new StringBuffer(length);
+        } else {
+            tempVal = new StringBuffer(10);
+        }
 
-		if(qName.equalsIgnoreCase("DASDNA")) {
-			//Do Nothing
-		} else if(qName.equalsIgnoreCase("SEQUENCE")) {
-			//Do Nothing
-		} else if (qName.equalsIgnoreCase("DNA")) {
-			residues = matcher.reset(tempVal).replaceAll("");
-		}
-		
-		if(Thread.currentThread().isInterrupted()){
-			tempVal = null;
-			residues = null;
-			throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
-		}
-	}
+        if (Thread.currentThread().isInterrupted()) {
+            tempVal = null;
+            residues = null;
+            throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
+        }
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        tempVal.append(new String(ch, start, length));
+
+        if (Thread.currentThread().isInterrupted()) {
+            tempVal = null;
+            residues = null;
+            throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
+        }
+    }
+
+    @Override
+    public void endElement(String uri, String localName,
+            String qName) throws SAXException {
+
+        if (qName.equalsIgnoreCase("DASDNA")) {
+            //Do Nothing
+        } else if (qName.equalsIgnoreCase("SEQUENCE")) {
+            //Do Nothing
+        } else if (qName.equalsIgnoreCase("DNA")) {
+            residues = matcher.reset(tempVal).replaceAll("");
+        }
+
+        if (Thread.currentThread().isInterrupted()) {
+            tempVal = null;
+            residues = null;
+            throw new SAXException(new InterruptedException("Thread interruped. Cancelling loading."));
+        }
+    }
 }

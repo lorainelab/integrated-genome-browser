@@ -139,7 +139,7 @@ public class UcscPslSym
         this.tmins = tmins;
         this.isProbe = isProbe;
 
-		// calculating whether any of the query coords overlap (assumes query coords are sorted in ascending order)
+        // calculating whether any of the query coords overlap (assumes query coords are sorted in ascending order)
         // (should probably also do this for target coords???)
         int count = qmins.length - 1;
         int prevmin = 0;
@@ -310,7 +310,7 @@ public class UcscPslSym
                 System.out.println("query children overlap, doing normal SeqUtils.getOverlappingChildren() call");
             }
         } else {
-			//      System.out.println("trying to do a binary search on qmins");
+            //      System.out.println("trying to do a binary search on qmins");
             // do a simple binary search on qmins to find first qmin with coord >= input_span.getMin()
             // then scan till qmin coord >= input_span.getMax();
             // collect all qmins in between and use as basis for creating syms...
@@ -328,7 +328,7 @@ public class UcscPslSym
                 beg_index = -beg_index - 1;
             } //      if (beg_index < 0)  { beg_index = (-beg_index -1) -1; }
             else {
-				// backtrack beg_index in case hit duplicates???
+                // backtrack beg_index in case hit duplicates???
                 // well, only way this can happen when (! overlapping_query_coords) is when have weird
                 //   entries where blockSize is zero...
                 while ((beg_index > 0) && (qmins[beg_index - 1] == qmins[beg_index])) {
@@ -436,7 +436,7 @@ public class UcscPslSym
         tprops.put("query bases inserted", getQueryBaseInserts());
         tprops.put("target inserts", getTargetNumInserts());
         tprops.put("target bases inserted", getTargetBaseInserts());
-		//tprops.put("query seq", getQuerySeq().getID());
+        //tprops.put("query seq", getQuerySeq().getID());
         //tprops.put("target seq", getTargetSeq().getID());
         if (props != null) {
             tprops.putAll(props);

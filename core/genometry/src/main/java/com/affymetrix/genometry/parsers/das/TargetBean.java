@@ -6,31 +6,50 @@ package com.affymetrix.genometry.parsers.das;
  * @version $Id: TargetBean.java 5343 2010-02-25 01:39:42Z sgblanch $
  */
 class TargetBean {
-	private String id, name;
-	private int start, stop;
 
-	TargetBean() { this.clear(); }
+    private String id, name;
+    private int start, stop;
 
-	void setID(String id) { this.id = id.intern(); }
+    TargetBean() {
+        this.clear();
+    }
 
-	String getID() { return this.id; }
+    void setID(String id) {
+        this.id = id.intern();
+    }
 
-	void setName(String name) { this.name = name.intern(); }
+    String getID() {
+        return this.id;
+    }
 
-	String getName() { return this.name; }
+    void setName(String name) {
+        this.name = name.intern();
+    }
 
-	void setStart(String start) { this.start = Integer.parseInt(start) - 1; }
+    String getName() {
+        return this.name;
+    }
 
-	int getStart() { return this.start; }
+    void setStart(String start) {
+        this.start = Integer.parseInt(start) - 1;
+    }
 
-	void setStop(String stop) { this.stop = Integer.parseInt(stop); }
+    int getStart() {
+        return this.start;
+    }
 
-	int getStop() { return this.stop; }
+    void setStop(String stop) {
+        this.stop = Integer.parseInt(stop);
+    }
 
-	void clear() {
-		id = "";
-		name = "";
-		start = 0;
-		stop = 0;
-	}
+    int getStop() {
+        return this.stop;
+    }
+
+    void clear() {
+        id = "";
+        name = "";
+        start = 0;
+        stop = 0;
+    }
 }

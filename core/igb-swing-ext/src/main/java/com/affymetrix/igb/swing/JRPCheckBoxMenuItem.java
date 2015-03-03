@@ -23,7 +23,7 @@ public class JRPCheckBoxMenuItem extends JCheckBoxMenuItem implements WeightedJR
         this.weight = weight;
         init();
     }
-    
+
     public JRPCheckBoxMenuItem(String id, Action a) {
         this(id, a, -1);
     }

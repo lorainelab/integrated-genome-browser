@@ -7,7 +7,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.event.ActionEvent;
 
 public class ShowMinusStrandAction extends GenericAction {
-    
+
     private static final long serialVersionUID = 1L;
     private static final ShowMinusStrandAction ACTION = new ShowMinusStrandAction();
 
@@ -36,7 +36,7 @@ public class ShowMinusStrandAction extends GenericAction {
     public boolean isToggle() {
         return true;
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

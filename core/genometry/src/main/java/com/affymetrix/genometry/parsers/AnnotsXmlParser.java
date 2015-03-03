@@ -13,11 +13,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.jdom.*;
 import org.xml.sax.SAXException;
-
 
 /**
  * This class is specifically for parsing the annots.xml file used by IGB and
@@ -48,42 +48,42 @@ public abstract class AnnotsXmlParser {
             }
         }
     }
-	
-	/**
-	 * This method validates annots.xml for Quickload site using XML Schema - annots.xsd
-	 * 
-	 * - Document root is <files>, it contains <file> and <folder>
-	 * - <folder> contains another <folder> or <file>, with a required string attribute 'name'
-	 * - <file> contains:
-	 * 
-	 * ****************************************************************************************
-	 *      attribute name          data type      required       comments 
-	 * ****************************************************************************************
-	 *      name                    string         yes 
-	 *      title                   string         no
-	 *      url                     uri            no 
-	 *      description             string         no
-	 *      load_hing               string         no             W(w)hole S(s)equence
-	 *      show2tracks             string         no             Case Insensitive false & true 
-	 *      label_field             string         no
-	 *      foreground              string         no             Color value - 000000 to FFFFFF 
-	 *      background              string         no             Color value - 000000 to FFFFFF 
-	 *      positive_strand_color   string         no             Color value - 000000 to FFFFFF 
-	 *      negative_strand_color   string         no             Color value - 000000 to FFFFFF 
-	 *      name_size               integer        no
-	 *      direction_type          enum           no             color, arrow, none or both
-	 *      max_depth               integer        no
-	 *      connected               string         no             Case Insensitive false & true  
-	 *      view_mode               string         no
-	 *      serverURL               uri            no
-	 *      collapsed               string         no             Case Insensitive false & true 
-	 * 
-	 * @param istr
-	 * @return
-	 * @throws SAXException
-	 * @throws MalformedURLException
-	 * @throws IOException 
-	 */
+
+    /**
+     * This method validates annots.xml for Quickload site using XML Schema - annots.xsd
+     *
+     * - Document root is <files>, it contains <file> and <folder>
+     * - <folder> contains another <folder> or <file>, with a required string attribute 'name'
+     * - <file> contains:
+     *
+     * ****************************************************************************************
+     * attribute name data type required comments
+     * ****************************************************************************************
+     * name string yes
+     * title string no
+     * url uri no
+     * description string no
+     * load_hing string no W(w)hole S(s)equence
+     * show2tracks string no Case Insensitive false & true
+     * label_field string no
+     * foreground string no Color value - 000000 to FFFFFF
+     * background string no Color value - 000000 to FFFFFF
+     * positive_strand_color string no Color value - 000000 to FFFFFF
+     * negative_strand_color string no Color value - 000000 to FFFFFF
+     * name_size integer no
+     * direction_type enum no color, arrow, none or both
+     * max_depth integer no
+     * connected string no Case Insensitive false & true
+     * view_mode string no
+     * serverURL uri no
+     * collapsed string no Case Insensitive false & true
+     *
+     * @param istr
+     * @return
+     * @throws SAXException
+     * @throws MalformedURLException
+     * @throws IOException
+     */
     private static boolean validateAnnotsXML(InputStream istr) throws SAXException, IOException {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         URL schemaURL = AnnotsXmlParser.class.getClassLoader().getResource("annots.xsd");
@@ -96,7 +96,7 @@ public abstract class AnnotsXmlParser {
         return true;
     }
 
-	   static void iterateAllNodesNew(List list, List<AnnotMapElt> annotList) {
+    static void iterateAllNodesNew(List list, List<AnnotMapElt> annotList) {
         String path, title;
         for (Object list1 : list) {
             Element e = (Element) list1;
@@ -113,7 +113,7 @@ public abstract class AnnotsXmlParser {
         }
     }
 
-	   static void iterateAllNodesOld(List list, List<AnnotMapElt> annotList) {
+    static void iterateAllNodesOld(List list, List<AnnotMapElt> annotList) {
         Element e;
         String title;
         for (Object list1 : list) {
@@ -123,7 +123,7 @@ public abstract class AnnotsXmlParser {
         }
     }
 
-	   static void addDataToList(List<AnnotMapElt> annotList, Element e, String title) {
+    static void addDataToList(List<AnnotMapElt> annotList, Element e, String title) {
         String filename = e.getAttributeValue("name");
         String desc = e.getAttributeValue("description");   // not currently used
         String friendlyURL = e.getAttributeValue("url");

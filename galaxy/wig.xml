@@ -12,9 +12,9 @@
         <param type="template" name="position" strip="True" >
             #set chrom, start, end = $wig_file.datatype.get_estimated_display_viewport( $wig_file )
             #if $chrom is not None:
-                seqid=${chrom}&amp;start=${start}&amp;end=${int(end) + 1}
+            seqid=${chrom}&amp;start=${start}&amp;end=${int(end) + 1}
             #else:
-                seqid=&amp;start=&amp;end=
+            seqid=&amp;start=&amp;end=
             #end if
         </param>
     </link>

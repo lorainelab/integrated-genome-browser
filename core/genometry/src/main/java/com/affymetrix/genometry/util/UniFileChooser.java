@@ -1,114 +1,114 @@
 /**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License").
+ * A copy of the license must be included with any distribution of
+ * this source code.
+ * Distributions from Affymetrix, Inc., place this in the
+ * IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at
+ * http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genometry.util;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-
 /**
- *  For reading files, you probably need to set-up your own JFileChooser, but
- *  the UniFileFilter class can be helpful in that case.
+ * For reading files, you probably need to set-up your own JFileChooser, but
+ * the UniFileFilter class can be helpful in that case.
  *
  */
 public class UniFileChooser extends GFileChooser {
-	static final long serialVersionUID = 1L;
 
-	/**
-	 *  A singleton UniFileChooser, re-used when possible.
-	 */
-	private static UniFileChooser static_file_chooser;
+    static final long serialVersionUID = 1L;
 
-	private String description = "Any file (*.*)";
-	private String extension = "";
+    /**
+     * A singleton UniFileChooser, re-used when possible.
+     */
+    private static UniFileChooser static_file_chooser;
 
-	private FileFilter current_file_filter;
+    private String description = "Any file (*.*)";
+    private String extension = "";
 
-	protected UniFileChooser() {
-		// bare constructor.  Allows for subclassing.
-		super();
-	}
+    private FileFilter current_file_filter;
 
-	/**
-	 *  Creates and returns a JFileChooser which accepts only filenames
-	 *  ending in period+extension when creating or writing to a file.
-	 *
-	 *  <p>Example: new UniFileChooser("AXML file", "axml");
-	 */
-	public UniFileChooser(String description, String extension) {
-		this();
-		reinitialize(description, extension);
-	}
+    protected UniFileChooser() {
+        // bare constructor.  Allows for subclassing.
+        super();
+    }
 
-	public static UniFileChooser getFileChooser(String description, String extension) {
-		if (static_file_chooser == null) {
-			static_file_chooser = new UniFileChooser(description, extension);
-		}
-		else {
-			static_file_chooser.reinitialize(description, extension);
-		}
+    /**
+     * Creates and returns a JFileChooser which accepts only filenames
+     * ending in period+extension when creating or writing to a file.
+     *
+     * <p>
+     * Example: new UniFileChooser("AXML file", "axml");
+     */
+    public UniFileChooser(String description, String extension) {
+        this();
+        reinitialize(description, extension);
+    }
 
-		return static_file_chooser;
-	}
+    public static UniFileChooser getFileChooser(String description, String extension) {
+        if (static_file_chooser == null) {
+            static_file_chooser = new UniFileChooser(description, extension);
+        } else {
+            static_file_chooser.reinitialize(description, extension);
+        }
 
-	/**
-	 *  Reinitializes a singleton JFileChooser to accept only an ".axml" filename.
-	 */
-	public static UniFileChooser getAXMLFileChooser() {
-		return getFileChooser("AXML file", "axml");
-	}
+        return static_file_chooser;
+    }
 
-	/**
-	 *  Reinitializes a singleton JFileChooser to accept only an ".xml" filename.
-	 */
-	public static UniFileChooser getXMLFileChooser() {
-		return getFileChooser("XML file", "xml");
-	}
+    /**
+     * Reinitializes a singleton JFileChooser to accept only an ".axml" filename.
+     */
+    public static UniFileChooser getAXMLFileChooser() {
+        return getFileChooser("AXML file", "axml");
+    }
 
-	/**
-	 *  Resets such that it will accept only filenames
-	 *  ending in period+extension when creating or writing to a file.
-	 *
-	 *  <p>Example: reinitialize("AXML file", "axml");
-	 */
-	public void reinitialize(final String description, final String extension) {
-		if (description==null || extension==null || "".equals(extension)) {
-			throw new IllegalArgumentException("description and extension cannot be null");
-		}
+    /**
+     * Reinitializes a singleton JFileChooser to accept only an ".xml" filename.
+     */
+    public static UniFileChooser getXMLFileChooser() {
+        return getFileChooser("XML file", "xml");
+    }
 
-		if (extension.indexOf('.') != -1) {
-			throw new IllegalArgumentException("extension should not contain \'.\'");
-		}
+    /**
+     * Resets such that it will accept only filenames
+     * ending in period+extension when creating or writing to a file.
+     *
+     * <p>
+     * Example: reinitialize("AXML file", "axml");
+     */
+    public void reinitialize(final String description, final String extension) {
+        if (description == null || extension == null || "".equals(extension)) {
+            throw new IllegalArgumentException("description and extension cannot be null");
+        }
 
-		if (this.description != description || this.extension != extension) {
-			this.description = description;
-			this.extension = extension;
+        if (extension.indexOf('.') != -1) {
+            throw new IllegalArgumentException("extension should not contain \'.\'");
+        }
 
-			FileFilter[] filters = getChoosableFileFilters();
-			for (FileFilter filter : filters) {
-				removeChoosableFileFilter(filter);
-			}
-			current_file_filter = new UniFileFilter(extension, description);
+        if (this.description != description || this.extension != extension) {
+            this.description = description;
+            this.extension = extension;
 
-			addChoosableFileFilter(current_file_filter);
-		}
+            FileFilter[] filters = getChoosableFileFilters();
+            for (FileFilter filter : filters) {
+                removeChoosableFileFilter(filter);
+            }
+            current_file_filter = new UniFileFilter(extension, description);
 
-		//addChoosableFileFilter(getAcceptAllFileFilter());
-		setFileFilter(current_file_filter);
-		setMultiSelectionEnabled(false);
-		setFileSelectionMode(JFileChooser.FILES_ONLY);
-		rescanCurrentDirectory();
-		setSelectedFile(null);
-	}
+            addChoosableFileFilter(current_file_filter);
+        }
+
+        //addChoosableFileFilter(getAcceptAllFileFilter());
+        setFileFilter(current_file_filter);
+        setMultiSelectionEnabled(false);
+        setFileSelectionMode(JFileChooser.FILES_ONLY);
+        rescanCurrentDirectory();
+        setSelectedFile(null);
+    }
 }

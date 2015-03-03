@@ -6,21 +6,32 @@ package com.affymetrix.genometry.parsers.das;
  * @version $Id: LinkBean.java 5343 2010-02-25 01:39:42Z sgblanch $
  */
 class LinkBean {
-	private String url;
-	private String title;
 
-	LinkBean() { this.clear(); }
+    private String url;
+    private String title;
 
-	void setURL(String url) { this.url = url.intern(); }
+    LinkBean() {
+        this.clear();
+    }
 
-	String getURL() { return this.url; }
+    void setURL(String url) {
+        this.url = url.intern();
+    }
 
-	void setTitle(String title) { this.title = title.intern(); }
+    String getURL() {
+        return this.url;
+    }
 
-	public String getTitle() { return this.title; }
+    void setTitle(String title) {
+        this.title = title.intern();
+    }
 
-	void clear() {
-		this.url = "";
-		this.title = "";
-	}
+    public String getTitle() {
+        return this.title;
+    }
+
+    void clear() {
+        this.url = "";
+        this.title = "";
+    }
 }

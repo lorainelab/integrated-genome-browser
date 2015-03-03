@@ -155,7 +155,6 @@ public class ConsoleLoggerGUI extends javax.swing.JFrame {
         clpbrd.setContents(stringSelection, null);
     }//GEN-LAST:event_copyToClipboardBtnActionPerformed
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeBtn;
     private javax.swing.JTextArea consoleTextArea;

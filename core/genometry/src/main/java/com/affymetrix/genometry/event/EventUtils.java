@@ -9,15 +9,15 @@ import java.awt.event.MouseEvent;
  */
 public abstract class EventUtils {
 
-	/**
-	 * Should trigger a pop up menu on whatever platform is being used. Notice
-	 * that this differs from
-	 * {@link java.awt.event.MouseEvent#isPopupTrigger() AWT's Version}.
-	 */
-	public static boolean isOurPopupTrigger(MouseEvent evt) {
-		int mods = evt.getModifiers();
-		return (evt.isMetaDown()
-				|| evt.isControlDown() // (for Apple Macintosh Computers)
-				|| ((mods & InputEvent.BUTTON3_MASK) != 0));
-	}
+    /**
+     * Should trigger a pop up menu on whatever platform is being used. Notice
+     * that this differs from
+     * {@link java.awt.event.MouseEvent#isPopupTrigger() AWT's Version}.
+     */
+    public static boolean isOurPopupTrigger(MouseEvent evt) {
+        int mods = evt.getModifiers();
+        return (evt.isMetaDown()
+                || evt.isControlDown() // (for Apple Macintosh Computers)
+                || ((mods & InputEvent.BUTTON3_MASK) != 0));
+    }
 }

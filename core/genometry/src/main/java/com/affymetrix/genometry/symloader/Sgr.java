@@ -12,12 +12,29 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public final class Sgr extends SymLoader implements AnnotationWriter {
 
@@ -102,7 +119,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
 
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-			// Using whole file path so probably not needed : HV 02/20/12
+            // Using whole file path so probably not needed : HV 02/20/12
             // Making sure the ID is unique on the seq
             // will make sure the GraphState is also unique on the seq.
             // String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);

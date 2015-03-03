@@ -212,7 +212,7 @@ public final class KeyStrokesView {
                 if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
-                if(!genericAction.isToolbarAction()) {
+                if (!genericAction.isToolbarAction()) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
                 rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);

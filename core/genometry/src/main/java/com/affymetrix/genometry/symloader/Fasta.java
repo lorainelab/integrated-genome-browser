@@ -106,7 +106,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
     public String getRegionResidues(SeqSpan span) throws Exception {
         init();
         BufferedInputStream bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
-		//Bigger buffers should increase multitasking.  That is, the thread tha manages the buffer
+        //Bigger buffers should increase multitasking.  That is, the thread tha manages the buffer
         //can keep loading the file from the web or hardrive while the main program can compute.
         final BufferedReader br = new BufferedReader(new InputStreamReader(bis), 1024 * 1024 * 50);
         try {
@@ -218,7 +218,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
                 }
             }
 
-			// Didn't use .toString() here because of a memory bug in Java
+            // Didn't use .toString() here because of a memory bug in Java
             // (See "stringbuffer memory java" for more details.)
             residues = new String(buf);
             buf.setLength(0);

@@ -16,10 +16,11 @@ import javax.swing.JPopupMenu;
  *
  * @author hiralv
  */
-public class NCBIBlastPopupListener implements ContextualPopupListener,AxisPopupListener {
+public class NCBIBlastPopupListener implements ContextualPopupListener, AxisPopupListener {
 
     private final SeqMapViewI smv;
-    private final BlastSearchAction blastXAction,blastPAction;
+    private final BlastSearchAction blastXAction, blastPAction;
+
     public NCBIBlastPopupListener(SeqMapViewI smv) {
         this.smv = smv;
         blastXAction = new BlastXSearchAction(smv);
@@ -31,19 +32,18 @@ public class NCBIBlastPopupListener implements ContextualPopupListener,AxisPopup
         if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
             JMenuItem remote_ncbi_blast_action = new JMenuItem(blastXAction);
             remote_ncbi_blast_action.setEnabled(blastXAction.isEnabled());
-            popup.add(remote_ncbi_blast_action,14);
+            popup.add(remote_ncbi_blast_action, 14);
 
             JMenuItem remote_ncbi_blastp_action = new JMenuItem(blastPAction);
             remote_ncbi_blastp_action.setEnabled(blastPAction.isEnabled());
-            popup.add(remote_ncbi_blastp_action,16);
-
+            popup.add(remote_ncbi_blastp_action, 16);
 
         }
     }
 
     @Override
     public void addPopup(JPopupMenu popup) {
-       popup.add(blastXAction);
-       popup.add(blastPAction);
+        popup.add(blastXAction);
+        popup.add(blastPAction);
     }
 }

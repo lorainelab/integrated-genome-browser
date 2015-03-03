@@ -7,10 +7,10 @@ import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGffSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import java.io.BufferedReader;
@@ -52,19 +52,19 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     boolean useDefaultSource = true;
     boolean use_standard_filters = false;
     boolean gff_base1 = true;
-	// should only be one tab between each field, but just in case,
+    // should only be one tab between each field, but just in case,
     //    allowing for possible multi-tabs
     static final Pattern line_regex = Pattern.compile("\\t+");
-	// Note that this simple rule for breaking the string at semicolons doesn't
+    // Note that this simple rule for breaking the string at semicolons doesn't
     // allow for the possibility that some tag's values might contain semicolons
     // inside quotes
     static final Pattern att_regex = Pattern.compile(";");
-	// According to http://www.sanger.ac.uk/Software/formats/GFF/GFF_Spec.shtml
+    // According to http://www.sanger.ac.uk/Software/formats/GFF/GFF_Spec.shtml
     // all tags must match ([A-Za-z][A-Za-z0-9_]*)
     // but we have relaxed this rule (probably inadvertently) to just ([\\w]+)
     // (thus allowing the identifier to start with '_' or a number.)
     static final Pattern tag_regex = Pattern.compile("^\\s*([\\w]+)\\s*");
-	// a regular expression to find values for tag-value entries
+    // a regular expression to find values for tag-value entries
     // values are either
     //   (1): quote-delimited free text (and this code makes the further
     //          simplifying assumption that there are no backslashed quotes
@@ -76,7 +76,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             + "\\s*([^\"\\s]\\S*)" /* pattern 2 */);
     static final Pattern gff3_tagval_splitter = Pattern.compile("=");
     static final Pattern gff3_multival_splitter = Pattern.compile(",");
-	// a hash used to filter
+    // a hash used to filter
     //  Hashtable fail_filter_hash = new Hashtable();
     Map<String, String> fail_filter_hash = null;
     Map<String, String> pass_filter_hash = null;
@@ -399,7 +399,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                     seq.setLength(max);
                 }
 
-				// add syms to a results List during parsing,
+                // add syms to a results List during parsing,
                 // then add group syms to BioSeq after entire parse is done.
                 if (use_hierarchy) {
                     useHierarchy(hier_parents, feature_type, current_h_level, line, sym, results);
@@ -469,7 +469,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             SingletonSymWithProps groupsym = group_hash.get(group_id);
             if (groupsym == null) {
                 if (use_first_one_as_group) {
-					// Take the first entry found with a given group_id and use it
+                    // Take the first entry found with a given group_id and use it
                     // as the parent symmetry for all members of the group
                     // (For example, a "transcript" line with transcript_id=3 might
                     //  be followed by several "exon" lines with transcript_id=3.
@@ -479,7 +479,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                     // Make a brand-new symmetry to hold all syms with a given group_id
                     groupsym = new SingletonSymWithProps(sym.getStart(), sym.getEnd(), sym.getBioSeq());
                     groupsym.addChild(sym);
-					// Setting the "group" property might be needed if you plan to use the
+                    // Setting the "group" property might be needed if you plan to use the
                     // outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
                     groupsym.setProperty("group", group_id);
                     groupsym.setProperty("source", source);
@@ -490,7 +490,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                     }
                 }
                 group_count++;
-				// If one field, like "probeset_id" was chosen as the group_id_field_name,
+                // If one field, like "probeset_id" was chosen as the group_id_field_name,
                 // then make the contents of that field be the "id" of the group symmetry
                 // and also index it in the IGB id-to-symmetry hash
                 String index_id = null;
@@ -584,7 +584,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq) {
         SeqSpan pspan = psym.getSpan(sortseq);
         boolean ascending = pspan.isForward();
-		//    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
+        //    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
         //    System.out.println("sortseq: " + sortseq.getID());
         //    SeqUtils.printSymmetry(psym);
         int child_count = psym.getChildCount();
@@ -680,7 +680,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             }
             String hierarchy_string = m.group(1).trim();
 
-			// Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
+            // Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
             // The ID field is optional.
             // Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>
             Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
@@ -881,7 +881,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     /**
      * Implementing AnnotationWriter interface to write out annotations to an
      * output stream as "GFF" format.
-	 *
+     *
      */
     public String getMimeType() {
         return "text/plain";

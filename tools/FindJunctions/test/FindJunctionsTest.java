@@ -1,3 +1,4 @@
+
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -21,76 +22,76 @@ import org.junit.Test;
  * @author hiralv
  */
 public class FindJunctionsTest {
-    
+
     String input;
     List<String> output = new ArrayList<String>();
-    
+
     @Before
-    public void setUp() throws URISyntaxException, Exception{
+    public void setUp() throws URISyntaxException, Exception {
         File inputDirectory = new File("data/input");
         inputDirectory = inputDirectory.getAbsoluteFile();
         FindJunction fJ = new FindJunction();
-        if(inputDirectory.isDirectory()){
+        if (inputDirectory.isDirectory()) {
             File files[] = inputDirectory.listFiles();
-            for(int i=0;i<files.length;i++){
+            for (int i = 0; i < files.length; i++) {
                 String name = files[i].getName();
-                String ext = name.substring(name.length()-3, name.length());
-                if(ext.equals("bam")){
-                    String out = name.substring(0, name.length()-3)+"bed";
-                    fJ.init("data/input/"+name, "data/output/"+out, 5, false, null, true, true);
+                String ext = name.substring(name.length() - 3, name.length());
+                if (ext.equals("bam")) {
+                    String out = name.substring(0, name.length() - 3) + "bed";
+                    fJ.init("data/input/" + name, "data/output/" + out, 5, false, null, true, true);
                     output.add(out);
                 }
             }
         }
-        
+
     }
-    
+
     @Test
-    public void sample() throws URISyntaxException, Exception{
+    public void sample() throws URISyntaxException, Exception {
         File outputDirectory = new File("data/output");
         outputDirectory = outputDirectory.getAbsoluteFile();
-        if(outputDirectory.isDirectory()){
+        if (outputDirectory.isDirectory()) {
             File outputFiles[] = outputDirectory.listFiles();
-            for(File file : outputFiles){
+            for (File file : outputFiles) {
                 String name = file.getName();
-                String ext = name.substring(name.length()-3, name.length());
-                if(!ext.equals("bed")){
+                String ext = name.substring(name.length() - 3, name.length());
+                if (!ext.equals("bed")) {
                     continue;
                 }
                 file = file.getAbsoluteFile();
                 String path = file.getAbsolutePath();
-                URI bedUri = new URI(FILE_PROTOCOL+path);
+                URI bedUri = new URI(FILE_PROTOCOL + path);
                 Map<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
-                AnnotatedSeqGroup group = new AnnotatedSeqGroup(name.substring(0 , name.length()-3));
-                BED bedFile = new BED(bedUri,name.substring(0 , name.length()-3),group);
+                AnnotatedSeqGroup group = new AnnotatedSeqGroup(name.substring(0, name.length() - 3));
+                BED bedFile = new BED(bedUri, name.substring(0, name.length() - 3), group);
                 List<BioSeq> chromosomes = bedFile.getChromosomeList();
-                for(BioSeq chr : chromosomes){
-                    List<SeqSymmetry> symList = bedFile.getChromosome(chr); 
-                    for(SeqSymmetry sym : symList){
+                for (BioSeq chr : chromosomes) {
+                    List<SeqSymmetry> symList = bedFile.getChromosome(chr);
+                    for (SeqSymmetry sym : symList) {
                         SeqSpan span = sym.getSpan(chr);
-                        String key = ""+span.getMin()+""+span.getMax();
+                        String key = "" + span.getMin() + "" + span.getMax();
                         Assert.assertEquals(false, map.containsKey(key));
                         map.put(key, sym);
                     }
                     map.clear();
                     symList.clear();
                 }
-                System.out.println(file.getName()+" success....");
+                System.out.println(file.getName() + " success....");
             }
         }
     }
-    
+
     @After
-    public void end(){
-       File outputDirectory = new File("data/output");
-       outputDirectory = outputDirectory.getAbsoluteFile();
-       if(outputDirectory.isDirectory()){
-           for(File file : outputDirectory.listFiles()){
-               if(output.contains(file.getName())){
-                   file.delete();
-               }
-           }
-       }
-       output.clear();
+    public void end() {
+        File outputDirectory = new File("data/output");
+        outputDirectory = outputDirectory.getAbsoluteFile();
+        if (outputDirectory.isDirectory()) {
+            for (File file : outputDirectory.listFiles()) {
+                if (output.contains(file.getName())) {
+                    file.delete();
+                }
+            }
+        }
+        output.clear();
     }
 }

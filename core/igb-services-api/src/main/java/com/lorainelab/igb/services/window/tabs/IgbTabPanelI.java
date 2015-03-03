@@ -13,5 +13,4 @@ public interface IgbTabPanelI {
 
     public IgbTabPanel getIgbTabPanel();
 
-   
 }

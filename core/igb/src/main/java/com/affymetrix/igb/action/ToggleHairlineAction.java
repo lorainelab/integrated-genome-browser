@@ -11,6 +11,7 @@ import com.affymetrix.igb.view.UnibrowHairline;
  * @author hiralv
  */
 public class ToggleHairlineAction extends GenericAction {
+
     private static final long serialVersionUID = 1;
     private static final ToggleHairlineAction ACTION = new ToggleHairlineAction();
 
@@ -37,7 +38,7 @@ public class ToggleHairlineAction extends GenericAction {
     public boolean isToggle() {
         return true;
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

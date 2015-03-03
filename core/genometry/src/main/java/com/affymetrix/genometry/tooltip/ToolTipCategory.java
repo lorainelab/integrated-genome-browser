@@ -12,16 +12,16 @@ import java.util.Map;
  * @author tarun
  */
 public class ToolTipCategory {
-    
+
     private String category;
     private int weight;
     private Map<String, String> properties;
-    
+
     public ToolTipCategory(String category, Map<String, String> properties) {
         this.category = category;
         this.properties = properties;
     }
-    
+
     public ToolTipCategory(String category, int weight, Map<String, String> properties) {
         this.category = category;
         this.weight = weight;

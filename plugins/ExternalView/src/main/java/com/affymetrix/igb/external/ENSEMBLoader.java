@@ -1,6 +1,10 @@
 package com.affymetrix.igb.external;
 
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.google.common.io.Closer;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,11 +16,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genoviz.util.ErrorHandler;
-import com.google.common.io.Closer;
-import java.awt.image.BufferedImage;
 
 /**
  * Helper class for getting genomic images from ENSEMBL The mappings for ensembl
@@ -82,7 +81,7 @@ class ENSEMBLoader extends BrowserLoader {
         if (!urlMap.containsKey(loc.db)) {
             return MessageFormat.format(ExternalViewer.BUNDLE.getString("ensemblTransposeError"), loc.db);
         }
-        if (loc.length() >= 100000) {            
+        if (loc.length() >= 100000) {
             return ExternalViewer.BUNDLE.getString("regionTooLargeError");
         }
         String chr = loc.chr.replaceAll("chr", "");
@@ -112,18 +111,16 @@ class ENSEMBLoader extends BrowserLoader {
                     cookie += ";" + EnsemblView.ENSEMBLSESSION + "=" + cookies.get(EnsemblView.ENSEMBLSESSION);
                 }
                 InputStream in = getConnection(url, cookie).getInputStream();
-                closer.register(in);                
+                closer.register(in);
                 return ImageIO.read(in);
             } catch (IOException e) {
-                logger.log(Level.WARNING, "IOException.", e);  
+                logger.log(Level.WARNING, "IOException.", e);
                 throw new ImageUnavailableException();
             }
         }
         throw new ImageUnavailableException(url);
     }
 }
-
-
 
 class EnsemblURL {
 

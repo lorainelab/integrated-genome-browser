@@ -39,7 +39,7 @@ public class PreferencesHelpTabAction extends HelpActionA {
                     "No Help", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

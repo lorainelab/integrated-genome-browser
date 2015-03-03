@@ -348,153 +348,153 @@ will not work well with these styles.
 <!--  commented out example exercising most of the PROPERTY keys that 
       control configuration of GenericAnnotGlyphFactory
       
-			  'regex' attribute only needs to match a substring of an annotation type name to be considered a match
-			  Prefix with "(?i)" for case insensitive matching
-			  Prefix with "^" to anchor to beginning of type name
-			  Prefix with "$" to anchor to end of type name
-		  <METHOD_REGEX_ASSOCIATION regex="(?i)regex_matches_substring_of_annotation_type"
-			 style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			   <PROPERTY key="color" value="00FFFF" />
-			   <PROPERTY key="background" value="BBA000" /> 
-			   <PROPERTY key="label_field" value="gene name" />
-			   <PROPERTY key="max_depth" value="3" />  max stacking level of annots when expanded
-			   <PROPERTY key="glyph_depth" value="1" />  if = 2, render connecting lines, if = 1, no connections
-			   <PROPERTY key="separate" value="false" />  if true, then render as two tiers (+ and -), if false then one tier
-			   NOT SURE IF THIS WORKS: <PROPERTY key="annot_type" value="refseq" /> 
-		  </METHOD_REGEX_ASSOCIATION>
-		-->
+                  'regex' attribute only needs to match a substring of an annotation type name to be considered a match
+                  Prefix with "(?i)" for case insensitive matching
+                  Prefix with "^" to anchor to beginning of type name
+                  Prefix with "$" to anchor to end of type name
+          <METHOD_REGEX_ASSOCIATION regex="(?i)regex_matches_substring_of_annotation_type"
+                 style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+                   <PROPERTY key="color" value="00FFFF" />
+                   <PROPERTY key="background" value="BBA000" /> 
+                   <PROPERTY key="label_field" value="gene name" />
+                   <PROPERTY key="max_depth" value="3" />  max stacking level of annots when expanded
+                   <PROPERTY key="glyph_depth" value="1" />  if = 2, render connecting lines, if = 1, no connections
+                   <PROPERTY key="separate" value="false" />  if true, then render as two tiers (+ and -), if false then one tier
+                   NOT SURE IF THIS WORKS: <PROPERTY key="annot_type" value="refseq" /> 
+          </METHOD_REGEX_ASSOCIATION>
+        -->
 
-		<!-- Configure the probe set display -->
-		<!-- Case-insensitive match of the ending ".link.psl" -->
-		<METHOD_REGEX_ASSOCIATION regex="(?i).*\.link\.psl$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
-		<METHOD_REGEX_ASSOCIATION regex="(?i)netaffx consensus$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
-		<METHOD_REGEX_ASSOCIATION regex="(?i)netaffx\+consensus$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
-		<!-- End of probe set display section -->
+        <!-- Configure the probe set display -->
+        <!-- Case-insensitive match of the ending ".link.psl" -->
+        <METHOD_REGEX_ASSOCIATION regex="(?i).*\.link\.psl$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
+        <METHOD_REGEX_ASSOCIATION regex="(?i)netaffx consensus$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
+        <METHOD_REGEX_ASSOCIATION regex="(?i)netaffx\+consensus$" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
+        <!-- End of probe set display section -->
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)refseq$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-			<PROPERTY key="label_field" value="gene name" />
-			<!--<PROPERTY key="max_depth" value="3" /> -->
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)refseq$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="00FF00" > green </PROPERTY>
+            <PROPERTY key="label_field" value="gene name" />
+            <!--<PROPERTY key="max_depth" value="3" /> -->
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)knowngene$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="6495ED" > cornflowerblue </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)knowngene$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="6495ED" > cornflowerblue </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)ensgene$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="7FFFD4" > aquamarine </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)ensgene$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="7FFFD4" > aquamarine </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)mgcgene(s?)$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="FFB6C1" > lightpink </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)mgcgene(s?)$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="FFB6C1" > lightpink </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)mrna$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="FFFF00" > yellow </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)mrna$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="FFFF00" > yellow </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)est$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="DAA520" > goldenrod </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)est$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="DAA520" > goldenrod </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)genscan$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="DDA0DD"> plum </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)genscan$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="DDA0DD"> plum </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)flybasegene$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)flybasegene$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="00FF00" > green </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)bdgpgene$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)bdgpgene$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="00FF00" > green </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)tair$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)tair$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="color" value="00FF00" > green </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)sanger_pombe$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)sanger_pombe$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="color" value="00FF00" > green </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<!-- "Flat" annotation types (no child annotations), so glyph depth = 1  -->
-		<METHOD_REGEX_ASSOCIATION regex="(?i)contig(s?)$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
-		</METHOD_REGEX_ASSOCIATION>
+        <!-- "Flat" annotation types (no child annotations), so glyph depth = 1  -->
+        <METHOD_REGEX_ASSOCIATION regex="(?i)contig(s?)$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)repeat(s?)$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="A0A000" />
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)repeat(s?)$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="A0A000" />
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)firstef$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="FFA07A" > lightsalmon </PROPERTY>
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)firstef$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="FFA07A" > lightsalmon </PROPERTY>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)sno_m(i?)rna$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="A000A0" />
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)sno_m(i?)rna$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="A000A0" />
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)mirna$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="A000A0" />
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)mirna$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="A000A0" />
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)(encode|encode regions|encoderegions)$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="FF8000" />
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)(encode|encode regions|encoderegions)$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="FF8000" />
+        </METHOD_REGEX_ASSOCIATION>
 
-		<METHOD_REGEX_ASSOCIATION regex="(?i)flybasenoncoding$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
-			<PROPERTY key="glyph_depth" value="1" />
-			<PROPERTY key="color" value="A000A0" />
-		</METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="(?i)flybasenoncoding$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+            <PROPERTY key="glyph_depth" value="1" />
+            <PROPERTY key="color" value="A000A0" />
+        </METHOD_REGEX_ASSOCIATION>
 
-		<!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
-		<!--
-		  Must match all these names:  (and similar ones for non-human chips)
-			"HuEx-1_0-st", "HuEx-1_0-st-Probes", "HuEx-1_0-st-Transcripts"
-			"HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
-		-->
-		<METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st.*Probes$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
-			<PROPERTY key="label_field" value="id"/>
-		</METHOD_REGEX_ASSOCIATION>
-		<METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st.*Transcripts$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
-			<PROPERTY key="label_field" value="id"/>
-		</METHOD_REGEX_ASSOCIATION>
+        <!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
+        <!--
+          Must match all these names:  (and similar ones for non-human chips)
+                "HuEx-1_0-st", "HuEx-1_0-st-Probes", "HuEx-1_0-st-Transcripts"
+                "HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
+        -->
+        <METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st.*Probes$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
+            <PROPERTY key="label_field" value="id"/>
+        </METHOD_REGEX_ASSOCIATION>
+        <METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st.*Transcripts$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
+            <PROPERTY key="label_field" value="id"/>
+        </METHOD_REGEX_ASSOCIATION>
 
-		<!-- This is for the 5-level GFF files -->
-		<METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st$"
-								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-			<PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
-			<PROPERTY key="label_field" value="probeset_id"/>
-		</METHOD_REGEX_ASSOCIATION>
+        <!-- This is for the 5-level GFF files -->
+        <METHOD_REGEX_ASSOCIATION regex="^.*Ex-1_0-st$"
+                                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+            <PROPERTY key="child_glyph" value="com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph"/>
+            <PROPERTY key="label_field" value="probeset_id"/>
+        </METHOD_REGEX_ASSOCIATION>
 
-	</ASSOCIATIONS>
+    </ASSOCIATIONS>
 
 </IGB_STYLESHEET>

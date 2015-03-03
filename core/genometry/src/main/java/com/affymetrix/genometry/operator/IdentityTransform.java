@@ -10,20 +10,20 @@ import com.affymetrix.genometry.GenometryConstants;
  *
  * @author auser
  */
-public class IdentityTransform extends AbstractFloatTransformer implements Operator{
+public class IdentityTransform extends AbstractFloatTransformer implements Operator {
 
-	@Override
-	public String getName() {
-		return "copy";
-	}
+    @Override
+    public String getName() {
+        return "copy";
+    }
 
-	@Override
-	public String getDisplay() {
-		return GenometryConstants.BUNDLE.getString("operator_" + getName());
-	}
-	
-	@Override
-	public float transform(float x) { 
-		return x; 
-	}
+    @Override
+    public String getDisplay() {
+        return GenometryConstants.BUNDLE.getString("operator_" + getName());
+    }
+
+    @Override
+    public float transform(float x) {
+        return x;
+    }
 }

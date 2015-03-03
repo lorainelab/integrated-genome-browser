@@ -4,10 +4,10 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.lorainelab.igb.track.operations.api.OperationsPanel;
-import com.lorainelab.igb.services.IgbService;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyJoined;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 
@@ -31,7 +31,7 @@ public class GraphOperationsImpl extends OperationsPanel {
     @Activate
     public void activate() {
         initComponents(igbService);
-        init(igbService); 
+        init(igbService);
     }
 
     @Reference(optional = false)

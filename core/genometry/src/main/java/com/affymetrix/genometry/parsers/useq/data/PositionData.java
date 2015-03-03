@@ -1,357 +1,392 @@
 package com.affymetrix.genometry.parsers.useq.data;
 
-import java.io.*;
-import java.util.*;
+import com.affymetrix.genometry.parsers.useq.SliceInfo;
+import com.affymetrix.genometry.parsers.useq.USeqUtilities;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import com.affymetrix.genometry.parsers.useq.*;
 
-/**Container for a sorted Position[] and it's associated meta data.
- * @author david.nix@hci.utah.edu*/
-public class PositionData extends USeqData implements Comparable <PositionData>{
+/**
+ * Container for a sorted Position[] and it's associated meta data.
+ *
+ * @author david.nix@hci.utah.edu
+ */
+public class PositionData extends USeqData implements Comparable<PositionData> {
 
-	//fields
-	private Position[] sortedPositions;
-	private int[] basePositions;
+    //fields
+    private Position[] sortedPositions;
+    private int[] basePositions;
 
-	//constructors
-	public PositionData(){}
+    //constructors
+    public PositionData() {
+    }
 
-	/**Note, be sure to sort the Position[].*/
-	public PositionData(Position[] sortedPositions, SliceInfo sliceInfo){
-		this.sortedPositions = sortedPositions;
-		this.sliceInfo = sliceInfo;
-	}
-	public PositionData(File binaryFile) throws IOException{
-		sliceInfo = new SliceInfo(binaryFile.getName());
-		read (binaryFile);
-	}
-	public PositionData(DataInputStream dis, SliceInfo sliceInfo){
-		this.sliceInfo = sliceInfo;
-		read (dis);
-	}
+    /**
+     * Note, be sure to sort the Position[].
+     */
+    public PositionData(Position[] sortedPositions, SliceInfo sliceInfo) {
+        this.sortedPositions = sortedPositions;
+        this.sliceInfo = sliceInfo;
+    }
 
-	//methods
-	/**Updates the SliceInfo setting just the FirstStartPosition, LastStartPosition, and NumberRecords.*/
-	public static void updateSliceInfo (Position[] sortedPositions, SliceInfo sliceInfo){
-		sliceInfo.setFirstStartPosition(sortedPositions[0].position);
-		sliceInfo.setLastStartPosition(sortedPositions[sortedPositions.length-1].position);
-		sliceInfo.setNumberRecords(sortedPositions.length);
-	}
-	public int[] getBasePositions(){
-		if (basePositions == null){
-			basePositions = new int[sortedPositions.length];
-			for (int i=0; i<basePositions.length; i++) {
-				basePositions[i] = sortedPositions[i].position;
-			}
-		}
-		return basePositions;
-	}
+    public PositionData(File binaryFile) throws IOException {
+        sliceInfo = new SliceInfo(binaryFile.getName());
+        read(binaryFile);
+    }
 
-	/**Assumes all are of the same chromosome and strand!*/
-	public static PositionData merge (ArrayList<PositionData> pdAL){
-		//convert to arrays and sort
-		PositionData[] pdArray = new PositionData[pdAL.size()];
-		pdAL.toArray(pdArray);
-		Arrays.sort(pdArray);
-		//fetch total size of Position[]
-		int num = 0;
-		for (PositionData aPdArray1 : pdArray) {
-			num += aPdArray1.sortedPositions.length;
-		}
-		//concatinate
-		Position[] concatinate = new Position[num];
-		int index = 0;
-		for (PositionData aPdArray : pdArray) {
-			Position[] slice = aPdArray.sortedPositions;
-			System.arraycopy(slice, 0, concatinate, index, slice.length);
-			index += slice.length;
-		}
-		//get and modify header
-		SliceInfo sliceInfo = pdArray[0].sliceInfo;
-		PositionData.updateSliceInfo(concatinate, sliceInfo);
-		//return new PositionData
-		return new PositionData(concatinate, sliceInfo);
-	}
+    public PositionData(DataInputStream dis, SliceInfo sliceInfo) {
+        this.sliceInfo = sliceInfo;
+        read(dis);
+    }
 
-	public static PositionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
-		int num = useqDataAL.size();
-		//convert ArrayList
-		ArrayList<PositionData> a = new ArrayList<>(num);
-		for (USeqData anUseqDataAL : useqDataAL) {
-			a.add((PositionData) anUseqDataAL);
-		}
-		return merge (a);
-	}
+    //methods
+    /**
+     * Updates the SliceInfo setting just the FirstStartPosition, LastStartPosition, and NumberRecords.
+     */
+    public static void updateSliceInfo(Position[] sortedPositions, SliceInfo sliceInfo) {
+        sliceInfo.setFirstStartPosition(sortedPositions[0].position);
+        sliceInfo.setLastStartPosition(sortedPositions[sortedPositions.length - 1].position);
+        sliceInfo.setNumberRecords(sortedPositions.length);
+    }
 
-	/**By position, smallest to largest, assumes same chromosome strand.*/
-	public int compareTo (PositionData other){
-		if (sortedPositions[0].position <other.sortedPositions[0].position) {
-			return -1;
-		}
-		if (sortedPositions[0].position >other.sortedPositions[0].position) {
-			return 1;
-		}
-		return 0;
-	}
+    public int[] getBasePositions() {
+        if (basePositions == null) {
+            basePositions = new int[sortedPositions.length];
+            for (int i = 0; i < basePositions.length; i++) {
+                basePositions[i] = sortedPositions[i].position;
+            }
+        }
+        return basePositions;
+    }
 
-	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
-	public void writeBed (PrintWriter out){
-		String chrom = sliceInfo.getChromosome();
-		String strand = sliceInfo.getStrand();
-		for (Position sortedPosition : sortedPositions) {
-			//chrom start stop name score strand
-			out.println(chrom + "\t" + sortedPosition.position + "\t" + (sortedPosition.position + 1) + "\t" + ".\t0\t" + strand);
-		}
-	}
-	
-	/**Returns the position of the last position in the sortedPositions array.*/
-	public int fetchLastBase(){
-		return sortedPositions[sortedPositions.length-1].position;
-	}
+    /**
+     * Assumes all are of the same chromosome and strand!
+     */
+    public static PositionData merge(ArrayList<PositionData> pdAL) {
+        //convert to arrays and sort
+        PositionData[] pdArray = new PositionData[pdAL.size()];
+        pdAL.toArray(pdArray);
+        Arrays.sort(pdArray);
+        //fetch total size of Position[]
+        int num = 0;
+        for (PositionData aPdArray1 : pdArray) {
+            num += aPdArray1.sortedPositions.length;
+        }
+        //concatinate
+        Position[] concatinate = new Position[num];
+        int index = 0;
+        for (PositionData aPdArray : pdArray) {
+            Position[] slice = aPdArray.sortedPositions;
+            System.arraycopy(slice, 0, concatinate, index, slice.length);
+            index += slice.length;
+        }
+        //get and modify header
+        SliceInfo sliceInfo = pdArray[0].sliceInfo;
+        PositionData.updateSliceInfo(concatinate, sliceInfo);
+        //return new PositionData
+        return new PositionData(concatinate, sliceInfo);
+    }
 
-	/**Writes native format to the PrintWriter*/
-	public void writeNative (PrintWriter out){
-		String chrom = sliceInfo.getChromosome();
-		String strand = sliceInfo.getStrand();
-		if (strand.equals(".")){
-			out.println("#Chr\tPosition");
-			for (Position sortedPosition : sortedPositions) {
-				out.println(chrom + "\t" + sortedPosition.position);
-			}
-		}
-		else {
-			out.println("#Chr\tPosition\tStrand");
-			for (Position sortedPosition : sortedPositions) {
-				//chrom start stop name score strand
-				out.println(chrom + "\t" + sortedPosition.position + "\t" + strand);
-			}
-		}
-	}
-	
-	/**Writes native format to the PrintWriter, 1 based, skips dups*/
-	public void writePositionScore (PrintWriter out){
-		int priorPosition = -1;
-		for (Position sortedPosition : sortedPositions) {
-			if (priorPosition != sortedPosition.position) {
-				out.println((sortedPosition.position + 1) + "\t0");
-				priorPosition = sortedPosition.position;
-			}
-		}
-	}
+    public static PositionData mergeUSeqData(ArrayList<USeqData> useqDataAL) {
+        int num = useqDataAL.size();
+        //convert ArrayList
+        ArrayList<PositionData> a = new ArrayList<>(num);
+        for (USeqData anUseqDataAL : useqDataAL) {
+            a.add((PositionData) anUseqDataAL);
+        }
+        return merge(a);
+    }
 
-	/**Writes the Position[] to a binary file.
-	 * @param	saveDirectory	the binary file will be written using the chromStrandStartBP-StopBP.extension notation to this directory
-	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
-	 * @return	the binaryFile written to the saveDirectory
-	 * */
-	public File write (File saveDirectory, boolean attemptToSaveAsShort) {
-		//check to see if this can be saved using shorts instead of ints?
-		boolean useShort = false;
-		if (attemptToSaveAsShort){			
-			int bp = sortedPositions[0].position;
-			useShort = true;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				int diff = currentStart - bp;
-				if (diff > 65536) {
-					useShort = false;
-					break;
-				}
-				bp = currentStart;
-			}
-		}
+    /**
+     * By position, smallest to largest, assumes same chromosome strand.
+     */
+    public int compareTo(PositionData other) {
+        if (sortedPositions[0].position < other.sortedPositions[0].position) {
+            return -1;
+        }
+        if (sortedPositions[0].position > other.sortedPositions[0].position) {
+            return 1;
+        }
+        return 0;
+    }
 
-		//make and put file type/extension in header
-		String fileType;
-		if (useShort) {
-			fileType = USeqUtilities.SHORT;
-		}
-		else {
-			fileType = USeqUtilities.INT;
-		}
-		sliceInfo.setBinaryType(fileType);
-		binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
+    /**
+     * Writes six column xxx.bed formatted lines to the PrintWriter
+     */
+    public void writeBed(PrintWriter out) {
+        String chrom = sliceInfo.getChromosome();
+        String strand = sliceInfo.getStrand();
+        for (Position sortedPosition : sortedPositions) {
+            //chrom start stop name score strand
+            out.println(chrom + "\t" + sortedPosition.position + "\t" + (sortedPosition.position + 1) + "\t" + ".\t0\t" + strand);
+        }
+    }
 
-		FileOutputStream workingFOS = null;
-		DataOutputStream workingDOS = null;
-		try {
-			//make IO
-			workingFOS = new FileOutputStream(binaryFile);
-			workingDOS = new DataOutputStream( new BufferedOutputStream (workingFOS));
+    /**
+     * Returns the position of the last position in the sortedPositions array.
+     */
+    public int fetchLastBase() {
+        return sortedPositions[sortedPositions.length - 1].position;
+    }
 
-			//write String header, currently this isn't used
-			workingDOS.writeUTF(header);
+    /**
+     * Writes native format to the PrintWriter
+     */
+    public void writeNative(PrintWriter out) {
+        String chrom = sliceInfo.getChromosome();
+        String strand = sliceInfo.getStrand();
+        if (strand.equals(".")) {
+            out.println("#Chr\tPosition");
+            for (Position sortedPosition : sortedPositions) {
+                out.println(chrom + "\t" + sortedPosition.position);
+            }
+        } else {
+            out.println("#Chr\tPosition\tStrand");
+            for (Position sortedPosition : sortedPositions) {
+                //chrom start stop name score strand
+                out.println(chrom + "\t" + sortedPosition.position + "\t" + strand);
+            }
+        }
+    }
 
-			//write first position, always an int
-			workingDOS.writeInt(sortedPositions[0].position);
-			//write shorts?
-			if (useShort) {			
-				int bp = sortedPositions[0].position;
-				for (int i=1; i< sortedPositions.length; i++){
-					int currentStart = sortedPositions[i].position;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					workingDOS.writeShort((short)(diff));
-					bp = currentStart;
-				}
-			}
+    /**
+     * Writes native format to the PrintWriter, 1 based, skips dups
+     */
+    public void writePositionScore(PrintWriter out) {
+        int priorPosition = -1;
+        for (Position sortedPosition : sortedPositions) {
+            if (priorPosition != sortedPosition.position) {
+                out.println((sortedPosition.position + 1) + "\t0");
+                priorPosition = sortedPosition.position;
+            }
+        }
+    }
 
-			//no, write ints
-			else {
-				int bp = sortedPositions[0].position;
-				for (int i=1; i< sortedPositions.length; i++){
-					int currentStart = sortedPositions[i].position;
-					int diff = currentStart - bp;
-					workingDOS.writeInt(diff);
-					bp = currentStart;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			binaryFile = null;
-		} finally {
-			USeqUtilities.safeClose(workingDOS);
-			USeqUtilities.safeClose(workingFOS);
-		}
-		return binaryFile;
-	}
+    /**
+     * Writes the Position[] to a binary file.
+     *
+     * @param	saveDirectory	the binary file will be written using the chromStrandStartBP-StopBP.extension notation to
+     * this directory
+     * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but
+     * potentially a considerable size reduction, set to false for max speed
+     * @return	the binaryFile written to the saveDirectory
+     *
+     */
+    public File write(File saveDirectory, boolean attemptToSaveAsShort) {
+        //check to see if this can be saved using shorts instead of ints?
+        boolean useShort = false;
+        if (attemptToSaveAsShort) {
+            int bp = sortedPositions[0].position;
+            useShort = true;
+            for (int i = 1; i < sortedPositions.length; i++) {
+                int currentStart = sortedPositions[i].position;
+                int diff = currentStart - bp;
+                if (diff > 65536) {
+                    useShort = false;
+                    break;
+                }
+                bp = currentStart;
+            }
+        }
 
-	/**Writes the Position[] to a ZipOutputStream.
-	 * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but potentially a considerable size reduction, set to false for max speed
-	 * */
-	public void write (ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
-		//check to see if this can be saved using shorts instead of ints?
-		boolean useShort = false;
-		if (attemptToSaveAsShort){			
-			int bp = sortedPositions[0].position;
-			useShort = true;
-			for (int i=1; i< sortedPositions.length; i++){
-				int currentStart = sortedPositions[i].position;
-				int diff = currentStart - bp;
-				if (diff > 65536) {
-					useShort = false;
-					break;
-				}
-				bp = currentStart;
-			}
-		}
-		//make and put file type/extension in header
-		String fileType;
-		if (useShort) {
-			fileType = USeqUtilities.SHORT;
-		}
-		else {
-			fileType = USeqUtilities.INT;
-		}
-		sliceInfo.setBinaryType(fileType);
-		binaryFile = null;
+        //make and put file type/extension in header
+        String fileType;
+        if (useShort) {
+            fileType = USeqUtilities.SHORT;
+        } else {
+            fileType = USeqUtilities.INT;
+        }
+        sliceInfo.setBinaryType(fileType);
+        binaryFile = new File(saveDirectory, sliceInfo.getSliceName());
 
-		try {
-			//make new ZipEntry
-			out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
+        FileOutputStream workingFOS = null;
+        DataOutputStream workingDOS = null;
+        try {
+            //make IO
+            workingFOS = new FileOutputStream(binaryFile);
+            workingDOS = new DataOutputStream(new BufferedOutputStream(workingFOS));
 
-			//write String header, currently this isn't used
-			dos.writeUTF(header);
+            //write String header, currently this isn't used
+            workingDOS.writeUTF(header);
 
-			//write first position, always an int
-			dos.writeInt(sortedPositions[0].position);
-			//write shorts?
-			if (useShort) {			
-				int bp = sortedPositions[0].position;
-				for (int i=1; i< sortedPositions.length; i++){
-					int currentStart = sortedPositions[i].position;
-					//subtract 32768 to extend range of short (-32768 to 32768)
-					int diff = currentStart - bp - 32768;
-					dos.writeShort((short)(diff));
-					bp = currentStart;
-				}
-			}
-			//no, write ints
-			else {
-				int bp = sortedPositions[0].position;
-				for (int i=1; i< sortedPositions.length; i++){
-					int currentStart = sortedPositions[i].position;
-					int diff = currentStart - bp;
-					dos.writeInt(diff);
-					bp = currentStart;
-				}
-			}
+            //write first position, always an int
+            workingDOS.writeInt(sortedPositions[0].position);
+            //write shorts?
+            if (useShort) {
+                int bp = sortedPositions[0].position;
+                for (int i = 1; i < sortedPositions.length; i++) {
+                    int currentStart = sortedPositions[i].position;
+                    //subtract 32768 to extend range of short (-32768 to 32768)
+                    int diff = currentStart - bp - 32768;
+                    workingDOS.writeShort((short) (diff));
+                    bp = currentStart;
+                }
+            } //no, write ints
+            else {
+                int bp = sortedPositions[0].position;
+                for (int i = 1; i < sortedPositions.length; i++) {
+                    int currentStart = sortedPositions[i].position;
+                    int diff = currentStart - bp;
+                    workingDOS.writeInt(diff);
+                    bp = currentStart;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            binaryFile = null;
+        } finally {
+            USeqUtilities.safeClose(workingDOS);
+            USeqUtilities.safeClose(workingFOS);
+        }
+        return binaryFile;
+    }
 
-			//close ZipEntry but not streams!
-			out.closeEntry();
-		} catch (IOException e) {
-			e.printStackTrace();
-			USeqUtilities.safeClose(out);
-			USeqUtilities.safeClose(dos);
-		} 
-	}
+    /**
+     * Writes the Position[] to a ZipOutputStream.
+     *
+     * @param	attemptToSaveAsShort	if true, scans to see if the offsets exceed 65536 bp, a bit slower to write but
+     * potentially a considerable size reduction, set to false for max speed
+     *
+     */
+    public void write(ZipOutputStream out, DataOutputStream dos, boolean attemptToSaveAsShort) {
+        //check to see if this can be saved using shorts instead of ints?
+        boolean useShort = false;
+        if (attemptToSaveAsShort) {
+            int bp = sortedPositions[0].position;
+            useShort = true;
+            for (int i = 1; i < sortedPositions.length; i++) {
+                int currentStart = sortedPositions[i].position;
+                int diff = currentStart - bp;
+                if (diff > 65536) {
+                    useShort = false;
+                    break;
+                }
+                bp = currentStart;
+            }
+        }
+        //make and put file type/extension in header
+        String fileType;
+        if (useShort) {
+            fileType = USeqUtilities.SHORT;
+        } else {
+            fileType = USeqUtilities.INT;
+        }
+        sliceInfo.setBinaryType(fileType);
+        binaryFile = null;
 
-	/**Reads a useries xxx.i or xxx.s DataInputStream into this PositionData.*/
-	public void read (DataInputStream dis) {
-		try {
-			//read text header, currently not used
-			header = dis.readUTF();
+        try {
+            //make new ZipEntry
+            out.putNextEntry(new ZipEntry(sliceInfo.getSliceName()));
 
-			//make array
-			int numberPositions = sliceInfo.getNumberRecords();
-			sortedPositions = new Position[numberPositions];
+            //write String header, currently this isn't used
+            dos.writeUTF(header);
 
-			//make first position
-			sortedPositions[0] = new Position(dis.readInt());
+            //write first position, always an int
+            dos.writeInt(sortedPositions[0].position);
+            //write shorts?
+            if (useShort) {
+                int bp = sortedPositions[0].position;
+                for (int i = 1; i < sortedPositions.length; i++) {
+                    int currentStart = sortedPositions[i].position;
+                    //subtract 32768 to extend range of short (-32768 to 32768)
+                    int diff = currentStart - bp - 32768;
+                    dos.writeShort((short) (diff));
+                    bp = currentStart;
+                }
+            } //no, write ints
+            else {
+                int bp = sortedPositions[0].position;
+                for (int i = 1; i < sortedPositions.length; i++) {
+                    int currentStart = sortedPositions[i].position;
+                    int diff = currentStart - bp;
+                    dos.writeInt(diff);
+                    bp = currentStart;
+                }
+            }
 
-			//what kind of data to follow? 
-			String fileType = sliceInfo.getBinaryType();
+            //close ZipEntry but not streams!
+            out.closeEntry();
+        } catch (IOException e) {
+            e.printStackTrace();
+            USeqUtilities.safeClose(out);
+            USeqUtilities.safeClose(dos);
+        }
+    }
 
-			//ints?
-			if (USeqUtilities.POSITION_INT.matcher(fileType).matches()){	
-				//read and resolve offsets to real bps
-				for (int i=1; i< numberPositions; i++){
-					sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readInt());	
-				}
-			}
-			//shorts?
-			else if (USeqUtilities.POSITION_SHORT.matcher(fileType).matches()){
-				//read and resolve offsets to real bps
-				for (int i=1; i< numberPositions; i++){
-					sortedPositions[i] = new Position(sortedPositions[i-1].getPosition() + dis.readShort() + 32768);	
-				}
-			}
-			//unknown!
-			else {
-				throw new IOException ("Incorrect file type for creating a Position[] -> '"+fileType+"' in "+binaryFile +"\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			USeqUtilities.safeClose(dis);
-		}
-	}
+    /**
+     * Reads a useries xxx.i or xxx.s DataInputStream into this PositionData.
+     */
+    public void read(DataInputStream dis) {
+        try {
+            //read text header, currently not used
+            header = dis.readUTF();
 
-	public Position[] getPositions() {
-		return sortedPositions;
-	}
+            //make array
+            int numberPositions = sliceInfo.getNumberRecords();
+            sortedPositions = new Position[numberPositions];
 
-	public void setPositions(Position[] sortedPositions) {
-		this.sortedPositions = sortedPositions;
-		updateSliceInfo(sortedPositions, sliceInfo);
-	}
+            //make first position
+            sortedPositions[0] = new Position(dis.readInt());
 
-	/**Returns whether data remains.*/
-	public boolean trim(int beginningBP, int endingBP) {
-		ArrayList<Position> al = new ArrayList<>();
-		for (Position sortedPosition : sortedPositions) {
-			if (sortedPosition.isContainedBy(beginningBP, endingBP)) {
-				al.add(sortedPosition);
-			}
-		}
-		if (al.isEmpty()) {
-			return false;
-		}
-		sortedPositions = new Position[al.size()];
-		al.toArray(sortedPositions);
-		updateSliceInfo(sortedPositions, sliceInfo);
-		return true;
-	}
+            //what kind of data to follow?
+            String fileType = sliceInfo.getBinaryType();
 
+            //ints?
+            if (USeqUtilities.POSITION_INT.matcher(fileType).matches()) {
+                //read and resolve offsets to real bps
+                for (int i = 1; i < numberPositions; i++) {
+                    sortedPositions[i] = new Position(sortedPositions[i - 1].getPosition() + dis.readInt());
+                }
+            } //shorts?
+            else if (USeqUtilities.POSITION_SHORT.matcher(fileType).matches()) {
+                //read and resolve offsets to real bps
+                for (int i = 1; i < numberPositions; i++) {
+                    sortedPositions[i] = new Position(sortedPositions[i - 1].getPosition() + dis.readShort() + 32768);
+                }
+            } //unknown!
+            else {
+                throw new IOException("Incorrect file type for creating a Position[] -> '" + fileType + "' in " + binaryFile + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            USeqUtilities.safeClose(dis);
+        }
+    }
+
+    public Position[] getPositions() {
+        return sortedPositions;
+    }
+
+    public void setPositions(Position[] sortedPositions) {
+        this.sortedPositions = sortedPositions;
+        updateSliceInfo(sortedPositions, sliceInfo);
+    }
+
+    /**
+     * Returns whether data remains.
+     */
+    public boolean trim(int beginningBP, int endingBP) {
+        ArrayList<Position> al = new ArrayList<>();
+        for (Position sortedPosition : sortedPositions) {
+            if (sortedPosition.isContainedBy(beginningBP, endingBP)) {
+                al.add(sortedPosition);
+            }
+        }
+        if (al.isEmpty()) {
+            return false;
+        }
+        sortedPositions = new Position[al.size()];
+        al.toArray(sortedPositions);
+        updateSliceInfo(sortedPositions, sliceInfo);
+        return true;
+    }
 
 }

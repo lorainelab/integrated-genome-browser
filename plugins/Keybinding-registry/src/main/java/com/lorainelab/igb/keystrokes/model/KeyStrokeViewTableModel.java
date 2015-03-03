@@ -29,7 +29,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
     private static final long serialVersionUID = 1L;
     private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
-    
+
     private IgbService igbService;
 
     @Reference(optional = false)

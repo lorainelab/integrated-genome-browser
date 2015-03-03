@@ -99,7 +99,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
     public void addChild(SeqSymmetry sym) {
         if (sym instanceof IndexedSym) {
             IndexedSym isym = (IndexedSym) sym;
-			// calling super.getChildCount() instead of this.getChildCount()
+            // calling super.getChildCount() instead of this.getChildCount()
             //   to avoid cyclic calls in LazyChpSym subclass
             int current_index = super.getChildCount();
             isym.setIndex(current_index);
@@ -224,7 +224,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
         return gsym;
     }
 
-	// Returns the unique graph ID associated with the score name;
+    // Returns the unique graph ID associated with the score name;
     // this score will map to this same graph ID for all other
     // ScoredContainerSym's that have the same ID, even if they
     // are on other BioSeq's.
@@ -247,7 +247,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
     }
 
     private ITrackStyleExtended getContainerStyle(char strand) {
-		// There are separate combo style items for +, - and +/-.
+        // There are separate combo style items for +, - and +/-.
         // They are shared by all scores with the same ID on different seqs.
         // They do not need a "+" or "-" as part of their name, because the glyph
         // factory will do that.

@@ -1,29 +1,48 @@
 package com.affymetrix.genometry.symloader;
 
-import java.net.URI;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.parsers.AnnotationWriter;
-import com.affymetrix.genometry.parsers.IndexWriter;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.comparator.UcscPslComparator;
+import com.affymetrix.genometry.parsers.AnnotationWriter;
+import com.affymetrix.genometry.parsers.IndexWriter;
 import com.affymetrix.genometry.parsers.TrackLineParser;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.Psl3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetryConverter;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.SeqUtils;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.broad.tribble.readers.LineReader;
 
 /**
@@ -231,7 +250,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
                 addToQueryTarget(queryTarget, query_seq_id, target_seq_id);
 
-				// Ignoring chromosome seqs after last track line. It also ignores
+                // Ignoring chromosome seqs after last track line. It also ignores
                 // orphan chromosome seqs.
                 if (!chrs.containsKey(target_seq_id)) {
                     addToLists(chrs, target_seq_id, chrFiles, chrLength, is_link_psl ? ".link.psl" : ".psl");
@@ -387,7 +406,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         }
         List<UcscPslSym> results = new ArrayList<>();
 
-		// Make temporary seq groups for any unspecified group.
+        // Make temporary seq groups for any unspecified group.
         // These temporary groups do not require synonym matching, because they should
         // only refer to sequences from a single file.
         if (query_group == null) {
@@ -433,7 +452,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
             }
 
             if (firstchar == 't' && line.startsWith("track")) {
-					// Always parse the track line, but
+                // Always parse the track line, but
                 // only set the AnnotStyle properties from it
                 // if this is NOT a ".link.psl" file.
                 track_line_parser.parseTrackLine(line, track_name_prefix);
@@ -486,7 +505,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 //			if (block_size_array != null && block_size_array.length != 0) {
 //				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
 //			}
-//		} 
+//		}
         if (DEBUG) {
             System.out.println("finished parsing PSL file, annot count: " + total_annot_count
                     + ", child count: " + total_child_count);
@@ -518,7 +537,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         }
         List<UcscPslSym> results = new ArrayList<>();
 
-		// Make temporary seq groups for any unspecified group.
+        // Make temporary seq groups for any unspecified group.
         // These temporary groups do not require synonym matching, because they should
         // only refer to sequences from a single file.
         if (query_group == null) {
@@ -564,7 +583,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
             }
 
             if (firstchar == 't' && line.startsWith("track")) {
-					// Always parse the track line, but
+                // Always parse the track line, but
                 // only set the AnnotStyle properties from it
                 // if this is NOT a ".link.psl" file.
                 if (is_link_psl) {
@@ -608,7 +627,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 //			if (block_size_array != null && block_size_array.length != 0) {
 //				sb.append("block_size first element: **").append(block_size_array[0]).append("**\n");
 //			}
-//		} 
+//		}
         if (DEBUG) {
             System.out.println("finished parsing PSL file, annot count: " + total_annot_count
                     + ", child count: " + total_child_count);
@@ -652,7 +671,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
             qforward = (strandstring.charAt(0) == '+');
             tforward = true;
         } else if (strandstring.length() == 2) {
-			// need to deal with cases (as mentioned in PSL docs) where
+            // need to deal with cases (as mentioned in PSL docs) where
             //    strand field is "++", "+-", "-+", "--"
             //  (where first char indicates strand of query, and second is strand for ? [target??]
             //  for now, just call strand based on them being different,
@@ -720,7 +739,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
          *  2. for UCSC PSL-like dump from database, where format has extra ushort field at beginning
          *       that is used to speed up indexing in db (includes_bin_field = true)
          */
-		//        if (line_count < 3) { System.out.println("# of fields: " + fields.length); }
+        //        if (line_count < 3) { System.out.println("# of fields: " + fields.length); }
         // trying to determine if there's an extra bin field at beginning of PSL line...
         //   for normal PSL, orientation field is
 
@@ -737,7 +756,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     private BioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
         BioSeq qseq = query_group.getSeq(qname);
         if (qseq == null) {
-			// Doing a new String() here gives a > 4X reduction in
+            // Doing a new String() here gives a > 4X reduction in
             //    memory requirements!  Possible reason: Regex machinery when it splits a String into
             //    an array of Strings may use same underlying character array, so essentially
             //    end up holding a pointer to a character array containing the whole input file ???
@@ -772,7 +791,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                 shared_query_target = true;
             } else {
                 if (look_for_targets_in_query_group && is_link_psl) {
-					// If we are in the bottom section of a ".link.psl" file,
+                    // If we are in the bottom section of a ".link.psl" file,
                     // then add sequences only to the query sequence, never the target sequence.
                     if (in_bottom_of_link_psl) {
                         tseq = query_group.addSeq(tname, qsize);
@@ -798,7 +817,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         UcscPslSym sym = null;
         // a "+" or "-" in first field after tmins indicates that it's a Psl3 format
         boolean is_psl3 = fields.length > findex && (fields[findex].equals("+") || fields[findex].equals("-"));
-		// trying to handle parsing of extended PSL format for three sequence alignment
+        // trying to handle parsing of extended PSL format for three sequence alignment
         //     (putting into a Psl3Sym)
         // extra fields (immediately after tmins), based on Psl3Sym.outputPsl3Format:
         // same_other_orientation  otherseq_id  otherseq_length  other_min other_max omins
@@ -884,7 +903,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
     private static void createContainerAnnot(
             Map<BioSeq, Map<String, SimpleSymWithProps>> seq2types, BioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
-		//    If using a container sym, need to first hash (seq2types) from
+        //    If using a container sym, need to first hash (seq2types) from
         //    seq to another hash (type2csym) of types to container sym
         //    System.out.println("in createContainerAnnot, type: " + type);
         Map<String, SimpleSymWithProps> type2csym = seq2types.get(seq);
@@ -1004,7 +1023,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     /**
      * Implementing AnnotationWriter interface to write out annotations to an
      * output stream as "PSL" format
-	 *
+     *
      */
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
             String type, OutputStream outstream) {
@@ -1013,7 +1032,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
     /**
      * This version of the method is able to write out track lines
-	 *
+     *
      */
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
             boolean writeTrackLines, String type,
@@ -1101,7 +1120,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     /**
      * Implementing AnnotationWriter interface to write out annotations to an
      * output stream as "PSL" format
-	 *
+     *
      */
     public String getMimeType() {
         return "text/plain";

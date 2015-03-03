@@ -1,21 +1,5 @@
 package com.affymetrix.genometry.symloader;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileReader.ValidationStringency;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -23,9 +7,22 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.samtools.SAMException;
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMFileReader.ValidationStringency;
+import net.sf.samtools.SAMFormatException;
+import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.BufferedLineReader;
+import net.sf.samtools.util.CloseableIterator;
 import org.broad.tribble.readers.LineReader;
 
 /**
@@ -43,7 +40,7 @@ public class SAM extends XAM implements LineProcessor {
         try {
             reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
             reader.setValidationStringency(ValidationStringency.SILENT);
-           
+
             if (this.isInitialized) {
                 return;
             }

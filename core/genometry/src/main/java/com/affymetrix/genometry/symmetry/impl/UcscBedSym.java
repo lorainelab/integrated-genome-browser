@@ -150,7 +150,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
             super(start, end, seq);
         }
 
-		// For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getID(),
         // or must NOT implement SymWithProps.
         public String getID() {
             return UcscBedSym.this.getID();
@@ -181,8 +181,8 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
             return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
-    
-    public static boolean isBedChildSingletonSeqSymClass (SeqSymmetry seq) {
+
+    public static boolean isBedChildSingletonSeqSymClass(SeqSymmetry seq) {
         return (seq instanceof BedChildSingletonSeqSym);
     }
 
@@ -196,7 +196,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 //		if (hasCdsSpan) {
 //			tprops.put("cds min", Integer.valueOf(cdsMin));
 //			tprops.put("cds max", Integer.valueOf(cdsMax));
-//		} 
+//		}
         if (score != Float.NEGATIVE_INFINITY) {
             tprops.put("score", score);
         }

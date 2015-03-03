@@ -19,167 +19,166 @@ import java.util.regex.Pattern;
 
 /**
  * This class sorts tab delimited files such as bed, psl, wiggle etc.
- * 
+ *
  * @author hiralv
  */
 public class SortTabFile {
-	
-	private static final Pattern line_regex = Pattern.compile("\\s+");
-	private static final Pattern tab_regex = Pattern.compile("\\t");
 
-	public static boolean sort(File file){
-		
-		BufferedReader br = null;
-		String line = null;
-		List<String> list = new ArrayList<>(1000);
-		List<String> templist = new ArrayList<>(1000);
-		String unzippedStreamName = GeneralUtils.stripEndings(file.getName());
-		String extension = GeneralUtils.getExtension(unzippedStreamName);
-		Comparator<String> comparator = new LineComparator(extension);
-		
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    private static final Pattern line_regex = Pattern.compile("\\s+");
+    private static final Pattern tab_regex = Pattern.compile("\\t");
 
-			while ((line = br.readLine()) != null) {
-				if(line.startsWith("track")){
-					Collections.sort(templist, comparator);
-					list.addAll(templist);
-					templist.clear();
-				}
-				templist.add(line);
-			}
-			Collections.sort(templist, comparator);
-			list.addAll(templist);
-						
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Could not find file " + file, ex);
-			return false;
-		} catch (IOException ex){
-			Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		} finally {
-			GeneralUtils.safeClose(br);
-		}
+    public static boolean sort(File file) {
 
-		return writeFile(file, list);
-	}
-	
-	private static boolean writeFile(File file, List<String> lines){
-		BufferedWriter bw = null;
-		try {
-			
-			if(!file.canWrite()){
-				Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Cannot write to file {0}", file);
-				return false;
-			}
+        BufferedReader br = null;
+        String line = null;
+        List<String> list = new ArrayList<>(1000);
+        List<String> templist = new ArrayList<>(1000);
+        String unzippedStreamName = GeneralUtils.stripEndings(file.getName());
+        String extension = GeneralUtils.getExtension(unzippedStreamName);
+        Comparator<String> comparator = new LineComparator(extension);
 
-			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-			for(String line : lines){
-				bw.write(line + "\n");
-			}
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("track")) {
+                    Collections.sort(templist, comparator);
+                    list.addAll(templist);
+                    templist.clear();
+                }
+                templist.add(line);
+            }
+            Collections.sort(templist, comparator);
+            list.addAll(templist);
 
-			bw.flush();
-			
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Could not find file " + file, ex);
-			return false;
-		} catch (IOException ex){
-			Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		} finally {
-			GeneralUtils.safeClose(bw);
-		}
-		return true;
-	}
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Could not find file " + file, ex);
+            return false;
+        } catch (IOException ex) {
+            Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } finally {
+            GeneralUtils.safeClose(br);
+        }
 
-	private static final class LineComparator implements Comparator<String>{
+        return writeFile(file, list);
+    }
 
-		private final int column;
-		private final int or_column;
-		private final String ext;
-		private final Pattern regex;
+    private static boolean writeFile(File file, List<String> lines) {
+        BufferedWriter bw = null;
+        try {
 
-		public LineComparator(String ext){
-			int[] columns = determineColumns(ext);
-			this.column		= columns[0] - 1;
-			this.or_column	= columns[1] - 1;
-			this.ext = ext;
-			this.regex = determineRegex(ext);
-		}
-		
-		public int compare(String o1, String o2) {
+            if (!file.canWrite()) {
+                Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Cannot write to file {0}", file);
+                return false;
+            }
 
-			if(o1.startsWith("track") || o2.startsWith("track")) {
-				return 0;
-			}
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
 
-			int[] mins = minimum(o1,o2);
+            for (String line : lines) {
+                bw.write(line + "\n");
+            }
 
-			return Integer.valueOf(mins[0]).compareTo(mins[1]);
-		}
+            bw.flush();
 
-		private int[] minimum(String o1, String o2){
-			int[] mins = new int[2];
-			int col = column;
-			int or_col = or_column;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, "Could not find file " + file, ex);
+            return false;
+        } catch (IOException ex) {
+            Logger.getLogger(SortTabFile.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } finally {
+            GeneralUtils.safeClose(bw);
+        }
+        return true;
+    }
 
-			String[] o1Fields = regex.split(o1);
-			if (o1Fields.length == 1) {
-				o1Fields = line_regex.split(o1);
-			}
-			
-			String[] o2Fields = regex.split(o2);
-			if (o2Fields.length == 1) {
-				o2Fields = line_regex.split(o2);
-			}
+    private static final class LineComparator implements Comparator<String> {
 
-			if(ext.endsWith(".bed")){
-				boolean includes_bin_field = o1Fields.length > 6 &&
-						(o1Fields[6].startsWith("+") || o1Fields[6].startsWith("-")
-						|| o1Fields[6].startsWith("."));
-				
-				if(includes_bin_field){
-					col += 1;
-					or_col += 1;
-				}
-			}
+        private final int column;
+        private final int or_column;
+        private final String ext;
+        private final Pattern regex;
 
-			mins[0] = Integer.valueOf(o1Fields[col]);
-			mins[1] = Integer.valueOf(o2Fields[col]);
+        public LineComparator(String ext) {
+            int[] columns = determineColumns(ext);
+            this.column = columns[0] - 1;
+            this.or_column = columns[1] - 1;
+            this.ext = ext;
+            this.regex = determineRegex(ext);
+        }
 
-			
-			if(or_col > 0){
-				mins[0] = Math.min(mins[0], Integer.valueOf(o1Fields[or_col]));
-				mins[1] = Math.min(mins[1], Integer.valueOf(o2Fields[or_col]));
-			}
+        public int compare(String o1, String o2) {
 
-			return mins;
-		}
+            if (o1.startsWith("track") || o2.startsWith("track")) {
+                return 0;
+            }
 
-		private static Pattern determineRegex(String ext){
-			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+            int[] mins = minimum(o1, o2);
+
+            return Integer.valueOf(mins[0]).compareTo(mins[1]);
+        }
+
+        private int[] minimum(String o1, String o2) {
+            int[] mins = new int[2];
+            int col = column;
+            int or_col = or_column;
+
+            String[] o1Fields = regex.split(o1);
+            if (o1Fields.length == 1) {
+                o1Fields = line_regex.split(o1);
+            }
+
+            String[] o2Fields = regex.split(o2);
+            if (o2Fields.length == 1) {
+                o2Fields = line_regex.split(o2);
+            }
+
+            if (ext.endsWith(".bed")) {
+                boolean includes_bin_field = o1Fields.length > 6
+                        && (o1Fields[6].startsWith("+") || o1Fields[6].startsWith("-")
+                        || o1Fields[6].startsWith("."));
+
+                if (includes_bin_field) {
+                    col += 1;
+                    or_col += 1;
+                }
+            }
+
+            mins[0] = Integer.valueOf(o1Fields[col]);
+            mins[1] = Integer.valueOf(o2Fields[col]);
+
+            if (or_col > 0) {
+                mins[0] = Math.min(mins[0], Integer.valueOf(o1Fields[or_col]));
+                mins[1] = Math.min(mins[1], Integer.valueOf(o2Fields[or_col]));
+            }
+
+            return mins;
+        }
+
+        private static Pattern determineRegex(String ext) {
+            if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
 //				return Pattern.compile("\t");
-				return tab_regex;
-			} else if (ext.equals(".bed")) {
+                return tab_regex;
+            } else if (ext.equals(".bed")) {
 //				return Pattern.compile("\\s+");
-				return tab_regex;
-			}
+                return tab_regex;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		private static int[] determineColumns(String ext) {
+        private static int[] determineColumns(String ext) {
 
-			if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
-				return new int[]{16, -1};
-			} else if (ext.equals(".bed")) {
-				return new int[]{2, 3};
-			}
+            if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+                return new int[]{16, -1};
+            } else if (ext.equals(".bed")) {
+                return new int[]{2, 3};
+            }
 
-			return new int[]{-1, -1};
-		}
+            return new int[]{-1, -1};
+        }
 
-	}
-	
+    }
+
 }

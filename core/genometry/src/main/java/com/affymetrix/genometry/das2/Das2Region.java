@@ -4,11 +4,13 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import java.net.URI;
 
-/**Container for a das2 segment (aka chromosome)*/
+/**
+ * Container for a das2 segment (aka chromosome)
+ */
 public final class Das2Region {
 
     private final URI region_uri;
-    private  BioSeq aseq;
+    private BioSeq aseq;
     private final Das2VersionedSource versioned_source;
 
     public Das2Region(Das2VersionedSource source, URI reg_uri, String name, String info, int len) {

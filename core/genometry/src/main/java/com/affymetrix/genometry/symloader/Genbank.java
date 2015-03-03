@@ -10,10 +10,17 @@ import com.affymetrix.genometry.symmetry.impl.GenbankSym;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-
-import java.net.*;
-import java.util.*;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +32,7 @@ public final class Genbank extends SymLoader {
     /**
      * This hash table contains the GENBANK start of line keywords (LOCUS,
      * DEFINITION, FEATURES and the EMBL start of lines that they correspond to)
-	 *
+     *
      */
     private static final Map<String, String> genbank_hash = new HashMap<>();
 
@@ -97,60 +104,60 @@ public final class Genbank extends SymLoader {
     }
     /**
      * The tag for the end of entry line: "//"
-	 *
+     *
      */
     private final static int BEGINNING_OF_ENTRY = 0;
     private final static String BEGINNING_OF_ENTRY_STRING = "ID";
     /**
      * The tag for the end of entry line: "//"
-	 *
+     *
      */
     private final static int END_OF_ENTRY = 1;
     private final static String END_OF_ENTRY_STRING = "//";
     /**
      * The tag for the start of sequence line
-	 *
+     *
      */
     private final static int SEQUENCE = 2;
     private final static String SEQUENCE_STRING = "SQ";
     /**
      * The tag for EMBL feature table lines
-	 *
+     *
      */
     private final static int FEATURE = 3;
     private final static String FEATURE_STRING = "FT";
     /**
      * The tag for EMBL feature header lines (FH ...)
-	 *
+     *
      */
     private final static int FEATURE_HEADER = 4;
     private final static String FEATURE_HEADER_STRING = "FH";
     /**
      * The tag for EMBL definition lines
-	 *
+     *
      */
     private final static int DEFINITION = 5;
     private final static String DEFINITION_STRING = "DE";
     /**
      * The tag for EMBL accession lines
-	 *
+     *
      */
     private final static int ACCESSION = 6;
     private final static String ACCESSION_STRING = "AC";
     /**
      * The tag for EMBL organism of source lines
-	 *
+     *
      */
     private final static int ORGANISM = 7;
     private final static String ORGANISM_STRING = "OS";
     /**
      * The tag for EMBL cross-references
-	 *
+     *
      */
     private final static int REF_KEY = 8;
     /**
      * The tag used for unidentified input. Which is kept, but not distinguished
-	 *
+     *
      */
     private final static int MISC = 9;
     /**
@@ -158,11 +165,11 @@ public final class Genbank extends SymLoader {
      * for EMBL the 's' in source is the 5th character in the line FT source
      * e.g. for Genbank the 'O' in On is the 12th character in the line COMMENT
      * On Sep 18, 2002 this sequence version replaced gi:10727164.
-	 *
+     *
      */
     private final static int EMBL_CONTENT_OFFSET = 5;
     private final static int GENBANK_CONTENT_OFFSET = 12;
-	// -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     // Instance variables
     // -----------------------------------------------------------------------
     /**
@@ -329,7 +336,8 @@ public final class Genbank extends SymLoader {
                                 seq = this.group.getSeq(value);
                                 if (seq == null) {
                                     seq = new BioSeq(value, length);
-                                }   chrLength.put(value, length);
+                                }
+                                chrLength.put(value, length);
                                 chrFound = true;
                                 break;
                             case "organism":
@@ -419,7 +427,7 @@ public final class Genbank extends SymLoader {
         return first_line;
     }
 
-	// loop until there are no more lines in the file or we hit the start of
+    // loop until there are no more lines in the file or we hit the start of
     // the next feature or the start of the next line group
     private void readFeature(BufferedReader input, Map<String, GenbankSym> id2sym, BioSeq seq, int min, int max) {
         boolean done = false;
@@ -492,7 +500,7 @@ public final class Genbank extends SymLoader {
             int html1 = current_line.indexOf('<');
             int html2 = current_line.indexOf('>') + 1;
             within_html = (html1 >= 0 && html2 > 0 && html2 > html1);
-			// Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
+            // Is this REALLY html, or is it < or > indicating incomplete 5' or 3' end?
             // (don't want to get rid of those!!)
             within_html = within_html && (!current_line.contains("   gene   ")) && (!current_line.contains("   mRNA   "));
             if (within_html) {
@@ -562,7 +570,7 @@ public final class Genbank extends SymLoader {
                 }
             } else if (GENBANK_CONTENT_OFFSET < line.length()) {
                 String sub_key = line.substring(0, GENBANK_CONTENT_OFFSET).trim();
-				// Don't use the subkeys, stick with the main key
+                // Don't use the subkeys, stick with the main key
                 //        if (!(sub_key.equals("")))
                 //          current_first_word = sub_key;
                 line_key = genbank_hash.get(sub_key);
@@ -681,27 +689,27 @@ public final class Genbank extends SymLoader {
                 case "tRNA":
                 case "scRNA":
                 case "snRNA":
-                case "snoRNA":
-                    {
-                        String value = current_feature.getValue("gene");
-                        if (value != null && value.length() != 0) {
-                            annotation.setProperty("name", value);
-                        }       value = current_feature.getValue("locus_tag");
-                        if (value != null && value.length() != 0) {
-                            annotation.setID(value);
-                        }       // What are the spans associated with this key?
-                        List<int[]> locs = current_feature.getLocation();
-                        if (locs == null || locs.isEmpty()) {
-                            Logger.getLogger(Genbank.class.getName()).log(
-                                    Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
-                        } else {
-                            for (int[] loc : locs) {
-                                annotation.addBlock(loc[0], loc[1]);
+                case "snoRNA": {
+                    String value = current_feature.getValue("gene");
+                    if (value != null && value.length() != 0) {
+                        annotation.setProperty("name", value);
                     }
-                }       break;
+                    value = current_feature.getValue("locus_tag");
+                    if (value != null && value.length() != 0) {
+                        annotation.setID(value);
+                    }       // What are the spans associated with this key?
+                    List<int[]> locs = current_feature.getLocation();
+                    if (locs == null || locs.isEmpty()) {
+                        Logger.getLogger(Genbank.class.getName()).log(
+                                Level.WARNING, "no location for key {0} for {1}", new Object[]{key, current_feature.toString()});
+                    } else {
+                        for (int[] loc : locs) {
+                            annotation.addBlock(loc[0], loc[1]);
+                        }
                     }
-                case "CDS":
-                {
+                    break;
+                }
+                case "CDS": {
                     // What are the spans associated with this key?
                     List<int[]> locs = current_feature.getLocation();
                     if (locs == null || locs.isEmpty()) {
@@ -710,14 +718,15 @@ public final class Genbank extends SymLoader {
                     } else {
                         for (int[] loc : locs) {
                             annotation.addCDSBlock(loc[0], loc[1]);
+                        }
                     }
-                    }       break;
+                    break;
                 }
                 default:
                     Logger.getLogger(Genbank.class.getName()).log(
                             Level.WARNING,
                             "ignoring {0} features; next line is {1}",
-                        new Object[]{key, line_number});
+                            new Object[]{key, line_number});
                     break;
             }
         }
@@ -725,7 +734,7 @@ public final class Genbank extends SymLoader {
 
     /**
      * This method will read raw sequence from the stream, and ignore it.
-	 *
+     *
      */
     private void ignoreSequence(BufferedReader input) {
         getCurrentInput(input);
@@ -836,16 +845,16 @@ public final class Genbank extends SymLoader {
  */
 final class GenbankFeature {
 
-  // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     // Class/static variables
     // -----------------------------------------------------------------------
     private static final int key_offset = 5;
 
-  // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     // Instance variables
     // -----------------------------------------------------------------------
     private String type;
-  // this is a hash into vectors to allow for cases where
+    // this is a hash into vectors to allow for cases where
     // there is more than one value for an individual tag
     private Map<String, List<String>> tagValues = new HashMap<>(3);
     private StringBuffer location;
@@ -941,7 +950,7 @@ final class GenbankFeature {
             if (end > 0) {
                 syns_str = syns_str.substring(0, end);
                 index = note.indexOf(';', index) + 1;
-        //if (index < note.length())
+                //if (index < note.length())
                 //  suffix = note.substring(index);
             }
             while (syns_str.length() > 0) {
@@ -968,7 +977,7 @@ final class GenbankFeature {
     private void setTagValue(String content) {
         String tag;
         String value;
-    //String db_tag = null;
+        //String db_tag = null;
         //String db_value = null;
         //String synonyms = null;
 
@@ -1192,7 +1201,7 @@ final class GenbankFeature {
             return (index_end < location_str.length()
                     ? location_str.substring(index_start, index_end)
                     : (index_start < location_str.length()
-                    ? location_str.substring(index_start) : location_str));
+                            ? location_str.substring(index_start) : location_str));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

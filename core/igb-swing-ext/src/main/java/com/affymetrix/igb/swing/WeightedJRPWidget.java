@@ -10,7 +10,7 @@ package com.affymetrix.igb.swing;
  * @author tarun
  */
 public interface WeightedJRPWidget extends JRPWidget {
-    
+
     public int getWeight();
-    
+
 }

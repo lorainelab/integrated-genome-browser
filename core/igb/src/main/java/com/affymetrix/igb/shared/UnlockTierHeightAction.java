@@ -1,12 +1,12 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.TierHeightAction;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyLocked;
-import com.affymetrix.igb.glyph.DefaultTierGlyph;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph.TierType;
 
 /**
@@ -54,7 +54,7 @@ public class UnlockTierHeightAction extends TierHeightAction {
     protected void setHeightFixed(DefaultTierGlyph dtg) {
         dtg.setHeightFixed(false);
     }
-    
+
     @Override
     public boolean isToolbarAction() {
         return false;

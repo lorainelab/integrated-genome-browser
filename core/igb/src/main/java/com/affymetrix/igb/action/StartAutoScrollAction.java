@@ -38,7 +38,7 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
         // Calculate start, end and bases per pixels
         Rectangle2D.Double cbox = getTierMap().getViewBounds();
         int start_pos = (int) cbox.x;
-        // Temporary fix to avoid npe. 
+        // Temporary fix to avoid npe.
         if (getSeqMapView().getViewSeq() == null) {
             return;
         }
@@ -54,7 +54,6 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 //	public boolean isEnabled(){
 //		return getSeqMapView().getViewSeq() != null;
 //	}
-    
     @Override
     public boolean isToolbarAction() {
         return false;

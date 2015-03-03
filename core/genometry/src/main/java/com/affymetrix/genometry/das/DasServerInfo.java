@@ -9,20 +9,27 @@
  */
 package com.affymetrix.genometry.das;
 
+import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.genometry.util.XMLUtils;
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.ServerUtils;
+import com.affymetrix.genometry.util.XMLUtils;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
-import java.util.*;
-
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  *
@@ -205,7 +212,7 @@ public final class DasServerInfo {
             istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
         }
 
-        logger.debug( "{} : {}", new Object[]{log_string, load_url});
+        logger.debug("{} : {}", new Object[]{log_string, load_url});
         return istr;
     }
 

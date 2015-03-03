@@ -1,11 +1,11 @@
 <project name="LuceneIndexing" default="index" basedir=".">
-	<target name="index" description="lucene indexing using felix gogo">
-		<property environment="env" />
-		<fail unless="env.lucene_index_dir">Please set the lucene_index_dir env variable to the directory to be indexed</fail>
-		<java jar="bin/felix.jar" fork="true" dir="." classpath="resources/">
-			<jvmarg value="-Xmx4096m"/>
-			<jvmarg value="-Dlucene_index_dir=${env.lucene_index_dir}"/>
-			<jvmarg value="-Ddump=${env.dump}"/>
-		</java>
-	</target>
+    <target name="index" description="lucene indexing using felix gogo">
+        <property environment="env" />
+        <fail unless="env.lucene_index_dir">Please set the lucene_index_dir env variable to the directory to be indexed</fail>
+        <java jar="bin/felix.jar" fork="true" dir="." classpath="resources/">
+            <jvmarg value="-Xmx4096m"/>
+            <jvmarg value="-Dlucene_index_dir=${env.lucene_index_dir}"/>
+            <jvmarg value="-Ddump=${env.dump}"/>
+        </java>
+    </target>
 </project>

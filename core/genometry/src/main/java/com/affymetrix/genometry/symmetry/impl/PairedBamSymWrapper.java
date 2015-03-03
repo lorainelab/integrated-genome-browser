@@ -149,7 +149,7 @@ public final class PairedBamSymWrapper implements TypedSym, SymWithProps, MultiT
         PairedConnectorSym toReturn;
         int min = getForwardStrandSym().getMax();
         int max = getNegativeStrandSym().getMin();
-        toReturn = new PairedConnectorSym(getType(), getForwardStrandSym().getBioSeq(), min+1, max-1, getName(), true, null, null) {
+        toReturn = new PairedConnectorSym(getType(), getForwardStrandSym().getBioSeq(), min + 1, max - 1, getName(), true, null, null) {
             @Override
             public SeqSymmetry getChild(int index) {
                 return null;

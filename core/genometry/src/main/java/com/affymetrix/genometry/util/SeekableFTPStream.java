@@ -1,21 +1,20 @@
 package com.affymetrix.genometry.util;
 
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Logger;
 import net.sf.samtools.seekablestream.SeekableStream;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 /**
  * User: jrobinso
  * Date: Apr 13, 2010
  */
-public class SeekableFTPStream extends SeekableStream{
+public class SeekableFTPStream extends SeekableStream {
 
     static final Logger log = Logger.getLogger(SeekableFTPStream.class.getName());
 
@@ -38,8 +37,8 @@ public class SeekableFTPStream extends SeekableStream{
     public long position() {
         return position;
     }
- 
-	@Override
+
+    @Override
     public long skip(long n) throws IOException {
         long bytesToSkip = n;
         position += bytesToSkip;
@@ -56,7 +55,6 @@ public class SeekableFTPStream extends SeekableStream{
             return 0;
         }
 
-
         int n = 0;
         InputStream is = null;
 
@@ -64,7 +62,7 @@ public class SeekableFTPStream extends SeekableStream{
 
             ftp.setRestartOffset(position);
             is = ftp.retrieveFileStream(path);
-   
+
             while (n < len) {
                 int count = is.read(buffer, offset + n, len - n);
                 if (count < 0) {
@@ -81,9 +79,7 @@ public class SeekableFTPStream extends SeekableStream{
 
             return n;
 
-        }
-
-        catch (EOFException e) {
+        } catch (EOFException e) {
             if (n < 0) {
                 return -1;
             } else {
@@ -91,16 +87,13 @@ public class SeekableFTPStream extends SeekableStream{
                 return n;
             }
 
-        }
-
-        finally {
+        } finally {
             if (is != null) {
                 is.close();
             }
             ftp.completePendingCommand();
         }
     }
-
 
     public void close() throws IOException {
         // Nothing to do
@@ -109,7 +102,6 @@ public class SeekableFTPStream extends SeekableStream{
     public int read() throws IOException {
         throw new UnsupportedOperationException("read() is not supported on SeekableHTTPStream.  Must read in blocks.");
     }
-
 
     private FTPClient openClient(String host) throws IOException {
 
@@ -136,20 +128,18 @@ public class SeekableFTPStream extends SeekableStream{
         // behind firewalls these days.
         temp_ftp.enterLocalPassiveMode();
 
-
         return temp_ftp;
     }
 
-	public long length(){
-		 throw new UnsupportedOperationException("length() is not supported on SeekableFTPStream.");
-	}
-	
-	public boolean eof() throws IOException {
-		throw new UnsupportedOperationException("eof() is not supported on SeekableFTPStream.");
-	}
-	
-	public String getSource(){
-		return path;
-	}
-}
+    public long length() {
+        throw new UnsupportedOperationException("length() is not supported on SeekableFTPStream.");
+    }
 
+    public boolean eof() throws IOException {
+        throw new UnsupportedOperationException("eof() is not supported on SeekableFTPStream.");
+    }
+
+    public String getSource() {
+        return path;
+    }
+}

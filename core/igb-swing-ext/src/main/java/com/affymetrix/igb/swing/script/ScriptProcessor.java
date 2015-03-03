@@ -5,13 +5,13 @@ import javax.script.ScriptEngineFactory;
 
 public interface ScriptProcessor {
 
-	public String getExtension();
+    public String getExtension();
 
-	public ScriptEngineFactory getScriptEngineFactory();
+    public ScriptEngineFactory getScriptEngineFactory();
 
-	public String getHeader();
+    public String getHeader();
 
-	public String getCommand(Operation operation);
+    public String getCommand(Operation operation);
 
-	public boolean canWriteScript();
+    public boolean canWriteScript();
 }

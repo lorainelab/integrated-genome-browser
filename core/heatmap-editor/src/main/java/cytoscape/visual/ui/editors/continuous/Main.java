@@ -2,7 +2,7 @@ package cytoscape.visual.ui.editors.continuous;
 
 public class Main {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 //		JFrame frame = new JFrame("Test");
 //		frame.setSize(800, 400);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,6 +50,6 @@ public class Main {
 //		frame.setLocationRelativeTo(null);
 //		frame.setVisible(true);
 
-		GradientEditorPanel.showDialog(600, 300, "Test");
-	}
+        GradientEditorPanel.showDialog(600, 300, "Test");
+    }
 }

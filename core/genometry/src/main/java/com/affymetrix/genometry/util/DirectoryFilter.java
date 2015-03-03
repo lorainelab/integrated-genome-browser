@@ -12,18 +12,23 @@ import java.io.FileFilter;
  * @version $Id: DirectoryFilter.java 4058 2009-07-29 14:28:31Z sgblanch $
  */
 public final class DirectoryFilter implements FileFilter {
-	private final FileFilter filter;
 
-	public DirectoryFilter() { filter = null; }
+    private final FileFilter filter;
 
-	/**
-	 * Constructor that allows chaining of file filters
-	 *
-	 * @param filter the FileFilter to add to filter chain
-	 */
-	public DirectoryFilter(FileFilter filter) { this.filter = filter; }
+    public DirectoryFilter() {
+        filter = null;
+    }
 
-	public boolean accept(File pathname) {
-		return pathname.isDirectory() && (filter == null || filter.accept(pathname));
-	}
+    /**
+     * Constructor that allows chaining of file filters
+     *
+     * @param filter the FileFilter to add to filter chain
+     */
+    public DirectoryFilter(FileFilter filter) {
+        this.filter = filter;
+    }
+
+    public boolean accept(File pathname) {
+        return pathname.isDirectory() && (filter == null || filter.accept(pathname));
+    }
 }

@@ -4,5 +4,5 @@ import java.awt.Rectangle;
 
 public interface SubRegionFinder {
 
-	public Rectangle getRegion();
+    public Rectangle getRegion();
 }

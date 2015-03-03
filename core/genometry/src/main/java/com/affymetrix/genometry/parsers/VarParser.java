@@ -1,24 +1,25 @@
 /**
- *   Copyright (c) 2007 Affymetrix, Inc.
+ * Copyright (c) 2007 Affymetrix, Inc.
  *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License").
+ * A copy of the license must be included with any distribution of
+ * this source code.
+ * Distributions from Affymetrix, Inc., place this in the
+ * IGB_LICENSE.html file.
  *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
+ * The license is also available at
+ * http://www.opensource.org/licenses/cpl.php
  */
-
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,75 +27,79 @@ import java.util.regex.Pattern;
 // VariationID	Landmark	Chr	Start	End	VariationType
 // LocusID	LocusChr	LocusStart	LocusEnd
 // Reference	PubMedID	Method/platform	Gain	Loss	TotalGainLossInv
-
 // The LocusID is not stable from one release to the next, so we ignore it
-
 /**
- *  A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
+ * A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
  */
 public final class VarParser implements Parser {
 
-	private static final String GENOMIC_VARIANTS = "Genomic Variants";
+    private static final String GENOMIC_VARIANTS = "Genomic Variants";
 
-	private static final Pattern line_regex = Pattern.compile("\\t");
-	
-	public static List<SingletonSymWithProps> parse(InputStream dis, AnnotatedSeqGroup seq_group)
-		throws IOException  {
+    private static final Pattern line_regex = Pattern.compile("\\t");
 
-		String line;
-		List<SingletonSymWithProps> results = new ArrayList<>();
-		Thread thread = Thread.currentThread();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+    public static List<SingletonSymWithProps> parse(InputStream dis, AnnotatedSeqGroup seq_group)
+            throws IOException {
 
-		line = reader.readLine();
-		String[] column_names = null;
-		column_names = line_regex.split(line);
+        String line;
+        List<SingletonSymWithProps> results = new ArrayList<>();
+        Thread thread = Thread.currentThread();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 
-		if (column_names == null) {
-			throw new IOException("Column names were missing or malformed");
-		}
+        line = reader.readLine();
+        String[] column_names = null;
+        column_names = line_regex.split(line);
 
-		int line_count = 1;
-		String[] fields;
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-			line_count++;
+        if (column_names == null) {
+            throw new IOException("Column names were missing or malformed");
+        }
 
-			fields = line_regex.split(line);
-			int field_count = fields.length;
+        int line_count = 1;
+        String[] fields;
+        while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
+            line_count++;
 
-			if (field_count > column_names.length) {
-				throw new IOException("Line " + line_count + " has wrong number of data columns: " + field_count);
-			}
+            fields = line_regex.split(line);
+            int field_count = fields.length;
 
-			String variationId = fields[0];
-			String seqid = fields[2];
-			int start = Integer.parseInt(fields[3]);
-			int end = Integer.parseInt(fields[4]);
+            if (field_count > column_names.length) {
+                throw new IOException("Line " + line_count + " has wrong number of data columns: " + field_count);
+            }
 
-			BioSeq aseq = seq_group.getSeq(seqid);
-			if (aseq == null) { aseq = seq_group.addSeq(seqid, end); }
-			if (start > aseq.getLength()) { aseq.setLength(start); }
-			if (end > aseq.getLength()) { aseq.setLength(end); }
+            String variationId = fields[0];
+            String seqid = fields[2];
+            int start = Integer.parseInt(fields[3]);
+            int end = Integer.parseInt(fields[4]);
 
-			SingletonSymWithProps var = new SingletonSymWithProps(variationId, start, end, aseq);
-			var.setProperty("id", variationId);
-			var.setProperty("method", GENOMIC_VARIANTS);
-			var.setProperty(column_names[1], fields[1]);
-			for (int c=5; c < fields.length; c++) {
-				String propName = column_names[c];
-				if (! propName.startsWith("Locus")) {
-					var.setProperty(propName, fields[c]);
-				}
-			}
-			results.add(var);
-		}
-		return results;
-	}
+            BioSeq aseq = seq_group.getSeq(seqid);
+            if (aseq == null) {
+                aseq = seq_group.addSeq(seqid, end);
+            }
+            if (start > aseq.getLength()) {
+                aseq.setLength(start);
+            }
+            if (end > aseq.getLength()) {
+                aseq.setLength(end);
+            }
 
-	@Override
-	public List<? extends SeqSymmetry> parse(InputStream is,
-			AnnotatedSeqGroup group, String nameType, String uri,
-			boolean annotate_seq) throws Exception {
-		return parse(is, group);
-	}
+            SingletonSymWithProps var = new SingletonSymWithProps(variationId, start, end, aseq);
+            var.setProperty("id", variationId);
+            var.setProperty("method", GENOMIC_VARIANTS);
+            var.setProperty(column_names[1], fields[1]);
+            for (int c = 5; c < fields.length; c++) {
+                String propName = column_names[c];
+                if (!propName.startsWith("Locus")) {
+                    var.setProperty(propName, fields[c]);
+                }
+            }
+            results.add(var);
+        }
+        return results;
+    }
+
+    @Override
+    public List<? extends SeqSymmetry> parse(InputStream is,
+            AnnotatedSeqGroup group, String nameType, String uri,
+            boolean annotate_seq) throws Exception {
+        return parse(is, group);
+    }
 }

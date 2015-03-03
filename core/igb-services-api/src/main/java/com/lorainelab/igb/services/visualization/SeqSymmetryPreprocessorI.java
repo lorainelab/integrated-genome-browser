@@ -13,7 +13,7 @@ import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 public interface SeqSymmetryPreprocessorI {
 
     public String getName();
-    
+
     public FileTypeCategory getCategory();
 
     public void process(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq);

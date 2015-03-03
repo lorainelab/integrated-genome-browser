@@ -22,8 +22,8 @@
             <scope>provided</scope>
         </dependency>    
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

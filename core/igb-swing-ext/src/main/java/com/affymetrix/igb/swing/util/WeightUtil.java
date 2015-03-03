@@ -13,22 +13,25 @@ import java.util.List;
  * @author tarun
  */
 public class WeightUtil {
-    
+
     public static int locationToAdd(List<WeightedJRPWidget> menuItems, WeightedJRPWidget newMenuItem) {
         int index = newMenuItem.getWeight();
-            WeightedJRPWidget prevMenuItem = null;
-            for(WeightedJRPWidget menuItem : menuItems) {
-                if(menuItem.getWeight() > index) {
-                    break;
-                } else {
-                    prevMenuItem = menuItem;
-                }
-            }
-            if(prevMenuItem == null) {
-                return -1;
+        if(index == -1) {
+            return menuItems.size();
+        }
+        WeightedJRPWidget prevMenuItem = null;
+        for (WeightedJRPWidget menuItem : menuItems) {
+            if (menuItem.getWeight() > index) {
+                break;
             } else {
-                return menuItems.indexOf(prevMenuItem) + 1;
+                prevMenuItem = menuItem;
             }
+        }
+        if (prevMenuItem == null) {
+            return 0;
+        } else {
+            return menuItems.indexOf(prevMenuItem) + 1;
+        }
     }
-    
+
 }

@@ -4,8 +4,9 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -23,14 +24,14 @@ import javax.swing.JRadioButtonMenuItem;
 public class TranscriptIsoFormMenuProvider implements IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "TranscriptIsoFormMenuProvider";
-    private JMenu transcriptIsoformMenu;
+    private JRPMenuItem transcriptIsoformMenu;
     private TranscriptIsoformEvidenceVisualizationManager tievListener;
     private IgbService igbService;
 
     @Activate
     public void activate() {
         tievListener = new TranscriptIsoformEvidenceVisualizationManager(igbService);
-        transcriptIsoformMenu = new JMenu("Transcript Isoform");
+        transcriptIsoformMenu = new JRPMenuItem("Transcript Isoform");
         final JMenuItem selectRefTiersMenuItem = new JMenuItem("Select reference tiers");
         selectRefTiersMenuItem.addActionListener(
                 new ActionListener() {
@@ -111,12 +112,12 @@ public class TranscriptIsoFormMenuProvider implements IgbMenuItemProvider {
     }
 
     @Override
-    public JMenuItem getMenuItem() {
+    public JRPMenuItem getMenuItem() {
         return transcriptIsoformMenu;
     }
 
     @Override
-    public int getMenuItemPosition() {
+    public int getMenuItemWeight() {
         return -1;
     }
 }

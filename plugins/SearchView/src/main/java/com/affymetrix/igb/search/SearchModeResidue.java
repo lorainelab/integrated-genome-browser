@@ -301,14 +301,14 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
             int end = Math.min(i + MAX_RESIDUE_LEN_SEARCH, residuesLength);
 
             String residues = chrFilter.getResidues(start, end);
-            List<GlyphI> results = igbService.getSeqMapView().searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1, start), hitcolors[color]);
+            List<GlyphI> results = igbService.getSeqMapView().searchForRegexInResidues(true, regex, residues, Math.max(residue_offset1, start), hitcolors[color % hitcolors.length]);
             hit_count1 += results.size();
             glyphs.addAll(results);
 
             // Search for reverse complement of query string
             // flip searchstring around, and redo nibseq search...
             String rev_searchstring = DNAUtils.reverseComplement(residues);
-            results = igbService.getSeqMapView().searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2, end), hitcolors[color]);
+            results = igbService.getSeqMapView().searchForRegexInResidues(false, regex, rev_searchstring, Math.min(residue_offset2, end), hitcolors[color % hitcolors.length]);
             hit_count2 += results.size();
             glyphs.addAll(results);
         }

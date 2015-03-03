@@ -144,7 +144,7 @@
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
         <module>plugins/session-manager</module>               
-        <module>plugins/keystroke</module>
+        <module>plugins/Keybinding-registry</module>
     </modules>
 
     <profiles>
@@ -432,7 +432,7 @@
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
-                <artifactId>keystroke</artifactId>
+                <artifactId>Keybinding-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

@@ -10,12 +10,13 @@ import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 
+@Component(name = ClearPreferencesAction.COMPONENT_NAME, immediate = true, provide = GenericAction.class)
 public class ClearPreferencesAction extends GenericAction {
-
+    
+    public static final String COMPONENT_NAME = "ClearPreferencesAction";
     private static final long serialVersionUID = 1l;
     private static final ClearPreferencesAction ACTION = new ClearPreferencesAction();
 

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

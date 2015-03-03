@@ -1,6 +1,5 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Component;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.event.ActionEvent;

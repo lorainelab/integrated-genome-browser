@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>com.lorainelab</groupId>
-    <artifactId>keystroke</artifactId>
+    <artifactId>Keybinding-registry</artifactId>
     <packaging>bundle</packaging>
 
     <name>Keystroke View</name>

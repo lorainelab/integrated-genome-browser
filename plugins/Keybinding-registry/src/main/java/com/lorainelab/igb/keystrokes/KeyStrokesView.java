@@ -22,7 +22,6 @@ import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -185,40 +184,6 @@ public final class KeyStrokesView {
     }
 
     /**
-     * These are actions that are inappropriate for the tool bar. This is kind
-     * of a kludge until we can figure out a better way.
-     */
-    static final Set<GenericAction> smallTimeActions = new HashSet<>();
-
-    /**
-     * Actions to be excluded from Toolbar: ClearPreferencesAction,
-     * PreferencesHelpAction, PreferencesHelpTabAction, ExpandAction,
-     * CollapseAction, ShowOneTierAction, ShowTwoTiersAction, FloatTiersAction,
-     * UnFloatTiersAction, LockTierHeightAction, UnlockTierHeightAction,
-     * StartAutoScrollAction, StopAutoScrollAction, ShowPlusStrandAction,
-     * ShowMinusStrandAction, ClampViewAction, ToggleHairlineAction,
-     * ToggleHairlineLabelAction, DrawCollapseControlAction,
-     * ShowIGBTrackMarkAction, ToggleEdgeMatchingAction,
-     * ShowLockedTrackIconAction
-     *
-     * @param action
-     */
-    @Reference(optional = true, multiple = true, unbind = "removeSmallTimeAction", dynamic = true)
-    public void addSmallTimeAction(GenericAction action) {
-        if (!action.isToolbarAction()) {
-            smallTimeActions.add(action);
-        }
-        logger.info("Action received " + action.getId());
-    }
-
-    public void removeSmallTimeAction(GenericAction action) {
-        if (!action.isToolbarAction()) {
-            smallTimeActions.remove(action);
-        }
-        logger.info("Action removed");
-    }
-
-    /**
      * Build the underlying data array. There is a fourth column, not shown in
      * the table, but needed by the setValue() method.
      *
@@ -247,7 +212,7 @@ public final class KeyStrokesView {
                 if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
-                if (smallTimeActions.contains(genericAction)) {
+                if(!genericAction.isToolbarAction()) {
                     rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
                 }
                 rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);

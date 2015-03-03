@@ -120,3 +120,4 @@ www/release_notes/images/Thumbs.db
 /plugins/session-manager/target/
 extbundles/
 /plugins/keystroke/target/
+/plugins/Keybinding-registry/target/

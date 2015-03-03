@@ -46,6 +46,11 @@
             <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igbSwingExt</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

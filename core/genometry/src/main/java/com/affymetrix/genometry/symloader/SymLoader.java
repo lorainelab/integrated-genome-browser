@@ -1,16 +1,5 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
-import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
-import java.io.*;
-import java.net.URI;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
@@ -20,8 +9,31 @@ import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
+import com.affymetrix.genometry.util.BioSeqUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.*;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.SortTabFile;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -93,8 +105,8 @@ public abstract class SymLoader {
 
     protected void sortCreatedFiles() throws Exception {
         //Now Sort all files
-        for (Entry<BioSeq, File> file : chrList.entrySet()) {
-            chrSort.put(file.getKey(), SortTabFile.sort(file.getValue()));
+        for (Entry<BioSeq, File> entry : chrList.entrySet()) {
+            chrSort.put(entry.getKey(), SortTabFile.sort(entry.getValue()));
         }
     }
 

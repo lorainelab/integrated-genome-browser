@@ -1,17 +1,5 @@
 package com.affymetrix.genometry.parsers;
 
-import java.lang.reflect.Constructor;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.parsers.das.DASFeatureParser;
 import com.affymetrix.genometry.parsers.gchp.AffyCnChpParser;
@@ -46,6 +34,17 @@ import com.affymetrix.genometry.symloader.USeq;
 import com.affymetrix.genometry.symloader.VCF;
 import com.affymetrix.genometry.symloader.Wiggle;
 import com.affymetrix.genometry.util.GeneralUtils;
+import java.lang.reflect.Constructor;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * all the FileTypeHandler implementations are saved here, included dynamically
@@ -64,6 +63,10 @@ public class FileTypeHolder {
     private FileTypeHolder() {
         fileTypeHandlerMap = new HashMap<>();
         dummyHandlerMap = new HashMap<>();
+        initializeFileTypeHandlers();
+    }
+
+    private void initializeFileTypeHandlers() {
         // load all built in FileTypeHandlers
         addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, FileTypeCategory.Annotation, AffyCnChpParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("BAM", new String[]{"bam"}, FileTypeCategory.Alignment, null, BAM.class);
@@ -83,7 +86,8 @@ public class FileTypeHolder {
 
                     @Override
                     public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-                        return SymLoaderTabix.getSymLoader(new SAM(uri, featureName, group));
+                        SAM sam = new SAM(uri, featureName, group);
+                        return SymLoaderTabix.getSymLoader(sam);
                     }
 
                     @Override
@@ -119,7 +123,8 @@ public class FileTypeHolder {
 
                     @Override
                     public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-                        return SymLoaderTabix.getSymLoader(new BED(uri, featureName, group));
+                        BED bed = new BED(uri, featureName, group);
+                        return SymLoaderTabix.getSymLoader(bed);
                     }
 
                     @Override
@@ -154,7 +159,8 @@ public class FileTypeHolder {
 
                     @Override
                     public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-                        return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
+                        final GFF3 gfF3 = new GFF3(uri, featureName, group);
+                        return SymLoaderTabix.getSymLoader(gfF3);
                     }
 
                     @Override
@@ -189,9 +195,11 @@ public class FileTypeHolder {
                     @Override
                     public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
                         if (com.affymetrix.genometry.symloader.GFF3.isGFF3(uri)) {
-                            return SymLoaderTabix.getSymLoader(new GFF3(uri, featureName, group));
+                            final GFF3 gfF3 = new GFF3(uri, featureName, group);
+                            return SymLoaderTabix.getSymLoader(gfF3);
                         } else {
-                            return SymLoaderTabix.getSymLoader(new GFF(uri, featureName, group));
+                            final GFF gff = new GFF(uri, featureName, group);
+                            return SymLoaderTabix.getSymLoader(gff);
                         }
                     }
 

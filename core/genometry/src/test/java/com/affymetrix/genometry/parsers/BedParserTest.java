@@ -1,15 +1,31 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.BED;
+import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
-
-import java.io.*;
-import java.util.*;
-import static org.junit.Assert.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class BedParserTest {
@@ -130,7 +146,7 @@ public class BedParserTest {
             assertEquals(expResult[i], result[i]);
         }
 
-        result = BED.parseIntArray(int_array);
+        result = BedUtils.parseIntArray(int_array);
         for (int i = 0; i < expResult.length; i++) {
             assertEquals(expResult[i], result[i]);
         }
@@ -155,7 +171,7 @@ public class BedParserTest {
 
         passed = false;
         try {
-            BED.parseIntArray(int_array);
+            BedUtils.parseIntArray(int_array);
         } catch (NumberFormatException nfe) {
             passed = true;
         }
@@ -180,7 +196,7 @@ public class BedParserTest {
             assertEquals(expResult[i], result[i]);
         }
 
-        result = BED.makeBlockMins(min, blockStarts);
+        result = BedUtils.makeBlockMins(min, blockStarts);
         for (int i = 0; i < expResult.length; i++) {
             assertEquals(expResult[i], result[i]);
         }
@@ -202,7 +218,7 @@ public class BedParserTest {
             assertEquals(expResult[i], result[i]);
         }
 
-        result = BED.makeBlockMaxs(blockMins, blockSizes);
+        result = BedUtils.makeBlockMaxs(blockMins, blockSizes);
         for (int i = 0; i < expResult.length; i++) {
             assertEquals(expResult[i], result[i]);
         }
@@ -232,7 +248,7 @@ public class BedParserTest {
         baos = new ByteArrayOutputStream();
         dos = new DataOutputStream(baos);
 
-        BED.writeSymmetry(dos, sym, seq);
+        BedUtils.writeSymmetry(dos, sym, seq);
         assertEquals("chr12\t500\t800\n", baos.toString());
     }
 

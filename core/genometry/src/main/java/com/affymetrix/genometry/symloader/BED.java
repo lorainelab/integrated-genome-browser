@@ -1,34 +1,50 @@
 package com.affymetrix.genometry.symloader;
 
-import java.io.*;
-import java.net.URI;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
+import static com.affymetrix.genometry.parsers.BedParser.makeBlockMaxs;
+import static com.affymetrix.genometry.parsers.BedParser.makeBlockMins;
+import static com.affymetrix.genometry.parsers.BedParser.parseIntArray;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.google.common.base.Strings;
+import com.google.common.io.CharStreams;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
-
 import org.broad.tribble.readers.LineReader;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,41 +52,42 @@ import org.broad.tribble.readers.LineReader;
  */
 public class BED extends SymLoader implements LineProcessor {
 
-    // Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-    private static final List<String> pref_list = new ArrayList<>();
-
-    static {
-        pref_list.add("bed");
-    }
-    private static final boolean DEBUG = false;
-    private static final Pattern line_regex = Pattern.compile("\\s+");
-    private static final Pattern tab_regex = Pattern.compile("\\t");
-    private static final Pattern comma_regex = Pattern.compile(",");
-    private boolean annotate_seq = true;
-    private boolean create_container_annot = false;
-    private String default_type = null;
-    private final TrackLineParser track_line_parser = new TrackLineParser();
-    private static final List<LoadStrategy> strategyList = new ArrayList<>();
-    private int BED_DETAIL_LINE_CHECK_COUNT = 0;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BED.class);
     private static final int BED_DETAIL_LINE_CHECK_LIMIT = 10;
     private static final int BED_DETAIL_FIELD_COUNT = 14;
-    private boolean bedDetail = false;
+    private static final String BED_MIME_TYPE = "text/bed";
+    private static final String BED_FILE_EXTENSION = ".bed";
+    private static final String BED_DETAIL_TRACKLINE_TYPE = "bedDetail";
+// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
+    private static final List<String> preferencesList = new ArrayList<>();
+
+    static {
+        preferencesList.add("bed");
+    }
+    private static final Pattern LINE_REGEX = Pattern.compile("\\s+");
+    private static final Pattern TAB_REGEX = Pattern.compile("\\t");
+
+    private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
         strategyList.add(LoadStrategy.VISIBLE);
-//		strategyList.add(LoadStrategy.CHROMOSOME);
         strategyList.add(LoadStrategy.GENOME);
     }
 
+    private boolean annotate_seq = true;
+    private boolean create_container_annot = false;
+    private String trackName = null;
+    private final TrackLineParser trackLineParser;
+    private int BED_DETAIL_LINE_CHECK_COUNT = 0;
+    private String bedFileType;
+    private GenometryModel gmodel;
+
     public BED(URI uri, String featureName, AnnotatedSeqGroup group) {
         super(uri, featureName, group);
-
-        default_type = uri.toString();
-//		if (default_type.endsWith(".bed")) {
-//			default_type = default_type.substring(0, default_type.lastIndexOf(".bed"));
-//		}
-
+        gmodel = GenometryModel.getInstance();
+        trackLineParser = new TrackLineParser();
+        trackName = uri.toString();
         annotate_seq = false;
         create_container_annot = false;
     }
@@ -85,12 +102,10 @@ public class BED extends SymLoader implements LineProcessor {
         if (this.isInitialized) {
             return;
         }
-
         if (buildIndex()) {
             sortCreatedFiles();
             super.init();
         }
-
     }
 
     @Override
@@ -125,173 +140,96 @@ public class BED extends SymLoader implements LineProcessor {
     }
 
     private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
-        InputStream istr = null;
-        try {
-            File file = chrList.get(seq);
-            boolean isSorted = chrSort.get(seq);
-            if (file == null) {
-                Logger.getLogger(BED.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
-                return Collections.<SeqSymmetry>emptyList();
-            }
-            istr = new FileInputStream(file);
+        File file = chrList.get(seq);
+        boolean isSorted = chrSort.get(seq);
+        try (InputStream istr = new FileInputStream(file)) {
             return parse(istr, isSorted, min, max);
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            GeneralUtils.safeClose(istr);
         }
     }
 
-    private List<SeqSymmetry> parse(InputStream istr, boolean isSorted, int min, int max)
-            throws IOException {
-        /*
-         *  seq2types is hash for making container syms (if create_container_annot == true)
-         *  each entry in hash is: BioSeq ==> type2psym hash
-         *     Each type2csym is hash where each entry is "type" ==> container_sym
-         *  so two-step process to find container sym for a particular type on a particular seq:
-         *    Map type2csym = (Map)seq2types.get(seq);
-         *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
-         */
+    private List<SeqSymmetry> parse(LineReader lineReader, boolean isSorted, int min, int max) {
+        List<SeqSymmetry> symlist = new ArrayList<>();
+        try {
+            List<String> lines = new ArrayList<>();
+            String nextLine;
+            while ((nextLine = lineReader.readLine()) != null) {
+                lines.add(nextLine);
+            }
+            lineReader.close();
+            symlist = parseLines(lines, min, max, isSorted);
 
-        BufferedInputStream bis;
-        if (istr instanceof BufferedInputStream) {
-            bis = (BufferedInputStream) istr;
-        } else {
-            bis = new BufferedInputStream(istr);
+        } catch (IOException ex) {
+            logger.error("Error reading lines from Bed File", ex);
         }
-        DataInputStream dis = new DataInputStream(bis);
-        return parse(dis, isSorted, min, max);
+        return symlist;
     }
 
-    private List<SeqSymmetry> parse(DataInputStream dis, boolean isSorted, int min, int max)
-            throws IOException {
-        if (DEBUG) {
-            System.out.println("called BedParser.parseWithEvents()");
+    private List<SeqSymmetry> parse(InputStream istr, boolean isSorted, int min, int max) throws IOException {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(istr))) {
+            List<String> lines = CharStreams.readLines(reader);
+            return parseLines(lines, min, max, isSorted);
         }
-
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
-        Iterator<String> it = new Iterator<String>() {
-
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public String next() {
-                String line = null;
-                try {
-                    line = reader.readLine();
-                } catch (IOException x) {
-                    Logger.getLogger(this.getClass().getName()).log(
-                            Level.SEVERE, "error reading bed file", x);
-                    line = null;
-                }
-                return line;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
-
-        return parse(it, isSorted, min, max);
     }
 
-    private List<SeqSymmetry> parse(Iterator<String> it, boolean isSorted, int min, int max) {
+    private List<SeqSymmetry> parseLines(List<String> lines, int min, int max, boolean isSorted) {
         List<SeqSymmetry> symlist = new ArrayList<>();
         Map<BioSeq, Map<String, SeqSymmetry>> seq2types = new HashMap<>();
 
-        String line;
-        String type = default_type;
-        boolean use_item_rgb = true;
-        GenometryModel gmodel = GenometryModel.getInstance();
-        Thread thread = Thread.currentThread();
-
-        while ((line = it.next()) != null && (!thread.isInterrupted())) {
-            if (line.length() == 0) {
-                continue;
-            }
-            if (line.startsWith("track")) {
-                track_line_parser.parseTrackLine(line);
-//				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, extension);
-                String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-                if (StringUtils.isNotBlank(trackLineName)) {
-                    if (type.contains(".bed")) {
-                        type = type.substring(0, type.indexOf(".bed")) + " " + trackLineName;
-                    } else {
-                        type = type + "_" + trackLineName;
+        for (String line : lines) {
+            if (!Strings.isNullOrEmpty(line)) {
+                if (isTrackLine(line)) {
+                    processTrackLine(line);
+                } else if (isBrowserLine(line)) {
+                    // currently take no action for browser lines
+                } else {
+                    if (!parseLine(line, min, max, symlist, seq2types) && isSorted) {
+                        break;
                     }
-                    track_line_parser.getCurrentTrackHash().put(TrackLineParser.NAME, type);
-                }
-//				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
-//				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
-//				style.setColorProvider(use_item_rgb? new RGB() : null);
-                String bedType = track_line_parser.getCurrentTrackHash().get("type");
-                bedDetail = "bedDetail".equals(bedType);
-            } else if (line.startsWith("browser")) {
-                // currently take no action for browser lines
-            } else {
-                if (DEBUG) {
-                    System.out.println(line);
-                }
-                if (!parseLine(line, gmodel, type, use_item_rgb, min, max, symlist, seq2types) && isSorted) {
-                    break;
                 }
             }
         }
         return symlist;
     }
 
-    @Override
-    public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
-        Iterator<String> it = new Iterator<String>() {
-
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public String next() {
-                String line = null;
-                try {
-                    line = lineReader.readLine();
-                } catch (IOException x) {
-                    Logger.getLogger(this.getClass().getName()).log(
-                            Level.SEVERE, "error reading bed file", x);
-                    line = null;
-                }
-                return line;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
-        return parse(it, true, 0, Integer.MAX_VALUE);
+    private static boolean isTrackLine(String line) {
+        return line.startsWith("track");
     }
 
-    private boolean parseLine(String line, GenometryModel gmodel, String type,
-            boolean use_item_rgb, int minimum, int maximum, List<SeqSymmetry> symlist,
-            Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
+    private void processTrackLine(String line) {
+        trackLineParser.parseTrackLine(line);
+        String trackLineName = trackLineParser.getCurrentTrackHash().get(TrackLineParser.NAME);
+        if (StringUtils.isNotBlank(trackLineName)) {
+            if (trackName.contains(BED_FILE_EXTENSION)) {
+                trackName = trackName.substring(0, trackName.indexOf(BED_FILE_EXTENSION)) + " " + trackLineName;
+            } else {
+                trackName = trackName + "_" + trackLineName;
+            }
+            trackLineParser.getCurrentTrackHash().put(TrackLineParser.NAME, trackName);
+        }
+        bedFileType = trackLineParser.getCurrentTrackHash().get("type");
+    }
 
-//		String[] fields = bedDetail ? tab_regex.split(line) : line_regex.split(line);
-        String[] fields = tab_regex.split(line);
+    @Override
+    public List<? extends SeqSymmetry> processLines(BioSeq seq, final LineReader lineReader) {
+        return parse(lineReader, true, 0, Integer.MAX_VALUE);
+    }
+
+    private boolean parseLine(String line, int minimum, int maximum, List<SeqSymmetry> symlist,
+            Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
+        String[] fields = TAB_REGEX.split(line);
         if (fields.length == 1) {
-            fields = line_regex.split(line);
+            fields = LINE_REGEX.split(line);
         }
         String detailSymbol = null;
         String detailDescription = null;
         int field_count = fields.length;
+        boolean isBedDetail = false;
 
         // Check BED detail type for few non-comment lines if 'bedDetail' attribute not specified in track line
-        if (!bedDetail && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
-            bedDetail = true;
+        if (!isBedDetailType(bedFileType) && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
+            isBedDetail = true;
         }
-        if (bedDetail) {
+        if (isBedDetail) {
             detailSymbol = fields[field_count - 2];
             detailDescription = fields[field_count - 1];
             field_count -= 2;
@@ -323,13 +261,13 @@ public class BED extends SymLoader implements LineProcessor {
         int beg = Integer.parseInt(fields[findex++]); // start field
         int end = Integer.parseInt(fields[findex++]); // stop field
         if (field_count >= 4) {
-            annot_name = parseName(fields[findex++]);
+            annot_name = BedUtils.parseName(fields[findex++]);
             if (annot_name == null || annot_name.length() == 0) {
                 annot_name = group.getID();
             }
         }
         if (field_count >= 5) {
-            score = parseScore(fields[findex++]);
+            score = BedUtils.parseScore(fields[findex++]);
         } // score field
         if (field_count >= 6) {
             forward = !(fields[findex++].equals("-"));
@@ -339,7 +277,7 @@ public class BED extends SymLoader implements LineProcessor {
         min = Math.min(beg, end);
         max = Math.max(beg, end);
 
-        if (!checkRange(min, max, minimum, maximum)) {
+        if (!BedUtils.checkRange(min, max, minimum, maximum)) {
             return max <= maximum;
         }
 
@@ -349,7 +287,6 @@ public class BED extends SymLoader implements LineProcessor {
             //    "seqid;genome_version"
             String seqid = seq_name.substring(0, seq_name.indexOf(';'));
             String version = seq_name.substring(seq_name.indexOf(';') + 1);
-            //            System.out.println("    seq = " + seqid + ", version = " + version);
             if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
                 // for format [chrom_name];[genome_version]
                 seq = group.getSeq(seqid);
@@ -358,9 +295,7 @@ public class BED extends SymLoader implements LineProcessor {
                 }
             } else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
                 // for format [genome_version];[chrom_name]
-                String temp = seqid;
                 seqid = version;
-                version = temp;
                 seq = group.getSeq(seqid);
                 if (seq != null) {
                     seq_name = seqid;
@@ -412,27 +347,17 @@ public class BED extends SymLoader implements LineProcessor {
         if (max > seq.getLength()) {
             seq.setLength(max);
         }
-        if (DEBUG) {
-            System.out.println("fields: " + field_count + ", type = " + type + ", seq = " + seq_name + ", min = " + min + ", max = " + max + ", name = " + annot_name + ", score = " + score + ", forward = " + forward + ", thickmin = " + thick_min + ", thickmax = " + thick_max);
-            if (blockMins != null) {
-                int count = blockMins.length;
-                if (blockSizes != null && blockStarts != null && blockMins != null && blockMaxs != null) {
-                    for (int i = 0; i < count; i++) {
-                        System.out.println("   " + i + ": blockSize = " + blockSizes[i] + ", blockStart = " + blockStarts[i] + ", blockMin = " + blockMins[i] + ", blockMax = " + blockMaxs[i]);
-                    }
-                }
-            }
-        }
+
         SymWithProps bedline_sym = null;
-        bedline_sym = bedDetail
-                ? new UcscBedDetailSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
-                : new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
-        if (use_item_rgb && itemRgb != null) {
+        bedline_sym = isBedDetail
+                ? new UcscBedDetailSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
+                : new UcscBedSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+        if (itemRgb != null) {
             java.awt.Color c = null;
             try {
                 c = TrackLineParser.reformatColor(itemRgb);
             } catch (Exception e) {
-                Logger.getLogger(BED.class.getName()).log(Level.SEVERE, "Could not parse a color from String ''{0}''", itemRgb);
+                logger.error("Could not parse a color from String '{}'", itemRgb);
             }
             if (c != null) {
                 bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
@@ -442,44 +367,15 @@ public class BED extends SymLoader implements LineProcessor {
         if (annotate_seq) {
             this.annotationParsed(bedline_sym, seq2types);
         }
-        if (annot_name != null) {
-//			group.addToIndex(annot_name, bedline_sym);
-        }
-        if (detailSymbol != null) {
-//			group.addToIndex(detailSymbol, bedline_sym);
-        }
         return true;
-    }
-
-    /**
-     * Converts the data in the score field, if present, to a floating-point
-     * number.
-     */
-    private static float parseScore(String s) {
-        if (s == null || s.length() == 0 || s.equals(".") || s.equals("-")) {
-            return 0.0f;
-        }
-        return Float.parseFloat(s);
-    }
-
-    /**
-     * Parses the name field from the file. Gene names are allowed to be
-     * non-unique.
-     *
-     * @param s
-     * @return annot_name
-     */
-    private static String parseName(String s) {
-        String annot_name = s; // create a new String so the entire input line doesn't get preserved
-        return annot_name;
     }
 
     private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
         BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
         if (create_container_annot) {
-            String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+            String type = trackLineParser.getCurrentTrackHash().get(TrackLineParser.NAME);
             if (type == null) {
-                type = default_type;
+                type = trackName;
             }
             Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
             if (type2csym == null) {
@@ -491,7 +387,7 @@ public class BED extends SymLoader implements LineProcessor {
                 parent_sym = new SimpleSymWithProps();
                 parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
                 parent_sym.setProperty("method", type);
-                parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
+                parent_sym.setProperty("preferred_formats", preferencesList);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
                 parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
                 seq.addAnnotation(parent_sym);
                 type2csym.put(type, parent_sym);
@@ -502,187 +398,23 @@ public class BED extends SymLoader implements LineProcessor {
         }
     }
 
-    public static int[] parseIntArray(String int_array) {
-        if (int_array == null || int_array.length() == 0) {
-            return new int[0];
-        }
-        String[] intstrings = comma_regex.split(int_array);
-        int count = intstrings.length;
-        int[] results = new int[count];
-        for (int i = 0; i < count; i++) {
-            int val = Integer.parseInt(intstrings[i]);
-            results[i] = val;
-        }
-        return results;
-    }
-
-    /**
-     * Converting blockStarts to blockMins.
-     *
-     * @param blockStarts in coords relative to min of annotation
-     * @return blockMins in coords relative to sequence that annotation is "on"
-     */
-    public static int[] makeBlockMins(int min, int[] blockStarts) {
-        int count = blockStarts.length;
-        int[] blockMins = new int[count];
-        for (int i = 0; i < count; i++) {
-            blockMins[i] = blockStarts[i] + min;
-        }
-        return blockMins;
-    }
-
-    public static int[] makeBlockMaxs(int[] blockMins, int[] blockSizes) {
-        int count = blockMins.length;
-        int[] blockMaxs = new int[count];
-        for (int i = 0; i < count; i++) {
-            blockMaxs[i] = blockMins[i] + blockSizes[i];
-        }
-        return blockMaxs;
-    }
-
-    public static void writeBedFormat(DataOutputStream out, List<SeqSymmetry> syms, BioSeq seq)
-            throws IOException {
-        for (SeqSymmetry sym : syms) {
-            writeSymmetry(out, sym, seq);
-        }
-    }
-
-    /**
-     * Writes bed file format. WARNING. This currently assumes that each child
-     * symmetry contains a span on the seq given as an argument.
-     */
-    public static void writeSymmetry(DataOutputStream out, SeqSymmetry sym, BioSeq seq)
-            throws IOException {
-        if (DEBUG) {
-            System.out.println("writing sym: " + sym);
-        }
-        SeqSpan span = sym.getSpan(seq);
-        if (span == null) {
-            return;
-        }
-
-        if (sym instanceof UcscBedDetailSym) {
-            UcscBedDetailSym bedsym = (UcscBedDetailSym) sym;
-            if (seq == bedsym.getBioSeq()) {
-                bedsym.outputBedDetailFormat(out);
-                out.write('\n');
-            }
-            return;
-        }
-
-        if (sym instanceof UcscBedSym) {
-            UcscBedSym bedsym = (UcscBedSym) sym;
-            if (seq == bedsym.getBioSeq()) {
-                bedsym.outputBedFormat(out);
-                out.write('\n');
-            }
-            return;
-        }
-
-        SymWithProps propsym = null;
-        if (sym instanceof SymWithProps) {
-            propsym = (SymWithProps) sym;
-        }
-
-        writeOutFile(out, seq, span, sym, propsym);
-    }
-
-    private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
-        out.write(seq.getID().getBytes());
-        out.write('\t');
-        int min = span.getMin();
-        int max = span.getMax();
-        out.write(Integer.toString(min).getBytes());
-        out.write('\t');
-        out.write(Integer.toString(max).getBytes());
-        int childcount = sym.getChildCount();
-        if ((!span.isForward()) || (childcount > 0) || (propsym != null)) {
-            out.write('\t');
-            if (propsym != null) {
-                if (propsym.getProperty("name") != null) {
-                    out.write(((String) propsym.getProperty("name")).getBytes());
-                } else if (propsym.getProperty("id") != null) {
-                    out.write(((String) propsym.getProperty("id")).getBytes());
-                }
-            }
-            out.write('\t');
-            if ((propsym != null) && (propsym.getProperty("score") != null)) {
-                out.write(propsym.getProperty("score").toString().getBytes());
-            } else if (sym instanceof Scored) {
-                out.write(Float.toString(((Scored) sym).getScore()).getBytes());
-            } else {
-                out.write('0');
-            }
-            out.write('\t');
-            if (span.isForward()) {
-                out.write('+');
-            } else {
-                out.write('-');
-            }
-            if (childcount > 0) {
-                writeOutChildren(out, propsym, min, max, childcount, sym, seq);
-            }
-        }
-        out.write('\n');
-    }
-
-    private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
-        out.write('\t');
-        if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
-            out.write(propsym.getProperty("cds min").toString().getBytes());
-        } else {
-            out.write(Integer.toString(min).getBytes());
-        }
-        out.write('\t');
-        if ((propsym != null) && (propsym.getProperty("cds max") != null)) {
-            out.write(propsym.getProperty("cds max").toString().getBytes());
-        } else {
-            out.write(Integer.toString(max).getBytes());
-        }
-        out.write('\t');
-        out.write('0');
-        out.write('\t');
-        out.write(Integer.toString(childcount).getBytes());
-        out.write('\t');
-        int[] blockSizes = new int[childcount];
-        int[] blockStarts = new int[childcount];
-        for (int i = 0; i < childcount; i++) {
-            SeqSymmetry csym = sym.getChild(i);
-            SeqSpan cspan = csym.getSpan(seq);
-            blockSizes[i] = cspan.getLength();
-            blockStarts[i] = cspan.getMin() - min;
-        }
-        for (int i = 0; i < childcount; i++) {
-            out.write(Integer.toString(blockSizes[i]).getBytes());
-            out.write(',');
-        }
-        out.write('\t');
-        for (int i = 0; i < childcount; i++) {
-            out.write(Integer.toString(blockStarts[i]).getBytes());
-            out.write(',');
-        }
-    }
-
     /**
      * Implementing AnnotationWriter interface to write out annotations to an
      * output stream as "BED" format.
      *
      */
-    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
-            String type, OutputStream outstream) {
-        if (DEBUG) {
-            System.out.println("in BedParser.writeAnnotations()");
-        }
+    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
+
         DataOutputStream dos = null;
         try {
             dos = new DataOutputStream(new BufferedOutputStream(outstream));
             for (SeqSymmetry sym : syms) {
-                writeSymmetry(dos, sym, seq);
+                BedUtils.writeSymmetry(dos, sym, seq);
             }
             dos.flush();
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
         return false;
     }
@@ -694,7 +426,7 @@ public class BED extends SymLoader implements LineProcessor {
         } else {
             dos = new DataOutputStream(os);
         }
-        BED.writeSymmetry(dos, sym, seq);
+        BedUtils.writeSymmetry(dos, sym, seq);
     }
 
     public Comparator<SeqSymmetry> getComparator(BioSeq seq) {
@@ -713,24 +445,11 @@ public class BED extends SymLoader implements LineProcessor {
 
     @Override
     public List<String> getFormatPrefList() {
-        return pref_list;
+        return preferencesList;
     }
 
-    /**
-     * Returns "text/bed".
-     */
     public String getMimeType() {
-        return "text/bed";
-    }
-
-    private static boolean checkRange(int start, int end, int min, int max) {
-
-        //getChromosome && getRegion
-        if (end < min || start > max) {
-            return false;
-        }
-
-        return true;
+        return BED_MIME_TYPE;
     }
 
     @Override
@@ -752,66 +471,56 @@ public class BED extends SymLoader implements LineProcessor {
                 if (line.length() == 0) {
                     continue;
                 }
-                char firstChar = line.charAt(0);
-                if (firstChar == '#') {  // skip comment lines
-                    continue;
-                } else if (firstChar == 't' && line.startsWith("track")) {
-                    chrTrack = new HashMap<>();
-                    trackLine = line;
-                    continue;
-                } else if (firstChar == 'b' && line.startsWith("browser")) {
-                    // currently take no action for browser lines
-                } else {
-                    if (DEBUG) {
-                        System.out.println(line);
-                    }
-//					fields = line_regex.split(line);
-                    fields = tab_regex.split(line);
 
-                    if (fields.length == 1) {
-                        fields = line_regex.split(line);
-                    }
-
-                    if (fields.length < 3) {
-                        Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", lineCounter);
-                        continue;
-                    }
-
-                    boolean includes_bin_field = false;
-
-                    if (fields.length > 6) {
-                        firstChar = fields[6].charAt(0);
-                        includes_bin_field = (firstChar == '+' || firstChar == '-' || firstChar == '.');
-                    }
-
-                    int findex = 0;
-                    if (includes_bin_field) {
-                        findex++;
-                    }
-
-                    seq_name = fields[findex++]; // seq id field
-
-                    int beg = Integer.parseInt(fields[findex++]); // start field;
-                    int end = Integer.parseInt(fields[findex++]); // stop field
-                    int max = Math.max(beg, end);
-
-                    if (!chrs.containsKey(seq_name)) {
-                        addToLists(chrs, seq_name, chrFiles, chrLength, ".bed");
-                    }
-                    bw = chrs.get(seq_name);
-                    if (!chrTrack.containsKey(seq_name)) {
-                        chrTrack.put(seq_name, true);
-
-                        if (trackLine != null) {
-                            bw.write(trackLine + "\n");
+                if (!line.startsWith("#") && !isBrowserLine(line)) {// skip comment lines
+                    if (isTrackLine(line)) {
+                        chrTrack = new HashMap<>();
+                        trackLine = line;
+                    } else {
+                        fields = TAB_REGEX.split(line);
+                        if (fields.length == 1) {
+                            fields = LINE_REGEX.split(line);
                         }
-                    }
-                    bw.write(line + "\n");
+                        if (fields.length < 3) {
+                            logger.warn("Invalid line at {} in BED file", lineCounter);
+                            continue;
+                        }
+                        boolean includes_bin_field = false;
 
-                    if (max > chrLength.get(seq_name)) {
-                        chrLength.put(seq_name, max);
-                    }
+                        if (fields.length > 6) {
+                            char firstChar = fields[6].charAt(0);
+                            includes_bin_field = (firstChar == '+' || firstChar == '-' || firstChar == '.');
+                        }
 
+                        int findex = 0;
+                        if (includes_bin_field) {
+                            findex++;
+                        }
+
+                        seq_name = fields[findex++]; // seq id field
+
+                        int beg = Integer.parseInt(fields[findex++]); // start field;
+                        int end = Integer.parseInt(fields[findex++]); // stop field
+                        int max = Math.max(beg, end);
+
+                        if (!chrs.containsKey(seq_name)) {
+                            addToLists(chrs, seq_name, chrFiles, chrLength, BED_FILE_EXTENSION);
+                        }
+                        bw = chrs.get(seq_name);
+                        if (!chrTrack.containsKey(seq_name)) {
+                            chrTrack.put(seq_name, true);
+
+                            if (trackLine != null) {
+                                bw.write(trackLine + "\n");
+                            }
+                        }
+                        bw.write(line + "\n");
+
+                        if (max > chrLength.get(seq_name)) {
+                            chrLength.put(seq_name, max);
+                        }
+
+                    }
                 }
             }
 
@@ -823,8 +532,6 @@ public class BED extends SymLoader implements LineProcessor {
                 return true;
             }
             throw ex;
-        } catch (Exception ex) {
-            throw ex;
         } finally {
             chrs.values().forEach(GeneralUtils::safeClose);
             GeneralUtils.safeClose(br);
@@ -833,9 +540,12 @@ public class BED extends SymLoader implements LineProcessor {
 
     }
 
+    private static boolean isBrowserLine(String line) {
+        return line.startsWith("browser");
+    }
+
     @Override
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
-        GenometryModel gmodel = GenometryModel.getInstance();
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String seq_name = bioseq.getKey();
             BioSeq seq = group.getSeq(seq_name);
@@ -871,6 +581,7 @@ public class BED extends SymLoader implements LineProcessor {
         }
     }
 
+    @Override
     public void init(URI uri) {
     }
 
@@ -879,6 +590,7 @@ public class BED extends SymLoader implements LineProcessor {
         return null; // not used yet
     }
 
+    @Override
     public boolean processInfoLine(String line, List<String> infoLines) {
         return false; // not used yet
     }
@@ -887,4 +599,9 @@ public class BED extends SymLoader implements LineProcessor {
     public boolean isMultiThreadOK() {
         return true;
     }
+
+    private boolean isBedDetailType(String bedFileType) {
+        return BED_DETAIL_TRACKLINE_TYPE.equals(bedFileType);
+    }
+
 }

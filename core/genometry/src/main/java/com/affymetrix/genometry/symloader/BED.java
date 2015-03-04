@@ -58,15 +58,8 @@ public class BED extends SymLoader implements LineProcessor {
     private static final String BED_MIME_TYPE = "text/bed";
     private static final String BED_FILE_EXTENSION = ".bed";
     private static final String BED_DETAIL_TRACKLINE_TYPE = "bedDetail";
-// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-    private static final List<String> preferencesList = new ArrayList<>();
-
-    static {
-        preferencesList.add("bed");
-    }
     private static final Pattern LINE_REGEX = Pattern.compile("\\s+");
     private static final Pattern TAB_REGEX = Pattern.compile("\\t");
-
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
     static {
@@ -387,7 +380,6 @@ public class BED extends SymLoader implements LineProcessor {
                 parent_sym = new SimpleSymWithProps();
                 parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
                 parent_sym.setProperty("method", type);
-                parent_sym.setProperty("preferred_formats", preferencesList);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
                 parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
                 seq.addAnnotation(parent_sym);
                 type2csym.put(type, parent_sym);
@@ -441,11 +433,6 @@ public class BED extends SymLoader implements LineProcessor {
     public int getMax(SeqSymmetry sym, BioSeq seq) {
         SeqSpan span = sym.getSpan(seq);
         return span.getMax();
-    }
-
-    @Override
-    public List<String> getFormatPrefList() {
-        return preferencesList;
     }
 
     public String getMimeType() {

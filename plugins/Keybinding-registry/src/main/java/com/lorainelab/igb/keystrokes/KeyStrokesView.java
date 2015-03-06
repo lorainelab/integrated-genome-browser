@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Comparator;
@@ -31,6 +32,8 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -41,16 +44,17 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
 /**
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
-@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = KeyStrokesView.class)
-public final class KeyStrokesView {
+@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {KeyStrokesView.class, PreferencesPanelProvider.class})
+public final class KeyStrokesView implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
-    public final JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
+    private JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
     public KeyStrokeViewTableModel model;
     public static final int IconColumn = 0;
     public static final int ToolbarColumn = 1;
@@ -63,6 +67,7 @@ public final class KeyStrokesView {
     public KeyStrokeEditPanel edit_panel = null;
     private int selected = -1;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
+    private final JPanel keyStrokePanel;
 
     private ListSelectionListener listSelectionListener = new ListSelectionListener() {
         /**
@@ -92,11 +97,17 @@ public final class KeyStrokesView {
         }
         // Each time a keystroke preference is changed, update the whole table.
         // Inelegant, but it works.
-        invokeRefreshTable();
+        refresh();
     };
 
     public KeyStrokesView() {
-        super();
+        table = new KeyStrokeViewTable("KeyStrokesView");
+        keyStrokePanel = new JPanel(new MigLayout("fill"));
+        JScrollPane scrollPane = new javax.swing.JScrollPane();
+        scrollPane.setViewportView(table);
+        keyStrokePanel.setName("Toolbar");
+        keyStrokePanel.setToolTipText("Edit Locations");
+        keyStrokePanel.add(scrollPane, "grow");
         lsm = table.getSelectionModel();
     }
 
@@ -228,27 +239,26 @@ public final class KeyStrokesView {
     }
 
     /**
-     * Re-populates the table with the shortcut data.
-     */
-    private void refresh() {
-        Object[][] rows;
-        rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
-        model.setRows(rows);
-    }
-
-    /**
      * Should fix the problems associated with updating entire table at every
      * preference change.
      */
-    public void invokeRefreshTable() {
+    @Override
+    public void refresh() {
         SwingUtilities.invokeLater(() -> {
-            refresh();
+            Object[][] rows;
+            rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
+            model.setRows(rows);
             model.fireTableDataChanged();
             if (selected > 0) {
                 table.setRowSelectionInterval(selected, selected);
             }
         });
 
+    }
+
+    @Override
+    public String getName() {
+        return COMPONENT_NAME;
     }
 
     class KeyStrokeViewTable extends JRPStyledTable {
@@ -286,6 +296,16 @@ public final class KeyStrokesView {
         }
     }
 
+    @Override
+    public int getTabWeight() {
+        return 1;
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return keyStrokePanel;
+    }
+
     private class KeyEditor extends DefaultCellEditor {
 
         private static final long serialVersionUID = 1L;
@@ -307,7 +327,7 @@ public final class KeyStrokesView {
                 KeyStroke ks = KeyStroke.getKeyStroke(evt.getKeyCode(), evt.getModifiers());
                 if (ks.getKeyCode() == KeyEvent.VK_ENTER) {
                     stopCellEditing();
-                    invokeRefreshTable();
+                    refresh();
                 }
             }
 

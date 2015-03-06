@@ -53,9 +53,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swing-layout</artifactId>
-            <version>1.0.3</version>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>shared-lib-wrapper</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

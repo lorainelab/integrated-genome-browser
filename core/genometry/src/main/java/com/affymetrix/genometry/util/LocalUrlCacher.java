@@ -982,6 +982,8 @@ public final class LocalUrlCacher {
     public static void writeToCache(URL url, String content) {
         try {
             String fileName = getCacheFileName(url.toString());
+            File cacheDir = new File(CACHE_CONTENT_ROOT);
+            cacheDir.mkdir();
             Files.write(content, new File(CACHE_CONTENT_ROOT, fileName), Charsets.UTF_8);
         } catch (IOException ex) {
             logger.error("Error writing {} to cache", url, ex);

@@ -60,7 +60,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     public static final int IdColumn = 4; // not displayed in table
     public static final int ColumnCount = 4;
     private final ListSelectionModel lsm;
-    public KeyStrokeEditPanel edit_panel = null;
+    private KeyStrokeEditPanel editPanel;
     private int selected = -1;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
     private final JPanel keyStrokePanel;
@@ -69,6 +69,11 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     @Reference
     public void addIgbService(IgbService igbService) {
         this.igbService = igbService;
+    }
+    
+    @Reference
+    public void addEditPanel(KeyStrokeEditPanel editPanel) {
+        this.editPanel = editPanel;
     }
 
     private ListSelectionListener listSelectionListener = new ListSelectionListener() {
@@ -83,13 +88,13 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
                     String id = (String) table.getModel().getValueAt(srow, IdColumn);
                     editKeystroke(id);
                 } else {
-                    edit_panel.setPreferenceKey(null, null);
+                    editPanel.setPreferenceKey(null, null);
                 }
             }
         }
 
         private void editKeystroke(String id) {
-            edit_panel.setPreferenceKey(id, "");
+            editPanel.setPreferenceKey(id, "");
         }
     };
 
@@ -135,8 +140,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
         table.getColumnModel().getColumn(KeyStrokeColumn).setPreferredWidth(35);
 
-        edit_panel = new KeyStrokeEditPanel();
-        edit_panel.setEnabled(false);
+        editPanel.setEnabled(false);
 
         try {
             PreferenceUtils.getKeystrokesNode().flush();
@@ -236,7 +240,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
         @Override
         public TableCellEditor getCellEditor(int row, int col) {
-            final DefaultCellEditor textEditor = new KeyEditor(edit_panel.key_field);
+            final DefaultCellEditor textEditor = new KeyEditor(editPanel.getKeyField());
             if (col == KeyStrokeColumn) {
                 selected = row;
                 textEditor.setClickCountToStart(1);

@@ -217,6 +217,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 if (genericAction == null) {
                     String logMsg = "!!! no GenericAction for key = " + key;
                     logger.warn(logMsg);
+                    continue;
                 }
                 rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
                 rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();

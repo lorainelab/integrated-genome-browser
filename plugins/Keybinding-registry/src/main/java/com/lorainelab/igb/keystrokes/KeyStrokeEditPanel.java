@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2001-2004 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.lorainelab.igb.keystrokes;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
@@ -16,7 +16,6 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
@@ -39,16 +38,11 @@ public final class KeyStrokeEditPanel extends JPanel {
     public static final String COMPONENT_NAME = "KeyStrokeEditPanel";
     private static final long serialVersionUID = 1L;
     private static final boolean DEBUG = false;
-    public final JRPTextField key_field
-            = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
-    private final JRPCheckBox toolbar_field
-            = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
-    public final JLabel key_label
-            = new JLabel("Type a shortcut: ");
-    public final JLabel note_label
-            = new JLabel();
-    public final JRPButton clear_button
-            = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
+    private final JRPTextField keyField;
+    private final JRPCheckBox toolbarField;
+    private final JLabel keyLabel;
+    private final JLabel noteLabel;
+    private final JRPButton clear_button;
     private String key = null;
     private String lastTimeFocusGained = "";
     private String lastCommand = "";
@@ -59,31 +53,12 @@ public final class KeyStrokeEditPanel extends JPanel {
         this.igbService = igbService;
     }
 
-    private FocusListener lois = new FocusListener() {
+    private FocusListener lois;
 
-        @Override
-        public void focusGained(java.awt.event.FocusEvent fe) {
-            Object o = fe.getSource();
-            if (o instanceof JTextField) {
-                JTextField tf = (JTextField) o;
-                KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
-            }
-        }
+    @Activate
+    public void activator() {
 
-        @Override
-        public void focusLost(java.awt.event.FocusEvent evt) {
-            if (KeyStrokeEditPanel.this.lastCommand != null) {
-                applyAction(KeyStrokeEditPanel.this.lastCommand);
-            }
-        }
-
-    };
-
-    /**
-     * Creates a new instance of KeyStrokesView
-     */
-    public KeyStrokeEditPanel() {
-        key_field.addKeyListener(new KeyListener() {
+        keyField.addKeyListener(new KeyListener() {
 
             @Override
             public void keyPressed(KeyEvent evt) {
@@ -98,7 +73,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                         break;
                     case "ENTER":
                     case "TAB":
-                        applyAction(key_field.getText().trim());
+                        applyAction(keyField.getText().trim());
                         break;
                     default:
                         evt.consume();
@@ -110,23 +85,23 @@ public final class KeyStrokeEditPanel extends JPanel {
                             // when the confirmation dialog pops up.
                             GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
                             String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
-                            key_field.removeFocusListener(lois);
+                            keyField.removeFocusListener(lois);
                             if (!ModalUtils.confirmPanel(KeyStrokeEditPanel.this,
                                     "This shortcut is currently in use; \n"
                                     + "reassigning this will remove the shortcut for '"
                                     + actionDisplayName + "'.\n"
                                     + "Do you want to proceed?", null, null, false)) {
-                                key_field.setText(lastTimeFocusGained);
+                                keyField.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
                                 PreferenceUtils.getKeystrokesNode().put(useCommand, "");
-                                key_field.setText(command);
-                                applyAction(key_field.getText().trim());
+                                keyField.setText(command);
+                                applyAction(keyField.getText().trim());
                             }
-                            key_field.addFocusListener(lois);
+                            keyField.addFocusListener(lois);
                             return;
                         }
-                        key_field.setText(command);
+                        keyField.setText(command);
                         lastCommand = command;
                         break;
                 }
@@ -142,9 +117,39 @@ public final class KeyStrokeEditPanel extends JPanel {
                 evt.consume();
             }
         });
-        key_field.addFocusListener(lois);
+        keyField.addFocusListener(lois);
 
         setEnabled(false);
+    }
+
+    /**
+     * Creates a new instance of KeyStrokesView
+     */
+    public KeyStrokeEditPanel() {
+        lois = new FocusListener() {
+
+            @Override
+            public void focusGained(java.awt.event.FocusEvent fe) {
+                Object o = fe.getSource();
+                if (o instanceof JTextField) {
+                    JTextField tf = (JTextField) o;
+                    KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (KeyStrokeEditPanel.this.lastCommand != null) {
+                    applyAction(KeyStrokeEditPanel.this.lastCommand);
+                }
+            }
+
+        };
+        keyField = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
+        toolbarField = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
+        keyLabel = new JLabel("Type a shortcut: ");
+        noteLabel = new JLabel();
+        clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
     }
 
     private String isCommandInUse(String command) {
@@ -161,26 +166,26 @@ public final class KeyStrokeEditPanel extends JPanel {
     void setPreferenceKey(String key, String defaultValue) {
         this.key = key;
         if (PreferenceUtils.getKeystrokesNode() == null || key == null) {
-            key_label.setText("Make a selection");
-            key_field.setText("");
+            keyLabel.setText("Make a selection");
+            keyField.setText("");
             setEnabled(false);
             return;
         } else {
-            key_label.setText("Type a shortcut for \"" + this.key + "\":");
+            keyLabel.setText("Type a shortcut for \"" + this.key + "\":");
             String value = PreferenceUtils.getKeystrokesNode().get(key, defaultValue);
-            key_field.setText(value);
+            keyField.setText(value);
             setEnabled(true);
         }
         boolean isToolbar = PreferenceUtils.getToolbarNode() != null && PreferenceUtils.getToolbarNode().getBoolean(key, false);
-        toolbar_field.setSelected(isToolbar);
-        key_field.getToolTipText();
+        toolbarField.setSelected(isToolbar);
+        keyField.getToolTipText();
     }
 
     @Override
     public void setEnabled(boolean b) {
         clear_button.setEnabled(b);
-        key_field.setEnabled(b);
-        toolbar_field.setEnabled(b);
+        keyField.setEnabled(b);
+        toolbarField.setEnabled(b);
     }
 
     private void applyAction(String str) {
@@ -195,13 +200,13 @@ public final class KeyStrokeEditPanel extends JPanel {
         if (str.length() > 0 && ks == null) {
             ErrorHandler.errorPanel("Unknown Key",
                     "Unknown key code: \"" + str + "\"");
-            key_field.setText("");
+            keyField.setText("");
             return;
         }
         if (str.length() > 0 && (isModifierKey(ks) || (str.contains("unknown")))) {
             ErrorHandler.errorPanel("Bad Keystroke",
                     "Illegal shortcut: \"" + str + "\"");
-            key_field.setText("");
+            keyField.setText("");
             return;
         }
         if (str.length() > 0 && (str.indexOf(' ') <= 0 || str.startsWith("shift "))) {
@@ -214,7 +219,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             ErrorHandler.errorPanel("Bad Keystroke",
                     "Illegal shortcut: \"" + str + "\"\n"
                     + "Must contain a modifier key (ctrl, alt, ...)");
-            key_field.setText("");
+            keyField.setText("");
             return;
         }
         if (DEBUG) {
@@ -268,9 +273,9 @@ public final class KeyStrokeEditPanel extends JPanel {
             setEnabled(false);
             return;
         }
-        key_field.setText("");
+        keyField.setText("");
         lastCommand = "";
-        toolbar_field.setSelected(false);
+        toolbarField.setSelected(false);
 //		this.the_keystroke_node.put(this.the_key, "");
         //TO DO:  Fix cell update
         //KeyStrokesView.getSingleton().model.fireTableCellUpdated(KeyStrokesView.getSingleton().table.getSelectedRow(), KeyStrokesView.KeyStrokeColumn);
@@ -292,10 +297,8 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * Convert a KeyStroke to a String in the same format used by
-     * KeyStroke.getKeyStroke(String). Modified, originally from the Java
-     * Developer's Almanac 1.4.
-     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * Convert a KeyStroke to a String in the same format used by KeyStroke.getKeyStroke(String). Modified, originally
+     * from the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     public static String keyStroke2String(KeyStroke key) {
         StringBuilder s = new StringBuilder(50);
@@ -332,8 +335,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * From the Java Developer's Almanac 1.4.
-     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * From the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     private static String getKeyText(int keyCode) {
         if (keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9
@@ -638,4 +640,21 @@ public final class KeyStrokeEditPanel extends JPanel {
 
         return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
     }
+
+    public JRPTextField getKeyField() {
+        return keyField;
+    }
+
+    public JLabel getKeyLabel() {
+        return keyLabel;
+    }
+
+    public JLabel getNoteLabel() {
+        return noteLabel;
+    }
+
+    public JRPButton getClearButton() {
+        return clear_button;
+    }
+
 }

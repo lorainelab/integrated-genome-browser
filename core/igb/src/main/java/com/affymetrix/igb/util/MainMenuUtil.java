@@ -27,7 +27,6 @@ import com.affymetrix.igb.action.RemoveFeatureAction;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.SaveImageAction;
 import com.affymetrix.igb.action.ShowAllVisualToolsAction;
-import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.ShowFilterMarkAction;
 import com.affymetrix.igb.action.ShowFullFilePathInTrack;
 import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
@@ -56,7 +55,6 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +189,6 @@ public class MainMenuUtil implements MainMenuManager {
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_aboutIGB", AboutIGBAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_IGBSupport", IGBSupportAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_documentation", DocumentationAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_showConsole", ShowConsoleAction.getAction(), menuItemCounter++));
     }
 
     private void loadDefaultMenu() {

@@ -80,6 +80,7 @@ import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.prefs.BackingStoreException;
@@ -118,9 +119,30 @@ public class Activator implements BundleActivator {
                 return;
             }
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
-
         }
+        //wait for consoleLogger service
+        setupConsoleServiceTracker(bundleContext);
 
+        initColorProvider(bundleContext);
+        initFilter(bundleContext);
+    }
+
+    private void setupConsoleServiceTracker(final BundleContext bundleContext) {
+        ServiceTracker<IgbMenuItemProvider, Object> consoleServiceTracker;
+        consoleServiceTracker = new ServiceTracker<IgbMenuItemProvider, Object>(bundleContext, IgbMenuItemProvider.class, null) {
+            @Override
+            public Object addingService(ServiceReference<IgbMenuItemProvider> serviceReference) {
+                if (serviceReference.getProperty("component.name").equals("ShowConsoleAction")) {
+                    run(bundleContext);
+                    logger.info("IGB Started");
+                }
+                return super.addingService(serviceReference);
+            }
+        };
+        consoleServiceTracker.open();
+    }
+
+    private void setupWindowServiceTracker(final BundleContext bundleContext) {
         ServiceTracker<IWindowService, Object> serviceTracker;
         serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
             @Override
@@ -139,12 +161,6 @@ public class Activator implements BundleActivator {
             }
         };
         serviceTracker.open();
-        logger.info("Starting IGB");
-        run(bundleContext);
-        logger.info("IGB Started");
-
-        initColorProvider(bundleContext);
-        initFilter(bundleContext);
     }
 
     private void verifyJidesoftLicense() {
@@ -164,8 +180,8 @@ public class Activator implements BundleActivator {
      * service
      */
     private void run(final BundleContext bundleContext) {
-        logger.info("Running IGB");
-
+        logger.info("Starting IGB");
+        setupWindowServiceTracker(bundleContext);
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
         igb.init(args, bundleContext);

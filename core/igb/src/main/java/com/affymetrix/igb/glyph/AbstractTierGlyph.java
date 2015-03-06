@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -25,13 +24,13 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.layout.CollapsePacker;
 import com.affymetrix.igb.view.layout.FasterExpandPacker;
 import com.affymetrix.igb.view.layout.GraphCollapsedPacker;
 import com.affymetrix.igb.view.layout.GraphFasterExpandPacker;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
-import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
@@ -55,7 +54,6 @@ import javax.swing.SwingWorker;
 /**
  * This is the glyph that displays the contents of a Tier/Track.
  */
-@Component
 public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph {
 
     private static final Map<String, Class<?>> NONE_PREFERENCES = new HashMap<>();

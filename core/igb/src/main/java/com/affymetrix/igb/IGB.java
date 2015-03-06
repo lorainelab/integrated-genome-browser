@@ -26,7 +26,6 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCO
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.Constants;
-import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -55,7 +54,6 @@ import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.logging.console.ConsoleLoggerGUI;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
@@ -76,7 +74,6 @@ import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
@@ -120,6 +117,11 @@ public class IGB extends Application
 
     public IGB() {
         super();
+        setLaf();
+        frm = new JFrame(APP_NAME + " " + APP_VERSION);
+        mbar = new JRPMenuBar();
+        frm.setJMenuBar(mbar);
+        mapView = new SeqMapView(true, "SeqMapView", frm);
     }
 
     @Override
@@ -262,16 +264,11 @@ public class IGB extends Application
 
     public void init(String[] args, BundleContext bundleContext) {
         logger.debug("Setting look and feel");
-        setLaf();
         // Set up a custom trust manager so that user is prompted
         // to accept or reject untrusted (self-signed) certificates
         // when connecting to server over HTTPS
         logger.debug("installTrustManager");
         IGBTrustManager.installTrustManager();
-        // Initialize the ConsoleView right off, so that ALL output will
-        // be captured there.
-        logger.debug("Setting up ConsoleView");
-        ConsoleLoggerGUI.getInstance();
         printDetails(args);
         logger.debug("Done setting up ConsoleView");
         loadSynonyms("/" + Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
@@ -282,9 +279,6 @@ public class IGB extends Application
                 mi.setDockIconImage(this.getIcon());
             }
         }
-        frm = new JFrame(APP_NAME + " " + APP_VERSION);
-        mbar = new JRPMenuBar();
-        frm.setJMenuBar(mbar);
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default
         Authenticator.setDefault(new IGBAuthenticator(frm));
@@ -314,7 +308,7 @@ public class IGB extends Application
                     }
                 }
         );
-        mapView = new SeqMapView(true, "SeqMapView", getFrame());
+
         gmodel.addSeqSelectionListener(mapView);
         gmodel.addGroupSelectionListener(mapView);
         gmodel.addSymSelectionListener(mapView.getSymSelectionListener());
@@ -369,7 +363,6 @@ public class IGB extends Application
         });
         GeneralLoadViewGUI.init(IgbServiceImpl.getInstance());
         MainWorkspaceManager.getWorkspaceManager().setSeqMapViewObj(mapView);
-        checkInternetConnection();
         notifyCounter();
         openQuickStart();
         ToolTipManager.sharedInstance().setDismissDelay(10000);
@@ -401,13 +394,6 @@ public class IGB extends Application
         tracker.setLoggingAdapter(loggingAdapter);
         tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
         LocalUrlCacher.isValidURL(COUNTER_URL);
-    }
-
-    private void checkInternetConnection() {
-        boolean connected = LocalUrlCacher.isValidURL(GUARANTEED_URL);
-        if (!connected) {
-            ErrorHandler.errorPanel(IGBConstants.BUNDLE.getString("internetError"));
-        }
     }
 
     private void openQuickStart() {

@@ -59,6 +59,14 @@
             <artifactId>swingx-all</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.boxysystems</groupId>
             <artifactId>jgoogleanalytics</artifactId>
         </dependency>
@@ -277,7 +285,9 @@
                             org.jdesktop.swingx,
                             org.jdesktop.swingx.*,
                             com.boxysystems.jgoogleanalytics,
-                            com.boxysystems.jgoogleanalytics.*
+                            com.boxysystems.jgoogleanalytics.*,
+                            net.miginfocom.layout,
+                            net.miginfocom.swing,
                         </Export-Package>
                     </instructions>
                     <archive>

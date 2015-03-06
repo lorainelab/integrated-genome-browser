@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -19,19 +18,17 @@ import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
+import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
-import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.DefaultCellEditor;
+import javax.swing.InputMap;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -63,11 +60,16 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     public static final int IdColumn = 4; // not displayed in table
     public static final int ColumnCount = 4;
     private final ListSelectionModel lsm;
-    // private final TableRowSorter<DefaultTableModel> sorter;
     public KeyStrokeEditPanel edit_panel = null;
     private int selected = -1;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
     private final JPanel keyStrokePanel;
+    private IgbService igbService;
+    
+    @Reference
+    public void addIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
 
     private ListSelectionListener listSelectionListener = new ListSelectionListener() {
         /**
@@ -113,6 +115,8 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
     @Activate
     public void activate() {
+
+        addShortcuts();
         lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         table.setCellSelectionEnabled(false);
@@ -144,111 +148,18 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
         PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(pcl);
     }
 
-    private static String getSortField(GenericAction genericAction) {
-        if (genericAction == null) {
-            return "";
-        }
-        return genericAction.getDisplay() + (genericAction.isToggle() ? "1" : "2");
-    }
-
-    private static TreeSet<String> filterActions() {
-        // this still throws ConcurrentModificationException
-        Set<String> keys = GenericActionHolder.getInstance().getGenericActionIds();
-        TreeSet<String> actions = new TreeSet<>(new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                GenericAction ga1 = GenericActionHolder.getInstance().getGenericAction(o1);
-                if (ga1 == null) {
-                    String errMsg = "No GenericAction found for \"" + o1 + "\".";
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-                            errMsg);
-                }
-                GenericAction ga2 = GenericActionHolder.getInstance().getGenericAction(o2);
-                if (ga2 == null) {
-                    String errMsg = "No GenericAction found for \"" + o2 + "\".";
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-                            errMsg);
-                }
-                return getSortField(ga1).compareTo(getSortField(ga2));
-            }
-        });
-        for (String key : keys) {
-            GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-            boolean hasGetAction;
-            try {
-                Class<?> actionClass = genericAction.getClass();
-                actionClass.getMethod("getAction");
-                hasGetAction = true;
-            } catch (NoSuchMethodException x) {
-                hasGetAction = false;
-            } catch (NullPointerException npe) {
-                System.err.println(KeyStrokesView.class.getName() + ".filterActions: " + npe.getMessage());
-                System.err.println(KeyStrokesView.class.getName() + ".filterActions: Trying to get class for " + key);
-                hasGetAction = false;
-            }
-            if (hasGetAction && genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
-                actions.add(key);
-            }
-        }
-        return actions;
-    }
-
-    /**
-     * Build the underlying data array. There is a fourth column, not shown in
-     * the table, but needed by the setValue() method.
-     *
-     * @param keystroke_node
-     * @param toolbar_node
-     */
-    private static Object[][] buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
-        Object[][] rows;
-
-        synchronized (keys) {
-            int num_rows = keys.size();
-            int num_cols = 5;
-            rows = new Object[num_rows][num_cols];
-            Iterator<String> iter = keys.iterator();
-            for (int i = 0; iter.hasNext(); i++) {
-                String key = iter.next();
-                GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-                if (genericAction == null) {
-                    String logMsg = "!!! no GenericAction for key = " + key;
-                    Logger.getLogger(KeyStrokesView.class.getName()).log(Level.WARNING, logMsg);
-                }
-                rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
-                rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();
-                rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
-                if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
-                    rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
-                }
-                if (!genericAction.isToolbarAction()) {
-                    rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
-                }
-                rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
-                rows[i][IdColumn] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
-            }
-        }
-        return rows;
-    }
-
     @Reference(optional = false)
     public void setModel(KeyStrokeViewTableModel model) {
         this.model = model;
     }
 
     /**
-     * Should fix the problems associated with updating entire table at every
-     * preference change.
+     * Should fix the problems associated with updating entire table at every preference change.
      */
     @Override
     public void refresh() {
         SwingUtilities.invokeLater(() -> {
-            Object[][] rows;
-            rows = buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
-            model.setRows(rows);
-            model.fireTableDataChanged();
+            model.refresh();
             if (selected > 0) {
                 table.setRowSelectionInterval(selected, selected);
             }
@@ -260,12 +171,63 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     public String getName() {
         return COMPONENT_NAME;
     }
+    
+    private void addShortcuts() {
+        JFrame frm = igbService.getFrame();
+        JPanel panel = (JPanel) frm.getContentPane();
+        Preferences p = PreferenceUtils.getKeystrokesNode();
+        try {
+            for (String k : p.keys()) {
+                String preferredKeyStroke = p.get(k, "");
+                if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
+                    continue;
+                }
+                GenericActionHolder h = GenericActionHolder.getInstance();
+                GenericAction a = h.getGenericAction(k);
+                if (null == a) { // A keystroke in the preferences has no known action.
+                    String message = "key stroke \"" + k
+                            + "\" is not among our generic actions.";
+                    logger.trace(message);
+                    try { // to load the missing class.
+                        ClassLoader l = this.getClass().getClassLoader();
+                        Class<?> type = l.loadClass(k);
+                        if (type.isAssignableFrom(GenericAction.class)) {
+                            Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
+                            // Now what?
+                        }
+                        continue;
+                    } catch (ClassNotFoundException cnfe) {
+                        message = "Class " + cnfe.getMessage() + " not found.";
+                        logger.trace(message);
+                        continue; // Skip this one.
+                    } finally {
+                        message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
+                        logger.trace(message);
+                    }
+                }
+                InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+                ActionMap am = panel.getActionMap();
+                String actionIdentifier = a.getId();
+                KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
+                if (null == ks) { // nothing we can do.
+                    String message = "Could not find preferred key stroke: "
+                            + preferredKeyStroke;
+                    logger.info(message);
+                    continue; // Skip this one.
+                }
+                im.put(ks, actionIdentifier);
+                am.put(actionIdentifier, a);
+            }
+        } catch (BackingStoreException bse) {
+            logger.trace(bse.getMessage());
+            logger.trace("Some keyboard shortcuts may not be set.");
+        }
+    }
 
     class KeyStrokeViewTable extends JRPStyledTable {
 
         public KeyStrokeViewTable(String id) {
             super(id);
-            //setDefaultEditor(ExistentialTriad.class, new DefaultCellEditor(new JComboBox(ExistentialTriad.values())));
             setDefaultEditor(ExistentialTriad.class, new SuperBooleanCellEditor());
             setDefaultRenderer(ExistentialTriad.class, new SuperBooleanCellEditor());
         }

@@ -20,10 +20,8 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.lorainelab.igb.preferences.model.DataProvider;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -255,38 +253,13 @@ public final class ServerList {
     }
 
     public void processPreferenceNode(Preferences node) {
-        try {
-            if (!removeIfInvalid(node)) {
-                ServerTypeI serverType = null;
-                if (node.get(SERVER_TYPE, null) != null) {
-                    serverType = getServerType(node.get(SERVER_TYPE, ServerTypeI.DEFAULT.getName()));
-                }
-
-                if (!(serverType == ServerTypeI.LocalFiles)) {
-                    addServer(node);
-                }
-            }
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
+        ServerTypeI serverType = null;
+        if (node.get(SERVER_TYPE, null) != null) {
+            serverType = getServerType(node.get(SERVER_TYPE, ServerTypeI.DEFAULT.getName()));
         }
-    }
 
-    private boolean removeIfInvalid(Preferences node) throws BackingStoreException {
-        if (!isValidUrl(node.get(SERVER_URL, ""))) {
-            //its not clear why, but sometimes a possible race condition seems to produce invalid duplicate currupt nodes
-            //... we delete them here
-            node.removeNode();
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isValidUrl(String url) {
-        try {
-            URL testUrl = new URL(url);
-            return true;
-        } catch (MalformedURLException ex) {
-            return false;
+        if (!(serverType == ServerTypeI.LocalFiles)) {
+            addServer(node);
         }
     }
 

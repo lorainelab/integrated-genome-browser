@@ -25,6 +25,7 @@ import com.affymetrix.genometry.symmetry.impl.SimpleScoredSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.google.common.base.Strings;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -107,7 +108,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
     private static final boolean DEBUG = false;
     private static final Pattern tab_regex = Pattern.compile("\\t");
     private static final Pattern line_regex = Pattern.compile("\\s+");
-    private static final Pattern comma_regex = Pattern.compile(",");
+    private static final Pattern COMMA_REGEX = Pattern.compile(",");
 
     private boolean annotate_seq = true;
     private boolean create_container_annot = false;
@@ -402,8 +403,11 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
         }
     }
 
-    public static int[] parseIntArray(String int_array) {
-        String[] intstrings = comma_regex.split(int_array);
+    public static int[] parseIntArray(String intArray) {
+        if (Strings.isNullOrEmpty(intArray)) {
+            return new int[0];
+        }
+        String[] intstrings = COMMA_REGEX.split(intArray);
         int count = intstrings.length;
         int[] results = new int[count];
         for (int i = 0; i < count; i++) {

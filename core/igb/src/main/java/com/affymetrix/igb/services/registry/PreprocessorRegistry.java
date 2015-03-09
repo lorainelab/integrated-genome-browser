@@ -14,7 +14,7 @@ import java.util.Collections;
  *
  * @author dcnorris
  */
-@Component(name = PreprocessorRegistry.COMPONENT_NAME)
+@Component(name = PreprocessorRegistry.COMPONENT_NAME, immediate = true)
 public class PreprocessorRegistry {
 
     public static final String COMPONENT_NAME = "PreprocessorRegistryImpl";

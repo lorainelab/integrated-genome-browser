@@ -107,4 +107,12 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
     public String getPrintableString() {
         return getParamPrompt() + ":" + getParameterValue(getParamPrompt());
     }
+
+    @Override
+    public Operator newInstance() {
+        if(exponent == 0.5) {
+            return new PowerTransformer(exponent);
+        }
+        return new PowerTransformer();
+    }
 }

@@ -330,21 +330,22 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setIcon(null);
         popup.add(collapse);
         
-        JMenuItem lockTrackHeight = new JCheckBoxMenuItem();
+        JMenuItem lockTierHeight = new JCheckBoxMenuItem();
+        lockTierHeight.setText("Lock Tier Height");
         List<TierGlyph> selectedTiers = tierLabelManager.getSelectedTiers();
         if(selectedTiers.size() != 1) {
-            lockTrackHeight.setEnabled(false);
+            lockTierHeight.setEnabled(false);
         } else {
             TierGlyph tier = selectedTiers.get(0);
             if(tier.isManuallyResizable()) {
-                lockTrackHeight.setAction(LockTierHeightAction.getAction());
-                lockTrackHeight.setSelected(false);
+                lockTierHeight.setAction(LockTierHeightAction.getAction());
+                lockTierHeight.setSelected(false);
             } else {
-                lockTrackHeight.setAction(UnlockTierHeightAction.getAction());
-                lockTrackHeight.setSelected(true);
+                lockTierHeight.setAction(UnlockTierHeightAction.getAction());
+                lockTierHeight.setSelected(true);
             }
         }
-        popup.add(lockTrackHeight);
+        popup.add(lockTierHeight);
         
         JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
         customize.setIcon(null);

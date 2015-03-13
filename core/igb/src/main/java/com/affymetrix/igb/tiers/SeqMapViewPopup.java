@@ -239,7 +239,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     @Override
     public void popupNotify(javax.swing.JPopupMenu popup, final TierLabelManager handler) {
-        logger.debug("Popup Notify called");
         int numSelections = Selections.allGlyphs.size();
         boolean anyAreCollapsed = false;
         boolean anyAreExpanded = false;

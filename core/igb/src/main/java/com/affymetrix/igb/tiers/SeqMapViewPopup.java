@@ -45,14 +45,16 @@ import com.affymetrix.igb.action.ShowMismatchAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationWithParametersAction;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
+import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackUtils;
+import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -61,8 +63,6 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -71,6 +71,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -81,6 +83,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private final ActionToggler at1;
     private final ActionToggler at2;
     private final RepackTiersAction repackStub;
+    private static final Logger logger = LoggerFactory.getLogger(SeqMapViewPopup.class);
 
     public SeqMapViewPopup(TierLabelManager tierLabelManager, SeqMapView smv) {
         this.tierLabelManager = tierLabelManager;
@@ -121,7 +124,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 String title = operator.getDisplay();
                 Operator newOperator = operator.newInstance();
                 if (newOperator == null) {
-                    Logger.getLogger(SeqMapViewPopup.class.getName()).log(Level.SEVERE, "Could not create instance for operator {0}", title);
+                    logger.error("Could not create instance for operator {}", title);
                     continue;
                 }
 
@@ -236,6 +239,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     @Override
     public void popupNotify(javax.swing.JPopupMenu popup, final TierLabelManager handler) {
+        logger.debug("Popup Notify called");
         int numSelections = Selections.allGlyphs.size();
         boolean anyAreCollapsed = false;
         boolean anyAreExpanded = false;
@@ -326,7 +330,23 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setText("Collapse");
         collapse.setIcon(null);
         popup.add(collapse);
-
+        
+        JMenuItem lockTrackHeight = new JCheckBoxMenuItem();
+        List<TierGlyph> selectedTiers = tierLabelManager.getSelectedTiers();
+        if(selectedTiers.size() != 1) {
+            lockTrackHeight.setEnabled(false);
+        } else {
+            TierGlyph tier = selectedTiers.get(0);
+            if(tier.isManuallyResizable()) {
+                lockTrackHeight.setAction(LockTierHeightAction.getAction());
+                lockTrackHeight.setSelected(false);
+            } else {
+                lockTrackHeight.setAction(UnlockTierHeightAction.getAction());
+                lockTrackHeight.setSelected(true);
+            }
+        }
+        popup.add(lockTrackHeight);
+        
         JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
         customize.setIcon(null);
         customize.setText("Customize...");
@@ -426,7 +446,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             });
         }
     }
-
+    
 // purely for debugging
     private void doDebugAction() {
         for (TierGlyph tg : tierLabelManager.getSelectedTiers()) {

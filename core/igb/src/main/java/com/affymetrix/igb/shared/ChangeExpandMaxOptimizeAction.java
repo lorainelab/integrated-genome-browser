@@ -1,10 +1,10 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.ChangeExpandMaxActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;

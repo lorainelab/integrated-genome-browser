@@ -83,13 +83,8 @@ import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import org.osgi.framework.BundleActivator;
@@ -198,7 +193,6 @@ public class Activator implements BundleActivator {
         addScriptListener(bundleContext);
         addPrefEditorComponentListener(bundleContext);
         initSeqMapViewActions();
-        addShortcuts();
         addStatusAlertListener(bundleContext);
         addSearchListener(bundleContext);
         addServerInitListener(bundleContext);
@@ -209,58 +203,6 @@ public class Activator implements BundleActivator {
         }
         logger.trace("settingFrame visibile");
         //igb.getFrame().setVisible(true);
-    }
-
-    private void addShortcuts() {
-        JFrame frm = Application.getSingleton().getFrame();
-        JPanel panel = (JPanel) frm.getContentPane();
-        Preferences p = PreferenceUtils.getKeystrokesNode();
-        try {
-            for (String k : p.keys()) {
-                String preferredKeyStroke = p.get(k, "");
-                if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
-                    continue;
-                }
-                GenericActionHolder h = GenericActionHolder.getInstance();
-                GenericAction a = h.getGenericAction(k);
-                if (null == a) { // A keystroke in the preferences has no known action.
-                    String message = "key stroke \"" + k
-                            + "\" is not among our generic actions.";
-                    logger.trace(message);
-                    try { // to load the missing class.
-                        ClassLoader l = this.getClass().getClassLoader();
-                        Class<?> type = l.loadClass(k);
-                        if (type.isAssignableFrom(GenericAction.class)) {
-                            Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
-                            // Now what?
-                        }
-                        continue;
-                    } catch (ClassNotFoundException cnfe) {
-                        message = "Class " + cnfe.getMessage() + " not found.";
-                        logger.trace(message);
-                        continue; // Skip this one.
-                    } finally {
-                        message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
-                        logger.trace(message);
-                    }
-                }
-                InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-                ActionMap am = panel.getActionMap();
-                String actionIdentifier = a.getId();
-                KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
-                if (null == ks) { // nothing we can do.
-                    String message = "Could not find preferred key stroke: "
-                            + preferredKeyStroke;
-                    logger.info(message);
-                    continue; // Skip this one.
-                }
-                im.put(ks, actionIdentifier);
-                am.put(actionIdentifier, a);
-            }
-        } catch (BackingStoreException bse) {
-            logger.trace(bse.getMessage());
-            logger.trace("Some keyboard shortcuts may not be set.");
-        }
     }
 
     /**

@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 public class BED extends SymLoader implements LineProcessor {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BED.class);
-    private static final int BED_DETAIL_LINE_CHECK_LIMIT = 10;
     private static final int BED_DETAIL_FIELD_COUNT = 14;
     private static final String BED_MIME_TYPE = "text/bed";
     private static final String BED_FILE_EXTENSION = ".bed";
@@ -72,9 +71,8 @@ public class BED extends SymLoader implements LineProcessor {
     private boolean create_container_annot = false;
     private String trackName = null;
     private final TrackLineParser trackLineParser;
-    private int BED_DETAIL_LINE_CHECK_COUNT = 0;
     private String bedFileType;
-    private GenometryModel gmodel;
+    private final GenometryModel gmodel;
 
     public BED(URI uri, String featureName, AnnotatedSeqGroup group) {
         super(uri, featureName, group);
@@ -207,7 +205,11 @@ public class BED extends SymLoader implements LineProcessor {
         return parse(lineReader, true, 0, Integer.MAX_VALUE);
     }
 
-    private boolean parseLine(String line, int minimum, int maximum, List<SeqSymmetry> symlist,
+    private boolean parseLine(
+            String line,
+            int minimum,
+            int maximum,
+            List<SeqSymmetry> symlist,
             Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
         String[] fields = TAB_REGEX.split(line);
         if (fields.length == 1) {
@@ -215,19 +217,18 @@ public class BED extends SymLoader implements LineProcessor {
         }
         String detailSymbol = null;
         String detailDescription = null;
-        int field_count = fields.length;
-        boolean isBedDetail = false;
+        int fieldCount = fields.length;
+        boolean isBedDetail = isBedDetailType(bedFileType);
 
-        // Check BED detail type for few non-comment lines if 'bedDetail' attribute not specified in track line
-        if (!isBedDetailType(bedFileType) && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
+        //Consider removing this specification violation support
+        if (!isBedDetail && fieldCount == BED_DETAIL_FIELD_COUNT) {
             isBedDetail = true;
+            detailSymbol = fields[fieldCount - 2];
+            detailDescription = fields[fieldCount - 1];
+            fieldCount -= 2;
         }
-        if (isBedDetail) {
-            detailSymbol = fields[field_count - 2];
-            detailDescription = fields[field_count - 1];
-            field_count -= 2;
-        }
-        if (field_count < 3) {
+
+        if (fieldCount < 3) {
             return true;
         }
 
@@ -244,7 +245,7 @@ public class BED extends SymLoader implements LineProcessor {
         int[] blockStarts = null;
         int[] blockMins = null;
         int[] blockMaxs = null;
-        boolean includes_bin_field = field_count > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
+        boolean includes_bin_field = fieldCount > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
         int findex = 0;
         if (includes_bin_field) {
             findex++;
@@ -253,16 +254,16 @@ public class BED extends SymLoader implements LineProcessor {
 
         int beg = Integer.parseInt(fields[findex++]); // start field
         int end = Integer.parseInt(fields[findex++]); // stop field
-        if (field_count >= 4) {
+        if (fieldCount >= 4) {
             annot_name = BedUtils.parseName(fields[findex++]);
             if (annot_name == null || annot_name.length() == 0) {
                 annot_name = group.getID();
             }
         }
-        if (field_count >= 5) {
+        if (fieldCount >= 5) {
             score = BedUtils.parseScore(fields[findex++]);
         } // score field
-        if (field_count >= 6) {
+        if (fieldCount >= 6) {
             forward = !(fields[findex++].equals("-"));
         } else {
             forward = (beg <= end);
@@ -300,16 +301,16 @@ public class BED extends SymLoader implements LineProcessor {
             seq = group.addSeq(seq_name, 0, uri.toString());
         }
 
-        if (field_count >= 8) {
+        if (fieldCount >= 8) {
             thick_min = Integer.parseInt(fields[findex++]); // thickStart field
             thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
         }
-        if (field_count >= 9) {
+        if (fieldCount >= 9) {
             itemRgb = fields[findex++];
         } else {
             findex++;
         }
-        if (field_count >= 12) {
+        if (fieldCount >= 12) {
             int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
             blockSizes = parseIntArray(fields[findex++]); // blockSizes field
             if (blockCount != blockSizes.length) {
@@ -341,7 +342,7 @@ public class BED extends SymLoader implements LineProcessor {
             seq.setLength(max);
         }
 
-        SymWithProps bedline_sym = null;
+        SymWithProps bedline_sym;
         bedline_sym = isBedDetail
                 ? new UcscBedDetailSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
                 : new UcscBedSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);

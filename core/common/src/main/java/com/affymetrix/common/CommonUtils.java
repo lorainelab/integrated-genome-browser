@@ -110,11 +110,6 @@ public class CommonUtils {
         return bundleContext.getProperty("args").split(", ");
     }
 
-    public boolean isExit(BundleContext bundleContext) {
-        String[] args = getArgs(bundleContext);
-        return (getArg("-cbc", args) != null); // exit program
-    }
-
     /**
      * Returns the location of the application data directory. The String will
      * always end with "/".
@@ -227,7 +222,7 @@ public class CommonUtils {
 
     public static boolean isDevelopmentMode() {
         String developmentMode = System.getProperty("developmentMode");
-        if (developmentMode != null && !developmentMode.isEmpty()) {
+        if (isNotBlank(developmentMode)) {
             return System.getProperty("developmentMode").equals("true");
         }
         return false;

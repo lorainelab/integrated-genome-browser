@@ -1,6 +1,5 @@
 package com.lorainelab.igb.services;
 
-import com.affymetrix.common.CommonUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -26,9 +25,6 @@ public abstract class SimpleServiceRegistrar implements BundleActivator {
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        if (CommonUtils.getInstance().isExit(bundleContext)) {
-            return;
-        }
         registerService(bundleContext);
     }
 

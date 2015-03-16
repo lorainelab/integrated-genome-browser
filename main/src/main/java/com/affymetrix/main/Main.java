@@ -1,6 +1,5 @@
 package com.affymetrix.main;
 
-import com.affymetrix.common.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +23,11 @@ public final class Main {
     /**
      * Start the program. Nothing to it, just start OSGi and all the bundles.
      */
-    public static void main(final String[] args) {
+    public static void main(String... args) {
         log.info("Starting OSGI container");
         try {
-            OSGiHandler osgiHandler = new OSGiHandler();
-            osgiHandler.startOSGi(args);
+            OSGiHandler osgiHandler = new OSGiHandler(args);
+            osgiHandler.startOSGi();
         } catch (Throwable t) {
             log.error("Error starting osgi runtime container", t);
             System.exit(1);

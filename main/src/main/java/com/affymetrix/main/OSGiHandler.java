@@ -19,6 +19,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -34,29 +35,28 @@ public class OSGiHandler {
     private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
     private static final Logger logger = LoggerFactory.getLogger(OSGiHandler.class);
     private Framework framework;
-    private String bundlePathToInstall;
-    private String bundleSymbolicNameToUninstall;
+    private final String[] args;
 
-    /**
-     * start OSGi, load and start the OSGi implementation load the embedded
-     * bundles, if not cached, and start all bundles
-     *
-     * @param args the command line arguments
-     */
-    public void startOSGi(String[] args) {
+    public OSGiHandler(String[] args) {
+        this.args = args;
+        if (isClearBundleCacheRun()) {
+            clearCache();
+            System.exit(1);
+        }
         if (isDevelopmentMode()) {
             clearCache();
         }
+    }
 
-        if (CommonUtils.getInstance().getArg("-cbc", args) != null) { // just clear bundle cache and return
-            clearCache();
-            return;
-        }
-
+    public void startOSGi() {
         logger.info("Loading OSGi framework");
-        String argArray = Arrays.toString(args);
-        loadFramework(argArray.substring(1, argArray.length() - 1));
+        String commandLineArguments = Arrays.toString(args);
+        commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
+        loadFramework(commandLineArguments);
+        loadBundles();
+    }
 
+    private void loadBundles() {
         try {
             BundleContext bundleContext = framework.getBundleContext();
             if (bundleContext.getBundles().length <= 1) {
@@ -72,9 +72,13 @@ public class OSGiHandler {
             }
             logger.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
-        } catch (Exception ex) {
+        } catch (IOException | BundleException ex) {
             logger.warn("Could not create framework, plugins disabled: {}", ex);
         }
+    }
+
+    private boolean isClearBundleCacheRun() {
+        return CommonUtils.getInstance().getArg("-cbc", args) != null;
     }
 
     private boolean bundleIsFragment(Bundle bundle) {
@@ -97,7 +101,7 @@ public class OSGiHandler {
     /**
      * clear the OSGi cache
      */
-    public void clearCache() {
+    private void clearCache() {
         deleteDirectory(new File(getCacheFolder()));
     }
 
@@ -258,52 +262,6 @@ public class OSGiHandler {
             return null;
         }
         return framework.getBundleContext();
-    }
-
-    public boolean installBundle(String filePath) {
-        if (framework == null) {
-            bundlePathToInstall = filePath;
-            return true;
-        }
-        Bundle bundle = null;
-        if (filePath != null) {
-            try {
-                BundleContext bundleContext = framework.getBundleContext();
-                bundle = bundleContext.installBundle(filePath);
-                bundle.start();
-            } catch (Exception x) {
-                logger.error("error installing bundle", x);
-                bundle = null;
-            }
-            if (bundle != null) {
-                logger.info("installed bundle: {}", filePath);
-            }
-        }
-        return bundle != null;
-    }
-
-    public boolean uninstallBundle(String symbolicName) {
-        if (framework == null) {
-            bundleSymbolicNameToUninstall = symbolicName;
-            return true;
-        }
-        boolean found = false;
-        if (symbolicName != null) {
-            BundleContext bundleContext = framework.getBundleContext();
-            for (Bundle bundle : bundleContext.getBundles()) {
-                if (symbolicName.equals(bundle.getSymbolicName())) {
-                    try {
-                        bundle.uninstall();
-                        logger.info("uninstalled bundle: {}", symbolicName);
-                        found = true;
-                    } catch (Exception x) {
-                        logger.error("error uninstalling bundle", x);
-                        found = false;
-                    }
-                }
-            }
-        }
-        return found;
     }
 
     public static boolean isNullOrEmpty(String string) {

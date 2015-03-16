@@ -101,7 +101,7 @@ public class Activator implements BundleActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(Activator.class);
     private String commandLineBatchFileStr;
-    String[] args;
+    private String[] args;
     private IGB igb;
 
     @Override
@@ -110,9 +110,6 @@ public class Activator implements BundleActivator {
         igb = new IGB();
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
-            if (CommonUtils.getInstance().isExit(bundleContext)) {
-                return;
-            }
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
         }
         //wait for consoleLogger service

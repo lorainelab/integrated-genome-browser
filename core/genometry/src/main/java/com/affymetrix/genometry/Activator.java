@@ -3,7 +3,6 @@ package com.affymetrix.genometry;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.genometry.event.GenericAction;
@@ -19,10 +18,6 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        if (CommonUtils.getInstance().isExit(bundleContext)) {
-            return;
-        }
-        //bundleContext.registerService(WaitHelperI.class, CThreadHolder.getInstance(), null);
         initFileTypeHandlers(bundleContext);
         initGenericActions(bundleContext);
         initServerTypes(bundleContext);

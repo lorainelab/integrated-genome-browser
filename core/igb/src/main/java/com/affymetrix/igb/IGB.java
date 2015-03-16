@@ -67,6 +67,7 @@ import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.swing.Action;
@@ -91,18 +92,16 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id: IGB.java 11452 2012-05-07 22:32:36Z lfrohman $
  */
-public class IGB extends Application
-        implements GroupSelectionListener, SeqSelectionListener {
+public class IGB extends Application implements GroupSelectionListener, SeqSelectionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(IGB.class);
-
-    private static final String GUARANTEED_URL = "http://www.google.com"; // if URL goes away, the program will always give a "not connected" error
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
-    private JFrame frm;
+    private JFrame igbMainFrame;
     private JRPMenuBar mbar;
     private IGBToolBar toolbar;
     private SeqMapView mapView;
+    private Image applicationIconImage;
     private AnnotatedSeqGroup prev_selected_group = null;
     private BioSeq prev_selected_seq = null;
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
@@ -118,10 +117,21 @@ public class IGB extends Application
     public IGB() {
         super();
         setLaf();
-        frm = new JFrame(APP_NAME + " " + APP_VERSION);
+        igbMainFrame = new JFrame(APP_NAME + " " + APP_VERSION);
+        mapView = new SeqMapView(true, "SeqMapView", igbMainFrame);
         mbar = new JRPMenuBar();
-        frm.setJMenuBar(mbar);
-        mapView = new SeqMapView(true, "SeqMapView", frm);
+        toolbar = new IGBToolBar();
+        igbMainFrame.setJMenuBar(mbar);
+        initializeApplicationIconImage();
+        loadSynonyms();
+    }
+
+    private void initializeApplicationIconImage() {
+        Optional<ImageIcon> applicationImageIcon = CommonUtils.getInstance().getApplicationIcon();
+        if (applicationImageIcon.isPresent()) {
+            applicationIconImage = applicationImageIcon.get().getImage();
+            igbMainFrame.setIconImage(applicationIconImage);
+        }
     }
 
     @Override
@@ -131,24 +141,23 @@ public class IGB extends Application
 
     @Override
     public JFrame getFrame() {
-        return frm;
+        return igbMainFrame;
     }
 
-    private static void loadSynonyms(String file, SynonymLookup lookup) {
-        InputStream istr = null;
-        try {
-            istr = IGB.class.getResourceAsStream(file);
-            lookup.loadSynonyms(IGB.class.getResourceAsStream(file), true);
+    private void loadSynonyms() {
+        loadSynonyms(Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
+        loadSynonyms(Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
+    }
+
+    private void loadSynonyms(String file, SynonymLookup lookup) {
+        try (InputStream istr = IGB.class.getClassLoader().getResourceAsStream(file)) {
+            lookup.loadSynonyms(istr, true);
         } catch (IOException ex) {
-            logger.info(
-                    "Problem loading default synonyms file " + file, ex);
-        } finally {
-            GeneralUtils.safeClose(istr);
+            logger.info("Problem loading default synonyms file " + file, ex);
         }
     }
 
-    //TODO: Remove this redundant call to set LAF. For now it fixes bug introduced by OSGi.
-    public static void setLaf() {
+    private static void setLaf() {
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
         System.setProperty("swing.aatext", "true");
 
@@ -157,47 +166,44 @@ public class IGB extends Application
         // But it also may take away some things, like resizing buttons, that the
         // user is used to in their operating system, so leave as false.
         JFrame.setDefaultLookAndFeelDecorated(false);
+        if (IS_WINDOWS) {
+            try {
+                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
+                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
-        // if this is != null, then the user-requested l-and-f has already been applied
-        if (System.getProperty("swing.defaultlaf") == null) {
-            if (IS_WINDOWS) {
-                try {
-                    // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-                    Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
-                    LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-                    if (look_and_feel.isSupportedLookAndFeel()) {
-                        LookAndFeelFactory.installJideExtension();
-                        // Is there a better way to do it? HV 03/02/12
-                        for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
-                            UIManager.getDefaults().put(obj.getKey(), obj.getValue());
-                        }
-                        UIManager.setLookAndFeel(look_and_feel);
+                if (look_and_feel.isSupportedLookAndFeel()) {
+                    LookAndFeelFactory.installJideExtension();
+                    // Is there a better way to do it? HV 03/02/12
+                    for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
+                        UIManager.getDefaults().put(obj.getKey(), obj.getValue());
                     }
-                } catch (Exception ulfe) {
-                    // Windows look and feel is only supported on Windows, and only in
-                    // some version of the jre.  That is perfectly ok.
+                    UIManager.setLookAndFeel(look_and_feel);
                 }
-            } else if (IS_LINUX) {
-                try {
-                    // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-                    Class<?> cl = Class.forName(LookAndFeelFactory.METAL_LNF);
-                    LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+            } catch (Exception ulfe) {
+                // Windows look and feel is only supported on Windows, and only in
+                // some version of the jre.  That is perfectly ok.
+            }
+        } else if (IS_LINUX) {
+            try {
+                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+                Class<?> cl = Class.forName(LookAndFeelFactory.METAL_LNF);
+                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
-                    if (look_and_feel.isSupportedLookAndFeel()) {
-                        LookAndFeelFactory.installJideExtension();
-                        // Is there a better way to do it? HV 03/02/12
-                        for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
-                            UIManager.getDefaults().put(obj.getKey(), obj.getValue());
-                        }
-                        UIManager.setLookAndFeel(look_and_feel);
+                if (look_and_feel.isSupportedLookAndFeel()) {
+                    LookAndFeelFactory.installJideExtension();
+                    // Is there a better way to do it? HV 03/02/12
+                    for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
+                        UIManager.getDefaults().put(obj.getKey(), obj.getValue());
                     }
-                } catch (Exception ulfe) {
-                    // Windows look and feel is only supported on Windows, and only in
-                    // some version of the jre.  That is perfectly ok.
+                    UIManager.setLookAndFeel(look_and_feel);
                 }
+            } catch (Exception ulfe) {
+                // Windows look and feel is only supported on Windows, and only in
+                // some version of the jre.  That is perfectly ok.
             }
         }
+
     }
 
     //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
@@ -271,24 +277,20 @@ public class IGB extends Application
         IGBTrustManager.installTrustManager();
         printDetails(args);
         logger.debug("Done setting up ConsoleView");
-        loadSynonyms("/" + Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
-        loadSynonyms("/" + Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
+
         if (IS_MAC) {
             MacIntegration mi = MacIntegration.getInstance();
-            if (this.getIcon() != null) {
-                mi.setDockIconImage(this.getIcon());
+            if (applicationIconImage != null) {
+                mi.setDockIconImage(applicationIconImage);
             }
         }
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default
-        Authenticator.setDefault(new IGBAuthenticator(frm));
+        Authenticator.setDefault(new IGBAuthenticator(igbMainFrame));
         StateProvider stateProvider = new IGBStateProvider();
         DefaultStateProvider.setGlobalStateProvider(stateProvider);
-        frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        Image icon = getIcon();
-        if (icon != null) {
-            frm.setIconImage(icon);
-        }
+        igbMainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
         GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addGroupSelectionListener(this);
         gmodel.addSeqSelectionListener(this);
@@ -314,11 +316,11 @@ public class IGB extends Application
         gmodel.addSymSelectionListener(mapView.getSymSelectionListener());
         Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
                 new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
-        PreferenceUtils.setWindowSize(frm, frame_bounds);
+        PreferenceUtils.setWindowSize(igbMainFrame, frame_bounds);
         // Show the frame before loading the plugins.  Thus any error panel
         // that is created by an exception during plugin set-up will appear
         // on top of the main frame, not hidden by it.
-        frm.addWindowListener(new WindowAdapter() {
+        igbMainFrame.addWindowListener(new WindowAdapter() {
 
             @Override
             public void windowClosing(WindowEvent evt) {
@@ -410,14 +412,11 @@ public class IGB extends Application
 
     public IgbTabPanelI[] setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
-        windowService.setMainFrame(frm);
+        windowService.setMainFrame(igbMainFrame);
 
         windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
 
         windowService.setStatusBar(statusBar);
-        if (toolbar == null) {
-            toolbar = new IGBToolBar();
-        }
         windowService.setToolBar(toolbar);
         windowService.setTabsMenu(mbar);
         return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), AltSpliceView.getSingleton()};
@@ -428,54 +427,20 @@ public class IGB extends Application
     }
 
     public int addToolbarAction(GenericAction genericAction) {
-        if (toolbar == null) {
-            toolbar = new IGBToolBar();
-        }
         addToolbarAction(genericAction, toolbar.getItemCount());
-
         return toolbar.getItemCount();
     }
 
     public void addToolbarAction(GenericAction genericAction, int index) {
-        if (toolbar == null) {
-            toolbar = new IGBToolBar();
-        }
         toolbar.addToolbarAction(genericAction, index);
     }
 
     public void removeToolbarAction(GenericAction action) {
-        if (toolbar == null) {
-            return;
-        }
         toolbar.removeToolbarAction(action);
     }
 
     void saveToolBar() {
-        if (toolbar == null) {
-            return;
-        }
-
         toolbar.saveToolBar();
-    }
-
-    @Override
-    public ImageIcon getSmallIcon() {
-        return CommonUtils.getInstance().getApplicationSmallIcon();
-    }
-
-    /**
-     * Returns the icon stored in the jar file. It is expected to be at
-     * com.affymetrix.igb.igb.gif.
-     *
-     * @return null if the image file is not found or can't be opened.
-     */
-    @Override
-    public Image getIcon() {
-        ImageIcon imageIcon = CommonUtils.getInstance().getApplicationIcon();
-        if (imageIcon != null) {
-            return imageIcon.getImage();
-        }
-        return null;
     }
 
     @Override
@@ -566,7 +531,7 @@ public class IGB extends Application
      * @param theAction to which the shortcut points.
      */
     public void addAction(GenericAction theAction) {
-        JPanel panel = (JPanel) this.frm.getContentPane();
+        JPanel panel = (JPanel) this.igbMainFrame.getContentPane();
         Object o = theAction.getValue(Action.ACCELERATOR_KEY);
         if (null != o && o instanceof KeyStroke) {
             KeyStroke ks = (KeyStroke) o;

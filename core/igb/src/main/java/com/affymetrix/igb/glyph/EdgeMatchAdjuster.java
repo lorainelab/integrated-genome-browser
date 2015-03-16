@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.SeqMapView;
@@ -23,7 +22,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -58,10 +56,6 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener {
         if (singleton_adjuster == null) {
             singleton_adjuster = new EdgeMatchAdjuster(matcher, view);
             singleton_frame = new JFrame("Adjust Edge Match Fuzziness");
-            Image icon = Application.getSingleton().getIcon();
-            if (icon != null) {
-                singleton_frame.setIconImage(icon);
-            }
             Container cpane = singleton_frame.getContentPane();
             cpane.setLayout(new BorderLayout());
             cpane.add("Center", singleton_adjuster);

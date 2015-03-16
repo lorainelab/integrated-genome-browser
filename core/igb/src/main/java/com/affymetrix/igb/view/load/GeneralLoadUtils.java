@@ -1203,16 +1203,14 @@ public final class GeneralLoadUtils {
     public static List<String> getGenericVersions(final String speciesName) {
         final Set<GenericVersion> versionList = species2genericVersionList.get(speciesName);
         final List<String> versionNames = new ArrayList<>();
-        if (versionList != null) {
-            for (GenericVersion gVersion : versionList) {
-                // the same versionName name may occur on multiple servers
-                String versionName = gVersion.versionName;
-                if (!versionNames.contains(versionName)) {
-                    versionNames.add(versionName);
-                }
+        for (GenericVersion gVersion : versionList) {
+            // the same versionName name may occur on multiple servers
+            String versionName = gVersion.versionName;
+            if (!versionNames.contains(versionName)) {
+                versionNames.add(versionName);
             }
-            Collections.sort(versionNames, new StringVersionDateComparator());
         }
+        Collections.sort(versionNames, new StringVersionDateComparator());
         return versionNames;
     }
 
@@ -1226,9 +1224,7 @@ public final class GeneralLoadUtils {
 
         GenericFeature gFeature = getFeature(uri, fileName, speciesName, loadGroup, isReferenceSequence);
 
-        if (gFeature == null) {
-            return;
-        } else {
+        if (gFeature != null) {
             addFeature(gFeature);
         }
     }

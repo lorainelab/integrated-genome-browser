@@ -98,10 +98,6 @@ public abstract class Application {
         return statusBar;
     }
 
-    public abstract java.awt.Image getIcon();
-
-    abstract public javax.swing.ImageIcon getSmallIcon();
-
     abstract public javax.swing.JFrame getFrame();
 
     abstract public SeqMapView getMapView();

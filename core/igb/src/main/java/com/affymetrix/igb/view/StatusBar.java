@@ -60,12 +60,6 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
 
     public StatusBar(final ActionListener statusListener) {
         String tt_status = "Shows Selected Item, or other Message";
-//		selLabel = new JLabel(" Selection Info: ");
-//		selField = new JTextField(20);
-//		selField.setEditable(false);
-//		selectionPanel = new JPanel();
-//		selectionPanel.add(selLabel);
-//		selectionPanel.add(selField);
         status_ta = new JLabel("");
         status_ta.setForeground(Color.black);
         progressPanel = new JPanel();
@@ -86,27 +80,20 @@ public final class StatusBar extends JPanel implements DisplaysError, CThreadLis
         CThreadHolder.getInstance().addListener(this);
         progressBar.addMouseListener(
                 new MouseAdapter() {
+                    @Override
                     public void mouseClicked(MouseEvent e) {
                         ThreadHandlerAction.getAction().actionPerformed(null);
                     }
                 }
         );
 
-        statusAlertButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int ret = alert.actionPerformed();
-                statusListener.actionPerformed(new ActionEvent(alert, e.getID(), "" + ret));
-            }
+        statusAlertButton.addActionListener((ActionEvent e) -> {
+            int ret = alert.actionPerformed();
+            statusListener.actionPerformed(new ActionEvent(alert, e.getID(), "" + ret));
         });
 
         status_ta.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         progressPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-//		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-//		selField.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-//		selLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-//		selectionPanel.setMinimumSize(new Dimension(420, 1));
-//		selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-
         status_ta.setToolTipText(tt_status);
         progressBar.setMaximumSize(new Dimension(150, 5));
         displayProgress(false);

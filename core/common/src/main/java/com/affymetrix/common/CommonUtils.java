@@ -7,6 +7,7 @@ import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -63,8 +64,8 @@ public class CommonUtils {
      *
      * @return
      */
-    public ImageIcon getApplicationIcon() {
-        return CommonUtils.getInstance().getIcon("images/igb.png");
+    public Optional<ImageIcon> getApplicationIcon() {
+        return Optional.ofNullable(getIcon("images/igb.png"));
     }
 
     /**
@@ -165,9 +166,8 @@ public class CommonUtils {
             if (url != null) {
                 icon = new ImageIcon(url);
             }
-        } catch (Exception e) {
-            e.printStackTrace(System.out);
-            // It isn't a big deal if we can't find the icon, just return null
+        } catch (Exception ex) {
+            logger.error("Could not retrieve icon", ex);
         }
         if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED
                 || icon.getIconHeight() <= 0 || icon.getIconWidth() <= 0) {

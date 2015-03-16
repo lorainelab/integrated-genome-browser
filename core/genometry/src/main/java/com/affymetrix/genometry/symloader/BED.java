@@ -233,7 +233,7 @@ public class BED extends SymLoader implements LineProcessor {
         }
 
         String seq_name = null;
-        String annot_name = null;
+        String geneName = null;
         int min;
         int max;
         String itemRgb = "";
@@ -255,9 +255,9 @@ public class BED extends SymLoader implements LineProcessor {
         int beg = Integer.parseInt(fields[findex++]); // start field
         int end = Integer.parseInt(fields[findex++]); // stop field
         if (fieldCount >= 4) {
-            annot_name = BedUtils.parseName(fields[findex++]);
-            if (annot_name == null || annot_name.length() == 0) {
-                annot_name = group.getID();
+            geneName = BedUtils.parseName(fields[findex++]);
+            if (geneName == null || geneName.length() == 0) {
+                geneName = group.getID();
             }
         }
         if (fieldCount >= 5) {
@@ -314,12 +314,12 @@ public class BED extends SymLoader implements LineProcessor {
             int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
             blockSizes = parseIntArray(fields[findex++]); // blockSizes field
             if (blockCount != blockSizes.length) {
-                System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq_name);
+                System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + geneName + " on " + seq_name);
                 return true;
             }
             blockStarts = parseIntArray(fields[findex++]); // blockStarts field
             if (blockCount != blockStarts.length) {
-                System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq_name);
+                System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + geneName + " on " + seq_name);
                 return true;
             }
             blockMins = makeBlockMins(min, blockStarts);
@@ -344,8 +344,8 @@ public class BED extends SymLoader implements LineProcessor {
 
         SymWithProps bedline_sym;
         bedline_sym = isBedDetail
-                ? new UcscBedDetailSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
-                : new UcscBedSym(trackName, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+                ? new UcscBedDetailSym(trackName, seq, min, max, geneName, score, forward, thick_min, thick_max, blockMins, blockMaxs, detailSymbol, detailDescription)
+                : new UcscBedSym(trackName, seq, min, max, geneName, score, forward, thick_min, thick_max, blockMins, blockMaxs);
         if (itemRgb != null) {
             java.awt.Color c = null;
             try {

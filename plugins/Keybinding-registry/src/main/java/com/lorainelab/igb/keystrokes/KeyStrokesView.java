@@ -11,8 +11,6 @@ package com.lorainelab.igb.keystrokes;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
@@ -22,13 +20,8 @@ import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
-import javax.swing.ActionMap;
 import javax.swing.DefaultCellEditor;
-import javax.swing.InputMap;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -47,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
-@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {KeyStrokesView.class, PreferencesPanelProvider.class})
+@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {PreferencesPanelProvider.class})
 public final class KeyStrokesView implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
@@ -65,12 +58,12 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
     private final JPanel keyStrokePanel;
     private IgbService igbService;
-    
+
     @Reference
     public void addIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
-    
+
     @Reference
     public void addEditPanel(KeyStrokeEditPanel editPanel) {
         this.editPanel = editPanel;
@@ -108,6 +101,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     };
 
     public KeyStrokesView() {
+        logger.info("NETBEANS DEBUGGER IS NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         table = new KeyStrokeViewTable("KeyStrokesView");
         keyStrokePanel = new JPanel(new MigLayout("fill"));
         JScrollPane scrollPane = new javax.swing.JScrollPane();
@@ -120,8 +114,6 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
     @Activate
     public void activate() {
-
-        addShortcuts();
         lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         table.setCellSelectionEnabled(false);
@@ -174,58 +166,6 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     @Override
     public String getName() {
         return COMPONENT_NAME;
-    }
-    
-    private void addShortcuts() {
-        JFrame frm = igbService.getFrame();
-        JPanel panel = (JPanel) frm.getContentPane();
-        Preferences p = PreferenceUtils.getKeystrokesNode();
-        try {
-            for (String k : p.keys()) {
-                String preferredKeyStroke = p.get(k, "");
-                if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
-                    continue;
-                }
-                GenericActionHolder h = GenericActionHolder.getInstance();
-                GenericAction a = h.getGenericAction(k);
-                if (null == a) { // A keystroke in the preferences has no known action.
-                    String message = "key stroke \"" + k
-                            + "\" is not among our generic actions.";
-                    logger.trace(message);
-                    try { // to load the missing class.
-                        ClassLoader l = this.getClass().getClassLoader();
-                        Class<?> type = l.loadClass(k);
-                        if (type.isAssignableFrom(GenericAction.class)) {
-                            Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
-                            // Now what?
-                        }
-                        continue;
-                    } catch (ClassNotFoundException cnfe) {
-                        message = "Class " + cnfe.getMessage() + " not found.";
-                        logger.trace(message);
-                        continue; // Skip this one.
-                    } finally {
-                        message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
-                        logger.trace(message);
-                    }
-                }
-                InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
-                ActionMap am = panel.getActionMap();
-                String actionIdentifier = a.getId();
-                KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
-                if (null == ks) { // nothing we can do.
-                    String message = "Could not find preferred key stroke: "
-                            + preferredKeyStroke;
-                    logger.info(message);
-                    continue; // Skip this one.
-                }
-                im.put(ks, actionIdentifier);
-                am.put(actionIdentifier, a);
-            }
-        } catch (BackingStoreException bse) {
-            logger.trace(bse.getMessage());
-            logger.trace("Some keyboard shortcuts may not be set.");
-        }
     }
 
     class KeyStrokeViewTable extends JRPStyledTable {

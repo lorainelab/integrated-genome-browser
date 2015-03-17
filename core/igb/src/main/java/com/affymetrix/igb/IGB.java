@@ -10,6 +10,9 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.IS_LINUX;
+import static com.affymetrix.common.CommonUtils.IS_MAC;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -66,7 +69,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -107,12 +109,6 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
     private IWindowService windowService;
     private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
-    final public static boolean IS_WINDOWS
-            = System.getProperty("os.name").toLowerCase().contains("windows");
-    final public static boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
-    final public static boolean IS_LINUX
-            = System.getProperty("os.name").toLowerCase().contains("linux");
 
     public IGB() {
         super();
@@ -175,9 +171,9 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
                 if (look_and_feel.isSupportedLookAndFeel()) {
                     LookAndFeelFactory.installJideExtension();
                     // Is there a better way to do it? HV 03/02/12
-                    for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
-                        UIManager.getDefaults().put(obj.getKey(), obj.getValue());
-                    }
+                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
+                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
+                    });
                     UIManager.setLookAndFeel(look_and_feel);
                 }
             } catch (Exception ulfe) {
@@ -193,9 +189,9 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
                 if (look_and_feel.isSupportedLookAndFeel()) {
                     LookAndFeelFactory.installJideExtension();
                     // Is there a better way to do it? HV 03/02/12
-                    for (Entry<Object, Object> obj : look_and_feel.getDefaults().entrySet()) {
-                        UIManager.getDefaults().put(obj.getKey(), obj.getValue());
-                    }
+                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
+                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
+                    });
                     UIManager.setLookAndFeel(look_and_feel);
                 }
             } catch (Exception ulfe) {

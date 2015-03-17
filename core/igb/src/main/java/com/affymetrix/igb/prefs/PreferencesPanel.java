@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -17,8 +18,8 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -160,7 +161,7 @@ public final class PreferencesPanel extends JPanel {
     public JFrame getFrame() {
         int width = 558;
         int height = 582;
-        if (IGB.IS_LINUX) {
+        if (IS_LINUX) {
             width = 574;
             height = 610;
         }

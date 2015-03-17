@@ -82,6 +82,7 @@ import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -114,7 +115,7 @@ public class Activator implements BundleActivator {
         }
         //wait for consoleLogger service
         setupConsoleServiceTracker(bundleContext);
-
+        setupKeyBindingRegistryServiceTracker(bundleContext);
         initColorProvider(bundleContext);
         initFilter(bundleContext);
     }
@@ -125,8 +126,24 @@ public class Activator implements BundleActivator {
             @Override
             public Object addingService(ServiceReference<IgbMenuItemProvider> serviceReference) {
                 if (serviceReference.getProperty("component.name").equals("ShowConsoleAction")) {
+                    bundleContext.getService(serviceReference);
                     run(bundleContext);
                     logger.info("IGB Started");
+                }
+                return super.addingService(serviceReference);
+            }
+        };
+        consoleServiceTracker.open();
+    }
+
+    private void setupKeyBindingRegistryServiceTracker(final BundleContext bundleContext) {
+        ServiceTracker<PreferencesPanelProvider, Object> consoleServiceTracker;
+        consoleServiceTracker = new ServiceTracker<PreferencesPanelProvider, Object>(bundleContext, PreferencesPanelProvider.class, null) {
+            @Override
+            public Object addingService(ServiceReference<PreferencesPanelProvider> serviceReference) {
+                if (serviceReference.getProperty("component.name").equals("KeyStrokesView")) {
+                    bundleContext.getService(serviceReference);
+                    addGenericActionListener();
                 }
                 return super.addingService(serviceReference);
             }
@@ -178,7 +195,6 @@ public class Activator implements BundleActivator {
 
         igb.init(args, bundleContext);
 
-        addGenericActionListener();
         registerServices(bundleContext);
 
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, TrackClickListener.class);

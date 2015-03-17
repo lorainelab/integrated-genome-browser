@@ -1,12 +1,12 @@
 package com.affymetrix.igb.shared;
 
+import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
-import static com.affymetrix.igb.IGB.IS_MAC;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphicsUtil;

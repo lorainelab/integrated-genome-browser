@@ -11,10 +11,13 @@ package com.lorainelab.igb.keystrokes.model;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;
 import static com.lorainelab.igb.keystrokes.KeyStrokesView.ActionColumn;
 import static com.lorainelab.igb.keystrokes.KeyStrokesView.IconColumn;
@@ -22,13 +25,20 @@ import static com.lorainelab.igb.keystrokes.KeyStrokesView.IdColumn;
 import static com.lorainelab.igb.keystrokes.KeyStrokesView.KeyStrokeColumn;
 import static com.lorainelab.igb.keystrokes.KeyStrokesView.ToolbarColumn;
 import com.lorainelab.igb.services.IgbService;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,54 +51,119 @@ import org.slf4j.LoggerFactory;
 public class KeyStrokeViewTableModel extends AbstractTableModel {
 
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
+    private static final String DEFAULT_PREFS_API_RESOURCE = "igb_default_APIprefs.xml";
+    private static final String COMMAND_KEY = "meta";
+    private static final String CONTROL_KEY = "ctrl";
     private static final long serialVersionUID = 1L;
     private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
 
     private IgbService igbService;
-    private static TreeSet<String> actions;
+    private static Set<String> actionKeys;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
-    
+
     public KeyStrokeViewTableModel() {
-        actions = new TreeSet<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                GenericAction ga1 = GenericActionHolder.getInstance().getGenericAction(o1);
-                if (ga1 == null) {
-                    String errMsg = "No GenericAction found for \"" + o1 + "\".";
-                    logger.error(errMsg);
-                }
-                GenericAction ga2 = GenericActionHolder.getInstance().getGenericAction(o2);
-                if (ga2 == null) {
-                    String errMsg = "No GenericAction found for \"" + o2 + "\".";
-                    logger.error(errMsg);
-                }
-                return getSortField(ga1).compareTo(getSortField(ga2));
-            }
-        });
+        actionKeys = Sets.newCopyOnWriteArraySet();
     }
 
     @Activate
     public void activator() {
-        filterActions();
+        loadDefaultToolbarActionsAndKeystrokeBindings();
+        addShortcuts();
+        actionKeys.addAll(GenericActionHolder.getInstance().getGenericActionIds());
         refresh();
     }
 
-    private static String getSortField(GenericAction genericAction) {
-        if (genericAction == null) {
-            return "";
+    private void loadDefaultToolbarActionsAndKeystrokeBindings() {
+        try (InputStream default_prefs_stream = KeyStrokeViewTableModel.class.getClassLoader().getResourceAsStream(DEFAULT_PREFS_API_RESOURCE);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+            //Save current preferences
+            PreferenceUtils.getTopNode().exportSubtree(outputStream);
+            if (default_prefs_stream != null) {
+                logger.debug("loading default User preferences from: " + DEFAULT_PREFS_API_RESOURCE);
+                Preferences.importPreferences(default_prefs_stream);
+
+                /**
+                 * Use 'command' instead of 'control' in keystrokes for Mac OS.
+                 */
+                if (IS_MAC) {
+                    String[] keys = PreferenceUtils.getKeystrokesNode().keys();
+                    for (int i = 0; i < keys.length; i++) {
+                        String action = PreferenceUtils.getKeystrokesNode().keys()[i];
+                        String keyStroke = PreferenceUtils.getKeystrokesNode().get(action, "");
+                        if (keyStroke.contains(CONTROL_KEY)) {
+                            keyStroke = keyStroke.replace(CONTROL_KEY, COMMAND_KEY);
+                            PreferenceUtils.getKeystrokesNode().put(action, keyStroke);
+                        }
+                    }
+                }
+                //Load back saved preferences
+                try (ByteArrayInputStream outputInputStream = new ByteArrayInputStream(outputStream.toByteArray())) {
+                    Preferences.importPreferences(outputInputStream);
+                }
+            }
+        } catch (Exception ex) {
+            logger.debug("Problem parsing prefs from: {}", DEFAULT_PREFS_API_RESOURCE, ex);
         }
-        return genericAction.getDisplay() + (genericAction.isToggle() ? "1" : "2");
+    }
+
+    private void addShortcuts() {
+        JFrame frm = igbService.getFrame();
+        JPanel panel = (JPanel) frm.getContentPane();
+        Preferences p = PreferenceUtils.getKeystrokesNode();
+        try {
+            for (String k : p.keys()) {
+                String preferredKeyStroke = p.get(k, "");
+                if (preferredKeyStroke.length() == 0) { // then this ain't our concern.
+                    continue;
+                }
+                GenericActionHolder h = GenericActionHolder.getInstance();
+                GenericAction a = h.getGenericAction(k);
+                if (null == a) { // A keystroke in the preferences has no known action.
+                    String message = "key stroke \"" + k
+                            + "\" is not among our generic actionKeys.";
+                    logger.trace(message);
+                    try { // to load the missing class.
+                        ClassLoader l = this.getClass().getClassLoader();
+                        Class<?> type = l.loadClass(k);
+                        if (type.isAssignableFrom(GenericAction.class)) {
+                            Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
+                            // Now what?
+                        }
+                        continue;
+                    } catch (ClassNotFoundException cnfe) {
+                        message = "Class " + cnfe.getMessage() + " not found.";
+                        logger.trace(message);
+                        continue; // Skip this one.
+                    } finally {
+                        message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
+                        logger.trace(message);
+                    }
+                }
+                InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+                ActionMap am = panel.getActionMap();
+                String actionIdentifier = a.getId();
+                KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
+                if (null == ks) { // nothing we can do.
+                    String message = "Could not find preferred key stroke: "
+                            + preferredKeyStroke;
+                    logger.info(message);
+                    continue; // Skip this one.
+                }
+                im.put(ks, actionIdentifier);
+                am.put(actionIdentifier, a);
+            }
+        } catch (BackingStoreException bse) {
+            logger.trace(bse.getMessage());
+            logger.trace("Some keyboard shortcuts may not be set.");
+        }
     }
 
     @Reference(multiple = true, dynamic = true)
     public void addAction(GenericAction action) {
         logger.debug("Action received");
-
-        if (action != null) {
-            actions.add(action.getId());
-            logger.debug(action.getId());
-            fireTableDataChanged();
-        }
+        actionKeys.add(action.getId());
+        logger.debug(action.getId());
+        fireTableDataChanged();
     }
 
     public void removeAction(GenericAction action) {
@@ -203,59 +278,34 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        //TreeSet<String> keys = filterActions();//PreferenceUtils.getKeystrokesNodeNames();
-        Object[][] rows;
-
-        synchronized (actions) {
-            int num_rows = actions.size();
-            int num_cols = 5;
-            rows = new Object[num_rows][num_cols];
-            Iterator<String> iter = actions.iterator();
-            for (int i = 0; iter.hasNext(); i++) {
-                String key = iter.next();
-                GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-                if (genericAction == null) {
-                    String logMsg = "!!! no GenericAction for key = " + key;
-                    logger.warn(logMsg);
-                    continue;
-                }
-                rows[i][ActionColumn] = (genericAction == null) ? "???" : genericAction.getDisplay();
-                rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();
-                rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
-                if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
-                    rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
-                }
-                if (!genericAction.isToolbarAction()) {
-                    rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
-                }
-                rows[i][IconColumn] = genericAction == null || rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
-                rows[i][IdColumn] = (genericAction == null) ? "" : genericAction.getId(); // not displayed
+        sortActionKeys();
+        Object[][] rows = new Object[actionKeys.size()][5];
+        int i = 0;
+        for (String key : actionKeys) {
+            GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
+            if (genericAction == null) {
+                String logMsg = "!!! no GenericAction for key = " + key;
+                logger.warn(logMsg);
+                return;
             }
+            rows[i][ActionColumn] = genericAction.getDisplay();
+            rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();
+            rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
+            if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
+                rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
+            }
+            if (!genericAction.isToolbarAction()) {
+                rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
+            }
+            rows[i][IconColumn] = rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
+            rows[i][IdColumn] = genericAction.getId(); // not displayed
+            i++;
         }
         setRows(rows);
     }
 
-    //remove this method when all actions are moved to registry.
-    private void filterActions() {
-        Set<String> keys = GenericActionHolder.getInstance().getGenericActionIds();
-
-        for (String key : keys) {
-            GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-            boolean hasGetAction;
-            try {
-                Class<?> actionClass = genericAction.getClass();
-                actionClass.getMethod("getAction");
-                hasGetAction = true;
-            } catch (NoSuchMethodException x) {
-                hasGetAction = false;
-            } catch (NullPointerException npe) {
-                System.err.println(KeyStrokesView.class.getName() + ".filterActions: " + npe.getMessage());
-                System.err.println(KeyStrokesView.class.getName() + ".filterActions: Trying to get class for " + key);
-                hasGetAction = false;
-            }
-            if (hasGetAction && genericAction.getDisplay() != null && !"".equals(genericAction.getDisplay())) {
-                actions.add(key);
-            }
-        }
+    private List<String> sortActionKeys() {
+        return Ordering.natural().immutableSortedCopy(actionKeys);
     }
+
 }

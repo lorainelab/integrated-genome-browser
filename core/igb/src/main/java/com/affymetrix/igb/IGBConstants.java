@@ -35,10 +35,6 @@ public interface IGBConstants {
             System.getProperty("os.arch"),
             Locale.getDefault().toString());
 
-    public static final boolean DEBUG = false;
-
-    public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
-
     public final static String GENOME_SEQ_ID = Constants.GENOME_SEQ_ID;
     public final static String ENCODE_REGIONS_ID = "encode_regions";
 }

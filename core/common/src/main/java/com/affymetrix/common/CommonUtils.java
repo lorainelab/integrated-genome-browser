@@ -30,6 +30,12 @@ public class CommonUtils {
     private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
     private static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
+    final public static boolean IS_WINDOWS
+            = System.getProperty("os.name").toLowerCase().contains("windows");
+    final public static boolean IS_MAC
+            = System.getProperty("os.name").toLowerCase().contains("mac");
+    final public static boolean IS_LINUX
+            = System.getProperty("os.name").toLowerCase().contains("linux");
 
     private CommonUtils() {
     }

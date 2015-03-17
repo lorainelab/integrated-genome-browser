@@ -101,7 +101,6 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     };
 
     public KeyStrokesView() {
-        logger.info("NETBEANS DEBUGGER IS NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         table = new KeyStrokeViewTable("KeyStrokesView");
         keyStrokePanel = new JPanel(new MigLayout("fill"));
         JScrollPane scrollPane = new javax.swing.JScrollPane();

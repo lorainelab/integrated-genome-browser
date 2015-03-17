@@ -364,7 +364,7 @@ public class SeqMapView extends JPanel
      */
     private static void collectGraphs(GlyphI gl, List<GraphGlyph> graphs) {
         Optional.of(gl.getChildren()).ifPresent(children -> {
-            gl.getChildren().stream()
+            children.stream()
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)
                     .forEach(agg -> {

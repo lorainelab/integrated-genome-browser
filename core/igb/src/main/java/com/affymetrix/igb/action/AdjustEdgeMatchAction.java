@@ -36,7 +36,7 @@ public class AdjustEdgeMatchAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        SeqMapView map_view = IGB.getSingleton().getMapView();
+        SeqMapView map_view = IGB.getInstance().getMapView();
         EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
     }
 }

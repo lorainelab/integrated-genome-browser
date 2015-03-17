@@ -33,7 +33,7 @@ public class CopyResiduesAction extends GenericAction {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
         GenometryModel.getInstance().addSymSelectionListener(
                 evt -> {
-                    boolean enabled1 = (IGB.getSingleton().getMapView().getSeqSymmetry() != null) || (IGB.getSingleton().getMapView().getSelectedSyms().size() == 1);
+                    boolean enabled1 = (IGB.getInstance().getMapView().getSeqSymmetry() != null) || (IGB.getInstance().getMapView().getSelectedSyms().size() == 1);
                     ACTION.setEnabled(enabled1);
                     ACTION_SHORT.setEnabled(enabled1);
                 });
@@ -64,11 +64,11 @@ public class CopyResiduesAction extends GenericAction {
         SeqSymmetry residues_sym = null;
         String from = "";
 
-        if (IGB.getSingleton().getMapView().getSeqSymmetry() != null) {
-            residues_sym = IGB.getSingleton().getMapView().getSeqSymmetry();
+        if (IGB.getInstance().getMapView().getSeqSymmetry() != null) {
+            residues_sym = IGB.getInstance().getMapView().getSeqSymmetry();
             from = " from selected region";
         } else {
-            List<SeqSymmetry> syms = IGB.getSingleton().getMapView().getSelectedSyms();
+            List<SeqSymmetry> syms = IGB.getInstance().getMapView().getSelectedSyms();
             if (syms.size() == 1) {
                 residues_sym = syms.get(0);
                 from = " from selected item";
@@ -82,9 +82,9 @@ public class CopyResiduesAction extends GenericAction {
         } else {
             String residues = null;
             if (allResidues) {
-                residues = SeqUtils.selectedAllResidues(residues_sym, IGB.getSingleton().getMapView().getAnnotatedSeq());
+                residues = SeqUtils.selectedAllResidues(residues_sym, IGB.getInstance().getMapView().getAnnotatedSeq());
             } else {
-                residues = SeqUtils.determineSelectedResidues(residues_sym, IGB.getSingleton().getMapView().getAnnotatedSeq());
+                residues = SeqUtils.determineSelectedResidues(residues_sym, IGB.getInstance().getMapView().getAnnotatedSeq());
             }
 
             if (residues != null) {

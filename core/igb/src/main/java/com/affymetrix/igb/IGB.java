@@ -33,6 +33,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.APP_VERSION;
@@ -48,6 +49,7 @@ import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.StatusBar;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -59,6 +61,7 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -68,9 +71,12 @@ import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -81,6 +87,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -94,9 +101,11 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id: IGB.java 11452 2012-05-07 22:32:36Z lfrohman $
  */
-public class IGB extends Application implements GroupSelectionListener, SeqSelectionListener {
+public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
+    public static final String COMPONENT_NAME = "IGB";
     private static final Logger logger = LoggerFactory.getLogger(IGB.class);
+    private static IGB INSTANCE;
     private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
     private JFrame igbMainFrame;
@@ -109,9 +118,28 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
     private IWindowService windowService;
     private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
+    private final StatusBar statusBar;
+    private static final int delay = 2; //delay in seconds
+    private LinkedList<StatusAlert> statusAlertList;
+    private final ActionListener status_alert_listener = e -> {
+        if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
+            removeStatusAlert((StatusAlert) e.getSource());
+        }
+    };
 
-    public IGB() {
-        super();
+    private final LinkedList<String> progressStringList = new LinkedList<>(); // list of progress bar messages.
+    ActionListener update_status_bar = ae -> {
+        synchronized (progressStringList) {
+            String s = progressStringList.pop();
+            progressStringList.addLast(s);
+            setNotLockedUpStatus(s);
+        }
+    };
+    Timer timer = new Timer(delay * 1000, update_status_bar);
+
+    private IGB() {
+        statusAlertList = new LinkedList<>();
+        statusBar = new StatusBar(status_alert_listener);
         setLaf();
         igbMainFrame = new JFrame(APP_NAME + " " + APP_VERSION);
         mapView = new SeqMapView(true, "SeqMapView", igbMainFrame);
@@ -130,12 +158,10 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
         }
     }
 
-    @Override
     public SeqMapView getMapView() {
         return mapView;
     }
 
-    @Override
     public JFrame getFrame() {
         return igbMainFrame;
     }
@@ -467,7 +493,6 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
         return windowService.getPlugins();
     }
 
-    @Override
     public void setSelField(Map<String, Object> properties, String message, SeqSymmetry sym) {
         toolbar.setSelectionText(properties, message, sym);
     }
@@ -553,6 +578,99 @@ public class IGB extends Application implements GroupSelectionListener, SeqSelec
             im.put(ks, actionIdentifier);
             am.put(actionIdentifier, theAction);
         }
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    public void addNotLockedUpMsg(final String s) {
+        synchronized (progressStringList) {
+            progressStringList.addFirst(s);
+        }
+        update_status_bar.actionPerformed(null);
+
+        if (!timer.isRunning()) {
+            timer.start();
+        }
+    }
+
+    public void removeNotLockedUpMsg(final String s) {
+        synchronized (progressStringList) {
+            progressStringList.remove(s);
+
+            if (progressStringList.isEmpty()) {
+                setNotLockedUpStatus(null);
+                timer.stop();
+            }
+        }
+    }
+
+    /**
+     * Set the status text, and show a little progress bar so that the
+     * application doesn't look locked up.
+     *
+     * @param s text of the message
+     */
+    private synchronized void setNotLockedUpStatus(String s) {
+        statusBar.setStatus(s);
+    }
+
+    /**
+     * Sets the text in the status bar. Will also echo a copy of the string to
+     * System.out. It is safe to call this method even if the status bar is not
+     * being displayed.
+     */
+    public void setStatus(String s) {
+        setStatus(s, true);
+    }
+
+    /**
+     * Sets the text in the status bar. Will optionally echo a copy of the
+     * string to System.out. It is safe to call this method even if the status
+     * bar is not being displayed.
+     *
+     * @param echo Whether to echo a copy to System.out.
+     */
+    public void setStatus(final String s, final boolean echo) {
+        statusBar.setStatus(s);
+        if (echo && s != null && !s.isEmpty()) {
+            logger.info(s);
+        }
+    }
+
+    public void addStatusAlert(final StatusAlert s) {
+        synchronized (statusAlertList) {
+            statusAlertList.addFirst(s);
+        }
+        setStatusAlert(s);
+    }
+
+    public void removeStatusAlert(final StatusAlert s) {
+        synchronized (statusAlertList) {
+            statusAlertList.remove(s);
+        }
+
+        if (statusAlertList.isEmpty()) {
+            setStatusAlert(null);
+        } else {
+            setStatusAlert(statusAlertList.pop());
+        }
+    }
+
+    private synchronized void setStatusAlert(StatusAlert s) {
+        statusBar.setStatusAlert(s);
+    }
+
+    public void showError(String title, String message, List<GenericAction> actions, Level level) {
+        statusBar.showError(title, message, actions, level);
+    }
+
+    public static IGB getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new IGB();
+        }
+        return INSTANCE;
     }
 
 }

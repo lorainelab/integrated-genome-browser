@@ -108,7 +108,7 @@ public class Activator implements BundleActivator {
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
         verifyJidesoftLicense();
-        igb = new IGB();
+        igb = IGB.getInstance();
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
@@ -346,16 +346,16 @@ public class Activator implements BundleActivator {
                                 }
                             }
 
-                            ((IGB) Application.getSingleton()).addAction(genericAction);
+                            IGB.getInstance().addAction(genericAction);
 
                             boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
                             if (isToolbar) {
 //							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
                                 int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId() + ".index", -1);
                                 if (index == -1) {
-                                    ((IGB) Application.getSingleton()).addToolbarAction(genericAction);
+                                    IGB.getInstance().addToolbarAction(genericAction);
                                 } else {
-                                    ((IGB) Application.getSingleton()).addToolbarAction(genericAction, index);
+                                    IGB.getInstance().addToolbarAction(genericAction, index);
                                 }
                             }
                         }
@@ -389,7 +389,7 @@ public class Activator implements BundleActivator {
                 new WindowServiceLifecylceHook() {
                     @Override
                     public void stop() {
-                        ((IGB) Application.getSingleton()).saveToolBar();
+                        IGB.getInstance().saveToolBar();
                     }
 
                     @Override
@@ -405,12 +405,12 @@ public class Activator implements BundleActivator {
                 new ExtensionPointListener<ContextualPopupListener>() {
                     @Override
                     public void addService(ContextualPopupListener listener) {
-                        Application.getSingleton().getMapView().addPopupListener(listener);
+                        IGB.getInstance().getMapView().addPopupListener(listener);
                     }
 
                     @Override
                     public void removeService(ContextualPopupListener listener) {
-                        Application.getSingleton().getMapView().removePopupListener(listener);
+                        IGB.getInstance().getMapView().removePopupListener(listener);
                     }
                 }
         );
@@ -422,12 +422,12 @@ public class Activator implements BundleActivator {
                 new ExtensionPointListener<AxisPopupListener>() {
                     @Override
                     public void addService(AxisPopupListener listener) {
-                        Application.getSingleton().getMapView().addAxisPopupListener(listener);
+                        IGB.getInstance().getMapView().addAxisPopupListener(listener);
                     }
 
                     @Override
                     public void removeService(AxisPopupListener listener) {
-                        Application.getSingleton().getMapView().removeAxisPopupListener(listener);
+                        IGB.getInstance().getMapView().removeAxisPopupListener(listener);
                     }
                 }
         );
@@ -456,12 +456,12 @@ public class Activator implements BundleActivator {
                 new ExtensionPointListener<StatusAlert>() {
                     @Override
                     public void addService(StatusAlert alert) {
-                        Application.getSingleton().addStatusAlert(alert);
+                        IGB.getInstance().addStatusAlert(alert);
                     }
 
                     @Override
                     public void removeService(StatusAlert alert) {
-                        Application.getSingleton().removeStatusAlert(alert);
+                        IGB.getInstance().removeStatusAlert(alert);
                     }
                 }
         );
@@ -473,12 +473,12 @@ public class Activator implements BundleActivator {
                 new ExtensionPointListener<SearchListener>() {
                     @Override
                     public void addService(SearchListener searchListener) {
-                        Application.getSingleton().getMapView().getMapRangeBox().addSearchListener(searchListener);
+                        IGB.getInstance().getMapView().getMapRangeBox().addSearchListener(searchListener);
                     }
 
                     @Override
                     public void removeService(SearchListener searchListener) {
-                        Application.getSingleton().getMapView().getMapRangeBox().removeSearchListener(searchListener);
+                        IGB.getInstance().getMapView().getMapRangeBox().removeSearchListener(searchListener);
                     }
                 }
         );

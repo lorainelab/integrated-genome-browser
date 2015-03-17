@@ -1,10 +1,10 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.igb.Application;
-import com.lorainelab.igb.services.search.ITransformableTierGlyph;
+import com.affymetrix.igb.IGB;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -168,7 +168,7 @@ public class GlyphScroller {
         map.addListSelectionListener(listener);
         zoomer.addChangeListener(listener);
         scrollbar.addAdjustmentListener(listener);
-        Application.getSingleton().getFrame().addComponentListener(listener);
+        IGB.getInstance().getFrame().addComponentListener(listener);
     }
 
     private void removeListners() {
@@ -176,7 +176,7 @@ public class GlyphScroller {
         map.removeListSelectionListener(listener);
         zoomer.removeChangeListener(listener);
         scrollbar.removeAdjustmentListener(listener);
-        Application.getSingleton().getFrame().removeComponentListener(listener);
+        IGB.getInstance().getFrame().removeComponentListener(listener);
     }
 
     private class Listeners implements MouseWheelListener,

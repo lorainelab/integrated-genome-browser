@@ -2,7 +2,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.HttpsURLConnection;
@@ -43,7 +43,7 @@ public class IGBTrustManager implements X509TrustManager {
         for (X509Certificate cert : certs) {
             certificates.append(cert.getIssuerX500Principal().getName()).append(",").append("\n");
         }
-        Application app = Application.getSingleton();
+        IGB app = IGB.getInstance();
         JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
         boolean response = ModalUtils.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
                 PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true, "Do not show this again for the publisher above");

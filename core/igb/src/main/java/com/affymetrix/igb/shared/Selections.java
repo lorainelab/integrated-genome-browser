@@ -12,14 +12,13 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
-import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -47,11 +46,9 @@ public class Selections {
     public static final List<RootSeqSymmetry> graphSyms = new CopyOnWriteArrayList<>();
     public static final List<ITrackStyleExtended> axisStyles = new CopyOnWriteArrayList<>();
 
-    private static final SeqMapView smv;
     private static final EventListenerList listenerList;
 
     static {
-        smv = (SeqMapView) Application.getSingleton().getMapView();
         listenerList = new EventListenerList();
         addListeners(new Listeners());
     }
@@ -60,14 +57,14 @@ public class Selections {
         GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addSeqSelectionListener(listeners);
         gmodel.addSymSelectionListener(listeners);
-        smv.addToRefreshList(listeners);
+        IGB.getInstance().getMapView().addToRefreshList(listeners);
         TrackstylePropertyMonitor.getPropertyTracker().addPropertyListener(listeners);
 //		igbService.addListSelectionListener(this);
     }
 
     private static synchronized void refreshSelection() {
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-        List<StyledGlyph> selected = (List) smv.getAllSelectedTiers();
+        List<StyledGlyph> selected = (List) IGB.getInstance().getMapView().getAllSelectedTiers();
         allStyles.clear();
         annotStyles.clear();
         graphStyles.clear();
@@ -137,7 +134,7 @@ public class Selections {
             }
         }
         @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-        List<GlyphI> selectedGraphs = (List) smv.getSelectedFloatingGraphGlyphs();
+        List<GlyphI> selectedGraphs = (List) IGB.getInstance().getMapView().getSelectedFloatingGraphGlyphs();
         selectedGraphs.stream().filter(glyph -> glyph instanceof GraphGlyph).forEach(glyph -> {
             GraphGlyph gg = (GraphGlyph) glyph;
             graphStates.add(gg.getGraphState());
@@ -297,7 +294,7 @@ public class Selections {
     }
 
     public static boolean isAllButOneLocked() {
-        return getTotalLocked() == smv.getTierManager().getVisibleTierGlyphs().size() - 2;
+        return getTotalLocked() == IGB.getInstance().getMapView().getTierManager().getVisibleTierGlyphs().size() - 2;
     }
 
     public static int getLockedHeight() {
@@ -316,7 +313,7 @@ public class Selections {
         for (StyledGlyph glyph : allGlyphs) {
             if (glyph instanceof TierGlyph) {
                 TierGlyph tg = (TierGlyph) glyph;
-                int slotNeeded = tg.getSlotsNeeded(smv.getSeqMap().getView());
+                int slotNeeded = tg.getSlotsNeeded(IGB.getInstance().getMapView().getSeqMap().getView());
                 if (optimumSet && ourOptimum != slotNeeded) {
                     ourOptimum = -1;
                     break;
@@ -330,7 +327,7 @@ public class Selections {
 
     private static int getTotalLocked() {
         int no_of_locked = 0;
-        for (TierGlyph tier : smv.getSeqMap().getTiers()) {
+        for (TierGlyph tier : IGB.getInstance().getMapView().getSeqMap().getTiers()) {
             ITrackStyleExtended style = tier.getAnnotStyle();
             if (style != CoordinateStyle.coordinate_annot_style && style.getShow()
                     && tier instanceof DefaultTierGlyph && ((DefaultTierGlyph) tier).isHeightFixed()) {
@@ -376,8 +373,8 @@ public class Selections {
             // Ignore the splice view as well as events coming from this class itself.
 
             Object src = evt.getSource();
-            if (!(src == smv || src == smv.getSeqMap())
-                    || smv == null || smv.getSeqMap() == null) {
+            if (!(src == IGB.getInstance().getMapView() || src == IGB.getInstance().getMapView().getSeqMap())
+                    || IGB.getInstance().getMapView() == null || IGB.getInstance().getMapView().getSeqMap() == null) {
                 return;
             }
 

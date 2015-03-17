@@ -3,7 +3,6 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
@@ -34,7 +33,7 @@ public class CancelScriptAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        final IGB igb = ((IGB) Application.getSingleton());
+        final IGB igb = ((IGB) IGB.getInstance());
         synchronized (igb) {
             SwingWorker<Void, Void> igbScriptWorker = igb.getScriptWorker();
             if (igbScriptWorker == null) {

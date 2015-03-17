@@ -96,17 +96,17 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void addNotLockedUpMsg(String message) {
-        Application.getSingleton().addNotLockedUpMsg(message);
+        IGB.getInstance().addNotLockedUpMsg(message);
     }
 
     @Override
     public void removeNotLockedUpMsg(String message) {
-        Application.getSingleton().removeNotLockedUpMsg(message);
+        IGB.getInstance().removeNotLockedUpMsg(message);
     }
 
     @Override
     public void setStatus(final String message) {
-        ThreadUtils.runOnEventQueue(() -> Application.getSingleton().setStatus(message));
+        ThreadUtils.runOnEventQueue(() -> IGB.getInstance().setStatus(message));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public JRPMenu addTopMenu(String id, String text, int index) {
-        IGB igb = (IGB) IGB.getSingleton();
+        IGB igb = IGB.getInstance();
         return igb.addTopMenu(id, text, index);
     }
 
@@ -189,7 +189,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public NeoAbstractWidget getSeqMap() {
-        return Application.getSingleton().getMapView().getSeqMap();
+        return IGB.getInstance().getMapView().getSeqMap();
     }
 
     @Override
@@ -206,7 +206,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public SeqMapViewI getSeqMapView() {
-        return Application.getSingleton().getMapView();
+        return IGB.getInstance().getMapView();
     }
 
     @Override
@@ -221,38 +221,38 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public JFrame getFrame() {
-        return Application.getSingleton().getFrame();
+        return IGB.getInstance().getFrame();
     }
 
     @Override
     public void saveState() {
-        ((IGB) IGB.getSingleton()).getWindowService().saveState();
+        (IGB.getInstance()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::saveSession);
+        ((IGB) IGB.getInstance()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::saveSession);
     }
 
     @Override
     public void loadState() {
-        ((IGB) IGB.getSingleton()).getWindowService().restoreState();
-        SeqMapView mapView = Application.getSingleton().getMapView();
+        (IGB.getInstance()).getWindowService().restoreState();
+        SeqMapView mapView = IGB.getInstance().getMapView();
         mapView.loadSession();
-        ((IGB) Application.getSingleton()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::loadSession);
+        ((IGB) IGB.getInstance()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::loadSession);
     }
 
     @Override
     public IgbTabPanel getTabPanel(String viewName) {
-        return ((IGB) IGB.getSingleton()).getView(viewName);
+        return (IGB.getInstance()).getView(viewName);
     }
 
     //Easier for scripting if we don't require full name.
     @Override
     public IgbTabPanel getTabPanelFromDisplayName(String viewName) {
-        return ((IGB) IGB.getSingleton()).getViewByDisplayName(viewName);
+        return (IGB.getInstance()).getViewByDisplayName(viewName);
     }
 
     @Override
     public void selectTab(IgbTabPanel panel) {
-        ((IGB) IGB.getSingleton()).getWindowService().selectTab(panel);
+        (IGB.getInstance()).getWindowService().selectTab(panel);
     }
 
     @Override
@@ -372,7 +372,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void print(int pageFormat, boolean noDialog) throws PrinterException {
-        Application.getSingleton().getMapView().getSeqMap().print(0, true);
+        IGB.getInstance().getMapView().getSeqMap().print(0, true);
     }
 
     @Override
@@ -409,7 +409,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void deselect(GlyphI tierGlyph) {
-        Application.getSingleton().getMapView().getTierManager().deselect(tierGlyph);
+        IGB.getInstance().getMapView().getTierManager().deselect(tierGlyph);
     }
 
     @Override
@@ -443,7 +443,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public Component determineSlicedComponent() {
-        AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+        AltSpliceView slice_view = (AltSpliceView) (IGB.getInstance()).getView(AltSpliceView.class.getName());
         if (slice_view == null) {
             return null;
         }
@@ -458,7 +458,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void bringToFront() {
-        JFrame f = Application.getSingleton().getFrame();
+        JFrame f = IGB.getInstance().getFrame();
         boolean tmp = f.isAlwaysOnTop();
         f.setAlwaysOnTop(true);
         f.toFront();
@@ -492,13 +492,13 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public int addToolbarAction(GenericAction genericAction) {
-        IGB igb = (IGB) IGB.getSingleton();
+        IGB igb = IGB.getInstance();
         return igb.addToolbarAction(genericAction);
     }
 
     @Override
     public void removeToolbarAction(GenericAction action) {
-        IGB igb = (IGB) IGB.getSingleton();
+        IGB igb = IGB.getInstance();
         igb.removeToolbarAction(action);
     }
 

@@ -26,7 +26,7 @@ public class ThresholdReader {
 
     private ThresholdReader() {
         super();
-        this.seqmap = IGB.getSingleton().getMapView().getSeqMap();
+        this.seqmap = IGB.getInstance().getMapView().getSeqMap();
     }
 
     public int getCurrentThresholdValue() {
@@ -34,7 +34,7 @@ public class ThresholdReader {
     }
 
     public double getAsZoomerPercent(int threshold) {
-        double scale = IGB.getSingleton().getMapView().getPixelsToCoord(0, threshold);
+        double scale = IGB.getInstance().getMapView().getPixelsToCoord(0, threshold);
         return seqmap.zoomerValueFromScale(NeoAbstractWidget.X, scale);
     }
 

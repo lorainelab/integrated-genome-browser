@@ -1,6 +1,5 @@
 package com.affymetrix.igb.shared;
 
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.operator.Operator;
@@ -14,10 +13,11 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class TrackUtils {
         makeNonPersistentStyle((SymWithProps) sym, method, operator, preferredStyle);
         BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
         aseq.addAnnotation(sym);
-        Application.getSingleton().getMapView().setAnnotatedSeq(aseq, true, true);
+        IGB.getInstance().getMapView().setAnnotatedSeq(aseq, true, true);
     }
 
     private ITrackStyleExtended makeNonPersistentStyle(SymWithProps sym, String human_name, Operator operator, ITrackStyleExtended preferredStyle) {

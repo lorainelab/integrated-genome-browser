@@ -15,7 +15,6 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
@@ -46,14 +45,14 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
     private Map<ITrackStyleExtended, ITrackStyleExtended> style2Style;
 
     AltSpliceSeqMapView(boolean b) {
-        super(b, "AltSpliceSeqMapView", Application.getSingleton().getFrame());
+        super(b, "AltSpliceSeqMapView", IGB.getInstance().getFrame());
         if (tierLabelManager != null) {
             tierLabelManager.setDoGraphSelections(false);
         }
         report_hairline_position_in_status_bar = false;
         report_status_in_status_bar = false;
         setEdgeMatching(false);
-        IGB.getSingleton().getMapView().addToRefreshList(this);
+        IGB.getInstance().getMapView().addToRefreshList(this);
     }
 
     @Override

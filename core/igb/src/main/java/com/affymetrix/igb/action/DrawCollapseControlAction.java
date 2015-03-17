@@ -36,7 +36,7 @@ public class DrawCollapseControlAction extends GenericAction {
         super.actionPerformed(e);
         boolean b = (Boolean) getValue(SELECTED_KEY);
         IGBStateProvider.setDrawCollapseControl(b);
-        IGB.getSingleton().getMapView().getSeqMap().updateWidget();
+        IGB.getInstance().getMapView().getSeqMap().updateWidget();
     }
 
     @Override

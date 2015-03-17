@@ -26,6 +26,6 @@ public class NextSearchSpanAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        IGB.getSingleton().getMapView().getMapRangeBox().nextSpan();
+        IGB.getInstance().getMapView().getMapRangeBox().nextSpan();
     }
 }

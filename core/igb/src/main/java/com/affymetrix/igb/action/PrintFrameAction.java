@@ -34,7 +34,7 @@ public class PrintFrameAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        ComponentPagePrinter cprinter = new ComponentPagePrinter(IGB.getSingleton().getFrame());
+        ComponentPagePrinter cprinter = new ComponentPagePrinter(IGB.getInstance().getFrame());
 
         try {
             cprinter.print();

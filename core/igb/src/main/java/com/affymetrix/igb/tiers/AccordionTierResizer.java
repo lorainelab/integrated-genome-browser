@@ -4,9 +4,9 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.Application;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -113,7 +113,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
     public void mouseMoved(MouseEvent theEvent) {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
-        AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+        AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
         assert m != src; // This seems odd.
         // Seems both cursors are the same, but you never know...
         if (atResizeTop(nevt)) {
@@ -123,7 +123,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
             m.setCursor(Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR));
             wasResizeable = true;
         } else if (wasResizeable) {
-            m.setCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+            m.setCursor(IGB.getInstance().getMapView().getMapMode().defCursor);
             wasResizeable = false;
         }
         // Otherwise, leave it alone. Other listeners can (and will) handle it.
@@ -152,7 +152,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
     @Override
     public void mouseEntered(MouseEvent theEvent) {
         if (this.dragStarted) {
-            AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+            AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
             m.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
         }
     }
@@ -162,7 +162,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
 
         // We only want to react when we're supposed to.
         // i.e. when we have set the mouse cursor.
-        AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+        AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
         assert m != evt.getSource(); // This seems odd.
         Cursor c = m.getCursor();
         if (c != Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR)
@@ -171,7 +171,7 @@ public class AccordionTierResizer extends MouseInputAdapter {
         }
 
         if (null == this.gviewer) {
-            this.gviewer = Application.getSingleton().getMapView();
+            this.gviewer = IGB.getInstance().getMapView();
             assert null != this.gviewer;
         }
         NeoMouseEvent nevt = (NeoMouseEvent) evt;

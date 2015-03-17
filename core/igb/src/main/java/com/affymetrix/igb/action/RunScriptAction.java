@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
-import com.affymetrix.igb.Application;
+
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.genometry.util.FileTracker;
@@ -54,7 +54,7 @@ public final class RunScriptAction extends GenericAction {
                 "22x22/actions/run_script.png",
                 KeyEvent.VK_R, null, true);
 
-        this.gviewerFrame = IGB.getSingleton().getFrame();
+        this.gviewerFrame = IGB.getInstance().getFrame();
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
     }
 
@@ -119,7 +119,7 @@ public final class RunScriptAction extends GenericAction {
     }
 
     public void runScript(final String filePath) {
-        final IGB igb = ((IGB) Application.getSingleton());
+        final IGB igb = ((IGB) IGB.getInstance());
         synchronized (igb) {
             if (igb.getScriptWorker() != null) {
                 ErrorHandler.errorPanel("script error", "another script is running, only one can run at a time", Level.SEVERE);

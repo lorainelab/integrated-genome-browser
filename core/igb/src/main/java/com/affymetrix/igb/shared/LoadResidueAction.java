@@ -5,7 +5,6 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -46,7 +45,7 @@ public class LoadResidueAction extends GenericAction {
         //Check if sequence is already loaded
         if (!seq.isAvailable(newSpan)) {
             boolean new_residue_loaded = false;
-            Application app = Application.getSingleton();
+            IGB app = IGB.getInstance();
             JFrame frame = (app == null) ? null : app.getFrame();
             final JDialog dialog = new JDialog(frame, "Loading...");
             JLabel message = new JLabel("Residues are being loaded please wait");
@@ -79,7 +78,7 @@ public class LoadResidueAction extends GenericAction {
 
             if (new_residue_loaded) {
                 ThreadUtils.runOnEventQueue(() -> {
-                    final SeqMapView smv = IGB.getSingleton().getMapView();
+                    final SeqMapView smv = IGB.getInstance().getMapView();
                     smv.setAnnotatedSeq(span.getBioSeq(), true, true, true);
                 });
             }

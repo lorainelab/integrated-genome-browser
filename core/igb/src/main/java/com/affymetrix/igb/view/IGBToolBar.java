@@ -123,6 +123,17 @@ public class IGBToolBar extends JToolBar {
         super.validate();
 
         setSelectionText(null, null, null);
+        RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener() {
+            @Override
+            public void selectionRefreshed() {
+                for (Component c : toolbarItemPanel.getComponents()) {
+                    if (c instanceof JButton && ((JButton) c).getAction() instanceof AbstractAction) {
+                        AbstractAction action = (AbstractAction) ((JButton) c).getAction();
+                        c.setEnabled(action.isEnabled());
+                    }
+                }
+            }
+        };
 
         Selections.addRefreshSelectionListener(refreshSelectionListener);
     }
@@ -247,18 +258,6 @@ public class IGBToolBar extends JToolBar {
         }
         return ordinal;
     }
-
-    private RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener() {
-        @Override
-        public void selectionRefreshed() {
-            for (Component c : toolbarItemPanel.getComponents()) {
-                if (c instanceof JButton && ((JButton) c).getAction() instanceof AbstractAction) {
-                    AbstractAction action = (AbstractAction) ((JButton) c).getAction();
-                    c.setEnabled(action.isEnabled());
-                }
-            }
-        }
-    };
 
     private final MouseListener continuousActionListener = new MouseAdapter() {
         private Timer timer;

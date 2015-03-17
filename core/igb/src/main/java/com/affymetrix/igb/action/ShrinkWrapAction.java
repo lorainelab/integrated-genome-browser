@@ -19,7 +19,7 @@ public class ShrinkWrapAction extends GenericAction {
 
     private ShrinkWrapAction() {
         super(BUNDLE.getString("toggleShrinkWrapping"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_S);
-        this.putValue(SELECTED_KEY, IGB.getSingleton().getMapView().getShrinkWrap());
+        this.putValue(SELECTED_KEY, IGB.getInstance().getMapView().getShrinkWrap());
     }
 
 //	static{
@@ -32,7 +32,7 @@ public class ShrinkWrapAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        SeqMapView map_view = IGB.getSingleton().getMapView();
+        SeqMapView map_view = IGB.getInstance().getMapView();
         map_view.setShrinkWrap(!map_view.getShrinkWrap());
     }
 

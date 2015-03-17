@@ -42,7 +42,7 @@ import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.Timer;
 import com.affymetrix.genometry.util.VersionDiscoverer;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
@@ -114,7 +114,7 @@ public final class GeneralLoadUtils {
      */
     private static final String SPECIES_SYNONYM_FILE = "/species.txt";
     private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
-    private final static SeqMapView gviewer = Application.getSingleton().getMapView();
+    private final static SeqMapView gviewer = IGB.getInstance().getMapView();
     // versions associated with a given genome.
     static final SetMultimap<String, GenericVersion> species2genericVersionList
             = Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, GenericVersion>create());// the list of versions associated with the species
@@ -288,7 +288,7 @@ public final class GeneralLoadUtils {
                         return false;
                     }
                 } else {
-                    Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+                    IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
                 }
                 if (gServer.serverType == ServerTypeI.QuickLoad) {
 
@@ -1028,18 +1028,18 @@ public final class GeneralLoadUtils {
             }
             String serverDescription = version.gServer.serverName + " " + version.gServer.serverType;
 //			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
-//			Application.getSingleton().addNotLockedUpMsg(msg);
+//			IGB.getInstance().addNotLockedUpMsg(msg);
             if (version.gServer.serverType != null && version.gServer.serverType.getResidues(version, genomeVersionName, aseq, min, max, span)) {
                 residuesLoaded = true;
             }
-//			Application.getSingleton().removeNotLockedUpMsg(msg);
+//			IGB.getInstance().removeNotLockedUpMsg(msg);
             if (residuesLoaded) {
-                Application.getSingleton().setStatus(MessageFormat.format(IGBConstants.BUNDLE.getString("completedLoadingSequence"),
+                IGB.getInstance().setStatus(MessageFormat.format(IGBConstants.BUNDLE.getString("completedLoadingSequence"),
                         seq_name, min, max, serverDescription));
                 return true;
             }
         }
-        Application.getSingleton().setStatus("");
+        IGB.getInstance().setStatus("");
         return false;
     }
 
@@ -1076,7 +1076,7 @@ public final class GeneralLoadUtils {
             return true;
         }
 
-//		Application.getSingleton().addNotLockedUpMsg("Loading residues for "+aseq.getID());
+//		IGB.getInstance().addNotLockedUpMsg("Loading residues for "+aseq.getID());
         return getResidues(versionsWithChrom, genomeVersionName, aseq, min, max, span);
     }
 
@@ -1534,7 +1534,7 @@ public final class GeneralLoadUtils {
      */
     public static void loadAllSymmetriesThread(final GenericFeature feature) {
         final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
-        final SeqMapView gviewer = Application.getSingleton().getMapView();
+        final SeqMapView gviewer = IGB.getInstance().getMapView();
 
         CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.featureName) {
 

@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.util.ColorUtils;
@@ -131,7 +131,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                 return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
             }
 
-            Application.getSingleton().addNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
+            IGB.getInstance().addNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
 
             return GeneralLoadUtils.loadFeaturesForSym(feature, optimized_sym);
         } catch (Exception ex) {
@@ -620,11 +620,11 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
                         //if (lastUsedGlyph == saveDetailGlyph) {
                         smv.repackTheTiers(true, true);
                         smv.getSeqMap().updateWidget();
-                        Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
+                        IGB.getInstance().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
                         //}
                     });
                 } else {
-                    Application.getSingleton().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
+                    IGB.getInstance().removeNotLockedUpMsg("Loading " + getAnnotStyle().getTrackName());
                 }
                 return null;
             }

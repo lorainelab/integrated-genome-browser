@@ -188,12 +188,12 @@ public class ExportDialog extends HeadLessExport {
      */
     private void initView() {
         if (seqMap == null) {
-            seqMap = IGB.getSingleton().getMapView().getSeqMap();
-            wholeFrame = IGB.getSingleton().getFrame();
+            seqMap = IGB.getInstance().getMapView().getSeqMap();
+            wholeFrame = IGB.getInstance().getFrame();
             mainView = seqMap.getNeoCanvas();
             AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
             mainViewWithLabels = tm.getSplitPane();
-            AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+            AltSpliceView slice_view = (AltSpliceView) (IGB.getInstance()).getView(AltSpliceView.class.getName());
             slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
             svseqMap = slice_view.getSplicedView().getSeqMap();
         }
@@ -229,7 +229,7 @@ public class ExportDialog extends HeadLessExport {
             initSpinner(unit);
 
             staticFrame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
-            staticFrame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+            staticFrame.setLocationRelativeTo(IGB.getInstance().getFrame());
             staticFrame.getRootPane().setDefaultButton(okButton);
         } else {
             initSpinner((String) unitComboBox.getSelectedItem());

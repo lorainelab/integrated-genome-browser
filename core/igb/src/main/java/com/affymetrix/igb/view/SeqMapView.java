@@ -67,7 +67,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.AutoScroll;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -707,7 +706,7 @@ public class SeqMapView extends JPanel
 
     public void dataRemoved() {
         setAnnotatedSeq(aseq);
-        AltSpliceView slice_view = (AltSpliceView) ((IGB) IGB.getSingleton()).getView(AltSpliceView.class.getName());
+        AltSpliceView slice_view = (AltSpliceView) (IGB.getInstance()).getView(AltSpliceView.class.getName());
         if (slice_view != null) {
             slice_view.getSplicedView().dataRemoved();
         }
@@ -1570,14 +1569,14 @@ public class SeqMapView extends JPanel
         } else {
             props = determineProps(sym_used_for_title);
         }
-        Application.getSingleton().setSelField(props, title, sym_used_for_title);
+        IGB.getInstance().setSelField(props, title, sym_used_for_title);
     }
 
     private void setStatus(String title) {
         if (!report_status_in_status_bar) {
             return;
         }
-        Application.getSingleton().setStatus(title, false);
+        IGB.getInstance().setStatus(title, false);
     }
 
     // Compare the code here with SymTableView.selectionChanged()

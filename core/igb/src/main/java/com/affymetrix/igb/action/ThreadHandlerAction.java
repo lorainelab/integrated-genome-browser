@@ -6,7 +6,7 @@ import com.affymetrix.genometry.thread.CThreadEvent;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadListener;
 import com.affymetrix.genometry.thread.CThreadWorker;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPButton;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -66,7 +66,7 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
             return;
         }
 
-        JFrame frame = Application.getSingleton().getFrame();
+        JFrame frame = IGB.getInstance().getFrame();
         final int x = (int) frame.getAlignmentX();
         final int y = (int) frame.getAlignmentY() + frame.getHeight() - ((size + 1) * 29);
         runningTasks.show(frame, x, y);
@@ -133,9 +133,9 @@ public class ThreadHandlerAction extends GenericAction implements CThreadListene
     public void heardThreadEvent(CThreadEvent cte) {
         CThreadWorker<?, ?> w = (CThreadWorker<?, ?>) cte.getSource();
         if (cte.getState() == CThreadEvent.STARTED) {
-            Application.getSingleton().addNotLockedUpMsg(w.getMessage());
+            IGB.getInstance().addNotLockedUpMsg(w.getMessage());
         } else {
-            Application.getSingleton().removeNotLockedUpMsg(w.getMessage());
+            IGB.getInstance().removeNotLockedUpMsg(w.getMessage());
         }
 
         if (CThreadHolder.getInstance().getCThreadWorkerCount() == 0 || !runningTasks.isShowing()) {

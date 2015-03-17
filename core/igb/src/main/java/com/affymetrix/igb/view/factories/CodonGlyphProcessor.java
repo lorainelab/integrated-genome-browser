@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import com.affymetrix.igb.glyph.CodonGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
@@ -8,7 +7,8 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.glyph.CodonGlyph;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -44,7 +44,7 @@ public class CodonGlyphProcessor {
                 int prevCodeSize = codeSize;
                 codeSize = PreferenceUtils.getIntParam(CodonGlyph.CODON_GLYPH_CODE_SIZE, CodonGlyph.default_codon_glyph_code_size);
                 if (prevCodeSize != codeSize) {
-                    ThreadUtils.runOnEventQueue(() -> Application.getSingleton().getMapView().setAnnotatedSeq(Application.getSingleton().getMapView().getAnnotatedSeq(), true, true));
+                    ThreadUtils.runOnEventQueue(() -> IGB.getInstance().getMapView().setAnnotatedSeq(IGB.getInstance().getMapView().getAnnotatedSeq(), true, true));
                 }
             }
         }

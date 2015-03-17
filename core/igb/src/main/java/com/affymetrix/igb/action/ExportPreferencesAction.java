@@ -45,7 +45,7 @@ public class ExportPreferencesAction extends GenericAction {
     public void actionPerformed(ActionEvent ae) {
         super.actionPerformed(ae);
         JFileChooser chooser = PreferenceUtils.getJFileChooser();
-        int option = chooser.showSaveDialog(IGB.getSingleton().getMapView().getSeqMap().getNeoCanvas());
+        int option = chooser.showSaveDialog(IGB.getInstance().getMapView().getSeqMap().getNeoCanvas());
         if (option == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();
             try {

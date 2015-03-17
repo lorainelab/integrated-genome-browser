@@ -24,14 +24,12 @@ import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
@@ -40,6 +38,7 @@ import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -106,7 +105,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     SeqGroupView(IgbService _igbService) {
         igbService = _igbService;
-        gviewer = Application.getSingleton().getMapView();
+        gviewer = IGB.getInstance().getMapView();
         selectVersionPanel = new SelectVersionPanel();
         seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
 
@@ -896,18 +895,18 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
         gmodel.addGroupSelectionListener(listener);
 
-        if (IGB.getSingleton().getFrame().isVisible()) {
+        if (IGB.getInstance().getFrame().isVisible()) {
             CThreadHolder.getInstance().execute(versionName, worker);
         } else {
             final ComponentListener componentListener = new ComponentAdapter() {
 
                 @Override
                 public void componentShown(ComponentEvent e) {
-                    IGB.getSingleton().getFrame().removeComponentListener(this);
+                    IGB.getInstance().getFrame().removeComponentListener(this);
                     CThreadHolder.getInstance().execute(versionName, worker);
                 }
             };
-            IGB.getSingleton().getFrame().addComponentListener(componentListener);
+            IGB.getInstance().getFrame().addComponentListener(componentListener);
         }
     }
 

@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.affymetrix.igb.swing.script.ScriptManager;
@@ -45,7 +45,7 @@ public class SaveScriptAction extends GenericAction {
                 "Script File"));
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.rescanCurrentDirectory();
-        int option = chooser.showSaveDialog(Application.getSingleton().getFrame().getContentPane());
+        int option = chooser.showSaveDialog(IGB.getInstance().getFrame().getContentPane());
         if (option == JFileChooser.APPROVE_OPTION) {
             try {
                 File f = chooser.getSelectedFile();

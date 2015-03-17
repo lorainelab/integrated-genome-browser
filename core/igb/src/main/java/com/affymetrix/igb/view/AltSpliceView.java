@@ -126,7 +126,7 @@ public class AltSpliceView extends IgbTabPanel
         if (tlman != null) {
             tlman.addPopupListener(this);
         }
-        IGB.getSingleton().getMapView().addToRefreshList(this);
+        IGB.getInstance().getMapView().addToRefreshList(this);
         resetAll();
     }
 

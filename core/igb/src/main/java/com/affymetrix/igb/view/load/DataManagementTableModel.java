@@ -8,15 +8,15 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,13 +58,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private List<TrackStyle> currentStyles;
     public List<VirtualFeature> virtualFeatures;
     public List<GenericFeature> features;
-    private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<>(); // Remember the load strategy for un-hidden restoration				
+    private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<>(); // Remember the load strategy for un-hidden restoration
 
     DataManagementTableModel(GeneralLoadView glv) {
         this.glv = glv;
         this.features = null;
         this.virtualFeatures = new ArrayList<>();
-        Application igb = Application.getSingleton();
+        IGB igb = IGB.getInstance();
         if (igb != null) {
             smv = igb.getMapView();
             map = (AffyLabelledTierMap) smv.getSeqMap();
@@ -156,10 +156,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //
 //	private class FeatureTierComparator implements Comparator<VirtualFeature> {
 //		Map<VirtualFeature,Integer> vfToPos;
-//		
+//
 //		FeatureTierComparator() {
 //			vfToPos = new HashMap<VirtualFeature,Integer>();
-//			
+//
 //			int pos = 0;
 //			List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
 //			int size = orderedGlyphs.size();
@@ -224,7 +224,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //					vfToPos.put(tempVirtualFeature, pos++);
 //					continue;
 //				}
-//			
+//
 //				//Temporary fix to show joined graph features when sequence is changed.
 //				vf = style2Feature.get(tempVirtualFeature.getStyle());
 //				if (vf != null && vf.getStyle().getJoin() && !vfToPos.containsKey(vf)) {
@@ -238,7 +238,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //					vfToPos.put(tempVirtualFeature, pos++);
 //				}
 //			}
-//			
+//
 //			List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
 //			size = floatingGraphGlyphs.size();
 //			for (int i = 0; i < size; i++) {
@@ -249,12 +249,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				}
 //			}
 //		}
-//		
+//
 //		@Override
 //		public int compare(VirtualFeature o1, VirtualFeature o2) {
 //			return vfToPos.get(o1).compareTo(vfToPos.get(o2));
 //		}
-//		
+//
 //	}
     private final static class featureTableComparator implements Comparator<GenericFeature> {
 
@@ -383,7 +383,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         } //		else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
         //				&& !vFeature.isPrimary()) {
         //			return false;
-        //		} 
+        //		}
         else if (smv.getFloaterGlyph().getChildren() != null
                 && col != DELETE_FEATURE_COLUMN && col != FOREGROUND_COLUMN) {
             for (GlyphI i : smv.getFloaterGlyph().getChildren()) {

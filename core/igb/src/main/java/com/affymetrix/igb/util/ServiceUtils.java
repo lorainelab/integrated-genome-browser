@@ -183,8 +183,8 @@ public final class ServiceUtils {
 
         }
 
-        GenometryModel.getInstance().setSelectedSymmetriesAndSeq(sym_list, IGB.getSingleton().getMapView().getSeqMap());
-        IGB.getSingleton().getMapView().setZoomSpotX(midpoint);
-        IGB.getSingleton().getMapView().setZoomSpotY(0);
+        GenometryModel.getInstance().setSelectedSymmetriesAndSeq(sym_list, IGB.getInstance().getMapView().getSeqMap());
+        IGB.getInstance().getMapView().setZoomSpotX(midpoint);
+        IGB.getInstance().getMapView().setZoomSpotY(0);
     }
 }

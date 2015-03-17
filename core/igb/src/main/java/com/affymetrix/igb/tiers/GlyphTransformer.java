@@ -1,10 +1,10 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.igb.Application;
-import com.lorainelab.igb.services.search.ITransformableTierGlyph;
+import com.affymetrix.igb.IGB;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -31,7 +31,7 @@ public class GlyphTransformer {
     private static final int SPEED = 10;
 
     private static JWindow getWindow(JComponent... components) {
-        JWindow window = new JWindow(Application.getSingleton().getFrame());
+        JWindow window = new JWindow(IGB.getInstance().getFrame());
         for (JComponent component : components) {
             window.add(component);
         }
@@ -161,7 +161,7 @@ public class GlyphTransformer {
         map.getZoomer(AffyLabelledTierMap.Y).addAdjustmentListener(listener);
 
 //		scrollbar.addAdjustmentListener(listener);
-//		Application.getSingleton().getFrame().addComponentListener(listener);
+//		IGB.getInstance().getFrame().addComponentListener(listener);
         // Set value for the glyph
         map.getZoomer(AffyLabelledTierMap.Y).setValue((int) zoomtrans.inverseTransform(AffyLabelledTierMap.Y, svmg.getScale()));
     }
@@ -179,7 +179,7 @@ public class GlyphTransformer {
         }
 
 //		scrollbar.removeAdjustmentListener(listener);
-//		Application.getSingleton().getFrame().removeComponentListener(listener);
+//		IGB.getInstance().getFrame().removeComponentListener(listener);
         // Restore value
         map.getZoomer(AffyLabelledTierMap.Y).setValue(zoom_pos);
     }

@@ -41,7 +41,7 @@ public class RequestFeatureActionNew extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         JFrame frame = new BugOrFeatureRequestForm(true);
-        frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+        frame.setLocationRelativeTo(IGB.getInstance().getFrame());
         frame.setVisible(true);
     }
 }

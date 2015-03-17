@@ -6,15 +6,15 @@ import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
-import com.affymetrix.igb.tiers.TrackStylePropertyListener;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.tiers.TrackStylePropertyListener;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -87,7 +87,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
         b1Text = "Select All";
         b2Text = "Restore to Default";
         track = "Track Name";
-        Application igb = Application.getSingleton();
+        IGB igb = IGB.getInstance();
         if (igb != null) {
             smv = igb.getMapView();
         }

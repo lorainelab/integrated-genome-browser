@@ -28,13 +28,13 @@ public class MaxSlotsChooser extends javax.swing.JFrame {
         this.initial = theInitialValue;
         this.optimum = theOptimalValue;
         this.ac = ac;
-        setLocationRelativeTo(IGB.getSingleton().getFrame());
+        setLocationRelativeTo(IGB.getInstance().getFrame());
         init();
     }
 
     private void init() {
         SwingUtilities.invokeLater(() -> {
-            setLocationRelativeTo(IGB.getSingleton().getFrame());
+            setLocationRelativeTo(IGB.getInstance().getFrame());
             initComponents();
             pack();
         });

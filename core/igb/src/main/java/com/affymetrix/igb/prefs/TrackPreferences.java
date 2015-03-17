@@ -8,7 +8,7 @@ import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
@@ -359,13 +359,13 @@ public abstract class TrackPreferences implements ListSelectionListener {
     public void annotationLabelAutoSizeCheckBoxActionPerformed() {
         EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = !EfficientLabelledLineGlyph.AUTO_SIZE_LABELS;
         annotationLabelSizeComboBox.setEnabled(!EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
-        Application.getSingleton().getMapView().getSeqMap().updateWidget();
+        IGB.getInstance().getMapView().getSeqMap().updateWidget();
     }
 
     public void annotationLabelSizeComboBoxActionPerformed() {
         float annotationLabelSize = Float.parseFloat(annotationLabelSizeComboBox.getSelectedItem().toString());
         EfficientLabelledLineGlyph.OVERRIDE_FONT = new Font(Font.MONOSPACED, Font.PLAIN, Math.round(annotationLabelSize));
-        Application.getSingleton().getMapView().getSeqMap().updateWidget();
+        IGB.getInstance().getMapView().getSeqMap().updateWidget();
     }
 
     class AnnotationLabelCombobox extends JComboBox {

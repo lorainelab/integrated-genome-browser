@@ -475,9 +475,9 @@ public final class ServerList {
             }
 
 //			if (server.serverType == null) {
-//				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server);
+//				IGB.getInstance().removeNotLockedUpMsg("Loading " + textName + " " + server);
 //			} else if (server.serverType != ServerTypeI.LocalFiles) {
-//				Application.getSingleton().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
+//				IGB.getInstance().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
 //			}
         }
 

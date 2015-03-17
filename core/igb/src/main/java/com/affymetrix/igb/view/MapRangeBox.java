@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.jidesoft.hints.ListDataIntelliHints;
@@ -91,7 +91,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         BASE_SEARCH_MODES.add(new CenterSearch());
     }
 
-    IStatus application_statusbar = text -> Application.getSingleton().setStatus(text);
+    IStatus application_statusbar = text -> IGB.getInstance().setStatus(text);
 
     private static abstract class EmptySearch {
 
@@ -528,21 +528,21 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             foundSpans = mergedSpans;
             spanPointer = 0;
             if (foundSpans.size() > 1) {
-//				Application.getSingleton().setStatus("found " + foundSpans.size() + " spans");
-                Application.getSingleton().setStatus(null);
+//				IGB.getInstance().setStatus("found " + foundSpans.size() + " spans");
+                IGB.getInstance().setStatus(null);
 //				NextSearchSpanAction.getAction().setEnabled(true);
             } else {
 //				NextSearchSpanAction.getAction().setEnabled(false);
             }
         } else {
 //			NextSearchSpanAction.getAction().setEnabled(false);
-            Application.getSingleton().setStatus("unable to match entry");
+            IGB.getInstance().setStatus("unable to match entry");
         }
     }
 
     public boolean nextSpan() {
         if (spanPointer + 1 >= foundSpans.size()) {
-            Application.getSingleton().setStatus("no span to zoom to");
+            IGB.getInstance().setStatus("no span to zoom to");
             return false;
         }
         spanPointer++;
@@ -551,7 +551,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         zoomToSeqAndSpan(gview, foundSpans.get(spanPointer));
         foundSpans = saveFoundSpans;
         spanPointer = saveSpanPointer;
-        Application.getSingleton().setStatus("zoom to span " + (spanPointer + 1) + " of " + foundSpans.size());
+        IGB.getInstance().setStatus("zoom to span " + (spanPointer + 1) + " of " + foundSpans.size());
 //		NextSearchSpanAction.getAction().setEnabled(spanPointer + 1 < foundSpans.size());
         return true;
     }

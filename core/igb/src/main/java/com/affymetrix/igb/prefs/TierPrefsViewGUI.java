@@ -4,7 +4,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import java.awt.event.WindowEvent;
@@ -28,7 +28,7 @@ public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowList
 
         tpv = TierPrefsView.getSingleton();
 
-        Application igb = Application.getSingleton();
+        IGB igb = IGB.getInstance();
         if (igb != null) {
             smv = igb.getMapView();
             smv.addToRefreshList(this);

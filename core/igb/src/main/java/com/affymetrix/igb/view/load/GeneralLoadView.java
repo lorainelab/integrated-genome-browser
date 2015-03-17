@@ -5,7 +5,6 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
@@ -18,32 +17,33 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInst;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithResidues;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public final class GeneralLoadView {
      */
     private GeneralLoadView(IgbService _igbService) {
         igbService = _igbService;
-        gviewer = Application.getSingleton().getMapView();
+        gviewer = IGB.getInstance().getMapView();
         initComponents();
         GeneralLoadUtils.loadServerMapping();
         PreferencesPanel.getSingleton();

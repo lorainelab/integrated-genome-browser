@@ -89,7 +89,7 @@ public class SelectionRuleAction extends GenericAction {
         }
         messageFrame.setMinimumSize(new Dimension(250, 100));
         messageFrame.pack();
-        messageFrame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+        messageFrame.setLocationRelativeTo(IGB.getInstance().getFrame());
         messageFrame.setVisible(true);
     }
 

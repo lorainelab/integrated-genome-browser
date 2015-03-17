@@ -4,10 +4,10 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.igb.Application;
-import com.lorainelab.igb.services.search.ITransformableTierGlyph;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -46,7 +46,7 @@ public class NewTierResizer extends MouseInputAdapter {
     public void mouseMoved(MouseEvent theEvent) {
         NeoMouseEvent nevt = (NeoMouseEvent) theEvent;
         Object src = theEvent.getSource();
-        AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+        AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
         assert m != src; // This seems odd.
         if (atResizeBottom(nevt)) {
             m.setCursor(ourCursor);
@@ -79,7 +79,7 @@ public class NewTierResizer extends MouseInputAdapter {
     @Override
     public void mouseEntered(MouseEvent theEvent) {
         if (this.dragStarted) {
-            AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+            AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
             m.setCursor(ourCursor);
         }
     }
@@ -89,7 +89,7 @@ public class NewTierResizer extends MouseInputAdapter {
 
         // We only want to react when we're supposed to.
         // i.e. when we have set the mouse cursor.
-        AffyTieredMap m = Application.getSingleton().getMapView().getSeqMap();
+        AffyTieredMap m = IGB.getInstance().getMapView().getSeqMap();
         assert m != evt.getSource(); // This seems odd.
         Cursor c = m.getCursor();
         if (c != ourCursor) {
@@ -97,7 +97,7 @@ public class NewTierResizer extends MouseInputAdapter {
         }
 
         if (null == this.gviewer) {
-            this.gviewer = Application.getSingleton().getMapView();
+            this.gviewer = IGB.getInstance().getMapView();
             assert null != this.gviewer;
         }
         NeoMouseEvent nevt = (NeoMouseEvent) evt;
@@ -140,7 +140,7 @@ public class NewTierResizer extends MouseInputAdapter {
                      */
                     ) {
 //				this.gviewer.getSeqMap().setFloatBounds(NeoWidget.Y,
-//					this.gviewer.getSeqMap().getCoordBounds().y, 
+//					this.gviewer.getSeqMap().getCoordBounds().y,
 //					this.gviewer.getSeqMap().getCoordBounds().height + delta);
 
                 double y = this.upperGl.getCoordBox().getY() - delta;

@@ -4,7 +4,6 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -42,7 +41,7 @@ public class ClearPreferencesAction extends GenericAction {
 
             try {
                 XmlStylesheetParser.removeUserStylesheetFile();
-                ((IGB) Application.getSingleton()).defaultCloseOperations();
+                ((IGB) IGB.getInstance()).defaultCloseOperations();
                 PreferenceUtils.clearPreferences();
                 System.exit(0);
             } catch (Exception ex) {

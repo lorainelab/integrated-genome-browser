@@ -7,13 +7,13 @@ import com.affymetrix.genometry.event.PropertyHolder;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MisMatchGraphSym;
-import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -23,11 +23,11 @@ import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.shared.TrackClickListener;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.shared.TrackClickListener;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -256,7 +256,7 @@ public final class TierLabelManager implements PropertyHolder {
                     dragLabel(gls, nevt);
 //					if(selected_glyphs.size() == 1){
 //						transformTier(gl);
-//					}			
+//					}
                 }
                 tiermap.updateWidget();
             }
@@ -273,7 +273,7 @@ public final class TierLabelManager implements PropertyHolder {
             if (evt instanceof NeoMouseEvent) {
                 NeoMouseEvent nevt = (NeoMouseEvent) evt;
                 double y = nevt.getCoordY();
-                Application.getSingleton().getMapView().setZoomSpotY(y);
+                IGB.getInstance().getMapView().setZoomSpotY(y);
             }
         }
 
@@ -751,11 +751,11 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     private void setCurrentCursor(Cursor cursor) {
-        Application.getSingleton().getMapView().getSeqMap().setCursor(cursor);
+        IGB.getInstance().getMapView().getSeqMap().setCursor(cursor);
     }
 
     private void restoreCursor() {
-        setCurrentCursor(Application.getSingleton().getMapView().getMapMode().defCursor);
+        setCurrentCursor(IGB.getInstance().getMapView().getMapMode().defCursor);
     }
 
     /**

@@ -5,7 +5,6 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import java.util.prefs.Preferences;
 import javax.swing.Action;
@@ -35,14 +34,14 @@ public class GenericActionRegister {
                     genericAction.putValue(Action.ACCELERATOR_KEY, ks);
                 }
             }
-            ((IGB) Application.getSingleton()).addAction(genericAction);
+            ((IGB) IGB.getInstance()).addAction(genericAction);
             boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
             if (isToolbar) {
                 int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId() + ".index", -1);
                 if (index == -1) {
-                    ((IGB) Application.getSingleton()).addToolbarAction(genericAction);
+                    ((IGB) IGB.getInstance()).addToolbarAction(genericAction);
                 } else {
-                    ((IGB) Application.getSingleton()).addToolbarAction(genericAction, index);
+                    ((IGB) IGB.getInstance()).addToolbarAction(genericAction, index);
                 }
             }
         }

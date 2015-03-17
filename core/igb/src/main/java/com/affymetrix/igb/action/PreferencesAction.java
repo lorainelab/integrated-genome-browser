@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
@@ -42,7 +42,7 @@ public class PreferencesAction extends GenericAction {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
 
-        Application igb = Application.getSingleton();
+        IGB igb = IGB.getInstance();
         List<TierLabelGlyph> tier_label_glyphs = null;
         if (igb != null) {
             tier_label_glyphs = igb.getMapView().getTierManager().getSelectedTierLabels();

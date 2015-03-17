@@ -27,7 +27,7 @@ public class CenterAtHairlineAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        SeqMapView gviewer = IGB.getSingleton().getMapView();
+        SeqMapView gviewer = IGB.getInstance().getMapView();
         gviewer.centerAtHairline();
     }
 }

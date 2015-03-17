@@ -198,7 +198,7 @@ public final class PreferencesPanel extends JPanel {
              * sets the Preferences window at the centre of the IGB window
              */
             frame.addWindowListener(singleton.tpvGUI);
-            frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+            frame.setLocationRelativeTo(IGB.getInstance().getFrame());
         }
 
         singleton.tpvGUI.refresh();	// update component list

@@ -6,7 +6,7 @@ import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -88,7 +88,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
                     String speciesName = (String) obj;
                     final List<String> versionNames = SeqGroupView.getInstance().getAllVersions(speciesName);
                     if (versionNames.isEmpty()) {
-                        Application.getSingleton().setStatus(speciesName + " Not Available", true);
+                        IGB.getInstance().setStatus(speciesName + " Not Available", true);
                         ErrorHandler.errorPanel("NOTICE", speciesName + " not available at this time. "
                                 + "Please check that the appropriate data source is available.", Level.WARNING);
                         return;
@@ -97,7 +97,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
                     AnnotatedSeqGroup group = gmodel.getSeqGroup(groupStr);
 
                     if (group == null || group.getEnabledVersions().isEmpty()) {
-                        Application.getSingleton().setStatus(groupStr + " Not Available", true);
+                        IGB.getInstance().setStatus(groupStr + " Not Available", true);
                         ErrorHandler.errorPanel("NOTICE", groupStr + " not available at this time. "
                                 + "Please check that the appropriate data source is available.", Level.WARNING);
                         return;

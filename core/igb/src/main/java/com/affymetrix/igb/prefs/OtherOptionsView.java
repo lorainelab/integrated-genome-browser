@@ -287,7 +287,7 @@ public class OtherOptionsView extends IPrefEditorComponent {
         );
 
         if(displayOption.isSelected())
-        ErrorHandler.setDisplayHandler(IGB.getSingleton().getStatusBar());
+        ErrorHandler.setDisplayHandler(IGB.getInstance().getStatusBar());
         else
         ErrorHandler.setDisplayHandler(null);
         displayOption.addItemListener(new java.awt.event.ItemListener() {
@@ -441,7 +441,7 @@ public class OtherOptionsView extends IPrefEditorComponent {
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged
         if (displayOption.isSelected()) {
-            com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getSingleton().getStatusBar());
+            com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getInstance().getStatusBar());
         } else {
             com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);
         }

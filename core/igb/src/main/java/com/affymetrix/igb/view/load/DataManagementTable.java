@@ -7,7 +7,7 @@ import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.ComboBoxRenderer;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.JRPTextFieldTableCellRenderer;
@@ -194,7 +194,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 
         rmMap = new HashMap<>();
 
-        Application igb = Application.getSingleton();
+        IGB igb = IGB.getInstance();
         if (igb != null) {
             smv = igb.getMapView();
         }

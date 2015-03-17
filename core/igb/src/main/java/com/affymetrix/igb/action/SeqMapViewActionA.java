@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -39,7 +39,7 @@ public abstract class SeqMapViewActionA extends GenericAction {
     protected SeqMapView getSeqMapView() {
         if (gviewer == null) {
             if (id == null) {
-                gviewer = Application.getSingleton().getMapView();
+                gviewer = IGB.getInstance().getMapView();
             } else {
                 gviewer = (SeqMapView) ScriptManager.getInstance().getWidget(id);
             }

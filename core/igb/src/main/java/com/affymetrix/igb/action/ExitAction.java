@@ -40,7 +40,7 @@ public class ExitAction extends GenericAction {
         super.actionPerformed(e);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
                 new WindowEvent(
-                        IGB.getSingleton().getFrame(),
+                        IGB.getInstance().getFrame(),
                         WindowEvent.WINDOW_CLOSING));
     }
 }

@@ -202,7 +202,7 @@ public final class LocalUrlCacher {
 
         // if url is a file url, and not caching files, then just directly return stream
         if (isFile(url)) {
-            //Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
+            //IGB.getInstance().logInfo("URL is file url, so not caching: " + furl);
             return getUncachedFileStream(url, sessionId, fileMayNotExist);
         }
 

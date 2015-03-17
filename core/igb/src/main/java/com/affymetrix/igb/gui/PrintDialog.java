@@ -101,8 +101,8 @@ public class PrintDialog {
 
     private void initView() {
         if (seqMap == null) {
-            seqMap = IGB.getSingleton().getMapView().getSeqMap();
-            wholeFrame = IGB.getSingleton().getFrame();
+            seqMap = IGB.getInstance().getMapView().getSeqMap();
+            wholeFrame = IGB.getInstance().getFrame();
             mainView = seqMap.getNeoCanvas();
             AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
             mainViewWithLabels = tm.getSplitPane();
@@ -114,7 +114,7 @@ public class PrintDialog {
         if (static_frame == null) {
 
             static_frame = PreferenceUtils.createFrame(TITLE, new PrintDialogGUI(this));
-            static_frame.setLocationRelativeTo(IGB.getSingleton().getFrame());
+            static_frame.setLocationRelativeTo(IGB.getInstance().getFrame());
             static_frame.getRootPane().setDefaultButton(printButton);
             static_frame.setResizable(false);
         }

@@ -76,7 +76,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
         serviceTracker = new ServiceTracker<IgbTabPanelI, Object>(bundleContext, filter, null) {
             @Override
             public Object addingService(ServiceReference<IgbTabPanelI> seqGroupViewReference) {
-                super.addingService(seqGroupViewReference);
+                bundleContext.getService(seqGroupViewReference);
                 final TutorialManager tutorialManager = new TutorialManager(igbService, windowService);
                 GenericActionHolder.getInstance().addGenericActionListener(tutorialManager);
                 JRPMenu tutorialMenu = new JRPMenu("Tutorial_tutorialMenu", "Tutorials");
@@ -109,7 +109,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
                     logger.error("Could not connect: {0}.\n          coninuing...", ex.getMessage());
                 }
 
-                return seqGroupViewReference;
+                return super.addingService(seqGroupViewReference);
 
             }
         };

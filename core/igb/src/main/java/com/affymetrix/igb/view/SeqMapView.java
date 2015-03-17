@@ -363,7 +363,7 @@ public class SeqMapView extends JPanel
      * Recurse through glyph hierarchy and collect graphs.
      */
     private static void collectGraphs(GlyphI gl, List<GraphGlyph> graphs) {
-        Optional.of(gl.getChildren()).ifPresent(children -> {
+        Optional.ofNullable(gl.getChildren()).ifPresent(children -> {
             children.stream()
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)

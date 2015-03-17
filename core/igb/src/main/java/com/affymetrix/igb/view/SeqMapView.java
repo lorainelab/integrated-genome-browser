@@ -146,6 +146,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -362,7 +363,7 @@ public class SeqMapView extends JPanel
      * Recurse through glyph hierarchy and collect graphs.
      */
     private static void collectGraphs(GlyphI gl, List<GraphGlyph> graphs) {
-        if (gl.getChildren() != null) {
+        Optional.of(gl.getChildren()).ifPresent(children -> {
             gl.getChildren().stream()
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)
@@ -371,7 +372,7 @@ public class SeqMapView extends JPanel
                         .filter(isGraphGlyph)
                         .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
                     });
-        }
+        });
     }
 
     private static void splitGraph(GraphGlyph glyph) {

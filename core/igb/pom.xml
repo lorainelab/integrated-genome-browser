@@ -112,12 +112,7 @@
             <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--End of logging dependencies-->
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>console-gui</artifactId>
-            <scope>provided</scope>
-        </dependency>  
+        <!--End of logging dependencies--> 
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>

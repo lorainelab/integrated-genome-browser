@@ -127,6 +127,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         this.igbService = igbService;
     }
 
+    @Override
     public String checkInput(String search_text, final BioSeq vseq, final String seq) {
         if (vseq == null) {
             return MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq);
@@ -174,10 +175,12 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         clearResults();
     }
 
+    @Override
     public void mapRefresh() {
         igbService.mapRefresh(glyphs);
     }
 
+    @Override
     public void seqSelectionChanged(SeqSelectionEvent evt) {
         clearResults();
     }
@@ -317,6 +320,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         igbService.getSeqMap().updateWidget();
 
         Collections.sort(glyphs, new Comparator<GlyphI>() {
+            @Override
             public int compare(GlyphI g1, GlyphI g2) {
                 return Integer.valueOf((int) g1.getCoordBox().x).compareTo((int) g2.getCoordBox().x);
             }

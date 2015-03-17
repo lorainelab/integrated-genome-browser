@@ -23,13 +23,6 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.swing.CCPUtils;
-import com.lorainelab.igb.services.search.ISearchHints;
-import com.lorainelab.igb.services.search.ISearchMode;
-import com.lorainelab.igb.services.search.ISearchModeExtended;
-import com.lorainelab.igb.services.search.ISearchModeSym;
-import com.lorainelab.igb.services.search.IStatus;
-import com.lorainelab.igb.services.search.SearchListener;
-import com.lorainelab.igb.services.search.SearchResults;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
@@ -38,6 +31,13 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.jidesoft.hints.ListDataIntelliHints;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.search.ISearchHints;
+import com.lorainelab.igb.services.search.ISearchMode;
+import com.lorainelab.igb.services.search.ISearchModeExtended;
+import com.lorainelab.igb.services.search.ISearchModeSym;
+import com.lorainelab.igb.services.search.IStatus;
+import com.lorainelab.igb.services.search.SearchListener;
+import com.lorainelab.igb.services.search.SearchResults;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.BorderLayout;
@@ -235,6 +235,7 @@ public final class SearchView extends IgbTabPanel implements
 
     ItemListener itemListener = new ItemListener() {
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             if (selectedSearchMode != null && selectedSearchMode instanceof ISearchModeExtended) {
                 JCheckBox checkbox = (JCheckBox) e.getSource();
@@ -594,6 +595,7 @@ public final class SearchView extends IgbTabPanel implements
      */
     private final MouseListener list_selection_listener = new MouseListener() {
 
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getComponent().isEnabled()
                     && e.getButton() == MouseEvent.BUTTON1
@@ -613,15 +615,19 @@ public final class SearchView extends IgbTabPanel implements
             }
         }
 
+        @Override
         public void mousePressed(MouseEvent me) {
         }
 
+        @Override
         public void mouseReleased(MouseEvent me) {
         }
 
+        @Override
         public void mouseEntered(MouseEvent me) {
         }
 
+        @Override
         public void mouseExited(MouseEvent me) {
         }
     };
@@ -653,15 +659,18 @@ public final class SearchView extends IgbTabPanel implements
         clearButton.setEnabled(enabled);
     }
 
+    @Override
     public void genericServerInit(GenericServerInitEvent evt) {
         initOptionCheckBox();
     }
 
+    @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
         groupOrSeqChange();
         clearResults();
     }
 
+    @Override
     public void seqSelectionChanged(SeqSelectionEvent evt) {
         groupOrSeqChange();
     }
@@ -706,6 +715,7 @@ public final class SearchView extends IgbTabPanel implements
     /**
      * Set the text in the status bar in a thread-safe way.
      */
+    @Override
     public void setStatus(final String text) {
         ThreadUtils.runOnEventQueue(() -> status_bar.setText(unQuoteString(text)));
     }
@@ -724,6 +734,7 @@ public final class SearchView extends IgbTabPanel implements
             addActionListener(this);
         }
 
+        @Override
         public void heardThreadEvent(CThreadEvent cte) {
             if (cte.getState() == CThreadEvent.STARTED) {
                 setEnabled(true);
@@ -732,6 +743,7 @@ public final class SearchView extends IgbTabPanel implements
             }
         }
 
+        @Override
         public void actionPerformed(ActionEvent ae) {
             if (worker != null && !worker.isCancelled() && !worker.isDone()) {
                 worker.cancel(true);
@@ -785,6 +797,7 @@ public final class SearchView extends IgbTabPanel implements
             horAlignment = horizontalAlignment;
         }
 
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int col) {
             Component c = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(table, value,

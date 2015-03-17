@@ -38,6 +38,7 @@ import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchListener;
+import com.lorainelab.igb.services.search.SearchModeRegistry;
 import com.lorainelab.igb.services.search.SearchResults;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -471,15 +472,12 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                 }
             }
         }
-        List<TypeContainerAnnot> trackSyms = getTrackSyms();
-        List<ISearchModeSym> modes = new ArrayList<>();
-        modes.addAll(ExtensionPointHandler.getExtensionPoint(ISearchModeSym.class).getExtensionPointImpls());
         String search_term = search_text;
         search_term = Pattern.quote(search_term);// kTs n Tk
         //for(String c : regexChars){
         //	search_term = search_term.replace(c, "\\"+c);
         //}
-        for (ISearchModeSym searchMode : modes) {
+        for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
             if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {
                 List<SeqSymmetry> res = null;

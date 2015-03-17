@@ -48,6 +48,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
         }
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
         SeqSymmetry sym = tableRows.get(row);
         SeqSpan span = sym.getSpan(0);
@@ -111,6 +112,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
         return false;
     }
 
+    @Override
     public int getColumnCount() {
         return column_names.length;
     }
@@ -120,6 +122,7 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
         return column_names[col];
     }
 
+    @Override
     public int getRowCount() {
         return tableRows.size();
     }

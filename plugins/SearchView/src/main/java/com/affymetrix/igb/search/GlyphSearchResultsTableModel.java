@@ -56,15 +56,18 @@ public class GlyphSearchResultsTableModel extends SearchResultsTableModel {
         tableRows.clear();
     }
 
+    @Override
     public int getRowCount() {
         return tableRows.size();
     }
 
+    @Override
     public int getColumnCount() {
         return column_names.length;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Object getValueAt(int row, int col) {
         GlyphI glyph = tableRows.get(row);
         SymWithProps info = (SymWithProps) glyph.getInfo();

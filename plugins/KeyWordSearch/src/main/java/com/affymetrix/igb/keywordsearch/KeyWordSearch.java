@@ -1,14 +1,14 @@
 package com.affymetrix.igb.keywordsearch;
 
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.lorainelab.igb.services.search.SearchResults;
 import com.lorainelab.igb.services.search.ISearchMode;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
+import com.lorainelab.igb.services.search.SearchModeRegistry;
+import com.lorainelab.igb.services.search.SearchResults;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class KeyWordSearch implements ISearchModeSym {
         List<SeqSymmetry> results = new ArrayList<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
-        for (ISearchModeSym searchMode : searchModeRegistry.getSearchModes()) {
+        for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
             statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
             SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
             List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
@@ -70,7 +70,7 @@ public class KeyWordSearch implements ISearchModeSym {
 
     public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
         List<SeqSymmetry> results = new ArrayList<>();
-        for (ISearchModeSym searchMode : searchModeRegistry.getSearchModes()) {
+        for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
             List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
             if (res != null && !res.isEmpty()) {
                 results.addAll(res);
@@ -96,11 +96,6 @@ public class KeyWordSearch implements ISearchModeSym {
         String getLastStatus() {
             return lastStatus;
         }
-    }
-
-    @Reference(optional = false)
-    public void setSearchModeRegistry(SearchModeRegistry searchModeRegistry) {
-        this.searchModeRegistry = searchModeRegistry;
     }
 
 }

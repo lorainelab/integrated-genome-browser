@@ -11,18 +11,18 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.ModalUtils;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
-import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
@@ -230,13 +230,13 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
         GenericServer server = GeneralLoadUtils.addServer(serverList,
                 type, name, url, order, isDefault, mirrorURL); //qlmirror
 
+        sourceTableModel.init();
         if (server == null) {
 
             return false;
         }
 
         ServerList.getServerInstance().addServerToPrefs(server, order, isDefault);
-        sourceTableModel.init();
         if (server.isEnabled()) {
             return true;
         }

@@ -366,8 +366,11 @@ public class SeqMapView extends JPanel
             gl.getChildren().stream()
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)
-                    .filter(isGraphGlyph)
-                    .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
+                    .forEach(agg -> {
+                        agg.getChildren().stream()
+                        .filter(isGraphGlyph)
+                        .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
+                    });
         }
     }
 

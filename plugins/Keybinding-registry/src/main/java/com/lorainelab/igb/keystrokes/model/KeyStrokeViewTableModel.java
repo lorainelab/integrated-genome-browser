@@ -278,7 +278,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        sortActionKeys();
+        List<String> actionKeys = sortActionKeys();
         Object[][] rows = new Object[actionKeys.size()][5];
         int i = 0;
         for (String key : actionKeys) {

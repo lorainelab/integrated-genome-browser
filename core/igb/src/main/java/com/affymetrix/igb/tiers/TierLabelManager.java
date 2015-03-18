@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
@@ -347,6 +349,18 @@ public final class TierLabelManager implements PropertyHolder {
         return tlg;
     }
 
+    final Predicate<? super TierGlyph> tierHasDirection = tier -> tier.getDirection() != StyledGlyph.Direction.AXIS;
+
+    public Set<TrackStyle> getSelectedTierGlyphStyles() {
+        return getSelectedTierLabels().stream()
+                .map(tlg -> tlg.getReferenceTier())
+                .filter(tierHasDirection)
+                .map(tier -> tier.getAnnotStyle())
+                .filter(style -> style instanceof TrackStyle)
+                .map(style -> (TrackStyle) style)
+                .collect(Collectors.toSet());
+    }
+
     public List<Map<String, Object>> getTierProperties() {
 
         List<Map<String, Object>> propList = new ArrayList<>();
@@ -545,7 +559,6 @@ public final class TierLabelManager implements PropertyHolder {
         for (TierLabelGlyph tlg : tier_labels) {
             setTierCollapsed(tlg.getReferenceTier(), collapsed);
         }
-        tiermap.setTierStyles();
         repackTheTiers(true, true);
         tiermap.updateWidget();
     }

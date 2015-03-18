@@ -839,7 +839,6 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
                     || col == COL_TRACK_NAME || col == COL_COLLAPSED
                     || col == COL_MAX_DEPTH) {
                 if (col == COL_COLLAPSED || col == COL_MAX_DEPTH) {
-                    smv.getSeqMap().setTierStyles();
                     smv.getSeqMap().repackTheTiers(true, true);
                 }
 

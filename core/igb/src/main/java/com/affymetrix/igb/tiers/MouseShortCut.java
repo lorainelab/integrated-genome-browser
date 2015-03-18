@@ -2,10 +2,10 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
@@ -50,7 +50,6 @@ final public class MouseShortCut implements MouseListener {
             TierGlyph tier = smv.getSeqMap().getHitGlyph(nme.getCoordX(), nme.getCoordY());
             if (tier != null) {
                 TierLabelManager.setTierCollapsed(tier, !tier.getAnnotStyle().getCollapsed());
-                smv.getSeqMap().setTierStyles();
                 popup.repack(false, false);
                 return;
             }

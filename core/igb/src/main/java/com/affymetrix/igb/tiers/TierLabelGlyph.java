@@ -6,9 +6,9 @@ import com.affymetrix.genometry.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -128,7 +128,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
     }
     private int position;
     private boolean isIGBTrack;
-    private final TierGlyph reference_tier;
+    private final TierGlyph referenceTier;
     private boolean isLoading;
     private int textPixelHeight;
     private double textCoordHeight;
@@ -138,8 +138,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
      * null.
      */
     public TierLabelGlyph(TierGlyph tier, int position) {
-        reference_tier = tier;
-        setInfo(reference_tier);
+        referenceTier = tier;
+        setInfo(referenceTier);
         setPosition(position);
         setShowIGBTrack(IGBStateProvider.getShowIGBTrackMarkState());
     }
@@ -150,8 +150,8 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
     }
 
     public void setShowIGBTrack(boolean b) {
-        isIGBTrack = b && (reference_tier.getAnnotStyle() instanceof TrackStyle)
-                && Delegate.EXT.equals(((TrackStyle) reference_tier.getAnnotStyle()).getExt());
+        isIGBTrack = b && (referenceTier.getAnnotStyle() instanceof TrackStyle)
+                && Delegate.EXT.equals(((TrackStyle) referenceTier.getAnnotStyle()).getExt());
     }
 
     public void setPosition(int position) {
@@ -194,7 +194,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
      * Equivalent to value returned by getInfo(). Will not be null.
      */
     public TierGlyph getReferenceTier() {
-        return (TierGlyph) getInfo();
+        return referenceTier;
     }
 
     /**

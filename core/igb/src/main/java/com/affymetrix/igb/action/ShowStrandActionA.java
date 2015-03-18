@@ -4,10 +4,8 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
-import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqMapView;
@@ -17,8 +15,7 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class ShowStrandActionA extends SeqMapViewActionA
-        implements SymSelectionListener, TrackStylePropertyListener {
+public abstract class ShowStrandActionA extends SeqMapViewActionA implements SymSelectionListener, TrackStylePropertyListener {
 
     private static final long serialVersionUID = 1L;
     protected boolean separateStrands;
@@ -33,15 +30,8 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA
         listenUp();
     }
 
-    private void setTwoTiers(List<TierLabelGlyph> tierLabelGlyphs, boolean b) {
-        tierLabelGlyphs.stream().map(tlg -> TierGlyph.class.cast(tlg.getInfo())).forEach(tier -> {
-            ITrackStyleExtended style = tier.getAnnotStyle();
-            tier.getFileTypeCategory().ifPresent(category -> {
-                if (!b || MapTierTypeHolder.supportsTwoTrack(category)) {
-                    style.setSeparate(b);
-                }
-            });
-        });
+    private void setTwoTiers(boolean b) {
+        getTierManager().getSelectedTierGlyphStyles().forEach(style -> style.setSeparate(b));
         refreshMap(false, true);
         getTierManager().sortTiers();
     }
@@ -49,7 +39,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        setTwoTiers(getTierManager().getSelectedTierLabels(), separateStrands);
+        setTwoTiers(separateStrands);
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
         List<SeqSymmetry> selected_syms = SeqMapView.glyphsToSyms(getTierManager().getSelectedTiers());
         changeStrandActionDisplay(selected_syms);

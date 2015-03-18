@@ -235,18 +235,15 @@ public class SeqMapView extends JPanel
         }
     }
 
-    private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> temp_tiers) {
+    private static void addPreviousTierGlyphs(AffyTieredMap seqmap, List<TierGlyph> tempTiers) {
         // add back in previous annotation tiers (with all children removed)
-        if (temp_tiers != null) {
-            for (TierGlyph tg : temp_tiers) {
-                if (DEBUG_TIERS) {
-                }
+        if (tempTiers != null) {
+            for (TierGlyph tg : tempTiers) {
                 if (tg.getAnnotStyle() != null) {
                     tg.setStyle(tg.getAnnotStyle());
                 }
                 seqmap.addTier(tg, false);
             }
-            temp_tiers.clear(); // redundant hint to garbage collection
         }
     }
 

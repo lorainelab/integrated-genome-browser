@@ -1,6 +1,5 @@
 package com.gene.searchmodelucene;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -10,7 +9,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ServerTypeI;
-import com.lorainelab.igb.services.search.ISearchMode;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchResults;
@@ -21,7 +19,8 @@ import java.util.ResourceBundle;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Fieldable;
 
-@Component(name = SearchModeLucene.COMPONENT_NAME, immediate = true, provide = ISearchMode.class)
+//disabled because it doesn't work as expected and seems to loop endlessly
+//@Component(name = SearchModeLucene.COMPONENT_NAME, immediate = true, provide = ISearchMode.class)
 public class SearchModeLucene implements ISearchModeSym {
 
     public static final String COMPONENT_NAME = "SearchModeLucene";

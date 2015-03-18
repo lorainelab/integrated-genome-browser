@@ -18,6 +18,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
 import com.affymetrix.igb.swing.util.Idable;
+import com.google.common.base.Strings;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -719,11 +720,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                 GenericServer gServer = feature.gVersion.gServer;
                                 if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
                                     gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
-                                    feature.gVersion.getFeatures().stream().filter(gFeature -> !gFeature.isVisible() && gFeature.getMethods().isEmpty()).forEach(gFeature -> {
-                                        URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL, gServer.mirrorURL));
-                                        gFeature.symL.setURI(newURI);
-                                        ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
-                                    });
+                                    for (GenericFeature gFeature : feature.gVersion.getFeatures()) {
+                                        if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
+                                            URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL, gServer.mirrorURL));
+                                            gFeature.symL.setURI(newURI);
+                                            ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
+                                        }
+                                    }
                                     tn.setChecked(true);
                                 } else {
                                     //qlmirror
@@ -745,7 +748,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         } else {
                             message = "Unchecking " + feature.featureName
                                     + " will remove all loaded data. \nDo you want to continue? ";
-                            if (feature.getMethods().isEmpty() || ModalUtils.confirmPanel(message,
+                            if (Strings.isNullOrEmpty(feature.getMethod()) || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                                 GeneralLoadView.getLoadView().removeFeature(feature, true, false);
                             } else {

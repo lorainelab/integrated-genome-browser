@@ -9,12 +9,12 @@ import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -230,7 +230,7 @@ public class Delegate extends QuickLoadSymLoader {
 
         results.forEach(seq::addAnnotation);
 
-        feature.addMethod(uri.toString());
+        feature.setMethod(uri.toString());
 
         return added;
     }
@@ -249,7 +249,7 @@ public class Delegate extends QuickLoadSymLoader {
         graphSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
 
         seq.addAnnotation(graphSym);
-        feature.addMethod(uri.toString());
+        feature.setMethod(uri.toString());
         graphSym.getGraphName(); //Temp fix to setGraphTier true in TrackStyle
     }
 

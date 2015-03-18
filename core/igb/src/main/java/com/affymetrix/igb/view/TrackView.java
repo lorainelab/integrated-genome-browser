@@ -1,31 +1,32 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
-import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
+import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.factories.AbstractTierGlyph;
-import com.affymetrix.igb.glyph.DefaultTierGlyph;
+import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.factories.ProbeSetGlyphFactory;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.google.common.base.Strings;
+import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,7 +110,7 @@ public class TrackView {
                 boolean above_axis = (tier_direction != StyledGlyph.Direction.REVERSE);
                 seqmap.addTier(tierGlyph, above_axis);
             }
-        } else if (seqmap.getTierIndex(tierGlyph) == -1) { // 
+        } else if (seqmap.getTierIndex(tierGlyph) == -1) { //
             boolean above_axis = (tier_direction != StyledGlyph.Direction.REVERSE);
             seqmap.addTier(tierGlyph, above_axis);
         }
@@ -210,20 +211,20 @@ public class TrackView {
         // If feature has at least one track then don't add default.
         // Also if track has been loaded on one sequence then load it
         // for other sequence.
-        if (!feature.getMethods().isEmpty()) {
-            for (String method : feature.getMethods()) {
-                if (method.endsWith(ProbeSetGlyphFactory.NETAFFX_PROBESETS)
-                        || method.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
-                    continue;
-                }
-                style = getStyle(method, feature);
-
-                if (style == null) {
-                    continue;
-                }
-
-                addTierFor(style, gviewer);
+        if (!Strings.isNullOrEmpty(feature.getMethod())) {
+            String method = feature.getMethod();
+            if (method.endsWith(ProbeSetGlyphFactory.NETAFFX_PROBESETS)
+                    || method.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
+                return;
             }
+            style = getStyle(method, feature);
+
+            if (style == null) {
+                return;
+            }
+
+            addTierFor(style, gviewer);
+
         } else {
             style = getStyle(feature.getURI().toString(), feature);
             style.setFeature(feature);

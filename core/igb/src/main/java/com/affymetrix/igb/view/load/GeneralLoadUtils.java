@@ -54,6 +54,7 @@ import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP2_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
+import com.google.common.base.Strings;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
@@ -994,7 +995,7 @@ public final class GeneralLoadUtils {
         if (result) {
             feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
         } else {
-            if (feature.getMethods().isEmpty()) {
+            if (Strings.isNullOrEmpty(feature.getMethod())) {
                 feature.setLastRefreshStatus(RefreshStatus.NO_DATA_LOADED);
             } else {
                 feature.setLastRefreshStatus(RefreshStatus.NO_NEW_DATA_LOADED);

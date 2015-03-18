@@ -1,6 +1,8 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -86,22 +88,23 @@ public final class DataManagementTable {
         table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
         for (int row = 0; row < featureSize; row++) {
-            VirtualFeature vFeature = ftm.getFeature(row);
-            JComboBox featureCB = new JComboBox(vFeature.getLoadChoices().toArray());
+            GenericFeature feature = ftm.getRowFeature(row);
+            ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
+            JComboBox featureCB = new JComboBox(feature.getLoadChoices().toArray());
             featureCB.setRenderer(comboRenderer);
             featureCB.setEnabled(true);
-            featureCB.setSelectedItem(vFeature.getLoadStrategy());
+            featureCB.setSelectedItem(feature.getLoadStrategy());
             DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
             choices.addEditorForRow(row, featureEditor);
-            ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(vFeature);
+            ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(feature);
             action.addEditorForRow(row, buttonEditor);
             JRPTextFieldTableCellRenderer trackNameFieldEditor;
-            if (vFeature.getStyle() != null) {
+            if (style != null) {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-                        vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
+                        style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-                        vFeature.getFeature().featureName, Color.WHITE, Color.BLACK);
+                        feature.featureName, Color.WHITE, Color.BLACK);
             }
             text.addEditorForRow(row, trackNameFieldEditor);
         }
@@ -143,22 +146,22 @@ public final class DataManagementTable {
                 JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
-            VirtualFeature vFeature = ftm.getFeature(row);
+            GenericFeature feature = ftm.getRowFeature(row);
             if (value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
                 if (value.equals(gtextField.getText())) {
                     return gtextField;
-                } else if (vFeature.getLoadChoices().size() == 1 && value.equals(dtextField.getText())) {
+                } else if (feature.getLoadChoices().size() == 1 && value.equals(dtextField.getText())) {
                     return dtextField;
                 } else {
-                    ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+                    ComboBoxRenderer renderer = new ComboBoxRenderer(feature.getLoadChoices().toArray());
                     Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                    renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+                    renderer.combobox.setSelectedItem(feature.getLoadStrategy());
                     return c;
                 }
             } else {
-                ComboBoxRenderer renderer = new ComboBoxRenderer(vFeature.getLoadChoices().toArray());
+                ComboBoxRenderer renderer = new ComboBoxRenderer(feature.getLoadChoices().toArray());
                 Component c = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                renderer.combobox.setSelectedItem(vFeature.getLoadStrategy());
+                renderer.combobox.setSelectedItem(feature.getLoadStrategy());
                 return c;
             }
         }
@@ -218,47 +221,48 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
     @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
-        VirtualFeature vFeature = ftm.getFeature(row);
-        if (vFeature == null) {
+        GenericFeature feature = ftm.getRowFeature(row);
+        ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
+        if (feature == null) {
             return super.getCellRenderer(row, column);
         }
 
         if (column == DataManagementTableModel.REFRESH_FEATURE_COLUMN) {
-//			if (!vFeature.isPrimary()) {
+//			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
-            boolean enabled = (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
-                    && vFeature.getLoadStrategy() != LoadStrategy.GENOME
+            boolean enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD
+                    && feature.getLoadStrategy() != LoadStrategy.GENOME
                     && smv.getAnnotatedSeq() != null
                     && !IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID()));
             return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
         } else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {
-//			if (!vFeature.isPrimary()) {
+//			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
             return new DataManagementTable.ColumnRenderer();
         } else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
-            if (vFeature.getStyle() != null) {
-//				if(vFeature.getStyle().getFileTypeCategory() == null){
-//					return new ErrorNotificationCellRenderer(vFeature.getFeature().featureName,
+            if (style != null) {
+//				if(style.getFileTypeCategory() == null){
+//					return new ErrorNotificationCellRenderer(feature.getVirtualFeature().featureName,
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-                return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getStyle().getTrackName(), vFeature.getStyle().getForeground(), vFeature.getStyle().getBackground());
+                return new JRPTextFieldTableCellRenderer(feature.featureName, style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
-                return new JRPTextFieldTableCellRenderer(vFeature.getFeature().featureName, vFeature.getFeature().featureName, Color.BLACK, Color.WHITE);
+                return new JRPTextFieldTableCellRenderer(feature.featureName, feature.featureName, Color.BLACK, Color.WHITE);
             }
 
         } else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
-//			if (!vFeature.isPrimary()) {
+//			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
             return new LabelTableCellRenderer(DataManagementTable.delete_icon, true);
         } else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
             currentTiers = smv.getSeqMap().getTiers();
             for (TierGlyph tier : currentTiers) {
-                if (vFeature.getStyle() != null && tier.getAnnotStyle().getMethodName() != null
+                if (style != null && tier.getAnnotStyle().getMethodName() != null
                         && tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
-                                vFeature.getStyle().getMethodName()))//need changed
+                                style.getMethodName()))//need changed
                 {
                     if (tier.getAnnotStyle().getShow()) {
                         return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
@@ -279,8 +283,8 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         int colIndex = columnAtPoint(p);
         int realColumnIndex = convertColumnIndexToModel(colIndex);
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
-        VirtualFeature feature = ftm.getFeature(rowIndex);
-        String featureName = feature.getFeature().featureName;
+        GenericFeature feature = ftm.getRowFeature(rowIndex);
+        String featureName = feature.featureName;
         switch (realColumnIndex) {
             case DataManagementTableModel.REFRESH_FEATURE_COLUMN:
                 if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD) {

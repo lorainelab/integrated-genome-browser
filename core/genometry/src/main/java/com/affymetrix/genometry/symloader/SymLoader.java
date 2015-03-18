@@ -337,7 +337,7 @@ public abstract class SymLoader {
 
             // Some format do not annotate. So it might not have method name. e.g bgn
             if (entry.getKey() != null) {
-                feature.addMethod(entry.getKey());
+                feature.setMethod(entry.getKey());
                 addAnnotations(filteredFeats, span, feature.getURI(), feature);
                 added.put(entry.getKey(), filteredFeats);
             } else {

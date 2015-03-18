@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometry.event.ParameteredAction;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.ParameteredAction;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
@@ -82,9 +82,7 @@ public class Actions {
      * @param showOneTier Show one tier
      */
     public static void showOneTwoTier(boolean showOneTier, ActionEvent e) {
-        GenericAction action = !showOneTier
-                ? ShowOneTierAction.getAction() : ShowTwoTiersAction.getAction();
-
+        GenericAction action = !showOneTier ? ShowOneTierAction.getAction() : ShowTwoTiersAction.getAction();
         action.actionPerformed(e);
     }
 

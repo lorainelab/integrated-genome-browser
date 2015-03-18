@@ -41,6 +41,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
@@ -370,7 +371,7 @@ public final class GeneralLoadView {
 
         ThreadUtils.runOnEventQueue(() -> {
             table.stopCellEditing();
-            tableModel.createVirtualFeatures(visibleFeatures);
+            tableModel.generateFeature2StyleReference(visibleFeatures);
             DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
         });
     }
@@ -391,7 +392,7 @@ public final class GeneralLoadView {
         }
         final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
         table.stopCellEditing();
-        tableModel.createVirtualFeatures(visibleFeatures);
+        tableModel.generateFeature2StyleReference(visibleFeatures);
 
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);
@@ -607,11 +608,9 @@ public final class GeneralLoadView {
 
             @Override
             protected Void runInBackground() {
-                if (!feature.getMethods().isEmpty()) {
-                    for (String method : feature.getMethods()) {
-                        for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
-                            TrackView.getInstance().deleteSymsOnSeq(gviewer, method, bioseq, feature);
-                        }
+                if (!Strings.isNullOrEmpty(feature.getMethod())) {
+                    for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
+                        TrackView.getInstance().deleteSymsOnSeq(gviewer, feature.getMethod(), bioseq, feature);
                     }
                 }
                 return null;
@@ -638,8 +637,8 @@ public final class GeneralLoadView {
 
                 if (refresh) {
                     removeTier(feature.getURI().toString());
-                    if (!feature.getMethods().isEmpty()) {
-                        feature.getMethods().forEach(this::removeTier);
+                    if (!Strings.isNullOrEmpty(feature.getMethod())) {
+                        removeTier(feature.getMethod());
                     }
                     feature.clear();
 

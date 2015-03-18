@@ -15,6 +15,7 @@ import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.SeqMapView;
+import com.google.common.collect.Maps;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
@@ -51,24 +52,19 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     static final int TRACK_NAME_COLUMN = 6;
     static final int DELETE_FEATURE_COLUMN = 7;
     private final GeneralLoadView glv;
-//	private final static featureTableComparator visibleFeatureComp = new featureTableComparator();
-    private SeqMapView smv;
-    private AffyLabelledTierMap map;
-    private Map<Object, VirtualFeature> style2Feature = new HashMap<>();
+    private final SeqMapView smv;
+    private final AffyLabelledTierMap map;
+    private final Map<GenericFeature, ITrackStyleExtended> feature2StyleReference;
     private List<TrackStyle> currentStyles;
-    public List<VirtualFeature> virtualFeatures;
     public List<GenericFeature> features;
-    private HashMap<GenericFeature, LoadStrategy> previousLoadStrategyMap = new HashMap<>(); // Remember the load strategy for un-hidden restoration
 
     DataManagementTableModel(GeneralLoadView glv) {
         this.glv = glv;
-        this.features = null;
-        this.virtualFeatures = new ArrayList<>();
+        this.features = new ArrayList<>();
+        feature2StyleReference = Maps.newHashMap();
         IGB igb = IGB.getInstance();
-        if (igb != null) {
-            smv = igb.getMapView();
-            map = (AffyLabelledTierMap) smv.getSeqMap();
-        }
+        smv = igb.getMapView();
+        map = (AffyLabelledTierMap) smv.getSeqMap();
         map.addTierOrderListener(this);
         // Here we map the friendly string back to the LoadStrategy.
         this.reverseLoadStrategyMap = new HashMap<>(3);
@@ -78,184 +74,37 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     }
 
     public void clearFeatures() {
-        if (features != null && virtualFeatures != null) {
-            virtualFeatures.clear();
-
-            features.clear();
-
-            style2Feature.clear();
-
-            fireTableDataChanged();
-
-            TierPrefsView.getSingleton().clearTable();
-        }
+        features.clear();
+        feature2StyleReference.clear();
+        fireTableDataChanged();
+        TierPrefsView.getSingleton().clearTable();
     }
 
-    void createVirtualFeatures(List<GenericFeature> features) {
+    void generateFeature2StyleReference(List<GenericFeature> features) {
         // Sort these features so the features to be loaded are at the top.
         Collections.sort(features, new featureTableComparator());
-
         this.features = features;
-        if (virtualFeatures != null) {
-            virtualFeatures.clear();
-        }
-        style2Feature.clear();
-
+        feature2StyleReference.clear();
         features.forEach(this::createPrimaryVirtualFeatures);
-
         fireTableDataChanged();
-//		sort();
-//		System.out.println(this.getClass().getName() + ".createVirtualFeatures: twice");
     }
 
     /*
      * Some file formats might have multiple tracks, try load GFF1_example.gff
      */
     private void createPrimaryVirtualFeatures(GenericFeature gFeature) {
-        VirtualFeature vFeature = new VirtualFeature(gFeature, null);
-        virtualFeatures.add(vFeature);
         currentStyles = getCurrentStyles();
         for (ITrackStyleExtended style : currentStyles) {
             if (style.getFeature() == gFeature) {
-                vFeature.setStyle(style);
-                style2Feature.put(style, vFeature);
-                if (gFeature.getMethods().size() > 1) {
-                    createSecondaryVirtualFeatures(vFeature);
-                    break;
-                }
+                feature2StyleReference.put(gFeature, style);
                 if (!style.isGraphTier()) {
                     break;
                 }
             }
         }
+        features = new ArrayList<>(feature2StyleReference.keySet());
     }
 
-    private void createSecondaryVirtualFeatures(VirtualFeature vFeature) {
-        boolean isPrimary = vFeature.isPrimary();
-        VirtualFeature subVfeature;
-        for (ITrackStyleExtended style : currentStyles) {
-            if (style.getFeature() == vFeature.getFeature()) {
-                subVfeature = new VirtualFeature(vFeature.getFeature(), style);
-                // The first tract will be removed and added back again as a primary track
-                if (isPrimary) {
-                    virtualFeatures.remove(vFeature);
-                    isPrimary = false;
-                } else {
-                    subVfeature.setPrimary(false);
-                }
-                virtualFeatures.add(subVfeature);
-                style2Feature.put(style, subVfeature);
-            }
-        }
-    }
-
-//	private void sort() {
-//		Collections.sort(virtualFeatures, new FeatureTierComparator());
-//		fireTableDataChanged();
-//	}
-//
-//	private class FeatureTierComparator implements Comparator<VirtualFeature> {
-//		Map<VirtualFeature,Integer> vfToPos;
-//
-//		FeatureTierComparator() {
-//			vfToPos = new HashMap<VirtualFeature,Integer>();
-//
-//			int pos = 0;
-//			List<TierLabelGlyph> orderedGlyphs = map.getOrderedTierLabels();
-//			int size = orderedGlyphs.size();
-//
-//			VirtualFeature vf;
-//			for (int i = 0; i < size; i++) {
-//				TierGlyph tg = orderedGlyphs.get(i).getReferenceTier();
-//				ITrackStyleExtended style = tg.getAnnotStyle();
-//				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
-//					continue;
-//				}
-//
-//				// Fix for joined graphs disappears from DMT when click on joined track label or remove feature
-//				if (style.isGraphTier() && tg.getChildCount() > 1) {
-//					for (int j = 0; j < tg.getChildCount(); j++) {
-//						GlyphI g = tg.getChild(j);
-//						if (!(g instanceof GraphGlyph)) {
-//							continue;
-//						}
-//						vf = style2Feature.get(((GraphGlyph) g).getAnnotStyle());
-//						if (vf != null && !vfToPos.containsKey(vf)) {
-//							vfToPos.put(vf, pos++);
-//						}
-//					}
-//					continue;
-//				}
-//
-//				vf = style2Feature.get(style);
-//				if (vf != null && !vfToPos.containsKey(vf)) {
-//					vfToPos.put(vf, pos++);
-//				}
-//			}
-//
-//			// Fix for link.psl files
-//			List<TierLabelGlyph> tierGlyphs = map.getTierLabels();
-//			size = tierGlyphs.size();
-//			for (int i = 0; i < size; i++) {
-//				TierGlyph tg = tierGlyphs.get(i).getReferenceTier();
-//				// If tier is invisible and it has no children then do not add it.
-//				if (!tg.isVisible() && tg.getChildCount() == 0) {
-//					continue;
-//				}
-//
-//				ITrackStyleExtended style = tg.getAnnotStyle();
-//				//Only consider positive track.
-//				if (style.getSeparate() && tg.getDirection() == StyledGlyph.Direction.REVERSE) {
-//					continue;
-//				}
-//
-//				vf = style2Feature.get(style);
-//				if (vf != null && !vfToPos.containsKey(vf)) {
-//					vfToPos.put(vf, pos++);
-//				}
-//			}
-//
-//			for (VirtualFeature tempVirtualFeature : virtualFeatures) {
-//				//virtualFeatures.add(tempVirtualFeature);
-//				if (tempVirtualFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)
-//						|| tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND)
-//						|| tempVirtualFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
-//					vfToPos.put(tempVirtualFeature, pos++);
-//					continue;
-//				}
-//
-//				//Temporary fix to show joined graph features when sequence is changed.
-//				vf = style2Feature.get(tempVirtualFeature.getStyle());
-//				if (vf != null && vf.getStyle().getJoin() && !vfToPos.containsKey(vf)) {
-//					vfToPos.put(vf, pos++);
-//				}
-//			}
-//
-//
-//			for (VirtualFeature tempVirtualFeature : virtualFeatures) {
-//				if (!vfToPos.containsKey(tempVirtualFeature)) {
-//					vfToPos.put(tempVirtualFeature, pos++);
-//				}
-//			}
-//
-//			List<GraphGlyph> floatingGraphGlyphs = smv.getFloatingGraphGlyphs();
-//			size = floatingGraphGlyphs.size();
-//			for (int i = 0; i < size; i++) {
-//				ITrackStyleExtended style = floatingGraphGlyphs.get(i).getAnnotStyle();
-//				vf = style2Feature.get(style);
-//				if (vf != null && !vfToPos.containsKey(vf)) {
-//					vfToPos.put(vf, pos++);
-//				}
-//			}
-//		}
-//
-//		@Override
-//		public int compare(VirtualFeature o1, VirtualFeature o2) {
-//			return vfToPos.get(o1).compareTo(vfToPos.get(o2));
-//		}
-//
-//	}
     private final static class featureTableComparator implements Comparator<GenericFeature> {
 
         public int compare(GenericFeature feature1, GenericFeature feature2) {
@@ -270,21 +119,27 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
     }
 
-    VirtualFeature getFeature(int row) {
-        return (getRowCount() <= row) ? null : virtualFeatures.get(row);
+    public GenericFeature getRowFeature(int row) {
+        return (getRowCount() <= row) ? null : features.get(row);
     }
 
-    private int getRow(VirtualFeature feature) {
-        return (virtualFeatures == null) ? -1 : virtualFeatures.indexOf(feature);
+    public ITrackStyleExtended getStyleFromFeature(GenericFeature feature) {
+        return feature2StyleReference.get(feature);
+    }
+
+    private int getRow(GenericFeature feature) {
+        return features.indexOf(feature);
 
     }
 
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
 
+    @Override
     public int getRowCount() {
-        return (virtualFeatures == null) ? 0 : virtualFeatures.size();
+        return features.size();
     }
 
     @Override
@@ -292,8 +147,9 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         return columnNames[col];
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
-        if (virtualFeatures == null || virtualFeatures.isEmpty()) {
+        if (features.isEmpty()) {
             // Indicate to user that there's no data.
             if (row == 0 && col == 2) {
                 return "No feature data found";
@@ -301,13 +157,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             return "";
         }
 
-        VirtualFeature vFeature;
+        GenericFeature feature;
         ITrackStyleExtended style;
-        if (getFeature(row) == null) {
+        if (getRowFeature(row) == null) {
             return "";
         } else {
-            vFeature = getFeature(row);
-            style = vFeature.getStyle();
+            feature = getRowFeature(row);
+            style = feature2StyleReference.get(feature);
         }
 
         switch (col) {
@@ -318,18 +174,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				if (!vFeature.isPrimary()) {
 //					return "";
 //				}
-                return vFeature.getLoadStrategy().toString();
+                return feature.getLoadStrategy().toString();
             case TRACK_NAME_COLUMN:
-                if (vFeature.getFeature().featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)
-                        || vFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBAND)
-                        || vFeature.getFeature().featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
-                    return vFeature.getFeature().featureName;
+                if (feature.featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)
+                        || feature.featureName.equalsIgnoreCase(CytobandParser.CYTOBAND)
+                        || feature.featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
+                    return feature.featureName;
                 } else if (style == null) {
-                    if (vFeature.getFeature().getMethods().size() > 1) {
-                        return "";
-                    } else {
-                        return vFeature.getFeature().featureName;
-                    }
+                    return feature.featureName;
                 }
                 return style.getTrackName();
             case FOREGROUND_COLUMN:
@@ -370,8 +222,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        VirtualFeature vFeature = virtualFeatures.get(row);
-        ITrackStyleExtended style = vFeature.getStyle();
+        GenericFeature feature = getRowFeature(row);
+        ITrackStyleExtended style = feature2StyleReference.get(feature);
 
         if ((style == null)
                 && (col == TRACK_NAME_COLUMN
@@ -391,7 +243,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                     return false;
                 }
             }
-        } else if ((vFeature.getStyle() != null && (vFeature.getStyle().isGraphTier() || !vFeature.getStyle().getSeparable()))
+        } else if ((style != null && (style.isGraphTier() || !style.getSeparable()))
                 && (col == SEPARATE_COLUMN)) {
             return false;
         }
@@ -409,80 +261,80 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 || col == HIDE_FEATURE_COLUMN || col == TRACK_NAME_COLUMN
                 || col == BACKGROUND_COLUMN || col == FOREGROUND_COLUMN) {
             return true;
-        } else if (getFeature(row) == null) {
+        } else if (getRowFeature(row) == null) {
             return false;
         }
 
         // This cell is only editable if the feature isn't already fully loaded.
-        return (getFeature(row).getLoadStrategy() != LoadStrategy.GENOME
-                && getFeature(row).getLoadChoices().size() > 1);
+        return (getRowFeature(row).getLoadStrategy() != LoadStrategy.GENOME
+                && getRowFeature(row).getLoadChoices().size() > 1);
     }
 
     @Override
     public void setValueAt(Object value, int row, int col) {
-        VirtualFeature vFeature = getFeature(row);
-
-        if (value == null || vFeature == null) {
+        GenericFeature feature = getRowFeature(row);
+        ITrackStyleExtended style = feature2StyleReference.get(feature);
+        if (value == null || feature == null) {
             return;
         }
 
         switch (col) {
             case DELETE_FEATURE_COLUMN:
-                String message = "Really remove entire " + vFeature.getFeature().featureName + " data set ?";
+                String message = "Really remove entire " + feature.featureName + " data set ?";
                 if (ScriptManager.SCRIPTING.equals(value) || ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(gFeature -> {
+                    features.stream().filter(gFeature -> gFeature.equals(feature)).forEach(gFeature -> {
                         GeneralLoadView.getLoadView().removeFeature(gFeature, true);
                     });
                     this.fireTableDataChanged(); //clear row selection
                 }
                 break;
             case REFRESH_FEATURE_COLUMN:
-                if (vFeature.getLoadStrategy() != LoadStrategy.NO_LOAD
-                        && vFeature.getLoadStrategy() != LoadStrategy.GENOME) {
+                if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD
+                        && feature.getLoadStrategy() != LoadStrategy.GENOME) {
                     GeneralLoadView.getLoadView().setShowLoadingConfirm(true);
-                    features.stream().filter(gFeature -> gFeature.equals(vFeature.getFeature())).forEach(GeneralLoadUtils::loadAndDisplayAnnotations);
+                    features.stream().filter(gFeature -> gFeature.equals(feature)).forEach(GeneralLoadUtils::loadAndDisplayAnnotations);
                 }
                 break;
             case LOAD_STRATEGY_COLUMN:
-                if (vFeature.getFeature().getLoadStrategy() == LoadStrategy.GENOME) {
+                if (feature.getLoadStrategy() == LoadStrategy.GENOME) {
                     return;	// We can't change strategies once we've loaded the entire genome.
                 }
-                if (vFeature.getFeature().getLoadChoices().size() <= 1) {
+                if (feature.getLoadChoices().size() <= 1) {
                     return;
                 }
                 String valueString = value.toString();
-                if (!vFeature.getFeature().getLoadStrategy().toString().equals(valueString)) {
+                if (!feature.getLoadStrategy().toString().equals(valueString)) {
                     // strategy changed.  Update the feature object.
-                    vFeature.getFeature().setLoadStrategy(reverseLoadStrategyMap.get(valueString));
-                    updatedStrategy(row, col, vFeature.getFeature());
+                    feature.setLoadStrategy(reverseLoadStrategyMap.get(valueString));
+                    updatedStrategy(row, col, feature);
                 }
                 break;
             case HIDE_FEATURE_COLUMN:
-                if (vFeature.getStyle() != null) {
-                    setVisibleTracks(vFeature);
+                if (style != null) {
+                    setVisibleTracks(feature);
                 }
                 break;
             case BACKGROUND_COLUMN:
-                if (vFeature.getStyle() != null) {
-                    vFeature.getStyle().setBackground((Color) value);
+                if (style != null) {
+                    style.setBackground((Color) value);
                 }
                 break;
             case FOREGROUND_COLUMN:
-                if (vFeature.getStyle() != null) {
-                    vFeature.getStyle().setForeground((Color) value);
+                if (style != null) {
+                    style.setForeground((Color) value);
                 }
                 break;
             case SEPARATE_COLUMN:
-                if (vFeature.getStyle() != null) {
-                    vFeature.getStyle().setSeparate(!((Boolean) value));
+                if (style != null) {
+                    style.setSeparate(!((Boolean) value));
                     smv.getPopup().refreshMap(false, true);
                     smv.getTierManager().sortTiers();
                 }
                 break;
             case TRACK_NAME_COLUMN:
-                if (vFeature.getStyle() != null && !vFeature.getStyle().getTrackName().equals(value)) {//TK
-                    vFeature.getStyle().setTrackName((String) value);
+                if (style != null && !style.getTrackName().equals(value)) {//TK
+                    style.setTrackName((String) value);
 
                 }
                 break;
@@ -507,8 +359,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
     }
 
-    private void setVisibleTracks(VirtualFeature vFeature) {
-        ITrackStyleExtended style = vFeature.getStyle();
+    private void setVisibleTracks(GenericFeature feature) {
+        ITrackStyleExtended style = feature2StyleReference.get(feature);
         if (style.getShow()) {
             style.setShow(false);
         } else {
@@ -519,7 +371,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private List<TrackStyle> getCurrentStyles() {
         ArrayList<TrackStyle> currentStyleList = new ArrayList<>();
         if (smv != null) {
-            LinkedHashMap<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<>();
+            Map<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<>();
             for (TierGlyph tier : new CopyOnWriteArrayList<>(smv.getSeqMap().getTiers())) {
                 ITrackStyle style = tier.getAnnotStyle();
                 if (style instanceof TrackStyle) {
@@ -576,7 +428,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     public void stateChanged(ChangeEvent evt) {//????
         Object src = evt.getSource();
         if (src instanceof GenericFeature) {
-            int row = getRow((VirtualFeature) src);
+            int row = getRow((GenericFeature) src);
             if (row >= 0) {  // if typestate is present in table, then send notification of row change
                 fireTableRowsUpdated(row, row);
             }
@@ -585,9 +437,5 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     @Override
     public void tableChanged(TableModelEvent e) {
-        if (virtualFeatures == null) {
-        }
-
-//		sort();
     }
 }

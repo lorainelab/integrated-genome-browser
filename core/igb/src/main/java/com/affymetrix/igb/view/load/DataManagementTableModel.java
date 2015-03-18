@@ -2,7 +2,6 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.CytobandParser;
-import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -25,6 +24,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.event.ChangeEvent;
@@ -53,7 +53,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private final GeneralLoadView glv;
     private final SeqMapView smv;
     private final AffyLabelledTierMap map;
-    private final Map<GenericFeature, ITrackStyleExtended> feature2StyleReference;
+    private final Map<GenericFeature, TrackStyle> feature2StyleReference;
     public List<GenericFeature> features;
 
     DataManagementTableModel(GeneralLoadView glv) {
@@ -91,7 +91,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
      * Some file formats might have multiple tracks, try load GFF1_example.gff
      */
     private void createPrimaryVirtualFeatures(GenericFeature gFeature) {
-        for (ITrackStyleExtended style : getTierGlyphStyles()) {
+        for (TrackStyle style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
                 if (!style.isGraphTier()) {
@@ -120,7 +120,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         return (getRowCount() <= row) ? null : features.get(row);
     }
 
-    public ITrackStyleExtended getStyleFromFeature(GenericFeature feature) {
+    public TrackStyle getStyleFromFeature(GenericFeature feature) {
         return feature2StyleReference.get(feature);
     }
 
@@ -155,7 +155,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
 
         GenericFeature feature;
-        ITrackStyleExtended style;
+        TrackStyle style;
         if (getRowFeature(row) == null) {
             return "";
         } else {
@@ -220,7 +220,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     @Override
     public boolean isCellEditable(int row, int col) {
         GenericFeature feature = getRowFeature(row);
-        ITrackStyleExtended style = feature2StyleReference.get(feature);
+        TrackStyle style = feature2StyleReference.get(feature);
 
         if ((style == null)
                 && (col == TRACK_NAME_COLUMN
@@ -270,7 +270,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     @Override
     public void setValueAt(Object value, int row, int col) {
         GenericFeature feature = getRowFeature(row);
-        ITrackStyleExtended style = feature2StyleReference.get(feature);
+        TrackStyle style = feature2StyleReference.get(feature);
         if (value == null || feature == null) {
             return;
         }
@@ -357,7 +357,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     }
 
     private void setVisibleTracks(GenericFeature feature) {
-        ITrackStyleExtended style = feature2StyleReference.get(feature);
+        TrackStyle style = feature2StyleReference.get(feature);
         if (style.getShow()) {
             style.setShow(false);
         } else {
@@ -367,12 +367,13 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     final Predicate<? super TierGlyph> tierHasDirection = tier -> tier.getDirection() != StyledGlyph.Direction.AXIS;
 
-    private List<ITrackStyleExtended> getTierGlyphStyles() {
+    private Set<TrackStyle> getTierGlyphStyles() {
         return smv.getSeqMap().getTiers().stream()
                 .filter(tierHasDirection)
                 .map(tier -> tier.getAnnotStyle())
                 .filter(style -> style instanceof TrackStyle)
-                .collect(Collectors.toList());
+                .map(style -> (TrackStyle) style)
+                .collect(Collectors.toSet());
     }
 
     /**

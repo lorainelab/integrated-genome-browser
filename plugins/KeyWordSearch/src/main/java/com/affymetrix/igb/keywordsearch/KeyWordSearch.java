@@ -51,29 +51,35 @@ public class KeyWordSearch implements ISearchModeSym {
         return null;
     }
 
+    @Override
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
         List<SeqSymmetry> results = new ArrayList<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
         for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
-            statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
-            SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
-            List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
-            if (res != null && !res.isEmpty()) {
-                results.addAll(res);
+            if (searchMode != this) {
+                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), searchMode.getName(), search_text));
+                SearchResults<SeqSymmetry> searchResults = searchMode.search(search_text, chrFilter, sh, option);
+                List<SeqSymmetry> res = searchResults != null ? searchResults.getResults() : null;
+                if (res != null && !res.isEmpty()) {
+                    results.addAll(res);
+                }
+                status.append(searchMode.getName()).append(" : ").append(sh.getLastStatus()).append(", ");
             }
-            status.append(searchMode.getName()).append(" : ").append(sh.getLastStatus()).append(", ");
         }
         statusHolder.setStatus(status.toString());
         return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
     }
 
+    @Override
     public List<SeqSymmetry> searchTrack(String search_text, TypeContainerAnnot contSym) {
         List<SeqSymmetry> results = new ArrayList<>();
         for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
-            List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
-            if (res != null && !res.isEmpty()) {
-                results.addAll(res);
+            if (searchMode != this) {
+                List<SeqSymmetry> res = searchMode.searchTrack(search_text, contSym);
+                if (res != null && !res.isEmpty()) {
+                    results.addAll(res);
+                }
             }
         }
         return results;
@@ -88,6 +94,7 @@ public class KeyWordSearch implements ISearchModeSym {
             this.internalSH = internalSH;
         }
 
+        @Override
         public void setStatus(String text) {
             internalSH.setStatus(text);
             lastStatus = text;

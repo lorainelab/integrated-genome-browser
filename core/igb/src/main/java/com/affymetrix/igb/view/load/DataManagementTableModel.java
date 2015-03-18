@@ -2,7 +2,6 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.parsers.CytobandParser;
-import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -24,10 +23,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
@@ -55,7 +54,6 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private final SeqMapView smv;
     private final AffyLabelledTierMap map;
     private final Map<GenericFeature, ITrackStyleExtended> feature2StyleReference;
-    private List<TrackStyle> currentStyles;
     public List<GenericFeature> features;
 
     DataManagementTableModel(GeneralLoadView glv) {
@@ -93,8 +91,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
      * Some file formats might have multiple tracks, try load GFF1_example.gff
      */
     private void createPrimaryVirtualFeatures(GenericFeature gFeature) {
-        currentStyles = getCurrentStyles();
-        for (ITrackStyleExtended style : currentStyles) {
+        for (ITrackStyleExtended style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
                 if (!style.isGraphTier()) {
@@ -368,37 +365,14 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
     }
 
-    private List<TrackStyle> getCurrentStyles() {
-        ArrayList<TrackStyle> currentStyleList = new ArrayList<>();
-        if (smv != null) {
-            Map<TrackStyle, TrackStyle> stylemap = new LinkedHashMap<>();
-            for (TierGlyph tier : new CopyOnWriteArrayList<>(smv.getSeqMap().getTiers())) {
-                ITrackStyle style = tier.getAnnotStyle();
-                if (style instanceof TrackStyle) {
-                    if (tier.getDirection() != StyledGlyph.Direction.AXIS) {
-                        stylemap.put((TrackStyle) style, (TrackStyle) style);
-                    } else if (CytobandParser.CYTOBAND_TIER_NAME.equals(style.getMethodName())) {
-                        stylemap.put((TrackStyle) style, (TrackStyle) style);
-                    } else if (smv.getFloaterGlyph().getChildren() != null) {
-                        for (GlyphI g : smv.getFloaterGlyph().getChildren()) {
-                            StyledGlyph j = (StyledGlyph) g;
-                            if (j.getAnnotStyle() == style) {
-                                stylemap.put((TrackStyle) style, (TrackStyle) style);
-                            }
-                        }
-                    }
-                }
-            }
-            currentStyleList.addAll(stylemap.values());
-        }
-        ArrayList<TrackStyle> customizables = new ArrayList<>(currentStyleList.size());
-        for (TrackStyle the_style : currentStyleList) {
-            if (the_style.getCustomizable()) {
-                customizables.add(the_style);
-            }
-        }
+    final Predicate<? super TierGlyph> tierHasDirection = tier -> tier.getDirection() != StyledGlyph.Direction.AXIS;
 
-        return customizables;
+    private List<ITrackStyleExtended> getTierGlyphStyles() {
+        return smv.getSeqMap().getTiers().stream()
+                .filter(tierHasDirection)
+                .map(tier -> tier.getAnnotStyle())
+                .filter(style -> style instanceof TrackStyle)
+                .collect(Collectors.toList());
     }
 
     /**

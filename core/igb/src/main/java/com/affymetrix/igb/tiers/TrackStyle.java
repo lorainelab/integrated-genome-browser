@@ -117,7 +117,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private boolean is_graph = false;
     private float track_name_size = default_track_name_size;
     private Map<String, Object> transient_properties;
-    private boolean customizable = true;
     private GenericFeature feature = null;
     public boolean customise = false;
     private int summaryThreshold;
@@ -436,7 +435,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 //		if (color_by_rgb_string != null && !"".equals(color_by_rgb_string)){
 //			if(color_by_rgb_string.equalsIgnoreCase(TRUE)){
 //				this.color_provider = new RGB();
-//			} 
+//			}
 //		}
         String nameSizeString = (String) props.get(PROP_NAME_SIZE);
         if (StringUtils.isNotBlank(nameSizeString)) {
@@ -558,10 +557,6 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         }
         this.show2tracks = b;
         save(PREF_SHOW2TRACKS, b);
-    }
-
-    public final boolean getCustomizable() {
-        return customizable;
     }
 
     /**
@@ -888,25 +883,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             setSummaryThreshold(as.getSummaryThreshold());
             setReverseMaxDepth(as.getReverseMaxDepth());
         }
-        if (g instanceof TrackStyle) {
-            TrackStyle as = (TrackStyle) g;
-            setCustomizable(as.getCustomizable());
-        }
 
         getTransientPropertyMap().putAll(g.getTransientPropertyMap());
-    }
-
-    /**
-     * Whether this style should be customizable in a preferences panel.
-     * Sometimes there are temporary styles created where some of the options
-     * simply don't make sense and shouldn't be shown to the user in the
-     * customization panel.
-     */
-    public final void setCustomizable(boolean b) {
-        // Another option instead of a single set/getCustomizable flag would be
-        // to have a bunch of individual flags: getSeparable(), getHumanNamable(),
-        // getHasMaxDepth(), etc....
-        customizable = b;
     }
 
     public boolean getSeparable() {

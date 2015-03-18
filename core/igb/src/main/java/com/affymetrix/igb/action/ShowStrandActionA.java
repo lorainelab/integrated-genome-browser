@@ -33,17 +33,15 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA
         listenUp();
     }
 
-    private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
-        for (TierLabelGlyph tlg : tier_label_glyphs) {
-            TierGlyph tier = (TierGlyph) tlg.getInfo();
+    private void setTwoTiers(List<TierLabelGlyph> tierLabelGlyphs, boolean b) {
+        tierLabelGlyphs.stream().map(tlg -> TierGlyph.class.cast(tlg.getInfo())).forEach(tier -> {
             ITrackStyleExtended style = tier.getAnnotStyle();
-            Optional<FileTypeCategory> category = tier.getFileTypeCategory();
-            if (category.isPresent()) {
-                if (!b || MapTierTypeHolder.supportsTwoTrack(category.get())) {
+            tier.getFileTypeCategory().ifPresent(category -> {
+                if (!b || MapTierTypeHolder.supportsTwoTrack(category)) {
                     style.setSeparate(b);
                 }
-            }
-        }
+            });
+        });
         refreshMap(false, true);
         getTierManager().sortTiers();
     }

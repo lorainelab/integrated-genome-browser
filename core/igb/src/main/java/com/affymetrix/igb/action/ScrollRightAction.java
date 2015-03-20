@@ -23,6 +23,7 @@ public class ScrollRightAction extends SeqMapViewActionA implements ContinuousAc
     public ScrollRightAction() {
         super("Scroll Right", BUNDLE.getString("rightGreenArrowTooltip"), "16x16/actions/go-next.png", "22x22/actions/go-next.png", 0);
         this.ordinal = -4007020;
+        setKeyStrokeBinding("ctrl RIGHT");
     }
 
     @Override

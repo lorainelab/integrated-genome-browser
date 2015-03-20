@@ -24,6 +24,7 @@ public class ScrollLeftAction extends SeqMapViewActionA implements ContinuousAct
         super("Scroll Left", BUNDLE.getString("leftGreenArrowTooltip"), "16x16/actions/go-previous.png",
                 "22x22/actions/go-previous.png", 0);
         this.ordinal = -4007010;
+        setKeyStrokeBinding("ctrl LEFT");
     }
 
     @Override

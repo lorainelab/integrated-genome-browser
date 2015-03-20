@@ -23,6 +23,7 @@ public class ScrollDownAction extends SeqMapViewActionA implements ContinuousAct
         super("Scroll Down", "16x16/actions/go-down.png",
                 "22x22/actions/go-down.png");
         this.ordinal = -4007040;
+        setKeyStrokeBinding("ctrl DOWN");
     }
 
     @Override

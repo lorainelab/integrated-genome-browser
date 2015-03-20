@@ -28,6 +28,7 @@ import com.lorainelab.igb.services.IgbService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
@@ -60,9 +61,11 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     private IgbService igbService;
     private static Set<String> actionKeys;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
+    List<GenericAction> actionQueue;
 
     public KeyStrokeViewTableModel() {
         actionKeys = Sets.newCopyOnWriteArraySet();
+        actionQueue = new ArrayList<>();
     }
 
     @Activate
@@ -71,6 +74,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         addShortcuts();
         actionKeys.addAll(GenericActionHolder.getInstance().getGenericActionIds());
         refresh();
+        loadQueuedActions();
     }
 
     private void loadDefaultToolbarActionsAndKeystrokeBindings() {
@@ -117,40 +121,22 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                     continue;
                 }
                 GenericActionHolder h = GenericActionHolder.getInstance();
-                GenericAction a = h.getGenericAction(k);
-                if (null == a) { // A keystroke in the preferences has no known action.
-                    String message = "key stroke \"" + k
-                            + "\" is not among our generic actionKeys.";
-                    logger.trace(message);
-                    try { // to load the missing class.
-                        ClassLoader l = this.getClass().getClassLoader();
-                        Class<?> type = l.loadClass(k);
-                        if (type.isAssignableFrom(GenericAction.class)) {
-                            Class<? extends GenericAction> c = type.asSubclass(GenericAction.class);
-                            // Now what?
-                        }
-                        continue;
-                    } catch (ClassNotFoundException cnfe) {
-                        message = "Class " + cnfe.getMessage() + " not found.";
-                        logger.trace(message);
-                        continue; // Skip this one.
-                    } finally {
-                        message = "Keyboard shortcut " + preferredKeyStroke + " not set.";
-                        logger.trace(message);
-                    }
+                GenericAction action = h.getGenericAction(k);
+                if (action == null) {
+                    continue;
                 }
                 InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
                 ActionMap am = panel.getActionMap();
-                String actionIdentifier = a.getId();
-                KeyStroke ks = KeyStroke.getKeyStroke(preferredKeyStroke);
-                if (null == ks) { // nothing we can do.
+                String actionIdentifier = action.getId();
+                KeyStroke ks = action.getKeyStroke();
+                if (null == ks) {
                     String message = "Could not find preferred key stroke: "
                             + preferredKeyStroke;
                     logger.info(message);
-                    continue; // Skip this one.
+                    continue;
                 }
                 im.put(ks, actionIdentifier);
-                am.put(actionIdentifier, a);
+                am.put(actionIdentifier, action);
             }
         } catch (BackingStoreException bse) {
             logger.trace(bse.getMessage());
@@ -158,12 +144,36 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
     }
 
-    @Reference(multiple = true, dynamic = true)
+    private void addShortcut(GenericAction action) {
+        JFrame frm = igbService.getApplicationFrame();
+        JPanel panel = (JPanel) frm.getContentPane();
+        InputMap im = panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = panel.getActionMap();
+        KeyStroke ks = action.getKeyStroke();
+        if (null == ks) {
+            return;
+        }
+        im.put(ks, action.getId());
+        am.put(action.getId(), action);
+    }
+
+    private void loadQueuedActions() {
+        actionQueue.forEach(action -> {
+            addShortcut(action);
+        });
+    }
+
+    @Reference(multiple = true, unbind = "removeAction", dynamic = true)
     public void addAction(GenericAction action) {
         logger.debug("Action received");
         actionKeys.add(action.getId());
         logger.debug(action.getId());
         fireTableDataChanged();
+        if (igbService == null) {
+            actionQueue.add(action);
+        } else {
+            addShortcut(action);
+        }
     }
 
     public void removeAction(GenericAction action) {
@@ -289,7 +299,9 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 return;
             }
             rows[i][ActionColumn] = genericAction.getDisplay();
-            rows[i][KeyStrokeColumn] = keystroke_node.get(key, "").toUpperCase();
+            if (genericAction.getKeyStroke() != null) {
+                rows[i][KeyStrokeColumn] = genericAction.getKeyStrokeBinding().toUpperCase();
+            }
             rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
             if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
                 rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;

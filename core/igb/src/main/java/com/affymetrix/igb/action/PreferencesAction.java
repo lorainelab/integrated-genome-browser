@@ -36,6 +36,7 @@ public class PreferencesAction extends GenericAction {
                 "22x22/actions/preferences_updated.png",
                 KeyEvent.VK_E, null, true);
         this.ordinal = -9006100;
+        setKeyStrokeBinding("alt P");
     }
 
     @Override

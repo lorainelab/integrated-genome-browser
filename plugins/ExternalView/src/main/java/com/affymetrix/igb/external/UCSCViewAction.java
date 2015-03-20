@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JMenuItem;
 
 /**
  *
@@ -47,6 +46,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
     public UCSCViewAction() {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
+        setKeyStrokeBinding("ctrl U");
     }
 
     @Activate

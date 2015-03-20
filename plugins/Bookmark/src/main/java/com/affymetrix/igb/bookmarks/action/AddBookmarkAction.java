@@ -1,11 +1,10 @@
 package com.affymetrix.igb.bookmarks.action;
 
-import java.awt.event.ActionEvent;
-
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 import com.lorainelab.igb.services.IgbService;
+import java.awt.event.ActionEvent;
 
 public class AddBookmarkAction extends BookmarkAction {
 
@@ -25,6 +24,7 @@ public class AddBookmarkAction extends BookmarkAction {
     private AddBookmarkAction(IgbService igbService) {
         super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
                 "22x22/actions/bookmark-new.png");
+        setKeyStrokeBinding("ctrl D");
         this.igbService = igbService;
     }
 

@@ -27,6 +27,7 @@ public class PrintAction extends GenericAction {
 
     private PrintAction() {
         super(BUNDLE.getString("print"), null, "16x16/actions/print.png", "22x22/actions/print.png", KeyEvent.VK_P, null, true);
+        setKeyStrokeBinding("ctrl P");
     }
 
     @Override

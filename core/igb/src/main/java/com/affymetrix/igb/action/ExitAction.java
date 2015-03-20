@@ -33,6 +33,7 @@ public class ExitAction extends GenericAction {
                 "22x22/actions/process-stop.png",
                 KeyEvent.VK_X);
         this.ordinal = -9009000;
+        setKeyStrokeBinding("ctrl Q");
     }
 
     @Override

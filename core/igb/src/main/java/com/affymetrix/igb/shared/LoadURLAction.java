@@ -59,6 +59,7 @@ public class LoadURLAction extends OpenURIAction {
                 "22x22/status/network-receive.png",
                 KeyEvent.VK_UNDEFINED, null, true);
         this.ordinal = -9009100;
+        setKeyStrokeBinding("ctrl shift O");
     }
 
     @Override

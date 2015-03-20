@@ -51,6 +51,7 @@ public class CopyResiduesAction extends GenericAction {
     protected CopyResiduesAction(String text) {
         super(text, null, "16x16/actions/copy_sequence.png", "22x22/actions/copy_sequence.png", KeyEvent.VK_C);
         setEnabled(enabled);
+        setKeyStrokeBinding("ctrl C");
     }
 
     @Override

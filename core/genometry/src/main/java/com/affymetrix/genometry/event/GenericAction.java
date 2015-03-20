@@ -1,6 +1,7 @@
 package com.affymetrix.genometry.event;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
@@ -8,12 +9,11 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 /**
- * Superclass of all IGB actions.
- * This is so we can keep track of actions for scripting, shortcuts, etc.
- * All actions in IGB also need to be added
- * to a singleton {@link GenericActionHolder}.
+ * Superclass of all IGB actions. This is so we can keep track of actions for scripting, shortcuts, etc. All actions in
+ * IGB also need to be added to a singleton {@link GenericActionHolder}.
  *
  * @see GenericActionDoneCallback
  * @see GenericActionListener
@@ -30,11 +30,12 @@ public abstract class GenericAction extends AbstractAction {
     private final Object extraInfo;
     private final boolean popup;
     private Set<GenericActionDoneCallback> doneCallbacks;
+    private KeyStroke keyStroke;
+    private String keyStrokeBinding;
 
     /**
-     * For ordering buttons in the toolbar.
-     * Subclasses should assign different numbers
-     * in the constructor or static initializer.
+     * For ordering buttons in the toolbar. Subclasses should assign different numbers in the constructor or static
+     * initializer.
      */
     protected int ordinal = 0;
 
@@ -176,4 +177,23 @@ public abstract class GenericAction extends AbstractAction {
     public boolean isToolbarAction() {
         return true;
     }
+
+    public KeyStroke getKeyStroke() {
+        return keyStroke;
+    }
+
+    public String getKeyStrokeBinding() {
+        return this.keyStrokeBinding;
+    }
+
+    public void setKeyStrokeBinding(String keyStrokeBinding) {
+        String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
+        if (prefKeyStrokeBinding == null || prefKeyStrokeBinding.length() == 0) {
+            prefKeyStrokeBinding = keyStrokeBinding;
+        }
+        this.keyStrokeBinding = prefKeyStrokeBinding;
+        this.keyStroke = KeyStroke.getKeyStroke(prefKeyStrokeBinding);
+        PreferenceUtils.getKeystrokesNode().put(getId(), prefKeyStrokeBinding);
+    }
+
 }

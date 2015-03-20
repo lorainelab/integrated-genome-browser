@@ -6,7 +6,6 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
-import java.util.prefs.Preferences;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
@@ -26,13 +25,9 @@ public class GenericActionRegister {
     @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeGenericAction")
     public void addGenericAction(GenericAction genericAction) {
         if (genericAction.getId() != null) {
-            Preferences p = PreferenceUtils.getKeystrokesNode();
-            if (null != p) {
-                String ak = p.get(genericAction.getId(), "");
-                if (null != ak & 0 < ak.length()) {
-                    KeyStroke ks = KeyStroke.getKeyStroke(ak);
-                    genericAction.putValue(Action.ACCELERATOR_KEY, ks);
-                }
+            KeyStroke ks = genericAction.getKeyStroke();
+            if (ks != null) {
+                genericAction.putValue(Action.ACCELERATOR_KEY, ks);
             }
             ((IGB) IGB.getInstance()).addAction(genericAction);
             boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);

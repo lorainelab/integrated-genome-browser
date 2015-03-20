@@ -127,6 +127,7 @@ public final class LoadFileAction extends OpenURIAction {
         this.ordinal = -9009000;
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
         this.igbService.getFrame().setTransferHandler(fdh);
+        setKeyStrokeBinding("ctrl O");
     }
 
     @Override

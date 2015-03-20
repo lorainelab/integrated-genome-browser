@@ -22,6 +22,7 @@ public class HomeAction extends GenericAction {
     private HomeAction() {
         super("Home", "Home", "16x16/actions/home_updated.png",
                 "22x22/actions/home_updated.png", KeyEvent.VK_H);
+        setKeyStrokeBinding("ctrl H");
     }
 
     @Override

@@ -31,6 +31,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(name = KeyStrokeEditPanel.COMPONENT_NAME, immediate = true, provide = KeyStrokeEditPanel.class)
 public final class KeyStrokeEditPanel extends JPanel {
@@ -47,6 +49,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     private String lastTimeFocusGained = "";
     private String lastCommand = "";
     private IgbService igbService;
+    private static final Logger logger = LoggerFactory.getLogger(KeyStrokeEditPanel.class);
 
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
@@ -222,11 +225,11 @@ public final class KeyStrokeEditPanel extends JPanel {
             keyField.setText("");
             return;
         }
-        if (DEBUG) {
-            System.out.println("Changing keystroke pref: "
-                    + PreferenceUtils.getKeystrokesNode() + ": "
-                    + this.key + "  -->  " + str);
-        }
+
+        logger.debug("Changing keystroke pref: "
+                + PreferenceUtils.getKeystrokesNode() + ": "
+                + this.key + "  -->  " + str);
+
         lastCommand = null;
         PreferenceUtils.getKeystrokesNode().put(this.key, str);
         // The following seems to put the accelerator in the menu,

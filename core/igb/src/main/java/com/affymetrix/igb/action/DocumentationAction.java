@@ -31,6 +31,7 @@ public class DocumentationAction extends GenericAction {
                 "22x22/actions/documentation.png",
                 KeyEvent.VK_D, null, false);
         this.ordinal = 110;
+        setKeyStrokeBinding("F1");
     }
 
     @Override

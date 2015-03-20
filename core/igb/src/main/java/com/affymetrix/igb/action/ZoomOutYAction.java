@@ -29,12 +29,14 @@ public class ZoomOutYAction extends SeqMapViewActionA {
                 "16x16/actions/list-remove.png", null
         );
         this.ordinal = -4004220;
+        setKeyStrokeBinding("ctrl shift UP");
     }
 
     public ZoomOutYAction(String label) {
         super("",
                 "16x16/actions/list-remove.png", null
         );
+        setKeyStrokeBinding("ctrl shift UP");
     }
 
     @Override

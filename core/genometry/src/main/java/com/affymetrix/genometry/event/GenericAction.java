@@ -183,6 +183,12 @@ public abstract class GenericAction extends AbstractAction {
     }
 
     public String getKeyStrokeBinding() {
+        String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
+        if (prefKeyStrokeBinding == null || prefKeyStrokeBinding.length() == 0) {
+            prefKeyStrokeBinding = keyStrokeBinding;
+        } else {
+            keyStrokeBinding = prefKeyStrokeBinding;
+        }
         return this.keyStrokeBinding;
     }
 

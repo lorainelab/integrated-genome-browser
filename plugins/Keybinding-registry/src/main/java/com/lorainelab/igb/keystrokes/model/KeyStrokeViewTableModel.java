@@ -107,7 +107,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     }
 
     private void addShortcuts() {
-        JFrame frm = igbService.getFrame();
+        JFrame frm = igbService.getApplicationFrame();
         JPanel panel = (JPanel) frm.getContentPane();
         Preferences p = PreferenceUtils.getKeystrokesNode();
         try {

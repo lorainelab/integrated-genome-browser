@@ -1,4 +1,4 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.image.exporter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

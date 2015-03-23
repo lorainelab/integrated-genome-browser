@@ -245,7 +245,7 @@ public final class KeyStrokeEditPanel extends JPanel {
         // Here we add "orphan" actions that are not in a window's menu.
         // i.e. the ones in the popup or the tool bar.
         // Should we check and return if it's not "orphaned"?
-        javax.swing.JFrame f = igbService.getFrame();
+        javax.swing.JFrame f = igbService.getApplicationFrame();
         javax.swing.JPanel p = (javax.swing.JPanel) f.getContentPane();
         InputMap im = p.getInputMap(WHEN_IN_FOCUSED_WINDOW);
 

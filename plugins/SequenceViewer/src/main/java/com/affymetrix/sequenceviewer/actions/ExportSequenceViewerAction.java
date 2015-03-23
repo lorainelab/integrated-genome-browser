@@ -1,43 +1,26 @@
 package com.affymetrix.sequenceviewer.actions;
 
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.shared.ExportDialog;
 import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
-import java.awt.Adjustable;
-import java.awt.Component;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.event.ActionEvent;
-import java.util.logging.Level;
 
-/**
- *
- * @author hiralv Modified by nick
- */
 public class ExportSequenceViewerAction extends GenericAction {
 
+    public static final String COMPONENT_NAME = "ExportSequenceViewerAction";
     private static final long serialVersionUID = 1l;
-    private final Component comp;
-    private final Adjustable scroller;
+    private final ImageExportService imageExportService;
+    public final java.awt.Component comp;
 
-    public ExportSequenceViewerAction(Component comp, Adjustable scroller) {
+    public ExportSequenceViewerAction(java.awt.Component comp, ImageExportService imageExportService) {
         super(AbstractSequenceViewer.BUNDLE.getString("saveImage"), null, "22x22/actions/Sequence_Viewer_export.png");
         this.comp = comp;
-        this.scroller = scroller;
+        this.imageExportService = imageExportService;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (comp == null || scroller == null) {
-            return;
-        }
-
-        try {
-            ExportDialog.getSingleton().setComponent(comp);
-            ExportDialog.getSingleton().initImageInfo();
-            ExportDialog.getSingleton().display(true);
-        } catch (Exception ex) {
-            ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
-        }
+        imageExportService.exportComponent(comp);
     }
 
 }

@@ -649,6 +649,33 @@ public abstract class PreferenceUtils {
         return parent.node(short_name);
     }
 
+    public static JFrame createFrame(String name, Dimension defaultSize) {
+        final JFrame frame;
+        if (name.length() > 70) {
+            throw new IllegalArgumentException("Title of the frame must be less than 70 chars.");
+        }
+        // If not already open in a new window, make a new window
+        frame = new JFrame(name);
+        frame.setName(name);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.setSize(defaultSize);
+
+        Rectangle pos = PreferenceUtils.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
+        if (pos != null) {
+            PreferenceUtils.setWindowSize(frame, pos);
+        }
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                // save the current size into the preferences, so the window
+                // will re-open with this size next time
+                PreferenceUtils.saveWindowLocation(frame, frame.getTitle());
+            }
+        });
+        // window already exists, but may not be visible
+        return frame;
+    }
+
     public static JFrame createFrame(String name, JPanel panel) {
         final JFrame frame;
 

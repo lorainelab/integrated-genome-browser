@@ -25,7 +25,6 @@ import com.affymetrix.igb.action.NewGenomeAction;
 import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
 import com.affymetrix.igb.action.RunScriptAction;
-import com.affymetrix.igb.action.SaveImageAction;
 import com.affymetrix.igb.action.ShowAllVisualToolsAction;
 import com.affymetrix.igb.action.ShowFilterMarkAction;
 import com.affymetrix.igb.action.ShowFullFilePathInTrack;
@@ -45,8 +44,8 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +83,7 @@ public class MainMenuUtil implements MainMenuManager {
     @Activate
     public void activate() {
         componentActivated = true;
-        menuBar = (JRPMenuBar) igbService.getFrame().getJMenuBar();
+        menuBar = (JRPMenuBar) igbService.getApplicationFrame().getJMenuBar();
         loadMenu();
         loadQueuedMenuItems();
     }
@@ -122,7 +121,6 @@ public class MainMenuUtil implements MainMenuManager {
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_newGenome", NewGenomeAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_saveImage", SaveImageAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
         fileMenu.addSeparator(menuItemCounter++);

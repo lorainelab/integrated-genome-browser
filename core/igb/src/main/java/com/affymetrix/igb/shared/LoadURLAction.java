@@ -90,10 +90,10 @@ public class LoadURLAction extends OpenURIAction {
         AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
 
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            JDialog dialog = pane.createDialog(igbService.getFrame(), BUNDLE.getString("openURL"));
+            JDialog dialog = pane.createDialog(igbService.getApplicationFrame(), BUNDLE.getString("openURL"));
             dialog.setModal(true);
             dialog.pack();
-            dialog.setLocationRelativeTo(igbService.getFrame());
+            dialog.setLocationRelativeTo(igbService.getApplicationFrame());
             dialog.setVisible(true);
         } else {
             ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),

@@ -11,8 +11,8 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.igb.shared.HeadLessExport;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import javax.script.SimpleScriptContext;
 public class IGBScriptEngine implements ScriptEngine {
 
     private final ScriptEngineFactory igbFactory;
-
+    private final ImageExportService imageExportService;
     private static String splitter = "\\s";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
 
@@ -62,7 +62,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
-    private static IgbService igbService;
+    private IgbService igbService;
     private static final Logger LOG
             = Logger.getLogger(IGBScriptEngine.class.getPackage().getName());
 
@@ -73,9 +73,9 @@ public class IGBScriptEngine implements ScriptEngine {
 
     private ScriptContext defaultContext;
 
-    public IGBScriptEngine(IGBScriptEngineFactory factory, IgbService igbService) {
-        super();
-        IGBScriptEngine.igbService = igbService;
+    public IGBScriptEngine(IGBScriptEngineFactory factory, IgbService igbService, ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
+        this.igbService = igbService;
         this.igbFactory = factory;
         SimpleScriptContext c = new SimpleScriptContext();
         Bindings b = c.getBindings(ScriptContext.ENGINE_SCOPE);
@@ -359,7 +359,7 @@ public class IGBScriptEngine implements ScriptEngine {
      *
      * @param f
      */
-    private static void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
+    private void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
         Logger.getLogger(IGBScriptEngine.class.getName()).log(
                 Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
         String ext = GeneralUtils.getExtension(f.getName().toLowerCase());
@@ -379,20 +379,20 @@ public class IGBScriptEngine implements ScriptEngine {
             Component c = null;
             switch (exportMode) {
                 case WHOLEFRAME:
-                    c = igbService.getFrame();
+                    c = igbService.getApplicationFrame();
                     break;
                 case MAIN:
-                    c = igbService.getSeqMapView().getSeqMap().getNeoCanvas();
+                    c = igbService.getMainViewComponent();
                     break;
                 case MAINWITHLABELS:
-                    c = igbService.getSeqMapView().getSeqMap();
+                    c = igbService.getMainViewComponentWithLabels();
                     break;
                 case SLICEDWITHLABELS:
-                    c = igbService.determineSlicedComponent();
+                    c = igbService.getSpliceViewComponentWithLabels();
                     break;
             }
-            HeadLessExport hle = new HeadLessExport();
-            hle.exportScreenshot(c, f, ext, true);
+
+            imageExportService.headlessComponentExport(c, f, ext, true);
         } catch (Exception ex) {
             Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
         }

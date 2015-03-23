@@ -35,7 +35,7 @@ public class WebLinksViewFrame extends JFrame implements WebLinkDisplayProvider 
 
     @Override
     public void displayPanel() {
-        JFrame topFrame = igbService.getFrame();
+        JFrame topFrame = igbService.getApplicationFrame();
         Point location = topFrame.getLocation();
         setLocation(location.x + topFrame.getWidth() / 2 - getWidth() / 2,
                 location.y + getHeight() / 2 - getHeight() / 2);

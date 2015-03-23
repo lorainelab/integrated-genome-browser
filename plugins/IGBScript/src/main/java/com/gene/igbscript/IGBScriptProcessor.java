@@ -1,18 +1,18 @@
 package com.gene.igbscript;
 
-import javax.script.ScriptEngineFactory;
-
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.swing.Operation;
 import com.affymetrix.igb.swing.script.ScriptProcessor;
-import com.lorainelab.igb.services.IgbService;
+import javax.script.ScriptEngineFactory;
 
+@Component(name = IGBScriptProcessor.COMPONENT_NAME, immediate = true, provide = ScriptProcessor.class)
 public class IGBScriptProcessor implements ScriptProcessor {
 
-    private IgbService igbService;
+    public static final String COMPONENT_NAME = "IGBScriptProcessor";
+    private IGBScriptEngineFactory scriptEngineFactory;
 
-    public IGBScriptProcessor(IgbService igbService) {
-        super();
-        this.igbService = igbService;
+    public IGBScriptProcessor() {
     }
 
     @Override
@@ -22,7 +22,7 @@ public class IGBScriptProcessor implements ScriptProcessor {
 
     @Override
     public ScriptEngineFactory getScriptEngineFactory() {
-        return new IGBScriptEngineFactory(igbService);
+        return scriptEngineFactory;
     }
 
     @Override
@@ -39,4 +39,10 @@ public class IGBScriptProcessor implements ScriptProcessor {
     public boolean canWriteScript() {
         return false;
     }
+
+    @Reference
+    public void setScriptEngineFactory(IGBScriptEngineFactory scriptEngineFactory) {
+        this.scriptEngineFactory = scriptEngineFactory;
+    }
+
 }

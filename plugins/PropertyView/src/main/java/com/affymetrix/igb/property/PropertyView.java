@@ -214,7 +214,7 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
         //scroll_pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         this.add(scroll_pane, BorderLayout.CENTER);
 
-        final JTextButtonCellRendererImpl ren = new JTextButtonCellRendererImpl(igbService.getFrame());
+        final JTextButtonCellRendererImpl ren = new JTextButtonCellRendererImpl(igbService.getApplicationFrame());
         for (int i = 1; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(ren);
             table.getColumnModel().getColumn(i).setCellEditor(ren);

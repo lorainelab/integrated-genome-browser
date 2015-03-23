@@ -1,6 +1,10 @@
 package com.gene.igbscript;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +17,10 @@ import javax.script.ScriptEngineFactory;
  * @see
  * http://today.java.net/pub/a/today/2006/09/21/making-scripting-languages-jsr-223-aware.html
  */
+@Component(name = IGBScriptEngineFactory.COMPONENT_NAME, immediate = true)
 public class IGBScriptEngineFactory implements ScriptEngineFactory {
 
+    public static final String COMPONENT_NAME = "IGBScriptEngineFactory";
     private static final String FILEEXT = ".igb";
 
     private static final String[] MIMETYPES = {
@@ -31,12 +37,28 @@ public class IGBScriptEngineFactory implements ScriptEngineFactory {
     private List<String> extensions;
     private List<String> mimeTypes;
     private List<String> names;
+    private IgbService igbService;
+    private ImageExportService imageExportService;
 
-    public IGBScriptEngineFactory(IgbService igbService) {
-        igbScriptEngine = new IGBScriptEngine(this, igbService);
+    public IGBScriptEngineFactory() {
         extensions = Collections.nCopies(1, FILEEXT);
         mimeTypes = Arrays.asList(MIMETYPES);
         names = Arrays.asList(NAMES);
+    }
+
+    @Activate
+    public void activate() {
+        igbScriptEngine = new IGBScriptEngine(this, igbService, imageExportService);
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Reference
+    public void setImageExportService(ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
     }
 
     @Override

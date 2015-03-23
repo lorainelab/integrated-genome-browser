@@ -1,0 +1,221 @@
+package com.lorainelab.image.exporter;
+
+import com.affymetrix.genometry.util.DisplayUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
+import net.miginfocom.swing.MigLayout;
+
+/**
+ *
+ * @author dcnorris
+ */
+public class ExportDialogGui extends JPanel {
+
+    private static final String TITLE = "Save Image";
+    private ButtonGroup buttonGroup;
+    private JButton cancelButton;
+    private JComboBox extComboBox;
+    private JSpinner heightSpinner;
+    private JRadioButton mvRadioButton;
+    private JRadioButton mvlRadioButton;
+    private JLabel previewLabel;
+    private JButton refreshButton;
+    private JComboBox resolutionComboBox;
+    private JLabel resolutionLabel;
+    private JLabel sizeLabel;
+    private JRadioButton svRadioButton;
+    private JComboBox unitComboBox;
+    private JRadioButton wfRadioButton;
+    private JSpinner widthSpinner;
+    private JButton saveButton;
+
+    public static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
+    public static final Object[] UNIT = {"pixels", "inches"};
+
+    private final JFrame exportDialogFrame;
+    private final ExportDialog controller;
+
+    public ExportDialogGui(ExportDialog exportDialog) {
+        this.controller = exportDialog;
+        setLayout(new MigLayout("", "[grow]", "[][][grow]"));
+        exportDialogFrame = PreferenceUtils.createFrame(TITLE, new Dimension(600, 400));
+        exportDialogFrame.add(this);
+        addMainPanel();
+        addImageOptionsPanel();
+        addPreviewPanel();
+    }
+
+    private void addMainPanel() {
+        extComboBox = new JComboBox();
+        extComboBox.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.extComboBoxActionPerformed();
+        });
+        cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.cancelButtonActionPerformed();
+        });
+        saveButton = new JButton("Save" + "\u2026");
+        saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.saveButtonActionPerformed();
+        });
+        exportDialogFrame.getRootPane().setDefaultButton(saveButton);
+        JPanel panel = new JPanel(new MigLayout("", "[grow][][]", "[]"));
+        panel.add(extComboBox, "growx");
+        panel.add(cancelButton);
+        panel.add(saveButton);
+        add(panel, "growx, wrap");
+    }
+
+    private void addImageOptionsPanel() {
+        JLabel widthLabel = new JLabel("Width:");
+        widthSpinner = new JSpinner();
+        widthSpinner.addChangeListener((ChangeEvent evt) -> {
+            controller.widthSpinnerStateChanged();
+        });
+        JLabel heightLabel = new JLabel("Height:");
+        heightSpinner = new JSpinner();
+        heightSpinner.addChangeListener((ChangeEvent evt) -> {
+            controller.heightSpinnerStateChanged();
+        });
+        JLabel unitLabel = new JLabel("Unit:");
+        unitComboBox = new JComboBox(UNIT);
+        unitComboBox.addActionListener((ActionEvent evt) -> {
+            controller.unitComboBoxActionPerformed();
+        });
+        sizeLabel = new JLabel();
+        resolutionLabel = new JLabel("Resolution:");
+        resolutionComboBox = new JComboBox(RESOLUTION);
+        resolutionComboBox.addActionListener((ActionEvent evt) -> {
+            controller.resolutionComboBoxActionPerformed();
+        });
+        JPanel panel = new JPanel(new MigLayout("", "[]rel[grow][]rel[grow][]rel[grow]", "[][]"));
+        panel.setBorder(BorderFactory.createTitledBorder("Image Size"));
+        panel.add(widthLabel);
+        panel.add(widthSpinner, "growx");
+        panel.add(heightLabel, "right");
+        panel.add(heightSpinner, "growx");
+        panel.add(unitLabel, "");
+        panel.add(unitLabel, "");
+        panel.add(unitComboBox, "growx, wrap");
+        panel.add(sizeLabel, "span 2, shrink 1, center");
+        panel.add(resolutionLabel, "gap related");
+        panel.add(resolutionComboBox, "growx");
+        add(panel, "growx, wrap");
+    }
+
+    private void addPreviewPanel() {
+        buttonGroup = new ButtonGroup();
+        svRadioButton = new JRadioButton("Sliced View (with Labels)");
+        svRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.svRadioButtonActionPerformed();
+        });
+        mvRadioButton = new JRadioButton("Main View");
+        mvRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.mvRadioButtonActionPerformed();
+        });
+        wfRadioButton = new JRadioButton("Whole Frame");
+        wfRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.wfRadioButtonActionPerformed();
+        });
+        mvlRadioButton = new JRadioButton("Main View (with Labels)");
+        mvlRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.mvlRadioButtonActionPerformed();
+        });
+        buttonGroup.add(svRadioButton);
+        buttonGroup.add(mvRadioButton);
+        buttonGroup.add(wfRadioButton);
+        buttonGroup.add(mvlRadioButton);
+
+        previewLabel = new JLabel();
+
+        refreshButton = new javax.swing.JButton("Update Preview Image");
+        refreshButton.setToolTipText("Click to update Preview and image dimensions after changing IGB.");
+
+        refreshButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.refreshButtonActionPerformed();
+        });
+
+        JPanel previewPanel = new JPanel(new MigLayout("flowx", "[][grow]", "[grow][grow][grow][grow][grow]"));
+        previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
+        previewPanel.add(wfRadioButton, "");
+        previewPanel.add(previewLabel, "span 1 5, grow, wrap");
+        previewPanel.add(mvRadioButton, "wrap");
+        previewPanel.add(mvlRadioButton, "wrap");
+        previewPanel.add(svRadioButton, "wrap");
+        previewPanel.add(refreshButton, "");
+
+        add(previewPanel, "grow");
+    }
+
+    public JFrame getExportDialogFrame() {
+        return exportDialogFrame;
+    }
+
+    public void bringToFront() {
+        DisplayUtils.bringFrameToFront(exportDialogFrame);
+    }
+
+    public void setFrameVisible(boolean b) {
+        exportDialogFrame.setVisible(b);
+    }
+
+    public JComboBox getExtComboBox() {
+        return extComboBox;
+    }
+
+    public JSpinner getHeightSpinner() {
+        return heightSpinner;
+    }
+
+    public JRadioButton getMvRadioButton() {
+        return mvRadioButton;
+    }
+
+    public JRadioButton getMvlRadioButton() {
+        return mvlRadioButton;
+    }
+
+    public JLabel getPreviewLabel() {
+        return previewLabel;
+    }
+
+    public JComboBox getResolutionComboBox() {
+        return resolutionComboBox;
+    }
+
+    public JLabel getResolutionLabel() {
+        return resolutionLabel;
+    }
+
+    public JLabel getSizeLabel() {
+        return sizeLabel;
+    }
+
+    public JRadioButton getSvRadioButton() {
+        return svRadioButton;
+    }
+
+    public JComboBox getUnitComboBox() {
+        return unitComboBox;
+    }
+
+    public JRadioButton getWfRadioButton() {
+        return wfRadioButton;
+    }
+
+    public JSpinner getWidthSpinner() {
+        return widthSpinner;
+    }
+
+}

@@ -49,7 +49,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         if (IS_MAC) {
-            FileDialog fd = new FileDialog(igbService.getFrame());
+            FileDialog fd = new FileDialog(igbService.getApplicationFrame());
             fd.setDirectory(System.getProperty("user.home"));
             fd.setFile("*.xml");
             fd.setLocation(50, 50);
@@ -69,7 +69,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
         } else {
             JFileChooser chooser = PreferenceUtils.getJFileChooser();
-            int option = chooser.showOpenDialog(igbService.getFrame().getContentPane());
+            int option = chooser.showOpenDialog(igbService.getApplicationFrame().getContentPane());
             if (option == JFileChooser.APPROVE_OPTION) {
                 try {
                     loadSession(chooser.getSelectedFile());

@@ -5,13 +5,14 @@ import com.affymetrix.genometry.event.GenericActionDoneCallback;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.SequenceLoader;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.image.exporter.service.ImageExportService;
 
 public class DefaultSequenceViewer extends AbstractSequenceViewer {
 
-    public DefaultSequenceViewer(IgbService igbService) {
-        super(igbService);
+    public DefaultSequenceViewer(IgbService igbService, ImageExportService imageExportService) {
+        super(igbService, imageExportService);
     }
 
     @Override

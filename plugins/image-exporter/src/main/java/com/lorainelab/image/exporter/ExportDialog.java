@@ -1,16 +1,14 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.image.exporter;
 
-import static com.affymetrix.common.CommonUtils.IS_MAC;
-import com.affymetrix.genometry.util.DisplayUtils;
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.GraphicsUtil;
-import com.affymetrix.igb.view.AltSpliceView;
+import com.google.common.collect.ImmutableMap;
+import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.image.exporter.ExportDialogGui.UNIT;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FileDialog;
@@ -18,18 +16,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
@@ -49,9 +40,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author nick
  */
-public class ExportDialog extends HeadLessExport {
+@aQute.bnd.annotation.component.Component(name = ExportDialog.COMPONENT_NAME, immediate = true, provide = {ExportDialog.class, ImageExportService.class})
+public class ExportDialog extends HeadLessExport implements ImageExportService {
 
-    private static ExportDialog singleton;
+    public static final String COMPONENT_NAME = "ExportDialog";
     private static final Logger logger = LoggerFactory.getLogger(ExportDialog.class);
     private static final double SPINNER_MIN = 1;
     private static final double SPINNER_MAX = 10_000;
@@ -61,32 +53,18 @@ public class ExportDialog extends HeadLessExport {
     public static float FONT_SIZE = 13.0f;
     private static final String TITLE = "Save Image";
     private static final String DEFAULT_FILE = "igb.png";
-    private static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
-    private static final Object[] UNIT = {"pixels", "inches"};
+
     private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
     private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
     private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-
-    /**
-     * @return ExportDialog instance
-     */
-    public static ExportDialog getSingleton() {
-        if (singleton == null) {
-            singleton = new ExportDialog();
-        }
-
-        return singleton;
-    }
+    private IgbService igbService;
 
     private String currentUnit;
-    private JFrame staticFrame;
     private File defaultDir;
-    private AffyTieredMap seqMap;
-    private AffyTieredMap svseqMap;
     private Component wholeFrame;
     private Component mainView;
     private Component mainViewWithLabels;
-    private Component slicedView;
+    private Component slicedViewWithLabels;
     private Component exportComponent;
     private String unit;
     private boolean isWidthSpinner; // Prevent multiple triggering each other
@@ -95,46 +73,42 @@ public class ExportDialog extends HeadLessExport {
     private FileFilter extFilter;
     private File defaultExportFile;
     private String selectedExt;
-    private final LinkedHashMap<ExportFileType, ExportFileFilter> FILTER_LIST;
-    private final JComboBox extComboBox;
-    private final JComboBox resolutionComboBox;
-    private final JComboBox unitComboBox;
-    private final JTextField filePathTextField;
-    private final JSpinner widthSpinner;
-    private final JSpinner heightSpinner;
-    private final JLabel previewLabel;
-    private final JLabel sizeLabel;
-    private final JButton okButton;
-    private final JRadioButton svRadioButton;
-    private final JRadioButton wfRadioButton;
-    private final JRadioButton mvRadioButton;
-    private final JRadioButton mvlRadioButton;
-    private final JPanel buttonsPanel;
+    private final Map<ExportFileType, ExportFileFilter> FILTER_LIST;
+
+    private final ExportDialogGui exportDialogGui;
 
     public ExportDialog() {
-        super();
-        FILTER_LIST = new LinkedHashMap<>();
-        FILTER_LIST.put(SVG, new ExportFileFilter(SVG));
-        FILTER_LIST.put(PNG, new ExportFileFilter(PNG));
-        FILTER_LIST.put(JPEG, new ExportFileFilter(JPEG));
+        this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
+                SVG, new ExportFileFilter(SVG),
+                PNG, new ExportFileFilter(PNG),
+                JPEG, new ExportFileFilter(JPEG)
+        );
+        exportDialogGui = new ExportDialogGui(this);
         defaultDir = new File(System.getProperty("user.home"));
-        extComboBox = new JComboBox();
-        resolutionComboBox = new JComboBox(RESOLUTION);
-        unitComboBox = new JComboBox(UNIT);
-        filePathTextField = new JTextField();
-        widthSpinner = new JSpinner();
-        heightSpinner = new JSpinner();
-        previewLabel = new JLabel();
-        sizeLabel = new JLabel();
-        okButton = new JButton();
-        svRadioButton = new JRadioButton();
-        wfRadioButton = new JRadioButton();
-        mvRadioButton = new JRadioButton();
-        mvlRadioButton = new JRadioButton();
-        buttonsPanel = new JPanel();
         isWidthSpinner = false;
         isHeightSpinner = false;
         unit = "";
+    }
+
+    @Activate
+    public void activate() {
+        wholeFrame = igbService.getApplicationFrame();
+        mainView = igbService.getMainViewComponent();
+        mainViewWithLabels = igbService.getMainViewComponentWithLabels();
+        slicedViewWithLabels = igbService.getSpliceViewComponentWithLabels();
+        setDefaultComponent();
+        initImageInfo();
+        initFrame();
+    }
+
+    private void setDefaultComponent() {
+        exportComponent = mainViewWithLabels;
+        imageInfo = new ExportImageInfo(600, 800);
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 
     /**
@@ -143,10 +117,10 @@ public class ExportDialog extends HeadLessExport {
      *
      * @param isSequenceViewer
      */
-    public synchronized void display(boolean isSequenceViewer) {
+    public void display(boolean isSequenceViewer) {
         initRadioButton(isSequenceViewer);
-        initFrame();
-        DisplayUtils.bringFrameToFront(staticFrame);
+        initSpinner((String) exportDialogGui.getUnitComboBox().getSelectedItem());
+        exportDialogGui.bringToFront();
         previewImage();
     }
 
@@ -156,84 +130,52 @@ public class ExportDialog extends HeadLessExport {
      * method is triggered by sequence viewer, radio buttons panel will be set
      * to invisible and set sequence viewer as export exportComponent.
      *
-     * @param isSequenceViewer
+     * @param isCustomComponent
      */
-    private void initRadioButton(boolean isSequenceViewer) {
-        if (!isSequenceViewer) {
-            initView();
-
-            if (svRadioButton.isSelected()) {
-                setComponent(slicedView);
-            } else if (mvRadioButton.isSelected()) {
-                setComponent(mainView);
-            } else if (mvlRadioButton.isSelected()) {
-                setComponent(mainViewWithLabels);
+    private void initRadioButton(boolean isCustomComponent) {
+        if (!isCustomComponent) {
+            if (exportDialogGui.getSvRadioButton().isSelected()) {
+                exportComponent = slicedViewWithLabels;
+            } else if (exportDialogGui.getMvRadioButton().isSelected()) {
+                exportComponent = mainView;
+            } else if (exportDialogGui.getMvlRadioButton().isSelected()) {
+                exportComponent = mainViewWithLabels;
             } else {
-                setComponent(wholeFrame);
-                wfRadioButton.setSelected(true);
+                exportComponent = wholeFrame;
+                exportDialogGui.getWfRadioButton().setSelected(true);
             }
-
-            initImageInfo();
-
-            mvRadioButton.setEnabled(!seqMap.getTiers().isEmpty());
-            mvlRadioButton.setEnabled(!seqMap.getTiers().isEmpty());
-            svRadioButton.setEnabled(!svseqMap.getTiers().isEmpty());
         }
-
-        buttonsPanel.setVisible(!isSequenceViewer);
-    }
-
-    /**
-     * Initialize the reference components from different part views of IGB.
-     */
-    private void initView() {
-        if (seqMap == null) {
-            seqMap = IGB.getInstance().getMapView().getSeqMap();
-            wholeFrame = IGB.getInstance().getFrame();
-            mainView = seqMap.getNeoCanvas();
-            AffyLabelledTierMap tm = (AffyLabelledTierMap) seqMap;
-            mainViewWithLabels = tm.getSplitPane();
-            AltSpliceView slice_view = (AltSpliceView) (IGB.getInstance()).getView(AltSpliceView.class.getName());
-            slicedView = ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
-            svseqMap = slice_view.getSplicedView().getSeqMap();
-        }
+        initImageInfo();
+        exportDialogGui.getMvRadioButton().setEnabled(!igbService.getAllTierGlyphs().isEmpty());
+        exportDialogGui.getMvlRadioButton().setEnabled(!igbService.getAllTierGlyphs().isEmpty());
+        exportDialogGui.getSvRadioButton().setEnabled(!igbService.getSeqMapView().getSelectedSyms().isEmpty());
+        hideRadioBtns(isCustomComponent);
     }
 
     /**
      * Initialize export panel.
      */
     private void initFrame() {
-        if (staticFrame == null) {
-            String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
-            if (file.equals(DEFAULT_FILE)) {
-                exportFile = new File(defaultDir, file);
-            } else {
-                exportFile = new File(file);
-            }
-
-            defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
-
-            imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
-
-            filePathTextField.setText(exportFile.getAbsolutePath());
-
-            ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
-            extComboBox.setModel(new DefaultComboBoxModel(FILTER_LIST.keySet().toArray()));
-            extComboBox.setSelectedItem(type);
-            selectedExt = type.getExtension();
-            resolutionComboBox.setSelectedItem(imageInfo.getResolution());
-
-            unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
-            unitComboBox.setSelectedItem(unit);
-            currentUnit = unit;
-            initSpinner(unit);
-
-            staticFrame = PreferenceUtils.createFrame(TITLE, new ExportDialogGUI(this));
-            staticFrame.setLocationRelativeTo(IGB.getInstance().getFrame());
-            staticFrame.getRootPane().setDefaultButton(okButton);
+        String file = exportNode.get(PREF_FILE, DEFAULT_FILE);
+        if (file.equals(DEFAULT_FILE)) {
+            exportFile = new File(defaultDir, file);
         } else {
-            initSpinner((String) unitComboBox.getSelectedItem());
+            exportFile = new File(file);
         }
+
+        defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
+
+        imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
+
+        ExportFileType type = getType(exportNode.get(PREF_EXT, DESCRIPTION[1]));
+        exportDialogGui.getExtComboBox().setModel(new DefaultComboBoxModel(FILTER_LIST.keySet().toArray()));
+        exportDialogGui.getExtComboBox().setSelectedItem(type);
+        selectedExt = type.getExtension();
+        exportDialogGui.getResolutionComboBox().setSelectedItem(imageInfo.getResolution());
+        unit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
+        initSpinner(unit);
+        exportDialogGui.getUnitComboBox().setSelectedItem(unit);
+        currentUnit = unit;
     }
 
     public FileFilter[] getAllExportFileFilters() {
@@ -258,13 +200,13 @@ public class ExportDialog extends HeadLessExport {
             logger.warn("Error detected, invalid image width, reverting to default width.");
         }
         SpinnerModel sm = new SpinnerNumberModel(width, SPINNER_MIN, SPINNER_MAX, 1);
-        widthSpinner.setModel(sm);
+        exportDialogGui.getWidthSpinner().setModel(sm);
         if (!isValidSpinnerValue(height)) {
             height = DEFAULT_SPINNER_HEIGHT;
             logger.warn("Error detected, invalid image height, reverting to default height.");
         }
         sm = new SpinnerNumberModel(height, SPINNER_MIN, SPINNER_MAX, 1);
-        heightSpinner.setModel(sm);
+        exportDialogGui.getHeightSpinner().setModel(sm);
 
         resetWidthHeight(width, height);
     }
@@ -288,15 +230,8 @@ public class ExportDialog extends HeadLessExport {
      * Saved image information basis on exportComponent.
      */
     public void initImageInfo() {
-        if (exportComponent == null) {
-            exportComponent = mainViewWithLabels;
-        }
-        if (imageInfo == null) {
-            imageInfo = new ExportImageInfo(exportComponent.getWidth(), exportComponent.getHeight());
-        } else {
-            imageInfo.setWidth(exportComponent.getWidth());
-            imageInfo.setHeight(exportComponent.getHeight());
-        }
+        imageInfo.setWidth(exportComponent.getWidth());
+        imageInfo.setHeight(exportComponent.getHeight());
     }
 
     /**
@@ -334,7 +269,7 @@ public class ExportDialog extends HeadLessExport {
     }
 
     public void cancelButtonActionPerformed() {
-        staticFrame.setVisible(false);
+        exportDialogGui.setFrameVisible(false);
     }
 
     /**
@@ -342,12 +277,12 @@ public class ExportDialog extends HeadLessExport {
      *
      * @param panel
      */
-    public void browseButtonActionPerformed(JPanel panel) {
+    public void saveButtonActionPerformed() {
         String fileName = "igb";
         File directory = defaultDir;
 
-        if (StringUtils.isNotBlank(filePathTextField.getText())) {
-            fileName = filePathTextField.getText();
+        if (StringUtils.isNotBlank(exportFile.getAbsolutePath())) {
+            fileName = exportFile.getAbsolutePath();
             try {
                 String tempDir = fileName.substring(0, fileName.lastIndexOf("/"));
                 File f = new File(tempDir);
@@ -368,17 +303,7 @@ public class ExportDialog extends HeadLessExport {
 
         defaultExportFile = new File(directory, fileName);
         extFilter = getFilter(selectedExt);
-
-        if (IS_MAC) {
-            showFileDialog(directory.getAbsolutePath(), fileName);
-        } else {
-            ExportFileChooser fileChooser = new ExportFileChooser(directory, defaultExportFile, extFilter, this);
-            fileChooser.setDialogTitle("Save view as...");
-            fileChooser.showDialog(panel, "Select");
-            if (fileChooser.getSelectedFile() != null) {
-                completeBrowseButtonAction(fileChooser.getSelectedFile());
-            }
-        }
+        showFileDialog(directory.getAbsolutePath(), fileName);
     }
 
     private void showFileDialog(String directory, String defaultFileName) {
@@ -386,7 +311,7 @@ public class ExportDialog extends HeadLessExport {
         if (StringUtils.isBlank(ext)) {
             defaultFileName += selectedExt;
         }
-        FileDialog dialog = new FileDialog(staticFrame, "Save Image", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
         //dialog.setFilenameFilter(fileNameFilter);
         dialog.setDirectory(directory);
         dialog.setFile(defaultFileName);
@@ -403,7 +328,6 @@ public class ExportDialog extends HeadLessExport {
             File imageFile = new File(dialog.getDirectory(), fileName);
             completeBrowseButtonAction(imageFile);
             okButtonActionPerformed(true);
-
         }
     }
 
@@ -411,7 +335,7 @@ public class ExportDialog extends HeadLessExport {
         String newPath = file.getAbsolutePath();
         String ext = GeneralUtils.getExtension(newPath);
         ExportFileType type = getType(getDescription(ext));
-        extComboBox.setSelectedItem(type);
+        exportDialogGui.getExtComboBox().setSelectedItem(type);
         resetPath(newPath);
     }
 
@@ -422,7 +346,6 @@ public class ExportDialog extends HeadLessExport {
      */
     private void resetPath(String path) {
         exportFile = new File(path);
-        filePathTextField.setText(path);
     }
 
     /**
@@ -434,7 +357,6 @@ public class ExportDialog extends HeadLessExport {
                 return type;
             }
         }
-
         return null;
     }
 
@@ -447,7 +369,6 @@ public class ExportDialog extends HeadLessExport {
                 return filter;
             }
         }
-
         return null;
     }
 
@@ -466,7 +387,7 @@ public class ExportDialog extends HeadLessExport {
 
     private void okButtonActionPerformed(boolean keepWindowOpen) {
         String previousPath = exportFile.getAbsolutePath();
-        String newPath = filePathTextField.getText();
+        String newPath = exportFile.getAbsolutePath();
         exportFile = new File(newPath);
 
         if (!isValidExportFile(previousPath)) {
@@ -499,10 +420,10 @@ public class ExportDialog extends HeadLessExport {
             }
         }
 
-        exportScreenshot(exportComponent, exportFile, selectedExt, false);
+        headlessComponentExport(exportComponent, exportFile, selectedExt, false);
 
         String des = getDescription(ext);
-        extComboBox.setSelectedItem(getType(des));
+        exportDialogGui.getExtComboBox().setSelectedItem(getType(des));
 
         exportNode.put(PREF_FILE, path);
         exportNode.put(PREF_EXT, des);
@@ -510,7 +431,7 @@ public class ExportDialog extends HeadLessExport {
         exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
         exportNode.put(PREF_UNIT, unit);
 
-        staticFrame.setVisible(keepWindowOpen);
+        exportDialogGui.getExportDialogFrame().setVisible(keepWindowOpen);
     }
 
     /**
@@ -530,7 +451,6 @@ public class ExportDialog extends HeadLessExport {
             // if output path is invalid, reset to previous correct path
             ErrorHandler.errorPanel("The output path is invalid.");
             resetPath(previousPath);
-            filePathTextField.grabFocus();
             return false;
         }
 
@@ -550,14 +470,10 @@ public class ExportDialog extends HeadLessExport {
      */
     private boolean isOverwrite() {
         String[] options = {"Yes", "No"};
-        if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+        return JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
                 null, "Overwrite Existing File?", "File Exists",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                options, options[1])) {
-            return true;
-        }
-
-        return false;
+                options, options[1]);
     }
 
     /**
@@ -572,9 +488,9 @@ public class ExportDialog extends HeadLessExport {
         exportComponent.printAll(g);
 
         Image previewImage = GraphicsUtil.resizeImage(exportImage,
-                previewLabel.getWidth(), previewLabel.getHeight());
+                exportDialogGui.getPreviewLabel().getWidth(), exportDialogGui.getPreviewLabel().getHeight());
 
-        previewLabel.setIcon(new ImageIcon(previewImage));
+        exportDialogGui.getPreviewLabel().setIcon(new ImageIcon(previewImage));
     }
 
     /**
@@ -617,11 +533,11 @@ public class ExportDialog extends HeadLessExport {
      */
     public void widthSpinnerStateChanged() {
         if (!isHeightSpinner) {
-            double newWidth = (Double) widthSpinner.getValue();
+            double newWidth = (Double) exportDialogGui.getWidthSpinner().getValue();
             double newHeight = newWidth * imageInfo.getHeightWidthRate();
 
             isWidthSpinner = true;
-            heightSpinner.setValue(newHeight);
+            exportDialogGui.getHeightSpinner().setValue(newHeight);
             isWidthSpinner = false;
 
             resetWidthHeight(newWidth, newHeight);
@@ -633,11 +549,11 @@ public class ExportDialog extends HeadLessExport {
      */
     public void heightSpinnerStateChanged() {
         if (!isWidthSpinner) {
-            double newHeight = (Double) heightSpinner.getValue();
+            double newHeight = (Double) exportDialogGui.getHeightSpinner().getValue();
             double newWidth = newHeight * imageInfo.getWidthHeightRate();
 
             isHeightSpinner = true;
-            widthSpinner.setValue(newWidth);
+            exportDialogGui.getWidthSpinner().setValue(newWidth);
             isHeightSpinner = false;
 
             resetWidthHeight(newWidth, newHeight);
@@ -650,9 +566,9 @@ public class ExportDialog extends HeadLessExport {
      * performed.
      */
     public void extComboBoxActionPerformed() {
-        String path = filePathTextField.getText();
+        String path = exportFile.getAbsolutePath();
         String ext = GeneralUtils.getExtension(path);
-        selectedExt = ((ExportFileType) extComboBox.getSelectedItem()).getExtension();
+        selectedExt = ((ExportFileType) exportDialogGui.getExtComboBox().getSelectedItem()).getExtension();
 
         int index = path.lastIndexOf('.');
         int length = 0;
@@ -675,18 +591,17 @@ public class ExportDialog extends HeadLessExport {
                 }
                 path += selectedExt;
                 resetPath(path);
-                filePathTextField.grabFocus();
             }
         }
 
         if (selectedExt.equals(EXTENSION[0])) {
-            mvRadioButton.setSelected(true);
+            exportDialogGui.getMvRadioButton().setSelected(true);
             mvRadioButtonActionPerformed();
-            wfRadioButton.setEnabled(false);
-            resolutionComboBox.setEnabled(false);
+            exportDialogGui.getWfRadioButton().setEnabled(false);
+            exportDialogGui.getResolutionComboBox().setEnabled(false);
         } else {
-            wfRadioButton.setEnabled(true);
-            resolutionComboBox.setEnabled(true);
+            exportDialogGui.getWfRadioButton().setEnabled(true);
+            exportDialogGui.getResolutionComboBox().setEnabled(true);
         }
     }
 
@@ -697,9 +612,9 @@ public class ExportDialog extends HeadLessExport {
      * Reset width spinner will trigger to reset height spinner.
      */
     public void unitComboBoxActionPerformed() {
-        unit = (String) unitComboBox.getSelectedItem();
+        unit = (String) exportDialogGui.getUnitComboBox().getSelectedItem();
 
-        double newWidth = (Double) widthSpinner.getValue();
+        double newWidth = (Double) exportDialogGui.getWidthSpinner().getValue();
         if (!unit.equals(currentUnit)) {
             if (unit.equals(UNIT[0])) {
                 newWidth *= imageInfo.getResolution();
@@ -708,7 +623,7 @@ public class ExportDialog extends HeadLessExport {
             }
         }
         currentUnit = unit;
-        widthSpinner.setValue(newWidth);
+        exportDialogGui.getWidthSpinner().setValue(newWidth);
     }
 
     /**
@@ -724,12 +639,12 @@ public class ExportDialog extends HeadLessExport {
 
                 width *= imageInfo.getResolution();
                 height *= imageInfo.getResolution();
-                sizeLabel.setText(String.valueOf((int) width)
+                exportDialogGui.getSizeLabel().setText(String.valueOf((int) width)
                         + " x "
                         + String.valueOf((int) height)
                         + " " + UNIT[0]);
             } else {
-                sizeLabel.setText(String.valueOf((int) width / imageInfo.getResolution())
+                exportDialogGui.getSizeLabel().setText(String.valueOf((int) width / imageInfo.getResolution())
                         + " x "
                         + String.valueOf((int) height / imageInfo.getResolution())
                         + " " + UNIT[1]);
@@ -748,12 +663,12 @@ public class ExportDialog extends HeadLessExport {
      * spinner).
      */
     public void resolutionComboBoxActionPerformed() {
-        imageInfo.setResolution((Integer) resolutionComboBox.getSelectedItem());
+        imageInfo.setResolution((Integer) exportDialogGui.getResolutionComboBox().getSelectedItem());
 
         if (unit.equals(UNIT[1])) {
             double width = imageInfo.getWidth();
             width /= imageInfo.getResolution();
-            widthSpinner.setValue(width);
+            exportDialogGui.getWidthSpinner().setValue(width);
         }
     }
 
@@ -778,7 +693,7 @@ public class ExportDialog extends HeadLessExport {
     }
 
     public void svRadioButtonActionPerformed() {
-        exportComponent = slicedView;
+        exportComponent = slicedViewWithLabels;
         refreshPreview();
     }
 
@@ -788,68 +703,26 @@ public class ExportDialog extends HeadLessExport {
 
     private void refreshPreview() {
         initImageInfo();
-        initSpinner((String) unitComboBox.getSelectedItem());
+        initSpinner((String) exportDialogGui.getUnitComboBox().getSelectedItem());
         previewImage();
-    }
-
-    public JTextField getFilePathTextField() {
-        return filePathTextField;
-    }
-
-    public JSpinner getWidthSpinner() {
-        return widthSpinner;
-    }
-
-    public JSpinner getHeightSpinner() {
-        return heightSpinner;
-    }
-
-    public JComboBox getExtComboBox() {
-        return extComboBox;
-    }
-
-    public JComboBox getResolutionComboBox() {
-        return resolutionComboBox;
-    }
-
-    public JLabel getSizeLabel() {
-        return sizeLabel;
     }
 
     public String getCurrentUnit() {
         return currentUnit;
     }
 
-    public JComboBox getUnitComboBox() {
-        return unitComboBox;
+    @Override
+    public void exportComponent(Component component) {
+        exportComponent = component;
+        initImageInfo();
+        display(true);
     }
 
-    public JLabel getPreviewLabel() {
-        return previewLabel;
-    }
-
-    public JButton getOkButton() {
-        return okButton;
-    }
-
-    public JRadioButton getSvRadioButton() {
-        return svRadioButton;
-    }
-
-    public JRadioButton getWfRadioButton() {
-        return wfRadioButton;
-    }
-
-    public JRadioButton getMvRadioButton() {
-        return mvRadioButton;
-    }
-
-    public JRadioButton getMvlRadioButton() {
-        return mvlRadioButton;
-    }
-
-    public JPanel getButtonsPanel() {
-        return buttonsPanel;
+    private void hideRadioBtns(boolean isCustomComponent) {
+        exportDialogGui.getSvRadioButton().setVisible(!isCustomComponent);
+        exportDialogGui.getMvRadioButton().setVisible(!isCustomComponent);
+        exportDialogGui.getMvlRadioButton().setVisible(!isCustomComponent);
+        exportDialogGui.getWfRadioButton().setVisible(!isCustomComponent);
     }
 
 }

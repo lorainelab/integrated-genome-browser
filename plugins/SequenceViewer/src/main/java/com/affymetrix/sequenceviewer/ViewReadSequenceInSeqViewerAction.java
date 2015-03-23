@@ -1,29 +1,38 @@
 package com.affymetrix.sequenceviewer;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.logging.Level;
-
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.SymWithResidues;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
-
 import com.affymetrix.genometry.util.ErrorHandler;
-
+import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.image.exporter.service.ImageExportService;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.logging.Level;
 
-public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener {
+@Component(name = ViewReadSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
+public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, IgbMenuItemProvider {
 
+    public static final String COMPONENT_NAME = "ViewReadSequenceInSeqViewerAction";
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
+    private ImageExportService imageExportService;
 
-    public ViewReadSequenceInSeqViewerAction(IgbService igbService) {
+    public ViewReadSequenceInSeqViewerAction() {
         super(AbstractSequenceViewer.BUNDLE.getString("ViewReadSequenceInSeqViewer"), null, "16x16/actions/Genome_Viewer_reads.png", "22x22/actions/Genome_Viewer_reads.png", KeyEvent.VK_UNDEFINED, null, false);
         this.setEnabled(false);
         GenometryModel.getInstance().addSymSelectionListener(this);
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
@@ -31,13 +40,14 @@ public class ViewReadSequenceInSeqViewerAction extends GenericAction implements 
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         try {
-            ReadSequenceViewer sv = new ReadSequenceViewer(igbService);
+            ReadSequenceViewer sv = new ReadSequenceViewer(igbService, imageExportService);
             sv.startSequenceViewer();
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Problem occured in copying sequences to sequence viewer", ex, Level.WARNING);
         }
     }
 
+    @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
         if (!evt.getSelectedGraphSyms().isEmpty() && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
             if (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues) {
@@ -48,5 +58,26 @@ public class ViewReadSequenceInSeqViewerAction extends GenericAction implements 
         } else {
             setEnabled(false);
         }
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return "view";
+    }
+
+    @Override
+    public JRPMenuItem getMenuItem() {
+        JRPMenuItem readSequenceMenuItem = new JRPMenuItem("SequenceViewer_viewAlignmentSequenceInSeqViewer", this);
+        return readSequenceMenuItem;
+    }
+
+    @Override
+    public int getMenuItemWeight() {
+        return 6;
+    }
+
+    @Reference
+    public void setImageExportService(ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
     }
 }

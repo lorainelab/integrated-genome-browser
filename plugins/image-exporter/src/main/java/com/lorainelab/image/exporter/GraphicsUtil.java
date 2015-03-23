@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.lorainelab.image.exporter;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;

@@ -1,14 +1,12 @@
-package com.affymetrix.igb.shared;
+package com.lorainelab.image.exporter;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.util.GraphicsUtil;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.prefs.Preferences;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -19,8 +17,8 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
-import org.freehep.graphicsio.svg.SVGExportFileType;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
+import org.jfree.graphics2d.svg.SVGUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,17 +41,13 @@ public class HeadLessExport {
         "Portable Network Graphics (*.png)",
         "Joint Photographic Experts Group (*.jpeg)",};
 
-    protected final Properties svgProperties;
-    protected final SVGExportFileType svgExport;
     protected BufferedImage exportImage;
     protected ExportImageInfo imageInfo;
 
     public HeadLessExport() {
-        svgProperties = new Properties();
-        svgExport = new SVGExportFileType();
     }
 
-    public void exportScreenshot(Component component, File f, String ext, boolean isScript) {
+    public void headlessComponentExport(Component component, File f, String ext, boolean isScript) {
         try {
             // From Script Loader, need to initialize the export image
             if (isScript) {
@@ -65,11 +59,9 @@ public class HeadLessExport {
             }
 
             if (ext.equals(EXTENSION[0])) {
-
-                svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
-                        (int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
-                svgExport.exportToFile(f, component, null, svgProperties, "");
-
+                SVGGraphics2D g2 = new SVGGraphics2D((int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+                component.paint(g2);
+                SVGUtils.writeToSVG(f, g2.getSVGElement());
             } else {
                 exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
                 Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
@@ -84,9 +76,9 @@ public class HeadLessExport {
                     }
 
                     if (ext.equals(EXTENSION[1])) {
-                        setPNG_DPI(metadata);
+                        setPngDpi(metadata);
                     } else {
-                        setJPEG_DPI(metadata);
+                        setJpegDpi(metadata);
                     }
 
                     try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
@@ -107,7 +99,7 @@ public class HeadLessExport {
      * @param metadata
      * @throws IIOInvalidTreeException
      */
-    private void setPNG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+    private void setPngDpi(IIOMetadata metadata) throws IIOInvalidTreeException {
         IIOMetadataNode horiz = new IIOMetadataNode("HorizontalPixelSize");
         horiz.setAttribute("value", Double.toString(imageInfo.getResolution() * 0.039));
 
@@ -130,7 +122,7 @@ public class HeadLessExport {
      * @param metadata
      * @throws IIOInvalidTreeException
      */
-    private void setJPEG_DPI(IIOMetadata metadata) throws IIOInvalidTreeException {
+    private void setJpegDpi(IIOMetadata metadata) throws IIOInvalidTreeException {
         IIOMetadataNode tree = (IIOMetadataNode) metadata.getAsTree("javax_imageio_jpeg_image_1.0");
         IIOMetadataNode jfif = (IIOMetadataNode) tree.getElementsByTagName("app0JFIF").item(0);
         jfif.setAttribute("Xdensity", Integer.toString(imageInfo.getResolution()));

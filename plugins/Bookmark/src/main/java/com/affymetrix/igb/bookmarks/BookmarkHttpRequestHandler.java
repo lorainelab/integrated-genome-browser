@@ -203,7 +203,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     }
 
     private void bringIgbToFront() {
-        JFrame f = igbService.getFrame();
+        JFrame f = igbService.getApplicationFrame();
         boolean tmp = f.isAlwaysOnTop();
         f.setAlwaysOnTop(true);
         f.toFront();

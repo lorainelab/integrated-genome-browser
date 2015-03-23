@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 
 @Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
 public class SaveSessionAction extends GenericAction implements IgbMenuItemProvider {
@@ -63,7 +62,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     private void showFileDialog(String defaultFileName) {
-        FileDialog dialog = new FileDialog(igbService.getFrame(), "Save Session", FileDialog.SAVE);
+        FileDialog dialog = new FileDialog(igbService.getApplicationFrame(), "Save Session", FileDialog.SAVE);
         dialog.setFilenameFilter(fileNameFilter);
         dialog.setFile(defaultFileName);
         dialog.setVisible(true);
@@ -78,7 +77,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
         JFileChooser chooser = PreferenceUtils.getJFileChooser();
         File sessionFile = new File(System.getProperty("user.home") + "/" + defaultFileName);
         chooser.setSelectedFile(sessionFile);
-        int option = chooser.showSaveDialog(igbService.getFrame().getContentPane());
+        int option = chooser.showSaveDialog(igbService.getApplicationFrame().getContentPane());
         if (option == JFileChooser.APPROVE_OPTION) {
             saveSession(chooser.getSelectedFile());
         }

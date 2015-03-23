@@ -35,6 +35,7 @@ import com.affymetrix.sequenceviewer.actions.ExportSequenceViewerAction;
 import com.affymetrix.sequenceviewer.actions.SelectAllInSeqViewerAction;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -107,11 +108,13 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
     Color[] reverted = {Color.white, Color.white};
     private String id;
     int[] selectedFrames = new int[6];
+    private ImageExportService imageExportService;
 
     /* default constructor to get the singleton object of SeqMapView
      * This is required to get the symmetry of the selected glyphs and genomic sequence in IGB
      */
-    public AbstractSequenceViewer(IgbService igbService) {
+    public AbstractSequenceViewer(IgbService igbService, ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
         seqmapview = igbService.getSeqMapView();
     }
 
@@ -631,7 +634,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportFastaSequence", new ExportFastaSequenceAction(this)));
         MenuUtil.addToMenu(fileMenu, exportRComplementFasta);
         fileMenu.addSeparator();
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(dock, seqview.getScroller())));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exportView", new ExportSequenceViewerAction(dock, imageExportService)));
         fileMenu.addSeparator();
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem("sequenceViewer_exitSeqViewer", new ExitSeqViewerAction(this.mapframe)));
         MenuUtil.addToMenu(copyMenu, new JRPMenuItem("sequenceViewer_copySeq", selectAllAction));

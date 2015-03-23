@@ -133,7 +133,15 @@ public interface IgbService {
      *
      * @return the main JFrame for the IGB instance
      */
-    public JFrame getFrame();
+    public JFrame getApplicationFrame();
+
+    public Component getMainViewComponent();
+
+    public Component getMainViewComponentWithLabels();
+
+    public Component getSpliceViewComponent();
+
+    public Component getSpliceViewComponentWithLabels();
 
     /**
      * Save the current state of the application.
@@ -225,8 +233,6 @@ public interface IgbService {
     public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order, String mirrorURL); //qlmirror
 
     public void removeServer(GenericServer gServer);
-
-    public Component determineSlicedComponent();
 
     public GenericFeature createFeature(String featureName, SymLoader loader);
 

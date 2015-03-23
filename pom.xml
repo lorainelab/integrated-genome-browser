@@ -144,6 +144,7 @@
         <module>plugins/plugin-manager</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
         <module>plugins/ConsoleGui</module>
+        <module>plugins/image-exporter</module>
         <module>plugins/session-manager</module>               
         <module>plugins/Keybinding-registry</module>
     </modules>
@@ -428,6 +429,12 @@
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
+                <artifactId>image-exporter</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
                 <artifactId>session-manager</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -678,6 +685,11 @@
                 <groupId>org.freehep</groupId>
                 <artifactId>freehep-graphicsio-svg</artifactId>
                 <version>2.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jfree</groupId>
+                <artifactId>jfreesvg</artifactId>
+                <version>2.1</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>

@@ -215,7 +215,7 @@ public class Activator implements BundleActivator {
             se.start();
         }
         logger.trace("settingFrame visibile");
-        //igb.getFrame().setVisible(true);
+        //igb.getApplicationFrame().setVisible(true);
     }
 
     /**
@@ -541,7 +541,7 @@ public class Activator implements BundleActivator {
 
         private boolean check() {
             return IgbServiceImpl.getInstance().areAllServersInited()
-                    && IgbServiceImpl.getInstance().getFrame().isVisible();
+                    && IgbServiceImpl.getInstance().getApplicationFrame().isVisible();
         }
     }
 }

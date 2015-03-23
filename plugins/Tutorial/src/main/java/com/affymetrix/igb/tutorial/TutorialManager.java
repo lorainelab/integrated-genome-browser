@@ -361,7 +361,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
             }
         }
         //if it is not enabled offer option to enable or cancel tutorial
-        Container frame = igbService.getFrame();
+        Container frame = igbService.getApplicationFrame();
         String message = "IGB Quickload is required for this tutorial, but it is not enabled. Would you like to enable it and continue?";
         Object[] params = {message};
         int yes = JOptionPane.showConfirmDialog(frame, params, "Continue?", JOptionPane.YES_NO_OPTION);

@@ -121,3 +121,4 @@ www/release_notes/images/Thumbs.db
 extbundles/
 /plugins/keystroke/target/
 /plugins/Keybinding-registry/target/
+/plugins/image-exporter/target/

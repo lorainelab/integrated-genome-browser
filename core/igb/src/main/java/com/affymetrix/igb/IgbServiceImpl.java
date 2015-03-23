@@ -219,8 +219,32 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public JFrame getFrame() {
+    public JFrame getApplicationFrame() {
         return IGB.getInstance().getFrame();
+    }
+
+    @Override
+    public Component getMainViewComponent() {
+        AffyLabelledTierMap map = (AffyLabelledTierMap) getSeqMap();
+        return map.getNeoCanvas();
+    }
+
+    @Override
+    public Component getMainViewComponentWithLabels() {
+        AffyLabelledTierMap map = (AffyLabelledTierMap) getSeqMap();
+        return map.getSplitPane();
+    }
+
+    @Override
+    public Component getSpliceViewComponent() {
+        AltSpliceView slice_view = AltSpliceView.getSingleton();
+        return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap());
+    }
+
+    @Override
+    public Component getSpliceViewComponentWithLabels() {
+        AltSpliceView slice_view = AltSpliceView.getSingleton();
+        return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
     }
 
     @Override
@@ -438,16 +462,6 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     public void removeServer(GenericServer gServer) {
         ServerList.getServerInstance().removeServer(gServer.URL);
         DataLoadPrefsView.getSingleton().refreshServers();
-    }
-
-    @Override
-    public Component determineSlicedComponent() {
-        AltSpliceView slice_view = (AltSpliceView) (IGB.getInstance()).getView(AltSpliceView.class.getName());
-        if (slice_view == null) {
-            return null;
-        }
-
-        return ((AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap()).getSplitPane();
     }
 
     @Override

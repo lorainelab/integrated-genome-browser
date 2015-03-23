@@ -126,14 +126,14 @@ public final class LoadFileAction extends OpenURIAction {
                 KeyEvent.VK_O, null, true);
         this.ordinal = -9009000;
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
-        this.igbService.getFrame().setTransferHandler(fdh);
+        this.igbService.getApplicationFrame().setTransferHandler(fdh);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
 
-        FileDialog fileChooser = new FileDialog(igbService.getFrame());
+        FileDialog fileChooser = new FileDialog(igbService.getApplicationFrame());
         File currDir = load_dir_tracker.getFile();
         if (currDir == null) {
             currDir = new File(System.getProperty("user.home"));

@@ -5,13 +5,13 @@ import com.affymetrix.genometry.event.GenericActionDoneCallback;
 import com.affymetrix.genometry.symmetry.SymWithResidues;
 import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.image.exporter.service.ImageExportService;
 
 public class ReadSequenceViewer extends AbstractSequenceViewer {
 
-    public ReadSequenceViewer(IgbService igbService) {
-        super(igbService);
+    public ReadSequenceViewer(IgbService igbService, ImageExportService imageExportService) {
+        super(igbService, imageExportService);
     }
 
     @Override

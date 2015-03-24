@@ -76,7 +76,7 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
             }
 
         } else {
-            throw new IllegalArgumentException("Only add WeightedJRPWidget to menu");
+            return (JMenuItem) super.add(newMenuItem, -1);
         }
     }
 

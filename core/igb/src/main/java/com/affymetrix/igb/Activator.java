@@ -82,9 +82,7 @@ import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import java.util.prefs.Preferences;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -115,7 +113,7 @@ public class Activator implements BundleActivator {
         }
         //wait for consoleLogger service
         setupConsoleServiceTracker(bundleContext);
-        setupKeyBindingRegistryServiceTracker(bundleContext);
+        addGenericActionListener();
         initColorProvider(bundleContext);
         initFilter(bundleContext);
     }
@@ -129,21 +127,6 @@ public class Activator implements BundleActivator {
                     bundleContext.getService(serviceReference);
                     run(bundleContext);
                     logger.info("IGB Started");
-                }
-                return super.addingService(serviceReference);
-            }
-        };
-        consoleServiceTracker.open();
-    }
-
-    private void setupKeyBindingRegistryServiceTracker(final BundleContext bundleContext) {
-        ServiceTracker<PreferencesPanelProvider, Object> consoleServiceTracker;
-        consoleServiceTracker = new ServiceTracker<PreferencesPanelProvider, Object>(bundleContext, PreferencesPanelProvider.class, null) {
-            @Override
-            public Object addingService(ServiceReference<PreferencesPanelProvider> serviceReference) {
-                if (serviceReference.getProperty("component.name").equals("KeyStrokesView")) {
-                    bundleContext.getService(serviceReference);
-                    addGenericActionListener();
                 }
                 return super.addingService(serviceReference);
             }
@@ -181,12 +164,10 @@ public class Activator implements BundleActivator {
     }
 
     /**
-     * method to start IGB, called when the window service is available, creates
-     * and initializes IGB and registers the IgbService add any extension points
-     * handling here
+     * method to start IGB, called when the window service is available, creates and initializes IGB and registers the
+     * IgbService add any extension points handling here
      *
-     * @param windowServiceReference - the OSGi ServiceReference for the window
-     * service
+     * @param windowServiceReference - the OSGi ServiceReference for the window service
      */
     private void run(final BundleContext bundleContext) {
         logger.info("Starting IGB");
@@ -219,9 +200,8 @@ public class Activator implements BundleActivator {
     }
 
     /**
-     * Add actions to the tool bar. Call getAction on all subclasses of
-     * SeqMapViewActionA so that they appear in the tool bar. Must be done after
-     * SeqMapView is created and assigned to IGB.map_view.
+     * Add actions to the tool bar. Call getAction on all subclasses of SeqMapViewActionA so that they appear in the
+     * tool bar. Must be done after SeqMapView is created and assigned to IGB.map_view.
      */
     private void initSeqMapViewActions() {
         ChangeForegroundColorAction.getAction();
@@ -337,26 +317,20 @@ public class Activator implements BundleActivator {
                     @Override
                     public void onCreateGenericAction(GenericAction genericAction) {
                         if (genericAction.getId() != null) {//genericAction.getValue(javax.swing.Action.NAME)
-                            Preferences p = PreferenceUtils.getKeystrokesNode();
-                            if (null != p) {
-                                String ak = p.get(genericAction.getId(), "");
-                                if (null != ak & 0 < ak.length()) {
-                                    KeyStroke ks = KeyStroke.getKeyStroke(ak);
-                                    genericAction.putValue(Action.ACCELERATOR_KEY, ks);
-                                }
+                            KeyStroke ks = genericAction.getKeyStroke();
+                            if (ks != null) {
+                                genericAction.putValue(Action.ACCELERATOR_KEY, ks);
                             }
 
                             IGB.getInstance().addAction(genericAction);
 
-                            boolean isToolbar = PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
+                            boolean isToolbar = genericAction.isToolbarDefault() || PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
                             if (isToolbar) {
-//							JRPButton button = new JRPButton("Toolbar_" + genericAction.getId(), genericAction);
                                 int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId() + ".index", -1);
                                 if (index == -1) {
-                                    IGB.getInstance().addToolbarAction(genericAction);
-                                } else {
-                                    IGB.getInstance().addToolbarAction(genericAction, index);
+                                    index = genericAction.getToolbarIndex();
                                 }
+                                IGB.getInstance().addToolbarAction(genericAction, index);
                             }
                         }
                     }

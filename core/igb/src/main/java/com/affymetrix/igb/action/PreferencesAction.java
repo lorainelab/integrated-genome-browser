@@ -21,6 +21,7 @@ public class PreferencesAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
     private static final PreferencesAction ACTION = new PreferencesAction();
+    private final int TOOLBAR_INDEX = 6;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -36,6 +37,7 @@ public class PreferencesAction extends GenericAction {
                 "22x22/actions/preferences_updated.png",
                 KeyEvent.VK_E, null, true);
         this.ordinal = -9006100;
+        setKeyStrokeBinding("alt P");
     }
 
     @Override
@@ -53,5 +55,14 @@ public class PreferencesAction extends GenericAction {
 //		((TierPrefsView)p.tpvGUI.tdv).setTier_label_glyphs(tier_label_glyphs);
         p.getFrame().setVisible(true);
         p.getFrame().setState(Frame.NORMAL);
+    }
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

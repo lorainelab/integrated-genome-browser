@@ -18,6 +18,7 @@ public class ExitAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
     private static final ExitAction ACTION = new ExitAction();
+    private final int TOOLBAR_INDEX = 7;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -33,6 +34,7 @@ public class ExitAction extends GenericAction {
                 "22x22/actions/process-stop.png",
                 KeyEvent.VK_X);
         this.ordinal = -9009000;
+        setKeyStrokeBinding("ctrl Q");
     }
 
     @Override
@@ -42,5 +44,15 @@ public class ExitAction extends GenericAction {
                 new WindowEvent(
                         IGB.getInstance().getFrame(),
                         WindowEvent.WINDOW_CLOSING));
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

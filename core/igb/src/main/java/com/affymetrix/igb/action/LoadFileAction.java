@@ -46,7 +46,7 @@ public final class LoadFileAction extends OpenURIAction {
 
     private boolean mergeSelected = false;
     private final FileTracker load_dir_tracker;
-
+    private final int TOOLBAR_INDEX = 0;
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
@@ -127,6 +127,7 @@ public final class LoadFileAction extends OpenURIAction {
         this.ordinal = -9009000;
         load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
         this.igbService.getApplicationFrame().setTransferHandler(fdh);
+        setKeyStrokeBinding("ctrl O");
     }
 
     @Override
@@ -164,4 +165,15 @@ public final class LoadFileAction extends OpenURIAction {
             openURI(uri, file.getName(), true, loadGroup, speciesName, false);
         }
     }
+
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
+    }
+    
 }

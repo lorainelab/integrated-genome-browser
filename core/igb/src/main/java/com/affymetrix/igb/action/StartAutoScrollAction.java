@@ -13,6 +13,7 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1l;
     private static StartAutoScrollAction ACTION = new StartAutoScrollAction();
+    private final int TOOLBAR_INDEX = 12;
 
     private StartAutoScrollAction() {
         super(BUNDLE.getString("startAutoScroll"), BUNDLE.getString("autoscrollTooltip"), "16x16/actions/autoscroll.png",
@@ -57,5 +58,15 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
     @Override
     public boolean isToolbarAction() {
         return false;
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

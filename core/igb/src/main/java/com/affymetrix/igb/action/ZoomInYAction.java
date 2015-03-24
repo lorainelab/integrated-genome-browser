@@ -29,12 +29,14 @@ public class ZoomInYAction extends SeqMapViewActionA {
                 "16x16/actions/list-add.png", null
         );
         this.ordinal = -4004110;
+        setKeyStrokeBinding("ctrl shift DOWN");
     }
 
     public ZoomInYAction(String label) {
         super(label,
                 "16x16/actions/list-add.png", null
         );
+        setKeyStrokeBinding("ctrl shift DOWN");
     }
 
     @Override

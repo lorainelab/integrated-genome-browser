@@ -21,6 +21,7 @@ public class NextSearchSpanAction extends GenericAction {
     private NextSearchSpanAction() {
         super(IGBConstants.BUNDLE.getString("nextSearchSpan"), "16x16/actions/go-last.png", "22x22/actions/go-last.png");
         setEnabled(false);
+        setKeyStrokeBinding("ctrl X");
     }
 
     @Override

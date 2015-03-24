@@ -39,6 +39,7 @@ public class SelectAllAction extends SeqMapViewActionA {
     protected SelectAllAction(FileTypeCategory... categories) {
         super(categories.length > 1 ? IGBConstants.BUNDLE.getString("selectAllTracks") : categories[0].toString(), null, null);
         this.categories = categories;
+        setKeyStrokeBinding("ctrl A");
     }
 
     @Override

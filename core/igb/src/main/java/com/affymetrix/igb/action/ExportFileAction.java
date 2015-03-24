@@ -41,6 +41,7 @@ public class ExportFileAction
                 KeyEvent.VK_UNDEFINED, null, true);
         putValue(SHORT_DESCRIPTION, BUNDLE.getString("saveTrackActionTooltip"));
         this.ordinal = -9007100;
+        setKeyStrokeBinding("ctrl S");
     }
 
     @Override

@@ -12,7 +12,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public abstract class BookmarkAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
-
+    
     public BookmarkAction(String text, String iconPath, String largeIconPath) {
         super(text, iconPath, largeIconPath);
     }

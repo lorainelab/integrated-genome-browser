@@ -18,6 +18,7 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
     private static final long serialVersionUID = 1L;
     private static final ChangeExpandMaxOptimizeAction ACTION
             = new ChangeExpandMaxOptimizeAction();
+    private final int TOOLBAR_INDEX = 14;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -71,5 +72,15 @@ public class ChangeExpandMaxOptimizeAction extends ChangeExpandMaxActionA {
     @Override
     public boolean isEnabled() {
         return (Selections.allGlyphs.size() > 0 && Selections.isAllAnnot());
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

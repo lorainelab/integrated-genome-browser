@@ -22,6 +22,7 @@ public class ToggleToolTipAction extends GenericAction {
 
     private static final long serialVersionUID = 1;
     private static final ToggleToolTipAction ACTION = new ToggleToolTipAction();
+    private final int TOOLBAR_INDEX = 16;
 
     private ToggleToolTipAction() {
         super(BUNDLE.getString("togglePropertiesTooltip"), null,
@@ -60,5 +61,15 @@ public class ToggleToolTipAction extends GenericAction {
     @Override
     public boolean isToggle() {
         return true;
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

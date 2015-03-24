@@ -10,6 +10,7 @@ public class HomeAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
     private static final HomeAction ACTION = new HomeAction();
+    private final int TOOLBAR_INDEX = 17;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -22,11 +23,22 @@ public class HomeAction extends GenericAction {
     private HomeAction() {
         super("Home", "Home", "16x16/actions/home_updated.png",
                 "22x22/actions/home_updated.png", KeyEvent.VK_H);
+        setKeyStrokeBinding("ctrl H");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; 
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; 
     }
 }

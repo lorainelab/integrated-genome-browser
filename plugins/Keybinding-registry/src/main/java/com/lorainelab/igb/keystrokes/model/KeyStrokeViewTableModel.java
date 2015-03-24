@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
 public class KeyStrokeViewTableModel extends AbstractTableModel {
 
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
-    //private static final String DEFAULT_PREFS_API_RESOURCE = "igb_default_APIprefs.xml";
     private static final String COMMAND_KEY = "meta";
     private static final String CONTROL_KEY = "ctrl";
     private static final long serialVersionUID = 1L;
@@ -83,7 +82,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 addAction(bundleContext.getService(serviceReference));
             }
         } catch (InvalidSyntaxException ex) {
-            logger.error("Invalid Syntax Exception");
+            logger.error("Invalid Syntax Exception ", ex);
         }
         setupActionServiceTracker(bundleContext);
     }

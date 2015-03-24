@@ -1,9 +1,9 @@
 package com.lorainelab.image.exporter;
 
-import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -29,7 +29,7 @@ public class ExportDialogGui extends JPanel {
     private JSpinner heightSpinner;
     private JRadioButton mvRadioButton;
     private JRadioButton mvlRadioButton;
-    private JLabel previewLabel;
+    private PreviewLabel previewLabel;
     private JButton refreshButton;
     private JComboBox resolutionComboBox;
     private JLabel resolutionLabel;
@@ -54,13 +54,11 @@ public class ExportDialogGui extends JPanel {
         addMainPanel();
         addImageOptionsPanel();
         addPreviewPanel();
+        setupAutoSizePreviewLabel();
     }
 
     private void addMainPanel() {
         extComboBox = new JComboBox();
-        extComboBox.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.extComboBoxActionPerformed();
-        });
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             controller.cancelButtonActionPerformed();
@@ -90,15 +88,9 @@ public class ExportDialogGui extends JPanel {
         });
         JLabel unitLabel = new JLabel("Unit:");
         unitComboBox = new JComboBox(UNIT);
-        unitComboBox.addActionListener((ActionEvent evt) -> {
-            controller.unitComboBoxActionPerformed();
-        });
         sizeLabel = new JLabel();
         resolutionLabel = new JLabel("Resolution:");
         resolutionComboBox = new JComboBox(RESOLUTION);
-        resolutionComboBox.addActionListener((ActionEvent evt) -> {
-            controller.resolutionComboBoxActionPerformed();
-        });
         JPanel panel = new JPanel(new MigLayout("", "[]rel[grow][]rel[grow][]rel[grow]", "[][]"));
         panel.setBorder(BorderFactory.createTitledBorder("Image Size"));
         panel.add(widthLabel);
@@ -137,8 +129,7 @@ public class ExportDialogGui extends JPanel {
         buttonGroup.add(wfRadioButton);
         buttonGroup.add(mvlRadioButton);
 
-        previewLabel = new JLabel();
-
+        previewLabel = new PreviewLabel();
         refreshButton = new javax.swing.JButton("Update Preview Image");
         refreshButton.setToolTipText("Click to update Preview and image dimensions after changing IGB.");
 
@@ -158,12 +149,29 @@ public class ExportDialogGui extends JPanel {
         add(previewPanel, "grow");
     }
 
-    public JFrame getExportDialogFrame() {
-        return exportDialogFrame;
+    private void setupAutoSizePreviewLabel() {
+        exportDialogFrame.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                previewLabel.repaint();
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
 
-    public void bringToFront() {
-        DisplayUtils.bringFrameToFront(exportDialogFrame);
+    public JFrame getExportDialogFrame() {
+        return exportDialogFrame;
     }
 
     public void setFrameVisible(boolean b) {
@@ -186,8 +194,12 @@ public class ExportDialogGui extends JPanel {
         return mvlRadioButton;
     }
 
-    public JLabel getPreviewLabel() {
+    public PreviewLabel getPreviewLabel() {
         return previewLabel;
+    }
+
+    public void setPreviewLabel(PreviewLabel previewLabel) {
+        this.previewLabel = previewLabel;
     }
 
     public JComboBox getResolutionComboBox() {

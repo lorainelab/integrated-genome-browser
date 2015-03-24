@@ -10,16 +10,20 @@ import org.slf4j.LoggerFactory;
 public class ExportImageInfo {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportImageInfo.class);
-    private static final int DEFAULT_IMAGE_HEIGHT = 800;
-    private static final int DEFAULT_IMAGE_WIDTH = 600;
-    private static final int DEFAULT_RESOLUTION = 300;
+    public static final int DEFAULT_IMAGE_HEIGHT = 800;
+    public static final int DEFAULT_IMAGE_WIDTH = 600;
+    public static final int DEFAULT_RESOLUTION = 300;
 
     private double width;
     private double height;
     private int resolution;
 
+    public ExportImageInfo() {
+        this(DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, DEFAULT_RESOLUTION);
+    }
+
     public ExportImageInfo(double w, double h) {
-        this(w, h, DEFAULT_IMAGE_WIDTH);
+        this(w, h, DEFAULT_RESOLUTION);
     }
 
     public ExportImageInfo(double w, double h, int r) {

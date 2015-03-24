@@ -1,6 +1,7 @@
 package com.lorainelab.image.exporter;
 
 import com.affymetrix.genometry.util.PreferenceUtils;
+import static com.lorainelab.image.exporter.ExportImageInfo.DEFAULT_RESOLUTION;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HeadLessExport {
 
-    protected static Preferences exportNode = PreferenceUtils.getExportPrefsNode();
+    protected static Preferences exportNode;
     private static final Logger logger = LoggerFactory.getLogger(HeadLessExport.class);
     protected static final String PREF_FILE = "File";
     protected static final String PREF_EXT = "Ext";
@@ -45,17 +46,18 @@ public class HeadLessExport {
     protected ExportImageInfo imageInfo;
 
     public HeadLessExport() {
+        exportNode = PreferenceUtils.getExportPrefsNode();
     }
 
-    public void headlessComponentExport(Component component, File f, String ext, boolean isScript) {
+    public void headlessComponentExport(Component component, File f, String ext, boolean isHeadlessExport) {
         try {
             // From Script Loader, need to initialize the export image
-            if (isScript) {
+            if (isHeadlessExport) {
                 exportImage = GraphicsUtil.getDeviceCompatibleImage(component.getWidth(), component.getHeight());
                 Graphics g = exportImage.createGraphics();
                 component.paintAll(g);
                 imageInfo = new ExportImageInfo(component.getWidth(), component.getHeight());
-                imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, -1));
+                imageInfo.setResolution(exportNode.getInt(PREF_RESOLUTION, DEFAULT_RESOLUTION));
             }
 
             if (ext.equals(EXTENSION[0])) {

@@ -2,6 +2,7 @@ package com.affymetrix.genometry.event;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
+import com.google.common.base.Strings;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public abstract class GenericAction extends AbstractAction {
     private Set<GenericActionDoneCallback> doneCallbacks;
     private KeyStroke keyStroke;
     private String keyStrokeBinding;
-    private int toolbarIndex = -1;
+    private final int TOOLBAR_INDEX = -1;
 
     /**
      * For ordering buttons in the toolbar. Subclasses should assign different numbers in the constructor or static
@@ -188,12 +189,12 @@ public abstract class GenericAction extends AbstractAction {
     }
 
     public int getToolbarIndex() {
-        return toolbarIndex;
+        return TOOLBAR_INDEX;
     }
     
     public String getKeyStrokeBinding() {
         String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
-        if (prefKeyStrokeBinding == null || prefKeyStrokeBinding.length() == 0) {
+        if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
             prefKeyStrokeBinding = keyStrokeBinding;
         } else {
             keyStrokeBinding = prefKeyStrokeBinding;
@@ -203,7 +204,7 @@ public abstract class GenericAction extends AbstractAction {
 
     public void setKeyStrokeBinding(String keyStrokeBinding) {
         String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
-        if (prefKeyStrokeBinding == null || prefKeyStrokeBinding.length() == 0) {
+        if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
             prefKeyStrokeBinding = keyStrokeBinding;
         }
         this.keyStrokeBinding = prefKeyStrokeBinding;

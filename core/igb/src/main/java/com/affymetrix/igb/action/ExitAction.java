@@ -48,11 +48,11 @@ public class ExitAction extends GenericAction {
     
     @Override
     public boolean isToolbarDefault() {
-        return true; //To change body of generated methods, choose Tools | Templates.
+        return true; 
     }
 
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
+        return TOOLBAR_INDEX; 
     }
 }

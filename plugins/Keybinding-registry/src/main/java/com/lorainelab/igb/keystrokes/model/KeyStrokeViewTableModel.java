@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
@@ -59,7 +60,6 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     private static final String CONTROL_KEY = "ctrl";
     private static final long serialVersionUID = 1L;
     private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
-
     private IgbService igbService;
     private static Set<String> actionKeys;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
@@ -77,8 +77,15 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         addShortcuts();
         actionKeys.addAll(GenericActionHolder.getInstance().getGenericActionIds());
         refresh();
+        try {
+            ServiceReference<GenericAction>[] serviceReferences = (ServiceReference<GenericAction>[]) bundleContext.getAllServiceReferences(GenericAction.class.getName(), null);
+            for (ServiceReference<GenericAction> serviceReference : serviceReferences) {
+                addAction(bundleContext.getService(serviceReference));
+            }
+        } catch (InvalidSyntaxException ex) {
+            logger.error("Invalid Syntax Exception");
+        }
         setupActionServiceTracker(bundleContext);
-        actionServiceTracker.open();
     }
 
     private void setupActionServiceTracker(final BundleContext bundleContext) {
@@ -92,7 +99,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 return super.addingService(reference);
             }
         };
-        
+        actionServiceTracker.open();
     }
 
     private void loadDefaultToolbarActionsAndKeystrokeBindings() {
@@ -118,7 +125,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 }
             }
         } catch (Exception ex) {
-            //logger.debug("Problem parsing prefs from: {}", DEFAULT_PREFS_API_RESOURCE, ex);
+            logger.debug("Cannot load preferences.");
         }
     }
 

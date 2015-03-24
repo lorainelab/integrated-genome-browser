@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
@@ -201,6 +202,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         } else {
             exportFile = new File(file);
         }
+        exportDialogGui.getFilePathTextField().setText(exportFile.getAbsolutePath());
     }
 
     public FileFilter[] getAllExportFileFilters() {
@@ -326,6 +328,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             }
         }
         showFileDialog(directory.getAbsolutePath(), fileName);
+        exportDialogGui.getExportDialogFrame().setVisible(false);
     }
 
     private void showFileDialog(String directory, String defaultFileName) {
@@ -347,6 +350,82 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             File imageFile = new File(dialog.getDirectory(), fileName);
             completeSaveButtonAction(imageFile);
         });
+    }
+
+    public void okButtonActionPerformed() {
+        String previousPath = exportFile.getAbsolutePath();
+        String newPath = exportDialogGui.getFilePathTextField().getText();
+        exportFile = new File(newPath);
+
+        if (!isValidExportFile(previousPath)) {
+            return;
+        }
+        String path = exportFile.getAbsolutePath();
+        String ext = GeneralUtils.getExtension(path);
+        if (!isExt(ext)) {
+            ext = selectedExt;
+            int index = path.lastIndexOf('.');
+            int length = 0;
+            if (index > 0) {
+                length = path.substring(index).length();
+            }
+            if (length < 2) {
+                if (length == 1) {
+                    path = path.substring(0, index);
+                }
+                path += selectedExt;
+                exportFile = new File(path);
+            }
+        }
+        if (exportFile.exists()) {
+            if (!isOverwrite()) {
+                return;
+            }
+        }
+        headlessComponentExport(exportComponent, exportFile, selectedExt, false);
+        exportDialogGui.getExtComboBox().setSelectedItem(getType(getDescription(ext)));
+        exportNode.put(PREF_FILE, exportFile.getAbsolutePath());
+        exportNode.put(PREF_EXT, selectedExt);
+        exportNode.put(PREF_DIR, defaultDir.getAbsolutePath());
+        exportNode.putInt(PREF_RESOLUTION, imageInfo.getResolution());
+        exportNode.put(PREF_UNIT, currentUnit);
+        exportDialogGui.getExportDialogFrame().setVisible(false);
+    }
+
+    /**
+     * Give the user the choice to overwrite the existing file or not.
+     */
+    private boolean isOverwrite() {
+        String[] options = {"Yes", "No"};
+        return JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+                null, "Overwrite Existing File?", "File Exists",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                options, options[1]);
+    }
+
+    /**
+     * Test whether the current export path is valid or not. If not, reset
+     * current export path to previous export path and return false. Also, test
+     * whether the image size is valid or not.
+     */
+    private boolean isValidExportFile(String previousPath) {
+        if (exportFile.getParentFile() == null || !exportFile.getParentFile().isDirectory()) {
+            // if output path is invalid, reset to previous correct path
+            ErrorHandler.errorPanel("The output path is invalid.");
+            resetPath(previousPath);
+            exportDialogGui.getFilePathTextField().grabFocus();
+            return false;
+        }
+
+        // if image size is too large...
+        long heapFreeSize = Runtime.getRuntime().freeMemory();
+        long size = (long) imageInfo.getWidth() * (long) imageInfo.getHeight();
+        if (size > heapFreeSize) {
+            ErrorHandler.errorPanel("The image size is invalid.");
+            return false;
+        }
+
+        return true;
     }
 
     private void centerAndShowSaveDialog(FileDialog dialog) {

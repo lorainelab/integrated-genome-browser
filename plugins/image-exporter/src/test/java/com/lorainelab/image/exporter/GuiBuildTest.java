@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import net.miginfocom.swing.MigLayout;
 import org.junit.Before;
@@ -38,21 +39,26 @@ public class GuiBuildTest extends JPanel {
     }
 
     private void addMainPanel() {
+        JTextField filePathTextField = new JTextField();
         JComboBox extComboBox = new JComboBox();
-        extComboBox.addActionListener((java.awt.event.ActionEvent evt) -> {
-//            exportDialog.extComboBoxActionPerformed();
-        });
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-//            exportDialog.cancelButtonActionPerformed();
+//            controller.cancelButtonActionPerformed();
         });
-        JButton saveButton = new JButton("Save" + "\u2026");
+        JButton saveAsButton = new JButton("Save As" + "\u2026");
+        saveAsButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+//            controller.saveButtonActionPerformed();
+        });
+        JButton saveButton = new JButton("Save");
         saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-//            exportDialog.browseButtonActionPerformed();
+//            controller.okButtonActionPerformed();
         });
+        exportDialogFrame.getRootPane().setDefaultButton(saveAsButton);
         JPanel panel = new JPanel(new MigLayout("", "[grow][][]", "[]"));
+        panel.add(filePathTextField, "growx");
+        panel.add(saveAsButton, "span 2,growx, wrap");
         panel.add(extComboBox, "growx");
-        panel.add(cancelButton);
+        panel.add(cancelButton, "right");
         panel.add(saveButton);
         add(panel, "growx, wrap");
     }
@@ -125,16 +131,18 @@ public class GuiBuildTest extends JPanel {
         refreshButton.addActionListener((java.awt.event.ActionEvent evt) -> {
 //            refreshButtonActionPerformed(evt);
         });
-
-        JPanel previewPanel = new JPanel(new MigLayout("flowx, debug", "[][grow]", "[grow][grow][grow][grow][grow]"));
+        JPanel previewPanel = new JPanel(new MigLayout("fill", "[][grow]", "[]"));
         previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
-        previewPanel.add(wfRadioButton, "");
-        previewPanel.add(previewLabel, "span 1 5, grow, wrap");
-        previewPanel.add(mvRadioButton, "wrap");
-        previewPanel.add(mvlRadioButton, "wrap");
-        previewPanel.add(svRadioButton, "wrap");
-        previewPanel.add(refreshButton, "");
-
+        JPanel btnPanel = new JPanel(new MigLayout("", "[]", "[][][][][]"));
+        btnPanel.add(wfRadioButton, "wrap");
+        btnPanel.add(mvRadioButton, "wrap");
+        btnPanel.add(mvlRadioButton, "wrap");
+        btnPanel.add(svRadioButton, "wrap");
+        btnPanel.add(refreshButton, "");
+        JPanel imagePanel = new JPanel(new MigLayout("fill", "[]", "[]"));
+        imagePanel.add(previewLabel, "grow");
+        previewPanel.add(btnPanel, "top, shrink 10");
+        previewPanel.add(imagePanel, "cell 1 0, grow");
         add(previewPanel, "grow");
     }
 

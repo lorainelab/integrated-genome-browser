@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import net.miginfocom.swing.MigLayout;
 
@@ -38,7 +39,9 @@ public class ExportDialogGui extends JPanel {
     private JComboBox unitComboBox;
     private JRadioButton wfRadioButton;
     private JSpinner widthSpinner;
+    private JButton saveAsButton;
     private JButton saveButton;
+    private JTextField filePathTextField;
 
     public static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     public static final Object[] UNIT = {"pixels", "inches"};
@@ -58,19 +61,26 @@ public class ExportDialogGui extends JPanel {
     }
 
     private void addMainPanel() {
+        filePathTextField = new JTextField();
         extComboBox = new JComboBox();
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             controller.cancelButtonActionPerformed();
         });
-        saveButton = new JButton("Save" + "\u2026");
-        saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+        saveAsButton = new JButton("Save As" + "\u2026");
+        saveAsButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             controller.saveButtonActionPerformed();
         });
-        exportDialogFrame.getRootPane().setDefaultButton(saveButton);
+        saveButton = new JButton("Save");
+        saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            controller.okButtonActionPerformed();
+        });
+        exportDialogFrame.getRootPane().setDefaultButton(saveAsButton);
         JPanel panel = new JPanel(new MigLayout("", "[grow][][]", "[]"));
+        panel.add(filePathTextField, "growx");
+        panel.add(saveAsButton, "span 2,growx, wrap");
         panel.add(extComboBox, "growx");
-        panel.add(cancelButton);
+        panel.add(cancelButton, "right");
         panel.add(saveButton);
         add(panel, "growx, wrap");
     }
@@ -137,15 +147,18 @@ public class ExportDialogGui extends JPanel {
             controller.refreshButtonActionPerformed();
         });
 
-        JPanel previewPanel = new JPanel(new MigLayout("flowx", "[][grow]", "[grow][grow][grow][grow][grow]"));
+        JPanel previewPanel = new JPanel(new MigLayout("debug, fill", "[][grow]", "[]"));
         previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
-        previewPanel.add(wfRadioButton, "");
-        previewPanel.add(previewLabel, "span 1 5, grow, wrap");
-        previewPanel.add(mvRadioButton, "wrap");
-        previewPanel.add(mvlRadioButton, "wrap");
-        previewPanel.add(svRadioButton, "wrap");
-        previewPanel.add(refreshButton, "");
-
+        JPanel btnPanel = new JPanel(new MigLayout("", "[]", "[][][][][]"));
+        btnPanel.add(wfRadioButton, "wrap");
+        btnPanel.add(mvRadioButton, "wrap");
+        btnPanel.add(mvlRadioButton, "wrap");
+        btnPanel.add(svRadioButton, "wrap");
+        btnPanel.add(refreshButton, "");
+        JPanel imagePanel = new JPanel(new MigLayout("fill", "[]", "[]"));
+        imagePanel.add(previewLabel, "grow");
+        previewPanel.add(btnPanel, "top");
+        previewPanel.add(imagePanel, "grow");
         add(previewPanel, "grow");
     }
 
@@ -176,6 +189,10 @@ public class ExportDialogGui extends JPanel {
 
     public void setFrameVisible(boolean b) {
         exportDialogFrame.setVisible(b);
+    }
+
+    public JTextField getFilePathTextField() {
+        return filePathTextField;
     }
 
     public JComboBox getExtComboBox() {

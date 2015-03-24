@@ -124,7 +124,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 }
             }
         } catch (Exception ex) {
-            logger.debug("Cannot load preferences.");
+            logger.debug("Cannot load preferences ", ex);
         }
     }
 
@@ -158,7 +158,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
             }
         } catch (BackingStoreException bse) {
             logger.trace(bse.getMessage());
-            logger.trace("Some keyboard shortcuts may not be set.");
+            logger.trace("Some keyboard shortcuts may not be set ");
         }
     }
 

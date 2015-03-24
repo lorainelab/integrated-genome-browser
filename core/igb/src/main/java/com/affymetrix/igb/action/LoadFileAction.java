@@ -46,7 +46,7 @@ public final class LoadFileAction extends OpenURIAction {
 
     private boolean mergeSelected = false;
     private final FileTracker load_dir_tracker;
-
+    private final int TOOLBAR_INDEX = 0;
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
@@ -165,4 +165,15 @@ public final class LoadFileAction extends OpenURIAction {
             openURI(uri, file.getName(), true, loadGroup, speciesName, false);
         }
     }
+
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

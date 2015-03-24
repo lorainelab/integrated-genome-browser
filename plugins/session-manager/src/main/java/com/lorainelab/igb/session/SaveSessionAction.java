@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 
 @Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
 public class SaveSessionAction extends GenericAction implements IgbMenuItemProvider {
@@ -35,6 +34,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
     private BookmarkService bookmarkService;
+    private final int TOOLBAR_INDEX = 1;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
 
@@ -147,5 +147,15 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     @Override
     public int getMenuItemWeight() {
         return 8;
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

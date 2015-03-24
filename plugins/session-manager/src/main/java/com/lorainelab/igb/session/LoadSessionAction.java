@@ -19,7 +19,6 @@ import java.net.URLDecoder;
 import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 
 @Component(name = LoadSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
 public class LoadSessionAction extends GenericAction implements IgbMenuItemProvider {
@@ -30,6 +29,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
     private static final long serialVersionUID = 1l;
     private IgbService igbService;
     private BookmarkService bookmarkService;
+    private final int TOOLBAR_INDEX = 2;
 
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
@@ -128,4 +128,13 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
         return MENU_POSITION;
     }
 
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
+    }
 }

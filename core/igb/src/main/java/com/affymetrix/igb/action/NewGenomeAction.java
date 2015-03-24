@@ -37,6 +37,7 @@ public class NewGenomeAction extends OpenURIAction {
     private static final long serialVersionUID = 1l;
 
     private static final NewGenomeAction ACTION = new NewGenomeAction();
+    private final int TOOLBAR_INDEX = 3;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -117,5 +118,15 @@ public class NewGenomeAction extends OpenURIAction {
         urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
 
         return urlStr;
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -18,6 +18,7 @@ public class SaveImageAction extends GenericAction {
     private static final long serialVersionUID = 1l;
     private static final SaveImageAction ACTION = new SaveImageAction();
 
+    private final int TOOLBAR_INDEX = 4;
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
     }
@@ -43,6 +44,15 @@ public class SaveImageAction extends GenericAction {
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);
         }
+    }
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 
 }

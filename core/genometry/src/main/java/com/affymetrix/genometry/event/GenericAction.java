@@ -32,6 +32,7 @@ public abstract class GenericAction extends AbstractAction {
     private Set<GenericActionDoneCallback> doneCallbacks;
     private KeyStroke keyStroke;
     private String keyStrokeBinding;
+    private int toolbarIndex = -1;
 
     /**
      * For ordering buttons in the toolbar. Subclasses should assign different numbers in the constructor or static
@@ -177,11 +178,19 @@ public abstract class GenericAction extends AbstractAction {
     public boolean isToolbarAction() {
         return true;
     }
+    
+    public boolean isToolbarDefault() {
+        return false;
+    }
 
     public KeyStroke getKeyStroke() {
         return keyStroke;
     }
 
+    public int getToolbarIndex() {
+        return toolbarIndex;
+    }
+    
     public String getKeyStrokeBinding() {
         String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
         if (prefKeyStrokeBinding == null || prefKeyStrokeBinding.length() == 0) {

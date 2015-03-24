@@ -11,6 +11,7 @@ public class ScrollLeftAction extends SeqMapViewActionA implements ContinuousAct
 
     private static final long serialVersionUID = 1L;
     private static ScrollLeftAction ACTION = new ScrollLeftAction();
+    private final int TOOLBAR_INDEX = 10;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -35,5 +36,15 @@ public class ScrollLeftAction extends SeqMapViewActionA implements ContinuousAct
         seqmap.scroll(NeoAbstractWidget.X, visible[0] - (visible[1] - visible[0]) / 10);
         seqmap.updateWidget();
         getSeqMapView().getAutoLoadAction().loadData();
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

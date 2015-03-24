@@ -25,6 +25,7 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     private static final long serialVersionUID = 1l;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private ExportDialog exportDialog;
+    private final int TOOLBAR_INDEX = 4;
 
     public SaveImageAction() {
         super(BUNDLE.getString("saveImage"), BUNDLE.getString("saveImageTooltip"),
@@ -64,4 +65,13 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
         return 4;
     }
 
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
+    }
 }

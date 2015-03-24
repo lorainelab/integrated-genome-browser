@@ -16,6 +16,7 @@ public class DocumentationAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
     private static final DocumentationAction ACTION = new DocumentationAction();
+    private final int TOOLBAR_INDEX = 8;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -38,5 +39,15 @@ public class DocumentationAction extends GenericAction {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         GeneralUtils.browse("http://wiki.transvar.org/confluence/display/igbman");
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

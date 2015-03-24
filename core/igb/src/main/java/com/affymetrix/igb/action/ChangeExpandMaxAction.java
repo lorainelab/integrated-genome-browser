@@ -3,8 +3,8 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -12,6 +12,7 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
 
     private static final long serialVersionUID = 1L;
     private static final ChangeExpandMaxAction ACTION = new ChangeExpandMaxAction();
+    private final int TOOLBAR_INDEX = 15;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -42,6 +43,16 @@ public class ChangeExpandMaxAction extends ChangeExpandMaxActionA {
     @Override
     public boolean isEnabled() {
         return (Selections.allGlyphs.size() > 0 && Selections.isAllAnnot());
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 
 }

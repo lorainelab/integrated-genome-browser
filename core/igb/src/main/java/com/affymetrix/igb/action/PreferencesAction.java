@@ -21,6 +21,7 @@ public class PreferencesAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
     private static final PreferencesAction ACTION = new PreferencesAction();
+    private final int TOOLBAR_INDEX = 6;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -54,5 +55,14 @@ public class PreferencesAction extends GenericAction {
 //		((TierPrefsView)p.tpvGUI.tdv).setTier_label_glyphs(tier_label_glyphs);
         p.getFrame().setVisible(true);
         p.getFrame().setState(Frame.NORMAL);
+    }
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

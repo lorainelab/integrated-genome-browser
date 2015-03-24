@@ -37,6 +37,7 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1L;
     private static final ZoomingRepackAction ACTION = new ZoomingRepackAction();
+    private final int TOOLBAR_INDEX = 13;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -95,5 +96,15 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
         gviewer.redoEdgeMatching();
         // Full update doesn't seem to happen.
         // Or, rather, it happens when the user clicks on the map.
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

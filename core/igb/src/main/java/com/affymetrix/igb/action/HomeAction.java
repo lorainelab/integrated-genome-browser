@@ -10,6 +10,7 @@ public class HomeAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
     private static final HomeAction ACTION = new HomeAction();
+    private final int TOOLBAR_INDEX = 17;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -29,5 +30,15 @@ public class HomeAction extends GenericAction {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

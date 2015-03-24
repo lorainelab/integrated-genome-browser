@@ -18,6 +18,7 @@ public class ExitAction extends GenericAction {
 
     private static final long serialVersionUID = 1l;
     private static final ExitAction ACTION = new ExitAction();
+    private final int TOOLBAR_INDEX = 7;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -43,5 +44,15 @@ public class ExitAction extends GenericAction {
                 new WindowEvent(
                         IGB.getInstance().getFrame(),
                         WindowEvent.WINDOW_CLOSING));
+    }
+    
+    @Override
+    public boolean isToolbarDefault() {
+        return true; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getToolbarIndex() {
+        return TOOLBAR_INDEX; //To change body of generated methods, choose Tools | Templates.
     }
 }

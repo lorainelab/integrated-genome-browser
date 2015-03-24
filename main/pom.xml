@@ -147,6 +147,11 @@
         <!-- End of external bundle dependencies-->
 
         <!--Start of plugin module dependencies-->
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>image-exporter</artifactId>
+            <scope>runtime</scope>          
+        </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>apollo-library</artifactId>

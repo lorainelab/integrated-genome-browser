@@ -18,6 +18,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
@@ -568,25 +569,26 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      * @param height
      */
     private void resetWidthHeight(double width, double height) {
+        String sizeLabelText;
         if (currentUnit.equals(UNIT[1])) {
             // Convert back from inches to pixels
             width *= imageInfo.getResolution();
             height *= imageInfo.getResolution();
-            String sizeLabelText = String.valueOf((int) width / imageInfo.getResolution())
-                    + " x "
-                    + String.valueOf((int) height / imageInfo.getResolution())
-                    + " " + UNIT[1];
-            exportDialogGui.getSizeLabel().setText(sizeLabelText);
+            NumberFormat numberFormat = NumberFormat.getNumberInstance();
+            numberFormat.setMaximumFractionDigits(2);
+            sizeLabelText = numberFormat.format(width) + " x " + numberFormat.format(height) + " " + UNIT[0];
         } else {
-            String sizeLabelText = String.valueOf((int) width)
-                    + " x "
-                    + String.valueOf((int) height)
-                    + " " + UNIT[0];
-            exportDialogGui.getSizeLabel().setText(sizeLabelText);
+            NumberFormat numberFormat = NumberFormat.getNumberInstance();
+            numberFormat.setMaximumFractionDigits(2);
+            double widthInches = (Double) width / imageInfo.getResolution();
+            double heighInches = (Double) height / imageInfo.getResolution();
+            sizeLabelText = numberFormat.format(widthInches) + " x " + numberFormat.format(heighInches) + " " + UNIT[1];
         }
-
+        exportDialogGui.getSizeLabel().setText(sizeLabelText);
         imageInfo.setWidth(width);
         imageInfo.setHeight(height);
+        // Allow user to reset width and height back to current size
+
     }
 
     /**

@@ -147,7 +147,7 @@ public class ExportDialogGui extends JPanel {
             controller.refreshButtonActionPerformed();
         });
 
-        JPanel previewPanel = new JPanel(new MigLayout("debug, fill", "[][grow]", "[]"));
+        JPanel previewPanel = new JPanel(new MigLayout("fill", "[][grow]", "[]"));
         previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
         JPanel btnPanel = new JPanel(new MigLayout("", "[]", "[][][][][]"));
         btnPanel.add(wfRadioButton, "wrap");

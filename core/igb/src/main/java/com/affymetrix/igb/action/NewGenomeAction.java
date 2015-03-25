@@ -12,8 +12,9 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.OpenURIAction;
-import com.affymetrix.igb.view.NewGenome;
+import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.google.common.base.Strings;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -51,10 +52,18 @@ public class NewGenomeAction extends OpenURIAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        NewGenome ng = new NewGenome();
+        CustomGenomeDialogPanel ng = new CustomGenomeDialogPanel();
+        triggerCustumGenomeDialogPanel(ng);
+    }
+
+    private void triggerCustumGenomeDialogPanel(CustomGenomeDialogPanel ng) {
         int reply = JOptionPane.showConfirmDialog(getSeqMapView(), ng, getText(), JOptionPane.OK_CANCEL_OPTION);
-        if (reply == JOptionPane.OK_OPTION && ng.getVersionName().length() > 0 && ng.getSpeciesName().length() > 0) {
+        if (reply == JOptionPane.OK_OPTION) {
+            if (Strings.isNullOrEmpty(ng.getSpeciesName()) || Strings.isNullOrEmpty(ng.getVersionName())) {
+                JOptionPane.showMessageDialog(getSeqMapView(), "You must choose a species and version name");
+                triggerCustumGenomeDialogPanel(ng);
+                return;
+            }
             String speciesName = SpeciesLookup.getPreferredName(ng.getSpeciesName());
             String versionName = SynonymLookup.getDefaultLookup().getPreferredName(ng.getVersionName());
 

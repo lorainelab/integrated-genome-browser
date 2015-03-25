@@ -65,7 +65,7 @@ public final class LoadURLAction extends OpenURIAction {
         filters.stream().forEach((filter) -> {
             all_known_endings.addAll(filter.getExtensions());
         });
-        final UniFileFilter all_known_types = getAllKnowFilter();
+        final UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
 
         String clipBoardContent = GeneralUtils.getClipboard();
         if (LocalUrlCacher.isURL(clipBoardContent)) {

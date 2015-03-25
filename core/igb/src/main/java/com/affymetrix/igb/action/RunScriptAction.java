@@ -69,7 +69,7 @@ public final class RunScriptAction extends GenericAction {
         chooser.setMultiSelectionEnabled(false);
         java.util.List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
         chooser.addChoosableFileFilter(new UniFileFilter(
-                var.toArray(new String[var.size()]),
+                var,
                 "Script File"));
 
         Set<String> all_known_endings = new HashSet<>();
@@ -81,7 +81,7 @@ public final class RunScriptAction extends GenericAction {
             }
         }
         UniFileFilter all_known_types = new UniFileFilter(
-                all_known_endings.toArray(new String[all_known_endings.size()]),
+                all_known_endings,
                 "Known Types");
         all_known_types.setExtensionListInDescription(false);
         all_known_types.addCompressionEndings(GeneralUtils.compression_endings);

@@ -63,7 +63,7 @@ public final class LoadFileAction extends OpenURIAction {
         public void openFileAction(List<File> files) {
             AnnotatedSeqGroup loadGroup = getloadGroup();
             String speciesName = getSpeciesName();
-            UniFileFilter all_known_types = getAllKnowFilter();
+            UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
             for (File f : files) {
                 openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getName(), all_known_types);
                 mergeSelected = true; // loadGroup will not be null at this point
@@ -73,7 +73,7 @@ public final class LoadFileAction extends OpenURIAction {
         @Override
         public void openURLAction(String url) {
             try {
-                UniFileFilter all_known_types = getAllKnowFilter();
+                UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
                 openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, all_known_types);
             } catch (URISyntaxException ex) {
                 ex.printStackTrace();

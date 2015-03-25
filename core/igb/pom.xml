@@ -139,6 +139,11 @@
             <artifactId>igb-genoviz-extensions-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

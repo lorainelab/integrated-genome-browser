@@ -176,7 +176,7 @@ public class FileTypeHolder {
 		addFileTypeHandler("Binary", new String[]{"ead"}, FileTypeCategory.Annotation, ExonArrayDesignParser.class, SymLoaderInstNC.class);
 		addFileTypeHandler(
 				new FileTypeHandler() {
-					String[] extensions = new String[]{"fa", "fas", "fasta"};
+					String[] extensions = new String[]{"fa", "fas", "fasta", "fna", "fsa", "mpfa"};
 					@Override
 					public String getName() { return "FASTA"; }
 					@Override

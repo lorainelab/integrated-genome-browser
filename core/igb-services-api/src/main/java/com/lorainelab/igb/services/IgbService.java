@@ -243,4 +243,8 @@ public interface IgbService {
     public int addToolbarAction(GenericAction genericAction);
 
     public void removeToolbarAction(GenericAction action);
+
+    public void deleteAllTracks();
+
+    public void deleteTrack(URI uri);
 }

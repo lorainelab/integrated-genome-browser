@@ -515,4 +515,17 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
         igb.removeToolbarAction(action);
     }
 
+    @Override
+    public void deleteAllTracks() {
+        GeneralLoadView.getLoadView().removeAllFeautres(GeneralLoadUtils.getVisibleFeatures());
+    }
+
+    @Override
+    public void deleteTrack(URI uri) {
+        GeneralLoadUtils.findFeatureFromUri(uri)
+                .ifPresent(featureToRemove -> {
+                    GeneralLoadView.getLoadView().removeFeature(featureToRemove, true);
+                });
+    }
+
 }

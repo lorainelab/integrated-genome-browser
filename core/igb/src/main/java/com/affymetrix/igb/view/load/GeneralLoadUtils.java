@@ -54,11 +54,13 @@ import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP2_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,6 +79,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -375,6 +378,12 @@ public final class GeneralLoadUtils {
         return species2genericVersionList.get(speciesName);
     }
 
+    public static Optional<GenericFeature> findFeatureFromUri(URI featurePath) {
+        checkNotNull(featurePath);
+        return GeneralLoadUtils.getAllFeatures().stream()
+                .filter(feature -> feature.getURI().equals(featurePath)).findFirst();
+    }
+
     /**
      * Returns the list of features for the genome with the given version name.
      * The list may (rarely) be empty, but never null.
@@ -383,13 +392,19 @@ public final class GeneralLoadUtils {
         // There may be more than one server with the same versionName.  Merge all the version names.
         List<GenericFeature> featureList = new ArrayList<>();
         if (group != null) {
-            Set<GenericVersion> versions = group.getEnabledVersions();
-            if (versions != null) {
-                for (GenericVersion gVersion : versions) {
-                    featureList.addAll(gVersion.getFeatures());
-                }
-            }
+            Optional.ofNullable(group.getEnabledVersions()).ifPresent(versions -> {
+                versions.stream()
+                        .flatMap(version -> version.getFeatures()
+                                .stream()).forEach(featureList::add);
+            });
         }
+        return featureList;
+    }
+
+    public static Set<GenericFeature> getAllFeatures() {
+        Set<GenericFeature> featureList = Sets.newHashSet();
+        GenometryModel.getInstance().getSeqGroups().values().stream()
+                .flatMap(group -> GeneralLoadUtils.getFeatures(group).stream()).forEach(featureList::add);
         return featureList;
     }
 

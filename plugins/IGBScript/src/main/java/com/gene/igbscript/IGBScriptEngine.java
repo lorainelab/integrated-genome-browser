@@ -30,6 +30,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
+import org.slf4j.LoggerFactory;
 
 /**
  * Java ScriptEngine to run scripts written in the IGB scripting language.
@@ -39,6 +40,7 @@ import javax.script.SimpleScriptContext;
  */
 public class IGBScriptEngine implements ScriptEngine {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IGBScriptEngine.class);
     private final ScriptEngineFactory igbFactory;
     private final ImageExportService imageExportService;
     private static String splitter = "\\s";
@@ -250,6 +252,21 @@ public class IGBScriptEngine implements ScriptEngine {
             }
             return;
         }
+        if (action.equalsIgnoreCase("unload") || action.equalsIgnoreCase("deleteTrack")) {
+            // Allowing multiple files to be specified, split by commas
+            String[] loadFiles = join(fields, 1).split(",");
+            for (int i = 0; i < loadFiles.length; i++) {
+                if (i > 0) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        logger.error("error while running unload action", ex);
+                    }
+                }
+                unLoadFile(loadFiles[i]);
+            }
+            return;
+        }
         if (action.equalsIgnoreCase("loadfromserver")) {
             if (fields.length >= 2) {
                 loadData(fields[1], join(fields, 2));
@@ -349,6 +366,11 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         if (action.equalsIgnoreCase("bringToFront")) {
             igbService.bringToFront();
+            return;
+        }
+
+        if (action.equalsIgnoreCase("deleteAllTracks")) {
+            igbService.deleteAllTracks();
             return;
         }
         LOG.log(Level.WARNING, "Unrecognized or invalid command: {0}", action);
@@ -452,6 +474,22 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
         igbService.openURI(uri, fileName, group, group.getOrganism(), false);
+    }
+
+    private void unLoadFile(String fileName) {
+        URI uri;
+        File f = new File(fileName.trim());
+        if (fileName.startsWith(HTTP_PROTOCOL_SCHEME)) {
+            try {
+                uri = new URI(fileName);
+            } catch (URISyntaxException ex) {
+                LOG.logp(Level.SEVERE, this.getClass().getName(), "loadFile", "", ex);
+                return;
+            }
+        } else {
+            uri = f.toURI();
+        }
+        igbService.deleteTrack(uri);
     }
 
     private void hideTrack(String fileName) {

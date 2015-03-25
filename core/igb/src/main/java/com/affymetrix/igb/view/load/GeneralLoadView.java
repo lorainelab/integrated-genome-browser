@@ -48,6 +48,7 @@ import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -547,7 +548,7 @@ public final class GeneralLoadView {
         CThreadHolder.getInstance().execute(feature, worker);
     }
 
-    void removeAllFeautres(Set<GenericFeature> features) {
+    public void removeAllFeautres(Collection<GenericFeature> features) {
         features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
             removeFeature(feature, true);
         });

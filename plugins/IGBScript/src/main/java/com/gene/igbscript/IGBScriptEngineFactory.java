@@ -17,7 +17,7 @@ import javax.script.ScriptEngineFactory;
  * @see
  * http://today.java.net/pub/a/today/2006/09/21/making-scripting-languages-jsr-223-aware.html
  */
-@Component(name = IGBScriptEngineFactory.COMPONENT_NAME, immediate = true)
+@Component(name = IGBScriptEngineFactory.COMPONENT_NAME, immediate = true, provide = IGBScriptEngineFactory.class)
 public class IGBScriptEngineFactory implements ScriptEngineFactory {
 
     public static final String COMPONENT_NAME = "IGBScriptEngineFactory";

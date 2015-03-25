@@ -58,14 +58,10 @@ public final class GenericFeature {
 
     private final boolean isReferenceSequence;
 
-    private static final List<LoadStrategy> standardLoadChoices;
-
-    static {
-        standardLoadChoices = ImmutableList.<LoadStrategy>builder()
-                .add(LoadStrategy.NO_LOAD)
-                .add(LoadStrategy.VISIBLE)
-                .add(LoadStrategy.GENOME).build();
-    }
+    private static final List<LoadStrategy> STANDARD_LOAD_CHOICES = ImmutableList.<LoadStrategy>of(
+            LoadStrategy.NO_LOAD,
+            LoadStrategy.VISIBLE,
+            LoadStrategy.GENOME);
 
     // Requests that have been made for this feature (to avoid overlaps)
     private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
@@ -361,7 +357,7 @@ public final class GenericFeature {
             return symL.getLoadChoices();
         }
 
-        return standardLoadChoices;
+        return STANDARD_LOAD_CHOICES;
     }
 
     @Override

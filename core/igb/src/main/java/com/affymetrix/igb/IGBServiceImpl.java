@@ -28,12 +28,11 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.RepositoryChangerHolder;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.service.api.IGBTabPanel;
 import com.affymetrix.igb.service.api.RepositoryChangeHolderI;
-import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
@@ -50,6 +49,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Optional;
+import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
@@ -294,7 +294,6 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         return ((SeqMapView) getSeqMapView()).getTierManager().getAllTierGlyphs(false);
     }
 
-    
     @Override
     public List<TierGlyph> getSelectedTierGlyphs() {
         return ((SeqMapView) getSeqMapView()).getTierManager().getSelectedTiers();
@@ -482,7 +481,7 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
     public GenericFeature createFeature(String featureName, SymLoader loader) {
         return GeneralLoadView.getLoadView().createFeature(featureName, loader);
     }
-    
+
     @Override
     public void bringToFront() {
         JFrame f = Application.getSingleton().getFrame();
@@ -493,5 +492,17 @@ public class IGBServiceImpl implements IGBService, BundleActivator {
         f.repaint();
         f.setAlwaysOnTop(tmp);
     }
-    
+
+    @Override
+    public void deleteAllTracks() {
+        GeneralLoadView.getLoadView().removeAllFeautres(GeneralLoadUtils.getVisibleFeatures());
+    }
+
+    @Override
+    public void deleteTrack(URI uri) {
+        GeneralLoadUtils.findFeatureFromUri(uri)
+                .ifPresent(featureToRemove -> {
+                    GeneralLoadView.getLoadView().removeFeature(featureToRemove, true);
+                });
+    }
 }

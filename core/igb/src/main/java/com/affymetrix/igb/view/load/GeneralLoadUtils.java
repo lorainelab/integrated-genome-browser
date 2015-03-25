@@ -54,10 +54,12 @@ import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP2_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,13 +72,13 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -379,6 +381,12 @@ public final class GeneralLoadUtils {
         return species2genericVersionList.get(speciesName);
     }
 
+    public static Optional<GenericFeature> findFeatureFromUri(URI featurePath) {
+        checkNotNull(featurePath);
+        return GeneralLoadUtils.getAllFeatures().stream()
+                .filter(feature -> feature.getURI().equals(featurePath)).findFirst();
+    }
+
     /**
      * Returns the list of features for the genome with the given version name.
      * The list may (rarely) be empty, but never null.
@@ -387,13 +395,19 @@ public final class GeneralLoadUtils {
         // There may be more than one server with the same versionName.  Merge all the version names.
         List<GenericFeature> featureList = new ArrayList<>();
         if (group != null) {
-            Set<GenericVersion> versions = group.getEnabledVersions();
-            if (versions != null) {
-                for (GenericVersion gVersion : versions) {
-                    featureList.addAll(gVersion.getFeatures());
-                }
-            }
+            Optional.ofNullable(group.getEnabledVersions()).ifPresent(versions -> {
+                versions.stream()
+                        .flatMap(version -> version.getFeatures()
+                                .stream()).forEach(featureList::add);
+            });
         }
+        return featureList;
+    }
+
+    public static Set<GenericFeature> getAllFeatures() {
+        Set<GenericFeature> featureList = Sets.newHashSet();
+        GenometryModel.getInstance().getSeqGroups().values().stream()
+                .flatMap(group -> GeneralLoadUtils.getFeatures(group).stream()).forEach(featureList::add);
         return featureList;
     }
 
@@ -941,7 +955,7 @@ public final class GeneralLoadUtils {
         for (SeqSpan optimized_span : optimized_spans) {
             Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
 
-            // If thread was interruped then it might return null. 
+            // If thread was interruped then it might return null.
             // So avoid null pointer exception, check it here.
             if (results != null) {
                 for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
@@ -1243,7 +1257,7 @@ public final class GeneralLoadUtils {
             addChromosomesForUnknownGroup(gFeature);
         }
 
-        // force a refresh of this server		
+        // force a refresh of this server
         ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
 
 //		SeqGroupView.getInstance().setSelectedGroup(gFeature.gVersion.group.getID());
@@ -1405,8 +1419,9 @@ public final class GeneralLoadUtils {
                     String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                     ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
                     version = null;
-                    
-                }   break;
+
+                }
+                break;
             case USEQ_EXT:
                 loadGroup = handleUseq(uri, loadGroup);
                 getNewVersion = true;

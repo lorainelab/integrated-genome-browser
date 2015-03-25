@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.Container;
@@ -85,8 +86,8 @@ public final class BookmarkManagerView {
     public JButton addFolderButton = new JButton();
     public JButton deleteBookmarkButton = new JButton();
     public List<TreePath> bookmark_history;
-    public FileFilter ff = new TextExportFileFilter(new UniFileFilter(new String[]{"txt"}, "TEXT Files"));
-    public FileFilter ff1 = new HTMLExportFileFilter(new UniFileFilter(new String[]{"html", "htm", "xhtml"}, "HTML Files"));
+    public FileFilter ff = new TextExportFileFilter(new UniFileFilter(ImmutableList.<String>of("txt"), "TEXT Files"));
+    public FileFilter ff1 = new HTMLExportFileFilter(new UniFileFilter(ImmutableList.<String>of("html", "htm", "xhtml"), "HTML Files"));
     public int history_pointer = -1;
     private final BookmarkTreeCellRenderer renderer;
     private static BookmarkManagerView singleton;
@@ -510,7 +511,7 @@ public final class BookmarkManagerView {
                 }
             };
             ff1 = new HTMLExportFileFilter(new UniFileFilter(
-                    new String[]{"html", "htm", "xhtml"}, "HTML Files"));
+                    ImmutableList.<String>of("html", "htm", "xhtml"), "HTML Files"));
             static_chooser.setAcceptAllFileFilterUsed(false);
             static_chooser.setCurrentDirectory(getLoadDirectory());
             static_chooser.addChoosableFileFilter(ff1);

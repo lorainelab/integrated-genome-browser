@@ -14,6 +14,7 @@ package com.affymetrix.genometry.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,6 +55,11 @@ public final class UniFileFilter extends FileFilter {
         }
     }
 
+    public UniFileFilter(Collection<String> filters, String description, boolean addDefaultCompressionEndings) {
+        this(filters, description);
+        addCompressionEndings(GeneralUtils.compression_endings);
+    }
+
     /**
      * This is the full constructor.
      * <pre>
@@ -66,12 +72,9 @@ public final class UniFileFilter extends FileFilter {
      *  uff.addCompressionEndings(new String[] {".gz", ".zip"});
      * </pre>
      */
-    public UniFileFilter(String[] filters, String description) {
+    public UniFileFilter(Collection<String> filters, String description) {
         this();
-        for (String filter : filters) {
-            // add filters one by one
-            addExtension(filter);
-        }
+        filters.stream().forEach(this::addExtension);
         if (description != null) {
             setDescription(description);
         }

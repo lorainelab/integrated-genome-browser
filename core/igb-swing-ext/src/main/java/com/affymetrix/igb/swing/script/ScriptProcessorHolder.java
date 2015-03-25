@@ -2,6 +2,7 @@ package com.affymetrix.igb.swing.script;
 
 import com.affymetrix.igb.swing.JavascriptScriptProcessor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +39,11 @@ public class ScriptProcessorHolder {
         return scriptExtensions;
     }
 
-    public String[] getSaveScriptExtensions() {
-        ArrayList<String> saveScriptExtensions = new ArrayList<>();
-        for (String extension : scriptProcessors.keySet()) {
-            if (scriptProcessors.get(extension).canWriteScript()) {
-                saveScriptExtensions.add(extension);
-            }
-        }
-        return saveScriptExtensions.toArray(new String[saveScriptExtensions.size()]);
+    public Collection<String> getSaveScriptExtensions() {
+        List<String> saveScriptExtensions = new ArrayList<>();
+        scriptProcessors.keySet().stream()
+                .filter(extension -> scriptProcessors.get(extension).canWriteScript())
+                .forEach(saveScriptExtensions::add);
+        return saveScriptExtensions;
     }
 }

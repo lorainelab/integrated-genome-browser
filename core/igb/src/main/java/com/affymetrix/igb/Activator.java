@@ -32,7 +32,6 @@ import com.affymetrix.igb.action.FloatTiersAction;
 import com.affymetrix.igb.action.HideAction;
 import com.affymetrix.igb.action.HomeAction;
 import com.affymetrix.igb.action.LabelGlyphAction;
-import com.affymetrix.igb.action.NewGenomeAction;
 import com.affymetrix.igb.action.RemoveDataFromTracksAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
 import com.affymetrix.igb.action.RenameTierAction;
@@ -277,7 +276,6 @@ public class Activator implements BundleActivator {
         RemoveDataFromTracksAction.getAction();
         RepackSelectedTiersAction.getAction();
         AutoLoadThresholdAction.getAction();
-        NewGenomeAction.getAction();
     }
 
     private void initColorProvider(final BundleContext bundleContext) {

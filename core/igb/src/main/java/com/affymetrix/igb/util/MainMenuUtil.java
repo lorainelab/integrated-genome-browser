@@ -21,7 +21,6 @@ import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.action.ExportFileAction;
 import com.affymetrix.igb.action.IGBSupportAction;
 import com.affymetrix.igb.action.LoadFileAction;
-import com.affymetrix.igb.action.NewGenomeAction;
 import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
 import com.affymetrix.igb.action.RunScriptAction;
@@ -120,7 +119,6 @@ public class MainMenuUtil implements MainMenuManager {
         fileMenu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_newGenome", NewGenomeAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
         fileMenu.addSeparator(menuItemCounter++);

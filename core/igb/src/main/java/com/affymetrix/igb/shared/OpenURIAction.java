@@ -13,7 +13,6 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
@@ -39,35 +38,22 @@ public class OpenURIAction extends SeqMapViewActionA {
     protected static final GenometryModel gmodel = GenometryModel.getInstance();
     protected static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 
-    public static UniFileFilter getAllKnowFilter() {
+    public static UniFileFilter getAllSupportedExtensionsFilter() {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
-        Set<String> all_known_endings = new HashSet<>();
-
-        for (String name : nameToExtensionMap.keySet()) {
-            all_known_endings.addAll(nameToExtensionMap.get(name));
-        }
-        all_known_endings.addAll(ScriptProcessorHolder.getInstance().getScriptExtensions());
-
-        UniFileFilter all_known_types = new UniFileFilter(
-                all_known_endings.toArray(new String[all_known_endings.size()]),
-                "Known Types");
-        all_known_types.setExtensionListInDescription(false);
-        all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
-
-        return all_known_types;
+        Set<String> allKnownEndings = new HashSet<>();
+        nameToExtensionMap.values().forEach(allKnownEndings::addAll);
+        allKnownEndings.addAll(ScriptProcessorHolder.getInstance().getScriptExtensions());
+        UniFileFilter allKnownTypes = new UniFileFilter(allKnownEndings, "Known Types", true);
+        allKnownTypes.setExtensionListInDescription(false);
+        return allKnownTypes;
     }
 
     public static List<UniFileFilter> getSupportedFiles(FileTypeCategory category) {
         Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
-        List<UniFileFilter> filters = new ArrayList<>(nameToExtensionMap.keySet().size() + 1);
-
-        for (String name : nameToExtensionMap.keySet()) {
-            List<String> var = nameToExtensionMap.get(name);
-            UniFileFilter uff = new UniFileFilter(var.toArray(new String[var.size()]), name + " Files");
-            uff.addCompressionEndings(GeneralUtils.compression_endings);
-            filters.add(uff);
-        }
-
+        List<UniFileFilter> filters = new ArrayList<>();
+        nameToExtensionMap.entrySet().stream()
+                .map(entry -> new UniFileFilter(entry.getValue(), entry.getKey() + " Files", true))
+                .forEach(filters::add);
         return filters;
     }
 

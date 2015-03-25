@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -79,7 +80,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         try {
             ServiceReference<GenericAction>[] serviceReferences = (ServiceReference<GenericAction>[]) bundleContext.getAllServiceReferences(GenericAction.class.getName(), null);
             for (ServiceReference<GenericAction> serviceReference : serviceReferences) {
-                addAction(bundleContext.getService(serviceReference));
+                Optional.ofNullable(bundleContext.getService(serviceReference)).ifPresent(this::addAction);
             }
         } catch (InvalidSyntaxException ex) {
             logger.error("Invalid Syntax Exception ", ex);

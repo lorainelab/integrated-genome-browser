@@ -1,7 +1,8 @@
 package com.affymetrix.igb.action;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.parsers.ChromInfoParser;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
@@ -16,8 +17,11 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.OpenURIAction;
-import com.affymetrix.igb.view.NewGenome;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.google.common.base.Strings;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -32,23 +36,16 @@ import javax.swing.JOptionPane;
  *
  * @author hiralv
  */
-public class NewGenomeAction extends OpenURIAction {
+@Component(name = NewGenomeAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
+public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvider {
 
+    public static final String COMPONENT_NAME = "NewGenomeAction";
+    private static final int FILE_MENU_INDEX = 3;
     private static final long serialVersionUID = 1l;
-
-    private static final NewGenomeAction ACTION = new NewGenomeAction();
     private final int TOOLBAR_INDEX = 3;
 
-    static {
-        GenericActionHolder.getInstance().addGenericAction(ACTION);
-    }
-
-    public static NewGenomeAction getAction() {
-        return ACTION;
-    }
-
-    private NewGenomeAction() {
-        super(BUNDLE.getString("addNewSpecies"), BUNDLE.getString("openCustomGenomeTooltip"),
+    public NewGenomeAction() {
+        super(BUNDLE.getString("openCustomGenomeMenuTitle"), BUNDLE.getString("openCustomGenomeTooltip"),
                 "16x16/actions/new_genome.png", "22x22/actions/new_genome.png",
                 KeyEvent.VK_UNDEFINED, null, false);
         this.ordinal = 200;
@@ -56,10 +53,18 @@ public class NewGenomeAction extends OpenURIAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        super.actionPerformed(e);
-        NewGenome ng = new NewGenome();
+        CustomGenomeDialogPanel ng = new CustomGenomeDialogPanel();
+        triggerCustumGenomeDialogPanel(ng);
+    }
+
+    private void triggerCustumGenomeDialogPanel(CustomGenomeDialogPanel ng) {
         int reply = JOptionPane.showConfirmDialog(getSeqMapView(), ng, getText(), JOptionPane.OK_CANCEL_OPTION);
-        if (reply == JOptionPane.OK_OPTION && ng.getVersionName().length() > 0 && ng.getSpeciesName().length() > 0) {
+        if (reply == JOptionPane.OK_OPTION) {
+            if (Strings.isNullOrEmpty(ng.getSpeciesName()) || Strings.isNullOrEmpty(ng.getVersionName())) {
+                JOptionPane.showMessageDialog(getSeqMapView(), "You must choose a species and version name");
+                triggerCustumGenomeDialogPanel(ng);
+                return;
+            }
             String speciesName = SpeciesLookup.getPreferredName(ng.getSpeciesName());
             String versionName = SynonymLookup.getDefaultLookup().getPreferredName(ng.getVersionName());
 
@@ -119,14 +124,31 @@ public class NewGenomeAction extends OpenURIAction {
 
         return urlStr;
     }
-    
+
     @Override
     public boolean isToolbarDefault() {
-        return true; 
+        return true;
     }
 
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
+        return TOOLBAR_INDEX;
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return "file";
+    }
+
+    @Override
+    public JRPMenuItem getMenuItem() {
+        JRPMenuItem consoleMenuItem = new JRPMenuItem("showConsole", this, FILE_MENU_INDEX);
+        consoleMenuItem.setText(BUNDLE.getString("addNewSpecies"));
+        return consoleMenuItem;
+    }
+
+    @Override
+    public int getMenuItemWeight() {
+        return FILE_MENU_INDEX;
     }
 }

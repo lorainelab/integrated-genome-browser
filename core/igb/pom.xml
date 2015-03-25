@@ -128,10 +128,9 @@
             <artifactId>swing-layout</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>keyWordSearch</artifactId>
-            <version>8.4.0</version>
-            <type>jar</type>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

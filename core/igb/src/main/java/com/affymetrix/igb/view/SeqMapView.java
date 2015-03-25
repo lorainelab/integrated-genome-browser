@@ -1798,10 +1798,10 @@ public class SeqMapView extends JPanel
             JSeparator afterGetInfoSep = new JSeparator();
             JSeparator afterViewReadSep = new JSeparator();
             JSeparator afterPrimerBalstSep = new JSeparator();
+            popup.add(select_rule_action, 4);
             popup.add(afterGetInfoSep, 6);
             popup.add(afterViewReadSep, 12);
             popup.add(afterPrimerBalstSep, 20);
-            popup.add(select_rule_action, 4);
             popup.add(select_parent_action, 22);
             popup.add(zoom_on_selected, 24);
 

@@ -1,13 +1,5 @@
 package com.affymetrix.genometry.symloader;
 
-import java.io.*;
-import java.net.URI;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
@@ -18,16 +10,40 @@ import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
-
 import org.broad.tribble.readers.LineReader;
 
 /**
@@ -323,7 +339,7 @@ public class BED extends SymLoader implements LineProcessor {
         int beg = Integer.parseInt(fields[findex++]); // start field
         int end = Integer.parseInt(fields[findex++]); // stop field
         if (field_count >= 4) {
-            annot_name = parseName(fields[findex++]);
+            annot_name = fields[findex++];
             if (annot_name == null || annot_name.length() == 0) {
                 annot_name = group.getID();
             }
@@ -460,18 +476,6 @@ public class BED extends SymLoader implements LineProcessor {
             return 0.0f;
         }
         return Float.parseFloat(s);
-    }
-
-    /**
-     * Parses the name field from the file. Gene names are allowed to be
-     * non-unique.
-     *
-     * @param s
-     * @return annot_name
-     */
-    private static String parseName(String s) {
-        String annot_name = s; // create a new String so the entire input line doesn't get preserved
-        return annot_name;
     }
 
     private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {

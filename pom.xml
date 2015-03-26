@@ -193,6 +193,7 @@
                 <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module>
+                <module>optionalPlugins/23andMe-snp-converter</module>
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
         </profile>
@@ -418,6 +419,12 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-command-socket</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>23andMe-snp-converter</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>

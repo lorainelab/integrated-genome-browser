@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  *
@@ -88,32 +89,29 @@ public class ToolTipOperations {
     }
 
     private static void populateCategory(Map<String, Object> props, Map<String, List<String>> categoryData, List<ToolTipCategory> categories) {
-        String value;
-
-        for (Map.Entry<String, List<String>> entry : categoryData.entrySet()) {
+        final Predicate<String> keyMapsToNull = key -> props.get(key) != null;
+        categoryData.entrySet().stream().forEach((entry) -> {
             String categoryKey = entry.getKey();
             List<String> keys = entry.getValue();
             Map<String, String> destProps = new LinkedHashMap<>();
-            ToolTipCategory category = null;
-            for (String key : keys) {
-                if (props.containsKey(key)) {
-                    value = props.get(key).toString();
-                    props.remove(key);
-                    destProps.put(key, value);
-                }
-            }
+            ToolTipCategory category;
+            keys.stream().filter((key) -> (props.containsKey(key))).filter(keyMapsToNull).forEach((key) -> {
+                String value = props.get(key).toString();
+                props.remove(key);
+                destProps.put(key, value);
+            });
             if (destProps.size() > 0) {
                 category = new ToolTipCategory(categoryKey, 1, destProps);
                 categories.add(category);
             }
-        }
+        });
     }
 
     private static void populateMisc(Map<String, Object> props, List<ToolTipCategory> categories, List<String> ignoreList) {
+        final Predicate<String> keyMapsToNull = key -> props.get(key) != null;
         Map<String, String> miscInfoProps = new HashMap<>();
         ToolTipCategory miscInfoCategory = new ToolTipCategory(MISC_CATEGORY, 3, miscInfoProps);
-
-        props.keySet().stream().filter(key -> !ignoreList.contains(key)).forEach(key -> {
+        props.keySet().stream().filter(key -> !ignoreList.contains(key)).filter(keyMapsToNull).forEach(key -> {
             miscInfoProps.put(key, props.get(key).toString());
         });
 

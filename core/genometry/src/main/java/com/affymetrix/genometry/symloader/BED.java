@@ -221,7 +221,7 @@ public class BED extends SymLoader implements LineProcessor {
         boolean isBedDetail = isBedDetailType(bedFileType);
 
         //Consider removing this specification violation support
-        if (!isBedDetail && fieldCount == BED_DETAIL_FIELD_COUNT) {
+        if (isBedDetail || fieldCount == BED_DETAIL_FIELD_COUNT) {
             isBedDetail = true;
             detailSymbol = fields[fieldCount - 2];
             detailDescription = fields[fieldCount - 1];
@@ -476,8 +476,7 @@ public class BED extends SymLoader implements LineProcessor {
                         boolean includes_bin_field = false;
 
                         if (fields.length > 6) {
-                            char firstChar = fields[6].charAt(0);
-                            includes_bin_field = (firstChar == '+' || firstChar == '-' || firstChar == '.');
+                            includes_bin_field = (fields[6].equals("+") || fields[6].equals("-") || fields[6].equals("."));
                         }
 
                         int findex = 0;

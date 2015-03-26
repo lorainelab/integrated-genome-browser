@@ -18,6 +18,7 @@ import static com.affymetrix.genometry.util.SeqUtils.isLinkPSL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +53,12 @@ public class SelectionInfoUtils {
 
     private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties) {
         Map<String, Object> orderedProps = new LinkedHashMap<>();
-        propertyKeys.stream().filter(property -> properties.containsKey(property)).forEach(property -> {
+        final Predicate<String> keyMapsToNull = key -> properties.get(key) != null;
+        propertyKeys.stream().filter(property -> properties.containsKey(property)).filter(keyMapsToNull).forEach(property -> {
             orderedProps.put(property, properties.get(property).toString());
         });
 
-        properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).forEach(key -> {
+        properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).filter(keyMapsToNull).forEach(key -> {
             Object property = properties.get(key);
             if (property instanceof String[]) {
                 StringBuilder value = new StringBuilder();

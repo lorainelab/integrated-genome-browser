@@ -26,6 +26,9 @@ public class SortTabFile {
 
     private static final Pattern line_regex = Pattern.compile("\\s+");
     private static final Pattern tab_regex = Pattern.compile("\\t");
+    private static final String BED_FILE_EXT = ".bed";
+    private static final String PSL_FILE_EXT = ".psl";
+    private static final String LINK_PSL_EXT = ".link.psl";
 
     public static boolean sort(File file) {
 
@@ -134,12 +137,8 @@ public class SortTabFile {
                 o2Fields = line_regex.split(o2);
             }
 
-            if (ext.endsWith(".bed")) {
-                boolean includes_bin_field = o1Fields.length > 6
-                        && (o1Fields[6].startsWith("+") || o1Fields[6].startsWith("-")
-                        || o1Fields[6].startsWith("."));
-
-                if (includes_bin_field) {
+            if (ext.endsWith(BED_FILE_EXT)) {
+                if (isIncludesBinField(o1Fields)) {
                     col += 1;
                     or_col += 1;
                 }
@@ -156,11 +155,17 @@ public class SortTabFile {
             return mins;
         }
 
+        private static boolean isIncludesBinField(String[] o1Fields) {
+            return o1Fields.length > 6
+                    && (o1Fields[6].equals("+") || o1Fields[6].equals("-")
+                    || o1Fields[6].equals("."));
+        }
+
         private static Pattern determineRegex(String ext) {
-            if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+            if (ext.equals(PSL_FILE_EXT) || ext.endsWith(LINK_PSL_EXT)) {
 //				return Pattern.compile("\t");
                 return tab_regex;
-            } else if (ext.equals(".bed")) {
+            } else if (ext.equals(BED_FILE_EXT)) {
 //				return Pattern.compile("\\s+");
                 return tab_regex;
             }
@@ -170,9 +175,9 @@ public class SortTabFile {
 
         private static int[] determineColumns(String ext) {
 
-            if (ext.equals(".psl") || ext.endsWith(".link.psl")) {
+            if (ext.equals(PSL_FILE_EXT) || ext.endsWith(LINK_PSL_EXT)) {
                 return new int[]{16, -1};
-            } else if (ext.equals(".bed")) {
+            } else if (ext.equals(BED_FILE_EXT)) {
                 return new int[]{2, 3};
             }
 

@@ -104,7 +104,7 @@ public final class LoadFileAction extends OpenURIAction {
         AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
         if (loadGroup == null) {
             mergeSelected = false;
-            loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + unknown_group_count);
+            loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER);
         } else {
             mergeSelected = true;
         }
@@ -114,7 +114,7 @@ public final class LoadFileAction extends OpenURIAction {
     private String getSpeciesName() {
         String speciesName = igbService.getSelectedSpecies();
         if (SELECT_SPECIES.equals(speciesName)) {
-            speciesName = UNKNOWN_SPECIES_PREFIX + " " + unknown_group_count;
+            speciesName = UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER;
         }
         return speciesName;
     }

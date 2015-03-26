@@ -3,9 +3,11 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
+import static com.affymetrix.igb.shared.OpenURIAction.CUSTOM_GENOME_COUNTER;
+import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_GENOME_PREFIX;
+import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_SPECIES_PREFIX;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.google.common.base.Strings;
-import com.google.common.io.Files;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
@@ -33,10 +35,10 @@ public class CustomGenomeDialogPanel extends JPanel {
     public CustomGenomeDialogPanel() {
         initComponents();
         layoutComponents();
-        PromptSupport.setPrompt("Enter Species Name", speciesTextField);
-        PromptSupport.setPrompt("Enter Version Name", versionTextField);
-        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, speciesTextField);
-        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIGHLIGHT_PROMPT, versionTextField);
+        PromptSupport.setPrompt(UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER + "     ", speciesTextField);
+        PromptSupport.setPrompt(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER + "     ", versionTextField);
+        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIDE_PROMPT, speciesTextField);
+        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIDE_PROMPT, versionTextField);
     }
 
     private void initComponents() {
@@ -81,10 +83,10 @@ public class CustomGenomeDialogPanel extends JPanel {
             try {
                 refSeqTextField.setText(selectedRefSeqFile.getCanonicalPath());
                 if (Strings.isNullOrEmpty(versionTextField.getText())) {
-                    versionTextField.setText(Files.getNameWithoutExtension(selectedRefSeqFile.getCanonicalPath()));
+                    versionTextField.setText("Custom Genome " + CUSTOM_GENOME_COUNTER);
                 }
                 if (Strings.isNullOrEmpty(speciesTextField.getText())) {
-                    speciesTextField.setText(Files.getNameWithoutExtension(selectedRefSeqFile.getCanonicalPath()));
+                    speciesTextField.setText("Custom Species " + CUSTOM_GENOME_COUNTER);
                 }
             } catch (IOException ex) {
                 logger.error("Error reading sequence file", ex);

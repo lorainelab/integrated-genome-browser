@@ -66,7 +66,7 @@ public class NewGenomeAction extends OpenURIAction {
             }
             String speciesName = SpeciesLookup.getPreferredName(ng.getSpeciesName());
             String versionName = SynonymLookup.getDefaultLookup().getPreferredName(ng.getVersionName());
-
+            incrementCustomCounter(speciesName, versionName);
             AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName);
             String refSeqPath = ng.getRefSeqFile();
 
@@ -90,6 +90,12 @@ public class NewGenomeAction extends OpenURIAction {
 
             gmodel.setSelectedSeqGroup(group);
 
+        }
+    }
+
+    private void incrementCustomCounter(String speciesName, String versionName) {
+        if (speciesName.equals(UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER) || versionName.equals(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER)) {
+            CUSTOM_GENOME_COUNTER++;
         }
     }
 

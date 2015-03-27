@@ -32,7 +32,7 @@ public class OpenURIAction extends SeqMapViewActionA {
 
     private static final long serialVersionUID = 1L;
 
-    public static int unknown_group_count = 1;
+    public static int CUSTOM_GENOME_COUNTER = 1;
     public static final String UNKNOWN_SPECIES_PREFIX = BUNDLE.getString("customSpecies");
     public static final String UNKNOWN_GENOME_PREFIX = BUNDLE.getString("customGenome");
     protected static final GenometryModel gmodel = GenometryModel.getInstance();
@@ -77,7 +77,7 @@ public class OpenURIAction extends SeqMapViewActionA {
         igbService.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
 
         if (!mergeSelected) {
-            unknown_group_count++;
+            CUSTOM_GENOME_COUNTER++;
             gmodel.setSelectedSeqGroup(loadGroup);
         }
 

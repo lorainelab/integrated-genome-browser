@@ -29,36 +29,26 @@
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".git" fileType="regular" />
-          <entry location="igb_exe_signed.jar" fileType="regular" />
           <entry location="extbundles" fileType="regular" />
           <entry location="pom.xml" fileType="regular" />
           <entry location="developmentPlugins" fileType="regular" />
           <entry location="plugins" fileType="regular" />
-          <entry location="run_igb_2gb.bat" fileType="regular" />
           <entry location="doc" fileType="regular" />
           <entry location="core" fileType="regular" />
           <entry location="run_igb.bat" fileType="regular" />
           <entry location="main" fileType="regular" />
-          <entry location=".idea" fileType="regular" />
           <entry location="run_igb.sh" fileType="regular" />
-          <entry location=".ant-targets-build.xml" fileType="regular" />
           <entry location="nbactions.xml" fileType="regular" />
           <entry location=".gitignore" fileType="regular" />
           <entry location="galaxy" fileType="regular" />
-          <entry location="run_igb_2gb.command" fileType="regular" />
           <entry location="ext" fileType="regular" />
+          <entry location="optionalPlugins" fileType="regular" />
           <entry location="distribution" fileType="regular" />
           <entry location="tools" fileType="regular" />
           <entry location="settings.gradle" fileType="regular" />
           <entry location="build.gradle" fileType="regular" />
-          <entry location="run_igb_5gb.command" fileType="regular" />
-          <entry location="nbproject" fileType="regular" />
           <entry location="bundles" fileType="regular" />
-          <entry location="igb-project.iml" fileType="regular" />
           <entry location="README.md" fileType="regular" />
-          <entry location=".gradle" fileType="regular" />
-          <entry location="run_igb_5gb.bat" fileType="regular" />
-          <entry location="old_build_info" fileType="regular" />
           <entry location="run_igb.command" fileType="regular" />
         </exclude>
       </dirEntry>
@@ -355,6 +345,27 @@
             <preActivation />
             <postActivation />
             <actions>
+              <action name="" id="554" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
+                      <void property="files">
+                        <array class="java.io.File" length="1">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>${installer:sys.installationDir}/optionalPlugins</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="recursive">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
               <action name="" id="9" customizedId="" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="2" errorMessage="${i18n:FileCorrupted}">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">

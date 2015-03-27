@@ -111,6 +111,12 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         return speciesName;
     }
 
+    private void incrementCustomCounter(String speciesName, String versionName) {
+        if (speciesName.equals(UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER) || versionName.equals(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER)) {
+            CUSTOM_GENOME_COUNTER++;
+        }
+    }
+
     private InputStream getInputStream(String fileName) throws Exception {
         return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
     }

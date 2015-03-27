@@ -303,12 +303,9 @@ public class BED extends SymLoader implements LineProcessor {
         String detailDescription = null;
         int field_count = fields.length;
 
-        //Consider removing this specification violation support
-        if (isBedDetail || fieldCount == BED_DETAIL_FIELD_COUNT) {
-            isBedDetail = true;
-            detailSymbol = fields[fieldCount - 2];
-            detailDescription = fields[fieldCount - 1];
-            fieldCount -= 2;
+        // Check BED detail type for few non-comment lines if 'bedDetail' attribute not specified in track line
+        if (!bedDetail && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
+            bedDetail = true;
         }
         if (bedDetail) {
             detailSymbol = fields[field_count - 2];
@@ -332,7 +329,7 @@ public class BED extends SymLoader implements LineProcessor {
         int[] blockStarts = null;
         int[] blockMins = null;
         int[] blockMaxs = null;
-        boolean includes_bin_field = field_count > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
+        boolean includes_bin_field = field_count > 6 && (fields[6].equals("+") || fields[6].equals("-") || fields[6].equals("."));
         int findex = 0;
         if (includes_bin_field) {
             findex++;
@@ -779,16 +776,10 @@ public class BED extends SymLoader implements LineProcessor {
                         fields = line_regex.split(line);
                     }
 
-<<<<<<< HEAD
                     if (fields.length < 3) {
                         Logger.getLogger(BED.class.getName()).log(Level.WARNING, "Invalid line at {0} in BED file", lineCounter);
                         continue;
                     }
-=======
-                        if (fields.length > 6) {
-                            includes_bin_field = (fields[6].equals("+") || fields[6].equals("-") || fields[6].equals("."));
-                        }
->>>>>>> be23262... hardened bed parser against some bugs found when loading 23andMe snp bed file
 
                     boolean includes_bin_field = false;
 

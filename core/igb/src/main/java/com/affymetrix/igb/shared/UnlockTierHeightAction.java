@@ -30,8 +30,10 @@ public class UnlockTierHeightAction extends TierHeightAction {
     protected Selections.RefreshSelectionListener enabler = () -> {
         if (isAnyLocked()) {
             setEnabled(true);
+            firePropertyChange("enabled", Boolean.FALSE, Boolean.TRUE);
         } else {
             setEnabled(false);
+            firePropertyChange("enabled", Boolean.TRUE, Boolean.FALSE);
         }
     };
 

@@ -32,8 +32,10 @@ public class LockTierHeightAction extends TierHeightAction {
     private Selections.RefreshSelectionListener enabler = () -> {
         if ((!isAllButOneLocked() && isAnyLockable())) {
             setEnabled(true);
+            firePropertyChange("enabled", Boolean.FALSE, Boolean.TRUE);
         } else {
             setEnabled(false);
+            firePropertyChange("enabled", Boolean.TRUE, Boolean.FALSE);
         }
     };
 

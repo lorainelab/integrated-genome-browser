@@ -61,7 +61,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         int reply = JOptionPane.showConfirmDialog(getSeqMapView(), ng, getText(), JOptionPane.OK_CANCEL_OPTION);
         if (reply == JOptionPane.OK_OPTION) {
             if (Strings.isNullOrEmpty(ng.getSpeciesName()) || Strings.isNullOrEmpty(ng.getVersionName())) {
-                JOptionPane.showMessageDialog(getSeqMapView(), "You must choose a species and version name");
+                JOptionPane.showMessageDialog(getSeqMapView(), "Please enter Genome Version and Species.");
                 triggerCustumGenomeDialogPanel(ng);
                 return;
             }

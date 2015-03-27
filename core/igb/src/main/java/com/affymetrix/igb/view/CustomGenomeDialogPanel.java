@@ -1,7 +1,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.igb.shared.FileTracker;
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.shared.OpenURIAction.CUSTOM_GENOME_COUNTER;
@@ -12,8 +11,6 @@ import com.google.common.base.Strings;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
@@ -74,19 +71,13 @@ public class CustomGenomeDialogPanel extends JPanel {
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
         JRPFileChooser chooser = new JRPFileChooser("newGenome", fileTracker.getFile());
-        Set<String> allKnownEndings = new HashSet<>();
-        OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream().forEach(filter -> {
-            chooser.addChoosableFileFilter(filter);
-            allKnownEndings.addAll(filter.getExtensions());
-        });
+        OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream().forEach(chooser::addChoosableFileFilter);
+        chooser.setAcceptAllFileFilterUsed(false);
         chooser.setMultiSelectionEnabled(false);
         int selection = chooser.showOpenDialog(this);
         if (selection != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        UniFileFilter allKnownTypes = new UniFileFilter(allKnownEndings, "Known Types");
-        chooser.addChoosableFileFilter(allKnownTypes);
-        chooser.setFileFilter(allKnownTypes);
         fileTracker.setFile(chooser.getCurrentDirectory());
         File selectedRefSeqFile = chooser.getSelectedFile();
         if (selectedRefSeqFile != null) {

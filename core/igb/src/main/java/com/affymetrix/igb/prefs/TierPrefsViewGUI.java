@@ -13,7 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 
 public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed, GroupSelectionListener {
 
-    public static final long serialVersionUID = 1l;
+    public static final long serialVersionUID = 1L;
     public TierPrefsView tpv;
     private SeqMapView smv;
 

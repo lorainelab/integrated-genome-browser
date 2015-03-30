@@ -43,7 +43,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class TierPrefsView extends TrackPreferences implements ListSelectionListener, TrackStylePropertyListener {
 
-    public static final long serialVersionUID = 1l;
+    public static final long serialVersionUID = 1L;
     private static TierPrefsView singleton;
     public static final String TRACK_NAME = "Track Name";
     public static final String FOREGROUND = "FG";

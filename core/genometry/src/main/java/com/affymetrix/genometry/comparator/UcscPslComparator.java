@@ -9,7 +9,7 @@ import java.util.Comparator;
  */
 public final class UcscPslComparator implements Comparator<UcscPslSym>, Serializable {
 
-    public static final long serialVersionUID = 1l;
+    public static final long serialVersionUID = 1L;
 
     /**
      * Sorts two instances of UcscPslSym based on UcscPslSym.getTargetMin(),

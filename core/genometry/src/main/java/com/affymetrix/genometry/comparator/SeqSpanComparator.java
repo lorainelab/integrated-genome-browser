@@ -10,7 +10,7 @@ import java.util.Comparator;
  */
 public final class SeqSpanComparator implements Comparator<SeqSpan>, Serializable {
 
-    public static final long serialVersionUID = 1l;
+    public static final long serialVersionUID = 1L;
 
     public int compare(SeqSpan span1, SeqSpan span2) {
         return compareSpans(span1, span2);

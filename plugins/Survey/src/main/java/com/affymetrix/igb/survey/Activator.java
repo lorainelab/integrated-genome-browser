@@ -89,6 +89,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
+                                //to prevent constant popups during development
                                 if (!isDevelopmentMode()) {
                                     showSurvey(survey);
                                 }

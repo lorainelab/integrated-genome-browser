@@ -30,6 +30,7 @@ public class ToolTipConstants {
     public static final String STRAND = "strand";
     public static final String SHOW_MASK = "showMask";
     public static final String SCORE = "score";
+    public static final String TYPE = "type";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
     public static final String MAPQ = "mapQ";

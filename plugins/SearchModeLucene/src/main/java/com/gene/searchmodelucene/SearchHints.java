@@ -3,11 +3,15 @@ package com.gene.searchmodelucene;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import static javax.swing.Action.NAME;
 import org.apache.lucene.document.Document;
 
 /**
@@ -17,7 +21,7 @@ import org.apache.lucene.document.Document;
 public class SearchHints implements ISearchHints {
 
     private final LuceneSearch<String> luceneSearch = new LuceneSearch<String>() {
-        String[] search_fields = new String[]{"id", "name", "gene name"};
+        String[] search_fields = new String[]{ID, NAME, TITLE, DESCRIPTION};
 
         @Override
         public String processSearch(Document doc) {
@@ -32,7 +36,7 @@ public class SearchHints implements ISearchHints {
 
 //		@Override
 //		protected String massageSearchTerm(String searchTerm) {
-//			String query = MessageFormat.format("{1}:{0} OR {2}:{0} OR {3}:{0}", 
+//			String query = MessageFormat.format("{1}:{0} OR {2}:{0} OR {3}:{0}",
 //					searchTerm, search_fields[0], search_fields[1], search_fields[2]);
 //			return super.massageSearchTerm(query);
 //		}

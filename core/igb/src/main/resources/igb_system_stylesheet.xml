@@ -302,14 +302,15 @@ will not work well with these styles.
 		<FILE_TYPE_ASSOCIATION file_type="bam">
 			<PROPERTY key="direction_type" value="none"/>
 			<PROPERTY key='separate' value='false'/>
+                        <PROPERTY key="label_field" value="id"/>
 		</FILE_TYPE_ASSOCIATION>
 
 		<FILE_TYPE_ASSOCIATION file_type="gff">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="label_field" value="id"/>
 			<PROPERTY key="color_by_rgb" value="true" />
 		</FILE_TYPE_ASSOCIATION>
-		
+
 		<FILE_TYPE_ASSOCIATION file_type="sam">
 			<PROPERTY key="direction_type" value="none"/>
 			<PROPERTY key='separate' value='false'/>
@@ -317,19 +318,19 @@ will not work well with these styles.
 
 		<FILE_TYPE_ASSOCIATION file_type="bed">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="label_field" value="id"/>
 			<PROPERTY key="color_by_rgb" value="true" />
 		</FILE_TYPE_ASSOCIATION>
-		
+
 		<FILE_TYPE_ASSOCIATION file_type="gtf">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="label_field" value="id"/>
 			<PROPERTY key="color_by_rgb" value="true" />
 		</FILE_TYPE_ASSOCIATION>
 
 		<FILE_TYPE_ASSOCIATION file_type="brs">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="gene name"/>	  
+			<PROPERTY key="label_field" value="title"/>
 		</FILE_TYPE_ASSOCIATION>
 
         <FILE_TYPE_ASSOCIATION file_type="vcf">
@@ -337,17 +338,17 @@ will not work well with these styles.
             <PROPERTY key='separate' value='false'/>
         </FILE_TYPE_ASSOCIATION>
 
-<!-- putting this ".*" regex assocation element before any other regex association elements 
-     ensure that if none of the other association elements matches an annotation method/type, 
-     then annotations of that type will be rendered with GenericAnnotGlyphFactory and default settings 
+<!-- putting this ".*" regex assocation element before any other regex association elements
+     ensure that if none of the other association elements matches an annotation method/type,
+     then annotations of that type will be rendered with GenericAnnotGlyphFactory and default settings
 -->
 		<METHOD_REGEX_ASSOCIATION regex='.*'
     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory"
    />
 
-<!--  commented out example exercising most of the PROPERTY keys that 
+<!--  commented out example exercising most of the PROPERTY keys that
       control configuration of GenericAnnotGlyphFactory
-      
+
 			  'regex' attribute only needs to match a substring of an annotation type name to be considered a match
 			  Prefix with "(?i)" for case insensitive matching
 			  Prefix with "^" to anchor to beginning of type name
@@ -355,12 +356,12 @@ will not work well with these styles.
 		  <METHOD_REGEX_ASSOCIATION regex="(?i)regex_matches_substring_of_annotation_type"
 			 style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
 			   <PROPERTY key="color" value="00FFFF" />
-			   <PROPERTY key="background" value="BBA000" /> 
-			   <PROPERTY key="label_field" value="gene name" />
+			   <PROPERTY key="background" value="BBA000" />
+			   <PROPERTY key="label_field" value="id" />
 			   <PROPERTY key="max_depth" value="3" />  max stacking level of annots when expanded
 			   <PROPERTY key="glyph_depth" value="1" />  if = 2, render connecting lines, if = 1, no connections
 			   <PROPERTY key="separate" value="false" />  if true, then render as two tiers (+ and -), if false then one tier
-			   NOT SURE IF THIS WORKS: <PROPERTY key="annot_type" value="refseq" /> 
+			   NOT SURE IF THIS WORKS: <PROPERTY key="annot_type" value="refseq" />
 		  </METHOD_REGEX_ASSOCIATION>
 		-->
 
@@ -374,7 +375,7 @@ will not work well with these styles.
 		<METHOD_REGEX_ASSOCIATION regex="(?i)refseq$"
 								  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
 			<PROPERTY key="color" value="00FF00" > green </PROPERTY>
-			<PROPERTY key="label_field" value="gene name" />
+			<PROPERTY key="label_field" value="id" />
 			<!--<PROPERTY key="max_depth" value="3" /> -->
 		</METHOD_REGEX_ASSOCIATION>
 

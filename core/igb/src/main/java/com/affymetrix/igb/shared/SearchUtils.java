@@ -2,10 +2,13 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static javax.swing.Action.NAME;
 
 /**
  *
@@ -48,20 +52,20 @@ public final class SearchUtils {
 //		} else {
 //			chrs = group.getSeqList();
 //		}
-//		
+//
 //		Matcher match = regex.matcher("");
 //		SymWithProps sym = null;
 //		Thread current_thread = Thread.currentThread();
-//		
+//
 //		for (BioSeq chr : chrs) {
 //			if(current_thread.isInterrupted())
 //				break;
-//			
+//
 //			int annotCount = chr.getAnnotationCount();
 //			for (int i=0;i<annotCount;i++) {
 //				sym = (SymWithProps)chr.getAnnotation(i);
 //				findIDsInSym(syms, sym, match);
-//				
+//
 //				if(current_thread.isInterrupted())
 //					break;
 //			}
@@ -110,10 +114,10 @@ public final class SearchUtils {
         Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
             group.searchProperties(syms, regex, limit);
-            props_to_search = new String[]{"id", "gene name", "description"};
+            props_to_search = new String[]{ID, NAME, TITLE, DESCRIPTION};
         } else {
             group.search(syms, regex, -1);
-            props_to_search = new String[]{"id"};
+            props_to_search = new String[]{ID};
         }
 
         final Matcher matcher = regex.matcher("");

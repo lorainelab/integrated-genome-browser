@@ -30,7 +30,6 @@ public class ToolTipConstants {
     public static final String STRAND = "strand";
     public static final String SHOW_MASK = "showMask";
     public static final String SCORE = "score";
-    public static final String TYPE = "type";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
     public static final String MAPQ = "mapQ";
@@ -61,6 +60,17 @@ public class ToolTipConstants {
     public static final String FAILED_QC = "failed qc";
 
     public static final String NA = "na";
+
+    // Constants added while SeqMapView refactoring
+    public static final String SEQ_ID = "seq id";
+    public static final String METHOD = "method";
+    public static final String SOURCE = "source";
+    public static final String TYPE = "type";
+    public static final String MATCH = "match";
+    public static final String FEATURE_TYPE = "feature type";
+    public static final String FRAME = "frame";
+    public static final String DIRECTION = "direction";
+    public static final String REVERSE_DIRECTION = "reverse";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);

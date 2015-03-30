@@ -5,6 +5,10 @@ import com.affymetrix.genometry.general.BoundedParameter;
 import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.igb.IGBConstants;
 import java.awt.Color;
 import java.util.LinkedList;
@@ -26,10 +30,10 @@ public class Property extends ColorProvider {
     private final static Color DEFAULT_NOT_MATCH_COLOR = Color.RED;
 
     static {
-        PROPERTY_VALUES.add("id");
-        PROPERTY_VALUES.add("name");
-        PROPERTY_VALUES.add("score");
-        PROPERTY_VALUES.add("gene name");
+        PROPERTY_VALUES.add(ID);
+        PROPERTY_VALUES.add(NAME);
+        PROPERTY_VALUES.add(SCORE);
+        PROPERTY_VALUES.add(TITLE);
     }
     private Float float_property_value = null;
 

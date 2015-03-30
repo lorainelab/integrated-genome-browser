@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
  */
 public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSym {
 
-    private static final String[] PROPERTIES_TO_SEARCH = new String[]{"id", "gene name", "description"};
     private static final FileTypeCategory DEFAULT_CATEGORY = FileTypeCategory.Annotation;
     private TreeMap<String, Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
     private final String ext;

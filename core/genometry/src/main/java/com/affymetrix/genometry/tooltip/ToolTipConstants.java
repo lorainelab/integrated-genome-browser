@@ -17,7 +17,6 @@ import java.util.Map;
  */
 public class ToolTipConstants {
 
-    public static final String GENE_NAME = "gene name";
     public static final String TITLE = "title";
     public static final String NAME = "name";
     public static final String ID = "id";
@@ -30,6 +29,7 @@ public class ToolTipConstants {
     public static final String RESIDUES = "residues";
     public static final String STRAND = "strand";
     public static final String SHOW_MASK = "showMask";
+    public static final String SCORE = "score";
     public static final String SCORES = "scores";
     public static final String FORWARD = "forward";
     public static final String MAPQ = "mapQ";
@@ -71,7 +71,7 @@ public class ToolTipConstants {
     public static final String REVERSE_DIRECTION = "reverse";
 
     // BAM
-    public static final List<String> BAM_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
+    public static final List<String> BAM_INFO_GRP = Arrays.asList(NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> BAM_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
     public static final List<String> BAM_DETAILS_GRP = Arrays.asList(PAIRED_READ, MATE_START, PROPER_PAIR_READ, UNMAPPED_READ, READ_REVERSE_STRAND, MATE_REVERSE_STRAND, FIRST_IN_PAIR,
             SECOND_IN_PAIR, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, NH, XS, NM);
@@ -104,7 +104,7 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> PSL_LOCATION_CATEGORY = ImmutableMap.of("PSL Info", PSL_LOC_GRP);
 
     // DEFAULT
-    public static final List<String> DEFAULT_INFO_GRP = Arrays.asList(GENE_NAME, NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
+    public static final List<String> DEFAULT_INFO_GRP = Arrays.asList(NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
     public static final List<String> DEFAULT_LOC_GRP = Arrays.asList(RESIDUES, STRAND, SHOW_MASK, SCORES, FORWARD, MAPQ, FLAGS);
     public static final List<String> DEFAULT_CIGAR_GRP = Arrays.asList(PAIRED_READ, CIGAR, VN, NH, XS, NM);
     public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);

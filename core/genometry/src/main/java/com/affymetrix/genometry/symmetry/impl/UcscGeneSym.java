@@ -17,6 +17,14 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SupportsGeneName;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_END;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_START;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FORWARD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -249,11 +257,11 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
 
     public Map<String, Object> cloneProperties() {
         HashMap<String, Object> tprops = new HashMap<>();
-        tprops.put("id", name);
-        tprops.put("type", type);
-        tprops.put("gene name", geneName);
-        tprops.put("seq id", seq.getID());
-        tprops.put("forward", forward);
+        tprops.put(ID, name);
+        tprops.put(TYPE, type);
+        tprops.put(TITLE, geneName);
+        tprops.put(CHROMOSOME, seq.getID());
+        tprops.put(FORWARD, forward);
 //		tprops.put("cds min", Integer.valueOf(cdsMin));
 //		tprops.put("cds max", Integer.valueOf(cdsMax));
         if (props != null) {
@@ -264,19 +272,19 @@ public final class UcscGeneSym implements SeqSpan, SupportsCdsSpan, SymSpanWithC
 
     public Object getProperty(String key) {
         // test for standard gene sym  props
-        if (key.equals("id")) {
+        if (key.equals(ID)) {
             return name;
-        } else if (key.equals("type")) {
+        } else if (key.equals(TYPE)) {
             return getType();
-        } else if (key.equals("gene name") || key.equals("gene_name")) {
+        } else if (key.equals(TITLE) || key.equals(NAME)) {
             return geneName;
-        } else if (key.equals("seq id")) {
+        } else if (key.equals(CHROMOSOME)) {
             return seq.getID();
-        } else if (key.equals("forward")) {
+        } else if (key.equals(FORWARD)) {
             return forward;
-        } else if (key.equals("cds min")) {
+        } else if (key.equals(CDS_START)) {
             return cdsMin;
-        } else if (key.equals("cds max")) {
+        } else if (key.equals(CDS_END)) {
             return cdsMax;
         } else if (props != null) {
             return props.get(key);

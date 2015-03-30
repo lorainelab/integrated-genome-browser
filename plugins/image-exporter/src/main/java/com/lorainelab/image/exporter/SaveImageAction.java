@@ -22,7 +22,7 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
 
     public static final String COMPONENT_NAME = "SaveImageAction";
     private static final Logger logger = LoggerFactory.getLogger(SaveImageAction.class);
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private ExportDialog exportDialog;
     private final int TOOLBAR_INDEX = 4;

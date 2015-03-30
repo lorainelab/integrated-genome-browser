@@ -20,7 +20,7 @@ import java.util.logging.Level;
 public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "ViewGenomicSequenceInSeqViewerAction";
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private IgbService igbService;
     private ImageExportService imageExportService;
 

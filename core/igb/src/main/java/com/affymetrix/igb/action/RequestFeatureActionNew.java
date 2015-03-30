@@ -19,7 +19,7 @@ import javax.swing.JFrame;
  */
 public class RequestFeatureActionNew extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final RequestFeatureActionNew ACTION = new RequestFeatureActionNew();
 
     static {

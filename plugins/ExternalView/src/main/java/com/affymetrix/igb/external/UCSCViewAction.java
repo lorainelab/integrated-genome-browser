@@ -37,7 +37,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
     public static final String COMPONENT_NAME = "UCSCViewAction";
     private static final int VIEW_MENU_POS = 3;
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();

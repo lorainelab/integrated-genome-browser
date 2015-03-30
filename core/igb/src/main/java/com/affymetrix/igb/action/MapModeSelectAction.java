@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
  */
 public class MapModeSelectAction extends SeqMapViewActionA {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public MapModeSelectAction(String id) {
         super(

@@ -16,7 +16,7 @@ import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
  */
 public class ExitSeqViewerAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     Frame mapframe;
 
     public ExitSeqViewerAction(Frame mapframe) {

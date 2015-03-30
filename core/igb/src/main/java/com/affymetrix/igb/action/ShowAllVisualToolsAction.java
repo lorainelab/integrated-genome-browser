@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
  */
 public class ShowAllVisualToolsAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static GenericAction[] actions = {
         ToggleHairlineAction.getAction(),
         ToggleHairlineLabelAction.getAction(),

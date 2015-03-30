@@ -27,7 +27,7 @@ import javax.swing.JTextField;
  */
 public class ChangeTierHeightAction extends SeqMapViewActionA implements ParameteredAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ChangeTierHeightAction ACTION = new ChangeTierHeightAction();
 
     static {

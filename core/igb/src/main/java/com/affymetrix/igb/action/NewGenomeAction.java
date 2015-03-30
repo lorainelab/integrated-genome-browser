@@ -41,7 +41,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
 
     public static final String COMPONENT_NAME = "NewGenomeAction";
     private static final int FILE_MENU_INDEX = 3;
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private final int TOOLBAR_INDEX = 3;
 
     public NewGenomeAction() {

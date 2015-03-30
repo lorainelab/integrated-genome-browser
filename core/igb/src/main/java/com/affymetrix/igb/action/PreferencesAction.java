@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PreferencesAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final PreferencesAction ACTION = new PreferencesAction();
     private final int TOOLBAR_INDEX = 6;
 

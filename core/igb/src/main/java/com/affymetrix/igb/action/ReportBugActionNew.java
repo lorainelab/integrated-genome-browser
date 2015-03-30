@@ -15,7 +15,7 @@ import javax.swing.JFrame;
  */
 public class ReportBugActionNew extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ReportBugActionNew ACTION = new ReportBugActionNew();
 
     static {

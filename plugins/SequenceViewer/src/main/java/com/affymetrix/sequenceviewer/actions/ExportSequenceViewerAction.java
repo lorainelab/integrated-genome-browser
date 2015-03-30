@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 public class ExportSequenceViewerAction extends GenericAction {
 
     public static final String COMPONENT_NAME = "ExportSequenceViewerAction";
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private final ImageExportService imageExportService;
     public final java.awt.Component comp;
 

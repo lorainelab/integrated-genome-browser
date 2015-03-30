@@ -33,7 +33,7 @@ import javax.swing.filechooser.FileFilter;
 public abstract class AbstractExportFileAction
         extends GenericAction implements SymSelectionListener {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private final ExportFileModel model;
     private final Map<FileTypeCategory, UniFileFilter> preferredFilters;

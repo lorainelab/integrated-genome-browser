@@ -17,7 +17,7 @@ public class ShowConsoleAction extends GenericAction implements IgbMenuItemProvi
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final String PARENT_MENU_NAME = "help";
     private static final int CONSOLE_MENU_ITEM_WEIGHT = 5;
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private ConsoleLogger consoleGui;
     
     public ShowConsoleAction() {

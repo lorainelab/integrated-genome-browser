@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 public final class GenomeVersionDateComparator implements Comparator<AnnotatedSeqGroup>, Serializable {
 
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private static final Comparator<String> stringComp = new StringVersionDateComparator();
 
     public int compare(AnnotatedSeqGroup group1, AnnotatedSeqGroup group2) {

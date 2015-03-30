@@ -31,7 +31,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
 
     public static final String COMPONENT_NAME = "SaveSessionAction";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private IgbService igbService;
     private BookmarkService bookmarkService;
     private final int TOOLBAR_INDEX = 1;

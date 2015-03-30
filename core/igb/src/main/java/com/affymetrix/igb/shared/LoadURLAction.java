@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class LoadURLAction extends OpenURIAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final LoadURLAction ACTION = new LoadURLAction();
 
     static {

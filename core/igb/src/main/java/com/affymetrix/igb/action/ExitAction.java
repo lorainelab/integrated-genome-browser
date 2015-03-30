@@ -16,7 +16,7 @@ import java.awt.event.WindowEvent;
  */
 public class ExitAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ExitAction ACTION = new ExitAction();
     private final int TOOLBAR_INDEX = 7;
 

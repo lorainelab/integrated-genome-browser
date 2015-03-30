@@ -7,7 +7,7 @@ import java.util.List;
 
 public class StringVersionDateComparator implements Comparator<String>, Serializable {
 
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private static final String[] month_array = {"Jan",
         "Feb",

@@ -25,7 +25,7 @@ import java.util.logging.Level;
  */
 public abstract class BlastSearchAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     protected final SeqMapViewI smv;
     protected final RemoteBlastNCBI.BlastType blastType;

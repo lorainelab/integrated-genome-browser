@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
  */
 public class ClampViewAction extends SeqMapViewActionA {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ClampViewAction ACTION = new ClampViewAction();
 
     private ClampViewAction() {

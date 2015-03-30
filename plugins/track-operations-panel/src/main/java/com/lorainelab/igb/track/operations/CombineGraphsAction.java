@@ -23,7 +23,7 @@ import static com.affymetrix.igb.shared.Selections.*;
  */
 public class CombineGraphsAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public CombineGraphsAction(IgbService igbService) {
         super("Join", null, null);

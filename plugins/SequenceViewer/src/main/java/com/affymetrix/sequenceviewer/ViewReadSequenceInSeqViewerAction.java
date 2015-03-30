@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "ViewReadSequenceInSeqViewerAction";
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private IgbService igbService;
     private ImageExportService imageExportService;
 

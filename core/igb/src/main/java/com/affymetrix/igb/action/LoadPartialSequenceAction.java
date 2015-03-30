@@ -13,7 +13,7 @@ import java.text.MessageFormat;
  */
 public class LoadPartialSequenceAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final LoadPartialSequenceAction ACTION = new LoadPartialSequenceAction();
 
     static {

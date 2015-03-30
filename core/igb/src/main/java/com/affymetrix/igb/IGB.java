@@ -13,6 +13,7 @@ import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
+import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -401,23 +402,25 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     private void notifyCounter() {
-        JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
-                IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
-        LoggingAdapter loggingAdapter = new LoggingAdapter() {
+        if (!isDevelopmentMode()) {
+            JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
+                    IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
+            LoggingAdapter loggingAdapter = new LoggingAdapter() {
 
-            @Override
-            public void logError(String error) {
-                logger.debug("Google Analytics Error Message: {}", error);
-            }
+                @Override
+                public void logError(String error) {
+                    logger.debug("Google Analytics Error Message: {}", error);
+                }
 
-            @Override
-            public void logMessage(String message) {
-                logger.debug("Google Analytics Response Message: {}", message);
-            }
-        };
-        tracker.setLoggingAdapter(loggingAdapter);
-        tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
-        LocalUrlCacher.isValidURL(COUNTER_URL);
+                @Override
+                public void logMessage(String message) {
+                    logger.debug("Google Analytics Response Message: {}", message);
+                }
+            };
+            tracker.setLoggingAdapter(loggingAdapter);
+            tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
+            LocalUrlCacher.isValidURL(COUNTER_URL);
+        }
     }
 
     private void openQuickStart() {

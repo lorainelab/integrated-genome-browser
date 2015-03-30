@@ -1,5 +1,6 @@
 package com.affymetrix.igb.survey;
 
+import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -88,7 +89,9 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                showSurvey(survey);
+                                if (!isDevelopmentMode()) {
+                                    showSurvey(survey);
+                                }
                             }
                         }, 10000);
 

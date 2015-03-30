@@ -6,13 +6,13 @@ import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.igb.IGBConstants;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import static javax.swing.Action.NAME;
 
 /**
  *

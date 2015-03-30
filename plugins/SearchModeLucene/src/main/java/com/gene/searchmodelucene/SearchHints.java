@@ -5,13 +5,13 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.shared.ISearchHints;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static javax.swing.Action.NAME;
 import org.apache.lucene.document.Document;
 
 /**

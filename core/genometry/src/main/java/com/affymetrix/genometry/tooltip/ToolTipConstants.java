@@ -64,9 +64,11 @@ public class ToolTipConstants {
     // Constants added while SeqMapView refactoring
     public static final String SEQ_ID = "seq id";
     public static final String METHOD = "method";
+    public static final String SOURCE = "source";
     public static final String TYPE = "type";
     public static final String MATCH = "match";
     public static final String FEATURE_TYPE = "feature type";
+    public static final String FRAME = "frame";
     public static final String DIRECTION = "direction";
     public static final String REVERSE_DIRECTION = "reverse";
 

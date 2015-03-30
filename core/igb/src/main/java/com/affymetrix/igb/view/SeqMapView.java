@@ -3,7 +3,6 @@ package com.affymetrix.igb.view;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -24,17 +23,20 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometry.symmetry.SymWithProps;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
+import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SelectionInfoUtils;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -78,8 +80,6 @@ import com.affymetrix.igb.service.api.IGBService;
 import com.affymetrix.igb.shared.GraphGlyph;
 import com.affymetrix.igb.shared.MapTierGlyphFactoryI;
 import com.affymetrix.igb.shared.MapTierTypeHolder;
-import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor;
 import com.affymetrix.igb.shared.TrackstylePropertyMonitor.TrackStylePropertyListener;
 import com.affymetrix.igb.swing.JRPPopupMenu;
@@ -97,6 +97,8 @@ import com.affymetrix.igb.view.factories.AnnotationGlyphFactory;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import com.lorainelab.igb.genoviz.extensions.api.SeqMapViewExtendedI;
+import com.lorainelab.igb.genoviz.extensions.api.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.api.TierGlyph;
 import java.awt.AWTEvent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -344,7 +346,8 @@ public class SeqMapView extends JPanel
                     AxisGlyph ag = seqmap.getAxis();
                     if (ag != null) {
                         setAxisFormatFromPrefs(ag);
-                    }   seqmap.updateWidget();
+                    }
+                    seqmap.updateWidget();
                     break;
                 case PreferenceUtils.SHOW_EDGEMATCH_OPTION:
                     setEdgeMatching(PreferenceUtils.getTopNode().getBoolean(PreferenceUtils.SHOW_EDGEMATCH_OPTION, PreferenceUtils.default_show_edge_match));
@@ -354,29 +357,30 @@ public class SeqMapView extends JPanel
                 case PREF_EDGE_MATCH_FUZZY_COLOR:
                     if (show_edge_matches) {
                         doEdgeMatching(seqmap.getSelected(), true);
-                    }   break;
-                case PREF_X_ZOOMER_ABOVE:
-                    {
-                        boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
-                        SeqMapView.this.remove(xzoombox);
-                        if (b) {
-                            SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
-                        } else {
-                            SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
-                        }       SeqMapView.this.invalidate();
-                        break;
                     }
-                case PREF_Y_ZOOMER_LEFT:
-                {
+                    break;
+                case PREF_X_ZOOMER_ABOVE: {
+                    boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+                    SeqMapView.this.remove(xzoombox);
+                    if (b) {
+                        SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+                    } else {
+                        SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+                    }
+                    SeqMapView.this.invalidate();
+                    break;
+                }
+                case PREF_Y_ZOOMER_LEFT: {
                     boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
                     SeqMapView.this.remove(yzoombox);
                     if (b) {
                         SeqMapView.this.add(BorderLayout.WEST, yzoombox);
                     } else {
                         SeqMapView.this.add(BorderLayout.EAST, yzoombox);
-                }       SeqMapView.this.invalidate();
-                        break;
                     }
+                    SeqMapView.this.invalidate();
+                    break;
+                }
                 case PREF_SHOW_TOOLTIP:
                     setShowPropertiesTooltip(PreferenceUtils.getTopNode().getBoolean(PREF_SHOW_TOOLTIP, default_show_prop_tooltip));
                     break;
@@ -893,8 +897,8 @@ public class SeqMapView extends JPanel
         if (old_tier_selections != null) {
             getTierManager().getAllTierLabels().stream().filter(tierLabelGlyph -> tierLabelGlyph.getReferenceTier().isVisible()
                     && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
-                ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
-            });
+                        ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
+                    });
         }
 
         if (show_edge_matches) {
@@ -1879,11 +1883,11 @@ public class SeqMapView extends JPanel
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("gene name");
+                    id = (String) ((SymWithProps) sym).getProperty(TITLE);
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty("id");
+                    id = (String) ((SymWithProps) sym).getProperty(ID);
                     sym_used_for_title = sym;
                 }
                 if (id == null && sym instanceof DerivedSeqSymmetry) {
@@ -1892,18 +1896,18 @@ public class SeqMapView extends JPanel
                         id = original.getID();
                         sym_used_for_title = original;
                     } else if (original instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) original).getProperty("id");
+                        id = (String) ((SymWithProps) original).getProperty(ID);
                         sym_used_for_title = original;
                     }
                 }
                 if (id == null && sym instanceof CdsSeqSymmetry) {
                     SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
                     if (property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty("gene name");
+                        id = (String) ((SymWithProps) property_sym).getProperty(TITLE);
                         sym_used_for_title = sym;
                     }
                     if (id == null && property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty("id");
+                        id = (String) ((SymWithProps) property_sym).getProperty(ID);
                         sym_used_for_title = sym;
                     }
                 }
@@ -1928,7 +1932,7 @@ public class SeqMapView extends JPanel
 //						// Add one ">" symbol for each level of getParent()
 //						sym_used_for_title = null; // may be re-set in the recursive call
 //						id = getSelectionTitle(Arrays.asList(pglyph));
-//					} 
+//					}
 //				}
                 if (id == null && sym instanceof SymWithProps) {
                     id = (String) ((SymWithProps) sym).getProperty("match");
@@ -2112,7 +2116,7 @@ public class SeqMapView extends JPanel
                         for (AxisPopupListener listener : axisPopupListeners) {
                             listener.addPopup(popup);
                         }
-//						view_genomic_sequence_action.setEnabled(true);	
+//						view_genomic_sequence_action.setEnabled(true);
                     }
                 }
 

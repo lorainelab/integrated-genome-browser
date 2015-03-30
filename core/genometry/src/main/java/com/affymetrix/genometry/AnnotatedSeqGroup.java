@@ -1,15 +1,22 @@
 package com.affymetrix.genometry;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.concurrent.CopyOnWriteArraySet;
-import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
+import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -27,8 +34,8 @@ public class AnnotatedSeqGroup {
     final private Map<String, BioSeq> id2seq;
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
-    private HashMap<String, Integer> type_id2annot_id = new HashMap<>();
-    private HashMap<String, Set<String>> uri2Seqs = new HashMap<>();
+    private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
+    private final Map<String, Set<String>> uri2Seqs = Maps.newConcurrentMap();
 
     private SynonymLookup chrLookup;
 

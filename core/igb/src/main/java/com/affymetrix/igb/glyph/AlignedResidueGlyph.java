@@ -1,7 +1,5 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.ImprovedStringCharIter;
 import com.affymetrix.genometry.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -42,14 +40,14 @@ public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
     @Override
     protected boolean getShowMask() {
-        Object mod = this.getInfo();
-        if (mod instanceof SymWithProps) {
-            SymWithProps swp = (SymWithProps) mod;
-            Object show_mask = swp.getProperty(BAM.SHOWMASK);
-            if (show_mask != null) {
-                return Boolean.parseBoolean(show_mask.toString());
-            }
-        }
+//		Object mod = this.getInfo();
+//		if (mod instanceof SymWithProps) {
+//			SymWithProps swp = (SymWithProps)mod;
+//			Object show_mask = swp.getProperty(BAM.SHOWMASK);
+//			if(show_mask != null){
+//				return Boolean.parseBoolean(show_mask.toString());
+//			}
+//		}
         return defaultShowMask;
     }
 

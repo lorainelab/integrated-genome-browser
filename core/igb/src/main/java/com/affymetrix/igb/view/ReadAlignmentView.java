@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -18,7 +17,6 @@ import javax.swing.JPopupMenu;
  *
  * @author hiralv
  */
-@Component(name = ReadAlignmentView.COMPONENT_NAME, immediate = true)
 public class ReadAlignmentView implements ContextualPopupListener {
 
     public static final String COMPONENT_NAME = "ReadAlignmentView";

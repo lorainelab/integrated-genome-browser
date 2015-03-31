@@ -31,7 +31,8 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter {
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
             String type, OutputStream outstream) {
 
-        try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream))) {
+        try {
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
             for (SeqSymmetry sym : syms) {
                 writeSymmetry(dos, sym, seq);
             }

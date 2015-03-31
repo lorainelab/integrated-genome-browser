@@ -10,12 +10,11 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.ExportFileModel;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GFileChooser;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
-import com.affymetrix.genometry.util.FileTracker;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.io.BufferedOutputStream;
@@ -106,17 +105,13 @@ public abstract class AbstractExportFileAction
             if (option == JFileChooser.APPROVE_OPTION) {
                 FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
                 BioSeq aseq = gmodel.getSelectedSeq();
-                DataOutputStream dos = null;
-                try {
-                    File fil = chooser.getSelectedFile();
-                    dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
+                File fil = chooser.getSelectedFile();
+                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
                     UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
                     preferredFilters.put(rootSym.getCategory(), selectedFilter);
                     exportFile(filter2writers.get().get(selectedFilter), dos, aseq, atier);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
-                } finally {
-                    GeneralUtils.safeClose(dos);
                 }
             }
         } else {
@@ -135,11 +130,6 @@ public abstract class AbstractExportFileAction
         return false;
     }
 
-    protected abstract void exportFile(
-            AnnotationWriter annotationWriter,
-            DataOutputStream dos,
-            BioSeq aseq,
-            TierGlyph atier
-    ) throws java.io.IOException;
+    protected abstract void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
 
 }

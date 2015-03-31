@@ -840,28 +840,27 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
             String type, OutputStream ostr) {
 
+        BufferedOutputStream bos = new BufferedOutputStream(ostr);
+        DataOutputStream dos = new DataOutputStream(bos);
         try {
-            BufferedOutputStream bos = new BufferedOutputStream(ostr);
-            try (DataOutputStream dos = new DataOutputStream(bos)) {
-                writeHeaderInfo(dos, syms.size());
+            writeHeaderInfo(dos, syms.size());
 
-                Iterator<? extends SeqSymmetry> iter = syms.iterator();
-                for (GraphSym graf; iter.hasNext();) {
-                    graf = (GraphSym) iter.next();
-                    writeSeqInfo(graf.getGraphSeq(), dos);
-                    //write out all properties from seq and/or graphs as tag/vals
-                    writeTagValuePairs(dos, graf.getProperties());
-                    writeGraphPoints(graf, dos);
-                }
-
-                dos.close();  // or should responsibility for closing stream be left to the caller??
+            Iterator<? extends SeqSymmetry> iter = syms.iterator();
+            for (GraphSym graf; iter.hasNext();) {
+                graf = (GraphSym) iter.next();
+                writeSeqInfo(graf.getGraphSeq(), dos);
+                //write out all properties from seq and/or graphs as tag/vals
+                writeTagValuePairs(dos, graf.getProperties());
+                writeGraphPoints(graf, dos);
             }
+            dos.flush();
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         return false;
+
     }
 
     private static void writeHeaderInfo(DataOutputStream dos, int size) throws IOException {

@@ -14,6 +14,7 @@ import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MisMatchGraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.tooltip.ToolTipConstants;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MultiGlyphDragger;
 import com.affymetrix.genoviz.bioviews.SceneI;
@@ -25,6 +26,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TrackClickListener;
+import com.google.common.base.CaseFormat;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -75,13 +77,13 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         Map<String, Object> props = new HashMap<>();
-        props.put("File Name", feature.featureName);
-        props.put("Description", feature.description());
+        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.FILE_NAME), feature.featureName);
+        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.DESCRIPTION), feature.description());
         if (feature.getFriendlyURL() != null) {
-            props.put("url", feature.getFriendlyURL());
+            props.put(ToolTipConstants.URL, feature.getURI());
         }
         String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
-        props.put("Server", server);
+        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
 
         return props;
     }
@@ -747,12 +749,12 @@ public final class TierLabelManager implements PropertyHolder {
         }
         String symid = sym.getID();
         if (symid != null) {
-            props.put("id", symid);
+            props.put(ToolTipConstants.ID, symid);
         }
         if (sym instanceof GraphSym && !(sym instanceof MisMatchGraphSym)) {
             float[] range = ((GraphSym) sym).getVisibleYRange();
-            props.put("min score", range[0]);
-            props.put("max score", range[1]);
+            props.put(ToolTipConstants.MIN_SCORE, range[0]);
+            props.put(ToolTipConstants.MAX_SCORE, range[1]);
         }
         if (sym instanceof GraphSym) {
             Map<String, Object> tierProps = getTierProperties(((GraphSym) sym).getGraphState().getTierStyle());

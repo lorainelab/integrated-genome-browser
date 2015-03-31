@@ -71,6 +71,12 @@ public class ToolTipConstants {
     public static final String FRAME = "frame";
     public static final String DIRECTION = "direction";
     public static final String REVERSE_DIRECTION = "reverse";
+    
+    public static final String FILE_NAME = "file name";
+    public static final String URL = "url";
+    public static final String SERVER = "Server";
+    public static final String MIN_SCORE = "min score";
+    public static final String MAX_SCORE = "max score";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);

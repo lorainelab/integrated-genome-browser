@@ -19,9 +19,9 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.swing.JRPMenuItem;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
@@ -99,7 +99,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
                 GenericServer server = null;
                 if ((server = igbService.getServer(UCSC_DAS_URL)) != null) {
                     // UCSC server already exists!
-                    ucsc = (DasServerInfo) server.serverObj;
+                    ucsc = (DasServerInfo) server.getServerObj();
                 } else {
                     ucsc = new DasServerInfo(UCSC_DAS_URL);
                 }

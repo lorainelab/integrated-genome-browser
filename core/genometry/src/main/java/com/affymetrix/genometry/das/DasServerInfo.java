@@ -205,7 +205,7 @@ public final class DasServerInfo {
          */
         if (istr == null && isLoadingFromPrimary()) {
 
-            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.serverName);
+            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.getServerName());
             primaryServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getLoadURL();

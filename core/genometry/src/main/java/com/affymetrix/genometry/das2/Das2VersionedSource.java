@@ -441,8 +441,7 @@ public final class Das2VersionedSource {
          */
         if (istr == null && isLoadingFromPrimary()) {
             LocalUrlCacher.invalidateCacheFile(load_url);
-            Logger.getLogger(Das2ServerInfo.class.getName()).log(
-                    Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+            Logger.getLogger(Das2ServerInfo.class.getName()).log(Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.getServerName());
             primaryServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getRegionString(query_type);

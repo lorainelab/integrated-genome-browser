@@ -102,7 +102,7 @@ public class IGBAuthenticator extends Authenticator {
         final JButton cancel = new JButton(BUNDLE.getString("cancel"));
         final JButton tryAgain = new JButton(BUNDLE.getString("tryagain"));
         final JCheckBox showPassword = new JCheckBox();
-        final JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
+        final JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.getServerName(), authOptional);
         final JLabel error = new JLabel(errorString);
         final JLabel server = new JLabel(urlString);
 
@@ -198,7 +198,7 @@ public class IGBAuthenticator extends Authenticator {
         }
 
         if (serverObject != null) {
-            url = serverObject.URL;
+            url = serverObject.getURL();
             serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
             authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
             if (serverObject.getLogin() != null) {
@@ -244,7 +244,7 @@ public class IGBAuthenticator extends Authenticator {
     private PasswordAuthentication displayDialog(final Component parent, final Preferences serverNode,
             final GenericServer serverObject, final String urlString, final String usrnmString, final String pwdString, final String errorString) {
 
-        final boolean authOptional = serverObject != null && serverObject.serverType != null && serverObject.serverType.isAuthOptional();
+        final boolean authOptional = serverObject != null && serverObject.getServerType() != null && serverObject.getServerType().isAuthOptional();
         final JRPTextField username = new JRPTextField("IGBAuthenticator_username", usrnmString);
         final JPasswordField password = new JPasswordField(pwdString);
         final JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));

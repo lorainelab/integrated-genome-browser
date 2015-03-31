@@ -127,7 +127,7 @@ public class Das2ServerType implements ServerTypeI {
         File file;
         Set<String> files = das2Files;
 
-        String server_path = gServer.URL + "/" + genome_name;
+        String server_path = gServer.getURL() + "/" + genome_name;
         local_path += "/" + genome_name;
         GeneralUtils.makeDir(local_path);
         boolean fileMayNotExist;
@@ -152,12 +152,12 @@ public class Das2ServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.URL, false);
+        File file = GeneralUtils.getFile(gServer.getURL(), false);
         if (!GeneralUtils.moveFileTo(file, Constants.GENOME_SEQ_ID + Constants.XML_EXTENSION, path)) {
             return false;
         }
 
-        Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.serverObj;
+        Das2ServerInfo serverInfo = (Das2ServerInfo) gServer.getServerObj();
         Map<String, Das2Source> sources = serverInfo.getSources();
 
         if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -169,7 +169,7 @@ public class Das2ServerType implements ServerTypeI {
             // Das/2 has versioned sources.  Get each version.
             for (Das2VersionedSource versionSource : source.getVersions().values()) {
                 if (!getAllFiles(gServer, versionSource.getName(), path)) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
                     return false;
                 }
             }
@@ -221,7 +221,7 @@ public class Das2ServerType implements ServerTypeI {
         for (Das2Type type : types) {
             String type_name = type.getName();
             if (type_name == null || type_name.length() == 0) {
-                System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+                System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.getServerName());
                 continue;
             }
             Map<String, String> type_props = type.getProps();
@@ -257,7 +257,7 @@ public class Das2ServerType implements ServerTypeI {
      */
     @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
-        Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+        Das2ServerInfo server = (Das2ServerInfo) gServer.getServerObj();
         Map<String, Das2Source> sources = server.getSources(primaryURL, primaryServer);
         if (sources == null || sources.values() == null || sources.values().isEmpty()) {
             System.out.println("WARNING: Couldn't find species for server: " + gServer);
@@ -649,7 +649,7 @@ public class Das2ServerType implements ServerTypeI {
             if (Thread.currentThread().isInterrupted()) {
                 return false;
             }
-            String uri = generateDas2URI(version.gServer.URL, genomeVersionName, seq_name, min, max, formatLoop);
+            String uri = generateDas2URI(version.gServer.getURL(), genomeVersionName, seq_name, min, max, formatLoop);
             if (loadDAS2Residues(aseq, uri, span, partial_load)) {
                 return true;
             }
@@ -670,15 +670,15 @@ public class Das2ServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.URL == null) {
+        if (gServer.getURL() == null) {
             return null;
         }
-        String tempURL = gServer.URL;
+        String tempURL = gServer.getURL();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
-        if (gServer.serverType != null) {
-            tempURL = gServer.serverType.adjustURL(tempURL);
+        if (gServer.getServerType() != null) {
+            tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
     }

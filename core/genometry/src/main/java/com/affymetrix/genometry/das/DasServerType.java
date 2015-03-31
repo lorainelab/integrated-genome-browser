@@ -135,12 +135,12 @@ public class DasServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.URL, false);
+        File file = GeneralUtils.getFile(gServer.getURL(), false);
         if (!GeneralUtils.moveFileTo(file, dsn, path)) {
             return false;
         }
 
-        DasServerInfo server = (DasServerInfo) gServer.serverObj;
+        DasServerInfo server = (DasServerInfo) gServer.getServerObj();
         Map<String, DasSource> sources = server.getDataSources();
 
         if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -151,13 +151,13 @@ public class DasServerType implements ServerTypeI {
         for (DasSource source : sources.values()) {
 
             if (!getAllDasFiles(source.getID(), source.getServerURL(), source.getMasterURL(), path)) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
                 return false;
             }
 
             for (String src : source.getSources()) {
                 if (!getAllDasFiles(src, source.getServerURL(), source.getMasterURL(), path)) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
                     return false;
                 }
             }
@@ -201,7 +201,7 @@ public class DasServerType implements ServerTypeI {
         for (Entry<String, String> type : types) {
             String type_name = type.getKey();
             if (type_name == null || type_name.length() == 0) {
-                System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+                System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.getServerName());
                 continue;
             }
             gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
@@ -235,13 +235,13 @@ public class DasServerType implements ServerTypeI {
      */
     @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
-        DasServerInfo server = (DasServerInfo) gServer.serverObj;
+        DasServerInfo server = (DasServerInfo) gServer.getServerObj();
         if (primaryURL == null) {
             try {
-                primaryURL = new URL(gServer.URL);
+                primaryURL = new URL(gServer.getURL());
                 primaryServer = null;
             } catch (MalformedURLException x) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot load URL " + gServer.URL + " for DAS server " + gServer.serverName, x);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot load URL " + gServer.getURL() + " for DAS server " + gServer.getServerName(), x);
             }
         }
         Map<String, DasSource> sources = server.getDataSources(primaryURL, primaryServer);

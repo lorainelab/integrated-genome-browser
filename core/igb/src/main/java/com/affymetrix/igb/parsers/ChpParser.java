@@ -314,11 +314,11 @@ public final class ChpParser {
 
         GenericServer gServer = ServerList.getServerInstance().getServer(LazyChpSym.PROBESET_SERVER_NAME);
         // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
-        if (gServer == null || gServer.serverType != ServerTypeI.DAS2) {
+        if (gServer == null || gServer.getServerType() != ServerTypeI.DAS2) {
             ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
             return null;
         }
-        Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+        Das2ServerInfo server = (Das2ServerInfo) gServer.getServerObj();
 
         // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
         if (server == null) {

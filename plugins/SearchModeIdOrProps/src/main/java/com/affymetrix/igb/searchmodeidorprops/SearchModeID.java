@@ -117,7 +117,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
         }
         int count = 0;
         for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
+            if (gVersion.gServer.getServerType() == ServerTypeI.DAS2) {
                 count++;
             }
         }

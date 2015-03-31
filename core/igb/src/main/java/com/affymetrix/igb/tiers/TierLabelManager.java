@@ -82,7 +82,7 @@ public final class TierLabelManager implements PropertyHolder {
         if (feature.getFriendlyURL() != null) {
             props.put(ToolTipConstants.URL, feature.getURI());
         }
-        String server = feature.gVersion.gServer.serverName + " (" + feature.gVersion.gServer.serverType.getName() + ")";
+        String server = feature.gVersion.gServer.getServerName() + " (" + feature.gVersion.gServer.getServerType().getName() + ")";
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
 
         return props;

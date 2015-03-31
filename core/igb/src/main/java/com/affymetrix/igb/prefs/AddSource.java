@@ -87,9 +87,9 @@ public class AddSource extends JFrame {
         mirrorURL = mirrorurl;
 
         if (isEditPanel) {
-            nameText.setText(server.serverName);
-            typeCombo.setSelectedItem(server.serverType);
-            urlText.setText(server.URL);
+            nameText.setText(server.getServerName());
+            typeCombo.setSelectedItem(server.getServerType());
+            urlText.setText(server.getURL());
             addServerButton.setText("Save Changes");
         } else {
             if (enableCombo) {

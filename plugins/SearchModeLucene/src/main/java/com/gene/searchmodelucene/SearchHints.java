@@ -45,7 +45,7 @@ public class SearchHints implements ISearchHints {
     public Set<String> search(String search_term) {
         Set<String> syms = new HashSet<>();
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+        group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.getServerType() == ServerTypeI.LocalFiles || gVersion.gServer.getServerType() == ServerTypeI.QuickLoad).forEach(gVersion -> {
             for (GenericFeature feature : gVersion.getFeatures()) {
                 if (feature.isVisible() && feature.symL != null) {
                     List<String> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_term, MAX_HITS);

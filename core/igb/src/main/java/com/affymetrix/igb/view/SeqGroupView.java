@@ -591,9 +591,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             return;	// ignore uninitialized servers
         }
 
-        if (gServer.serverType != ServerTypeI.LocalFiles) {
-            if (gServer.serverType != null) {
-                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.getName() + ")");
+        if (gServer.getServerType() != ServerTypeI.LocalFiles) {
+            if (gServer.getServerType() != null) {
+                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().getName() + ")");
             }
         }
 
@@ -625,7 +625,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     private void populateSpeciesData() {
         for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
-            CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
+            CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.getServerName()) {
                 @Override
                 protected Void runInBackground() {
                     GeneralLoadUtils.discoverServer(gServer);

@@ -8,12 +8,12 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import furbelow.AbstractComponentDecorator;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -357,7 +357,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     private boolean checkServer(String serverName) {
         Set<GenericServer> enabledServers = igbService.getEnabledServerList();
         for (GenericServer server : enabledServers) {
-            if (server.serverName.equalsIgnoreCase(serverName)) {
+            if (server.getServerName().equalsIgnoreCase(serverName)) {
                 return true;
             }
         }
@@ -368,7 +368,7 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
         int yes = JOptionPane.showConfirmDialog(frame, params, "Continue?", JOptionPane.YES_NO_OPTION);
         if (yes == JOptionPane.YES_OPTION) {
             for (GenericServer server : igbService.getAllServersList()) {
-                if (server.serverName.equalsIgnoreCase(serverName)) {
+                if (server.getServerName().equalsIgnoreCase(serverName)) {
                     server.setEnabled(true);
                     igbService.discoverServer(server);
                     return true;

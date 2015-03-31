@@ -144,15 +144,15 @@ public class LocalFilesServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.URL == null) {
+        if (gServer.getURL() == null) {
             return null;
         }
-        String tempURL = gServer.URL;
+        String tempURL = gServer.getURL();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
-        if (gServer.serverType != null) {
-            tempURL = gServer.serverType.adjustURL(tempURL);
+        if (gServer.getServerType() != null) {
+            tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
     }

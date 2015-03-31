@@ -1,9 +1,9 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ final public class Bookmarks {
 
     private void addToSyms(GenericFeature feature, boolean isGraph) {
         GenericVersion version = feature.gVersion;
-        syms.add(new SymBookmark(version.gServer.URL, feature.getURI().toString(), isGraph));
+        syms.add(new SymBookmark(version.gServer.getURL(), feature.getURI().toString(), isGraph));
     }
 
     /**

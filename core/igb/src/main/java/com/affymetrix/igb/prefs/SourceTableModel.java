@@ -99,11 +99,11 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
             case Refresh:
                 return "";
             case Name:
-                return servers.get(rowIndex).serverName;
+                return servers.get(rowIndex).getServerName();
             case Type:
-                return servers.get(rowIndex).serverType;
+                return servers.get(rowIndex).getServerType();
             case URL:
-                return servers.get(rowIndex).URL;
+                return servers.get(rowIndex).getURL();
             case Enabled:
                 return servers.get(rowIndex).isEnabled();
             default:
@@ -135,11 +135,10 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
         switch (tableColumns.get(col)) {
             case Refresh:
                 // Plugin is used as a Server Object and its serverType is null
-                if (server.serverType != null) {
+                if (server.getServerType() != null) {
                     if (!server.isEnabled()
                             || DataLoadPrefsView.getSingleton().confirmRefresh()) {
-                        DataLoadPrefsView.getSingleton().updateSource(server.URL,
-                                server.serverType, server.serverName, server.URL, server.mirrorURL);
+                        DataLoadPrefsView.getSingleton().updateSource(server.getURL(), server.getServerType(), server.getServerName(), server.getURL(), server.getMirrorUrl());
                     }
                 }
                 break;
@@ -148,7 +147,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
                     discoverServer(server);
                     server.setEnabled(true);
                 } else {
-                    if (server.serverType == null || DataLoadPrefsView.getSingleton().confirmDelete()) {
+                    if (server.getServerType() == null || DataLoadPrefsView.getSingleton().confirmDelete()) {
                         serverList.fireServerInitEvent(server, LoadUtils.ServerStatus.NotResponding, true);
                         server.setEnabled(false);
                     }

@@ -111,8 +111,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             if (feature1.featureName.compareTo(feature2.featureName) != 0) {
                 return feature1.featureName.compareTo(feature2.featureName);
             }
-            return feature1.gVersion.gServer.serverType.compareTo(
-                    feature2.gVersion.gServer.serverType);
+            return feature1.gVersion.gServer.getServerType().compareTo(feature2.gVersion.gServer.getServerType());
         }
     }
 

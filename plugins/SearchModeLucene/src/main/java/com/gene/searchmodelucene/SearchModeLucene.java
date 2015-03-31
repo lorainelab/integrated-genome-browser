@@ -105,7 +105,7 @@ public class SearchModeLucene implements ISearchModeSym {
         if (search_text != null && !search_text.isEmpty()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             if (group != null) {
-                group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+                group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.getServerType() == ServerTypeI.LocalFiles || gVersion.gServer.getServerType() == ServerTypeI.QuickLoad).forEach(gVersion -> {
                     for (GenericFeature feature : gVersion.getFeatures()) {
                         if (feature.isVisible() && feature.symL != null) {
                             if (statusHolder != null) {

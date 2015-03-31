@@ -144,7 +144,7 @@ public final class ServerList {
         GenericServer server = url2server.get(URLorName);
         if (server == null) {
             for (GenericServer gServer : getAllServers()) {
-                if (gServer.serverName.equals(URLorName)) {
+                if (gServer.getServerName().equals(URLorName)) {
                     return gServer;
                 }
             }
@@ -376,9 +376,8 @@ public final class ServerList {
      * @param server GenericServer object of the server to add or update.
      */
     public void addServerToPrefs(GenericServer server, int order, boolean isDefault) {
-        if (server.serverType.isSaveServersInPrefs()) {
-            addServerToPrefs(server.URL, server.serverName,
-                    server.serverType, order, server.isDefault());
+        if (server.getServerType().isSaveServersInPrefs()) {
+            addServerToPrefs(server.getURL(), server.getServerName(), server.getServerType(), order, server.isDefault());
 
         }
     }
@@ -404,7 +403,7 @@ public final class ServerList {
     }
 
     private int getServerOrder(GenericServer server) {
-        String url = ServerUtils.formatURL(server.URL, server.serverType);
+        String url = ServerUtils.formatURL(server.getURL(), server.getServerType());
         return PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).getInt(SERVER_ORDER, 0);
     }
 
@@ -440,34 +439,34 @@ public final class ServerList {
     }
 
     public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
-        Preferences node = getPreferencesNode().node(GenericServer.getHash(server.URL));
+        Preferences node = getPreferencesNode().node(GenericServer.getHash(server.getURL()));
         if (status == ServerStatus.NotResponding) {
-            if (server.serverType != null && !server.serverType.isSaveServersInPrefs()) {
-                removeServer(server.URL);
+            if (server.getServerType() != null && !server.getServerType().isSaveServersInPrefs()) {
+                removeServer(server.getURL());
             }
 
             if (!removedManually) {
                 String errorText;
-                if (server.serverType != null && server.serverType == ServerTypeI.QuickLoad) {
+                if (server.getServerType() != null && server.getServerType() == ServerTypeI.QuickLoad) {
 
                     server.setEnabled(false);
 
                     //If the server was previously not available give the user the option to disable permanently
                     if (previouslyUnavailable(node)) {
-                        if (ModalUtils.confirmPanel("The Quickload site named: " + server.serverName + " is still not responding. Would you like to ignore this site from now on?")) {
+                        if (ModalUtils.confirmPanel("The Quickload site named: " + server.getServerName() + " is still not responding. Would you like to ignore this site from now on?")) {
                             setEnableIfAvailable(node, false);
                         }
                     } else {
-                        ErrorHandler.errorPanelWithReportBug(server.serverName, MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.serverName), Level.SEVERE);
+                        ErrorHandler.errorPanelWithReportBug(server.getServerName(), MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadConnectError"), server.getServerName()), Level.SEVERE);
                         DataLoadPrefsView.getSingleton().sourceTableModel.fireTableDataChanged();
                         //Ensure the server is checked for availibility on startup
                         setEnableIfAvailable(node, true);
                     }
                 } else {
                     String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
-                    errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.serverName);
-                    if (server.serverType != null && server.serverType.isSaveServersInPrefs()) {
-                        ErrorHandler.errorPanel(server.serverName, errorText, Level.SEVERE);
+                    errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.getServerName());
+                    if (server.getServerType() != null && server.getServerType().isSaveServersInPrefs()) {
+                        ErrorHandler.errorPanel(server.getServerName(), errorText, Level.SEVERE);
                     } else {
                         logger.error(errorText);
                     }

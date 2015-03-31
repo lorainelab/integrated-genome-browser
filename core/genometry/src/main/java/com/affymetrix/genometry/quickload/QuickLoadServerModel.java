@@ -498,7 +498,7 @@ public final class QuickLoadServerModel {
          */
         if (istr == null && isLoadingFromPrimary() && !fileMayNotExist) {
 
-            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.serverName);
+            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.getServerName());
             primaryServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getLoadURL() + append_url;

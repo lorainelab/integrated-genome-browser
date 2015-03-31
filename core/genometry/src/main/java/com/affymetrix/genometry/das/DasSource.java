@@ -257,8 +257,7 @@ public final class DasSource {
          */
         if (istr == null && isLoadingFromPrimary()) {
 
-            Logger.getLogger(DasSource.class.getName()).log(
-                    Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.serverName);
+            Logger.getLogger(DasSource.class.getName()).log(Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.getServerName());
             primaryServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getLoadURL(server, query, pri_default);

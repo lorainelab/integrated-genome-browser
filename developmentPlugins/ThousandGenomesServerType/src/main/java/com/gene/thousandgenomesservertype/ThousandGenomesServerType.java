@@ -1,15 +1,5 @@
 package com.gene.thousandgenomesservertype;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -26,6 +16,15 @@ import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.io.IOUtils;
 
 public class ThousandGenomesServerType implements ServerTypeI {
@@ -205,7 +204,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
     public boolean getSpeciesAndVersions(GenericServer gServer,
             GenericServer primaryServer, URL primaryURL,
             VersionDiscoverer versionDiscoverer) {
-        String genomeID = (String) gServer.serverObj;
+        String genomeID = (String) gServer.getServerObj();
         String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
         String versionName, speciesName;
         // Retrieve group identity, since this has already been added in QuickLoadServerModel.
@@ -256,15 +255,15 @@ public class ThousandGenomesServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.URL == null) {
+        if (gServer.getURL() == null) {
             return null;
         }
-        String tempURL = gServer.URL;
+        String tempURL = gServer.getURL();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
-        if (gServer.serverType != null) {
-            tempURL = gServer.serverType.adjustURL(tempURL);
+        if (gServer.getServerType() != null) {
+            tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
     }

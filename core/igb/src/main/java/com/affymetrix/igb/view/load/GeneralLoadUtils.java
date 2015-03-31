@@ -232,7 +232,7 @@ public final class GeneralLoadUtils {
     };
 
     public static boolean discoverServer(GenericServer gServer) {
-        if (gServer.serverType == null) { // bundle repository
+        if (gServer.getServerType() == null) { // bundle repository
             return true;
         }
         if (gServer.isPrimary()) {
@@ -240,25 +240,25 @@ public final class GeneralLoadUtils {
         }
 
         try {
-            if (gServer == null || gServer.serverType == ServerTypeI.LocalFiles) {
+            if (gServer == null || gServer.getServerType() == ServerTypeI.LocalFiles) {
                 // should never happen
                 return false;
             }
-            if (gServer.serverType != null) {
+            if (gServer.getServerType() != null) {
                 //tKanapar
-                if (!LocalUrlCacher.isValidURL(gServer.URL)) {//Adding check on the request if authentication is required
+                if (!LocalUrlCacher.isValidURL(gServer.getURL())) {//Adding check on the request if authentication is required
                     if (IGBAuthenticator.authenticationRequestCancelled()) {//If the cancel dialog is clicked in the IGB Authenticator
                         IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
-                        ServerList.getServerInstance().removeServer(gServer.URL);//Remove the preference so that it wont add the server to list
-                        ServerList.getServerInstance().removeServerFromPrefs(gServer.URL);
+                        ServerList.getServerInstance().removeServer(gServer.getURL());//Remove the preference so that it wont add the server to list
+                        ServerList.getServerInstance().removeServerFromPrefs(gServer.getURL());
                         return false;
                     }
                 }
 
                 GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-                URL primaryURL = getServerDirectory(gServer.URL);
+                URL primaryURL = getServerDirectory(gServer.getURL());
 
-                if (!gServer.serverType.getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
+                if (!gServer.getServerType().getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
 
                     /**
                      * qlmirror - Quickload Mirror Server
@@ -276,9 +276,9 @@ public final class GeneralLoadUtils {
 //
                         // Change serverObj for Quickload to apply mirror site
                         // Currently only Quickload has mirror
-                        if (gServer.serverType == ServerTypeI.QuickLoad) {
-                            logger.info("Using mirror site: {}", gServer.mirrorURL);
-                            gServer.serverObj = gServer.mirrorURL;
+                        if (gServer.getServerType() == ServerTypeI.QuickLoad) {
+                            logger.info("Using mirror site: {}", gServer.getMirrorUrl());
+                            gServer.setServerObj(gServer.getMirrorUrl());
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
                             discoverServer(gServer);
                         } else {
@@ -292,9 +292,9 @@ public final class GeneralLoadUtils {
                         return false;
                     }
                 } else {
-                    IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.toString() + ")");
+                    IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().toString() + ")");
                 }
-                if (gServer.serverType == ServerTypeI.QuickLoad) {
+                if (gServer.getServerType() == ServerTypeI.QuickLoad) {
 
                 }
             }
@@ -463,10 +463,10 @@ public final class GeneralLoadUtils {
             logger.debug("Feature names are already loaded.");
             return;
         }
-        if (gVersion.gServer.serverType == null) {
-            logger.warn("WARNING: Unknown server class " + gVersion.gServer.serverType);
+        if (gVersion.gServer.getServerType() == null) {
+            logger.warn("WARNING: Unknown server class " + gVersion.gServer.getServerType());
         } else {
-            gVersion.gServer.serverType.discoverFeatures(gVersion, autoload);
+            gVersion.gServer.getServerType().discoverFeatures(gVersion, autoload);
         }
     }
 
@@ -498,7 +498,7 @@ public final class GeneralLoadUtils {
     private static void loadChromInfo(AnnotatedSeqGroup group) {
         for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
             for (GenericVersion gVersion : group.getEnabledVersions()) {
-                if (gVersion.gServer.serverType != serverType) {
+                if (gVersion.gServer.getServerType() != serverType) {
                     continue;
                 }
                 serverType.discoverChromosomes(gVersion.versionSourceObj);
@@ -636,7 +636,7 @@ public final class GeneralLoadUtils {
 //		}
         BioSeq selected_seq = gmodel.getSelectedSeq();
         BioSeq visible_seq = gviewer.getViewSeq();
-        if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles)) {
+        if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.getServerType() != ServerTypeI.LocalFiles)) {
             //      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
             //System.out.println("@@@@@ selected chrom: " + selected_seq);
             //System.out.println("@@@@@ visible chrom: " + visible_seq);
@@ -684,7 +684,7 @@ public final class GeneralLoadUtils {
     public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
         SeqSymmetry optimized_sym = null;
         // special-case chp files, due to their LazyChpSym DAS/2 loading
-        if ((feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles)
+        if ((feature.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad || feature.gVersion.gServer.getServerType() == ServerTypeI.LocalFiles)
                 && ((QuickLoadSymLoader) feature.symL).extension.endsWith("chp")) {
             feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
             optimized_sym = new SimpleMutableSeqSymmetry();
@@ -696,8 +696,8 @@ public final class GeneralLoadUtils {
         optimized_sym = feature.optimizeRequest(span);
 
         if (feature.getLoadStrategy() != LoadStrategy.GENOME
-                || feature.gVersion.gServer.serverType == ServerTypeI.DAS2
-                || feature.gVersion.gServer.serverType == ServerTypeI.DAS) {
+                || feature.gVersion.gServer.getServerType() == ServerTypeI.DAS2
+                || feature.gVersion.gServer.getServerType() == ServerTypeI.DAS) {
             // Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
             if (checkBamAndSamLoading(feature, optimized_sym)) {
@@ -709,7 +709,7 @@ public final class GeneralLoadUtils {
         }
 
         //Since Das1 does not have whole genome return if it is not Quickload or LocalFile
-        if (feature.gVersion.gServer.serverType != ServerTypeI.QuickLoad && feature.gVersion.gServer.serverType != ServerTypeI.LocalFiles) {
+        if (feature.gVersion.gServer.getServerType() != ServerTypeI.QuickLoad && feature.gVersion.gServer.getServerType() != ServerTypeI.LocalFiles) {
             return;
         }
 
@@ -941,7 +941,7 @@ public final class GeneralLoadUtils {
     //TO DO: Make this private again.
     public static Map<String, List<? extends SeqSymmetry>> loadFeaturesForSym(
             GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception {
-        if (feature.gVersion.gServer.serverType == null) {
+        if (feature.gVersion.gServer.getServerType() == null) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
 
@@ -950,7 +950,7 @@ public final class GeneralLoadUtils {
         Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<>();
 
         for (SeqSpan optimized_span : optimized_spans) {
-            Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.serverType.loadFeatures(optimized_span, feature);
+            Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.getServerType().loadFeatures(optimized_span, feature);
 
             // If thread was interruped then it might return null.
             // So avoid null pointer exception, check it here.
@@ -1042,10 +1042,10 @@ public final class GeneralLoadUtils {
             if (Thread.currentThread().isInterrupted()) {
                 return false;
             }
-            String serverDescription = version.gServer.serverName + " " + version.gServer.serverType;
+            String serverDescription = version.gServer.getServerName() + " " + version.gServer.getServerType();
 //			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
 //			IGB.getInstance().addNotLockedUpMsg(msg);
-            if (version.gServer.serverType != null && version.gServer.serverType.getResidues(version, genomeVersionName, aseq, min, max, span)) {
+            if (version.gServer.getServerType() != null && version.gServer.getServerType().getResidues(version, genomeVersionName, aseq, min, max, span)) {
                 residuesLoaded = true;
             }
 //			IGB.getInstance().removeNotLockedUpMsg(msg);
@@ -1154,7 +1154,7 @@ public final class GeneralLoadUtils {
                 String[] fields = tab_regex.split(line);
                 if (fields.length >= 2) {
                     String serverURL = fields[0];
-                    String dirURL = primaryServer.URL + fields[1];
+                    String dirURL = primaryServer.getURL() + fields[1];
                     servermapping.put(serverURL, dirURL);
                 }
             }

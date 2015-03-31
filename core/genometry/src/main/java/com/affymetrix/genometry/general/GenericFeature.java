@@ -116,7 +116,7 @@ public final class GenericFeature {
             return;
         }
         if (gVersion != null && gVersion.gServer != null) {
-            if (gVersion.gServer.serverType.loadStrategyVisibleOnly()) {
+            if (gVersion.gServer.getServerType().loadStrategyVisibleOnly()) {
                 setLoadStrategy(LoadStrategy.VISIBLE);
             } else {
                 // Local File or QuickLoad
@@ -191,7 +191,7 @@ public final class GenericFeature {
                 || friendlyURLString.toLowerCase().startsWith(FTP_PROTOCOL)
                 || friendlyURLString.toLowerCase().startsWith(FILE_PROTOCOL))) {
 
-            if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+            if (this.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad) {
 
                 if (friendlyURLString.startsWith("./")) {
                     friendlyURLString = friendlyURLString.substring(2);
@@ -207,14 +207,14 @@ public final class GenericFeature {
                  * Concentrate that URL with server path to support relative
                  * friendly URL (documentation link in feature tree)
                  */
-                return this.gVersion.gServer.serverObj + friendlyURLString;
+                return this.gVersion.gServer.getServerObj() + friendlyURLString;
 
             } else {
                 return friendlyURLString;
             }
         } else {
-            if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                return friendlyURLString.replaceAll(this.gVersion.gServer.URL, (String) this.gVersion.gServer.serverObj);
+            if (this.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad) {
+                return friendlyURLString.replaceAll(this.gVersion.gServer.getURL(), (String) this.gVersion.gServer.getServerObj());
             }
             return friendlyURLString;
         }
@@ -278,7 +278,7 @@ public final class GenericFeature {
         // Remove all childred from request
         requestSym.removeChildren();
         if (currentRequestSym.getChildCount() > 0) {
-            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.serverType);
+            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.getServerType());
             currentRequestSym.removeChildren();
         }
         method = null;

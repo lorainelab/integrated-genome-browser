@@ -267,7 +267,7 @@ public final class GeneralLoadView {
         }
 
         //TODO refactor code to not use serverType == null as a hack
-        if (serverType != null && gFeature.gVersion.gServer.serverType != serverType) {
+        if (serverType != null && gFeature.gVersion.gServer.getServerType() != serverType) {
             return false;
         }
 
@@ -279,7 +279,7 @@ public final class GeneralLoadView {
     public synchronized static void AutoloadQuickloadFeature() {
         for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
             if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
-                    || gFeature.gVersion.gServer.serverType != ServerTypeI.QuickLoad) {
+                    || gFeature.gVersion.gServer.getServerType() != ServerTypeI.QuickLoad) {
                 continue;
             }
 
@@ -619,11 +619,11 @@ public final class GeneralLoadView {
 
             @Override
             protected void finished() {
-                boolean refSeq = feature.gVersion.gServer.serverType.equals(ServerTypeI.LocalFiles) && feature.symL.isResidueLoader();
+                boolean refSeq = feature.gVersion.gServer.getServerType().equals(ServerTypeI.LocalFiles) && feature.symL.isResidueLoader();
                 if (removeLocal || refSeq) {
                     // If feature is local then remove it from server.
                     GenericVersion version = feature.gVersion;
-                    if (version.gServer.serverType.equals(ServerTypeI.LocalFiles)) {
+                    if (version.gServer.getServerType().equals(ServerTypeI.LocalFiles)) {
                         if (version.removeFeature(feature)) {
                             SeqGroupView.getInstance().refreshTable();
                             if (gmodel.getSelectedSeqGroup().getSeqCount() > 0

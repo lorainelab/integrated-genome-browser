@@ -1,31 +1,5 @@
 package com.gene.dasregistryservertype;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -46,7 +20,30 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.genometry.util.XMLUtils;
 import com.lorainelab.igb.services.IgbService;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This uses the DAS Registry to find features for the selected species (and
@@ -118,12 +115,12 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 
     @Override
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
-        Map<String, Map<String, Object>> featureList = featuresMap.get(gVersion.gServer.URL);
+        Map<String, Map<String, Object>> featureList = featuresMap.get(gVersion.gServer.getURL());
         if (featureList != null) {
             for (String url : featureList.keySet()) {
                 Map<String, Object> featureProps = featureList.get(url);
                 if (DEBUG) {
-                    System.out.println("!!! DAS Registry add feature " + gVersion.gServer.URL + " - " + url);
+                    System.out.println("!!! DAS Registry add feature " + gVersion.gServer.getURL() + " - " + url);
                 }
                 System.out.flush();
                 int pos = url.lastIndexOf('/');
@@ -161,7 +158,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
         String versionName = currentGroup.getID();
         String speciesName = currentGroup.getOrganism();
         try {
-            URL url = new URL(gServer.URL);
+            URL url = new URL(gServer.getURL());
             versionDiscoverer.discoverVersion(versionID, versionName, gServer, url, speciesName);
         } catch (MalformedURLException e) {
             e.printStackTrace();

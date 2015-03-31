@@ -53,10 +53,10 @@ public final class ServiceUtils {
 
         URI uri = URI.create(feature_url);
         GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-        if (gVersion == null && gServer.serverType != ServerTypeI.LocalFiles) {
+        if (gVersion == null && gServer.getServerType() != ServerTypeI.LocalFiles) {
             Logger.getLogger(ServiceUtils.class.getName()).log(
                     Level.WARNING, "Couldn''t find version {0} in server {1}",
-                    new Object[]{seqGroup.getID(), gServer.serverName});
+                    new Object[]{seqGroup.getID(), gServer.getServerName()});
             return null;
         }
 
@@ -64,7 +64,7 @@ public final class ServiceUtils {
             feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
         }
 
-        if (feature == null && gServer.serverType == ServerTypeI.LocalFiles) {
+        if (feature == null && gServer.getServerType() == ServerTypeI.LocalFiles) {
             String uriString = uri.toASCIIString().toLowerCase();
             String unzippedStreamName = GeneralUtils.stripEndings(uriString);
             String extension = GeneralUtils.getExtension(unzippedStreamName);

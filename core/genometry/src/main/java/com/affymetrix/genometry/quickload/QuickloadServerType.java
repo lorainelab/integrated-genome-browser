@@ -125,7 +125,7 @@ public class QuickloadServerType implements ServerTypeI {
         File file;
         Set<String> files = quickloadFiles;
 
-        String server_path = gServer.URL + "/" + genome_name;
+        String server_path = gServer.getURL() + "/" + genome_name;
         local_path += "/" + genome_name;
         GeneralUtils.makeDir(local_path);
         boolean fileMayNotExist;
@@ -148,10 +148,10 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.URL + Constants.CONTENTS_TXT, false);
+        File file = GeneralUtils.getFile(gServer.getURL() + Constants.CONTENTS_TXT, false);
 
         String quickloadStr = null;
-        quickloadStr = (String) gServer.serverObj;
+        quickloadStr = (String) gServer.getServerObj();
 
         QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
 
@@ -162,7 +162,7 @@ public class QuickloadServerType implements ServerTypeI {
 
         for (String genome_name : genome_names) {
             if (!getAllFiles(gServer, genome_name, path)) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.serverName);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
                 return false;
             }
         }
@@ -206,7 +206,7 @@ public class QuickloadServerType implements ServerTypeI {
     private static URI determineURI(GenericVersion version, String featureName) {
         URI uri = null;
 
-        if (version.gServer.URL == null || version.gServer.URL.length() == 0) {
+        if (version.gServer.getURL() == null || version.gServer.getURL().length() == 0) {
             int httpIndex = featureName.toLowerCase().indexOf(HTTP_PROTOCOL);
             if (httpIndex > -1) {
                 // Strip off initial characters up to and including http:
@@ -225,7 +225,8 @@ public class QuickloadServerType implements ServerTypeI {
                 uri = URI.create(fileName);
             } else {
                 uri = URI.create(
-                        version.gServer.serverObj // Changed from 'version.gServer.URL' since quickload uses serverObj
+                        version.gServer.getServerObj() // Changed from 'version.gServer.URL' since quickload uses serverObj
+                
                         + version.versionID + "/"
                         + determineFileName(version, featureName));
             }
@@ -237,7 +238,7 @@ public class QuickloadServerType implements ServerTypeI {
     private static String determineFileName(GenericVersion version, String featureName) {
         URL quickloadURL;
         try {
-            quickloadURL = new URL((String) version.gServer.serverObj);
+            quickloadURL = new URL((String) version.gServer.getServerObj());
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
             return "";
@@ -259,22 +260,22 @@ public class QuickloadServerType implements ServerTypeI {
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
         // Discover feature names from QuickLoad
         try {
-            URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
+            URL quickloadURL = new URL((String) gVersion.gServer.getServerObj());
             if (logger.isDebugEnabled()) {
-                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + gVersion.gServer.serverObj);
+                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + gVersion.gServer.getServerObj());
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
             List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
             if (typeNames == null) {
-                String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.serverName, gVersion.group.getOrganism(), gVersion.versionName);
-                ErrorHandler.errorPanelWithReportBug(gVersion.gServer.serverName, errorText, Level.SEVERE);
+                String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.getServerName(), gVersion.group.getOrganism(), gVersion.versionName);
+                ErrorHandler.errorPanelWithReportBug(gVersion.gServer.getServerName(), errorText, Level.SEVERE);
                 return;
             }
 
             for (String type_name : typeNames) {
                 if (type_name == null || type_name.length() == 0) {
-                    logger.warn("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+                    logger.warn("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.getServerName());
                     continue;
                 }
                 if (logger.isDebugEnabled()) {
@@ -315,7 +316,7 @@ public class QuickloadServerType implements ServerTypeI {
             VersionDiscoverer versionDiscoverer) {
         URL quickloadURL = null;
         try {
-            quickloadURL = new URL((String) gServer.serverObj);
+            quickloadURL = new URL((String) gServer.getServerObj());
         } catch (MalformedURLException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -478,7 +479,7 @@ public class QuickloadServerType implements ServerTypeI {
         String path = "";
         SymLoader symloader;
         try {
-            URL quickloadURL = new URL((String) server.serverObj);
+            URL quickloadURL = new URL((String) server.getServerObj());
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
             path = quickloadServer.getPath(version.versionName, seq_name);
             common_url = root_url + path + ".";
@@ -500,7 +501,7 @@ public class QuickloadServerType implements ServerTypeI {
             BioSeq aseq, int min, int max, SeqSpan span) {
         String seq_name = aseq.getID();
         AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-        String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, (String) version.gServer.serverObj, span, aseq);
+        String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, (String) version.gServer.getServerObj(), span, aseq);
         if (residues != null) {
             BioSeqUtils.addResiduesToComposition(aseq, residues, span);
             return true;
@@ -510,7 +511,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public void removeServer(GenericServer server) {
-        QuickLoadServerModel.removeQLModelForURL(server.URL);
+        QuickLoadServerModel.removeQLModelForURL(server.getURL());
     }
 
     @Override
@@ -520,22 +521,22 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.serverObj == null) {
+        if (gServer.getServerObj() == null) {
             return null;
         }
-        String tempURL = (String) gServer.serverObj;
+        String tempURL = (String) gServer.getServerObj();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
-        if (gServer.serverType != null) {
-            tempURL = gServer.serverType.adjustURL(tempURL);
+        if (gServer.getServerType() != null) {
+            tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
     }
 
     @Override
     public boolean useMirrorSite(GenericServer gServer) {
-        if (gServer.mirrorURL != null && gServer.mirrorURL != gServer.serverObj && LocalUrlCacher.isValidURL(gServer.mirrorURL)) {
+        if (gServer.getMirrorUrl() != null && gServer.getMirrorUrl() != gServer.getServerObj() && LocalUrlCacher.isValidURL(gServer.getMirrorUrl())) {
             return true;
         }
         return false;

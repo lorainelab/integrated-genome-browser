@@ -57,7 +57,7 @@ public class IgbPreferencesLoadingOrchestrator {
                 String url = GeneralUtils.URLDecode(node.get("url", ""));
                 boolean nodeRemoved = false;
                 for (GenericServer server : loadedServers) {
-                    if (server.URL.equals(url)) {
+                    if (server.getURL().equals(url)) {
                         node.removeNode();
                         nodeRemoved = true;
                         break;

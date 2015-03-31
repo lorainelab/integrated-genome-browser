@@ -368,7 +368,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void discoverServer(final GenericServer server) {
-        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server " + server.serverName) {
+        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server " + server.getServerName()) {
 
             @Override
             protected Void runInBackground() {
@@ -460,7 +460,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void removeServer(GenericServer gServer) {
-        ServerList.getServerInstance().removeServer(gServer.URL);
+        ServerList.getServerInstance().removeServer(gServer.getURL());
         DataLoadPrefsView.getSingleton().refreshServers();
     }
 

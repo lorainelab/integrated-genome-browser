@@ -65,7 +65,7 @@ public abstract class DasLoader {
         String residues = null;
 
         try {
-            request = URI.create(version.gServer.URL);
+            request = URI.create(version.gServer.getURL());
             URL url = new URL(request.toURL(), version.versionID + "/dna?");
             QueryBuilder builder = new QueryBuilder(url.toExternalForm());
 

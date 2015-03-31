@@ -187,7 +187,7 @@ public final class LazyChpSym extends ScoredContainerSym {
             ErrorHandler.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
             return;
         }
-        Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+        Das2ServerInfo server = (Das2ServerInfo) gServer.getServerObj();
         Das2VersionedSource vsource = server.getVersionedSource(aseq.getSeqGroup());
         if (vsource == null) {
             ErrorHandler.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());

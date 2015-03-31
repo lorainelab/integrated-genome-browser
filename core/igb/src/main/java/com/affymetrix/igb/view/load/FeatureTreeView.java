@@ -272,7 +272,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param featureName
      */
     private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
-        if (!featureName.contains(path_separator) || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
+        if (!featureName.contains(path_separator) || feature.gVersion.gServer.getServerType() == ServerTypeI.LocalFiles) {
             //This code adds a leaf
             TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
@@ -486,14 +486,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @return hyperlink of the server name
      */
     private static String serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-        if (!gServer.serverType.hasFriendlyURL()) {
+        if (!gServer.getServerType().hasFriendlyURL()) {
             return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
         }
 
         String friendlyURL = gServer.getFriendlyURL();
 
         if (friendlyURL != null) {
-            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
+            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getServerName(), thetree.getGraphics());
             bounds.width = (int) linkBound.getWidth();
             if (gServer.getFriendlyIcon() != null) {
                 bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
@@ -615,7 +615,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
             String featureName = gFeature.featureName;
-            String featureText = gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles
+            String featureText = gFeature.gVersion.gServer.getServerType() != ServerTypeI.LocalFiles
                     ? featureName.substring(featureName.lastIndexOf(path_separator) + 1) : featureName;
             featureText = "<html>" + featureText;
             if (gFeature.getFriendlyURL() != null) {
@@ -645,13 +645,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
             String serverNameString = "";
-            if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.serverType.hasFriendlyURL()) {
+            if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.getServerType().hasFriendlyURL()) {
                 // TODO - hack to ignore server hyperlinks for DAS/1.
-                serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.serverName + "</b></a>";
+                serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.getServerName() + "</b></a>";
             } else {
-                serverNameString = "<b>" + gServer.serverName + "</b>";
+                serverNameString = "<b>" + gServer.getServerName() + "</b>";
             }
-            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.serverType.getName() + ")</i>";
+            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getServerType().getName() + ")</i>";
 
             if (DEBUG) {
                 serverNameString = serverNameString + " [" + leafCount(node) + "]";
@@ -690,7 +690,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                     if (tn.genericObject instanceof GenericFeature) {
                         GenericFeature feature = (GenericFeature) tn.genericObject;
-                        if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+                        if (feature.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad) {
                             String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
                             FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
                             if (fth == null) {
@@ -701,7 +701,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
-                            if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad && !isURLReachable(feature.getURI())) {
+                            if (feature.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad && !isURLReachable(feature.getURI())) {
 
                                 /**
                                  * qlmirror - Quickload Mirror Server
@@ -718,11 +718,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                  *
                                  */
                                 GenericServer gServer = feature.gVersion.gServer;
-                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
-                                    gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
+                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
+                                    gServer.setServerObj(gServer.getMirrorUrl()); // Update serverObj to support new server & feature friendly URL
                                     for (GenericFeature gFeature : feature.gVersion.getFeatures()) {
                                         if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
-                                            URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL, gServer.mirrorURL));
+                                            URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.getURL(), gServer.getMirrorUrl()));
                                             gFeature.symL.setURI(newURI);
                                             ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
                                         }
@@ -780,7 +780,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                 if (tn.genericObject instanceof GenericFeature) {
                     GenericFeature feature = (GenericFeature) tn.genericObject;
-                    extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+                    extraInfo = feature.gVersion.gServer.getServerType() + ":" + feature.gVersion.gServer.getServerName() + "." + feature.featureName;
                 }
             }
             return extraInfo;
@@ -888,7 +888,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         public String getId() {
             if (genericObject instanceof GenericServer) {
-                return ((GenericServer) genericObject).serverType + ":" + ((GenericServer) genericObject).serverName;
+                return ((GenericServer) genericObject).getServerType() + ":" + ((GenericServer) genericObject).getServerName();
             } else if (genericObject instanceof GenericFeature) {
                 return ((GenericFeature) genericObject).featureName;
             }

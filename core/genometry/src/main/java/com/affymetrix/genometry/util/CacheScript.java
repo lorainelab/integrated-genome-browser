@@ -72,14 +72,14 @@ public class CacheScript extends Thread {
                 protected Void doInBackground() {
                     ser_tim.start();
                     if (processServer(gServer, path)) {
-                        copyDirectoryFor(path, gServer.serverName);
+                        copyDirectoryFor(path, gServer.getServerName());
                     }
                     return null;
                 }
 
                 @Override
                 public void done() {
-                    Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Time required to cache " + gServer.serverName + " :" + (ser_tim.read() / 1000f), ser_tim);
+                    Logger.getLogger(CacheScript.class.getName()).log(Level.INFO, "Time required to cache " + gServer.getServerName() + " :" + (ser_tim.read() / 1000f), ser_tim);
                 }
             };
             vexec.execute(worker);
@@ -100,7 +100,7 @@ public class CacheScript extends Thread {
             fos = new FileOutputStream(mapping);
             out = new PrintStream(fos);
             for (final GenericServer gServer : server_list) {
-                out.println(gServer.URL + "\t" + gServer.serverName);
+                out.println(gServer.getURL() + "\t" + gServer.getServerName());
             }
         } catch (IOException ex) {
             Logger.getLogger(CacheScript.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,12 +117,12 @@ public class CacheScript extends Thread {
      * @param gServer	GenericServer to be processed.
      */
     private static boolean processServer(GenericServer gServer, String path) {
-        Logger.getLogger(CacheScript.class.getName()).log(Level.FINE, "Caching {0} at path {1}", new Object[]{gServer.serverName, path});
+        Logger.getLogger(CacheScript.class.getName()).log(Level.FINE, "Caching {0} at path {1}", new Object[]{gServer.getServerName(), path});
 
-        String serverCachePath = path + gServer.serverName + temp;
+        String serverCachePath = path + gServer.getServerName() + temp;
         GeneralUtils.makeDir(serverCachePath);
 
-        return gServer.serverType.processServer(gServer, serverCachePath);
+        return gServer.getServerType().processServer(gServer, serverCachePath);
     }
 
     /**

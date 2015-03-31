@@ -5,7 +5,6 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public interface TierGlyph extends GlyphI, StyledGlyph {
 
     public List<GlyphI> pickTraversal(Rectangle2D.Double coordrect, ViewI view);
 
-    public <G extends GlyphI> G getItem(Object datamodel);
+    public GlyphI getItem(Object datamodel);
 
     public boolean reomveItem(GlyphI glyph);
 

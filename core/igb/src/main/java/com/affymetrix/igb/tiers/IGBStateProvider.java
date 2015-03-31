@@ -6,6 +6,7 @@ import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.tooltip.ToolTipConstants;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import java.util.ArrayList;
@@ -139,6 +140,11 @@ public final class IGBStateProvider extends DefaultStateProvider {
                 if (track_name != null) {
                     track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
                 }
+            } else {
+                String uri = props.get(ToolTipConstants.URL);
+                    if (uri != null) {
+                        track_name = uri;
+                    }
             }
 
             style = new TrackStyle(unique_name, track_name, file_type, template, props);

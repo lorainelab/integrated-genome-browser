@@ -24,7 +24,7 @@ public class GenericActionHolder {
         return instance;
     }
 
-    private Map<String, GenericAction> genericActions = new HashMap<>();
+    private final Map<String, GenericAction> genericActions = new HashMap<>();
 
     /**
      * Add one to the collection and let everyone know.

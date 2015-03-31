@@ -121,7 +121,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     private SwingWorker<Void, Void> scriptWorker = null; // thread for running scripts - only one script can run at a time
     private final StatusBar statusBar;
     private static final int delay = 2; //delay in seconds
-    private LinkedList<StatusAlert> statusAlertList;
+    private final LinkedList<StatusAlert> statusAlertList;
     private final ActionListener status_alert_listener = e -> {
         if (e.getActionCommand().equals(String.valueOf(StatusAlert.HIDE_ALERT))) {
             removeStatusAlert((StatusAlert) e.getSource());

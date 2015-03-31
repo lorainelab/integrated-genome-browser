@@ -7,12 +7,14 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
-import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
+import com.google.common.base.Strings;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.event.ActionEvent;
+import java.net.URI;
 import static javax.swing.Action.SELECTED_KEY;
 
 /**
@@ -46,18 +48,17 @@ public class ShowFullFilePathInTrack extends SeqMapViewActionA {
         for (TierGlyph glyph : getTierManager().getAllTierGlyphs(true)) {
             if (glyph.getAnnotStyle() instanceof TrackStyle
                     && glyph.getAnnotStyle().getFeature() != null) {
-                String track_name = glyph.getAnnotStyle().getFeature().featureName;
-                if (track_name != null) {
-                    if (b) {
-                        // Code to add the slashes
-                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(track_name);
-
-                    } else {
-                        //Code to remove the slashes
-                        track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
-                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(track_name);
-
+                if (b) {
+                    URI uri = glyph.getAnnotStyle().getFeature().getURI();
+                    if (uri != null) {
+                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(uri.getPath());
                     }
+                } else {
+                    String track_name = glyph.getAnnotStyle().getFeature().featureName;
+                    if (!Strings.isNullOrEmpty(track_name)) {
+                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(track_name);
+                    }
+
                 }
             }
         }

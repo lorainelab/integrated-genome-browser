@@ -43,9 +43,8 @@ public final class IGBStateProvider extends DefaultStateProvider {
     }
 
     /**
-     * If there is no AnnotStyle with the given name, just returns the given
-     * name; else modifies the name such that there are no instances that are
-     * currently using it.
+     * If there is no AnnotStyle with the given name, just returns the given name; else modifies the name such that
+     * there are no instances that are currently using it.
      */
     public static String getUniqueName(String name) {
         String result = name.toLowerCase();
@@ -139,6 +138,8 @@ public final class IGBStateProvider extends DefaultStateProvider {
                 if (track_name != null) {
                     track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
                 }
+            } else {
+                track_name = unique_name;
             }
 
             style = new TrackStyle(unique_name, track_name, file_type, template, props);

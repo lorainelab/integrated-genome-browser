@@ -1,7 +1,6 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.google.common.io.Closer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -61,10 +60,8 @@ public abstract class BrowserLoader {
      * @return url of the image of the region
      */
     public String getImageUrl(String url, String cookie, URLFinder urlfinder) throws ImageUnavailableException {
-        Closer closer = Closer.create();
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(getConnection(url, cookie).getInputStream()));
-            closer.register(in);
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(getConnection(url, cookie).getInputStream()))) {
             return urlfinder.findUrl(in, null);
         } catch (Throwable t) {
             //wrap exception if needed
@@ -73,13 +70,6 @@ public abstract class BrowserLoader {
                 throw new ImageUnavailableException();
             }
             throw (ImageUnavailableException) t;
-        } finally {
-            try {
-                closer.close();
-            } catch (IOException ex) {
-                logger.log(Level.WARNING, "IOException thrown while closing Closeable.", ex);
-                throw new ImageUnavailableException();
-            }
         }
     }
 }

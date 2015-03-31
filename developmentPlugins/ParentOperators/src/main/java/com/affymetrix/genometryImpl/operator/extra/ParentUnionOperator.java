@@ -48,7 +48,7 @@ public class ParentUnionOperator extends AbstractAnnotationOperator implements O
 
     @Override
     public int getOperandCountMax(FileTypeCategory category) {
-        return category == category ? Integer.MAX_VALUE : 0;
+        return this.category == category ? Integer.MAX_VALUE : 0;
     }
 
     private static SymWithProps projectLandscape(GraphSym landscape) {

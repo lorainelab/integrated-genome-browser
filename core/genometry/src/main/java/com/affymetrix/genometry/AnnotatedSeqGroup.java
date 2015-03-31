@@ -5,7 +5,10 @@ import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
+import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ public class AnnotatedSeqGroup {
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
-    private final Map<String, Set<String>> uri2Seqs = Maps.newConcurrentMap();
+    private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
 
     private SynonymLookup chrLookup;
 
@@ -239,51 +242,8 @@ public class AnnotatedSeqGroup {
         return id.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(id, synonym);
     }
 
-    private boolean findSeqid(String searchSeqid) {
-        if (searchSeqid == null) {
-            return false;
-        }
-        boolean found = false;
-        for (Set<String> seqids : uri2Seqs.values()) {
-            for (String seqid : seqids) {
-                if (searchSeqid.toLowerCase().equals(seqid.toLowerCase())) {
-                    found = true;
-                }
-            }
-        }
-        return found;
-    }
-
     public boolean removeSeqsForUri(String uri) {
-        Set<String> seqids = uri2Seqs.get(uri);
-        uri2Seqs.remove(uri);
-        boolean removed = false;
-        if (seqids != null) {
-            for (String seqid : seqids) {
-                if (!findSeqid(seqid)) {
-                    id2seq.remove(seqid.toLowerCase());
-                    id2seq_dirty_bit = true;
-                    removed = true;
-                }
-            }
-        }
-        if (removed && getSeqCount() == 1) {
-            BioSeq seq = getSeq(0);
-            if (seq.getID().equals("genome")) {
-                id2seq.remove(seq.getID());
-                seqlist.remove(seq);
-            }
-        }
-        return removed;
-    }
-
-    private void addUri2Seqs(String uri, String seqid) {
-        Set<String> seqids = uri2Seqs.get(uri);
-        if (seqids == null) {
-            seqids = new HashSet<>();
-            uri2Seqs.put(uri, seqids);
-        }
-        seqids.add(seqid);
+        return !uri2Seqs.removeAll(uri).isEmpty();
     }
 
     public final BioSeq addSeq(String seqid, int length) {
@@ -295,10 +255,9 @@ public class AnnotatedSeqGroup {
      * necessary, and increasing its length to the given sym if necessary.
      */
     public final BioSeq addSeq(String seqid, int length, String uri) {
-        addUri2Seqs(uri, seqid);
-        if (seqid == null) {
-            throw new NullPointerException();
-        }
+        checkNotNull(seqid);
+        checkNotNull(uri);
+        uri2Seqs.put(uri, seqid);
 
         BioSeq aseq = getSeq(seqid);
         if (aseq != null) {

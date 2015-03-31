@@ -20,11 +20,6 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 
-/**
- * A class that's useful for visualizing a generic server.
- *
- * @version $Id: GenericServer.java 10498 2012-02-28 15:49:34Z imnick $
- */
 public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
 
     /**

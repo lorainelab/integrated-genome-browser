@@ -27,8 +27,7 @@ public class GuiBuildTest extends JPanel {
     private static final String TITLE = "Save Image";
     private JFrame exportDialogFrame;
 
-    @Before
-    public void setup() {
+    public GuiBuildTest() {
         setLayout(new MigLayout("", "[grow]", "[][][grow]"));
         exportDialogFrame = PreferenceUtils.createFrame(TITLE, new Dimension(600, 400));
         exportDialogFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -146,9 +145,8 @@ public class GuiBuildTest extends JPanel {
         add(previewPanel, "grow");
     }
 
-    @Test
-    public void seeDesign() throws InterruptedException {
-        exportDialogFrame.setVisible(true);
+    public static void main(String... args) throws InterruptedException {
+        new GuiBuildTest().exportDialogFrame.setVisible(true);
         while (true) {
             Thread.sleep(20000);
         }

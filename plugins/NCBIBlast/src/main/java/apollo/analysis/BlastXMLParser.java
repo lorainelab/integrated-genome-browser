@@ -31,7 +31,7 @@ public class BlastXMLParser {
 
     public class BlastXMLParserException extends Exception {
 
-        private final static long serialVersionUID = 1l;
+        private static final long serialVersionUID = 1L;
 
         public BlastXMLParserException(String msg) {
             super(msg);

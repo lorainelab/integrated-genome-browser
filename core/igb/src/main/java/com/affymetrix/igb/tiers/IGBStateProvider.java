@@ -6,7 +6,6 @@ import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.tooltip.ToolTipConstants;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import java.util.ArrayList;
@@ -44,9 +43,8 @@ public final class IGBStateProvider extends DefaultStateProvider {
     }
 
     /**
-     * If there is no AnnotStyle with the given name, just returns the given
-     * name; else modifies the name such that there are no instances that are
-     * currently using it.
+     * If there is no AnnotStyle with the given name, just returns the given name; else modifies the name such that
+     * there are no instances that are currently using it.
      */
     public static String getUniqueName(String name) {
         String result = name.toLowerCase();
@@ -141,10 +139,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
                     track_name = track_name.substring(track_name.lastIndexOf(java.io.File.separator) + 1);
                 }
             } else {
-                String uri = props.get(ToolTipConstants.URL);
-                    if (uri != null) {
-                        track_name = unique_name;
-                    }
+                track_name = unique_name;
             }
 
             style = new TrackStyle(unique_name, track_name, file_type, template, props);

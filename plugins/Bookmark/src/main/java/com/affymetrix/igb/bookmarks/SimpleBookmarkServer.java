@@ -114,22 +114,12 @@ public final class SimpleBookmarkServer {
      */
     private static boolean isPortAvailable(int port) {
         logger.debug("Testing port {}", Integer.toString(port));
-        Socket s = null;
-        try {
-            s = new Socket("localhost", port);
+        try (Socket s = new Socket("localhost", port);) {
             logger.debug("Port {} is not available", Integer.toString(port));
             return false;
         } catch (IOException e) {
             logger.debug("Port {} is available", Integer.toString(port));
             return true;
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException("Error attempting to close socket.", ex);
-                }
-            }
         }
     }
 }

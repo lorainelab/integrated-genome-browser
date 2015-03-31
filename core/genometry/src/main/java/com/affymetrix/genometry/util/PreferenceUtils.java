@@ -586,16 +586,15 @@ public abstract class PreferenceUtils {
 
         final String[] interned_options = new String[options.length];
         for (int i = 0; i < options.length; i++) {
-            interned_options[i] = options[i].intern();
+            interned_options[i] = options[i];
         }
-        default_value.intern();
 
         final JComboBox combo_box = new JComboBox(interned_options);
 
         // Note that no check is made that the given default_value is
         // actually one of the given options.  The combo_box will ignore
         // an attempt to set itself to a value that isn't in its option list.
-        String current_stored_value = node.get(pref_name, default_value).intern();
+        String current_stored_value = node.get(pref_name, default_value);
 
         combo_box.addActionListener(ae -> {
             String selection = (String) combo_box.getSelectedItem();

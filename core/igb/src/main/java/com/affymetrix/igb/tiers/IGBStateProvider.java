@@ -143,7 +143,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
             } else {
                 String uri = props.get(ToolTipConstants.URL);
                     if (uri != null) {
-                        track_name = uri;
+                        track_name = unique_name;
                     }
             }
 

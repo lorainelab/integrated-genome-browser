@@ -713,12 +713,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
         String feat_title = null;
         if (annot instanceof SymWithProps) {
             SymWithProps swp = (SymWithProps) annot;
-            feat_title = (String) swp.getProperty("name");
+            feat_title = (String) swp.getProperty(NAME);
             if (feat_title == null) {
-                feat_title = (String) swp.getProperty("title");
-            }
-            if (feat_title == null) {
-                feat_title = (String) swp.getProperty("gene_name");
+                feat_title = (String) swp.getProperty(TITLE);
             }
         }
         if (feat_title == null && annot.getChildCount() > 0) {

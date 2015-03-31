@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 
 public class ClearPreferencesAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ClearPreferencesAction ACTION = new ClearPreferencesAction();
 
     static {

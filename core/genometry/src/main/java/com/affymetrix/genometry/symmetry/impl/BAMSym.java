@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithBaseQuality;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.AVERAGE_QUALITY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.FORWARD;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MAPQ;
@@ -301,7 +302,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put(ID, name);
             tprops.put(RESIDUES, getResidues());
             tprops.put(FORWARD, this.isForward());
-            tprops.put("feature_type", "insertion");
+            tprops.put(FEATURE_TYPE, "insertion");
             tprops.put(AVERAGE_QUALITY, getAverageQuality());
             return tprops;
         }

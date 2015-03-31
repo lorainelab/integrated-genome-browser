@@ -12,8 +12,10 @@
  */
 package com.affymetrix.genometry.util;
 
+import com.google.common.base.Strings;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * For reading files, you probably need to set-up your own JFileChooser, but
@@ -83,7 +85,7 @@ public class UniFileChooser extends GFileChooser {
      * Example: reinitialize("AXML file", "axml");
      */
     public void reinitialize(final String description, final String extension) {
-        if (description == null || extension == null || "".equals(extension)) {
+        if (Strings.isNullOrEmpty(description) || Strings.isNullOrEmpty(extension)) {
             throw new IllegalArgumentException("description and extension cannot be null");
         }
 
@@ -91,7 +93,7 @@ public class UniFileChooser extends GFileChooser {
             throw new IllegalArgumentException("extension should not contain \'.\'");
         }
 
-        if (this.description != description || this.extension != extension) {
+        if (!StringUtils.equals(this.description, description) || !StringUtils.equals(this.extension, extension)) {
             this.description = description;
             this.extension = extension;
 

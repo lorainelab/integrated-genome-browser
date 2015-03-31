@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
  */
 public class PrintFrameAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final PrintFrameAction ACTION = new PrintFrameAction();
 
     static {

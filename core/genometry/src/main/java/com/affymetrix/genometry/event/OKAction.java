@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 
 public class OKAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final OKAction ACTION = new OKAction();
 
     static {

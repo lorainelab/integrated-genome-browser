@@ -30,7 +30,7 @@ import java.util.logging.Level;
  */
 public class PrimerSearchAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     private final SeqMapViewI smv;
     private final NCBIPrimerBlastOpts ncbiPrimerBlastOpts;

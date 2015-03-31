@@ -38,15 +38,16 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DIRECTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.END;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.GENE_NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.LENGTH;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATCH;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.METHOD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.REVERSE_DIRECTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SEQ_ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -110,6 +111,7 @@ import static com.affymetrix.igb.view.SeqMapViewConstants.SEQ_MODE;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
+import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
@@ -953,9 +955,8 @@ public class SeqMapView extends JPanel
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <G extends GlyphI> G getItemFromTier(Object datamodel) {
-        return (G) seqmap.getItemFromTier(datamodel);
+    public GlyphI getItemFromTier(Object datamodel) {
+        return seqmap.getItemFromTier(datamodel);
     }
 
     @Override
@@ -1612,19 +1613,15 @@ public class SeqMapView extends JPanel
                     id = sym.getID();
                     sym_used_for_title = sym;
                 }
-                if (id == null && sym instanceof GraphSym) {
+                if (Strings.isNullOrEmpty(id) && sym instanceof GraphSym) {
                     id = ((GraphSym) sym).getGraphName();
                     sym_used_for_title = sym;
                 }
-                if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty(GENE_NAME);
-                    sym_used_for_title = sym;
+                if (sym instanceof SymWithProps) {
+                    id = getSymWithPropsIdField((SymWithProps) sym);
                 }
-                if (id == null && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty(ID);
-                    sym_used_for_title = sym;
-                }
-                if (id == null && sym instanceof DerivedSeqSymmetry) {
+
+                if (Strings.isNullOrEmpty(id) && sym instanceof DerivedSeqSymmetry) {
                     SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
                     if (original instanceof MutableSingletonSeqSymmetry) {
                         id = original.getID();
@@ -1634,23 +1631,18 @@ public class SeqMapView extends JPanel
                         sym_used_for_title = original;
                     }
                 }
-                if (id == null && sym instanceof CdsSeqSymmetry) {
+                if (Strings.isNullOrEmpty(id) && sym instanceof CdsSeqSymmetry) {
                     SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
                     if (property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty(GENE_NAME);
-                        sym_used_for_title = sym;
-                    }
-                    if (id == null && property_sym instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) property_sym).getProperty(ID);
-                        sym_used_for_title = sym;
+                        id = getSymWithPropsIdField((SymWithProps) property_sym);
                     }
                 }
-                if (id == null && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
+                if (Strings.isNullOrEmpty(id) && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
                     SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
                     id = SeqUtils.spanToString(seq_region);
                     sym_used_for_title = seq_selected_sym;
                 }
-                if (id == null && topgl instanceof GraphGlyph) {
+                if (Strings.isNullOrEmpty(id) && topgl instanceof GraphGlyph) {
                     GraphGlyph gg = (GraphGlyph) topgl;
                     if (gg.getLabel() != null) {
                         id = "Graph: " + gg.getLabel();
@@ -1659,15 +1651,15 @@ public class SeqMapView extends JPanel
                     }
                     sym_used_for_title = null;
                 }
-                if (id == null && sym instanceof SymWithProps) {
+                if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
                     id = (String) ((SymWithProps) sym).getProperty(MATCH);
                     sym_used_for_title = sym;
                 }
-                if (id == null && sym instanceof SymWithProps) {
+                if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
                     id = (String) ((SymWithProps) sym).getProperty(FEATURE_TYPE);
                     sym_used_for_title = sym;
                 }
-                if (id == null) {
+                if (Strings.isNullOrEmpty(id)) {
                     id = "Unknown Selection";
                     sym_used_for_title = sym;
                 }
@@ -1675,6 +1667,21 @@ public class SeqMapView extends JPanel
                 sym_used_for_title = null;
                 id = "" + selected_glyphs.size() + " Selections";
             }
+        }
+        return id;
+    }
+
+    //prefer
+    private String getSymWithPropsIdField(SymWithProps sym) {
+        id = (String) ((SymWithProps) sym).getProperty(TITLE);
+        sym_used_for_title = sym;
+        if (Strings.isNullOrEmpty(id)) {
+            id = (String) ((SymWithProps) sym).getProperty(NAME);
+            sym_used_for_title = sym;
+        }
+        if (Strings.isNullOrEmpty(id)) {
+            id = (String) ((SymWithProps) sym).getProperty(ID);
+            sym_used_for_title = sym;
         }
         return id;
     }

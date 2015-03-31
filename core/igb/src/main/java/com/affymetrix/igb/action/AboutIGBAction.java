@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AboutIGBAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final AboutIGBAction ACTION = new AboutIGBAction();
     private static final Logger logger = LoggerFactory.getLogger(AboutIGBAction.class);
 

@@ -57,7 +57,7 @@ import javax.swing.border.TitledBorder;
  */
 public final class DataLoadPrefsView extends ServerPrefsView {
 
-    private static final long serialVersionUID = 2l;
+    private static final long serialVersionUID = 1L;
     private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
     private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
     private static DataLoadPrefsView singleton;

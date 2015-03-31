@@ -49,7 +49,7 @@ import javax.swing.table.TableColumn;
 
 public abstract class ServerPrefsView extends IPrefEditorComponent {
 
-    private static final long serialVersionUID = 2l;
+    private static final long serialVersionUID = 1L;
     private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
     protected final JPanel sourcePanel;
     protected final GroupLayout layout;
@@ -154,7 +154,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
         table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
         TableCellRenderer renderer = new DefaultTableCellRenderer() {
 
-            private static final long serialVersionUID = -1l;
+            private static final long serialVersionUID = 1L;
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -170,7 +170,7 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
 
         TableCellRenderer refresh_renderer = new LabelTableCellRenderer(refresh_icon, true) {
 
-            private static final long serialVersionUID = -1l;
+            private static final long serialVersionUID = 1L;
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,

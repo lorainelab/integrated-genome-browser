@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
  */
 public class ExportFastaSequenceAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     AbstractSequenceViewer sv;
 

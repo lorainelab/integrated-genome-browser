@@ -23,7 +23,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private final List<GenericServer> servers = new ArrayList<>();
 
     public static enum SourceColumn {

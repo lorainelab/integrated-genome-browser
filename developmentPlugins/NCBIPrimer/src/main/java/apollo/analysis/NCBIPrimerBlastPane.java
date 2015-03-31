@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 public class NCBIPrimerBlastPane extends IPrefEditorComponent implements NCBIPrimerBlastOpts {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private PrimerOptsPanel primerOptsPanel;
     private PrimerCheckOptsPanel primerCheckOptsPanel;
     private PrimerPostProcessPanel primerPostProcessPanel;
@@ -308,7 +308,7 @@ public class NCBIPrimerBlastPane extends IPrefEditorComponent implements NCBIPri
 
     private class PrimerPostProcessPanel extends JPanel {
 
-        private static final long serialVersionUID = 1l;
+        private static final long serialVersionUID = 1L;
         private JCheckBox removePairsNotInExonsCheckBox;
 
         public PrimerPostProcessPanel() {

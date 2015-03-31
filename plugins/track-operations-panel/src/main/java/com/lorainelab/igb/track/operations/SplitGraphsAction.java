@@ -13,7 +13,7 @@ import static com.affymetrix.igb.shared.Selections.*;
  */
 public class SplitGraphsAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public SplitGraphsAction(IgbService igbService) {
         super("Split", null, null);

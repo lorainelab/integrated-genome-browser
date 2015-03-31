@@ -18,7 +18,7 @@ import java.text.MessageFormat;
  */
 public class AdjustEdgeMatchAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final AdjustEdgeMatchAction ACTION = new AdjustEdgeMatchAction();
 
     static {

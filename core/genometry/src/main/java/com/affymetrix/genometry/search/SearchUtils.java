@@ -5,6 +5,10 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -110,10 +114,10 @@ public class SearchUtils {
         Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
             group.searchProperties(syms, regex, limit);
-            props_to_search = new String[]{"id", "gene name", "description"};
+            props_to_search = new String[]{ID, NAME, TITLE, DESCRIPTION};
         } else {
             group.search(syms, regex, -1);
-            props_to_search = new String[]{"id"};
+            props_to_search = new String[]{ID};
         }
 
         final Matcher matcher = regex.matcher("");

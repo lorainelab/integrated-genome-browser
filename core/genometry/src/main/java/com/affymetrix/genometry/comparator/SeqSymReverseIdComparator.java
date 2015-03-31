@@ -13,7 +13,7 @@ import java.util.Comparator;
  */
 public final class SeqSymReverseIdComparator implements Comparator<SeqSymmetry>, Serializable {
 
-    public static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
         return compareReverseStrings(sym1.getID(), sym2.getID());

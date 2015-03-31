@@ -6,15 +6,12 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.event.PropertyHandler;
 import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.util.OrderComparator;
 import static com.affymetrix.genometry.util.SelectionInfoUtils.orderProperties;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.util.Comparator;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -33,7 +30,6 @@ public class SelectionRuleAction extends GenericAction {
 
     private static final String no_selection_text = "Click the map below to select annotations";
     private static final String selection_info = "Selection Info";
-    private static final Comparator<String> comparator = new OrderComparator(PropertyHandler.prop_order);
     private static final SelectionRuleAction ACTION = new SelectionRuleAction();
     private SymWithProps sym;
     private static final Logger logger = LoggerFactory.getLogger(SelectionRuleAction.class);

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ViewReadAlignmentAction extends SeqMapViewActionA {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     private static final String RESTOREREAD = BUNDLE.getString("restoreAlignment");
     private static final String SHOWMISMATCH = BUNDLE.getString("showMismatch");

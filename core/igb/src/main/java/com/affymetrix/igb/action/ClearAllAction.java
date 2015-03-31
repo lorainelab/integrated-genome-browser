@@ -15,7 +15,7 @@ import java.text.MessageFormat;
  */
 public class ClearAllAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final ClearAllAction ACTION = new ClearAllAction();
 
     static {

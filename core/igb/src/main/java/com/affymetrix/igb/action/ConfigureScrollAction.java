@@ -27,7 +27,7 @@ import javax.swing.text.AbstractDocument;
  */
 public class ConfigureScrollAction extends SeqMapViewActionA {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     /*
      * Units to scroll are either in pixels or bases
      */

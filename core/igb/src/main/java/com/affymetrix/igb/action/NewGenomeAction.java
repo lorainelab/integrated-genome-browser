@@ -41,7 +41,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
 
     public static final String COMPONENT_NAME = "NewGenomeAction";
     private static final int FILE_MENU_INDEX = 3;
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private final int TOOLBAR_INDEX = 3;
 
     public NewGenomeAction() {
@@ -60,15 +60,10 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     private void triggerCustumGenomeDialogPanel(CustomGenomeDialogPanel ng) {
         int reply = JOptionPane.showConfirmDialog(getSeqMapView(), ng, getText(), JOptionPane.OK_CANCEL_OPTION);
         if (reply == JOptionPane.OK_OPTION) {
-            if (Strings.isNullOrEmpty(ng.getSpeciesName()) || Strings.isNullOrEmpty(ng.getVersionName())) {
-                JOptionPane.showMessageDialog(getSeqMapView(), "Please enter Genome Version and Species.");
-                triggerCustumGenomeDialogPanel(ng);
-                return;
-            }
-            String speciesName = SpeciesLookup.getPreferredName(ng.getSpeciesName());
-            String versionName = SynonymLookup.getDefaultLookup().getPreferredName(ng.getVersionName());
-
-            AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName);
+            String speciesName = getSpeciesName(ng);
+            String genomeVersionName = getGenomeVersionName(ng);
+            incrementCustomCounter(speciesName, genomeVersionName);
+            AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeVersionName);
             String refSeqPath = ng.getRefSeqFile();
 
             if (refSeqPath != null && refSeqPath.length() > 0) {
@@ -91,6 +86,34 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
 
             gmodel.setSelectedSeqGroup(group);
 
+        }
+    }
+
+    private String getGenomeVersionName(CustomGenomeDialogPanel ng) {
+        String versionName;
+        if (Strings.isNullOrEmpty(ng.getVersionName())) {
+            versionName = UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER;
+        } else {
+            versionName = ng.getVersionName();
+        }
+        versionName = SynonymLookup.getDefaultLookup().getPreferredName(versionName);
+        return versionName;
+    }
+
+    private String getSpeciesName(CustomGenomeDialogPanel ng) {
+        String speciesName;
+        if (Strings.isNullOrEmpty(ng.getSpeciesName())) {
+            speciesName = UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER;
+        } else {
+            speciesName = ng.getSpeciesName();
+        }
+        speciesName = SpeciesLookup.getPreferredName(speciesName);
+        return speciesName;
+    }
+
+    private void incrementCustomCounter(String speciesName, String versionName) {
+        if (speciesName.equals(UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER) || versionName.equals(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER)) {
+            CUSTOM_GENOME_COUNTER++;
         }
     }
 

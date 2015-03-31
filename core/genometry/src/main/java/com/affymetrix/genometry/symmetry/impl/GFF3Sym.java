@@ -15,15 +15,26 @@ import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.parsers.GFF3Parser;
+import static com.affymetrix.genometry.parsers.GFF3Parser.GFF_PROPS_TO_FILTER;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.affymetrix.genometry.tooltip.ToolTipConstants;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FRAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.METHOD;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SOURCE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A sym to efficiently store GFF version 3 annotations.
@@ -56,9 +67,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
     private static final Pattern equalsP = Pattern.compile("=");
     private static final Pattern commaP = Pattern.compile(",");
 
-    private static final String[] EMPTY_RESULT = new String[0];
-
-    private static final List<String> bad_prop_names = Arrays.asList("feature_type", "type", "score", "frame");
+    private static final List<String> bad_prop_names = Arrays.asList(FEATURE_TYPE, TYPE, SCORE, FRAME);
 
     private String source;
     private String method;
@@ -101,32 +110,17 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
         // in GFF3, the property "ID" is intended to have meaning only inside the file itself.
         // the property "Name" is more like what we think of as an ID in Genometry
-        String[] possible_names = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_NAME, attributes);
-        if (possible_names.length > 0) {
-            this.id = possible_names[0];
+        List<String> possible_names = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_NAME, attributes);
+        if (possible_names.size() > 0) {
+            id = possible_names.get(0);
         } else {
-            this.id = null;
+            id = null;
         }
     }
 
-    /**
-     * Return the ID. Unknown if the original contract allows null to be
-     * returned, but this class and users of this class assume it can return
-     * null.
-     *
-     * @return ID or null
-     */
     @Override
     public String getID() {
-        // This is overridden because we only want to check the value of this.id,
-        // we do NOT want to check for a property named "id".  This is because GFF3
-        // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
-        // only has meaning while processing the file and should be ignored later.
-        if (this.id == null) {
-            return null;
-        } else {
-            return this.id;
-        }
+        return id;
     }
 
     public String getSource() {
@@ -151,24 +145,24 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
     @Override
     public Object getProperty(String name) {
-        if (name.equals("source") && source != null) {
+        if (name.equals(ToolTipConstants.SOURCE) && source != null) {
             return source;
-        } else if (name.equals("method")) {
+        } else if (name.equals(ToolTipConstants.METHOD)) {
             return method;
-        } else if (name.equals("feature_type") || name.equals("type")) {
+        } else if (name.equals(ToolTipConstants.FEATURE_TYPE) || name.equals(ToolTipConstants.TYPE)) {
             return feature_type;
-        } else if (name.equals("score") && score != UNKNOWN_SCORE) {
+        } else if (name.equals(ToolTipConstants.SCORE) && score != UNKNOWN_SCORE) {
             return score;
-        } else if (name.equals("frame") && frame != UNKNOWN_FRAME) {
+        } else if (name.equals(FRAME) && frame != UNKNOWN_FRAME) {
             return frame;
-        } else if (name.equals("id")) {
+        } else if (name.equals(ToolTipConstants.ID)) {
             return getID();
         }
-        String[] temp = getGFF3PropertyFromAttributes(name, attributes);
-        if (temp.length == 0) {
+        List<String> temp = getGFF3PropertyFromAttributes(name, attributes);
+        if (temp.isEmpty()) {
             return null;
-        } else if (temp.length == 1) {
-            return temp[0];
+        } else if (temp.size() == 1) {
+            return temp.get(0);
         } else {
             return temp;
         }
@@ -177,12 +171,12 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
     /**
      * Overridden such that certain properties will be stored more efficiently.
      * Setting certain properties this way is not supported: these include
-     * "attributes", "score" and "frame".
+     * "attributes", SCORE and FRAME.
      */
     @Override
     public boolean setProperty(String name, Object val) {
         String lc_name = name.toLowerCase();
-        if (name.equals("id")) {
+        if (name.equals(ID)) {
             if (val instanceof String) {
                 id = (String) val;
                 return true;
@@ -191,7 +185,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
                 return false;
             }
         }
-        if (name.equals("source")) {
+        if (name.equals(SOURCE)) {
             if (val instanceof String) {
                 source = (String) val;
                 return true;
@@ -200,7 +194,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
                 return false;
             }
         }
-        if (name.equals("method")) {
+        if (name.equals(METHOD)) {
             if (val instanceof String) {
                 method = (String) val;
                 return true;
@@ -228,27 +222,27 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
             tprops = new HashMap<>();
         }
         if (getID() != null) {
-            tprops.put("id", getID());
+            tprops.put(ID, getID());
         }
         if (source != null) {
-            tprops.put("source", source);
+            tprops.put(SOURCE, source);
         }
         if (method != null) {
-            tprops.put("method", method);
+            tprops.put(METHOD, method);
         }
         if (feature_type != null) {
-            tprops.put("feature_type", feature_type);
-            tprops.put("type", feature_type);
+            tprops.put(FEATURE_TYPE, feature_type);
+            tprops.put(TYPE, feature_type);
         }
         if (score != UNKNOWN_SCORE) {
-            tprops.put("score", getScore());
+            tprops.put(SCORE, getScore());
         }
         if (frame != UNKNOWN_FRAME) {
-            tprops.put("frame", frame);
+            tprops.put(FRAME, frame);
         }
         addAllAttributesFromGFF3(tprops, attributes);
 
-        return tprops;
+        return tprops.entrySet().stream().filter(entry -> !GFF_PROPS_TO_FILTER.contains(entry.getKey())).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 
     /**
@@ -257,11 +251,11 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
      * of the GFF3 file, and has no meaning outside the file.
      */
     public static String getIdFromGFF3Attributes(String attributes) {
-        String[] possible_ids = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_ID, attributes);
-        if (possible_ids.length == 0) {
+        List<String> possibleIds = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_ID, attributes);
+        if (possibleIds.isEmpty()) {
             return null;
         } else {
-            return possible_ids[0];
+            return possibleIds.get(0);
         }
     }
 
@@ -294,27 +288,26 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
     /**
      * Returns a non-null String[].
      */
-    public static String[] getGFF3PropertyFromAttributes(String prop_name, String attributes) {
+    public static List<String> getGFF3PropertyFromAttributes(String propName, String attributes) {
+        List<String> results = Lists.newArrayList();
         if (attributes == null) {
-            return EMPTY_RESULT;
+            return results;
         }
-        String[] tag_vals = attributes.split(";");
-        String prop_with_equals = prop_name + "=";
+        String[] tagVals = attributes.split(";");
+        String propWithEquals = propName + "=";
         String val = null;
 
-        for (String tag_val : tag_vals) {
-            if (tag_val.startsWith(prop_with_equals)) {
-                val = tag_val.substring(prop_with_equals.length());
+        for (String tag_val : tagVals) {
+            if (tag_val.startsWith(propWithEquals)) {
+                val = tag_val.substring(propWithEquals.length());
                 break;
             }
         }
         if (val == null) {
-            return EMPTY_RESULT;
+            return results;
         }
-        String[] results = val.split(",");
-        for (int i = 0; i < results.length; i++) {
-            results[i] = GeneralUtils.URLDecode(results[i]);
-        }
+        results.addAll(Lists.newArrayList(val.split(",")));
+        results = results.stream().map(prop -> GeneralUtils.URLDecode(prop)).collect(Collectors.toList());
         return results;
     }
 

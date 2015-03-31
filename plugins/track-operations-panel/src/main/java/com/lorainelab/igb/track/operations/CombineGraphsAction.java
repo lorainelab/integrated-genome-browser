@@ -23,7 +23,7 @@ import static com.affymetrix.igb.shared.Selections.*;
  */
 public class CombineGraphsAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public CombineGraphsAction(IgbService igbService) {
         super("Join", null, null);
@@ -71,7 +71,7 @@ public class CombineGraphsAction extends GenericAction {
                 GraphState gstate = gsym.getGraphState();
                 gstate.setComboStyle(combo_style, i++);
                 gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
-                height += gsym.getGraphState().getTierStyle().getHeight();
+                height = (float) (height + gsym.getGraphState().getTierStyle().getHeight());
             }
         }
         combo_style.setHeight(height);

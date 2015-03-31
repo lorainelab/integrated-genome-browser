@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
  */
 public class StopAutoScrollAction extends SeqMapViewActionA {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static StopAutoScrollAction ACTION = new StopAutoScrollAction();
 
     private StopAutoScrollAction() {

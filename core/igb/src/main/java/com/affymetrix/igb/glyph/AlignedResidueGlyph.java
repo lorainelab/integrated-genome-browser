@@ -138,7 +138,7 @@ public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
     }
 
     private float getAlpha(byte qual) {
-        qual -= 33;
+        qual = (byte) (qual - 33);
         float alpha;
 
         if (qual < minQ) {

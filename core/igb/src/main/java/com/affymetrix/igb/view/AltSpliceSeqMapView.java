@@ -30,7 +30,7 @@ import javax.swing.SwingWorker;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private boolean slicing_in_effect = false;
     /**
      * number of bases that slicer tries to buffer on each side of every span it

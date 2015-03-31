@@ -19,7 +19,7 @@ import javax.swing.JFileChooser;
 
 public class SaveScriptAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final SaveScriptAction ACTION = new SaveScriptAction();
 
     static {

@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
  */
 public class DocumentationAction extends GenericAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
     private static final DocumentationAction ACTION = new DocumentationAction();
     private final int TOOLBAR_INDEX = 8;
 

@@ -735,14 +735,13 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <G extends GlyphI> G getItem(Object datamodel) {
+    public GlyphI getItem(Object datamodel) {
         Object result = model_hash.get(datamodel);
         if (result instanceof GlyphI) {
-            return (G) result;
+            return (GlyphI) result;
         }
         if (result instanceof List && ((List) result).size() > 0) {
-            List<G> vec = (List<G>) result;
+            List<GlyphI> vec = (List<GlyphI>) result;
             return vec.get(vec.size() - 1);
         }
         return null;

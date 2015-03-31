@@ -302,6 +302,7 @@ will not work well with these styles.
 		<FILE_TYPE_ASSOCIATION file_type="bam">
 			<PROPERTY key="direction_type" value="none"/>
 			<PROPERTY key='separate' value='false'/>
+                        <PROPERTY key="label_field" value="id"/>
 		</FILE_TYPE_ASSOCIATION>
 
 		<FILE_TYPE_ASSOCIATION file_type="gff">
@@ -329,7 +330,7 @@ will not work well with these styles.
 
 		<FILE_TYPE_ASSOCIATION file_type="brs">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="gene name"/>	  
+			<PROPERTY key="label_field" value="id"/>	  
 		</FILE_TYPE_ASSOCIATION>
 
         <FILE_TYPE_ASSOCIATION file_type="vcf">
@@ -356,7 +357,7 @@ will not work well with these styles.
                  style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
                    <PROPERTY key="color" value="00FFFF" />
                    <PROPERTY key="background" value="BBA000" /> 
-                   <PROPERTY key="label_field" value="gene name" />
+                   <PROPERTY key="label_field" value="id" />
                    <PROPERTY key="max_depth" value="3" />  max stacking level of annots when expanded
                    <PROPERTY key="glyph_depth" value="1" />  if = 2, render connecting lines, if = 1, no connections
                    <PROPERTY key="separate" value="false" />  if true, then render as two tiers (+ and -), if false then one tier
@@ -374,7 +375,7 @@ will not work well with these styles.
         <METHOD_REGEX_ASSOCIATION regex="(?i)refseq$"
                                   style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
             <PROPERTY key="color" value="00FF00" > green </PROPERTY>
-            <PROPERTY key="label_field" value="gene name" />
+            <PROPERTY key="label_field" value="id" />
             <!--<PROPERTY key="max_depth" value="3" /> -->
         </METHOD_REGEX_ASSOCIATION>
 

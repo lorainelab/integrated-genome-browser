@@ -36,7 +36,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -223,7 +222,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             popup.add(new ActionWrapper(menuItem, group));
         }
         setTabMenu(igbTabPanel);
-        if (igbTabPanel.getPosition() == igbTabPanel.DEFAULT_TAB_POSITION) {
+        if (igbTabPanel.getPosition() == IgbTabPanel.DEFAULT_TAB_POSITION) {
             if (!tabSeparatorSet) {
                 tabsMenu.addSeparator();
                 tabSeparatorSet = true;

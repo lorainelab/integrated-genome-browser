@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class BlastXSearchAction extends BlastSearchAction {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public BlastXSearchAction(SeqMapViewI smv) {
         super(smv, RemoteBlastNCBI.BlastType.blastx);

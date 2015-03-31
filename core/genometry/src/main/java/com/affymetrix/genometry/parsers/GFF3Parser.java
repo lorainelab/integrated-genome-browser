@@ -19,6 +19,7 @@ import com.affymetrix.genometry.symloader.Fasta;
 import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
+import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +66,7 @@ public final class GFF3Parser implements Parser {
     public static final String GFF3_NOTE = "Note";
     public static final String GFF3_DBXREF = "Dbxref";
     public static final String GFF3_ONTOLOGY_TERM = "Ontology_term";
+    public static final List<String> GFF_PROPS_TO_FILTER = ImmutableList.<String>of(GFF3_ID, GFF3_NAME);
     // Must be exactly one tab between each column; not spaces or multiple tabs.
     private static final Pattern line_regex = Pattern.compile("\\t");
     private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
@@ -223,10 +225,10 @@ public final class GFF3Parser implements Parser {
             String score_str = fields[5];
             char strand_char = fields[6].charAt(0);
             char frame_char = fields[7].charAt(0);
-            String attributes_field = null;
+            String attributesField = null;
             // last_field is "attributes" in both GFF2 and GFF3, but uses different format.
             if (fields.length >= 9) {
-                attributes_field = fields[8];
+                attributesField = fields[8];
             } // creating a new String saves memory
 
             float score = GFF3Sym.UNKNOWN_SCORE;
@@ -246,9 +248,9 @@ public final class GFF3Parser implements Parser {
             }
 
             if (IGNORABLE_TYPES.contains(feature_type.toLowerCase())) {
-                String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, attributes_field);
-                if (ids.length > 0) {
-                    bad_parents.add(ids[0]);
+                List<String> ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, attributesField);
+                if (ids.size() > 0) {
+                    bad_parents.add(ids.get(0));
                 }
 //				synchronized (seenTypes) {
 //					if (seenTypes.add(feature_type.toLowerCase())) {
@@ -282,15 +284,15 @@ public final class GFF3Parser implements Parser {
              or for those that span multiple lines.  The IDs do not have meaning outside
              the file in which they reside.
              */
-            String the_id = GFF3Sym.getIdFromGFF3Attributes(attributes_field);
-            GFF3Sym old_sym = id2sym.get(the_id);
-            if (the_id == null || the_id.equals("null") || "-".equals(the_id)) {
-                GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributes_field, span, track_name);
+            String id = GFF3Sym.getIdFromGFF3Attributes(attributesField);
+            GFF3Sym old_sym = id2sym.get(id);
+            if (id == null || id.equals("null") || "-".equals(id)) {
+                GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributesField, span, track_name);
                 all_syms.add(sym);
             } else if (old_sym == null) {
-                GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributes_field, span, track_name);
+                GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributesField, span, track_name);
                 all_syms.add(sym);
-                id2sym.put(the_id, sym);
+                id2sym.put(id, sym);
             } else {
                 old_sym.addSpan(span);
             }
@@ -320,7 +322,7 @@ public final class GFF3Parser implements Parser {
     private void addToParent(List<GFF3Sym> all_syms, List<SeqSymmetry> results, Map<String, GFF3Sym> id2sym, Set<String> bad_parents, BioSeq seq, AnnotatedSeqGroup seq_group, boolean annot_seq, boolean merge_cds) throws IOException {
 //		Map<String, GFF3Sym> moreCdsSpans = new HashMap<String, GFF3Sym>();
         for (GFF3Sym sym : all_syms) {
-            String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
+            List<String> parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
             String id = sym.getID();
             if (id != null && !"-".equals(id) && id.length() != 0) {
 //				seq_group.addToIndex(id, sym);
@@ -332,7 +334,7 @@ public final class GFF3Parser implements Parser {
             // gff3 display bug. hiralv 08-16-10
             if (sym.getFeatureType().equals("TF_binding_site")) {
                 //Do nothing for now
-            } else if (parent_ids.length == 0) {
+            } else if (parent_ids.isEmpty()) {
                 // If no parents, then it is top-level
                 results.add(sym);
             } else {
@@ -349,9 +351,9 @@ public final class GFF3Parser implements Parser {
                          * ids are added to the bad_parents list since we are
                          * ignoring them too.
                          */
-                        String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
-                        if (ids.length > 0) {
-                            bad_parents.add(ids[0]);
+                        List<String> ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+                        if (ids.size() > 0) {
+                            bad_parents.add(ids.get(0));
                         }
                     } else if (parent_sym == null) {
                         if (!bad_parents.contains(parent_id)) {
@@ -439,9 +441,9 @@ public final class GFF3Parser implements Parser {
 //		}
 //	}
     private void addBadParent(GFF3Sym sym, Set<String> bad_parents) {
-        String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
-        if (ids.length > 0) {
-            bad_parents.add(ids[0]);
+        List<String> ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+        if (ids.size() > 0) {
+            bad_parents.add(ids.get(0));
         }
     }
 

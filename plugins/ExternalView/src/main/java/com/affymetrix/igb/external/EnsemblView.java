@@ -5,7 +5,6 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.lorainelab.igb.services.IgbService;
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
@@ -49,7 +48,7 @@ public class EnsemblView extends BrowserView {
     public JDialog getViewHelper(Window window) {
         Loc loc = getLoc();
         String url = ensemblLoader.url(loc);
-        String helper = url != "" ? "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlMessage") + ":<a href=" + url + ">" + url + "</a></p>" : "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlError") + "</p>";
+        String helper = !"".equals(url) ? "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlMessage") + ":<a href=" + url + ">" + url + "</a></p>" : "<p>" + ExternalViewer.BUNDLE.getString("ensemblUrlError") + "</p>";
         return new ENSEMBLHelper(window, ExternalViewer.BUNDLE.getString("ensemblCustomize"), helper);
     }
 

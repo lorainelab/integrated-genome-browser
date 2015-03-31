@@ -39,12 +39,14 @@ import net.sf.samtools.seekablestream.SeekableBufferedStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.util.CloseableIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jnicol
  */
 public final class BAM extends XAM {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BAM.class);
     public final static List<String> pref_list = new ArrayList<>();
     private SAMFileReader mateReader;
 
@@ -297,9 +299,8 @@ public final class BAM extends XAM {
                     tempBAMFile = File.createTempFile(CLEAN.matcher(featureName).replaceAll("_"), ".bam");
                     tempBAMFile.deleteOnExit();
                 } catch (IOException ex) {
-                    Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, null, ex);
-                    System.err.println("Cannot create temporary BAM file! \n" + ex.getStackTrace());
-                    return; // Can't create the temporary file! 
+                    logger.error("Cannot create temporary BAM file", ex);
+                    return; 
                 }
                 sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
             } else {
@@ -311,7 +312,7 @@ public final class BAM extends XAM {
                 sfw.addAlignment(sr);
             }
         } catch (Exception ex) {
-            Logger.getLogger(BAM.class.getName()).log(Level.SEVERE, "SAM exception A SAMFormatException has been thrown by the Picard tools.\n"
+            logger.error("SAM exception A SAMFormatException has been thrown by the Picard tools.\n"
                     + "Please validate your BAM files and contact the Picard project at http://picard.sourceforge.net."
                     + "See console and the tomcat catalina.out for the details of the exception.\n", ex);
         } finally {
@@ -346,8 +347,7 @@ public final class BAM extends XAM {
      *
      * @param bamfile
      * @return file
-     * @throws
-     * com.affymetrix.genometry.symloader.BAM.BamIndexNotFoundException
+     * @throws com.affymetrix.genometry.symloader.BAM.BamIndexNotFoundException
      */
     public static File findIndexFile(File bamfile) throws BamIndexNotFoundException {
         //look for xxx.bam.bai

@@ -11,6 +11,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -26,6 +27,7 @@ import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
@@ -93,7 +95,6 @@ public final class GeneralLoadView {
         igbService = _igbService;
         gviewer = IGB.getInstance().getMapView();
         initComponents();
-        GeneralLoadUtils.loadServerMapping();
         PreferencesPanel.getSingleton();
     }
 
@@ -267,7 +268,7 @@ public final class GeneralLoadView {
         }
 
         //TODO refactor code to not use serverType == null as a hack
-        if (serverType != null && gFeature.gVersion.gServer.getServerType() != serverType) {
+        if (serverType != null && gFeature.getgVersion().getgServer().getServerType() != serverType) {
             return false;
         }
 
@@ -279,7 +280,7 @@ public final class GeneralLoadView {
     public synchronized static void AutoloadQuickloadFeature() {
         for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
             if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
-                    || gFeature.gVersion.gServer.getServerType() != ServerTypeI.QuickLoad) {
+                    || gFeature.getgVersion().getgServer().getServerType() != QuickloadServerType.getInstance()) {
                 continue;
             }
 
@@ -288,7 +289,7 @@ public final class GeneralLoadView {
             }
 
             //If Loading whole genome for unoptimized file then load everything at once.
-            if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInst) {
+            if (((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader() instanceof SymLoaderInst) {
                 GeneralLoadUtils.loadAllSymmetriesThread(gFeature);
             } else {
                 GeneralLoadUtils.iterateSeqList(gFeature);
@@ -297,11 +298,11 @@ public final class GeneralLoadView {
     }
 
     public void useAsRefSequence(final GenericFeature feature) throws Exception {
-        if (feature != null && feature.symL != null) {
-            final QuickLoadSymLoader quickload = (QuickLoadSymLoader) feature.symL;
+        if (feature != null && feature.getSymL() != null) {
+            final QuickLoadSymLoader quickload = (QuickLoadSymLoader) feature.getSymL();
             if (quickload.getSymLoader() instanceof ResidueTrackSymLoader) {
 
-                final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.featureName) {
+                final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.getFeatureName()) {
 
                     @Override
                     protected Void runInBackground() {
@@ -310,7 +311,7 @@ public final class GeneralLoadView {
                             SeqSymmetry child;
                             SimpleSymWithResidues rchild;
 
-                            for (BioSeq seq : feature.symL.getChromosomeList()) {
+                            for (BioSeq seq : feature.getSymL().getChromosomeList()) {
                                 sym = seq.getAnnotation(feature.getURI().toString());
                                 if (sym != null) {
 
@@ -389,7 +390,7 @@ public final class GeneralLoadView {
         final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         int maxFeatureNameLength = 1;
         for (GenericFeature feature : visibleFeatures) {
-            maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
+            maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.getFeatureName().length());
         }
         final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
         table.stopCellEditing();
@@ -519,7 +520,7 @@ public final class GeneralLoadView {
 
     public static void addFeatureTier(final GenericFeature feature) {
 
-        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.featureName, Thread.MIN_PRIORITY) {
+        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getFeatureName(), Thread.MIN_PRIORITY) {
 
             @Override
             protected Object runInBackground() {
@@ -605,12 +606,12 @@ public final class GeneralLoadView {
             return;
         }
 
-        CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.featureName) {
+        CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.getFeatureName()) {
 
             @Override
             protected Void runInBackground() {
                 if (!Strings.isNullOrEmpty(feature.getMethod())) {
-                    for (BioSeq bioseq : feature.gVersion.group.getSeqList()) {
+                    for (BioSeq bioseq : feature.getgVersion().getGroup().getSeqList()) {
                         TrackView.getInstance().deleteSymsOnSeq(gviewer, feature.getMethod(), bioseq, feature);
                     }
                 }
@@ -619,11 +620,11 @@ public final class GeneralLoadView {
 
             @Override
             protected void finished() {
-                boolean refSeq = feature.gVersion.gServer.getServerType().equals(ServerTypeI.LocalFiles) && feature.symL.isResidueLoader();
+                boolean refSeq = feature.getgVersion().getgServer().getServerType().equals(LocalFilesServerType.getInstance()) && feature.getSymL().isResidueLoader();
                 if (removeLocal || refSeq) {
                     // If feature is local then remove it from server.
-                    GenericVersion version = feature.gVersion;
-                    if (version.gServer.getServerType().equals(ServerTypeI.LocalFiles)) {
+                    GenericVersion version = feature.getgVersion();
+                    if (version.getgServer().getServerType().equals(LocalFilesServerType.getInstance())) {
                         if (version.removeFeature(feature)) {
                             SeqGroupView.getInstance().refreshTable();
                             if (gmodel.getSelectedSeqGroup().getSeqCount() > 0

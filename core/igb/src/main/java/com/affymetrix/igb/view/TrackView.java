@@ -200,9 +200,9 @@ public class TrackView {
     public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer) {
 
         // No sequence selected or if it is cytoband or it is residue file. Then return
-        if (gviewer.getAnnotatedSeq() == null || feature.featureName.equals(CytobandParser.CYTOBAND)
-                || feature.featureName.toLowerCase().contains(CytobandParser.CYTOBAND)
-                || (feature.symL != null && (feature.symL.isResidueLoader() || feature.symL.getExtension().equalsIgnoreCase("cyt")))) {
+        if (gviewer.getAnnotatedSeq() == null || feature.getFeatureName().equals(CytobandParser.CYTOBAND)
+                || feature.getFeatureName().toLowerCase().contains(CytobandParser.CYTOBAND)
+                || (feature.getSymL() != null && (feature.getSymL().isResidueLoader() || feature.getSymL().getExtension().equalsIgnoreCase("cyt")))) {
             return;
         }
 
@@ -235,8 +235,7 @@ public class TrackView {
 
     public ITrackStyleExtended getStyle(String method, GenericFeature feature) {
         if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
-            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(
-                    method, feature.featureName, feature.getExtension(), feature.featureProps);
+            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(method, feature.getFeatureName(), feature.getExtension(), feature.getFeatureProps());
 
             if (state.getTierStyle().isFloatTier()) {
                 return null;
@@ -244,8 +243,7 @@ public class TrackView {
 
             return state.getTierStyle();
         } else {
-            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(
-                    method, feature.featureName, feature.getExtension(), feature.featureProps);
+            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, feature.getFeatureName(), feature.getExtension(), feature.getFeatureProps());
         }
     }
 

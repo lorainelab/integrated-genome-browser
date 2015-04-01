@@ -1,7 +1,6 @@
 package com.affymetrix.igb.search;
 
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.das2.SimpleDas2Feature;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -57,10 +56,6 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
             case ID_COLUMN:
                 return sym.getID();
             case GENE_NAME_COLUMN:
-                if (sym instanceof SimpleDas2Feature) {
-                    String geneName = ((SimpleDas2Feature) sym).getName();
-                    return geneName == null ? "" : geneName;
-                }
                 if (sym instanceof SymWithProps) {
                     String geneName = (String) ((SymWithProps) sym).getProperty(TITLE);
                     return geneName == null ? "" : geneName;

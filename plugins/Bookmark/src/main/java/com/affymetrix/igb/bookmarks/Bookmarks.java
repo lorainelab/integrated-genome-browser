@@ -30,8 +30,8 @@ final public class Bookmarks {
     }
 
     private void addToSyms(GenericFeature feature, boolean isGraph) {
-        GenericVersion version = feature.gVersion;
-        syms.add(new SymBookmark(version.gServer.getURL(), feature.getURI().toString(), isGraph));
+        GenericVersion version = feature.getgVersion();
+        syms.add(new SymBookmark(version.getgServer().getUrlString(), feature.getURI().toString(), isGraph));
     }
 
     /**

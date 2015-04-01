@@ -41,7 +41,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
         String message = "Really remove entire data sets?";
 
         if (allGlyphs.size() == 1) {
-            message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().featureName + " data set?";
+            message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().getFeatureName() + " data set?";
         }
 
         if (ModalUtils.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {

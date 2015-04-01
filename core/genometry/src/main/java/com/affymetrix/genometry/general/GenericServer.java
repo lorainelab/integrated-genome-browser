@@ -13,18 +13,22 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.StringEncrypter;
 import com.affymetrix.genometry.util.StringEncrypter.EncryptionException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import org.slf4j.LoggerFactory;
 
 public final class GenericServer implements PreferenceChangeListener {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericServer.class);
     private final Preferences node;
     private String serverName;
-    private String url;
+    private String urlString;
     private String mirrorUrl; //qlmirror
     private ServerTypeI serverType;
     private String login = "";
@@ -52,33 +56,18 @@ public final class GenericServer implements PreferenceChangeListener {
      */
     private boolean friendlyIconAttempted = false;
     private ServerStatus serverStatus = ServerStatus.NotInitialized;
-    private final boolean primary;
     private final boolean isDefault;
 
-    public GenericServer(String serverName, String URL, ServerTypeI serverType,
-            boolean enabled, Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
-        this(
-                serverName,
-                URL,
-                serverType,
-                enabled,
-                false,
-                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
-                serverObj, primary, isDefault, mirrorURL);
-    }
-
-    public GenericServer(String serverName, String URL, ServerTypeI serverType,
+    public GenericServer(String serverName, String urlString, ServerTypeI serverType,
             boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
         this(
                 serverName,
-                URL,
+                urlString,
                 serverType,
                 enabled,
-                false,
-                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                        : PreferenceUtils.getServersNode().node(getHash(URL)),
-                serverObj, false, isDefault, mirrorURL);
+                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(urlString))
+                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
+                serverObj, isDefault, mirrorURL);
     }
 
     public GenericServer(Preferences node, Object serverObj,
@@ -88,9 +77,8 @@ public final class GenericServer implements PreferenceChangeListener {
                 GeneralUtils.URLDecode(node.get(SERVER_URL, "")),
                 serverType,
                 true,
-                false,
                 node,
-                serverObj, false, isDefault, mirrorURL);
+                serverObj, isDefault, mirrorURL);
     }
 
     /**
@@ -105,17 +93,17 @@ public final class GenericServer implements PreferenceChangeListener {
         return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
     }
 
-    private GenericServer(String serverName, String URL, ServerTypeI serverType,
-            boolean enabled, boolean referenceOnly, Preferences node,
-            Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
+    private GenericServer(String serverName, String urlString, ServerTypeI serverType,
+            boolean enabled, Preferences node,
+            Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
         this.serverName = serverName;
-        this.url = URL;
+        this.urlString = urlString;
         this.mirrorUrl = mirrorURL; //qlmirror
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
         this.serverObj = serverObj;
-        this.friendlyURL = URL;
+        this.friendlyURL = urlString;
 //		this.referenceOnly = referenceOnly;
 
         if (this.node != null) {
@@ -128,7 +116,6 @@ public final class GenericServer implements PreferenceChangeListener {
             this.setPassword(decrypt(this.node.get(SERVER_PASSWORD, "")));
             this.node.addPreferenceChangeListener(this);
         }
-        this.primary = primary;
         this.isDefault = isDefault;
     }
 
@@ -162,7 +149,7 @@ public final class GenericServer implements PreferenceChangeListener {
         if (node != null) {
             node.put(SERVER_NAME, name);
         }
-        this.setServerName(name);
+        this.serverName = name;
     }
 
     public void enableForSession() {
@@ -200,10 +187,6 @@ public final class GenericServer implements PreferenceChangeListener {
 
     public String getPassword() {
         return this.password;
-    }
-
-    public boolean isPrimary() {
-        return this.primary;
     }
 
     public boolean isDefault() {
@@ -298,32 +281,26 @@ public final class GenericServer implements PreferenceChangeListener {
         return serverName;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public String getUrlString() {
+        return urlString;
     }
 
-    public String getURL() {
+    public URL getURL() {
+        URL url = null;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
         return url;
-    }
-
-    public void setURL(String url) {
-        this.url = url;
     }
 
     public String getMirrorUrl() {
         return mirrorUrl;
     }
 
-    public void setMirrorUrl(String mirrorUrl) {
-        this.mirrorUrl = mirrorUrl;
-    }
-
     public ServerTypeI getServerType() {
         return serverType;
-    }
-
-    public void setServerType(ServerTypeI serverType) {
-        this.serverType = serverType;
     }
 
     public Object getServerObj() {

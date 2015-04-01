@@ -19,7 +19,7 @@ import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -53,7 +53,7 @@ public final class ServiceUtils {
 
         URI uri = URI.create(feature_url);
         GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-        if (gVersion == null && gServer.getServerType() != ServerTypeI.LocalFiles) {
+        if (gVersion == null && gServer.getServerType() != LocalFilesServerType.getInstance()) {
             Logger.getLogger(ServiceUtils.class.getName()).log(
                     Level.WARNING, "Couldn''t find version {0} in server {1}",
                     new Object[]{seqGroup.getID(), gServer.getServerName()});
@@ -64,7 +64,7 @@ public final class ServiceUtils {
             feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
         }
 
-        if (feature == null && gServer.getServerType() == ServerTypeI.LocalFiles) {
+        if (feature == null && gServer.getServerType() == LocalFilesServerType.getInstance()) {
             String uriString = uri.toASCIIString().toLowerCase();
             String unzippedStreamName = GeneralUtils.stripEndings(uriString);
             String extension = GeneralUtils.getExtension(unzippedStreamName);

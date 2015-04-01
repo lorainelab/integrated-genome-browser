@@ -103,7 +103,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
             case Type:
                 return servers.get(rowIndex).getServerType();
             case URL:
-                return servers.get(rowIndex).getURL();
+                return servers.get(rowIndex).getUrlString();
             case Enabled:
                 return servers.get(rowIndex).isEnabled();
             default:
@@ -138,7 +138,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
                 if (server.getServerType() != null) {
                     if (!server.isEnabled()
                             || DataLoadPrefsView.getSingleton().confirmRefresh()) {
-                        DataLoadPrefsView.getSingleton().updateSource(server.getURL(), server.getServerType(), server.getServerName(), server.getURL(), server.getMirrorUrl());
+                        DataLoadPrefsView.getSingleton().updateSource(server.getUrlString(), server.getServerType(), server.getServerName(), server.getUrlString(), server.getMirrorUrl());
                     }
                 }
                 break;

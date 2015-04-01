@@ -14,10 +14,8 @@ package com.affymetrix.genometry.das;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.XMLUtils;
 import java.io.IOException;
@@ -48,8 +46,6 @@ public final class DasSource {
 
     private final URL server;
     private final URL master;
-    private final URL primary;
-    private final GenericServer primaryServer;
     private final String id;
     private final Set<String> sources = new HashSet<>();
     private final Set<String> entry_points = new LinkedHashSet<>();
@@ -58,12 +54,10 @@ public final class DasSource {
     private boolean types_initialized = false;
     private AnnotatedSeqGroup genome = null;	// lazily instantiate
 
-    public DasSource(URL server, URL master, URL primary, GenericServer primaryServer) {
+    public DasSource(URL server, URL master) {
         this.server = server;
         this.master = master;
-        this.primary = primary;
         this.id = getID(master);
-        this.primaryServer = primaryServer;
     }
 
     static String getID(URL master) {
@@ -117,8 +111,7 @@ public final class DasSource {
         InputStream stream = null;
         try {
             String entry_point = master.getPath() + "/" + ENTRY_POINTS;
-            String pri_entry_point = id + "/" + ENTRY_POINTS;
-            stream = getInputStream(master, entry_point, pri_entry_point, "Das Entry Request");
+            stream = getInputStream(master, entry_point, "Das Entry Request");
             if (stream == null) {
                 Logger.getLogger(this.getClass().getName()).log(
                         Level.SEVERE, "Could not contact server at {0}", master);
@@ -127,19 +120,11 @@ public final class DasSource {
             Document doc = XMLUtils.getDocument(stream);
             NodeList segments = doc.getElementsByTagName("SEGMENT");
             addSegments(segments);
-        } catch (MalformedURLException ex) {
-            ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
-        } catch (ParserConfigurationException ex) {
-            ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
-        } catch (SAXException ex) {
-            ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             ErrorHandler.errorPanel("Error initializing DAS entry points for\n" + getID() + " on " + server, ex, Level.SEVERE);
         } finally {
             GeneralUtils.safeClose(stream);
-            synchronized (this) {
-                entries_initialized = true;	// set even if there's an error?
-            }
+            entries_initialized = true;	// set even if there's an error?
         }
         return true;
     }
@@ -186,7 +171,7 @@ public final class DasSource {
             String type_req = source + "/" + TYPES;
             URL typesURL = new URL(server, type_req);
             URL testMasterURL = new URL(master, master.getPath() + "/" + TYPES);
-            stream = getInputStream(server, type_req, type_req, "Das Types Request");
+            stream = getInputStream(server, type_req, "Das Types Request");
             if (stream == null) {
                 Logger.getLogger(this.getClass().getName()).log(
                         Level.WARNING, "Types request failed for {0}, skipping", typesURL);
@@ -248,37 +233,17 @@ public final class DasSource {
                 && url1.getFile().equals(url2.getFile());
     }
 
-    private InputStream getInputStream(URL server, String query, String pri_default, String log_string) throws IOException {
-        URL load_url = getLoadURL(server, query, pri_default);
+    private InputStream getInputStream(URL server, String query, String log_string) throws IOException {
+        URL load_url = getLoadURL(server, query);
         InputStream istr = LocalUrlCacher.getInputStream(load_url);
-
-        /**
-         * Check to see if trying to load from primary server but primary server is not responding *
-         */
-        if (istr == null && isLoadingFromPrimary()) {
-
-            Logger.getLogger(DasSource.class.getName()).log(Level.WARNING, "Primary Server :{0} is not responding. So disabling it for this session.", primaryServer.getServerName());
-            primaryServer.setServerStatus(ServerStatus.NotResponding);
-
-            load_url = getLoadURL(server, query, pri_default);
-            istr = LocalUrlCacher.getInputStream(load_url);
-        }
 
         Logger.getLogger(DasServerInfo.class.getName()).log(
                 Level.INFO, "{0} : {1}", new Object[]{log_string, load_url});
         return istr;
     }
 
-    private boolean isLoadingFromPrimary() {
-        return (primary != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
-    }
-
-    private URL getLoadURL(URL server, String query, String pri_default) throws MalformedURLException {
-        if (!isLoadingFromPrimary()) {
-            return new URL(server, query);
-        }
-
-        return new URL(primary, pri_default + ".xml");
+    private URL getLoadURL(URL server, String query) throws MalformedURLException {
+        return new URL(server, query);
     }
 
     public Set<String> getSources() {

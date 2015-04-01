@@ -9,9 +9,9 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.lorainelab.igb.services.search.SearchResults;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
+import com.lorainelab.igb.services.search.SearchResults;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,11 +131,6 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 
             //remoteSearches
             remoteSymList = new ArrayList<>();
-            RemoteSearchDAS2 remoteSearch = new RemoteSearchDAS2();
-            statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingRemote"), friendlySearchStr, remoteSearch.getClass().getName()));
-            List<SeqSymmetry> symList = remoteSearch.searchFeatures(group, text, chrFilter);
-            symList = filterBySeq(symList, chrFilter);	// make sure we filter out other chromosomes
-            remoteSymList.addAll(symList);
         }
 
         if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {

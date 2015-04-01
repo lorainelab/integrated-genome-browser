@@ -254,9 +254,9 @@ public class GraphGlyphFactory extends MapTierGlyphFactoryA {
         String featureName = null, extension = null;
         Map<String, String> featureProps = null;
         if (style.getFeature() != null) {
-            featureName = style.getFeature().featureName;
+            featureName = style.getFeature().getFeatureName();
             extension = style.getFeature().getExtension();
-            featureProps = style.getFeature().featureProps;
+            featureProps = style.getFeature().getFeatureProps();
         }
         return DefaultStateProvider.getGlobalStateProvider().getGraphState(style.getMethodName(), featureName, extension, featureProps);
     }

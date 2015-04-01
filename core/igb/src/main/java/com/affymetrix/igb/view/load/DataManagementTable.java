@@ -103,8 +103,7 @@ public final class DataManagementTable {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
-                trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
-                        feature.featureName, Color.WHITE, Color.BLACK);
+                trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row, feature.getFeatureName(), Color.WHITE, Color.BLACK);
             }
             text.addEditorForRow(row, trackNameFieldEditor);
         }
@@ -247,9 +246,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //					return new ErrorNotificationCellRenderer(feature.getVirtualFeature().featureName,
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-                return new JRPTextFieldTableCellRenderer(feature.featureName, style.getTrackName(), style.getForeground(), style.getBackground());
+                return new JRPTextFieldTableCellRenderer(feature.getFeatureName(), style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
-                return new JRPTextFieldTableCellRenderer(feature.featureName, feature.featureName, Color.BLACK, Color.WHITE);
+                return new JRPTextFieldTableCellRenderer(feature.getFeatureName(), feature.getFeatureName(), Color.BLACK, Color.WHITE);
             }
 
         } else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
@@ -284,7 +283,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         int realColumnIndex = convertColumnIndexToModel(colIndex);
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
         GenericFeature feature = ftm.getRowFeature(rowIndex);
-        String featureName = feature.featureName;
+        String featureName = feature.getFeatureName();
         switch (realColumnIndex) {
             case DataManagementTableModel.REFRESH_FEATURE_COLUMN:
                 if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD) {

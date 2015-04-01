@@ -2,27 +2,15 @@ package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.das.DasServerType;
-import com.affymetrix.genometry.das2.Das2ServerType;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.general.GenericVersion;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 public interface ServerTypeI extends Comparable<ServerTypeI> {
-
-    // preinstalled server types
-    ServerTypeI QuickLoad = QuickloadServerType.getInstance();
-    ServerTypeI DAS = DasServerType.getInstance();
-    ServerTypeI DAS2 = Das2ServerType.getInstance();
-    ServerTypeI LocalFiles = LocalFilesServerType.getInstance();
-
-    ServerTypeI DEFAULT = LocalFiles;
 
     /**
      * @return the name of the Server Type
@@ -100,13 +88,8 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
     /**
      * get all species and versions from the server
      *
-     * @param gServer the server
-     * @param primaryServer the primary server
-     * @param primaryURL the primary URL
-     * @param versionDiscoverer VersionDiscoverer callback
-     * @return true if successful, false otherwise
      */
-    public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer);
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer);
 
     /**
      * @param span span containing the range for which you want annotations.
@@ -115,14 +98,6 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
      * @throws IOException
      */
     public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception;
-
-    /**
-     * if user authorization is optional for this ServerType
-     *
-     * @return if user authorization is optional for this ServerType
-     * (true if authorization is optional, false if no authorization)
-     */
-    public boolean isAuthOptional();
 
     /**
      * get Residues from the sepcified server

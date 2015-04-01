@@ -34,12 +34,12 @@ public class FeatureCheckBox extends JRPCheckBox {
     }
 
     private static final String getId(GenericFeature gFeature) {
-        String featureName = gFeature.featureName;
-        String featureText = gFeature.featureName.substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1).replaceAll(" ", "_");
+        String featureName = gFeature.getFeatureName();
+        String featureText = gFeature.getFeatureName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1).replaceAll(" ", "_");
         return "FeatureTreeView_LeafCheckBox_"
-                + gFeature.gVersion.gServer.getServerType().getName()
+                + gFeature.getgVersion().getgServer().getServerType().getName()
                 + "_"
-                + gFeature.gVersion.gServer.getURL()
+                + gFeature.getgVersion().getgServer().getUrlString()
                 + "_"
                 + featureText;
     }

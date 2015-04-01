@@ -4,11 +4,12 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchResults;
@@ -105,13 +106,13 @@ public class SearchModeLucene implements ISearchModeSym {
         if (search_text != null && !search_text.isEmpty()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
             if (group != null) {
-                group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.getServerType() == ServerTypeI.LocalFiles || gVersion.gServer.getServerType() == ServerTypeI.QuickLoad).forEach(gVersion -> {
+                group.getEnabledVersions().stream().filter(gVersion -> gVersion.getgServer().getServerType() == LocalFilesServerType.getInstance() || gVersion.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(gVersion -> {
                     for (GenericFeature feature : gVersion.getFeatures()) {
-                        if (feature.isVisible() && feature.symL != null) {
+                        if (feature.isVisible() && feature.getSymL() != null) {
                             if (statusHolder != null) {
-                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.symL.uri.toString(), search_text));
+                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.getSymL().uri.toString(), search_text));
                             }
-                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_text, MAX_HITS);
+                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_text, MAX_HITS);
                             if (results != null) {
                                 syms.addAll(results);
                             }

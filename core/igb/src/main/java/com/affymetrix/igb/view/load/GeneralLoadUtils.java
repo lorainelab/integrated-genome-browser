@@ -5,6 +5,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.StringVersionDateComparator;
+import com.affymetrix.genometry.das.DasServerType;
 import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericServer;
@@ -14,6 +15,7 @@ import com.affymetrix.genometry.parsers.graph.BarParser;
 import com.affymetrix.genometry.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometry.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.BAM;
@@ -32,6 +34,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -61,15 +64,11 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,11 +150,6 @@ public final class GeneralLoadUtils {
             GeneralUtils.safeClose(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
         }
     }
-    /**
-     * Map to store directory name associated with the server on a cached
-     * server.
-     */
-    private static Map<String, String> servermapping = new HashMap<>();
 
     /**
      *
@@ -185,12 +179,11 @@ public final class GeneralLoadUtils {
         /*
          * should never happen
          */
-        if (serverType == ServerTypeI.LocalFiles) {
+        if (serverType == LocalFilesServerType.getInstance()) {
             return null;
         }
-
-        GenericServer gServer = serverList.addServer(serverType, serverName,
-                serverURL, true, false, order, isDefault, mirrorURL);
+        boolean enabled = true;
+        GenericServer gServer = serverList.addServer(serverType, serverName, serverURL, enabled, order, isDefault, mirrorURL);
 
         if (gServer == null) {
             return null;
@@ -206,7 +199,7 @@ public final class GeneralLoadUtils {
         Iterator<Map.Entry<String, GenericVersion>> i = species2genericVersionList.entries().iterator();
         while (i.hasNext()) {
             GenericVersion version = i.next().getValue();
-            if (version.gServer == server) {
+            if (version.getgServer() == server) {
                 GeneralLoadView.getLoadView().removeAllFeautres(version.getFeatures());
                 version.clear();
                 i.remove();
@@ -235,30 +228,19 @@ public final class GeneralLoadUtils {
         if (gServer.getServerType() == null) { // bundle repository
             return true;
         }
-        if (gServer.isPrimary()) {
-            return true;
-        }
 
         try {
-            if (gServer == null || gServer.getServerType() == ServerTypeI.LocalFiles) {
-                // should never happen
-                return false;
-            }
             if (gServer.getServerType() != null) {
                 //tKanapar
-                if (!LocalUrlCacher.isValidURL(gServer.getURL())) {//Adding check on the request if authentication is required
+                if (!LocalUrlCacher.isValidURL(gServer.getUrlString())) {//Adding check on the request if authentication is required
                     if (IGBAuthenticator.authenticationRequestCancelled()) {//If the cancel dialog is clicked in the IGB Authenticator
                         IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
-                        ServerList.getServerInstance().removeServer(gServer.getURL());//Remove the preference so that it wont add the server to list
-                        ServerList.getServerInstance().removeServerFromPrefs(gServer.getURL());
+                        ServerList.getServerInstance().removeServer(gServer.getUrlString());//Remove the preference so that it wont add the server to list
+                        ServerList.getServerInstance().removeServerFromPrefs(gServer.getUrlString());
                         return false;
                     }
                 }
-
-                GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-                URL primaryURL = getServerDirectory(gServer.getURL());
-
-                if (!gServer.getServerType().getSpeciesAndVersions(gServer, primaryServer, primaryURL, versionDiscoverer)) {
+                if (!gServer.getServerType().getSpeciesAndVersions(gServer, versionDiscoverer)) {
 
                     /**
                      * qlmirror - Quickload Mirror Server
@@ -276,7 +258,7 @@ public final class GeneralLoadUtils {
 //
                         // Change serverObj for Quickload to apply mirror site
                         // Currently only Quickload has mirror
-                        if (gServer.getServerType() == ServerTypeI.QuickLoad) {
+                        if (gServer.getServerType() == QuickloadServerType.getInstance()) {
                             logger.info("Using mirror site: {}", gServer.getMirrorUrl());
                             gServer.setServerObj(gServer.getMirrorUrl());
 //							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
@@ -294,7 +276,7 @@ public final class GeneralLoadUtils {
                 } else {
                     IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().toString() + ")");
                 }
-                if (gServer.getServerType() == ServerTypeI.QuickLoad) {
+                if (gServer.getServerType() == QuickloadServerType.getInstance()) {
 
                 }
             }
@@ -345,7 +327,7 @@ public final class GeneralLoadUtils {
         }
 
         for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (gVersion.gServer == server) {
+            if (gVersion.getgServer() == server) {
                 return gVersion;
             }
         }
@@ -442,8 +424,8 @@ public final class GeneralLoadUtils {
      */
     public static List<GenericServer> getServersWithAssociatedFeatures(List<GenericFeature> features) {
         List<GenericServer> serverList = new ArrayList<>();
-        features.stream().filter(gFeature -> !serverList.contains(gFeature.gVersion.gServer)).forEach(gFeature -> {
-            serverList.add(gFeature.gVersion.gServer);
+        features.stream().filter(gFeature -> !serverList.contains(gFeature.getgVersion().getgServer())).forEach(gFeature -> {
+            serverList.add(gFeature.getgVersion().getgServer());
         });
         // make sure these servers always have the same order
         Collections.sort(serverList, ServerList.getServerInstance().getServerOrderComparator());
@@ -463,10 +445,10 @@ public final class GeneralLoadUtils {
             logger.debug("Feature names are already loaded.");
             return;
         }
-        if (gVersion.gServer.getServerType() == null) {
-            logger.warn("WARNING: Unknown server class " + gVersion.gServer.getServerType());
+        if (gVersion.getgServer().getServerType() == null) {
+            logger.warn("WARNING: Unknown server class " + gVersion.getgServer().getServerType());
         } else {
-            gVersion.gServer.getServerType().discoverFeatures(gVersion, autoload);
+            gVersion.getgServer().getServerType().discoverFeatures(gVersion, autoload);
         }
     }
 
@@ -498,10 +480,10 @@ public final class GeneralLoadUtils {
     private static void loadChromInfo(AnnotatedSeqGroup group) {
         for (ServerTypeI serverType : ServerUtils.getServerTypes()) {
             for (GenericVersion gVersion : group.getEnabledVersions()) {
-                if (gVersion.gServer.getServerType() != serverType) {
+                if (gVersion.getgServer().getServerType() != serverType) {
                     continue;
                 }
-                serverType.discoverChromosomes(gVersion.versionSourceObj);
+                serverType.discoverChromosomes(gVersion.getVersionSourceObj());
                 return;
             }
         }
@@ -636,7 +618,7 @@ public final class GeneralLoadUtils {
 //		}
         BioSeq selected_seq = gmodel.getSelectedSeq();
         BioSeq visible_seq = gviewer.getViewSeq();
-        if ((selected_seq == null || visible_seq == null) && (gFeature.gVersion.gServer.getServerType() != ServerTypeI.LocalFiles)) {
+        if ((selected_seq == null || visible_seq == null) && (gFeature.getgVersion().getgServer().getServerType() != LocalFilesServerType.getInstance())) {
             //      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
             //System.out.println("@@@@@ selected chrom: " + selected_seq);
             //System.out.println("@@@@@ visible chrom: " + visible_seq);
@@ -663,7 +645,7 @@ public final class GeneralLoadUtils {
 
         BioSeq selected_seq = gmodel.getSelectedSeq();
         if (selected_seq == null) {
-            ErrorHandler.errorPanel("Couldn't find genome data on server for file, genome = " + gFeature.gVersion.group.getID());
+            ErrorHandler.errorPanel("Couldn't find genome data on server for file, genome = " + gFeature.getgVersion().getGroup().getID());
             return;
         }
         SeqSpan overlap = null;
@@ -684,8 +666,8 @@ public final class GeneralLoadUtils {
     public static void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature) {
         SeqSymmetry optimized_sym = null;
         // special-case chp files, due to their LazyChpSym DAS/2 loading
-        if ((feature.gVersion.gServer.getServerType() == ServerTypeI.QuickLoad || feature.gVersion.gServer.getServerType() == ServerTypeI.LocalFiles)
-                && ((QuickLoadSymLoader) feature.symL).extension.endsWith("chp")) {
+        if ((feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance() || feature.getgVersion().getgServer().getServerType() == LocalFilesServerType.getInstance())
+                && ((QuickLoadSymLoader) feature.getSymL()).extension.endsWith("chp")) {
             feature.setLoadStrategy(LoadStrategy.GENOME);	// it should be set to this already.  But just in case...
             optimized_sym = new SimpleMutableSeqSymmetry();
             ((SimpleMutableSeqSymmetry) optimized_sym).addSpan(span);
@@ -696,8 +678,7 @@ public final class GeneralLoadUtils {
         optimized_sym = feature.optimizeRequest(span);
 
         if (feature.getLoadStrategy() != LoadStrategy.GENOME
-                || feature.gVersion.gServer.getServerType() == ServerTypeI.DAS2
-                || feature.gVersion.gServer.getServerType() == ServerTypeI.DAS) {
+                || feature.getgVersion().getgServer().getServerType() == DasServerType.getInstance()) {
             // Don't iterate for DAS/2.  "Genome" there is used for autoloading.
 
             if (checkBamAndSamLoading(feature, optimized_sym)) {
@@ -709,12 +690,12 @@ public final class GeneralLoadUtils {
         }
 
         //Since Das1 does not have whole genome return if it is not Quickload or LocalFile
-        if (feature.gVersion.gServer.getServerType() != ServerTypeI.QuickLoad && feature.gVersion.gServer.getServerType() != ServerTypeI.LocalFiles) {
+        if (feature.getgVersion().getgServer().getServerType() != QuickloadServerType.getInstance() && feature.getgVersion().getgServer().getServerType() != LocalFilesServerType.getInstance()) {
             return;
         }
 
         //If Loading whole genome for unoptimized file then load everything at once.
-        if (((QuickLoadSymLoader) feature.symL).getSymLoader() instanceof SymLoaderInst) {
+        if (((QuickLoadSymLoader) feature.getSymL()).getSymLoader() instanceof SymLoaderInst) {
             if (optimized_sym != null) {
                 loadAllSymmetriesThread(feature);
             }
@@ -727,7 +708,7 @@ public final class GeneralLoadUtils {
     static void iterateSeqList(final GenericFeature feature) {
 
         CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
-                MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.featureName)) {
+                MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.getFeatureName())) {
 
                     @Override
                     protected Void runInBackground() {
@@ -742,7 +723,7 @@ public final class GeneralLoadUtils {
 //                                            return s1.getID().compareToIgnoreCase(s2.getID());
 //                                        }
 //                                    });
-                            if (feature.symL.isMultiThreadOK()) {
+                            if (feature.getSymL().isMultiThreadOK()) {
                                 return multiThreadedLoad(chrList);
                             }
                             return singleThreadedLoad(chrList);
@@ -751,7 +732,7 @@ public final class GeneralLoadUtils {
                                     "Error while loading feature", ex);
                             return null;
                         } finally {
-                            logger.info("Loaded {} in {} secs", new Object[]{feature.featureName, (double) timer.read() / 1000f});
+                            logger.info("Loaded {} in {} secs", new Object[]{feature.getFeatureName(), (double) timer.read() / 1000f});
                         }
                     }
 
@@ -860,7 +841,7 @@ public final class GeneralLoadUtils {
                         } catch (Exception ex) {
                             logger.error("Error in loadOnSequence", ex);
                             if (ex instanceof FileNotFoundException) {
-                                ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+                                ErrorHandler.errorPanel(feature.getFeatureName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                             }
                         }
                     }
@@ -871,13 +852,13 @@ public final class GeneralLoadUtils {
 
     private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final GenericFeature feature) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            logger.debug("All of new query covered by previous queries for feature {}", feature.featureName);
+            logger.debug("All of new query covered by previous queries for feature {}", feature.getFeatureName());
             return;
         }
 
         final int seq_count = gmodel.getSelectedSeqGroup().getSeqCount();
         final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker
-                = new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>(LOADING_MESSAGE_PREFIX + feature.featureName, Thread.MIN_PRIORITY) {
+                = new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>(LOADING_MESSAGE_PREFIX + feature.getFeatureName(), Thread.MIN_PRIORITY) {
 
                     @Override
                     protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
@@ -887,7 +868,7 @@ public final class GeneralLoadUtils {
                             re.printStackTrace();
                         } catch (Exception ex) {
                             if (ex instanceof FileNotFoundException) {
-                                ErrorHandler.errorPanel(feature.featureName + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+                                ErrorHandler.errorPanel(feature.getFeatureName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                             }
                         } catch (Throwable t) {
                             t.printStackTrace();
@@ -941,7 +922,7 @@ public final class GeneralLoadUtils {
     //TO DO: Make this private again.
     public static Map<String, List<? extends SeqSymmetry>> loadFeaturesForSym(
             GenericFeature feature, SeqSymmetry optimized_sym) throws OutOfMemoryError, Exception {
-        if (feature.gVersion.gServer.getServerType() == null) {
+        if (feature.getgVersion().getgServer().getServerType() == null) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
 
@@ -950,7 +931,7 @@ public final class GeneralLoadUtils {
         Map<String, List<? extends SeqSymmetry>> loaded = new HashMap<>();
 
         for (SeqSpan optimized_span : optimized_spans) {
-            Map<String, List<? extends SeqSymmetry>> results = feature.gVersion.gServer.getServerType().loadFeatures(optimized_span, feature);
+            Map<String, List<? extends SeqSymmetry>> results = feature.getgVersion().getgServer().getServerType().loadFeatures(optimized_span, feature);
 
             // If thread was interruped then it might return null.
             // So avoid null pointer exception, check it here.
@@ -1036,16 +1017,16 @@ public final class GeneralLoadUtils {
         String seq_name = aseq.getID();
         boolean residuesLoaded = false;
         for (GenericVersion version : versions) {
-            if (!version.gServer.isEnabled()) {
+            if (!version.getgServer().isEnabled()) {
                 continue;
             }
             if (Thread.currentThread().isInterrupted()) {
                 return false;
             }
-            String serverDescription = version.gServer.getServerName() + " " + version.gServer.getServerType();
+            String serverDescription = version.getgServer().getServerName() + " " + version.getgServer().getServerType();
 //			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
 //			IGB.getInstance().addNotLockedUpMsg(msg);
-            if (version.gServer.getServerType() != null && version.gServer.getServerType().getResidues(version, genomeVersionName, aseq, min, max, span)) {
+            if (version.getgServer().getServerType() != null && version.getgServer().getServerType().getResidues(version, genomeVersionName, aseq, min, max, span)) {
                 residuesLoaded = true;
             }
 //			IGB.getInstance().removeNotLockedUpMsg(msg);
@@ -1121,78 +1102,6 @@ public final class GeneralLoadUtils {
     }
 
     /**
-     * Method to load server directory mapping.
-     */
-    public static void loadServerMapping() {
-        GenericServer primaryServer = ServerList.getServerInstance().getPrimaryServer();
-        if (primaryServer == null) {
-            return;
-        }
-        InputStream istr = null;
-        InputStreamReader ireader = null;
-        BufferedReader br = null;
-
-        try {
-            try {
-                istr = LocalUrlCacher.getInputStream(primaryServer.getFriendlyURL() + SERVER_MAPPING);
-            } catch (Exception e) {
-                logger.error("Couldn''t open ''{}" + SERVER_MAPPING + "\n:  {}", new Object[]{primaryServer.getFriendlyURL(), e.toString()});
-                istr = null; // dealt with below
-            }
-            if (istr == null) {
-                logger.info("Could not load server mapping contents from\n{}" + SERVER_MAPPING, primaryServer.getFriendlyURL());
-                return;
-            }
-            ireader = new InputStreamReader(istr);
-            br = new BufferedReader(ireader);
-            String line;
-            while ((line = br.readLine()) != null) {
-                if ((line.length() == 0) || line.startsWith("#")) {
-                    continue;
-                }
-
-                String[] fields = tab_regex.split(line);
-                if (fields.length >= 2) {
-                    String serverURL = fields[0];
-                    String dirURL = primaryServer.getURL() + fields[1];
-                    servermapping.put(serverURL, dirURL);
-                }
-            }
-        } catch (Exception ex) {
-            ErrorHandler.errorPanel("Error loading server mapping", ex, Level.SEVERE);
-        } finally {
-            GeneralUtils.safeClose(istr);
-            GeneralUtils.safeClose(ireader);
-            GeneralUtils.safeClose(br);
-        }
-    }
-
-    /**
-     * Get directory url on cached server from servermapping map.
-     *
-     * @param url	URL of the server.
-     * @return	Returns a directory if exists else null.
-     */
-    public static URL getServerDirectory(String url) {
-        if (ServerList.getServerInstance().getPrimaryServer() == null) {
-            return null;
-        }
-
-        for (Entry<String, String> primary : servermapping.entrySet()) {
-            if (url.equals(primary.getKey())) {
-                try {
-                    return new URL(primary.getValue());
-                } catch (MalformedURLException ex) {
-                    logger.error(null, ex);
-                    return null;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Set autoload variable in features.
      *
      * @param autoload
@@ -1221,7 +1130,7 @@ public final class GeneralLoadUtils {
         final List<String> versionNames = new ArrayList<>();
         for (GenericVersion gVersion : versionList) {
             // the same versionName name may occur on multiple servers
-            String versionName = gVersion.versionName;
+            String versionName = gVersion.getVersionName();
             if (!versionNames.contains(versionName)) {
                 versionNames.add(versionName);
             }
@@ -1246,7 +1155,7 @@ public final class GeneralLoadUtils {
     }
 
     public static void addFeature(GenericFeature gFeature) {
-        if (gFeature.symL != null) {
+        if (gFeature.getSymL() != null) {
             addChromosomesForUnknownGroup(gFeature);
         }
 
@@ -1258,27 +1167,27 @@ public final class GeneralLoadUtils {
     }
 
     private static void addChromosomesForUnknownGroup(final GenericFeature gFeature) {
-        if (((QuickLoadSymLoader) gFeature.symL).getSymLoader() instanceof SymLoaderInstNC) {
+        if (((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader() instanceof SymLoaderInstNC) {
             loadAllSymmetriesThread(gFeature);
             // force a refresh of this server. This forces creation of 'genome' sequence.
             ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), ServerStatus.Initialized, true);
             return;
         }
 
-        final AnnotatedSeqGroup loadGroup = gFeature.gVersion.group;
-        final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), gFeature.featureName);
+        final AnnotatedSeqGroup loadGroup = gFeature.getgVersion().getGroup();
+        final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), gFeature.getFeatureName());
         final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
             boolean featureRemoved = false;
 
             @Override
             protected Boolean runInBackground() {
                 try {
-                    for (BioSeq seq : gFeature.symL.getChromosomeList()) {
-                        loadGroup.addSeq(seq.getID(), seq.getLength(), gFeature.symL.uri.toString());
+                    for (BioSeq seq : gFeature.getSymL().getChromosomeList()) {
+                        loadGroup.addSeq(seq.getID(), seq.getLength(), gFeature.getSymL().uri.toString());
                     }
                     return true;
                 } catch (Exception ex) {
-                    ((QuickLoadSymLoader) gFeature.symL).logException(ex);
+                    ((QuickLoadSymLoader) gFeature.getSymL()).logException(ex);
                     featureRemoved = removeFeatureAndRefresh(gFeature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                     return featureRemoved;
                 }
@@ -1287,12 +1196,12 @@ public final class GeneralLoadUtils {
 
             @Override
             protected boolean showCancelConfirmation() {
-                return removeFeature("Cancel chromosome retrieval and remove " + gFeature.featureName + "?");
+                return removeFeature("Cancel chromosome retrieval and remove " + gFeature.getFeatureName() + "?");
             }
 
             private boolean removeFeature(String msg) {
                 if (ModalUtils.confirmPanel(msg)) {
-                    if (gFeature.gVersion.removeFeature(gFeature)) {
+                    if (gFeature.getgVersion().removeFeature(gFeature)) {
                         SeqGroupView.getInstance().refreshTable();
                     }
                     return true;
@@ -1372,7 +1281,7 @@ public final class GeneralLoadUtils {
             if (!LocalUrlCacher.isValidURI(uri)) {
                 return null;
             }
-            SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.group);
+            SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), version.getGroup());
             if (symL != null && symL.isResidueLoader() && !isReferenceSequence) {
                 featureProps = new HashMap<>();
                 featureProps.put("collapsed", "true");
@@ -1380,8 +1289,8 @@ public final class GeneralLoadUtils {
             }
             String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
             QuickLoadSymLoader quickLoad = SymLoader.getExtension(uri).endsWith("chp")
-                    ? new QuickLoadSymLoaderChp(uri, friendlyName, version.group)
-                    : new QuickLoadSymLoader(uri, friendlyName, version.group, !isReferenceSequence);
+                    ? new QuickLoadSymLoaderChp(uri, friendlyName, version.getGroup())
+                    : new QuickLoadSymLoader(uri, friendlyName, version.getGroup(), !isReferenceSequence);
             gFeature = new GenericFeature(fileName, featureProps, version, quickLoad, File.class, autoload, isReferenceSequence);
 
             version.addFeature(gFeature);
@@ -1435,7 +1344,7 @@ public final class GeneralLoadUtils {
             if (GenometryModel.getInstance().getSelectedSeqGroup() == null
                     || version == newVersion
                     || ModalUtils.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmGroupChange"),
-                                    version.group.getOrganism(), version, newVersion.group.getOrganism(), newVersion),
+                                    version.getGroup().getOrganism(), version, newVersion.getGroup().getOrganism(), newVersion),
                             PreferenceUtils.CONFIRM_BEFORE_GROUP_CHANGE,
                             PreferenceUtils.default_confirm_before_group_change)) {
                 version = newVersion;
@@ -1549,10 +1458,10 @@ public final class GeneralLoadUtils {
      * @param feature
      */
     public static void loadAllSymmetriesThread(final GenericFeature feature) {
-        final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.symL;
+        final QuickLoadSymLoader quickLoad = (QuickLoadSymLoader) feature.getSymL();
         final SeqMapView gviewer = IGB.getInstance().getMapView();
 
-        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.featureName) {
+        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getFeatureName()) {
 
             @Override
             protected Object runInBackground() {

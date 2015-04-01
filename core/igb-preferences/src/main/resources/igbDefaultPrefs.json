@@ -52,15 +52,6 @@
                 "enabled": "false",
                 "order": "6",
                 "default": "true"
-            },
-            {
-                "type": "quickload",
-                "name": "BioVizServerCache",
-                "url": "http://bioviz.org/cached/",
-                "primary": "true",
-                "order": "7",
-                "enabled": "true",
-                "default": "true"
             }
         ],
         "repository": [

@@ -42,9 +42,6 @@ public class DataProvider {
     @XmlAttribute(name = "enabled")
     protected String enabled;
     @Expose
-    @XmlAttribute(name = "primary")
-    protected String primary;
-    @Expose
     @XmlAttribute(name = "password")
     protected String password;
 
@@ -120,14 +117,6 @@ public class DataProvider {
         this.enabled = value;
     }
 
-    public String getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(String value) {
-        this.primary = value;
-    }
-
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -135,7 +124,7 @@ public class DataProvider {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(type).append(name).append(url).append(order).append(_default).append(mirror).append(enabled).append(primary).toHashCode();
+        return new HashCodeBuilder().append(type).append(name).append(url).append(order).append(_default).append(mirror).append(enabled).toHashCode();
     }
 
     @Override
@@ -147,6 +136,6 @@ public class DataProvider {
             return false;
         }
         DataProvider rhs = ((DataProvider) other);
-        return new EqualsBuilder().append(type, rhs.type).append(name, rhs.name).append(url, rhs.url).append(order, rhs.order).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).append(primary, rhs.primary).isEquals();
+        return new EqualsBuilder().append(type, rhs.type).append(name, rhs.name).append(url, rhs.url).append(order, rhs.order).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).isEquals();
     }
 }

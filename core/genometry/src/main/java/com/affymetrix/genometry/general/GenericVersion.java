@@ -15,17 +15,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public final class GenericVersion implements Comparable<GenericVersion> {
 
-    public final AnnotatedSeqGroup group;
-    /**
-     * Display name of this version
-     */
-    public final String versionName;          // name of the other.
-    /**
-     * ID of this version on this server
-     */
-    public final String versionID;
-    public final GenericServer gServer; // generic Server object.
-    public final Object versionSourceObj;     // Das2VersionedSource, DasVersionedSource, ..., QuickLoad?
+    private final AnnotatedSeqGroup group;
+    private final String versionName;
+    private final String versionID;
+    private final GenericServer gServer;
+    private final Object versionSourceObj;
     private final Set<GenericFeature> features = new CopyOnWriteArraySet<>();	// features associated with this version
     private boolean isInitialized = false;	// is this version initialized?
 
@@ -49,7 +43,7 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 
     public boolean removeFeature(GenericFeature f) {
         features.remove(f);
-        return group.removeSeqsForUri(f.symL.uri.toString());
+        return getGroup().removeSeqsForUri(f.getSymL().uri.toString());
     }
 
     public void setInitialized() {
@@ -69,14 +63,49 @@ public final class GenericVersion implements Comparable<GenericVersion> {
 
     @Override
     public String toString() {
-        return this.versionName;
+        return this.getVersionName();
     }
 
     public int compareTo(GenericVersion other) {
-        return new StringVersionDateComparator().compare(this.versionName, other.versionName);
+        return new StringVersionDateComparator().compare(this.getVersionName(), other.getVersionName());
     }
 
     public void clear() {
         features.clear();
+    }
+
+    /**
+     * @return the group
+     */
+    public AnnotatedSeqGroup getGroup() {
+        return group;
+    }
+
+    /**
+     * @return the versionName
+     */
+    public String getVersionName() {
+        return versionName;
+    }
+
+    /**
+     * @return the versionID
+     */
+    public String getVersionID() {
+        return versionID;
+    }
+
+    /**
+     * @return the gServer
+     */
+    public GenericServer getgServer() {
+        return gServer;
+    }
+
+    /**
+     * @return the versionSourceObj
+     */
+    public Object getVersionSourceObj() {
+        return versionSourceObj;
     }
 }

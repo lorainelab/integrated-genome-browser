@@ -2,13 +2,15 @@ package com.affymetrix.genometry.util;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.das.DasServerType;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,14 +18,7 @@ import java.util.logging.Logger;
 
 public class ServerUtils {
 
-    private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = new ArrayList<>();
-
-    static {
-        DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS2);
-        DEFAULT_SERVER_TYPES.add(ServerTypeI.DAS);
-        DEFAULT_SERVER_TYPES.add(ServerTypeI.QuickLoad);
-        DEFAULT_SERVER_TYPES.add(ServerTypeI.LocalFiles);
-    }
+    private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = ImmutableList.of(DasServerType.getInstance(), QuickloadServerType.getInstance(), LocalFilesServerType.getInstance());
 
     /**
      * Format a URL based on the ServerType's requirements.

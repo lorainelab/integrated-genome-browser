@@ -103,8 +103,8 @@ public class ThousandGenomesServerType implements ServerTypeI {
             return;
         }
         //TODO: Use symloader created below
-        SymLoader symL = fth.createSymLoader(uri, featureName, gVersion.group);
-        QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, gVersion.group);
+        SymLoader symL = fth.createSymLoader(uri, featureName, gVersion.getGroup());
+        QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, gVersion.getGroup());
         Map<String, String> type_props = new HashMap<>();
         gVersion.addFeature(
                 new GenericFeature(
@@ -201,9 +201,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getSpeciesAndVersions(GenericServer gServer,
-            GenericServer primaryServer, URL primaryURL,
-            VersionDiscoverer versionDiscoverer) {
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         String genomeID = (String) gServer.getServerObj();
         String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
         String versionName, speciesName;
@@ -224,12 +222,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
     @Override
     public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span,
             GenericFeature feature) throws Exception {
-        return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
-    }
-
-    @Override
-    public boolean isAuthOptional() {
-        return false;
+        return (((QuickLoadSymLoader) feature.getSymL()).loadFeatures(span, feature));
     }
 
     @Override
@@ -255,10 +248,10 @@ public class ThousandGenomesServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.getURL() == null) {
+        if (gServer.getUrlString() == null) {
             return null;
         }
-        String tempURL = gServer.getURL();
+        String tempURL = gServer.getUrlString();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }

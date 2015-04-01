@@ -125,7 +125,7 @@ public class QuickloadServerType implements ServerTypeI {
         File file;
         Set<String> files = quickloadFiles;
 
-        String server_path = gServer.getURL() + "/" + genome_name;
+        String server_path = gServer.getUrlString() + "/" + genome_name;
         local_path += "/" + genome_name;
         GeneralUtils.makeDir(local_path);
         boolean fileMayNotExist;
@@ -148,7 +148,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.getURL() + Constants.CONTENTS_TXT, false);
+        File file = GeneralUtils.getFile(gServer.getUrlString() + Constants.CONTENTS_TXT, false);
 
         String quickloadStr = null;
         quickloadStr = (String) gServer.getServerObj();
@@ -196,7 +196,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     private QuickLoadSymLoader getQuickLoad(GenericVersion version, String featureName) {
         URI uri = determineURI(version, featureName);
-        QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version.group);
+        QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(uri, featureName, version.getGroup());
         for (QuickLoadSymLoaderHook quickLoadSymLoaderHook : quickLoadSymLoaderHooks) {
             quickLoadSymLoader = quickLoadSymLoaderHook.processQuickLoadSymLoader(quickLoadSymLoader);
         }
@@ -206,7 +206,7 @@ public class QuickloadServerType implements ServerTypeI {
     private static URI determineURI(GenericVersion version, String featureName) {
         URI uri = null;
 
-        if (version.gServer.getURL() == null || version.gServer.getURL().length() == 0) {
+        if (version.getgServer().getUrlString() == null || version.getgServer().getUrlString().length() == 0) {
             int httpIndex = featureName.toLowerCase().indexOf(HTTP_PROTOCOL);
             if (httpIndex > -1) {
                 // Strip off initial characters up to and including http:
@@ -225,9 +225,9 @@ public class QuickloadServerType implements ServerTypeI {
                 uri = URI.create(fileName);
             } else {
                 uri = URI.create(
-                        version.gServer.getServerObj() // Changed from 'version.gServer.URL' since quickload uses serverObj
-                
-                        + version.versionID + "/"
+                        version.getgServer().getServerObj() // Changed from 'version.gServer.URL' since quickload uses serverObj
+
+                        + version.getVersionID() + "/"
                         + determineFileName(version, featureName));
             }
         }
@@ -238,14 +238,14 @@ public class QuickloadServerType implements ServerTypeI {
     private static String determineFileName(GenericVersion version, String featureName) {
         URL quickloadURL;
         try {
-            quickloadURL = new URL((String) version.gServer.getServerObj());
+            quickloadURL = new URL((String) version.getgServer().getServerObj());
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
             return "";
         }
 
         QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-        List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(version.versionID);
+        List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(version.getVersionID());
 
         // Linear search, but over a very small list.
         for (AnnotMapElt annotMapElt : annotsList) {
@@ -260,34 +260,34 @@ public class QuickloadServerType implements ServerTypeI {
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
         // Discover feature names from QuickLoad
         try {
-            URL quickloadURL = new URL((String) gVersion.gServer.getServerObj());
+            URL quickloadURL = new URL((String) gVersion.getgServer().getServerObj());
             if (logger.isDebugEnabled()) {
-                logger.debug("Discovering Quickload features for " + gVersion.versionName + ". URL:" + gVersion.gServer.getServerObj());
+                logger.debug("Discovering Quickload features for " + gVersion.getVersionName() + ". URL:" + gVersion.getgServer().getServerObj());
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-            List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
+            List<String> typeNames = quickloadServer.getTypes(gVersion.getVersionName());
             if (typeNames == null) {
-                String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.gServer.getServerName(), gVersion.group.getOrganism(), gVersion.versionName);
-                ErrorHandler.errorPanelWithReportBug(gVersion.gServer.getServerName(), errorText, Level.SEVERE);
+                String errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("quickloadGenomeError"), gVersion.getgServer().getServerName(), gVersion.getGroup().getOrganism(), gVersion.getVersionName());
+                ErrorHandler.errorPanelWithReportBug(gVersion.getgServer().getServerName(), errorText, Level.SEVERE);
                 return;
             }
 
             for (String type_name : typeNames) {
                 if (type_name == null || type_name.length() == 0) {
-                    logger.warn("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.getServerName());
+                    logger.warn("WARNING: Found empty feature name in " + gVersion.getVersionName() + ", " + gVersion.getgServer().getServerName());
                     continue;
                 }
                 if (logger.isDebugEnabled()) {
                     logger.debug("Adding feature " + type_name);
                 }
-                Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
+                Map<String, String> type_props = quickloadServer.getProps(gVersion.getVersionName(), type_name);
                 gVersion.addFeature(
                         new GenericFeature(
                                 type_name, type_props, gVersion, getQuickLoad(gVersion, type_name), null, autoload));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -311,9 +311,7 @@ public class QuickloadServerType implements ServerTypeI {
      * @return false if there's an obvious failure.
      */
     @Override
-    public boolean getSpeciesAndVersions(GenericServer gServer,
-            GenericServer primaryServer, URL primaryURL,
-            VersionDiscoverer versionDiscoverer) {
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         URL quickloadURL = null;
         try {
             quickloadURL = new URL((String) gServer.getServerObj());
@@ -321,7 +319,7 @@ public class QuickloadServerType implements ServerTypeI {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-        QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL, primaryURL, primaryServer);
+        QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 
         if (quickloadServer == null) {
             logger.error("ERROR: No quickload server model found for server: " + gServer);
@@ -388,12 +386,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature) throws Exception {
-        return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
-    }
-
-    @Override
-    public boolean isAuthOptional() {
-        return false;
+        return (((QuickLoadSymLoader) feature.getSymL()).loadFeatures(span, feature));
     }
 
     // Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1.bnib")
@@ -481,9 +474,9 @@ public class QuickloadServerType implements ServerTypeI {
         try {
             URL quickloadURL = new URL((String) server.getServerObj());
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-            path = quickloadServer.getPath(version.versionName, seq_name);
+            path = quickloadServer.getPath(version.getVersionName(), seq_name);
             common_url = root_url + path + ".";
-            String vPath = root_url + quickloadServer.getPath(version.versionName, version.versionName) + ".2bit";
+            String vPath = root_url + quickloadServer.getPath(version.getVersionName(), version.getVersionName()) + ".2bit";
 
             symloader = determineLoader(common_url, vPath, seq_group, seq_name);
 
@@ -501,7 +494,7 @@ public class QuickloadServerType implements ServerTypeI {
             BioSeq aseq, int min, int max, SeqSpan span) {
         String seq_name = aseq.getID();
         AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-        String residues = GetQuickLoadResidues(version.gServer, version, seq_group, seq_name, (String) version.gServer.getServerObj(), span, aseq);
+        String residues = GetQuickLoadResidues(version.getgServer(), version, seq_group, seq_name, (String) version.getgServer().getServerObj(), span, aseq);
         if (residues != null) {
             BioSeqUtils.addResiduesToComposition(aseq, residues, span);
             return true;
@@ -511,7 +504,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public void removeServer(GenericServer server) {
-        QuickLoadServerModel.removeQLModelForURL(server.getURL());
+        QuickLoadServerModel.removeQLModelForURL(server.getUrlString());
     }
 
     @Override

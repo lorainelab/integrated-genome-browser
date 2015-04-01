@@ -37,13 +37,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+import org.slf4j.LoggerFactory;
 
 public class DasServerType implements ServerTypeI {
 
-    /**
-     * boolean to indicate should script continue to run if error occurs *
-     */
-    private static final boolean DEBUG = true;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DasServerType.class);
     private static final boolean exitOnError = false;
     private static final String dsn = "dsn.xml";
     private static final String name = "DAS";
@@ -106,7 +104,6 @@ public class DasServerType implements ServerTypeI {
      *
      * @param local_path	Local path from where mapping is to saved.
      */
-    @SuppressWarnings("unused")
     private boolean getAllDasFiles(String id, URL server, URL master, String local_path) {
         local_path += "/" + id;
         GeneralUtils.makeDir(local_path);
@@ -135,7 +132,7 @@ public class DasServerType implements ServerTypeI {
 
     @Override
     public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.getURL(), false);
+        File file = GeneralUtils.getFile(gServer.getUrlString(), false);
         if (!GeneralUtils.moveFileTo(file, dsn, path)) {
             return false;
         }
@@ -196,12 +193,12 @@ public class DasServerType implements ServerTypeI {
 
     @Override
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
-        DasSource version = (DasSource) gVersion.versionSourceObj;
+        DasSource version = (DasSource) gVersion.getVersionSourceObj();
         List<Entry<String, String>> types = new ArrayList<>(version.getTypes().entrySet());
         for (Entry<String, String> type : types) {
             String type_name = type.getKey();
             if (type_name == null || type_name.length() == 0) {
-                System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.getServerName());
+                System.out.println("WARNING: Found empty feature name in " + gVersion.getVersionName() + ", " + gVersion.getgServer().getServerName());
                 continue;
             }
             gVersion.addFeature(new GenericFeature(type_name, null, gVersion, null, type.getValue(), autoload));
@@ -234,19 +231,12 @@ public class DasServerType implements ServerTypeI {
      * @return false if there's an obvious problem
      */
     @Override
-    public boolean getSpeciesAndVersions(GenericServer gServer, GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         DasServerInfo server = (DasServerInfo) gServer.getServerObj();
-        if (primaryURL == null) {
-            try {
-                primaryURL = new URL(gServer.getURL());
-                primaryServer = null;
-            } catch (MalformedURLException x) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot load URL " + gServer.getURL() + " for DAS server " + gServer.getServerName(), x);
-            }
-        }
-        Map<String, DasSource> sources = server.getDataSources(primaryURL, primaryServer);
+
+        Map<String, DasSource> sources = server.getDataSources(gServer);
         if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-            System.out.println("WARNING: Couldn't find species for server: " + gServer);
+            logger.info("WARNING: Couldn't find species for server: " + gServer);
             return false;
         }
         for (DasSource source : sources.values()) {
@@ -260,7 +250,7 @@ public class DasServerType implements ServerTypeI {
 
     protected String getSegment(SeqSpan span, GenericFeature feature) {
         BioSeq current_seq = span.getBioSeq();
-        Set<String> segments = ((DasSource) feature.gVersion.versionSourceObj).getEntryPoints();
+        Set<String> segments = ((DasSource) feature.getgVersion().getVersionSourceObj()).getEntryPoints();
         return SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, current_seq.getID());
     }
 
@@ -277,20 +267,17 @@ public class DasServerType implements ServerTypeI {
 
             String segment = getSegment(span, feature);
 
-            QueryBuilder builder = new QueryBuilder(feature.typeObj.toString());
+            QueryBuilder builder = new QueryBuilder(feature.getTypeObj().toString());
             builder.add("segment", segment);
             builder.add("segment", segment + ":" + (span.getMin() + 1) + "," + span.getMax());
 
-            ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.typeObj.toString(), feature.featureName, "das1", feature.featureProps);
+            ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.getTypeObj().toString(), feature.getFeatureName(), "das1", feature.getFeatureProps());
             style.setFeature(feature);
 
             // TODO - probably not necessary
             //style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(feature.featureName, feature.featureName, "das1");
             //style.setFeature(feature);
             URI uri = builder.build();
-            if (DEBUG) {
-                System.out.println("Loading DAS feature " + feature.featureName + " with uri " + uri);
-            }
             List<DASSymmetry> dassyms = parseData(uri);
 
             return SymLoader.splitFilterAndAddAnnotation(span, dassyms, feature);
@@ -364,11 +351,6 @@ public class DasServerType implements ServerTypeI {
         }
 
         return null;
-    }
-
-    @Override
-    public boolean isAuthOptional() {
-        return false;
     }
 
     @Override

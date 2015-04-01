@@ -206,7 +206,7 @@ public class QuickLoadSymLoader extends SymLoader {
 
     private void setStyle(GenericFeature feature) {
         // TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.featureProps);
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.getFeatureProps());
         style.setFeature(feature);
 
         // TODO - probably not necessary

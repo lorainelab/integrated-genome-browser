@@ -460,7 +460,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void removeServer(GenericServer gServer) {
-        ServerList.getServerInstance().removeServer(gServer.getURL());
+        ServerList.getServerInstance().removeServer(gServer.getUrlString());
         DataLoadPrefsView.getSingleton().refreshServers();
     }
 
@@ -498,7 +498,7 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     public List<String> getLoadedFeatureNames() {
         ImmutableList.Builder<String> builder = new ImmutableList.Builder<>();
         for (GenericFeature vFeature : GeneralLoadView.getLoadView().getTableModel().features) {
-            builder.add(vFeature.featureName);
+            builder.add(vFeature.getFeatureName());
         }
         return builder.build();
     }

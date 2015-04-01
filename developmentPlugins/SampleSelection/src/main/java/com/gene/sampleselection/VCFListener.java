@@ -100,7 +100,7 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
             if (versions != null) {
                 for (GenericVersion gVersion : versions) {
                     for (GenericFeature feature : gVersion.getFeatures()) {
-                        if (feature.symL != null && name.equals(feature.symL.featureName)) {
+                        if (feature.getSymL() != null && name.equals(feature.getSymL().featureName)) {
                             feature.clear();
                             feature.setVisible();
                         }
@@ -132,7 +132,7 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
         for (TierGlyph tierGlyph : selectedGlyphs) {
             ITrackStyleExtended style = tierGlyph.getAnnotStyle();
             if (style != null) {
-                SymLoader symL = style.getFeature().symL;
+                SymLoader symL = style.getFeature().getSymL();
                 if (symL instanceof QuickLoadSymLoader) {
                     symL = ((QuickLoadSymLoader) symL).getSymLoader();
                 }

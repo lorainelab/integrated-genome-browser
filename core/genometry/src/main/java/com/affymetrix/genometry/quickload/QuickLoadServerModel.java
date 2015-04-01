@@ -9,39 +9,48 @@
  */
 package com.affymetrix.genometry.quickload;
 
-import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.parsers.AnnotsXmlParser;
 import com.affymetrix.genometry.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometry.parsers.ChromInfoParser;
 import com.affymetrix.genometry.parsers.LiftParser;
 import com.affymetrix.genometry.util.Constants;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
+import com.affymetrix.genometry.util.SynonymLookup;
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
-import com.google.common.base.Optional;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.jdom.JDOMException;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
 import org.xml.sax.SAXParseException;
 
 /**
@@ -53,7 +62,7 @@ public final class QuickLoadServerModel {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(QuickLoadServerModel.class);
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Pattern tab_regex = Pattern.compile("\t");
-    private final String root_url;
+    private final String urlString;
     /**
      * Stores the names of the data set name. For example A_thaliana_Jun_2008
      * populated by loadGenomeNames()
@@ -66,8 +75,8 @@ public final class QuickLoadServerModel {
     // A map from String genome name to a Map of (typeName,fileName) on the server for that group
     private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<>();
     private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<>();
-    private final String primary_url;
-    private final GenericServer primaryServer;
+
+    private final GenericServer cacheServer;
 
     /**
      * Initialize quickload server model for given url.
@@ -75,21 +84,13 @@ public final class QuickLoadServerModel {
      * @param url	server url.
      */
     public QuickLoadServerModel(String url) {
-        this(url, null, null);
+        this(url, null);
     }
 
-    private QuickLoadServerModel(String url, String pri_url, GenericServer priServer) {
-        url = ServerUtils.formatURL(url, ServerTypeI.QuickLoad);
-
-        if (pri_url != null) {
-            pri_url = ServerUtils.formatURL(pri_url, ServerTypeI.QuickLoad);
-        }
-
-        root_url = url;
-        primary_url = pri_url;
-        primaryServer = priServer;
-
-        logger.trace("( {}, {} )", new Object[]{root_url, primary_url});
+    private QuickLoadServerModel(String urlString, GenericServer cacheServer) {
+        urlString = ServerUtils.formatURL(urlString, QuickloadServerType.getInstance());
+        this.urlString = urlString;
+        this.cacheServer = cacheServer;
     }
 
     /**
@@ -99,21 +100,13 @@ public final class QuickLoadServerModel {
      * @param url	server URL.
      * @param primary_url	URL of primary server.
      */
-    public static synchronized QuickLoadServerModel getQLModelForURL(URL url,
-            URL primary_url, GenericServer primaryServer) {
+    public static synchronized QuickLoadServerModel getQLModelForURL(URL url, GenericServer cacheServer) {
 
-        String ql_http_root = url.toExternalForm();
-
-        String primary_root = null;
-        if (primary_url != null) {
-            primary_root = primary_url.toExternalForm();
-        }
-
-        QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
+        QuickLoadServerModel ql_server = url2quickload.get(url.toExternalForm());
         if (ql_server == null) {
-            LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root + Constants.SYNONYMS_TXT);
-            ql_server = new QuickLoadServerModel(ql_http_root, primary_root, primaryServer);
-            url2quickload.put(ql_http_root, ql_server);
+            LocalUrlCacher.loadSynonyms(LOOKUP, url.toExternalForm() + Constants.SYNONYMS_TXT);
+            ql_server = new QuickLoadServerModel(url.toExternalForm(), cacheServer);
+            url2quickload.put(url.toExternalForm(), ql_server);
         }
 
         return ql_server;
@@ -124,7 +117,7 @@ public final class QuickLoadServerModel {
      * Initialize quickload server model for given url.
      */
     public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
-        return getQLModelForURL(url, null, null);
+        return getQLModelForURL(url, null);
     }
 
     /*
@@ -145,7 +138,7 @@ public final class QuickLoadServerModel {
     }
 
     private String getRootUrl() {
-        return root_url;
+        return this.urlString;
     }
 
     public List<String> getGenomeNames() {
@@ -240,20 +233,20 @@ public final class QuickLoadServerModel {
                 annots_found = processAnnotsXml(istr, validationIstr, annotList);
             } catch (SAXParseException x) {
                 String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}: {2}. Please contact the server administrators or the IGB development team to let us know about the problem.";
-                String errorText = MessageFormat.format(errorMessage, root_url, genome_name, x.getMessage());
+                String errorText = MessageFormat.format(errorMessage, this.urlString, genome_name, x.getMessage());
                 String title = "Invalid annots.xml file";
                 ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
                 return false;
             } catch (JDOMException x) {
                 String errorMessage = "QuickLoad Server {0} has an invalid annotations (annots.xml) file for {1}. Please contact the server administrators or the IGB development team to let us know about the problem.";
-                String errorText = MessageFormat.format(errorMessage, root_url, genome_name);
+                String errorText = MessageFormat.format(errorMessage, this.urlString, genome_name);
                 String title = "Invalid annots.xml file";
                 ErrorHandler.errorPanelWithReportBug(title, errorText, Level.SEVERE);
                 return false;
             }
 
             if (annots_found) {
-                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, root_url);
+                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, this.urlString);
                 return true;
             }
 
@@ -266,9 +259,9 @@ public final class QuickLoadServerModel {
             if (!annots_found) {
                 ErrorHandler.errorPanelWithReportBug("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required annots.xml/annots.txt metadata "
                         + "file for requested genome version {1}. "
-                        + "IGB may not be able to display this genome.", root_url, genome_name), Level.SEVERE);
+                        + "IGB may not be able to display this genome.", this.urlString, genome_name), Level.SEVERE);
             } else {
-                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, root_url);
+                logger.debug("Found {} files in {} on server {}.", annotList.size(), genome_name, this.urlString);
             }
 
             return annots_found;
@@ -498,8 +491,8 @@ public final class QuickLoadServerModel {
          */
         if (istr == null && isLoadingFromPrimary() && !fileMayNotExist) {
 
-            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.getServerName());
-            primaryServer.setServerStatus(ServerStatus.NotResponding);
+            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", cacheServer.getServerName());
+            cacheServer.setServerStatus(ServerStatus.NotResponding);
 
             load_url = getLoadURL() + append_url;
             istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
@@ -510,7 +503,7 @@ public final class QuickLoadServerModel {
     }
 
     private boolean isLoadingFromPrimary() {
-        return (primary_url != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
+        return (cacheServer != null && cacheServer.getURL() != null && !cacheServer.getServerStatus().equals(ServerStatus.NotResponding));
     }
 
     /**
@@ -547,17 +540,17 @@ public final class QuickLoadServerModel {
 
     private String getLoadURL() {
         if (!isLoadingFromPrimary()) {
-            return root_url;
+            return this.urlString;
         }
 
-        return primary_url;
+        return cacheServer.getUrlString();
     }
 
     private void clean() {
         for (String genome : getGenomeNames()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSeqGroup(genome);
             if (group != null) {
-                group.removeSeqsForUri(root_url);
+                group.removeSeqsForUri(this.urlString);
             }
         }
     }

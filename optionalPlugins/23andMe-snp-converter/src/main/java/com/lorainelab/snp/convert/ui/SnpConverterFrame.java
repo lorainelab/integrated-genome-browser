@@ -10,6 +10,7 @@ import com.lorainelab.snp.convert.SnpConverterAction;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.text.DefaultCaret;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,11 @@ public class SnpConverterFrame extends javax.swing.JFrame {
         ReferencePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Build", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
 
         useRef.setText("Use reference to upgrade conversion to latest build");
+        useRef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useRefActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ReferencePanelLayout = new javax.swing.GroupLayout(ReferencePanel);
         ReferencePanel.setLayout(ReferencePanelLayout);
@@ -196,8 +202,8 @@ public class SnpConverterFrame extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -231,12 +237,11 @@ public class SnpConverterFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(OutputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(convertButton))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(convertButton)
+                    .addComponent(cancelButton)))
         );
 
         pack();
@@ -298,6 +303,16 @@ public class SnpConverterFrame extends javax.swing.JFrame {
             fileOutPath.setText(file.getAbsolutePath());
         }
     }//GEN-LAST:event_BrowseOutActionPerformed
+
+    private void useRefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useRefActionPerformed
+        Runtime runtime = Runtime.getRuntime();
+        double maxMem = Math.round(runtime.maxMemory()/1073741824.0);
+        if(maxMem < 3.0){
+            useRef.setSelected(false);
+            JOptionPane.showMessageDialog(rootPane, "This plugin requires that IGB be running with a java virtual machine with a minimum of 3.0 GB.\n"
+                    + "You are currently running the application with a max of " + Double.toString(maxMem) +"GB.");
+        }    
+    }//GEN-LAST:event_useRefActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseIn;

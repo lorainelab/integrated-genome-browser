@@ -20,40 +20,15 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 
-public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
+public final class GenericServer implements PreferenceChangeListener {
 
-    /**
-     * Stores this servers settings on Java Preferences
-     */
-    public final Preferences node;
-    /**
-     * Name of the server.
-     */
-    public String serverName;
-    /**
-     * URL/file that points to the server.
-     */
-    public String URL;
-
-    /**
-     * Mirror site url
-     */
-    public String mirrorURL; //qlmirror
-    /**
-     * DAS, DAS2, QuickLoad, Unknown (local file)
-     */
-    public ServerTypeI serverType;
-    /**
-     * to be used by DAS/2 authentication
-     */
+    private final Preferences node;
+    private String serverName;
+    private String url;
+    private String mirrorUrl; //qlmirror
+    private ServerTypeI serverType;
     private String login = "";
-    /**
-     * to be used by DAS/2 authentication
-     */
     private String password = "";
-    /**
-     * Is this server enabled?
-     */
     private boolean enabled = true;
 
     /**
@@ -63,7 +38,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
     /**
      * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
      */
-    public Object serverObj; //qlmirror
+    private Object serverObj; //qlmirror
     /**
      * friendly SERVER_URL that users may look at.
      */
@@ -76,9 +51,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
      * Don't keep on searching for friendlyIcon
      */
     private boolean friendlyIconAttempted = false;
-    /**
-     * Is this server initialized?
-     */
     private ServerStatus serverStatus = ServerStatus.NotInitialized;
     private final boolean primary;
     private final boolean isDefault;
@@ -133,13 +105,12 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
         return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
     }
 
-    private GenericServer(
-            String serverName, String URL, ServerTypeI serverType,
+    private GenericServer(String serverName, String URL, ServerTypeI serverType,
             boolean enabled, boolean referenceOnly, Preferences node,
             Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
         this.serverName = serverName;
-        this.URL = URL;
-        this.mirrorURL = mirrorURL; //qlmirror
+        this.url = URL;
+        this.mirrorUrl = mirrorURL; //qlmirror
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
@@ -191,7 +162,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
         if (node != null) {
             node.put(SERVER_NAME, name);
         }
-        this.serverName = name;
+        this.setServerName(name);
     }
 
     public void enableForSession() {
@@ -240,38 +211,21 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
     }
 
     public String getFriendlyURL() {
-        return serverType.getFriendlyURL(this);
+        return getServerType().getFriendlyURL(this);
     }
 
     public boolean useMirrorSite() {
-        return serverType.useMirrorSite(this);
+        return getServerType().useMirrorSite(this);
     }
 
     @Override
     public String toString() {
-        return serverName;
-    }
-
-    /**
-     * Order by: enabled/disabled, then server name, then DAS2, DAS, Quickload.
-     *
-     * @param gServer
-     * @return comparison integer
-     */
-    @Override
-    public int compareTo(GenericServer gServer) {
-        if (this.isEnabled() != gServer.isEnabled()) {
-            return Boolean.valueOf(this.isEnabled()).compareTo(gServer.isEnabled());
-        }
-        if (!(this.serverName.equals(gServer.serverName))) {
-            return this.serverName.compareTo(gServer.serverName);
-        }
-        return this.serverType.compareTo(gServer.serverType);
+        return getServerName();
     }
 
     public void clean() {
-        if (serverType != null) {
-            serverType.removeServer(this);
+        if (getServerType() != null) {
+            getServerType().removeServer(this);
         }
         setEnabled(false);
     }
@@ -338,5 +292,45 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
             }
         }
         return "";
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getURL() {
+        return url;
+    }
+
+    public void setURL(String url) {
+        this.url = url;
+    }
+
+    public String getMirrorUrl() {
+        return mirrorUrl;
+    }
+
+    public void setMirrorUrl(String mirrorUrl) {
+        this.mirrorUrl = mirrorUrl;
+    }
+
+    public ServerTypeI getServerType() {
+        return serverType;
+    }
+
+    public void setServerType(ServerTypeI serverType) {
+        this.serverType = serverType;
+    }
+
+    public Object getServerObj() {
+        return serverObj;
+    }
+
+    public void setServerObj(Object serverObj) {
+        this.serverObj = serverObj;
     }
 }

@@ -275,10 +275,4 @@ public class DasServerType implements ServerTypeI {
         return true;
     }
 
-    // No friendly URL for DAS
-    @Override
-    public String getFriendlyURL(GenericServer gServer) {
-        return null;
-    }
-
 }

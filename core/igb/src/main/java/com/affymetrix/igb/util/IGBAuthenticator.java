@@ -201,7 +201,7 @@ public class IGBAuthenticator extends Authenticator {
 
         if (serverObject != null) {
             url = serverObject.getUrlString();
-            serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
+            serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
             authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
             if (serverObject.getLogin() != null) {
                 userFromPrefs = serverObject.getLogin();
@@ -280,8 +280,7 @@ public class IGBAuthenticator extends Authenticator {
 
                     //Only save correct username and password
                     if (remember.isSelected()) {
-                        savePreferences(serverNode, serverObject, username.getText(),
-                                password.getPassword(), anon.isSelected(), remember.isSelected());
+                        savePreferences(serverNode, serverObject, username.getText(), password.getPassword(), anon.isSelected(), remember.isSelected());
                     }
 
                     return pa;
@@ -357,18 +356,10 @@ public class IGBAuthenticator extends Authenticator {
      * @param serverNode the preferences node for this server
      * @param serverObject the GenericServer object for this server
      */
-    private static void savePreferences(
-            Preferences serverNode,
-            GenericServer serverObject,
-            String username,
-            char[] password,
-            boolean anon,
-            boolean remember) {
-
+    private static void savePreferences(Preferences serverNode, GenericServer serverObject, String username, char[] password, boolean anon, boolean remember) {
         if (serverNode == null || serverObject == null) {
             return;
         }
-
         AuthType authType = anon ? AuthType.ANONYMOUS : AuthType.AUTHENTICATE;
         serverNode.put(PREF_AUTH_TYPE, authType.toString());
         serverNode.parent().putBoolean(PREF_REMEMBER, remember);

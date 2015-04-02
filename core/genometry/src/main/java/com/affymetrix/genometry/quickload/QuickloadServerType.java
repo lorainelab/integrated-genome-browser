@@ -404,16 +404,4 @@ public class QuickloadServerType implements ServerTypeI {
         return true;
     }
 
-    @Override
-    public String getFriendlyURL(GenericServer gServer) {
-        String tempURL = gServer.getUrlString();
-        if (tempURL.endsWith("/")) {
-            tempURL = tempURL.substring(0, tempURL.length() - 1);
-        }
-        if (gServer.getServerType() != null) {
-            tempURL = gServer.getServerType().adjustURL(tempURL);
-        }
-        return tempURL;
-    }
-
 }

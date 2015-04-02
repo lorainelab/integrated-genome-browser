@@ -461,12 +461,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @return hyerlink for the feature name
      */
     private static String featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
-        if (gFeature.getFriendlyURL() != null) {
+        if (!Strings.isNullOrEmpty(gFeature.getgVersion().getgServer().getUrlString())) {
             int iconWidth = 10 + 2 * 4;
             bounds.x += bounds.width - iconWidth;
             bounds.width = iconWidth;
             if (bounds.contains(x, y)) {
-                return gFeature.getFriendlyURL();
+                return gFeature.getgVersion().getgServer().getUrlString();
             }
         }
         return null;
@@ -615,7 +615,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             String featureText = gFeature.getgVersion().getgServer().getServerType() != LocalFilesServerType.getInstance()
                     ? featureName.substring(featureName.lastIndexOf(path_separator) + 1) : featureName;
             featureText = "<html>" + featureText;
-            if (gFeature.getFriendlyURL() != null) {
+            if (!Strings.isNullOrEmpty(gFeature.getgVersion().getgServer().getUrlString())) {
                 featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
             }
 
@@ -699,21 +699,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
                             if (feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance() && !isURLReachable(feature.getURI())) {
-
-                                /**
-                                 * qlmirror - Quickload Mirror Server
-                                 *
-                                 * All related changes can be searched by
-                                 * 'qlmirror'
-                                 *
-                                 * The following code will try to use mirror
-                                 * server when user is selecting a feature from
-                                 * feature tree but server is not available
-                                 *
-                                 * Mirror server address is specified in
-                                 * igb_defaults_prefs.xml by 'mirror' attribute
-                                 *
-                                 */
                                 GenericServer gServer = feature.getgVersion().getgServer();
                                 if (!Strings.isNullOrEmpty(gServer.getMirrorUrl()) && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
                                     for (GenericFeature gFeature : feature.getgVersion().getFeatures()) {

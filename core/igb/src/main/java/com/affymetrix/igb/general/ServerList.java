@@ -196,7 +196,7 @@ public final class ServerList {
             String type = node.get(SERVER_TYPE, hasTypes() ? LocalFilesServerType.getInstance().getName() : null);
             serverType = getServerType(type);
             url = ServerUtils.formatURL(url, serverType);
-            server = new GenericServer(node, serverType, false, null); //qlmirror
+            server = new GenericServer(node, serverType, false); //qlmirror
             url2server.put(url, server);
         }
         return server;
@@ -331,8 +331,7 @@ public final class ServerList {
      * @return an anemic GenericServer object whose sole purpose is to aid in
      * setting of additional preferences
      */
-    private GenericServer addServerToPrefs(String url, String name,
-            ServerTypeI type, int order, boolean isDefault) {
+    private GenericServer addServerToPrefs(String url, String name, ServerTypeI type, int order, boolean isDefault) {
         url = ServerUtils.formatURL(url, type);
         Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
         if (node.get(SERVER_NAME, null) == null) {
@@ -345,7 +344,7 @@ public final class ServerList {
 
         }
         return new GenericServer(node, getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getName())),
-                isDefault, null); //qlmirror
+                isDefault); //qlmirror
     }
 
     /**

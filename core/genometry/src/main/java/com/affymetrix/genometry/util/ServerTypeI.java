@@ -105,6 +105,4 @@ public interface ServerTypeI {
 
     public boolean isSaveServersInPrefs();
 
-    public String getFriendlyURL(GenericServer gServer);
-
 }

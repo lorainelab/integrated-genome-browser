@@ -5,7 +5,6 @@ import static com.affymetrix.genometry.general.GenericServerPrefKeys.IS_SERVER_E
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_LOGIN;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_NAME;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_PASSWORD;
-import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_TYPE;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_URL;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
@@ -17,13 +16,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
 import org.slf4j.LoggerFactory;
 
-public final class GenericServer implements PreferenceChangeListener {
+public final class GenericServer {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericServer.class);
     private final Preferences node;
@@ -50,24 +47,12 @@ public final class GenericServer implements PreferenceChangeListener {
 
     public GenericServer(String serverName, String urlString, ServerTypeI serverType,
             boolean enabled, boolean isDefault, String mirrorURL) { //qlmirror
-        this(
-                serverName,
-                urlString,
-                serverType,
-                enabled,
-                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(urlString))
-                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
+        this(serverName, urlString, serverType, enabled, serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
                 isDefault, mirrorURL);
     }
 
-    public GenericServer(Preferences node, ServerTypeI serverType, boolean isDefault, String mirrorURL) {
-        this(
-                node.get(SERVER_NAME, "Unknown"),
-                GeneralUtils.URLDecode(node.get(SERVER_URL, "")),
-                serverType,
-                true,
-                node,
-                isDefault, mirrorURL);
+    public GenericServer(Preferences node, ServerTypeI serverType, boolean isDefault) {
+        this(node.get(SERVER_NAME, "Unknown"), GeneralUtils.URLDecode(node.get(SERVER_URL, "")), serverType, true, node, isDefault, null);
     }
 
     /**
@@ -82,17 +67,14 @@ public final class GenericServer implements PreferenceChangeListener {
         return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
     }
 
-    private GenericServer(String serverName, String urlString, ServerTypeI serverType,
-            boolean enabled, Preferences node,
-            boolean isDefault, String mirrorURL) { //qlmirror
+    private GenericServer(String serverName, String urlString, ServerTypeI serverType, boolean enabled, Preferences node, boolean isDefault, String mirrorURL) {
         this.serverName = serverName;
         this.urlString = urlString;
-        this.mirrorUrl = mirrorURL; //qlmirror
+        this.mirrorUrl = mirrorURL;
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
         this.friendlyURL = urlString;
-//		this.referenceOnly = referenceOnly;
 
         if (this.node != null) {
             if (this.node.getBoolean(ENABLE_IF_AVAILABLE, false)) {
@@ -102,7 +84,6 @@ public final class GenericServer implements PreferenceChangeListener {
             }
             this.setLogin(this.node.get(SERVER_LOGIN, ""));
             this.setPassword(decrypt(this.node.get(SERVER_PASSWORD, "")));
-            this.node.addPreferenceChangeListener(this);
         }
         this.isDefault = isDefault;
     }
@@ -182,7 +163,7 @@ public final class GenericServer implements PreferenceChangeListener {
     }
 
     public String getFriendlyURL() {
-        return getServerType().getFriendlyURL(this);
+        return getUrlString();
     }
 
     @Override
@@ -195,32 +176,6 @@ public final class GenericServer implements PreferenceChangeListener {
             getServerType().removeServer(this);
         }
         setEnabled(false);
-    }
-
-    /**
-     * React to modifications of the Java preferences. This should probably fire
-     * an event notifying listeners that this generic server has changed.
-     *
-     * @param evt
-     */
-    @Override
-    public void preferenceChange(PreferenceChangeEvent evt) {
-        final String key = evt.getKey();
-
-        switch (key) {
-            case SERVER_NAME:
-            case SERVER_TYPE:
-                break;
-            case SERVER_LOGIN:
-                this.login = evt.getNewValue() == null ? "" : evt.getNewValue();
-                break;
-            case SERVER_PASSWORD:
-                this.password = evt.getNewValue() == null ? "" : decrypt(evt.getNewValue());
-                break;
-            case IS_SERVER_ENABLED:
-                this.enabled = evt.getNewValue() == null ? true : Boolean.valueOf(evt.getNewValue());
-                break;
-        }
     }
 
     /**

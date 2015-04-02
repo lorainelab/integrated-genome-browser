@@ -164,10 +164,6 @@ public final class GenericFeature {
                 && featureProps.get("load_hint").equals(loadStrategy));
     }
 
-    public String getFriendlyURL() {
-        return getgVersion().getgServer().getFriendlyURL();
-    }
-
     public String description() {
         if (this.getFeatureProps() != null) {
             String summary = getFeatureProps().get("summary");

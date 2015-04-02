@@ -14,7 +14,6 @@ import com.affymetrix.genometry.das.DasServerInfo;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
-import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -95,14 +94,8 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
             if (UCSCSources.isEmpty()) {
                 // Get the sources from the UCSC server.  If the server has already been initialized, get from there.
                 // This is done to avoid additional slow DAS queries.
-                DasServerInfo ucsc = null;
-                GenericServer server = null;
-                if ((server = igbService.getServer(UCSC_DAS_URL)) != null) {
-                    // UCSC server already exists!
-                    ucsc = (DasServerInfo) server.getServerObj();
-                } else {
-                    ucsc = new DasServerInfo(UCSC_DAS_URL);
-                }
+                DasServerInfo ucsc = new DasServerInfo(UCSC_DAS_URL);
+
                 UCSCSources.addAll(ucsc.getDataSources().keySet());
             }
         }

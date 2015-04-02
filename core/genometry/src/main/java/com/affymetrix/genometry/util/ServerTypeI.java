@@ -10,19 +10,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public interface ServerTypeI extends Comparable<ServerTypeI> {
+public interface ServerTypeI {
 
     /**
      * @return the name of the Server Type
      */
     public String getName();
-
-    /**
-     * used for ordering the ServerTypes
-     *
-     * @return ordinal for comparing/ordering
-     */
-    public int getOrdinal();
 
     /**
      * format the URL, e.g. add or remove trailing /
@@ -31,15 +24,6 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
      * @return formatted URL
      */
     public String formatURL(String url);
-
-    /**
-     * Initialize the server.
-     *
-     * @param url
-     * @param name
-     * @return initialized server
-     */
-    public Object getServerInfo(String url, String name);
 
     /**
      * adjustments to the URL specific to the Server Type
@@ -122,26 +106,5 @@ public interface ServerTypeI extends Comparable<ServerTypeI> {
     public boolean isSaveServersInPrefs();
 
     public String getFriendlyURL(GenericServer gServer);
-
-    /**
-     * Determines should mirror url be used or not.
-     *
-     * @param gServer
-     * @return
-     */
-    public boolean useMirrorSite(GenericServer gServer);
-
-    // the following method is required by the CacheScript class
-    // this method does not need to be implemented unless there are
-    // servers of this server type that will be cached.
-    /**
-     * Creates directory of server name.
-     * Determines the server type and process it accordingly.
-     *
-     * @param gServer GenericServer to be processed.
-     * @param path path to use.
-     * @return true if successful, false otherwise
-     */
-    public boolean processServer(GenericServer gServer, String path);
 
 }

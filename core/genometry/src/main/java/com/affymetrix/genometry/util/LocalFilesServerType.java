@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 public class LocalFilesServerType implements ServerTypeI {
 
     private static final String name = "Local Files";
-    public static final int ordinal = 40;
     private static final LocalFilesServerType instance = new LocalFilesServerType();
 
     public static LocalFilesServerType getInstance() {
@@ -33,33 +32,13 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public int compareTo(ServerTypeI o) {
-        return ordinal - o.getOrdinal();
-    }
-
-    @Override
-    public int getOrdinal() {
-        return ordinal;
-    }
-
-    @Override
     public String toString() {
         return name;
     }
 
     @Override
-    public boolean processServer(GenericServer gServer, String path) {
-        return false;
-    }
-
-    @Override
     public String formatURL(String url) {
         return url;
-    }
-
-    @Override
-    public Object getServerInfo(String url, String name) {
-        return null;
     }
 
     @Override
@@ -148,10 +127,5 @@ public class LocalFilesServerType implements ServerTypeI {
             tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
-    }
-
-    @Override
-    public boolean useMirrorSite(GenericServer server) {
-        return false;
     }
 }

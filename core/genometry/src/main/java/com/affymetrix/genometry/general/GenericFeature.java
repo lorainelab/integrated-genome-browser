@@ -3,13 +3,8 @@ package com.affymetrix.genometry.general;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -48,7 +43,6 @@ public final class GenericFeature {
     private final GenericVersion gVersion;        // Points to the version that uses this feature.
     private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
     private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
-    private final String friendlyURL;			// friendly URL that users may look at.
     private RefreshStatus lastRefresh;
     private final Object typeObj;    // Das2Type, ...?
     private final SymLoader symL;
@@ -84,8 +78,6 @@ public final class GenericFeature {
         this.gVersion = gVersion;
         this.symL = symLoader;
         this.typeObj = typeObj;
-
-        this.friendlyURL = this.featureProps == null ? null : this.featureProps.get("url");
 
         this.setAutoload(autoload);
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
@@ -173,46 +165,7 @@ public final class GenericFeature {
     }
 
     public String getFriendlyURL() {
-
-        if (friendlyURL == null) {
-            return null;
-        }
-
-        String friendlyURLString = friendlyURL;
-
-        // Support relative path in friendly URL for Quickload
-        if (!(friendlyURLString.toLowerCase().startsWith(HTTP_PROTOCOL)
-                || friendlyURLString.toLowerCase().startsWith(HTTPS_PROTOCOL)
-                || friendlyURLString.toLowerCase().startsWith(FTP_PROTOCOL)
-                || friendlyURLString.toLowerCase().startsWith(FILE_PROTOCOL))) {
-
-            if (this.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
-
-                if (friendlyURLString.startsWith("./")) {
-                    friendlyURLString = friendlyURLString.substring(2);
-                } else if (friendlyURLString.startsWith("/")) {
-                    friendlyURLString = friendlyURLString.substring(1);
-                }
-
-                /**
-                 * For Quickload the server path to be used is stored in
-                 * serverObj, and it always end with a '/' during server
-                 * initialization
-                 *
-                 * Concentrate that URL with server path to support relative
-                 * friendly URL (documentation link in feature tree)
-                 */
-                return this.getgVersion().getgServer().getServerObj() + friendlyURLString;
-
-            } else {
-                return friendlyURLString;
-            }
-        } else {
-            if (this.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
-                return friendlyURLString.replaceAll(this.getgVersion().getgServer().getUrlString(), (String) this.getgVersion().getgServer().getServerObj());
-            }
-            return friendlyURLString;
-        }
+        return getgVersion().getgServer().getFriendlyURL();
     }
 
     public String description() {

@@ -170,7 +170,6 @@
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module> 
                 <module>optionalPlugins/23andMe-snp-converter</module>
-                <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/FindAnnotations</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>                
                 <module>developmentPlugins/SampleSelection</module>
@@ -454,12 +453,6 @@
             <!--End of plugin module dependencies-->
             
             <!-- Start of development plugins -->
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>DasRegistryServerType</artifactId>
-                <version>${project.version}</version>
-                <scope>provided</scope>
-            </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>findAnnotations</artifactId>

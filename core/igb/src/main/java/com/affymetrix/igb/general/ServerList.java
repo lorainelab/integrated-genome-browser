@@ -53,14 +53,18 @@ public final class ServerList {
     private static final Logger logger = LoggerFactory.getLogger(ServerList.class);
     private final Map<String, GenericServer> url2server = new LinkedHashMap<>();
     private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<>();
-    private final GenericServer localFilesServer = new GenericServer("Local Files", "", LocalFilesServerType.getInstance(), true, null, false, null); //qlmirror
-    private final GenericServer igbFilesServer = new GenericServer("IGB Tracks", "", LocalFilesServerType.getInstance(), true, null, false, null); //qlmirror
-    private static ServerList serverInstance = new ServerList("server");
-    private final String textName;
+    private final GenericServer localFilesServer;
+    private final GenericServer igbFilesServer;
+    private static final ServerList serverInstance = new ServerList();
+    private final String NAME = "server";
     private final Comparator<GenericServer> serverOrderComparator = (o1, o2) -> getServerOrder(o1) - getServerOrder(o2);
 
-    private ServerList(String textName) {
-        this.textName = textName;
+    private ServerList() {
+        boolean isEnabled = true;
+        boolean isDefault = false;
+        String mirrorUrlString = null;
+        localFilesServer = new GenericServer("Local Files", "", LocalFilesServerType.getInstance(), isEnabled, isDefault, mirrorUrlString);
+        igbFilesServer = new GenericServer("IGB Tracks", "", LocalFilesServerType.getInstance(), isEnabled, isDefault, mirrorUrlString);
     }
 
     public static ServerList getServerInstance() {
@@ -68,7 +72,7 @@ public final class ServerList {
     }
 
     public String getTextName() {
-        return textName;
+        return NAME;
     }
 
     public boolean hasTypes() {
@@ -166,22 +170,18 @@ public final class ServerList {
             boolean enabled, int order, boolean isDefault, String mirrorURL) { //qlmirror
         url = ServerUtils.formatURL(url, serverType);
         GenericServer server = url2server.get(url);
-        Object info;
 
         if (server == null) {
-            info = serverType == null ? url : serverType.getServerInfo(url, name);
-
-            if (info != null) {
-                if (serverType == null || serverType.isSaveServersInPrefs()) {
-                    Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
-                    if (node.get(SERVER_NAME, null) != null) {
-                        name = node.get(SERVER_NAME, null); //Apply changes users may have made to server name
-                    }
+            if (serverType == null || serverType.isSaveServersInPrefs()) {
+                Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
+                if (node.get(SERVER_NAME, null) != null) {
+                    name = node.get(SERVER_NAME, null); //Apply changes users may have made to server name
                 }
-                server = new GenericServer(name, url, serverType, enabled, info, isDefault, mirrorURL);
-                url2server.put(url, server);
-                addServerToPrefs(server, order, isDefault);
             }
+            server = new GenericServer(name, url, serverType, enabled, isDefault, mirrorURL);
+            url2server.put(url, server);
+            addServerToPrefs(server, order, isDefault);
+
         }
 
         return server;
@@ -190,27 +190,15 @@ public final class ServerList {
     public GenericServer addServer(Preferences node) {
         GenericServer server = url2server.get(GeneralUtils.URLDecode(node.get(SERVER_URL, "")));
         String url;
-        String name;
         ServerTypeI serverType;
-        Object info;
-
         if (server == null) {
             url = GeneralUtils.URLDecode(node.get(SERVER_URL, ""));
-            name = node.get(SERVER_NAME, "Unknown");
             String type = node.get(SERVER_TYPE, hasTypes() ? LocalFilesServerType.getInstance().getName() : null);
             serverType = getServerType(type);
             url = ServerUtils.formatURL(url, serverType);
-            info = (serverType == null) ? url : serverType.getServerInfo(url, name);
-
-            if (info != null) {
-                server = new GenericServer(node, info, serverType, false, null); //qlmirror
-
-                if (server != null) {
-                    url2server.put(url, server);
-                }
-            }
+            server = new GenericServer(node, serverType, false, null); //qlmirror
+            url2server.put(url, server);
         }
-
         return server;
     }
 
@@ -314,7 +302,7 @@ public final class ServerList {
                     normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
 
                     if (!decodedURL.equals(normalizedURL)) {
-                        logger.debug("upgrading " + textName + " URL: ''{}'' in preferences", decodedURL);
+                        logger.debug("upgrading " + NAME + " URL: ''{}'' in preferences", decodedURL);
                         Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
                         for (String key : currentServer.keys()) {
                             normalizedServer.put(key, currentServer.get(key, ""));
@@ -356,8 +344,7 @@ public final class ServerList {
             node.put(SERVER_URL, GeneralUtils.URLEncode(url));
 
         }
-        return new GenericServer(node, null,
-                getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getName())),
+        return new GenericServer(node, getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getName())),
                 isDefault, null); //qlmirror
     }
 
@@ -420,7 +407,7 @@ public final class ServerList {
                 logger.error(ex.getMessage(), ex);
             }
         }
-        throw new IllegalArgumentException("URL " + u.toString() + " is not a valid " + textName + ".");
+        throw new IllegalArgumentException("URL " + u.toString() + " is not a valid " + NAME + ".");
     }
 
     public void addServerInitListener(GenericServerInitListener listener) {
@@ -456,7 +443,7 @@ public final class ServerList {
                         setEnableIfAvailable(node, true);
                     }
                 } else {
-                    String superType = textName.substring(0, 1).toUpperCase() + textName.substring(1);
+                    String superType = NAME.substring(0, 1).toUpperCase() + NAME.substring(1);
                     errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.getServerName());
                     if (server.getServerType() != null && server.getServerType().isSaveServersInPrefs()) {
                         ErrorHandler.errorPanel(server.getServerName(), errorText, Level.SEVERE);
@@ -467,9 +454,9 @@ public final class ServerList {
             }
 
 //			if (server.serverType == null) {
-//				IGB.getInstance().removeNotLockedUpMsg("Loading " + textName + " " + server);
+//				IGB.getInstance().removeNotLockedUpMsg("Loading " + NAME + " " + server);
 //			} else if (server.serverType != LocalFilesServerType.getInstance()) {
-//				IGB.getInstance().removeNotLockedUpMsg("Loading " + textName + " " + server + " (" + server.serverType.toString() + ")");
+//				IGB.getInstance().removeNotLockedUpMsg("Loading " + NAME + " " + server + " (" + server.serverType.toString() + ")");
 //			}
         }
 

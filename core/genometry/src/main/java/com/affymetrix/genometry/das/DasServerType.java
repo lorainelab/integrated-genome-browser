@@ -14,7 +14,6 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.QueryBuilder;
@@ -23,11 +22,8 @@ import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +38,7 @@ import org.slf4j.LoggerFactory;
 public class DasServerType implements ServerTypeI {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DasServerType.class);
-    private static final boolean exitOnError = false;
-    private static final String dsn = "dsn.xml";
-    private static final String name = "DAS";
-    public static final int ordinal = 30;
+    private static final String NAME = "DAS";
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     /**
      * Private copy of the default Synonym lookup
@@ -65,103 +58,12 @@ public class DasServerType implements ServerTypeI {
 
     @Override
     public String getName() {
-        return name;
-    }
-
-    @Override
-    public int compareTo(ServerTypeI o) {
-        return ordinal - o.getOrdinal();
-    }
-
-    @Override
-    public int getOrdinal() {
-        return ordinal;
+        return NAME;
     }
 
     @Override
     public String toString() {
-        return name;
-    }
-
-    /**
-     * Gets server path for a mapping on DAS server.
-     *
-     * @param id	Genome id
-     * @param file	File name.
-     */
-    private String getPath(String id, URL server, String file) {
-        try {
-            URL server_path = new URL(server, id + "/" + file);
-            return server_path.toExternalForm();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    /**
-     * Gets files for a genome and copies it to it's directory.
-     *
-     * @param local_path	Local path from where mapping is to saved.
-     */
-    private boolean getAllDasFiles(String id, URL server, URL master, String local_path) {
-        local_path += "/" + id;
-        GeneralUtils.makeDir(local_path);
-
-        File file;
-        final Map<String, String> DasFilePath = new HashMap<>();
-
-        String entry_point = getPath(master.getPath(), master, DasSource.ENTRY_POINTS);
-
-        String types = getPath(id, server, DasSource.TYPES);
-
-        DasFilePath.put(entry_point, DasSource.ENTRY_POINTS + Constants.XML_EXTENSION);
-        DasFilePath.put(types, DasSource.TYPES + Constants.XML_EXTENSION);
-
-        for (Entry<String, String> fileDet : DasFilePath.entrySet()) {
-            file = GeneralUtils.getFile(fileDet.getKey(), false);
-
-            if ((file == null || !GeneralUtils.moveFileTo(file, fileDet.getValue(), local_path)) && exitOnError) {
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.getUrlString(), false);
-        if (!GeneralUtils.moveFileTo(file, dsn, path)) {
-            return false;
-        }
-
-        DasServerInfo server = (DasServerInfo) gServer.getServerObj();
-        Map<String, DasSource> sources = server.getDataSources();
-
-        if (sources == null || sources.values() == null || sources.values().isEmpty()) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Couldn't find species for server: ", gServer);
-            return false;
-        }
-
-        for (DasSource source : sources.values()) {
-
-            if (!getAllDasFiles(source.getID(), source.getServerURL(), source.getMasterURL(), path)) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
-                return false;
-            }
-
-            for (String src : source.getSources()) {
-                if (!getAllDasFiles(src, source.getServerURL(), source.getMasterURL(), path)) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
-                    return false;
-                }
-            }
-
-        }
-
-        return true;
+        return NAME;
     }
 
     @Override
@@ -170,11 +72,6 @@ public class DasServerType implements ServerTypeI {
             url = url.substring(0, url.length() - 1);
         }
         return url;
-    }
-
-    @Override
-    public Object getServerInfo(String url, String name) {
-        return new DasServerInfo(url);
     }
 
     @Override
@@ -232,7 +129,7 @@ public class DasServerType implements ServerTypeI {
      */
     @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
-        DasServerInfo server = (DasServerInfo) gServer.getServerObj();
+        DasServerInfo server = new DasServerInfo(gServer.getUrlString());
 
         Map<String, DasSource> sources = server.getDataSources(gServer);
         if (sources == null || sources.values() == null || sources.values().isEmpty()) {
@@ -384,9 +281,4 @@ public class DasServerType implements ServerTypeI {
         return null;
     }
 
-    // No mirror site for DAS
-    @Override
-    public boolean useMirrorSite(GenericServer gServer) {
-        return false;
-    }
 }

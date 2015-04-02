@@ -33,7 +33,6 @@ public class ThousandGenomesServerType implements ServerTypeI {
     private static final String VERSION = "H_sapiens_Feb_2009";
     private static final int MAX_DIRS = 12;
     private static final boolean DEBUG = false;
-    public static final int ordinal = Integer.MAX_VALUE;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final ThousandGenomesServerType instance = new ThousandGenomesServerType();
@@ -47,18 +46,8 @@ public class ThousandGenomesServerType implements ServerTypeI {
     }
 
     @Override
-    public int compareTo(ServerTypeI o) {
-        return ordinal - o.getOrdinal();
-    }
-
-    @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public int getOrdinal() {
-        return ordinal;
     }
 
     @Override
@@ -69,11 +58,6 @@ public class ThousandGenomesServerType implements ServerTypeI {
     @Override
     public String formatURL(String url) {
         return url;
-    }
-
-    @Override
-    public Object getServerInfo(String url, String name) {
-        return VERSION;
     }
 
     @Override
@@ -202,8 +186,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
 
     @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
-        String genomeID = (String) gServer.getServerObj();
-        String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
+        String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), VERSION);
         String versionName, speciesName;
         // Retrieve group identity, since this has already been added in QuickLoadServerModel.
         Set<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getEnabledVersions();
@@ -215,7 +198,7 @@ public class ThousandGenomesServerType implements ServerTypeI {
             versionName = genomeName;
             speciesName = SpeciesLookup.getSpeciesName(genomeName);
         }
-        versionDiscoverer.discoverVersion(genomeID, versionName, gServer, gServer, speciesName);
+        versionDiscoverer.discoverVersion(VERSION, versionName, gServer, null, speciesName);
         return true;
     }
 
@@ -228,11 +211,6 @@ public class ThousandGenomesServerType implements ServerTypeI {
     @Override
     public boolean getResidues(GenericVersion versions, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
-        return false;
-    }
-
-    @Override
-    public boolean processServer(GenericServer gServer, String path) {
         return false;
     }
 
@@ -259,10 +237,5 @@ public class ThousandGenomesServerType implements ServerTypeI {
             tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
-    }
-
-    @Override
-    public boolean useMirrorSite(GenericServer server) {
-        return false;
     }
 }

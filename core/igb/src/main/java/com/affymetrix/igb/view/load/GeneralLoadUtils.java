@@ -225,60 +225,44 @@ public final class GeneralLoadUtils {
     };
 
     public static boolean discoverServer(GenericServer gServer) {
-        if (gServer.getServerType() == null) { // bundle repository
-            return true;
-        }
-
         try {
-            if (gServer.getServerType() != null) {
-                //tKanapar
-                if (!LocalUrlCacher.isValidURL(gServer.getUrlString())) {//Adding check on the request if authentication is required
-                    if (IGBAuthenticator.authenticationRequestCancelled()) {//If the cancel dialog is clicked in the IGB Authenticator
-                        IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
-                        ServerList.getServerInstance().removeServer(gServer.getUrlString());//Remove the preference so that it wont add the server to list
-                        ServerList.getServerInstance().removeServerFromPrefs(gServer.getUrlString());
-                        return false;
-                    }
+            if (!LocalUrlCacher.isValidURL(gServer.getUrlString())) {//Adding check on the request if authentication is required
+                if (IGBAuthenticator.authenticationRequestCancelled()) {//If the cancel dialog is clicked in the IGB Authenticator
+                    IGBAuthenticator.resetAuthenticationRequestCancelled();//Reset the cancel for future use
+                    ServerList.getServerInstance().removeServer(gServer.getUrlString());//Remove the preference so that it wont add the server to list
+                    ServerList.getServerInstance().removeServerFromPrefs(gServer.getUrlString());
+                    return false;
                 }
-                if (!gServer.getServerType().getSpeciesAndVersions(gServer, versionDiscoverer)) {
+            }
+            if (!gServer.getServerType().getSpeciesAndVersions(gServer, versionDiscoverer)) {
 
-                    /**
-                     * qlmirror - Quickload Mirror Server
-                     *
-                     * All related changes can be searched by 'qlmirror'
-                     *
-                     * The following code will try to use mirror server when
-                     * server is being discovered e.g. IGB startup
-                     *
-                     * Mirror server address is specified in
-                     * igb_defaults_prefs.xml by 'mirror' attribute
-                     *
-                     */
-                    if (gServer.useMirrorSite()) {
-//
-                        // Change serverObj for Quickload to apply mirror site
-                        // Currently only Quickload has mirror
-                        if (gServer.getServerType() == QuickloadServerType.getInstance()) {
-                            logger.info("Using mirror site: {}", gServer.getMirrorUrl());
-                            gServer.setServerObj(gServer.getMirrorUrl());
-//							ServerList.getServerInstance().fireServerInitEvent(gServer, LoadUtils.ServerStatus.NotInitialized);
-                            discoverServer(gServer);
-                        } else {
-                            ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-                            gServer.setEnabled(false);
-                            return false;
-                        }
-                    } else { // Disable server if no mirror or not used
-                        ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
-                        gServer.setEnabled(false);
-                        return false;
-                    }
-                } else {
-                    IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().toString() + ")");
-                }
-                if (gServer.getServerType() == QuickloadServerType.getInstance()) {
+                /**
+                 * qlmirror - Quickload Mirror Server
+                 *
+                 * All related changes can be searched by 'qlmirror'
+                 *
+                 * The following code will try to use mirror server when
+                 * server is being discovered e.g. IGB startup
+                 *
+                 * Mirror server address is specified in
+                 * igb_defaults_prefs.xml by 'mirror' attribute
+                 *
+                 */
+                if (!Strings.isNullOrEmpty(gServer.getMirrorUrl()) && !gServer.isUserMirror()) {
+                    logger.info("Using mirror site: {}", gServer.getMirrorUrl());
+                    gServer.setUserMirror(true);
+                    discoverServer(gServer);
 
+                } else { // Disable server if no mirror or not used
+                    ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.NotResponding, false);
+                    gServer.setEnabled(false);
+                    return false;
                 }
+            } else {
+                IGB.getInstance().addNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().toString() + ")");
+            }
+            if (gServer.getServerType() == QuickloadServerType.getInstance()) {
+
             }
             ServerList.getServerInstance().fireServerInitEvent(gServer, ServerStatus.Initialized, true);
         } catch (IllegalStateException ex) {

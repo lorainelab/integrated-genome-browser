@@ -34,18 +34,8 @@ public final class GenericServer implements PreferenceChangeListener {
     private String login = "";
     private String password = "";
     private boolean enabled = true;
+    private boolean userMirror = false;
 
-    /**
-     * Is this only a reference (no annotations) server?
-     */
-    //	private final boolean referenceOnly;
-    /**
-     * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
-     */
-    private Object serverObj; //qlmirror
-    /**
-     * friendly SERVER_URL that users may look at.
-     */
     private final String friendlyURL;
     /**
      * friendly icon that users may look at.
@@ -59,7 +49,7 @@ public final class GenericServer implements PreferenceChangeListener {
     private final boolean isDefault;
 
     public GenericServer(String serverName, String urlString, ServerTypeI serverType,
-            boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
+            boolean enabled, boolean isDefault, String mirrorURL) { //qlmirror
         this(
                 serverName,
                 urlString,
@@ -67,18 +57,17 @@ public final class GenericServer implements PreferenceChangeListener {
                 enabled,
                 serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(urlString))
                         : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
-                serverObj, isDefault, mirrorURL);
+                isDefault, mirrorURL);
     }
 
-    public GenericServer(Preferences node, Object serverObj,
-            ServerTypeI serverType, boolean isDefault, String mirrorURL) { //qlmirror
+    public GenericServer(Preferences node, ServerTypeI serverType, boolean isDefault, String mirrorURL) {
         this(
                 node.get(SERVER_NAME, "Unknown"),
                 GeneralUtils.URLDecode(node.get(SERVER_URL, "")),
                 serverType,
                 true,
                 node,
-                serverObj, isDefault, mirrorURL);
+                isDefault, mirrorURL);
     }
 
     /**
@@ -95,14 +84,13 @@ public final class GenericServer implements PreferenceChangeListener {
 
     private GenericServer(String serverName, String urlString, ServerTypeI serverType,
             boolean enabled, Preferences node,
-            Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
+            boolean isDefault, String mirrorURL) { //qlmirror
         this.serverName = serverName;
         this.urlString = urlString;
         this.mirrorUrl = mirrorURL; //qlmirror
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
-        this.serverObj = serverObj;
         this.friendlyURL = urlString;
 //		this.referenceOnly = referenceOnly;
 
@@ -197,10 +185,6 @@ public final class GenericServer implements PreferenceChangeListener {
         return getServerType().getFriendlyURL(this);
     }
 
-    public boolean useMirrorSite() {
-        return getServerType().useMirrorSite(this);
-    }
-
     @Override
     public String toString() {
         return getServerName();
@@ -282,13 +266,21 @@ public final class GenericServer implements PreferenceChangeListener {
     }
 
     public String getUrlString() {
-        return urlString;
+        if (userMirror) {
+            return mirrorUrl;
+        } else {
+            return urlString;
+        }
     }
 
     public URL getURL() {
         URL url = null;
         try {
-            url = new URL(urlString);
+            if (!userMirror) {
+                url = new URL(urlString);
+            } else {
+                url = new URL(mirrorUrl);
+            }
         } catch (MalformedURLException ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -303,11 +295,12 @@ public final class GenericServer implements PreferenceChangeListener {
         return serverType;
     }
 
-    public Object getServerObj() {
-        return serverObj;
+    public boolean isUserMirror() {
+        return userMirror;
     }
 
-    public void setServerObj(Object serverObj) {
-        this.serverObj = serverObj;
+    public void setUserMirror(boolean userMirror) {
+        this.userMirror = userMirror;
     }
+
 }

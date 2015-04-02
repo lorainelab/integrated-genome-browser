@@ -11,7 +11,6 @@ import com.affymetrix.genometry.symloader.SymLoaderInstNC;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +60,6 @@ public class ServerUtils {
 
     public static List<ServerTypeI> getServerTypes() {
         List<ServerTypeI> serverTypes = ExtensionPointHandler.getExtensionPoint(ServerTypeI.class) == null ? DEFAULT_SERVER_TYPES : ExtensionPointHandler.getExtensionPoint(ServerTypeI.class).getExtensionPointImpls();
-        Collections.sort(serverTypes);
         return serverTypes;
     }
 

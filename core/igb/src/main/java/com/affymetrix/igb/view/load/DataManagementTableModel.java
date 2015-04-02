@@ -104,14 +104,16 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     private final static class featureTableComparator implements Comparator<GenericFeature> {
 
-        public int compare(GenericFeature feature1, GenericFeature feature2) {
-            if (feature1.getLoadStrategy() != feature2.getLoadStrategy()) {
-                return (feature1.getLoadStrategy().compareTo(feature2.getLoadStrategy()));
+        @Override
+        public int compare(GenericFeature left, GenericFeature right) {
+            if (left.getLoadStrategy() != right.getLoadStrategy()) {
+                return (left.getLoadStrategy().compareTo(right.getLoadStrategy()));
             }
-            if (feature1.getFeatureName().compareTo(feature2.getFeatureName()) != 0) {
-                return feature1.getFeatureName().compareTo(feature2.getFeatureName());
+            if (left.getFeatureName().compareTo(right.getFeatureName()) != 0) {
+                return left.getFeatureName().compareTo(right.getFeatureName());
             }
-            return feature1.getgVersion().getgServer().getServerType().compareTo(feature2.getgVersion().getgServer().getServerType());
+
+            return left.getgVersion().getgServer().getServerType().getName().compareTo(right.getgVersion().getgServer().getServerType().getName());
         }
     }
 

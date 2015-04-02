@@ -11,7 +11,6 @@ package com.affymetrix.genometry.quickload;
 
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.parsers.AnnotsXmlParser;
 import com.affymetrix.genometry.parsers.AnnotsXmlParser.AnnotMapElt;
 import com.affymetrix.genometry.parsers.ChromInfoParser;
@@ -20,9 +19,7 @@ import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
-import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.google.common.base.Charsets;
@@ -76,21 +73,9 @@ public final class QuickLoadServerModel {
     private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<>();
     private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<>();
 
-    private final GenericServer cacheServer;
-
-    /**
-     * Initialize quickload server model for given url.
-     *
-     * @param url	server url.
-     */
-    public QuickLoadServerModel(String url) {
-        this(url, null);
-    }
-
-    private QuickLoadServerModel(String urlString, GenericServer cacheServer) {
+    private QuickLoadServerModel(String urlString) {
         urlString = ServerUtils.formatURL(urlString, QuickloadServerType.getInstance());
         this.urlString = urlString;
-        this.cacheServer = cacheServer;
     }
 
     /**
@@ -100,24 +85,16 @@ public final class QuickLoadServerModel {
      * @param url	server URL.
      * @param primary_url	URL of primary server.
      */
-    public static synchronized QuickLoadServerModel getQLModelForURL(URL url, GenericServer cacheServer) {
-
+    public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
         QuickLoadServerModel ql_server = url2quickload.get(url.toExternalForm());
         if (ql_server == null) {
             LocalUrlCacher.loadSynonyms(LOOKUP, url.toExternalForm() + Constants.SYNONYMS_TXT);
-            ql_server = new QuickLoadServerModel(url.toExternalForm(), cacheServer);
+            ql_server = new QuickLoadServerModel(url.toExternalForm());
             url2quickload.put(url.toExternalForm(), ql_server);
         }
 
         return ql_server;
 
-    }
-
-    /**
-     * Initialize quickload server model for given url.
-     */
-    public static synchronized QuickLoadServerModel getQLModelForURL(URL url) {
-        return getQLModelForURL(url, null);
     }
 
     /*
@@ -379,9 +356,9 @@ public final class QuickLoadServerModel {
             if (lift_stream != null) {
                 success = LiftParser.parse(lift_stream, group, annot_contigs);
             } else if (ginfo_stream != null) {
-                success = ChromInfoParser.parse(ginfo_stream, group, getLoadURL());
+                success = ChromInfoParser.parse(ginfo_stream, group, urlString);
             } else if (cinfo_stream != null) {
-                success = ChromInfoParser.parse(cinfo_stream, group, getLoadURL());
+                success = ChromInfoParser.parse(cinfo_stream, group, urlString);
             }
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Error loading data for genome '" + genome_name + "'", ex, Level.SEVERE);
@@ -391,25 +368,20 @@ public final class QuickLoadServerModel {
             GeneralUtils.safeClose(cinfo_stream);
             GeneralUtils.safeClose(chrom_stream);
         }
-//		if(!success){
-//			ErrorHandler.errorPanel("Missing Required File", MessageFormat.format("QuickLoad Server {0} does not contain required sequence metadata "
-//					+ "file for requested genome version {1}. "
-//					+ "IGB may not be able to display this genome.",new Object[]{root_url,genome_name}));
-//		}
         return success;
     }
 
     void loadGenomeNames() {
         URL contentsTextUrl = null;
         try {
-            contentsTextUrl = new URL(getLoadURL() + Constants.CONTENTS_TXT);
+            contentsTextUrl = new URL(urlString + Constants.CONTENTS_TXT);
             String contents = Resources.toString(contentsTextUrl, Charsets.UTF_8);
             LocalUrlCacher.writeToCache(contentsTextUrl, contents);
             processContentsTextFile(contents);
         } catch (MalformedURLException ex) {
             logger.error("Invalid url", ex);
         } catch (IOException ex) {
-            logger.warn("Unable to obtaint {} from the server", contentsTextUrl.toString());
+            logger.warn("Unable to obtain {} from the server", contentsTextUrl.toString());
             Optional<String> cachedContent = LocalUrlCacher.retrieveFileAsStringFromCache(contentsTextUrl);
             if (cachedContent.isPresent()) {
                 logger.info("Loading {} from cache", contentsTextUrl);
@@ -469,7 +441,7 @@ public final class QuickLoadServerModel {
     }
 
     private InputStream getInputStream(String append_url, boolean write_to_cache, boolean fileMayNotExist, boolean allowHtml) throws IOException {
-        String load_url = getLoadURL() + append_url;
+        String load_url = urlString + append_url;
         if (logger.isDebugEnabled()) {
             if (append_url.equals(Constants.CONTENTS_TXT)) {
                 try {
@@ -485,25 +457,8 @@ public final class QuickLoadServerModel {
         }
         InputStream istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
 
-        /**
-         * Check to see if trying to load from primary server but primary server
-         * is not responding *
-         */
-        if (istr == null && isLoadingFromPrimary() && !fileMayNotExist) {
-
-            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", cacheServer.getServerName());
-            cacheServer.setServerStatus(ServerStatus.NotResponding);
-
-            load_url = getLoadURL() + append_url;
-            istr = LocalUrlCacher.getInputStream(load_url, write_to_cache, null, fileMayNotExist, allowHtml);
-        }
-
         logger.debug("Load URL: {}", load_url);
         return istr;
-    }
-
-    private boolean isLoadingFromPrimary() {
-        return (cacheServer != null && cacheServer.getURL() != null && !cacheServer.getServerStatus().equals(ServerStatus.NotResponding));
     }
 
     /**
@@ -538,19 +493,11 @@ public final class QuickLoadServerModel {
         return stream != null;
     }
 
-    private String getLoadURL() {
-        if (!isLoadingFromPrimary()) {
-            return this.urlString;
-        }
-
-        return cacheServer.getUrlString();
-    }
-
     private void clean() {
         for (String genome : getGenomeNames()) {
             AnnotatedSeqGroup group = GenometryModel.getInstance().getSeqGroup(genome);
             if (group != null) {
-                group.removeSeqsForUri(this.urlString);
+                group.removeSeqsForUri(urlString);
             }
         }
     }

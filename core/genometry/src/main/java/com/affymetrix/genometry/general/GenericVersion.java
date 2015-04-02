@@ -66,6 +66,7 @@ public final class GenericVersion implements Comparable<GenericVersion> {
         return this.getVersionName();
     }
 
+    @Override
     public int compareTo(GenericVersion other) {
         return new StringVersionDateComparator().compare(this.getVersionName(), other.getVersionName());
     }

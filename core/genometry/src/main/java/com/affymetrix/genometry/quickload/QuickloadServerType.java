@@ -17,7 +17,6 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.TwoBitNew;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -28,13 +27,11 @@ import com.affymetrix.genometry.util.VersionDiscoverer;
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +52,6 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     private static final String name = "Quickload";
-    public static final int ordinal = 20;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static final List<QuickLoadSymLoaderHook> quickLoadSymLoaderHooks = new ArrayList<>();
     /**
@@ -64,21 +60,7 @@ public class QuickloadServerType implements ServerTypeI {
      * @see SynonymLookup#getDefaultLookup()
      */
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-    /**
-     * For files too be looked up on server. *
-     */
-    private static final Set<String> quickloadFiles = new HashSet<>();
 
-    /**
-     * Add files to be looked up. *
-     */
-    static {
-        quickloadFiles.add(Constants.ANNOTS_TXT);
-        quickloadFiles.add(Constants.ANNOTS_XML);
-        quickloadFiles.add(Constants.MOD_CHROM_INFO_TXT);
-        quickloadFiles.add(Constants.LIFT_ALL_LFT);
-        quickloadFiles.add(Constants.GENOME_TXT);
-    }
     private static final QuickloadServerType instance = new QuickloadServerType();
 
     public static QuickloadServerType getInstance() {
@@ -95,89 +77,13 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     @Override
-    public int compareTo(ServerTypeI o) {
-        return ordinal - o.getOrdinal();
-    }
-
-    @Override
-    public int getOrdinal() {
-        return ordinal;
-    }
-
-    @Override
     public String toString() {
         return name;
-    }
-
-    /**
-     * @return true if file may not exist else false.
-     */
-    private boolean getFileAvailability(String fileName) {
-        return fileName.equals(Constants.ANNOTS_TXT) || fileName.equals(Constants.ANNOTS_XML) || fileName.equals(Constants.LIFT_ALL_LFT);
-    }
-
-    /**
-     * Gets files for a genome and copies it to it's directory.
-     *
-     * @param local_path	Local path from where mapping is to saved.
-     */
-    private boolean getAllFiles(GenericServer gServer, String genome_name, String local_path) {
-        File file;
-        Set<String> files = quickloadFiles;
-
-        String server_path = gServer.getUrlString() + "/" + genome_name;
-        local_path += "/" + genome_name;
-        GeneralUtils.makeDir(local_path);
-        boolean fileMayNotExist;
-        for (String fileName : files) {
-            fileMayNotExist = getFileAvailability(fileName);
-
-            file = GeneralUtils.getFile(server_path + "/" + fileName, fileMayNotExist);
-
-            if ((file == null && !fileMayNotExist)) {
-                return false;
-            }
-
-            if (!GeneralUtils.moveFileTo(file, fileName, local_path)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean processServer(GenericServer gServer, String path) {
-        File file = GeneralUtils.getFile(gServer.getUrlString() + Constants.CONTENTS_TXT, false);
-
-        String quickloadStr = null;
-        quickloadStr = (String) gServer.getServerObj();
-
-        QuickLoadServerModel quickloadServer = new QuickLoadServerModel(quickloadStr);
-
-        List<String> genome_names = quickloadServer.getGenomeNames();
-        if (!GeneralUtils.moveFileTo(file, Constants.CONTENTS_TXT, path)) {
-            return false;
-        }
-
-        for (String genome_name : genome_names) {
-            if (!getAllFiles(gServer, genome_name, path)) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Could not find all files for {0} !!!", gServer.getServerName());
-                return false;
-            }
-        }
-
-        return true;
     }
 
     @Override
     public String formatURL(String url) {
         return url.endsWith("/") ? url : url + "/";
-    }
-
-    @Override
-    public Object getServerInfo(String url, String name) {
-        return formatURL(url);
     }
 
     @Override
@@ -225,7 +131,7 @@ public class QuickloadServerType implements ServerTypeI {
                 uri = URI.create(fileName);
             } else {
                 uri = URI.create(
-                        version.getgServer().getServerObj() // Changed from 'version.gServer.URL' since quickload uses serverObj
+                        version.getgServer().getUrlString() // Changed from 'version.gServer.URL' since quickload uses serverObj
 
                         + version.getVersionID() + "/"
                         + determineFileName(version, featureName));
@@ -236,13 +142,7 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     private static String determineFileName(GenericVersion version, String featureName) {
-        URL quickloadURL;
-        try {
-            quickloadURL = new URL((String) version.getgServer().getServerObj());
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-            return "";
-        }
+        URL quickloadURL = version.getgServer().getURL();
 
         QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
         List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(version.getVersionID());
@@ -260,9 +160,9 @@ public class QuickloadServerType implements ServerTypeI {
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
         // Discover feature names from QuickLoad
         try {
-            URL quickloadURL = new URL((String) gVersion.getgServer().getServerObj());
+            URL quickloadURL = gVersion.getgServer().getURL();
             if (logger.isDebugEnabled()) {
-                logger.debug("Discovering Quickload features for " + gVersion.getVersionName() + ". URL:" + gVersion.getgServer().getServerObj());
+                logger.debug("Discovering Quickload features for " + gVersion.getVersionName() + ". URL:" + gVersion.getgServer().getUrlString());
             }
 
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
@@ -312,31 +212,25 @@ public class QuickloadServerType implements ServerTypeI {
      */
     @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
-        URL quickloadURL = null;
-        try {
-            quickloadURL = new URL((String) gServer.getServerObj());
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
+        URL quickloadURL = gServer.getURL();
+        QuickLoadServerModel quickLoadServerModel = QuickLoadServerModel.getQLModelForURL(quickloadURL);
 
-        if (quickloadServer == null) {
+        if (quickLoadServerModel == null) {
             logger.error("ERROR: No quickload server model found for server: " + gServer);
             return false;
         }
 
-        quickloadServer.loadGenomeNames();
-        List<String> genomeList = quickloadServer.getGenomeNames();
+        quickLoadServerModel.loadGenomeNames();
+        List<String> genomeList = quickLoadServerModel.getGenomeNames();
         if (genomeList == null || genomeList.isEmpty()) {
             logger.warn("WARNING: No species found in server: " + gServer);
             return false;
         }
 
         //update species.txt with information from the server.
-        if (quickloadServer.hasSpeciesTxt()) {
+        if (quickLoadServerModel.hasSpeciesTxt()) {
             try {
-                SpeciesLookup.load(quickloadServer.getSpeciesTxt());
+                SpeciesLookup.load(quickLoadServerModel.getSpeciesTxt());
             } catch (IOException ex) {
                 logger.warn("No species.txt found at this quickload server.", ex);
             }
@@ -355,7 +249,7 @@ public class QuickloadServerType implements ServerTypeI {
                 versionName = genomeName;
                 speciesName = SpeciesLookup.getSpeciesName(genomeName);
             }
-            versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickloadServer, speciesName);
+            versionDiscoverer.discoverVersion(genomeID, versionName, gServer, quickLoadServerModel, speciesName);
         }
         return true;
     }
@@ -465,20 +359,18 @@ public class QuickloadServerType implements ServerTypeI {
      *
      * @return residue String.
      */
-    private String GetQuickLoadResidues(
-            GenericServer server, GenericVersion version, AnnotatedSeqGroup seq_group,
-            String seq_name, String root_url, SeqSpan span, BioSeq aseq) {
+    private String getQuickLoadResidues(GenericServer server, GenericVersion version, AnnotatedSeqGroup seqGroup, String seqName, SeqSpan span, BioSeq aseq) {
         String common_url = "";
         String path = "";
         SymLoader symloader;
         try {
-            URL quickloadURL = new URL((String) server.getServerObj());
+            URL quickloadURL = server.getURL();
             QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(quickloadURL);
-            path = quickloadServer.getPath(version.getVersionName(), seq_name);
-            common_url = root_url + path + ".";
-            String vPath = root_url + quickloadServer.getPath(version.getVersionName(), version.getVersionName()) + ".2bit";
+            path = quickloadServer.getPath(version.getVersionName(), seqName);
+            common_url = server.getUrlString() + path + ".";
+            String vPath = server.getUrlString() + quickloadServer.getPath(version.getVersionName(), version.getVersionName()) + ".2bit";
 
-            symloader = determineLoader(common_url, vPath, seq_group, seq_name);
+            symloader = determineLoader(common_url, vPath, seqGroup, seqName);
 
             if (symloader != null) {
                 return symloader.getRegionResidues(span);
@@ -494,7 +386,7 @@ public class QuickloadServerType implements ServerTypeI {
             BioSeq aseq, int min, int max, SeqSpan span) {
         String seq_name = aseq.getID();
         AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
-        String residues = GetQuickLoadResidues(version.getgServer(), version, seq_group, seq_name, (String) version.getgServer().getServerObj(), span, aseq);
+        String residues = getQuickLoadResidues(version.getgServer(), version, seq_group, seq_name, span, aseq);
         if (residues != null) {
             BioSeqUtils.addResiduesToComposition(aseq, residues, span);
             return true;
@@ -514,10 +406,7 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.getServerObj() == null) {
-            return null;
-        }
-        String tempURL = (String) gServer.getServerObj();
+        String tempURL = gServer.getUrlString();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
@@ -527,11 +416,4 @@ public class QuickloadServerType implements ServerTypeI {
         return tempURL;
     }
 
-    @Override
-    public boolean useMirrorSite(GenericServer gServer) {
-        if (gServer.getMirrorUrl() != null && gServer.getMirrorUrl() != gServer.getServerObj() && LocalUrlCacher.isValidURL(gServer.getMirrorUrl())) {
-            return true;
-        }
-        return false;
-    }
 }

@@ -715,8 +715,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                  *
                                  */
                                 GenericServer gServer = feature.getgVersion().getgServer();
-                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
-                                    gServer.setServerObj(gServer.getMirrorUrl()); // Update serverObj to support new server & feature friendly URL
+                                if (!Strings.isNullOrEmpty(gServer.getMirrorUrl()) && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
                                     for (GenericFeature gFeature : feature.getgVersion().getFeatures()) {
                                         if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
                                             URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrlString(), gServer.getMirrorUrl()));

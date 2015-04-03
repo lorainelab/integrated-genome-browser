@@ -587,7 +587,7 @@ public final class GeneralUtils {
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
     public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
-        return LOOKUP.getPreferredName(gVersions.iterator().next().versionName);
+        return LOOKUP.getPreferredName(gVersions.iterator().next().getVersionName());
     }
 
     public static String preferencesDisplay(Preferences prefs) {

@@ -3,8 +3,7 @@ package com.affymetrix.genometry.general;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.das2.Das2Type;
-import com.affymetrix.genometry.das2.FormatPriorities;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
@@ -18,7 +17,6 @@ import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,15 +43,15 @@ public final class GenericFeature {
 
     private static final String WHOLE_GENOME = "Whole Sequence";
 
-    public final String featureName;      // friendly name of the feature.
-    public final Map<String, String> featureProps;
-    public final GenericVersion gVersion;        // Points to the version that uses this feature.
+    private final String featureName;      // friendly name of the feature.
+    private final Map<String, String> featureProps;
+    private final GenericVersion gVersion;        // Points to the version that uses this feature.
     private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
     private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
     private final String friendlyURL;			// friendly URL that users may look at.
     private RefreshStatus lastRefresh;
-    public final Object typeObj;    // Das2Type, ...?
-    public final SymLoader symL;
+    private final Object typeObj;    // Das2Type, ...?
+    private final SymLoader symL;
     private String method;
 
     private final boolean isReferenceSequence;
@@ -86,9 +84,6 @@ public final class GenericFeature {
         this.gVersion = gVersion;
         this.symL = symLoader;
         this.typeObj = typeObj;
-        if (typeObj instanceof Das2Type) {
-            ((Das2Type) typeObj).setFeature(this);
-        }
 
         this.friendlyURL = this.featureProps == null ? null : this.featureProps.get("url");
 
@@ -99,7 +94,7 @@ public final class GenericFeature {
     }
 
     public boolean setAutoload(boolean auto) {
-        if (shouldAutoLoad(featureProps, WHOLE_GENOME) && auto) {
+        if (shouldAutoLoad(getFeatureProps(), WHOLE_GENOME) && auto) {
             setLoadStrategy(LoadStrategy.GENOME);
             this.setVisible();
             return true;
@@ -115,13 +110,13 @@ public final class GenericFeature {
         if (this.loadStrategy != LoadStrategy.NO_LOAD) {
             return;
         }
-        if (gVersion != null && gVersion.gServer != null) {
-            if (gVersion.gServer.serverType.loadStrategyVisibleOnly()) {
+        if (getgVersion() != null && getgVersion().getgServer() != null) {
+            if (getgVersion().getgServer().getServerType().loadStrategyVisibleOnly()) {
                 setLoadStrategy(LoadStrategy.VISIBLE);
             } else {
                 // Local File or QuickLoad
-                if (this.symL != null) {
-                    if (this.symL.getLoadChoices().contains(LoadStrategy.VISIBLE)) {
+                if (this.getSymL() != null) {
+                    if (this.getSymL().getLoadChoices().contains(LoadStrategy.VISIBLE)) {
                         setLoadStrategy(LoadStrategy.VISIBLE);
 //					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
 //						setLoadStrategy(LoadStrategy.CHROMOSOME);
@@ -191,7 +186,7 @@ public final class GenericFeature {
                 || friendlyURLString.toLowerCase().startsWith(FTP_PROTOCOL)
                 || friendlyURLString.toLowerCase().startsWith(FILE_PROTOCOL))) {
 
-            if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
+            if (this.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
 
                 if (friendlyURLString.startsWith("./")) {
                     friendlyURLString = friendlyURLString.substring(2);
@@ -207,23 +202,23 @@ public final class GenericFeature {
                  * Concentrate that URL with server path to support relative
                  * friendly URL (documentation link in feature tree)
                  */
-                return this.gVersion.gServer.serverObj + friendlyURLString;
+                return this.getgVersion().getgServer().getServerObj() + friendlyURLString;
 
             } else {
                 return friendlyURLString;
             }
         } else {
-            if (this.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                return friendlyURLString.replaceAll(this.gVersion.gServer.URL, (String) this.gVersion.gServer.serverObj);
+            if (this.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
+                return friendlyURLString.replaceAll(this.getgVersion().getgServer().getUrlString(), (String) this.getgVersion().getgServer().getServerObj());
             }
             return friendlyURLString;
         }
     }
 
     public String description() {
-        if (this.featureProps != null) {
-            String summary = featureProps.get("summary");
-            String descrip = featureProps.get("description");
+        if (this.getFeatureProps() != null) {
+            String summary = getFeatureProps().get("summary");
+            String descrip = getFeatureProps().get("description");
 
             if (summary != null && summary.length() > 0) {
                 return summary;
@@ -235,7 +230,7 @@ public final class GenericFeature {
                 return descrip;
             }
         }
-        return featureName;
+        return getFeatureName();
     }
 
     public String getMethod() {
@@ -244,7 +239,7 @@ public final class GenericFeature {
 
     public void setMethod(String method) {
         this.method = method;
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), featureProps);
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), getFeatureProps());
         style.setFeature(this);
     }
 
@@ -278,12 +273,12 @@ public final class GenericFeature {
         // Remove all childred from request
         requestSym.removeChildren();
         if (currentRequestSym.getChildCount() > 0) {
-            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", gVersion.gServer.serverType);
+            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", getgVersion().getgServer().getServerType());
             currentRequestSym.removeChildren();
         }
         method = null;
-        if (symL != null) {
-            symL.clear();
+        if (getSymL() != null) {
+            getSymL().clear();
         }
         setInvisible();
         setLastRefreshStatus(RefreshStatus.NOT_REFRESHED);
@@ -353,8 +348,8 @@ public final class GenericFeature {
     }
 
     public List<LoadStrategy> getLoadChoices() {
-        if (symL != null) {
-            return symL.getLoadChoices();
+        if (getSymL() != null) {
+            return getSymL().getLoadChoices();
         }
 
         return STANDARD_LOAD_CHOICES;
@@ -364,40 +359,64 @@ public final class GenericFeature {
     public String toString() {
         // remove all but the last "/", since these will be represented in a friendly tree view.
         if (!this.featureName.contains("/")) {
-            return this.featureName;
+            return this.getFeatureName();
         }
 
-        int lastSlash = this.featureName.lastIndexOf('/');
-        return this.featureName.substring(lastSlash + 1, featureName.length());
+        int lastSlash = this.getFeatureName().lastIndexOf('/');
+        return this.getFeatureName().substring(lastSlash + 1, getFeatureName().length());
     }
 
     public URI getURI() {
-        if (typeObj instanceof Das2Type) {
-            return ((Das2Type) typeObj).getURI();
-        }
-        if (typeObj instanceof String) {
-            return URI.create(typeObj.toString());
+        if (getTypeObj() instanceof String) {
+            return URI.create(getTypeObj().toString());
         }
 
-        if (symL != null) {
-            return symL.uri;
+        if (getSymL() != null) {
+            return getSymL().uri;
         }
         return null;
     }
 
     public String getExtension() {
-        if (typeObj instanceof Das2Type) {
-            String ext = FormatPriorities.getFormat((Das2Type) typeObj);
-            if (ext == null) {
-                ext = "";
-            }
-            return ext;
-        }
-
-        if (symL != null) {
-            return symL.extension;
+        if (getSymL() != null) {
+            return getSymL().extension;
         }
 
         return "";
+    }
+
+    /**
+     * @return the featureName
+     */
+    public String getFeatureName() {
+        return featureName;
+    }
+
+    /**
+     * @return the featureProps
+     */
+    public Map<String, String> getFeatureProps() {
+        return featureProps;
+    }
+
+    /**
+     * @return the gVersion
+     */
+    public GenericVersion getgVersion() {
+        return gVersion;
+    }
+
+    /**
+     * @return the typeObj
+     */
+    public Object getTypeObj() {
+        return typeObj;
+    }
+
+    /**
+     * @return the symL
+     */
+    public SymLoader getSymL() {
+        return symL;
     }
 }

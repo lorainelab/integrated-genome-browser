@@ -13,47 +13,26 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.StringEncrypter;
 import com.affymetrix.genometry.util.StringEncrypter.EncryptionException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.ImageIcon;
+import org.slf4j.LoggerFactory;
 
-public final class GenericServer implements Comparable<GenericServer>, PreferenceChangeListener {
+public final class GenericServer implements PreferenceChangeListener {
 
-    /**
-     * Stores this servers settings on Java Preferences
-     */
-    public final Preferences node;
-    /**
-     * Name of the server.
-     */
-    public String serverName;
-    /**
-     * URL/file that points to the server.
-     */
-    public String URL;
-
-    /**
-     * Mirror site url
-     */
-    public String mirrorURL; //qlmirror
-    /**
-     * DAS, DAS2, QuickLoad, Unknown (local file)
-     */
-    public ServerTypeI serverType;
-    /**
-     * to be used by DAS/2 authentication
-     */
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenericServer.class);
+    private final Preferences node;
+    private String serverName;
+    private String urlString;
+    private String mirrorUrl; //qlmirror
+    private ServerTypeI serverType;
     private String login = "";
-    /**
-     * to be used by DAS/2 authentication
-     */
     private String password = "";
-    /**
-     * Is this server enabled?
-     */
     private boolean enabled = true;
 
     /**
@@ -63,7 +42,7 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
     /**
      * Das2ServerInfo, DasServerInfo, ..., QuickLoad?
      */
-    public Object serverObj; //qlmirror
+    private Object serverObj; //qlmirror
     /**
      * friendly SERVER_URL that users may look at.
      */
@@ -76,37 +55,19 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
      * Don't keep on searching for friendlyIcon
      */
     private boolean friendlyIconAttempted = false;
-    /**
-     * Is this server initialized?
-     */
     private ServerStatus serverStatus = ServerStatus.NotInitialized;
-    private final boolean primary;
     private final boolean isDefault;
 
-    public GenericServer(String serverName, String URL, ServerTypeI serverType,
-            boolean enabled, Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
-        this(
-                serverName,
-                URL,
-                serverType,
-                enabled,
-                false,
-                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(URL)) : null,
-                serverObj, primary, isDefault, mirrorURL);
-    }
-
-    public GenericServer(String serverName, String URL, ServerTypeI serverType,
+    public GenericServer(String serverName, String urlString, ServerTypeI serverType,
             boolean enabled, Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
         this(
                 serverName,
-                URL,
+                urlString,
                 serverType,
                 enabled,
-                false,
-                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(URL))
-                        : PreferenceUtils.getServersNode().node(getHash(URL)),
-                serverObj, false, isDefault, mirrorURL);
+                serverType == null ? PreferenceUtils.getRepositoriesNode().node(getHash(urlString))
+                        : serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
+                serverObj, isDefault, mirrorURL);
     }
 
     public GenericServer(Preferences node, Object serverObj,
@@ -116,9 +77,8 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
                 GeneralUtils.URLDecode(node.get(SERVER_URL, "")),
                 serverType,
                 true,
-                false,
                 node,
-                serverObj, false, isDefault, mirrorURL);
+                serverObj, isDefault, mirrorURL);
     }
 
     /**
@@ -133,18 +93,17 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
         return Long.toString(((long) str.hashCode() + (long) Integer.MAX_VALUE));
     }
 
-    private GenericServer(
-            String serverName, String URL, ServerTypeI serverType,
-            boolean enabled, boolean referenceOnly, Preferences node,
-            Object serverObj, boolean primary, boolean isDefault, String mirrorURL) { //qlmirror
+    private GenericServer(String serverName, String urlString, ServerTypeI serverType,
+            boolean enabled, Preferences node,
+            Object serverObj, boolean isDefault, String mirrorURL) { //qlmirror
         this.serverName = serverName;
-        this.URL = URL;
-        this.mirrorURL = mirrorURL; //qlmirror
+        this.urlString = urlString;
+        this.mirrorUrl = mirrorURL; //qlmirror
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
         this.serverObj = serverObj;
-        this.friendlyURL = URL;
+        this.friendlyURL = urlString;
 //		this.referenceOnly = referenceOnly;
 
         if (this.node != null) {
@@ -157,7 +116,6 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
             this.setPassword(decrypt(this.node.get(SERVER_PASSWORD, "")));
             this.node.addPreferenceChangeListener(this);
         }
-        this.primary = primary;
         this.isDefault = isDefault;
     }
 
@@ -231,47 +189,26 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
         return this.password;
     }
 
-    public boolean isPrimary() {
-        return this.primary;
-    }
-
     public boolean isDefault() {
         return this.isDefault;
     }
 
     public String getFriendlyURL() {
-        return serverType.getFriendlyURL(this);
+        return getServerType().getFriendlyURL(this);
     }
 
     public boolean useMirrorSite() {
-        return serverType.useMirrorSite(this);
+        return getServerType().useMirrorSite(this);
     }
 
     @Override
     public String toString() {
-        return serverName;
-    }
-
-    /**
-     * Order by: enabled/disabled, then server name, then DAS2, DAS, Quickload.
-     *
-     * @param gServer
-     * @return comparison integer
-     */
-    @Override
-    public int compareTo(GenericServer gServer) {
-        if (this.isEnabled() != gServer.isEnabled()) {
-            return Boolean.valueOf(this.isEnabled()).compareTo(gServer.isEnabled());
-        }
-        if (!(this.serverName.equals(gServer.serverName))) {
-            return this.serverName.compareTo(gServer.serverName);
-        }
-        return this.serverType.compareTo(gServer.serverType);
+        return getServerName();
     }
 
     public void clean() {
-        if (serverType != null) {
-            serverType.removeServer(this);
+        if (getServerType() != null) {
+            getServerType().removeServer(this);
         }
         setEnabled(false);
     }
@@ -338,5 +275,39 @@ public final class GenericServer implements Comparable<GenericServer>, Preferenc
             }
         }
         return "";
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public String getUrlString() {
+        return urlString;
+    }
+
+    public URL getURL() {
+        URL url = null;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return url;
+    }
+
+    public String getMirrorUrl() {
+        return mirrorUrl;
+    }
+
+    public ServerTypeI getServerType() {
+        return serverType;
+    }
+
+    public Object getServerObj() {
+        return serverObj;
+    }
+
+    public void setServerObj(Object serverObj) {
+        this.serverObj = serverObj;
     }
 }

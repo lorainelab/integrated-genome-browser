@@ -1,31 +1,5 @@
 package com.gene.dasregistryservertype;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
@@ -46,7 +20,24 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.VersionDiscoverer;
 import com.affymetrix.genometry.util.XMLUtils;
 import com.lorainelab.igb.services.IgbService;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This uses the DAS Registry to find features for the selected species (and
@@ -118,13 +109,10 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 
     @Override
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
-        Map<String, Map<String, Object>> featureList = featuresMap.get(gVersion.gServer.URL);
+        Map<String, Map<String, Object>> featureList = featuresMap.get(gVersion.getgServer().getUrlString());
         if (featureList != null) {
             for (String url : featureList.keySet()) {
                 Map<String, Object> featureProps = featureList.get(url);
-                if (DEBUG) {
-                    System.out.println("!!! DAS Registry add feature " + gVersion.gServer.URL + " - " + url);
-                }
                 System.out.flush();
                 int pos = url.lastIndexOf('/');
                 String featureName = (String) featureProps.get("title");
@@ -151,9 +139,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
     }
 
     @Override
-    public boolean getSpeciesAndVersions(GenericServer gServer,
-            GenericServer primaryServer, URL primaryURL,
-            VersionDiscoverer versionDiscoverer) {
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         if (currentGroup == null) {
             return false;
         }
@@ -161,18 +147,13 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
         String versionName = currentGroup.getID();
         String speciesName = currentGroup.getOrganism();
         try {
-            URL url = new URL(gServer.URL);
+            URL url = new URL(gServer.getUrlString());
             versionDiscoverer.discoverVersion(versionID, versionName, gServer, url, speciesName);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean isAuthOptional() {
-        return false;
     }
 
     @Override
@@ -213,10 +194,6 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
                 if (featureMap == null) {
                     featureMap = new HashMap<>();
                     featuresMap.put(serverURL, featureMap);
-                    if (DEBUG) {
-                        System.out.println("!!! DAS Registry new server " + serverURL);
-                    }
-                    System.out.flush();
                 } else if (featureMap.keySet().contains(url)) {
                     return;
                 }
@@ -243,10 +220,6 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
                     }
                     featureMap.put(url, featureProps);
                 }
-                if (DEBUG) {
-                    System.out.println("!!! DAS Registry new feature " + url);
-                }
-                System.out.flush();
                 return;
             }
         }
@@ -257,10 +230,6 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
         CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("add DAS Registry feature " + serverURL) {
             @Override
             protected Void runInBackground() {
-                if (DEBUG) {
-                    System.out.println("!!! DAS Registry add server " + serverURL);
-                }
-                System.out.flush();
                 GenericServer gServer = igbService.addServer(DASRegistryServerType.this, serverURL, serverURL, Integer.MAX_VALUE);
                 synchronized (serverMap) {
                     serverMap.put(serverURL, gServer);
@@ -270,70 +239,14 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
 
             @Override
             protected void finished() {
-//				igbService.updateGeneralLoadView();
             }
         };
-//		CThreadHolder.getInstance().execute(getName(), worker);
         CThreadHolder.getInstance().execute(serverURL, worker);
     }
 
     @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
         setGroup(evt.getSelectedGroup());
-    }
-
-    /**
-     * The feature may contains multiple types, each one is a separate feature
-     *
-     * @param types_uri the types uri to process
-     * @return a list of the types for the uri
-     */
-    private List<String> getTypes(final String types_uri) {
-        List<String> types = null;
-        InputStream is = null;
-        try {
-            if (DEBUG) {
-                System.out.println("!!! DAS Registry processing types URL " + types_uri);
-            }
-            System.out.flush();
-            is = new URL(types_uri).openConnection().getInputStream();
-            Document dom = XMLUtils.getDocument(is);
-            NodeList nl1 = dom.getChildNodes();
-            for (int i1 = 0; i1 < nl1.getLength(); i1++) {
-                Node n1 = nl1.item(i1);
-                if (n1.getNodeName().equals("GFF") && n1.hasChildNodes()) {
-                    NodeList nl2 = n1.getChildNodes();
-                    for (int i2 = 0; i2 < nl1.getLength(); i2++) {
-                        Node n2 = nl2.item(i2);
-                        if (n2.getNodeName().equals("SEGMENT") && n2.hasChildNodes()) {
-                            NodeList nl3 = n2.getChildNodes();
-                            for (int i3 = 0; i3 < nl1.getLength(); i3++) {
-                                Node n3 = nl3.item(i3);
-                                if (n3.getNodeName().equals("TYPE") && n3.hasAttributes() && n3.getAttributes().getNamedItem("id") != null) {
-                                    if (types == null) {
-                                        types = new ArrayList<>();
-                                    }
-                                    types.add(n3.getAttributes().getNamedItem("id").getNodeValue());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (DEBUG) {
-                System.out.println("!!! DAS Registry CONTENT types URL ");
-            }
-            System.out.flush();
-            if (DEBUG) {
-                printXML(dom);
-            }
-            System.out.flush();
-        } catch (Exception x) {
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "failed to load types URL " + types_uri, x);
-        } finally {
-            GeneralUtils.safeClose(is);
-        }
-        return types;
     }
 
     /**
@@ -388,14 +301,8 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
             }
         }
         List<String> types = null;
-        if (types_query_uri != null) {
-//			types = getTypes(types_query_uri);
-        }
         if (feature_query_uri != null) {
             addFeature(feature_query_uri, entry_points_query_uri, stylesheet_query_uri, title, types);
-        }
-        if (sources_query_uri != null && loadSub) {
-//			loadSourcesURL(sources_query_uri, false);
         }
     }
 
@@ -409,24 +316,12 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
     private void loadSourcesURL(String url, boolean loadSub) {
         InputStream is = null;
         try {
-            if (DEBUG) {
-                System.out.println("!!! DAS Registry processing source URL " + url);
-            }
-            System.out.flush();
             is = new URL(url).openConnection().getInputStream();
             Document dom = XMLUtils.getDocument(is);
             NodeList nl = dom.getElementsByTagName("SOURCE");
             for (int i = 0; i < nl.getLength(); i++) {
                 processSourceNode(nl.item(i), loadSub);
             }
-            if (DEBUG) {
-                System.out.println("!!! DAS Registry CONTENT sources URL ");
-            }
-            System.out.flush();
-            if (DEBUG) {
-                printXML(dom);
-            }
-            System.out.flush();
         } catch (Exception x) {
             Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "failed to load sources URL " + url, x);
         } finally {
@@ -470,9 +365,6 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
      */
     public void setGroup(AnnotatedSeqGroup group) {
         Date start = new Date();
-        if (DEBUG) {
-            System.out.println("!!! DAS Registry start groupSelectionChanged()");
-        }
         String organism = "";
         try {
             for (GenericServer gServer : serverMap.values()) {
@@ -520,9 +412,6 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
             }
         }
         Date end = new Date();
-        if (DEBUG) {
-            System.out.println("!!! DAS Registry end groupSelectionChanged() " + ((end.getTime() - start.getTime()) / 1000.0) + " seconds");
-        }
     }
 
     @Override
@@ -545,7 +434,7 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
             Map<String, Object> featureProps = getFeatureProps(uri);
             // if the server has entry_points try that to get the segment (AKA sequence AKA chromosome)
             if (featureProps != null && featureProps.get("entry_points_uri") != null) {
-                DasSource source = new DasSource(null, new URL(uri), null, null);
+                DasSource source = new DasSource(null, new URL(uri));
                 Set<String> segments = source.getEntryPoints();
                 segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, null);
             }
@@ -566,26 +455,9 @@ public class DASRegistryServerType extends DasServerType implements ServerTypeI,
         try {
             return super.loadFeatures(span, feature);
         } catch (Exception x) {
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load {0}, {1}", new Object[]{feature.featureName, x.getMessage()});
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.SEVERE, "cannot load {0}, {1}", new Object[]{feature.getFeatureName(), x.getMessage()});
         }
         return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
     }
 
-    // http://www.petefreitag.com/item/445.cfm
-    private void printXML(Document doc) { // for debugging only
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            //initialize StreamResult with File object to save to file
-            StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(doc);
-            transformer.transform(source, result);
-
-            String xmlString = result.getWriter().toString();
-            System.out.println(xmlString);
-        } catch (Exception x) {
-            System.out.println("(Fail exception) " + x.getMessage());
-        }
-    }
 }

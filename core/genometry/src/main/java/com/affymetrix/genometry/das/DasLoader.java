@@ -58,15 +58,15 @@ public abstract class DasLoader {
      * @return a string of residues from the DAS server or null
      */
     public static String getDasResidues(GenericVersion version, String seqid, int min, int max) {
-        Set<String> segments = ((DasSource) version.versionSourceObj).getEntryPoints();
+        Set<String> segments = ((DasSource) version.getVersionSourceObj()).getEntryPoints();
         String segment = SynonymLookup.getDefaultLookup().findMatchingSynonym(segments, seqid);
         URI request;
         InputStream result_stream = null;
         String residues = null;
 
         try {
-            request = URI.create(version.gServer.URL);
-            URL url = new URL(request.toURL(), version.versionID + "/dna?");
+            request = URI.create(version.getgServer().getUrlString());
+            URL url = new URL(request.toURL(), version.getVersionID() + "/dna?");
             QueryBuilder builder = new QueryBuilder(url.toExternalForm());
 
             builder.add("segment", segment + ":" + (min + 1) + "," + max);

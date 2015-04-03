@@ -6,9 +6,11 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
@@ -87,14 +89,14 @@ public class AddSource extends JFrame {
         mirrorURL = mirrorurl;
 
         if (isEditPanel) {
-            nameText.setText(server.serverName);
-            typeCombo.setSelectedItem(server.serverType);
-            urlText.setText(server.URL);
+            nameText.setText(server.getServerName());
+            typeCombo.setSelectedItem(server.getServerType());
+            urlText.setText(server.getUrlString());
             addServerButton.setText("Save Changes");
         } else {
             if (enableCombo) {
                 nameText.setText("Your server name");
-                typeCombo.setSelectedItem(ServerTypeI.QuickLoad);
+                typeCombo.setSelectedItem(QuickloadServerType.getInstance());
                 addServerButton.setText("Submit");
             } else {
                 nameText.setText("Your repository name");
@@ -217,7 +219,7 @@ public class AddSource extends JFrame {
                 .addContainerGap())
         );
 
-        typeCombo.removeItem(ServerTypeI.LocalFiles);
+        typeCombo.removeItem(LocalFilesServerType.getInstance());
         openDir.setToolTipText("Open Local Directory");
 
         pack();
@@ -235,7 +237,7 @@ public class AddSource extends JFrame {
 	}//GEN-LAST:event_openDirActionPerformed
 
 	private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
-        openDir.setEnabled(typeCombo.getSelectedItem() == ServerTypeI.QuickLoad);
+        openDir.setEnabled(typeCombo.getSelectedItem() == QuickloadServerType.getInstance());
 	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed

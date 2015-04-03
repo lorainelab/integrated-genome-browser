@@ -108,11 +108,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             if (feature1.getLoadStrategy() != feature2.getLoadStrategy()) {
                 return (feature1.getLoadStrategy().compareTo(feature2.getLoadStrategy()));
             }
-            if (feature1.featureName.compareTo(feature2.featureName) != 0) {
-                return feature1.featureName.compareTo(feature2.featureName);
+            if (feature1.getFeatureName().compareTo(feature2.getFeatureName()) != 0) {
+                return feature1.getFeatureName().compareTo(feature2.getFeatureName());
             }
-            return feature1.gVersion.gServer.serverType.compareTo(
-                    feature2.gVersion.gServer.serverType);
+            return feature1.getgVersion().getgServer().getServerType().compareTo(feature2.getgVersion().getgServer().getServerType());
         }
     }
 
@@ -168,17 +167,17 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 return "";
             case LOAD_STRATEGY_COLUMN:
                 // return the load strategy
-//				if (!vFeature.isPrimary()) {
+//				if (!vFeature.isCacheServer()) {
 //					return "";
 //				}
                 return feature.getLoadStrategy().toString();
             case TRACK_NAME_COLUMN:
-                if (feature.featureName.equals(CytobandParser.CYTOBAND_TIER_NAME)
-                        || feature.featureName.equalsIgnoreCase(CytobandParser.CYTOBAND)
-                        || feature.featureName.equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
-                    return feature.featureName;
+                if (feature.getFeatureName().equals(CytobandParser.CYTOBAND_TIER_NAME)
+                        || feature.getFeatureName().equalsIgnoreCase(CytobandParser.CYTOBAND)
+                        || feature.getFeatureName().equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
+                    return feature.getFeatureName();
                 } else if (style == null) {
-                    return feature.featureName;
+                    return feature.getFeatureName();
                 }
                 return style.getTrackName();
             case FOREGROUND_COLUMN:
@@ -230,7 +229,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         } else if (style != null && style.getMethodName().matches(CytobandParser.CYTOBAND_TIER_NAME)) {
             return col == HIDE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN || col == DELETE_FEATURE_COLUMN;
         } //		else if ((col == DELETE_FEATURE_COLUMN || col == REFRESH_FEATURE_COLUMN)
-        //				&& !vFeature.isPrimary()) {
+        //				&& !vFeature.isCacheServer()) {
         //			return false;
         //		}
         else if (smv.getFloaterGlyph().getChildren() != null
@@ -277,7 +276,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
         switch (col) {
             case DELETE_FEATURE_COLUMN:
-                String message = "Really remove entire " + feature.featureName + " data set ?";
+                String message = "Really remove entire " + feature.getFeatureName() + " data set ?";
                 if (ScriptManager.SCRIPTING.equals(value) || ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                     features.stream().filter(gFeature -> gFeature.equals(feature)).forEach(gFeature -> {

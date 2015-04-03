@@ -88,7 +88,6 @@ public class IGBAuthenticator extends Authenticator {
      */
     private static JOptionPane buildDialog(
             final GenericServer serverObject,
-            final boolean authOptional,
             final String urlString,
             final String errorString,
             final JRadioButton anon,
@@ -105,7 +104,7 @@ public class IGBAuthenticator extends Authenticator {
         final JButton cancel = new JButton(BUNDLE.getString("cancel"));
         final JButton tryAgain = new JButton(BUNDLE.getString("tryagain"));
         final JCheckBox showPassword = new JCheckBox();
-        final JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.serverName, authOptional);
+        final JPanel messageContainer = serverObject == null ? new JPanel() : setMessage(serverObject.getServerName());
         final JLabel error = new JLabel(errorString);
         final JLabel server = new JLabel(urlString);
 
@@ -201,7 +200,7 @@ public class IGBAuthenticator extends Authenticator {
         }
 
         if (serverObject != null) {
-            url = serverObject.URL;
+            url = serverObject.getUrlString();
             serverNode = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));//GeneralUtils.URLEncode(url));
             authType = AuthType.valueOf(serverNode.get(PREF_AUTH_TYPE, AuthType.ASK.toString()));
             if (serverObject.getLogin() != null) {
@@ -247,20 +246,19 @@ public class IGBAuthenticator extends Authenticator {
     private PasswordAuthentication displayDialog(final Component parent, final Preferences serverNode,
             final GenericServer serverObject, final String urlString, final String usrnmString, final String pwdString, final String errorString) {
 
-        final boolean authOptional = serverObject != null && serverObject.serverType != null && serverObject.serverType.isAuthOptional();
         final JRPTextField username = new JRPTextField("IGBAuthenticator_username", usrnmString);
         final JPasswordField password = new JPasswordField(pwdString);
         final JRadioButton anon = new JRadioButton(BUNDLE.getString("useAnonymousLogin"));
         final JRadioButton auth = new JRadioButton(BUNDLE.getString("authToServer"));
         final JCheckBox remember = new JCheckBox();
 
-        anon.setSelected(authOptional);
-        anon.setEnabled(authOptional);
-        auth.setSelected(!authOptional);
+        anon.setSelected(false);
+        anon.setEnabled(false);
+        auth.setSelected(true);
         remember.setEnabled(serverObject != null && serverNode != null && serverNode.parent().getBoolean(PREF_REMEMBER, true));
-        remember.setSelected(!remember.isEnabled() && !authOptional);
+        remember.setSelected(!remember.isEnabled());
 
-        JOptionPane optionPane = buildDialog(serverObject, authOptional, urlString, errorString, anon, auth, username, password, remember);
+        JOptionPane optionPane = buildDialog(serverObject, urlString, errorString, anon, auth, username, password, remember);
         JDialog jdg = optionPane.createDialog(parent, null);
         jdg.addWindowListener(new WindowAdapter() {
             @Override
@@ -306,7 +304,7 @@ public class IGBAuthenticator extends Authenticator {
          * Das2ServerInfo: getSources() will call initialize() every time
          * if the login() fails.  Currently, this occurs 4 times on startup.
          */
-        return authOptional ? doAnonymous() : null;
+        return null;
     }
 
     private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws IOException {
@@ -332,13 +330,13 @@ public class IGBAuthenticator extends Authenticator {
      * authentication.
      * @return a JPanel containing the message
      */
-    private static JPanel setMessage(String serverName, boolean authOptional) {
+    private static JPanel setMessage(String serverName) {
         JPanel messageContainer = new JPanel();
         /* instantiante current simply to steal FontMetrics from it */
         JLabel current = new JLabel();
         String[] message = IgbStringUtils.wrap(
                 MessageFormat.format(
-                        BUNDLE.getString(authOptional ? "authOptional" : "authRequired"),
+                        BUNDLE.getString("authRequired"),
                         serverName),
                 current.getFontMetrics(current.getFont()),
                 500);

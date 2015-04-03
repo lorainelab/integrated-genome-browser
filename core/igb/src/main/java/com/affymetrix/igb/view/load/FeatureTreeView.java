@@ -8,12 +8,13 @@ import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
@@ -252,8 +253,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
              *//*
              * && canHandleFeature(feature)
              */
-            features.stream().filter(feature -> feature.gVersion.gServer.equals(server)).forEach(feature -> {
-                addOrFindNode(serverRoot, feature, feature.featureName);
+            features.stream().filter(feature -> feature.getgVersion().getgServer().equals(server)).forEach(feature -> {
+                addOrFindNode(serverRoot, feature, feature.getFeatureName());
             });
             if (serverRoot.getChildCount() > 0) {
                 root.add(serverRoot);
@@ -272,7 +273,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param featureName
      */
     private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
-        if (!featureName.contains(path_separator) || feature.gVersion.gServer.serverType == ServerTypeI.LocalFiles) {
+        if (!featureName.contains(path_separator) || feature.getgVersion().getgServer().getServerType() == LocalFilesServerType.getInstance()) {
             //This code adds a leaf
             TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
@@ -296,9 +297,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
             }
             GenericFeature candidateFeature = (GenericFeature) nodeData;
-            String candidateName = candidateFeature.featureName;
+            String candidateName = candidateFeature.getFeatureName();
             // See if this can go under a previous node.  Be sure we're working with the same version/server.
-            if (candidateName.equals(featureLeft) && candidateFeature.gVersion.equals(feature.gVersion)) {
+            if (candidateName.equals(featureLeft) && candidateFeature.getgVersion().equals(feature.getgVersion())) {
                 // Make sure we are really dealing with a non-leaf node.  This will
                 // fix bug caused by name collision when a folder and feature are
                 // named the same thing.
@@ -314,7 +315,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
         // Couldn't find matching node.  Add new one.
         // John -- not really sure what the following code is for. ?
-        GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion, null, null, autoload);
+        GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.getgVersion(), null, null, autoload);
         TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
         root.add(newNode);
@@ -486,14 +487,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @return hyperlink of the server name
      */
     private static String serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-        if (!gServer.serverType.hasFriendlyURL()) {
+        if (!gServer.getServerType().hasFriendlyURL()) {
             return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
         }
 
         String friendlyURL = gServer.getFriendlyURL();
 
         if (friendlyURL != null) {
-            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
+            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getServerName(), thetree.getGraphics());
             bounds.width = (int) linkBound.getWidth();
             if (gServer.getFriendlyIcon() != null) {
                 bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
@@ -614,8 +615,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             // You must call super before each return.
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
-            String featureName = gFeature.featureName;
-            String featureText = gFeature.gVersion.gServer.serverType != ServerTypeI.LocalFiles
+            String featureName = gFeature.getFeatureName();
+            String featureText = gFeature.getgVersion().getgServer().getServerType() != LocalFilesServerType.getInstance()
                     ? featureName.substring(featureName.lastIndexOf(path_separator) + 1) : featureName;
             featureText = "<html>" + featureText;
             if (gFeature.getFriendlyURL() != null) {
@@ -645,13 +646,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
             String serverNameString = "";
-            if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.serverType.hasFriendlyURL()) {
+            if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.getServerType().hasFriendlyURL()) {
                 // TODO - hack to ignore server hyperlinks for DAS/1.
-                serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.serverName + "</b></a>";
+                serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.getServerName() + "</b></a>";
             } else {
-                serverNameString = "<b>" + gServer.serverName + "</b>";
+                serverNameString = "<b>" + gServer.getServerName() + "</b>";
             }
-            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.serverType.getName() + ")</i>";
+            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getServerType().getName() + ")</i>";
 
             if (DEBUG) {
                 serverNameString = serverNameString + " [" + leafCount(node) + "]";
@@ -690,8 +691,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                     if (tn.genericObject instanceof GenericFeature) {
                         GenericFeature feature = (GenericFeature) tn.genericObject;
-                        if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad) {
-                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.symL.uri.toString());
+                        if (feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
+                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
                             FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
                             if (fth == null) {
                                 ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
@@ -701,7 +702,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
-                            if (feature.gVersion.gServer.serverType == ServerTypeI.QuickLoad && !isURLReachable(feature.getURI())) {
+                            if (feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance() && !isURLReachable(feature.getURI())) {
 
                                 /**
                                  * qlmirror - Quickload Mirror Server
@@ -717,14 +718,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                  * igb_defaults_prefs.xml by 'mirror' attribute
                                  *
                                  */
-                                GenericServer gServer = feature.gVersion.gServer;
-                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.serverName + " is unreachable at this time.\nWould you like to use the mirror site?")) {
-                                    gServer.serverObj = gServer.mirrorURL; // Update serverObj to support new server & feature friendly URL
-                                    for (GenericFeature gFeature : feature.gVersion.getFeatures()) {
+                                GenericServer gServer = feature.getgVersion().getgServer();
+                                if (gServer.useMirrorSite() && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
+                                    gServer.setServerObj(gServer.getMirrorUrl()); // Update serverObj to support new server & feature friendly URL
+                                    for (GenericFeature gFeature : feature.getgVersion().getFeatures()) {
                                         if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
-                                            URI newURI = URI.create(gFeature.symL.uri.toString().replaceAll(gServer.URL, gServer.mirrorURL));
-                                            gFeature.symL.setURI(newURI);
-                                            ((QuickLoadSymLoader) gFeature.symL).getSymLoader().setURI(newURI);
+                                            URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrlString(), gServer.getMirrorUrl()));
+                                            gFeature.getSymL().setURI(newURI);
+                                            ((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader().setURI(newURI);
                                         }
                                     }
                                     tn.setChecked(true);
@@ -746,7 +747,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                 GeneralLoadView.getLoadView().addFeature(feature);
                             }
                         } else {
-                            message = "Unchecking " + feature.featureName
+                            message = "Unchecking " + feature.getFeatureName()
                                     + " will remove all loaded data. \nDo you want to continue? ";
                             if (Strings.isNullOrEmpty(feature.getMethod()) || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
@@ -780,7 +781,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                 if (tn.genericObject instanceof GenericFeature) {
                     GenericFeature feature = (GenericFeature) tn.genericObject;
-                    extraInfo = feature.gVersion.gServer.serverType + ":" + feature.gVersion.gServer.serverName + "." + feature.featureName;
+                    extraInfo = feature.getgVersion().getgServer().getServerType() + ":" + feature.getgVersion().getgServer().getServerName() + "." + feature.getFeatureName();
                 }
             }
             return extraInfo;
@@ -888,9 +889,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         public String getId() {
             if (genericObject instanceof GenericServer) {
-                return ((GenericServer) genericObject).serverType + ":" + ((GenericServer) genericObject).serverName;
+                return ((GenericServer) genericObject).getServerType() + ":" + ((GenericServer) genericObject).getServerName();
             } else if (genericObject instanceof GenericFeature) {
-                return ((GenericFeature) genericObject).featureName;
+                return ((GenericFeature) genericObject).getFeatureName();
             }
             return null;
         }

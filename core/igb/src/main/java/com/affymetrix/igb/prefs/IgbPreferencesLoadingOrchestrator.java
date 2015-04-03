@@ -57,7 +57,7 @@ public class IgbPreferencesLoadingOrchestrator {
                 String url = GeneralUtils.URLDecode(node.get("url", ""));
                 boolean nodeRemoved = false;
                 for (GenericServer server : loadedServers) {
-                    if (server.URL.equals(url)) {
+                    if (server.getUrlString().equals(url)) {
                         node.removeNode();
                         nodeRemoved = true;
                         break;
@@ -69,7 +69,6 @@ public class IgbPreferencesLoadingOrchestrator {
                     dataProvider.setDefault(Boolean.FALSE.toString());
                     dataProvider.setEnabled(node.get("enabled", "false"));
                     dataProvider.setOrder(node.getInt("order", 1));
-                    dataProvider.setPrimary((Boolean.FALSE.toString()));
                     dataProvider.setName(node.get("name", "unknown"));
                     dataProvider.setType(node.get("type", ""));
                     dataProvider.setPassword(node.get("password", ""));

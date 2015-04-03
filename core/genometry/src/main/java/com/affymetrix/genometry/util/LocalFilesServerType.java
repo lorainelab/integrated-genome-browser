@@ -7,7 +7,6 @@ import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -92,35 +91,29 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getSpeciesAndVersions(GenericServer gServer,
-            GenericServer primaryServer, URL primaryURL, VersionDiscoverer versionDiscoverer) {
+    public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         return false;
     }
 
     @Override
     public Map<String, List<? extends SeqSymmetry>> loadFeatures(SeqSpan span, GenericFeature feature)
             throws Exception {
-        if (((QuickLoadSymLoader) feature.symL).getSymLoader() != null
-                && (((QuickLoadSymLoader) feature.symL).getSymLoader().isResidueLoader())) {
+        if (((QuickLoadSymLoader) feature.getSymL()).getSymLoader() != null
+                && (((QuickLoadSymLoader) feature.getSymL()).getSymLoader().isResidueLoader())) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
-        return (((QuickLoadSymLoader) feature.symL).loadFeatures(span, feature));
-    }
-
-    @Override
-    public boolean isAuthOptional() {
-        return false;
+        return (((QuickLoadSymLoader) feature.getSymL()).loadFeatures(span, feature));
     }
 
     @Override
     public boolean getResidues(GenericVersion version, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
         for (GenericFeature feature : version.getFeatures()) {
-            if (feature.symL == null || !feature.symL.isResidueLoader()) {
+            if (feature.getSymL() == null || !feature.getSymL().isResidueLoader()) {
                 continue;
             }
             try {
-                String residues = feature.symL.getRegionResidues(span);
+                String residues = feature.getSymL().getRegionResidues(span);
                 if (residues != null) {
                     BioSeqUtils.addResiduesToComposition(aseq, residues, span);
                     return true;
@@ -144,15 +137,15 @@ public class LocalFilesServerType implements ServerTypeI {
 
     @Override
     public String getFriendlyURL(GenericServer gServer) {
-        if (gServer.URL == null) {
+        if (gServer.getUrlString() == null) {
             return null;
         }
-        String tempURL = gServer.URL;
+        String tempURL = gServer.getUrlString();
         if (tempURL.endsWith("/")) {
             tempURL = tempURL.substring(0, tempURL.length() - 1);
         }
-        if (gServer.serverType != null) {
-            tempURL = gServer.serverType.adjustURL(tempURL);
+        if (gServer.getServerType() != null) {
+            tempURL = gServer.getServerType().adjustURL(tempURL);
         }
         return tempURL;
     }

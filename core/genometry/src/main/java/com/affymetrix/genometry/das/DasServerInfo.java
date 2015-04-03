@@ -11,10 +11,7 @@ package com.affymetrix.genometry.das;
 
 import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.util.ServerTypeI;
-import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.genometry.util.XMLUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +38,8 @@ public final class DasServerInfo {
     private static final boolean REPORT_SOURCES = false;
     private static final boolean REPORT_CAPS = true;
     private URL serverURL;
-    private URL primaryURL = null;
     private final Map<String, DasSource> sources = new LinkedHashMap<>();  // using LinkedHashMap for predictable iteration
     private boolean initialized = false;
-    private GenericServer primaryServer = null;
 
     /**
      * Creates an instance of DasServerInfo for the given DAS server url.
@@ -60,12 +55,7 @@ public final class DasServerInfo {
 
     }
 
-    public Map<String, DasSource> getDataSources(URL primaryURL, GenericServer primaryServer) {
-
-        if (this.primaryURL == null) {
-            setPrimaryURL(primaryURL);
-            this.primaryServer = primaryServer;
-        }
+    public Map<String, DasSource> getDataSources(GenericServer server) {
 
         if (!initialized) {
             initialize();
@@ -73,20 +63,8 @@ public final class DasServerInfo {
         return sources;
     }
 
-    private void setPrimaryURL(URL primaryURL) {
-        if (primaryURL != null) {
-            try {
-                this.primaryURL = new URL(ServerUtils.formatURL(primaryURL.toExternalForm(), ServerTypeI.QuickLoad));
-            } catch (MalformedURLException ex) {
-                logger.error("MalformedURLException", ex);
-            }
-        } else {
-            this.primaryURL = null;
-        }
-    }
-
     public Map<String, DasSource> getDataSources() {
-        return getDataSources(null, null);
+        return getDataSources(null);
     }
 
     /**
@@ -182,7 +160,7 @@ public final class DasServerInfo {
             DasSource das_source = sources.get(DasSource.getID(masterURL));
             synchronized (this) {
                 if (das_source == null) {
-                    das_source = new DasSource(serverURL, masterURL, primaryURL, primaryServer);
+                    das_source = new DasSource(serverURL, masterURL);
                     sources.put(DasSource.getID(masterURL), das_source);
                 }
                 das_source.add(sourceid);
@@ -198,33 +176,10 @@ public final class DasServerInfo {
     public InputStream getInputStream(Map<String, List<String>> headers, String log_string) throws IOException {
         URL load_url = getLoadURL();
         InputStream istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
-
-        /**
-         * Check to see if trying to load from primary server but primary server
-         * is not responding *
-         */
-        if (istr == null && isLoadingFromPrimary()) {
-
-            logger.warn("Primary Server :{} is not responding. So disabling it for this session.", primaryServer.serverName);
-            primaryServer.setServerStatus(ServerStatus.NotResponding);
-
-            load_url = getLoadURL();
-            istr = LocalUrlCacher.getInputStream(load_url, true, null, headers);
-        }
-
-        logger.debug("{} : {}", new Object[]{log_string, load_url});
         return istr;
     }
 
-    private boolean isLoadingFromPrimary() {
-        return (primaryURL != null && primaryServer != null && !primaryServer.getServerStatus().equals(ServerStatus.NotResponding));
-    }
-
     private URL getLoadURL() throws MalformedURLException {
-        if (!isLoadingFromPrimary()) {
-            return serverURL;
-        }
-
-        return new URL(primaryURL.toExternalForm() + "/dsn.xml");
+        return serverURL;
     }
 }

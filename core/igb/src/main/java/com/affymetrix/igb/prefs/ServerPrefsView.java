@@ -60,9 +60,9 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
     protected JRPButton removeServerButton;
     public final SourceTableModel sourceTableModel;
 
-    public ServerPrefsView(ServerList serverList_) {
+    public ServerPrefsView(ServerList serverList) {
         layout = new GroupLayout(this);
-        serverList = serverList_;
+        this.serverList = serverList;
         sourceTableModel = new SourceTableModel(serverList);
 
         sourcePanel = initSourcePanel(getViewName());

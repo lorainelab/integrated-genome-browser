@@ -1,12 +1,9 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchMode;
 import com.lorainelab.igb.services.search.ISearchModeExtended;
@@ -51,21 +48,21 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 
     @Override
     public String getOptionName() {
-        int i = getRemoteServerCount();
+        int i = 0;
         String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
         return MessageFormat.format(REMOTESERVERSEARCH, "" + i, remoteServerPluralText);
     }
 
     @Override
     public String getOptionTooltip() {
-        int i = getRemoteServerCount();
+        int i = 0;
         String remoteServerPluralText = i == 1 ? REMOTESERVERSEARCHSINGULAR : REMOTESERVERSEARCHPLURAL;
         return MessageFormat.format(REMOTESERVERSEARCHTOOLTIP, "" + i, remoteServerPluralText);
     }
 
     @Override
     public boolean getOptionEnable() {
-        int i = getRemoteServerCount();
+        int i = 0;
         return i > 0;
     }
 
@@ -110,17 +107,4 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
         return null;
     }
 
-    private int getRemoteServerCount() {
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        if (group == null) {
-            return 0;
-        }
-        int count = 0;
-        for (GenericVersion gVersion : group.getEnabledVersions()) {
-            if (gVersion.gServer.serverType == ServerTypeI.DAS2) {
-                count++;
-            }
-        }
-        return count;
-    }
 }

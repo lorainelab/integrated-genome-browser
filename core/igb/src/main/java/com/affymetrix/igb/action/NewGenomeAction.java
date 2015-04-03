@@ -72,7 +72,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
                     try {
                         ChromInfoParser.parse(getInputStream(refSeqPath), group, refSeqPath);
                         GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
-                        ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
+                        ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ServerStatus.Initialized, false);
                     } catch (Exception ex) {
                         Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -81,7 +81,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
                 }
             } else {
                 GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
-                ServerList.getServerInstance().fireServerInitEvent(version.gServer, ServerStatus.Initialized, false);
+                ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ServerStatus.Initialized, false);
             }
 
             gmodel.setSelectedSeqGroup(group);

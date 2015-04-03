@@ -194,7 +194,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     public void restoreToDefault() {
         if (this.getFeature() != null) {
-            initStyle(IGBStateProvider.getDefaultTrackStyle(), this.getFeature().featureProps);
+            initStyle(IGBStateProvider.getDefaultTrackStyle(), this.getFeature().getFeatureProps());
         }
         this.setTrackName(original_track_name);
 

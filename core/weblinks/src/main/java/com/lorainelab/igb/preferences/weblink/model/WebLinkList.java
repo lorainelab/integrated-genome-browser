@@ -100,7 +100,7 @@ public class WebLinkList {
 
         //	if (webLinks.isEmpty()) {
         if (style.getFeature() != null) {
-            webLinks.addAll(getWebLink(sym, style.getFeature().featureName));
+            webLinks.addAll(getWebLink(sym, style.getFeature().getFeatureName()));
         }
         //	}
 

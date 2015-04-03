@@ -6,6 +6,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.comparator.AlphanumComparator;
 import com.affymetrix.genometry.comparator.SeqSymIdComparator;
 import com.affymetrix.genometry.comparator.StringVersionDateComparator;
+import com.affymetrix.genometry.das.DasServerType;
 import com.affymetrix.genometry.event.GenericServerInitEvent;
 import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
@@ -21,7 +22,7 @@ import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
@@ -573,8 +574,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         }
 
         GeneralLoadView.getLoadView().refreshDataManagementView();
-        GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS2);
-        GeneralLoadView.loadWholeRangeFeatures(ServerTypeI.DAS);
+        GeneralLoadView.loadWholeRangeFeatures(DasServerType.getInstance());
     }
 
     public void genericServerInit(GenericServerInitEvent evt) {
@@ -591,9 +591,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             return;	// ignore uninitialized servers
         }
 
-        if (gServer.serverType != ServerTypeI.LocalFiles) {
-            if (gServer.serverType != null) {
-                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.serverType.getName() + ")");
+        if (gServer.getServerType() != LocalFilesServerType.getInstance()) {
+            if (gServer.getServerType() != null) {
+                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().getName() + ")");
             }
         }
 
@@ -625,7 +625,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     private void populateSpeciesData() {
         for (final GenericServer gServer : ServerList.getServerInstance().getEnabledServers()) {
-            CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.serverName) {
+            CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("loading server " + gServer.getServerName()) {
                 @Override
                 protected Void runInBackground() {
                     GeneralLoadUtils.discoverServer(gServer);
@@ -651,10 +651,10 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         speciesCB.removeItemListener(this);
         versionCB.removeItemListener(this);
         GenericVersion gVersion = GeneralLoadUtils.getUnknownVersion(group);
-        String species = GeneralLoadUtils.getVersionName2Species().get(gVersion.versionName);
+        String species = GeneralLoadUtils.getVersionName2Species().get(gVersion.getVersionName());
         refreshSpeciesCB();
         if (DEBUG_EVENTS) {
-            System.out.println("Species is " + species + ", version is " + gVersion.versionName);
+            System.out.println("Species is " + species + ", version is " + gVersion.getVersionName());
         }
 
         if (!species.equals(speciesCB.getSelectedItem())) {
@@ -670,9 +670,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             refreshVersionCB(species);
         }
 
-        initVersion(gVersion.versionName);
+        initVersion(gVersion.getVersionName());
 
-        versionCB.setSelectedItem(gVersion.versionName);
+        versionCB.setSelectedItem(gVersion.getVersionName());
         versionCB.setEnabled(true);
         gviewer.getPartial_residuesButton().setEnabled(false);
         gviewer.getRefreshDataAction().setEnabled(false);
@@ -726,7 +726,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         if (versionList != null) {
             for (GenericVersion gVersion : versionList) {
                 // the same versionName name may occur on multiple servers
-                String versionName = gVersion.versionName;
+                String versionName = gVersion.getVersionName();
                 if (!versionNames.contains(versionName)) {
                     versionNames.add(versionName);
                 }

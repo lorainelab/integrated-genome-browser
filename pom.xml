@@ -169,6 +169,7 @@
                 <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module> 
+                <module>optionalPlugins/23andMe-snp-converter</module>
                 <module>developmentPlugins/DASRegistryServerType</module>
                 <module>developmentPlugins/FindAnnotations</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>                

@@ -13,7 +13,6 @@ import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BpsParser;
-import com.affymetrix.genometry.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.parsers.PSLParser;
@@ -28,7 +27,6 @@ import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -39,8 +37,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -285,22 +281,6 @@ public final class UrlLoaderThread extends Thread {
                 BpsParser.parse(dis, type, null, group, false, true);
             } finally {
                 GeneralUtils.safeClose(dis);
-            }
-        } else if (content_type.startsWith(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE)) {
-            BufferedInputStream bis = null;
-            try {
-                bis = new BufferedInputStream(stream);
-                InputSource input_source = new InputSource(new BufferedInputStream(bis));
-
-                Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
-                das_parser.parse(input_source, URI.create(url.toString()).toString(), group, true);
-
-            } catch (SAXException e) {
-                IOException ioe = new IOException("Error parsing DAS2 XML");
-                ioe.initCause(e);
-                throw ioe;
-            } finally {
-                GeneralUtils.safeClose(bis);
             }
         } else if (content_type.startsWith("text/plain")
                 || content_type.startsWith("text/html")

@@ -229,7 +229,6 @@ public class FileTypeHolder {
         addFileTypeHandler("Graph", new String[]{"chp"}, FileTypeCategory.ScoredContainer, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
         addFileTypeHandler("Copy Number", new String[]{"cnt"}, FileTypeCategory.Graph, CntParser.class, SymLoaderInst.class);
         addFileTypeHandler("Cytobands", new String[]{"cyt"}, /*FileTypeCategory.Cytoband*/ null, CytobandParser.class, SymLoaderInst.class);
-        addFileTypeHandler("DAS", new String[]{Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, "das2feature", "das2xml", "x-das-feature"}, FileTypeCategory.Annotation, Das2FeatureSaxParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("DAS", new String[]{"das", "dasxml"}, FileTypeCategory.Annotation, DASFeatureParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("Binary", new String[]{"ead"}, FileTypeCategory.Annotation, ExonArrayDesignParser.class, SymLoaderInstNC.class);
         addFileTypeHandler(

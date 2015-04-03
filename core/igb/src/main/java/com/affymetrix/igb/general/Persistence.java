@@ -11,8 +11,6 @@ import java.util.prefs.Preferences;
 
 public final class Persistence {
 
-    private final static boolean DEBUG = false;
-
     private final static String GENOME_ID = "GENOME_ID";  // full genome version ID if gets MD5-compressed in node creation
     private final static String SEQ_ID = "SEQ_ID";  // full seq ID if gets MD5-compressed in node creation
     private final static String SELECTED_GENOME_PREF = "SELECTED_GENOME_PREF";
@@ -65,9 +63,6 @@ public final class Persistence {
         if (group_id == null || group_id.length() == 0) {
             return null;
         }
-        if (DEBUG) {
-            System.out.println("Attempting to restore group:" + group_id);
-        }
         return gmodel.getSeqGroup(group_id);
     }
 
@@ -108,15 +103,9 @@ public final class Persistence {
         }
 
         BioSeq seq = group.getSeq(seq_id);
-        if (DEBUG) {
-            System.out.println("Persistence: seq_id is " + seq_id + ". seq is " + seq);
-        }
         // if selected or default seq can't be found, use first seq in group
         if (seq == null && group.getSeqCount() > 0) {
             seq = group.getSeq(0);
-            if (DEBUG) {
-                System.out.println("Persistence: seq is now " + seq);
-            }
         }
         return seq;
     }

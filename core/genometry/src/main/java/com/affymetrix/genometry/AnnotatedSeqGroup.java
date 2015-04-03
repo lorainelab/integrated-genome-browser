@@ -93,7 +93,7 @@ public class AnnotatedSeqGroup {
     final public Set<GenericVersion> getEnabledVersions() {
         Set<GenericVersion> versions = new CopyOnWriteArraySet<>();
         for (GenericVersion v : gVersions) {
-            if (v.gServer.isEnabled()) {
+            if (v.getgServer().isEnabled()) {
                 versions.add(v);
             }
         }
@@ -102,7 +102,7 @@ public class AnnotatedSeqGroup {
 
     final public GenericVersion getVersionOfServer(GenericServer gServer) {
         for (GenericVersion v : gVersions) {
-            if (v.gServer.equals(gServer)) {
+            if (v.getgServer().equals(gServer)) {
                 return v;
             }
         }

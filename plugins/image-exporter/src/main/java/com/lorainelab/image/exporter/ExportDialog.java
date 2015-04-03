@@ -466,6 +466,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      */
     private void resetPath(String path) {
         exportFile = new File(path);
+        exportDialogGui.getFilePathTextField().setText(path);
     }
 
     /**

@@ -160,7 +160,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
 
         GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-        GenericFeature feature = GeneralLoadView.getLoadView().createFeature(featureName, new Delegate(uri, featureName, version.group, operator, dps));
+        GenericFeature feature = GeneralLoadView.getLoadView().createFeature(featureName, new Delegate(uri, featureName, version.getGroup(), operator, dps));
 
         ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, featureName, Delegate.EXT, null);
         if (preferredStyle != null) {

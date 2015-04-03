@@ -3,11 +3,12 @@ package com.gene.searchmodelucene;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.quickload.QuickloadServerType;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
-import com.affymetrix.genometry.util.ServerTypeI;
+import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.lorainelab.igb.services.search.ISearchHints;
 import java.util.HashSet;
 import java.util.List;
@@ -45,10 +46,10 @@ public class SearchHints implements ISearchHints {
     public Set<String> search(String search_term) {
         Set<String> syms = new HashSet<>();
         AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        group.getEnabledVersions().stream().filter(gVersion -> gVersion.gServer.serverType == ServerTypeI.LocalFiles || gVersion.gServer.serverType == ServerTypeI.QuickLoad).forEach(gVersion -> {
+        group.getEnabledVersions().stream().filter(gVersion -> gVersion.getgServer().getServerType() == LocalFilesServerType.getInstance() || gVersion.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(gVersion -> {
             for (GenericFeature feature : gVersion.getFeatures()) {
-                if (feature.isVisible() && feature.symL != null) {
-                    List<String> results = luceneSearch.searchIndex(feature.symL.uri.toString(), search_term, MAX_HITS);
+                if (feature.isVisible() && feature.getSymL() != null) {
+                    List<String> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_term, MAX_HITS);
                     if (results != null) {
                         syms.addAll(results);
                     }

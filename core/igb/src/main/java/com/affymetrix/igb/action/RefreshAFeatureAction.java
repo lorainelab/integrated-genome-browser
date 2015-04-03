@@ -16,7 +16,7 @@ public class RefreshAFeatureAction extends GenericAction {
     private GenericFeature feature;
 
     public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
-        final String text = "Load " + feature.featureName;
+        final String text = "Load " + feature.getFeatureName();
         RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text);
         refreshAFeature.setFeature(feature);
         return refreshAFeature;

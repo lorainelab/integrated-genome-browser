@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * copy / modification of TierGlyph for ViewModeGlyph for annotations
@@ -45,6 +47,7 @@ import java.util.function.Predicate;
 public class DefaultTierGlyph extends TransformTierGlyph {
 
     private static final Map<String, Class<?>> ANNOT_DEFAULT_PREFERENCES;
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTierGlyph.class);
 
     static {
         Map<String, Class<?>> temp = new HashMap<>();
@@ -268,28 +271,37 @@ public class DefaultTierGlyph extends TransformTierGlyph {
 
     @Override
     public void superDrawChildren(ViewI view) {
-        if (getChildren() == null) {
-            return;
-        }
-        if (!isAnnotationTier() || style.getCollapsed()) {
-            getChildren().stream().forEach(child -> child.drawTraversal(view));
-        } else {
-            getChildren().stream().forEach(child -> {
-                if (child.isOverlapped()) {
-                    int maxDepth = getStyleDepth();
-                    if (child.getRowNumber() < maxDepth + MAX_CHILD_IN_SLOP_ROW) {
-                        Graphics2D g = view.getGraphics();
-                        Composite dac = g.getComposite();
-                        g.setComposite(ac);
-                        child.drawTraversal(view);
-                        g.setComposite(dac);
+        int max_depth = getStyleDepth();
+        try {
+            if (getChildren() != null) {
+                GlyphI child;
+                int numChildren = getChildren().size();
+                for (int i = 0; i < numChildren; i++) {
+                    child = getChildren().get(i);
+                    // TransientGlyphs are usually NOT drawn in standard drawTraversal
+                    if (!(child instanceof TransientGlyph) || drawTransients()) {
+                        if (child.isOverlapped() && this.tierType == TierType.ANNOTATION) {
+                            if (child.getRowNumber() < max_depth + MAX_CHILD_IN_SLOP_ROW) {
+                                if (!style.getCollapsed()) {
+                                    Graphics2D g = view.getGraphics();
+                                    Composite dac = g.getComposite();
+                                    g.setComposite(ac);
+                                    child.drawTraversal(view);
+                                    g.setComposite(dac);
+                                } else {
+                                    child.drawTraversal(view);
+                                }
+                            }
+                        } else {
+                            child.drawTraversal(view);
+                        }
                     }
-                } else {
-                    child.drawTraversal(view);
                 }
-            });
-        }
+            }
 
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
     }
 
     private boolean isAnnotationTier() {

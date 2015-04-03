@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
+import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,7 +23,6 @@ import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -45,6 +45,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An Authenticator class for IGB. It is designed to make it easier for a user
@@ -74,6 +76,7 @@ public class IGBAuthenticator extends Authenticator {
     private static final String PREF_AUTH_TYPE = "authentication type";
     private static final String PREF_REMEMBER = "remember authentication";
     private final JFrame parent;
+    private static final Logger logger = LoggerFactory.getLogger(IGBAuthenticator.class);
 
     public IGBAuthenticator(JFrame parent) {
         this.parent = parent;
@@ -192,9 +195,9 @@ public class IGBAuthenticator extends Authenticator {
         try {
             serverObject = ServerList.getServerInstance().getServer(this.getRequestingURL());
         } catch (URISyntaxException ex) {
-            Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.SEVERE, "Problem translating URL '" + this.getRequestingURL().toString() + "' to server", ex);
+            logger.error("Problem translating URL '{}' to server", this.getRequestingURL().toString(), ex);
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(IGBAuthenticator.class.getName()).log(Level.WARNING, "URL {0} was not in server list.", this.getRequestingURL());
+            logger.warn("URL {} was not in server list.", this.getRequestingURL());
         }
 
         if (serverObject != null) {
@@ -306,22 +309,17 @@ public class IGBAuthenticator extends Authenticator {
         return authOptional ? doAnonymous() : null;
     }
 
-    private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) {
-        InputStream temp = null;
+    private synchronized PasswordAuthentication testAuthentication(final String urlString, final String usrnmString, final char[] pwd) throws IOException {
         PasswordAuthentication pa = new PasswordAuthentication(usrnmString, pwd);
+        Authenticator.setDefault(new SingleAuthenticator(pa));
+        URL url = null;
         try {
-            Authenticator.setDefault(new SingleAuthenticator(pa));
-            URL url = new URL(urlString);
-            URLConnection conn = url.openConnection();
-            temp = conn.getInputStream();
-
-            if (temp == null) {
-                throw new IllegalArgumentException(ERROR_LOGIN);
-            }
-
-        } catch (IOException ex) {
+            url = new URL(urlString);
+        } catch (MalformedURLException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        try (InputStream temp = url.openStream()) {
         } finally {
-            GeneralUtils.safeClose(temp);
             Authenticator.setDefault(this);
         }
         return pa;

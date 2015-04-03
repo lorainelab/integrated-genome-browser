@@ -51,7 +51,7 @@ public class ShowFullFilePathInTrack extends SeqMapViewActionA {
                 if (b) {
                     URI uri = glyph.getAnnotStyle().getFeature().getURI();
                     if (uri != null) {
-                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(uri.getPath());
+                        ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(uri.toString());
                     }
                 } else {
                     String track_name = glyph.getAnnotStyle().getFeature().getFeatureName();

@@ -80,7 +80,7 @@ public final class TierLabelManager implements PropertyHolder {
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.FILE_NAME), feature.getFeatureName());
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.DESCRIPTION), feature.description());
         props.put(ToolTipConstants.URL, feature.getURI());
-        String server = feature.getgVersion().getgServer().getServerName() + " (" + feature.getgVersion().getgServer().getServerType().getName() + ")";
+        String server = feature.getgVersion().getgServer().getServerName() + " (" + feature.getgVersion().getgServer().getServerType().getServerName() + ")";
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
 
         return props;

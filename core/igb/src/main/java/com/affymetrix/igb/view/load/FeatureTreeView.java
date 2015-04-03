@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.GenometryConstants;
+import com.affymetrix.genometry.das.DasServerType;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.GenericFeature;
 import com.affymetrix.genometry.general.GenericServer;
@@ -21,6 +22,7 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
 import com.affymetrix.igb.swing.util.Idable;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,6 +48,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,6 +86,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     private final JRPButton serverPrefsB;
     public static final String path_separator = "/";
     private static ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
+    private final static Map<GenericServer, ImageIcon> faviconReference = Maps.newHashMap();
 
     public FeatureTreeView() {
         this.setLayout(new BorderLayout());
@@ -195,13 +199,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             }
         }
 
-        if (node == null || !(node instanceof DefaultMutableTreeNode)) {
+        if (!(node instanceof DefaultMutableTreeNode)) {
             return;
         }
 
         Object obj = ((DefaultMutableTreeNode) node).getUserObject();
 
-        if (obj == null || !(obj instanceof TreeNodeUserInfo)) {
+        if (!(obj instanceof TreeNodeUserInfo)) {
             return;
         }
 
@@ -367,29 +371,26 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         private final Cursor defaultCursor = null;
 
         public void mouseClicked(MouseEvent e) {
-
             int x = e.getX();
             int y = e.getY();
-            String friendlyURL = getURLAt((JTree) e.getSource(), x, y);
-            if (friendlyURL != null && friendlyURL.length() > 0) {
-                GeneralUtils.browse(friendlyURL);
-            }
+            JTree tree = (JTree) e.getSource();
+            getURLAt(tree, x, y).ifPresent(GeneralUtils::browse);
         }
 
         public void mouseMoved(MouseEvent e) {
-
             int x = e.getX();
             int y = e.getY();
-            JTree thetree = (JTree) e.getSource();
+            JTree tree = (JTree) e.getSource();
 
-            String friendlyURL = getURLAt(thetree, x, y);
-            if (friendlyURL != null && friendlyURL.length() > 0) {
-                thetree.setCursor(handCursor);
+            final Optional<String> urlAt = getURLAt(tree, x, y);
+            if (urlAt.isPresent()) {
+                tree.setCursor(handCursor);
             } else {
-                if (thetree.getCursor() != defaultCursor) {
-                    thetree.setCursor(defaultCursor);
+                if (tree.getCursor() != defaultCursor) {
+                    tree.setCursor(defaultCursor);
                 }
             }
+
         }
 
         public void mousePressed(MouseEvent e) {
@@ -416,24 +417,24 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param y
      * @return URL
      */
-    private static String getURLAt(JTree tree, int x, int y) {
+    private static Optional<String> getURLAt(JTree tree, int x, int y) {
 
         TreePath path = tree.getClosestPathForLocation(x, y);
         if (path == null) {
-            return null;
+            return Optional.empty();
         }
 
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
         if (node == null) {
-            return null;
+            return Optional.empty();
         }
 
         Rectangle bounds = tree.getPathBounds(path);
         if (bounds == null) {
-            return null;
+            return Optional.empty();
         }
         if (!bounds.contains(x, y)) {
-            return null;
+            return Optional.empty();
         }
 
         Object nodeData = node.getUserObject();
@@ -447,7 +448,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         if (nodeData instanceof GenericFeature) {
             return featureFriendlyURL((GenericFeature) nodeData, bounds, x, y);
         }
-        return null;
+        return Optional.empty();
 
     }
 
@@ -460,16 +461,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param y
      * @return hyerlink for the feature name
      */
-    private static String featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
+    private static Optional<String> featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
         if (!Strings.isNullOrEmpty(gFeature.getgVersion().getgServer().getUrlString())) {
             int iconWidth = 10 + 2 * 4;
             bounds.x += bounds.width - iconWidth;
             bounds.width = iconWidth;
             if (bounds.contains(x, y)) {
-                return gFeature.getgVersion().getgServer().getUrlString();
+                return Optional.ofNullable(gFeature.getgVersion().getgServer().getUrlString());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -482,28 +483,34 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param y
      * @return hyperlink of the server name
      */
-    private static String serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-        if (!gServer.getServerType().hasFriendlyURL()) {
-            return null;	// TODO - hack to ignore server hyperlinks for DAS/1.
-        }
-
-        String friendlyURL = gServer.getFriendlyURL();
+    private static Optional<String> serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
+        String friendlyURL = gServer.getUrlString();
 
         if (friendlyURL != null) {
             Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getServerName(), thetree.getGraphics());
             bounds.width = (int) linkBound.getWidth();
-            if (gServer.getFriendlyIcon() != null) {
-                bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
+            final Optional<ImageIcon> serverFavicon = getServerFavicon(gServer);
+            if (serverFavicon.isPresent()) {
+                bounds.x += serverFavicon.get().getIconWidth() + 1;
             } else {
                 bounds.x += 16;
             }
 
             if (bounds.contains(x, y)) {
-                return friendlyURL;
+                return Optional.ofNullable(friendlyURL);
             }
         }
-        return null;
+        return Optional.empty();
 
+    }
+
+    private static Optional<ImageIcon> getServerFavicon(GenericServer gServer) {
+        if (faviconReference.containsKey(gServer)) {
+            return Optional.ofNullable(faviconReference.get(gServer));
+        }
+        final Optional<ImageIcon> serverFavicon = Optional.ofNullable(GeneralUtils.determineFriendlyIcon(gServer.getUrlString() + "/favicon.ico"));
+        serverFavicon.ifPresent(favicon -> faviconReference.put(gServer, favicon));
+        return serverFavicon;
     }
 
     /*
@@ -642,22 +649,20 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
             String serverNameString = "";
-            if (gServer.getFriendlyURL() != null && gServer.getFriendlyURL().length() > 0 && gServer.getServerType().hasFriendlyURL()) {
+            if (gServer.getServerType() != DasServerType.getInstance()) {
                 // TODO - hack to ignore server hyperlinks for DAS/1.
-                serverNameString = "<a href='" + gServer.getFriendlyURL() + "'><b>" + gServer.getServerName() + "</b></a>";
+                serverNameString = "<a href='" + gServer.getUrlString() + "'><b>" + gServer.getServerName() + "</b></a>";
             } else {
                 serverNameString = "<b>" + gServer.getServerName() + "</b>";
             }
-            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getServerType().getName() + ")</i>";
+            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getServerType().getServerName() + ")</i>";
 
             if (DEBUG) {
                 serverNameString = serverNameString + " [" + leafCount(node) + "]";
             }
 
             super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
-            if (gServer.getFriendlyIcon() != null) {
-                setIcon(gServer.getFriendlyIcon());
-            }
+            getServerFavicon(gServer).ifPresent(this::setIcon);
             return this;
         }
     }

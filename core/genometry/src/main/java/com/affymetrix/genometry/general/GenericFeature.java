@@ -103,20 +103,16 @@ public final class GenericFeature {
             return;
         }
         if (getgVersion() != null && getgVersion().getgServer() != null) {
-            if (getgVersion().getgServer().getServerType().loadStrategyVisibleOnly()) {
-                setLoadStrategy(LoadStrategy.VISIBLE);
-            } else {
-                // Local File or QuickLoad
-                if (this.getSymL() != null) {
-                    if (this.getSymL().getLoadChoices().contains(LoadStrategy.VISIBLE)) {
-                        setLoadStrategy(LoadStrategy.VISIBLE);
+            if (this.getSymL() != null) {
+                if (this.getSymL().getLoadChoices().contains(LoadStrategy.VISIBLE)) {
+                    setLoadStrategy(LoadStrategy.VISIBLE);
 //					} else if (this.symL.getLoadChoices().contains(LoadStrategy.CHROMOSOME)) {
 //						setLoadStrategy(LoadStrategy.CHROMOSOME);
-                    } else {
-                        setLoadStrategy(LoadStrategy.GENOME);
-                    }
+                } else {
+                    setLoadStrategy(LoadStrategy.GENOME);
                 }
             }
+            setLoadStrategy(LoadStrategy.VISIBLE);
         }
     }
 

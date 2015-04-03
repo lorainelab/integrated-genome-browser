@@ -593,7 +593,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
         if (gServer.getServerType() != LocalFilesServerType.getInstance()) {
             if (gServer.getServerType() != null) {
-                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().getName() + ")");
+                igbService.removeNotLockedUpMsg("Loading server " + gServer + " (" + gServer.getServerType().getServerName() + ")");
             }
         }
 

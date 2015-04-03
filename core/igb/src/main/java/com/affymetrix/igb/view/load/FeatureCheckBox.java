@@ -37,7 +37,7 @@ public class FeatureCheckBox extends JRPCheckBox {
         String featureName = gFeature.getFeatureName();
         String featureText = gFeature.getFeatureName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1).replaceAll(" ", "_");
         return "FeatureTreeView_LeafCheckBox_"
-                + gFeature.getgVersion().getgServer().getServerType().getName()
+                + gFeature.getgVersion().getgServer().getServerType().getServerName()
                 + "_"
                 + gFeature.getgVersion().getgServer().getUrlString()
                 + "_"

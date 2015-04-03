@@ -72,28 +72,13 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     @Override
-    public String getName() {
+    public String getServerName() {
         return name;
     }
 
     @Override
     public String toString() {
         return name;
-    }
-
-    @Override
-    public String formatURL(String url) {
-        return url.endsWith("/") ? url : url + "/";
-    }
-
-    @Override
-    public String adjustURL(String url) {
-        return url;
-    }
-
-    @Override
-    public boolean loadStrategyVisibleOnly() {
-        return false;
     }
 
     public static void addQuickLoadSymLoaderHook(QuickLoadSymLoaderHook quickLoadSymLoaderHook) {
@@ -193,16 +178,6 @@ public class QuickloadServerType implements ServerTypeI {
 
     @Override
     public void discoverChromosomes(Object versionSourceObj) {
-    }
-
-    @Override
-    public boolean hasFriendlyURL() {
-        return true;
-    }
-
-    @Override
-    public boolean canHandleFeature() {
-        return false;
     }
 
     /**
@@ -382,7 +357,7 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getResidues(GenericVersion version, String genomeVersionName,
+    public boolean loadResidues(GenericVersion version, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
         String seq_name = aseq.getID();
         AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
@@ -395,12 +370,7 @@ public class QuickloadServerType implements ServerTypeI {
     }
 
     @Override
-    public void removeServer(GenericServer server) {
-        QuickLoadServerModel.removeQLModelForURL(server.getUrlString());
-    }
-
-    @Override
-    public boolean isSaveServersInPrefs() {
+    public boolean supportsUserAddedInstances() {
         return true;
     }
 

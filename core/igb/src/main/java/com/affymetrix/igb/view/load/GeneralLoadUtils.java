@@ -32,7 +32,6 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -288,10 +287,6 @@ public final class GeneralLoadUtils {
         GenericServer server = ServerList.getServerInstance().getLocalFilesServer();
 
         return discoverVersion(versionName, versionName, server, null, speciesName);
-    }
-
-    public static GenericVersion getIGBFilesVersion(AnnotatedSeqGroup group, String speciesName) {
-        return getXFilesVersion(ServerList.getServerInstance().getIGBFilesServer(), group, speciesName);
     }
 
     /**
@@ -867,24 +862,6 @@ public final class GeneralLoadUtils {
 
                         if (aseq != null) {
                             gviewer.setAnnotatedSeq(aseq, true, true);
-//					if (this.isCancelled()) {
-//						return;
-//					}
-//					try {
-//						Map<String, List<? extends SeqSymmetry>> results = get();
-//						for (Entry<String, List<? extends SeqSymmetry>> entry : results.entrySet()) {
-//							RootSeqSymmetry annotSym = aseq.getAnnotation(entry.getKey());
-//							if (entry.getKey() != null && annotSym != null) {
-//								MapTierGlyphFactoryI factory = MapTierTypeHolder.getInstance().getDefaultFactoryFor(annotSym.getCategory());
-//								ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(entry.getKey());
-//								factory.createGlyphs(annotSym, entry.getValue(), style, gviewer, aseq);
-//							}
-//						}
-//						gviewer.getSeqMap().repackTheTiers(true, true, true);
-//					} catch (Exception ex) {
-//						Logger.getLogger(GeneralLoadUtils.class.getName()).log(
-//								Level.SEVERE, "Unable to get refresh action result.", ex);
-//					}
                         } else if (gmodel.getSelectedSeqGroup() != null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
                             // This can happen when loading a brand-new genome
                             aseq = gmodel.getSelectedSeqGroup().getSeq(0);
@@ -964,24 +941,7 @@ public final class GeneralLoadUtils {
                         PreferenceUtils.CONFIRM_BEFORE_LOAD, PreferenceUtils.default_confirm_before_load));
             }
         }
-//		if(!check )
-//			return !check;
-//
         return false;
-        //end max
-    }
-
-    private static void setLastRefreshStatus(GenericFeature feature, boolean result) {
-        if (result) {
-            feature.setLastRefreshStatus(RefreshStatus.DATA_LOADED);
-        } else {
-            if (Strings.isNullOrEmpty(feature.getMethod())) {
-                feature.setLastRefreshStatus(RefreshStatus.NO_DATA_LOADED);
-            } else {
-                feature.setLastRefreshStatus(RefreshStatus.NO_NEW_DATA_LOADED);
-            }
-        }
-        //LoadModeTable.updateVirtualFeatureList();
     }
 
     /**
@@ -1008,12 +968,10 @@ public final class GeneralLoadUtils {
                 return false;
             }
             String serverDescription = version.getgServer().getServerName() + " " + version.getgServer().getServerType();
-//			String msg = MessageFormat.format(IGBConstants.BUNDLE.getString("loadingSequence"), seq_name, serverDescription);
-//			IGB.getInstance().addNotLockedUpMsg(msg);
-            if (version.getgServer().getServerType() != null && version.getgServer().getServerType().getResidues(version, genomeVersionName, aseq, min, max, span)) {
+            if (version.getgServer().getServerType() != null && version.getgServer().getServerType().loadResidues(version, genomeVersionName, aseq, min, max, span)) {
                 residuesLoaded = true;
             }
-//			IGB.getInstance().removeNotLockedUpMsg(msg);
+
             if (residuesLoaded) {
                 IGB.getInstance().setStatus(MessageFormat.format(IGBConstants.BUNDLE.getString("completedLoadingSequence"),
                         seq_name, min, max, serverDescription));
@@ -1034,14 +992,6 @@ public final class GeneralLoadUtils {
      * @return true if succeeded.
      */
     static boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
-
-        /*
-         * This test does not work properly, so it's being commented out for
-         * now.
-         *
-         * if (aseq.isComplete()) {  if (logger.isDebugEnabled()) { System.out.println("already
-         * have residues for " + seq_name); } return false; }
-         */
         // Determine list of servers that might have this chromosome sequence.
         Set<GenericVersion> versionsWithChrom = new HashSet<>();
         versionsWithChrom.addAll(aseq.getSeqGroup().getEnabledVersions());

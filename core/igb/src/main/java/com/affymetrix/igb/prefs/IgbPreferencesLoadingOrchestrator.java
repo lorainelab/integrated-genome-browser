@@ -4,17 +4,22 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.general.GenericServer;
+import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_URL;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.general.ServerList;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.DataProvider;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.osgi.framework.BundleContext;
@@ -25,6 +30,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     public static final String COMPONENT_NAME = "PrefsLoader";
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IgbPreferencesLoadingOrchestrator.class);
+    private static final Set<String> retiredServers = ImmutableSet.<String>of("http://bioviz.org/cached/");
 
     private IgbPreferencesService igbPreferencesService;
 
@@ -44,9 +50,12 @@ public class IgbPreferencesLoadingOrchestrator {
         //Temporary migration step... can be removed after a few release cycles
         loadOldPreferences();
 
-        //Load DataProviders from persistence api
-        ServerList.getServerInstance().loadServerPrefs();
+        //Filter deprecated servers from preferences
+        filterRetiredServersFromPrefs();
 
+        //Load from persistence api
+        loadFromPersistenceStorage();
+        DataLoadPrefsView.getSingleton().refreshServers();
     }
 
     private void loadOldPreferences() {
@@ -106,8 +115,38 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private static void processDataProviders(List<DataProvider> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
-        dataProviders.stream().forEach(dataProvider -> ServerList.getServerInstance().addServer(dataProvider));
-        DataLoadPrefsView.getSingleton().refreshServers();
+        dataProviders.stream().distinct().forEach(ServerList.getServerInstance()::addServer);
+    }
+
+    private void filterRetiredServersFromPrefs() {
+        try {
+            Arrays.stream(PreferenceUtils.getServersNode().childrenNames())
+                    .map(nodeName -> PreferenceUtils.getServersNode().node(nodeName))
+                    .filter(node -> retiredServers.contains(GeneralUtils.URLDecode(node.get("url", ""))))
+                    .forEach(node -> {
+                        try {
+                            node.removeNode();
+                        } catch (BackingStoreException ex) {
+                            logger.error(ex.getMessage(), ex);
+                        }
+                    });
+
+        } catch (BackingStoreException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+    }
+
+    private void loadFromPersistenceStorage() {
+        logger.info("Loading server preferences from the Java preferences subsystem");
+        try {
+            Arrays.stream(PreferenceUtils.getServersNode().childrenNames())
+                    .map(nodeName -> PreferenceUtils.getServersNode().node(nodeName))
+                    .filter(node -> Strings.isNullOrEmpty(node.get(SERVER_URL, "")))
+                    .forEach(ServerList.getServerInstance()::addServer);
+        } catch (BackingStoreException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        logger.info("Completed loading server preferences from the Java preferences subsystem");
     }
 
 }

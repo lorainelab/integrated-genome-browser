@@ -27,7 +27,7 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public String getName() {
+    public String getServerName() {
         return name;
     }
 
@@ -37,36 +37,11 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public String formatURL(String url) {
-        return url;
-    }
-
-    @Override
-    public String adjustURL(String url) {
-        return url;
-    }
-
-    @Override
-    public boolean loadStrategyVisibleOnly() {
-        return false;
-    }
-
-    @Override
     public void discoverFeatures(GenericVersion gVersion, boolean autoload) {
     }
 
     @Override
     public void discoverChromosomes(Object versionSourceObj) {
-    }
-
-    @Override
-    public boolean hasFriendlyURL() {
-        return true;
-    }
-
-    @Override
-    public boolean canHandleFeature() {
-        return false;
     }
 
     @Override
@@ -85,7 +60,7 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getResidues(GenericVersion version, String genomeVersionName,
+    public boolean loadResidues(GenericVersion version, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
         for (GenericFeature feature : version.getFeatures()) {
             if (feature.getSymL() == null || !feature.getSymL().isResidueLoader()) {
@@ -105,12 +80,7 @@ public class LocalFilesServerType implements ServerTypeI {
     }
 
     @Override
-    public void removeServer(GenericServer server) {
-        // Do Nothing for now
-    }
-
-    @Override
-    public boolean isSaveServersInPrefs() {
+    public boolean supportsUserAddedInstances() {
         return false;
     }
 }

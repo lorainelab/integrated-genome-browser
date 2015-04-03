@@ -54,7 +54,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private static final int DEFAULT_SPINNER_WIDTH = 600;
     private static final int DEFAULT_RESOLUTION = 300;
     public static float FONT_SIZE = 13.0f;
-    private static final String TITLE = "Save Image";
     private static final String DEFAULT_FILE = "igb.png";
 
     private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
@@ -63,7 +62,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private IgbService igbService;
 
     private String currentUnit;
-    private File defaultDir;
+    private final File defaultDir;
     private Component wholeFrame;
     private Component mainView;
     private Component mainViewWithLabels;
@@ -304,7 +303,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      *
      * @param panel
      */
-    public void saveButtonActionPerformed() {
+    public void saveAsButtonActionPerformed() {
         String fileName = "igb";
         File directory = defaultDir;
 
@@ -319,7 +318,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                     ErrorHandler.errorPanel("The output path is invalid.");
                 }
             } catch (Exception ex) {
-                //do nothing
+                logger.error(ex.getMessage(), ex);
             }
             if (fileName.contains("/")) {
                 if (fileName.length() > fileName.lastIndexOf("/")) {
@@ -352,7 +351,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         });
     }
 
-    public void okButtonActionPerformed() {
+    public void saveButtonActionPerformed() {
         String previousPath = exportFile.getAbsolutePath();
         String newPath = exportDialogGui.getFilePathTextField().getText();
         exportFile = new File(newPath);

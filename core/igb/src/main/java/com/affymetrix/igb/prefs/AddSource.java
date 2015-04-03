@@ -10,7 +10,6 @@ import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ServerUtils;
@@ -81,8 +80,7 @@ public class AddSource extends JFrame {
         }
     }
 
-    public void init(boolean isEditP, boolean comboActive, String title,
-            GenericServer server, String url, String mirrorurl) {
+    public void init(boolean isEditP, boolean comboActive, String title, GenericServer server, String url, String mirrorurl) {
         enableCombo = comboActive;
         isEditPanel = isEditP;
         serverURL = url;
@@ -150,19 +148,35 @@ public class AddSource extends JFrame {
 
         typeLabel.setText("Type:");
 
-        typeCombo = new JComboBox(ServerUtils.getServerTypes().toArray());
-        typeCombo.addActionListener(this::typeComboActionPerformed);
+        typeCombo = new JComboBox(ServerUtils.getServerTypesSupportingUserInstances().toArray());
+        typeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeComboActionPerformed(evt);
+            }
+        });
 
         urlLabelField.setText("URL:");
 
         openDir.setText("Choose local folder");
-        openDir.addActionListener(this::openDirActionPerformed);
+        openDir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDirActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(this::cancelButtonActionPerformed);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         addServerButton.setText("Submit");
-        addServerButton.addActionListener(this::addServerButtonActionPerformed);
+        addServerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addServerButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,10 +184,6 @@ public class AddSource extends JFrame {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(openDir)
-                        .add(0, 0, 0))
                     .add(layout.createSequentialGroup()
                         .add(12, 12, 12)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -186,10 +196,13 @@ public class AddSource extends JFrame {
                             .add(typeCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(nameText)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(164, Short.MAX_VALUE)
-                        .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 78, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(addServerButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, openDir)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(cancelButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 78, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(addServerButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))))
                 .add(8, 8, 8))
         );
 
@@ -219,7 +232,6 @@ public class AddSource extends JFrame {
                 .addContainerGap())
         );
 
-        typeCombo.removeItem(LocalFilesServerType.getInstance());
         openDir.setToolTipText("Open Local Directory");
 
         pack();
@@ -248,12 +260,12 @@ public class AddSource extends JFrame {
             protected Boolean runInBackground() {
                 if (isEditPanel) {
                     DataLoadPrefsView.getSingleton().updateSource(serverURL,
-                            (ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText(), mirrorURL);
+                            (ServerTypeI) typeCombo.getSelectedItem(), nameText.getText(), urlText.getText());
                 } else {
                     if (enableCombo) {
                         return DataLoadPrefsView.getSingleton().addDataSource(
                                 (ServerTypeI) typeCombo.getSelectedItem(),
-                                nameText.getText(), urlText.getText(), -1, false, mirrorURL);
+                                nameText.getText(), urlText.getText(), -1, false);
                     }
                 }
                 return true;
@@ -287,7 +299,7 @@ public class AddSource extends JFrame {
         if (server == null) {
             CThreadHolder.getInstance().execute(evt, worker);
         } else {
-            ModalUtils.infoPanel("<html>The server <i color=blue>" + server.getFriendlyURL() + "</i> has already been added. </html>");
+            ModalUtils.infoPanel("<html>The server <i color=blue>" + server.getUrlString() + "</i> has already been added. </html>");
         }
 
         this.setVisible(false);

@@ -363,13 +363,18 @@ public final class DataLoadPrefsView extends ServerPrefsView implements HtmlHelp
     }
 
     @Override
-    protected void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL) {
+    protected void updateSource(GenericServer server) {
+        ServerList.getServerInstance().removeServer(server.getUrlString());
+        addDataSource(server);
+    }
+
+    @Override
+    protected void updateSource(String url, ServerTypeI type, String name, String newUrl) {
         Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(url));
         int order = node.getInt(SERVER_ORDER, -1);
         boolean isDefault = ServerList.getServerInstance().getServer(url).isDefault();
         ServerList.getServerInstance().removeServer(url);
-        ServerList.getServerInstance().removeServerFromPrefs(url);
-        addDataSource(type, name, newUrl, order, isDefault, mirrorURL);
+        addDataSource(type, name, newUrl, order, isDefault);
     }
 
     @Override

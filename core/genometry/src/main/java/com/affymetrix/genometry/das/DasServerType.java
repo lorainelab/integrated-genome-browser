@@ -57,35 +57,13 @@ public class DasServerType implements ServerTypeI {
     }
 
     @Override
-    public String getName() {
+    public String getServerName() {
         return NAME;
     }
 
     @Override
     public String toString() {
         return NAME;
-    }
-
-    @Override
-    public String formatURL(String url) {
-        while (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
-        }
-        return url;
-    }
-
-    @Override
-    public String adjustURL(String url) {
-        String tempURL = url;
-        if (tempURL.endsWith("/dsn")) {
-            tempURL = tempURL.substring(0, tempURL.length() - 4);
-        }
-        return tempURL;
-    }
-
-    @Override
-    public boolean loadStrategyVisibleOnly() {
-        return true;
     }
 
     @Override
@@ -109,16 +87,6 @@ public class DasServerType implements ServerTypeI {
 
         version.getGenome();
         version.getEntryPoints();
-    }
-
-    @Override
-    public boolean hasFriendlyURL() {
-        return false;
-    }
-
-    @Override
-    public boolean canHandleFeature() {
-        return true;
     }
 
     /**
@@ -251,7 +219,7 @@ public class DasServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getResidues(GenericVersion version, String genomeVersionName,
+    public boolean loadResidues(GenericVersion version, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
         String seq_name = aseq.getID();
         DasResiduesHandler dasResiduesHandler = new DasResiduesHandler();
@@ -266,12 +234,7 @@ public class DasServerType implements ServerTypeI {
     }
 
     @Override
-    public void removeServer(GenericServer server) {
-        // Do Nothing for now
-    }
-
-    @Override
-    public boolean isSaveServersInPrefs() {
+    public boolean supportsUserAddedInstances() {
         return true;
     }
 

@@ -46,28 +46,13 @@ public class ThousandGenomesServerType implements ServerTypeI {
     }
 
     @Override
-    public String getName() {
+    public String getServerName() {
         return name;
     }
 
     @Override
     public String toString() {
         return name;
-    }
-
-    @Override
-    public String formatURL(String url) {
-        return url;
-    }
-
-    @Override
-    public String adjustURL(String url) {
-        return url;
-    }
-
-    @Override
-    public boolean loadStrategyVisibleOnly() {
-        return false;
     }
 
     private void addFile(GenericVersion gVersion, boolean autoload, String url) {
@@ -175,16 +160,6 @@ public class ThousandGenomesServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean hasFriendlyURL() {
-        return true;
-    }
-
-    @Override
-    public boolean canHandleFeature() {
-        return false;
-    }
-
-    @Override
     public boolean getSpeciesAndVersions(GenericServer gServer, VersionDiscoverer versionDiscoverer) {
         String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), VERSION);
         String versionName, speciesName;
@@ -209,18 +184,13 @@ public class ThousandGenomesServerType implements ServerTypeI {
     }
 
     @Override
-    public boolean getResidues(GenericVersion versions, String genomeVersionName,
+    public boolean loadResidues(GenericVersion versions, String genomeVersionName,
             BioSeq aseq, int min, int max, SeqSpan span) {
         return false;
     }
 
     @Override
-    public void removeServer(GenericServer server) {
-        // Do Nothing for now
-    }
-
-    @Override
-    public boolean isSaveServersInPrefs() {
+    public boolean supportsUserAddedInstances() {
         return false;
     }
 }

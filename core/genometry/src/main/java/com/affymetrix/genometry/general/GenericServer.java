@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.general;
 
-import static com.affymetrix.genometry.general.GenericServerPrefKeys.ENABLE_IF_AVAILABLE;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.IS_SERVER_ENABLED;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_LOGIN;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_NAME;
@@ -17,7 +16,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.ImageIcon;
 import org.slf4j.LoggerFactory;
 
 public final class GenericServer {
@@ -32,22 +30,11 @@ public final class GenericServer {
     private String password = "";
     private boolean enabled = true;
     private boolean userMirror = false;
-
-    private final String friendlyURL;
-    /**
-     * friendly icon that users may look at.
-     */
-    private ImageIcon friendlyIcon = null;
-    /**
-     * Don't keep on searching for friendlyIcon
-     */
-    private boolean friendlyIconAttempted = false;
     private ServerStatus serverStatus = ServerStatus.NotInitialized;
     private final boolean isDefault;
 
-    public GenericServer(String serverName, String urlString, ServerTypeI serverType,
-            boolean enabled, boolean isDefault, String mirrorURL) { //qlmirror
-        this(serverName, urlString, serverType, enabled, serverType.isSaveServersInPrefs() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
+    public GenericServer(String serverName, String urlString, ServerTypeI serverType, boolean enabled, boolean isDefault, String mirrorURL) {
+        this(serverName, urlString, serverType, enabled, serverType.supportsUserAddedInstances() ? PreferenceUtils.getServersNode().node(getHash(urlString)) : null,
                 isDefault, mirrorURL);
     }
 
@@ -74,29 +61,13 @@ public final class GenericServer {
         this.serverType = serverType;
         this.enabled = enabled;
         this.node = node;
-        this.friendlyURL = urlString;
 
         if (this.node != null) {
-            if (this.node.getBoolean(ENABLE_IF_AVAILABLE, false)) {
-                this.setEnabled(true);
-            } else {
-                this.setEnabled(this.node.getBoolean(IS_SERVER_ENABLED, enabled));
-            }
+            this.setEnabled(this.node.getBoolean(IS_SERVER_ENABLED, enabled));
             this.setLogin(this.node.get(SERVER_LOGIN, ""));
             this.setPassword(decrypt(this.node.get(SERVER_PASSWORD, "")));
         }
         this.isDefault = isDefault;
-    }
-
-    public ImageIcon getFriendlyIcon() {
-        if (friendlyIcon == null && !friendlyIconAttempted) {
-            if (this.friendlyURL != null) {
-                friendlyIconAttempted = true;
-                this.friendlyIcon = GeneralUtils.determineFriendlyIcon(
-                        this.friendlyURL + "/favicon.ico");
-            }
-        }
-        return friendlyIcon;
     }
 
     public void setServerStatus(ServerStatus serverStatus) {
@@ -162,19 +133,12 @@ public final class GenericServer {
         return this.isDefault;
     }
 
-    public String getFriendlyURL() {
-        return getUrlString();
-    }
-
     @Override
     public String toString() {
         return getServerName();
     }
 
     public void clean() {
-        if (getServerType() != null) {
-            getServerType().removeServer(this);
-        }
         setEnabled(false);
     }
 
@@ -231,10 +195,10 @@ public final class GenericServer {
     public URL getURL() {
         URL url = null;
         try {
-            if (!userMirror) {
-                url = new URL(urlString);
-            } else {
+            if (userMirror) {
                 url = new URL(mirrorUrl);
+            } else {
+                url = new URL(urlString);
             }
         } catch (MalformedURLException ex) {
             logger.error(ex.getMessage(), ex);

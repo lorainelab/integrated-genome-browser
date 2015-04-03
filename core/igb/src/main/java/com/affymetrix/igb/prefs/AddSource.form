@@ -113,8 +113,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeComboActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="typeCombo.removeItem(ServerTypeI.LocalFiles);"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="typeCombo = new JComboBox(ServerUtils.getServerTypes().toArray());"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="typeCombo = new JComboBox(ServerUtils.getServerTypesSupportingUserInstances().toArray());"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="10"/>
       </AuxValues>
     </Component>

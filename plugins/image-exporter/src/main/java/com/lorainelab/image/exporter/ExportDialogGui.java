@@ -69,11 +69,11 @@ public class ExportDialogGui extends JPanel {
         });
         saveAsButton = new JButton("Save As" + "\u2026");
         saveAsButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.saveButtonActionPerformed();
+            controller.saveAsButtonActionPerformed();
         });
         saveButton = new JButton("Save");
         saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.okButtonActionPerformed();
+            controller.saveButtonActionPerformed();
         });
         exportDialogFrame.getRootPane().setDefaultButton(saveAsButton);
         JPanel panel = new JPanel(new MigLayout("", "[grow][][]", "[]"));

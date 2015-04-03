@@ -113,7 +113,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 return left.getFeatureName().compareTo(right.getFeatureName());
             }
 
-            return left.getgVersion().getgServer().getServerType().getName().compareTo(right.getgVersion().getgServer().getServerType().getName());
+            return left.getgVersion().getgServer().getServerType().getServerName().compareTo(right.getgVersion().getgServer().getServerType().getServerName());
         }
     }
 

@@ -61,6 +61,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
         this.fireTableDataChanged();
     }
 
+    @Override
     public int getRowCount() {
         return servers.size();
     }
@@ -138,7 +139,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
                 if (server.getServerType() != null) {
                     if (!server.isEnabled()
                             || DataLoadPrefsView.getSingleton().confirmRefresh()) {
-                        DataLoadPrefsView.getSingleton().updateSource(server.getUrlString(), server.getServerType(), server.getServerName(), server.getUrlString(), server.getMirrorUrl());
+                        DataLoadPrefsView.getSingleton().updateSource(server);
                     }
                 }
                 break;

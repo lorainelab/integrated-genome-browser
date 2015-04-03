@@ -11,6 +11,7 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.general.GenericServer;
+import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_ORDER;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
@@ -217,6 +219,13 @@ public abstract class ServerPrefsView extends JRPJPanel implements PreferencesPa
         return table;
     }
 
+    public void addDataSource(GenericServer server) {
+        Preferences node = PreferenceUtils.getServersNode().node(GenericServer.getHash(server.getUrlString()));
+        int order = node.getInt(SERVER_ORDER, -1);
+        boolean isDefault = serverList.getServer(server.getUrlString()).isDefault();
+        GeneralLoadUtils.addServer(serverList, server.getServerType(), server.getServerName(), server.getUrlString(), order, isDefault, server.getMirrorUrl());
+    }
+
     /**
      * Add the URL/Directory and server name to the preferences.
      *
@@ -224,13 +233,12 @@ public abstract class ServerPrefsView extends JRPJPanel implements PreferencesPa
      * @param type
      * @param name
      */
-    public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault, String mirrorURL) {
+    public boolean addDataSource(ServerTypeI type, String name, String url, int order, boolean isDefault) {
         if (url == null || url.isEmpty() || url.equals("http://") || name == null || name.isEmpty()) {
             return false;
         }
-
-        GenericServer server = GeneralLoadUtils.addServer(serverList,
-                type, name, url, order, isDefault, mirrorURL); //qlmirror
+        String mirrorUrl = null;
+        GenericServer server = GeneralLoadUtils.addServer(serverList, type, name, url, order, isDefault, mirrorUrl);
 
         sourceTableModel.init();
         if (server == null) {
@@ -310,5 +318,7 @@ public abstract class ServerPrefsView extends JRPJPanel implements PreferencesPa
 
     protected abstract boolean enableCombo();
 
-    protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl, String mirrorURL);
+    protected abstract void updateSource(String url, ServerTypeI type, String name, String newUrl);
+
+    protected abstract void updateSource(GenericServer server);
 }

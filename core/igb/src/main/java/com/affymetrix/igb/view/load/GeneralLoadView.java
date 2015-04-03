@@ -495,11 +495,11 @@ public final class GeneralLoadView {
     }
 
     public GenericFeature createFeature(String featureName, SymLoader loader) {
-        GenericVersion version = GeneralLoadUtils.getIGBFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), getSelectedSpecies());
+        GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), getSelectedSpecies());
         GenericFeature feature = new GenericFeature(featureName, null, version, loader, null, false);
         version.addFeature(feature);
         feature.setVisible(); // this should be automatically checked in the feature tree
-        ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getIGBFilesServer(), LoadUtils.ServerStatus.Initialized, true);
+        ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), LoadUtils.ServerStatus.Initialized, true);
         refreshDataManagementView();
 
         return feature;

@@ -10,36 +10,15 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ServerUtils {
 
     private static final List<ServerTypeI> DEFAULT_SERVER_TYPES = ImmutableList.of(DasServerType.getInstance(), QuickloadServerType.getInstance(), LocalFilesServerType.getInstance());
-
-    /**
-     * Format a URL based on the ServerType's requirements.
-     *
-     * @param url URL to format
-     * @param type type of server the URL represents
-     * @return formatted URL
-     */
-    public static String formatURL(String url, ServerTypeI type) {
-        try {
-            url = url.replace(" ", "");
-            url = new URI(url).normalize().toASCIIString();
-        } catch (URISyntaxException ex) {
-            String message = "Unable to parse URL: '" + url + "'";
-            Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, message, ex);
-            throw new IllegalArgumentException(message, ex);
-        }
-        if (type == null) {
-            return url;
-        }
-        return type.formatURL(url);
-    }
 
     /**
      * Determine the appropriate loader.
@@ -61,6 +40,10 @@ public class ServerUtils {
     public static List<ServerTypeI> getServerTypes() {
         List<ServerTypeI> serverTypes = ExtensionPointHandler.getExtensionPoint(ServerTypeI.class) == null ? DEFAULT_SERVER_TYPES : ExtensionPointHandler.getExtensionPoint(ServerTypeI.class).getExtensionPointImpls();
         return serverTypes;
+    }
+
+    public static Set<ServerTypeI> getServerTypesSupportingUserInstances() {
+        return getServerTypes().stream().filter(serverType -> serverType.supportsUserAddedInstances()).collect(Collectors.toSet());
     }
 
     public static boolean isResidueFile(String format) {

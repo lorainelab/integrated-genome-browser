@@ -51,10 +51,9 @@ import org.slf4j.LoggerFactory;
 public final class ServerList {
 
     private static final Logger logger = LoggerFactory.getLogger(ServerList.class);
-    private final Map<String, GenericServer> url2server = new LinkedHashMap<>();
-    private final Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<>();
+    private final Map<String, GenericServer> url2server;
+    private final Set<GenericServerInitListener> serverInitListeners = new CopyOnWriteArraySet<>();
     private final GenericServer localFilesServer;
-    private final GenericServer igbFilesServer;
     private static final ServerList serverInstance = new ServerList();
     private final String NAME = "server";
     private final Comparator<GenericServer> serverOrderComparator = (o1, o2) -> getServerOrder(o1) - getServerOrder(o2);
@@ -64,7 +63,7 @@ public final class ServerList {
         boolean isDefault = false;
         String mirrorUrlString = null;
         localFilesServer = new GenericServer("Local Files", "", LocalFilesServerType.getInstance(), isEnabled, isDefault, mirrorUrlString);
-        igbFilesServer = new GenericServer("IGB Tracks", "", LocalFilesServerType.getInstance(), isEnabled, isDefault, mirrorUrlString);
+        url2server = new LinkedHashMap<>();
     }
 
     public static ServerList getServerInstance() {
@@ -107,10 +106,6 @@ public final class ServerList {
         return localFilesServer;
     }
 
-    public GenericServer getIGBFilesServer() {
-        return igbFilesServer;
-    }
-
     public boolean areAllServersInited() {
         for (GenericServer gServer : getAllServers()) {
             if (!gServer.isEnabled()) {
@@ -149,17 +144,15 @@ public final class ServerList {
         return server;
     }
 
-    //for now I must follow old conventions
     public void addServer(DataProvider dataProvider) {
         ServerTypeI serverType = getServerType(dataProvider.getType());
-
         addServer(serverType, dataProvider.getName(), dataProvider.getUrl(), Boolean.valueOf(dataProvider.getEnabled()),
                 dataProvider.getOrder(), Boolean.valueOf(dataProvider.getDefault()), dataProvider.getMirror());
     }
 
     private static ServerTypeI getServerType(String type) {
         for (ServerTypeI t : ServerUtils.getServerTypes()) {
-            if (type.equalsIgnoreCase(t.getName())) {
+            if (type.equalsIgnoreCase(t.getServerName())) {
                 return t;
             }
         }
@@ -168,11 +161,10 @@ public final class ServerList {
 
     public GenericServer addServer(ServerTypeI serverType, String name, String url,
             boolean enabled, int order, boolean isDefault, String mirrorURL) { //qlmirror
-        url = ServerUtils.formatURL(url, serverType);
         GenericServer server = url2server.get(url);
 
         if (server == null) {
-            if (serverType == null || serverType.isSaveServersInPrefs()) {
+            if (serverType == null || serverType.supportsUserAddedInstances()) {
                 Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
                 if (node.get(SERVER_NAME, null) != null) {
                     name = node.get(SERVER_NAME, null); //Apply changes users may have made to server name
@@ -193,9 +185,8 @@ public final class ServerList {
         ServerTypeI serverType;
         if (server == null) {
             url = GeneralUtils.URLDecode(node.get(SERVER_URL, ""));
-            String type = node.get(SERVER_TYPE, hasTypes() ? LocalFilesServerType.getInstance().getName() : null);
+            String type = node.get(SERVER_TYPE, hasTypes() ? LocalFilesServerType.getInstance().getServerName() : null);
             serverType = getServerType(type);
-            url = ServerUtils.formatURL(url, serverType);
             server = new GenericServer(node, serverType, false); //qlmirror
             url2server.put(url, server);
         }
@@ -214,34 +205,7 @@ public final class ServerList {
             server.clean();
             fireServerInitEvent(server, ServerStatus.NotResponding, true); // remove it from our lists.
         }
-    }
-
-    /**
-     * Load server preferences from the Java preferences subsystem.
-     */
-    public void loadServerPrefs() {
-        logger.info("Loading server preferences from the Java preferences subsystem");
-
-        try {
-            for (String nodeName : getPreferencesNode().childrenNames()) {
-                Preferences node = getPreferencesNode().node(nodeName);
-                processPreferenceNode(node);
-            }
-            logger.info("Completed loading server preferences from the Java preferences subsystem");
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
-
-    public void processPreferenceNode(Preferences node) {
-        ServerTypeI serverType = null;
-        if (node.get(SERVER_TYPE, null) != null) {
-            serverType = getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getName()));
-        }
-
-        if (!(serverType == LocalFilesServerType.getInstance())) {
-            addServer(node);
-        }
+        removeServerFromPrefs(url);
     }
 
     /**
@@ -282,44 +246,6 @@ public final class ServerList {
         return PreferenceUtils.getServersNode();
     }
 
-    public void updateServerURLsInPrefs() {
-        Preferences servers = getPreferencesNode();
-        Preferences currentServer;
-        String normalizedURL;
-        String decodedURL;
-
-        try {
-            for (String encodedURL : servers.childrenNames()) {
-                try {
-                    currentServer = servers.node(encodedURL);
-                    decodedURL = GeneralUtils.URLDecode(encodedURL);
-                    String serverType = currentServer.get("type", "Unknown");
-                    if (serverType.equals("Unknown")) {
-                        logger.warn("server URL: {} could not be determined; ignoring.\nPreferences may be corrupted; clear preferences.", decodedURL);
-                        continue;
-                    }
-
-                    normalizedURL = ServerUtils.formatURL(decodedURL, getServerType(serverType));
-
-                    if (!decodedURL.equals(normalizedURL)) {
-                        logger.debug("upgrading " + NAME + " URL: ''{}'' in preferences", decodedURL);
-                        Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
-                        for (String key : currentServer.keys()) {
-                            normalizedServer.put(key, currentServer.get(key, ""));
-                        }
-                        currentServer.removeNode();
-                    }
-                } catch (Exception ex) {
-                    // Allow preferences loading to continue if an exception is encountered.
-                    logger.error(ex.getMessage(), ex);
-                    continue;
-                }
-            }
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
-
     /**
      * Add or update a server in the preferences subsystem. This only modifies
      * the preferences nodes, it does not affect any other part of the
@@ -332,19 +258,17 @@ public final class ServerList {
      * setting of additional preferences
      */
     private GenericServer addServerToPrefs(String url, String name, ServerTypeI type, int order, boolean isDefault) {
-        url = ServerUtils.formatURL(url, type);
         Preferences node = getPreferencesNode().node(GenericServer.getHash(url));
         if (node.get(SERVER_NAME, null) == null) {
             node.put(SERVER_NAME, name);
-            node.put(SERVER_TYPE, type.getName());
+            node.put(SERVER_TYPE, type.getServerName());
             node.putInt(SERVER_ORDER, order);
             //Added url to preferences.
             //long url was bugging the node name since it only accepts 80 char names
             node.put(SERVER_URL, GeneralUtils.URLEncode(url));
 
         }
-        return new GenericServer(node, getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getName())),
-                isDefault); //qlmirror
+        return new GenericServer(node, getServerType(node.get(SERVER_TYPE, LocalFilesServerType.getInstance().getServerName())), isDefault); //qlmirror
     }
 
     /**
@@ -355,7 +279,7 @@ public final class ServerList {
      * @param server GenericServer object of the server to add or update.
      */
     public void addServerToPrefs(GenericServer server, int order, boolean isDefault) {
-        if (server.getServerType().isSaveServersInPrefs()) {
+        if (server.getServerType().supportsUserAddedInstances()) {
             addServerToPrefs(server.getUrlString(), server.getServerName(), server.getServerType(), order, server.isDefault());
 
         }
@@ -382,8 +306,7 @@ public final class ServerList {
     }
 
     private int getServerOrder(GenericServer server) {
-        String url = ServerUtils.formatURL(server.getUrlString(), server.getServerType());
-        return PreferenceUtils.getServersNode().node(GenericServer.getHash(url)).getInt(SERVER_ORDER, 0);
+        return PreferenceUtils.getServersNode().node(GenericServer.getHash(server.getUrlString())).getInt(SERVER_ORDER, 0);
     }
 
     /**
@@ -410,17 +333,17 @@ public final class ServerList {
     }
 
     public void addServerInitListener(GenericServerInitListener listener) {
-        server_init_listeners.add(listener);
+        serverInitListeners.add(listener);
     }
 
     public void removeServerInitListener(GenericServerInitListener listener) {
-        server_init_listeners.remove(listener);
+        serverInitListeners.remove(listener);
     }
 
     public void fireServerInitEvent(GenericServer server, ServerStatus status, boolean removedManually) {
         Preferences node = getPreferencesNode().node(GenericServer.getHash(server.getUrlString()));
         if (status == ServerStatus.NotResponding) {
-            if (server.getServerType() != null && !server.getServerType().isSaveServersInPrefs()) {
+            if (server.getServerType() != null && !server.getServerType().supportsUserAddedInstances()) {
                 removeServer(server.getUrlString());
             }
 
@@ -444,7 +367,7 @@ public final class ServerList {
                 } else {
                     String superType = NAME.substring(0, 1).toUpperCase() + NAME.substring(1);
                     errorText = MessageFormat.format(GenometryConstants.BUNDLE.getString("connectError"), superType, server.getServerName());
-                    if (server.getServerType() != null && server.getServerType().isSaveServersInPrefs()) {
+                    if (server.getServerType() != null && server.getServerType().supportsUserAddedInstances()) {
                         ErrorHandler.errorPanel(server.getServerName(), errorText, Level.SEVERE);
                     } else {
                         logger.error(errorText);
@@ -452,11 +375,6 @@ public final class ServerList {
                 }
             }
 
-//			if (server.serverType == null) {
-//				IGB.getInstance().removeNotLockedUpMsg("Loading " + NAME + " " + server);
-//			} else if (server.serverType != LocalFilesServerType.getInstance()) {
-//				IGB.getInstance().removeNotLockedUpMsg("Loading " + NAME + " " + server + " (" + server.serverType.toString() + ")");
-//			}
         }
 
         // Fire event whenever server status in set to initialized
@@ -469,7 +387,7 @@ public final class ServerList {
             }
             server.setServerStatus(status);
             GenericServerInitEvent evt = new GenericServerInitEvent(server);
-            for (GenericServerInitListener listener : server_init_listeners) {
+            for (GenericServerInitListener listener : serverInitListeners) {
                 listener.genericServerInit(evt);
             }
         }

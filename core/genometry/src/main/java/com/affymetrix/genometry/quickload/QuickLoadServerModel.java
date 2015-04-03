@@ -20,7 +20,6 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -59,12 +58,12 @@ public final class QuickLoadServerModel {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(QuickLoadServerModel.class);
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Pattern tab_regex = Pattern.compile("\t");
-    private final String urlString;
+    private String urlString;
     /**
      * Stores the names of the data set name. For example A_thaliana_Jun_2008
      * populated by loadGenomeNames()
      */
-    private final List<String> genome_names = new ArrayList<>();
+    private final List<String> genomeNames = new ArrayList<>();
     /**
      * A set containing initialized genomes
      */
@@ -74,7 +73,13 @@ public final class QuickLoadServerModel {
     private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<>();
 
     private QuickLoadServerModel(String urlString) {
-        urlString = ServerUtils.formatURL(urlString, QuickloadServerType.getInstance());
+        initializeUrlString(urlString);
+    }
+
+    private void initializeUrlString(String urlString) {
+        if (!urlString.endsWith("/")) {
+            urlString += "/";
+        }
         this.urlString = urlString;
     }
 
@@ -97,19 +102,6 @@ public final class QuickLoadServerModel {
 
     }
 
-    /*
-     * Remove server from list.
-     */
-    public static synchronized void removeQLModelForURL(String url) {
-        if (url2quickload.get(url) != null) {
-            QuickLoadServerModel model = url2quickload.get(url);
-            if (model != null) {
-                model.clean();
-            }
-            url2quickload.remove(url);
-        }
-    }
-
     private static boolean getCacheAnnots() {
         return true;
     }
@@ -119,7 +111,7 @@ public final class QuickLoadServerModel {
     }
 
     public List<String> getGenomeNames() {
-        return genome_names;
+        return genomeNames;
     }
 
     private AnnotatedSeqGroup getSeqGroup(String genome_name) {
@@ -137,7 +129,7 @@ public final class QuickLoadServerModel {
      * null.
      */
     public List<String> getTypes(String genome_name) {
-        genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
+        genome_name = LOOKUP.findMatchingSynonym(genomeNames, genome_name);
         if (!initialized.contains(genome_name)) {
             if (!initGenome(genome_name)) {
                 return null;
@@ -190,7 +182,7 @@ public final class QuickLoadServerModel {
      * with {@link #getTypes(String)}
      */
     private boolean loadAnnotationNames(String genome_name) {
-        genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
+        genome_name = LOOKUP.findMatchingSynonym(genomeNames, genome_name);
         logger.debug("loading list of available annotations for genome: {}", genome_name);
 
         // Make a new list of typeNames, in case this is being re-initialized
@@ -303,7 +295,7 @@ public final class QuickLoadServerModel {
         String genomeTxt = Constants.GENOME_TXT;
         String chromosomeTxt = Constants.CHROMOSOMES_TXT;
 
-        genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
+        genome_name = LOOKUP.findMatchingSynonym(genomeNames, genome_name);
         boolean success = false;
         InputStream lift_stream = null;
         InputStream cinfo_stream = null;
@@ -404,7 +396,7 @@ public final class QuickLoadServerModel {
             if (fields.size() >= 1) {
                 String genomeName = fields.get(0);
                 AnnotatedSeqGroup group = this.getSeqGroup(genomeName);  // returns existing group if found, otherwise creates a new group
-                genome_names.add(genomeName);
+                genomeNames.add(genomeName);
                 // if quickload server has description, and group is new or doesn't yet have description, add description to group
                 if ((fields.size() >= 2) && (group.getDescription() == null)) {
                     group.setDescription(fields.get(1));
@@ -426,7 +418,7 @@ public final class QuickLoadServerModel {
     public String getPath(String genome_name, String file) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(LOOKUP.findMatchingSynonym(genome_names, genome_name));
+        builder.append(LOOKUP.findMatchingSynonym(genomeNames, genome_name));
         builder.append("/");
 
         if (file != null && !file.isEmpty()) {

@@ -131,17 +131,9 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                 Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
 
                 if (params != null && !params.isEmpty()) {
-                    JMenu operatorSMI = new JMenu(title);
-
-                    JMenuItem operatorMI = new JMenuItem("Use Default");
-                    operatorMI.addActionListener(new TrackOperationAction(newOperator));
-                    operatorSMI.add(operatorMI);
-
-                    operatorMI = new JMenuItem("Configure...");
+                    JMenuItem operatorMI = new JMenuItem(title);
                     operatorMI.addActionListener(new TrackOperationWithParametersAction(newOperator));
-                    operatorSMI.add(operatorMI);
-
-                    operationsMenu.add(operatorSMI);
+                    operationsMenu.add(operatorMI);
                 } else {
                     JMenuItem operatorMI = new JMenuItem(title);
                     operatorMI.addActionListener(new TrackOperationAction(newOperator));

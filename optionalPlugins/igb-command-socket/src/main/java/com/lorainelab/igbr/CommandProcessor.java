@@ -33,6 +33,8 @@ public class CommandProcessor implements Runnable {
 
     public void recieveIgbCommand(String igbCommand) {
         if (out != null) {
+            //TODO when time allows, I think this code probably could just use
+            // ScriptEngine engine = engineMgr.getEngineByExtension("igb");...rather than use this singleton
             ScriptManager.getInstance().runScriptString(igbCommand, "igb");
             out.println("Command processed");
         }

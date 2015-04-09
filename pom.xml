@@ -120,6 +120,7 @@
         <module>core/igb-genoviz-ext</module>
         <module>core/igb-preferences</module>
         <module>core/weblinks</module>
+        <module>core/quickload</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -255,6 +256,12 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>weblinks</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>quickload</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -812,6 +819,11 @@
                 <groupId>fi.iki.elonen</groupId>
                 <artifactId>NanoHTTPD</artifactId>
                 <version>2.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.kevinsawicki</groupId>
+                <artifactId>http-request</artifactId>
+                <version>6.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

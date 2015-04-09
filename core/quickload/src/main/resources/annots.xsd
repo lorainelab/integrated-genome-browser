@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="files">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="file"/>
+                <xs:element ref="folder"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="folder">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="file"/>
+                <xs:element ref="folder"/>
+            </xs:choice>
+            <xs:attribute name="name" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="file">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="title" type="xs:string"/>
+            <xs:attribute name="url" type="xs:anyURI"/>
+            <xs:attribute name="description" type="xs:string"/>
+            <xs:attribute name="load_hint">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="((W|w)hole (S|s)equence)"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="show2tracks">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="((F|f)(A|a)(L|l)(S|s)(E|e))|((T|t)(R|r)(U|u)(E|e))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="label_field">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="foreground">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="([a-fA-F0-9]{6})|(\s?(\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3}))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="background">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="([a-fA-F0-9]{6})|(\s?(\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3}))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="positive_strand_color">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="([a-fA-F0-9]{6})|(\s?(\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3}))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="negative_strand_color">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="([a-fA-F0-9]{6})|(\s?(\d{1,3}),\s?(\d{1,3}),\s?(\d{1,3}))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="name_size">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="direction_type">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="color"/>
+                        <xs:enumeration value="arrow"/>
+                        <xs:enumeration value="none"/>
+                        <xs:enumeration value="both"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="max_depth">
+                <xs:simpleType>
+                    <xs:restriction base="xs:integer"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="connected">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="((F|f)(A|a)(L|l)(S|s)(E|e))|((T|t)(R|r)(U|u)(E|e))"/>
+                    </xs:restriction>	
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="view_mode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="serverURL">
+                <xs:simpleType>
+                    <xs:restriction base="xs:anyURI"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="collapsed">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="((F|f)(A|a)(L|l)(S|s)(E|e))|((T|t)(R|r)(U|u)(E|e))"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <!--Should only be 'Whole Sequence' according to annots.xml specification, but 'AUTOLOAD' exists in current XMLs -->
+            <!--Supposed to be boolean type, but there are 'False' in current XMLs so change to string type -->
+            <!--To match XML parser definition-->
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

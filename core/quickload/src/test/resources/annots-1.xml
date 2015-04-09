@@ -1,0 +1,33 @@
+
+<files>
+    <file
+        name="TDNA.bed.gz"
+        title="TDNA insertion lines"
+        description="insertion lines, start of block marks insertion site"
+        url="A_thaliana_Jun_2009"
+        show2tracks="false"
+        foreground="007c00"
+        name_size="14"
+        direction_type="none"
+        label_field="id"
+        background="FFFFFF"
+    />
+    <file
+        name="Affymetrix/ATH1-121501.link.psl.gz"
+        title="Affymetrix / ATH1 probe sets"
+        description="ATH1 array probe set alignments"
+        url="A_thaliana_Jun_2009/Affymetrix"
+        name_size="14"
+        label_field="id"
+        background="FFFFFF"
+    />
+    <file
+        name="Affymetrix/AG.link.psl.gz"
+        title="Affymetrix / AG probe sets"
+        description="AG array probe set alignments"
+        url="A_thaliana_Jun_2009/Affymetrix"
+        name_size="14"
+        label_field="id"
+        background="FFFFFF"
+    />
+</files>

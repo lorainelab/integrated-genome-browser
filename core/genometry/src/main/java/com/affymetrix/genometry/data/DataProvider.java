@@ -60,9 +60,9 @@ public interface DataProvider {
      * @return Checks and returns current server status,
      * this status drives
      */
-    public ResourceStatus getServerStatus();
+    public ResourceStatus getStatus();
 
-    public void setServerStatus(ResourceStatus serverStatus);
+    public void setStatus(ResourceStatus serverStatus);
 
     /**
      * @return set of genome versions for which data is available

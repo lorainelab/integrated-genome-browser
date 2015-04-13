@@ -404,7 +404,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         selected_seq = null;
         seqtable.setModel(mod);
         //Disabled for now
-        //seqtable.setRowSorter(sorter);
+        seqtable.setRowSorter(sorter);
         sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
 
         TableColumn c = seqtable.getColumnModel().getColumn(1);

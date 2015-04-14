@@ -11,8 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Superclass of all IGB actions. This is so we can keep track of actions for scripting, shortcuts, etc. All actions in
@@ -36,7 +34,6 @@ public abstract class GenericAction extends AbstractAction {
     private KeyStroke keyStroke;
     private String keyStrokeBinding;
     private final int TOOLBAR_INDEX = -1;
-    private static final Logger logger = LoggerFactory.getLogger(GenericAction.class);
 
     /**
      * For ordering buttons in the toolbar. Subclasses should assign different numbers in the constructor or static
@@ -202,7 +199,6 @@ public abstract class GenericAction extends AbstractAction {
     }
 
     private String getPreferredKeyStrokeBinding() {
-        logger.debug("Action " + getId());
         if (Strings.isNullOrEmpty(getId())) {
             return null;
         }

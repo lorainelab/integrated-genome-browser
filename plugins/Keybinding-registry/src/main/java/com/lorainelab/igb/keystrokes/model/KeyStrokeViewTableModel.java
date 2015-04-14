@@ -292,11 +292,8 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        logger.debug("Build row called>>>>>>>>>>>>>>>>>>");
         List<String> actionKeys = sortActionKeys();
         Object[][] rows = new Object[actionKeys.size()][5];
-        logger.debug("Total number of Actions " + actionKeys.size());
-        int toolbarActions = actionKeys.size();
         int i = 0;
         for (String key : actionKeys) {
             GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
@@ -313,18 +310,16 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
             if (genericAction.isToolbarDefault()) {
                 rows[i][ToolbarColumn] = ExistentialTriad.IS;
             }
-            if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {    // I am not sure what exactly is this doing.
+            if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
                 rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
             }
             if (!genericAction.isToolbarAction()) {
                 rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
-                toolbarActions--;
             }
             rows[i][IconColumn] = rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
             rows[i][IdColumn] = genericAction.getId(); // not displayed
             i++;
         }
-        logger.debug("Toolbar Actions " + toolbarActions);
         setRows(rows);
     }
 

@@ -98,9 +98,15 @@ public abstract class GenericAction extends AbstractAction {
         if (tooltip != null) {
             this.putValue(SHORT_DESCRIPTION, tooltip);
         }
-//		if (tooltip == null && text != null) {
-//			this.putValue(SHORT_DESCRIPTION, text);
-//		}
+        loadPreferredKeystrokes();
+    }
+
+    private void loadPreferredKeystrokes() {
+        String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
+        if (!Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
+            this.keyStrokeBinding = prefKeyStrokeBinding;
+            this.keyStroke = KeyStroke.getKeyStroke(prefKeyStrokeBinding);
+        }
     }
 
     public final String getText() {
@@ -179,7 +185,7 @@ public abstract class GenericAction extends AbstractAction {
     public boolean isToolbarAction() {
         return true;
     }
-    
+
     public boolean isToolbarDefault() {
         return false;
     }
@@ -191,19 +197,27 @@ public abstract class GenericAction extends AbstractAction {
     public int getToolbarIndex() {
         return TOOLBAR_INDEX;
     }
-    
+
+    private String getPreferredKeyStrokeBinding() {
+        if (Strings.isNullOrEmpty(getId())) {
+            return null;
+        }
+        return PreferenceUtils.getKeystrokesNode().get(getId(), null);
+    }
+
     public String getKeyStrokeBinding() {
-        String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
+        String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
         if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
             prefKeyStrokeBinding = keyStrokeBinding;
         } else {
             keyStrokeBinding = prefKeyStrokeBinding;
         }
+        this.keyStroke = KeyStroke.getKeyStroke(prefKeyStrokeBinding);
         return this.keyStrokeBinding;
     }
 
     public void setKeyStrokeBinding(String keyStrokeBinding) {
-        String prefKeyStrokeBinding = PreferenceUtils.getKeystrokesNode().get(getId(), null);
+        String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
         if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
             prefKeyStrokeBinding = keyStrokeBinding;
         }

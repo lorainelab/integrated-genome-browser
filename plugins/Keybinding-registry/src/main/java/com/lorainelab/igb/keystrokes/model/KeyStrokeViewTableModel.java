@@ -16,7 +16,6 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
-import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;
 import static com.lorainelab.igb.keystrokes.KeyStrokesView.ActionColumn;
@@ -28,12 +27,12 @@ import com.lorainelab.igb.services.IgbService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
@@ -55,28 +54,29 @@ import org.slf4j.LoggerFactory;
  */
 @Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, provide = KeyStrokeViewTableModel.class)
 public class KeyStrokeViewTableModel extends AbstractTableModel {
-
+    
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
     private static final String COMMAND_KEY = "meta";
     private static final String CONTROL_KEY = "ctrl";
     private static final long serialVersionUID = 1L;
     private final static String[] columnNames = new String[KeyStrokesView.ColumnCount];
     private IgbService igbService;
-    private static Set<String> actionKeys;
+    private static Set<GenericAction> actionKeys;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
     List<GenericAction> actionQueue;
     ServiceTracker<GenericAction, Object> actionServiceTracker;
-
+    
     public KeyStrokeViewTableModel() {
         actionKeys = Sets.newCopyOnWriteArraySet();
         actionQueue = new ArrayList<>();
     }
-
+    
     @Activate
     public void activator(BundleContext bundleContext) {
         loadDefaultToolbarActionsAndKeystrokeBindings();
         addShortcuts();
-        actionKeys.addAll(GenericActionHolder.getInstance().getGenericActionIds());
+        
+        actionKeys.addAll(GenericActionHolder.getInstance().getGenericActions());
         refresh();
         try {
             ServiceReference<GenericAction>[] serviceReferences = (ServiceReference<GenericAction>[]) bundleContext.getAllServiceReferences(GenericAction.class.getName(), null);
@@ -88,11 +88,11 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
         setupActionServiceTracker(bundleContext);
     }
-
+    
     private void setupActionServiceTracker(final BundleContext bundleContext) {
-
+        
         actionServiceTracker = new ServiceTracker<GenericAction, Object>(bundleContext, GenericAction.class, null) {
-
+            
             @Override
             public Object addingService(ServiceReference<GenericAction> reference) {
                 GenericAction action = bundleContext.getService(reference);
@@ -102,7 +102,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         };
         actionServiceTracker.open();
     }
-
+    
     private void loadDefaultToolbarActionsAndKeystrokeBindings() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
             //Save current preferences
@@ -129,7 +129,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
             logger.debug("Cannot load preferences ", ex);
         }
     }
-
+    
     private void addShortcuts() {
         JFrame frm = igbService.getApplicationFrame();
         JPanel panel = (JPanel) frm.getContentPane();
@@ -163,7 +163,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
             logger.trace("Some keyboard shortcuts may not be set ");
         }
     }
-
+    
     private void addShortcut(GenericAction action) {
         JFrame frm = igbService.getApplicationFrame();
         JPanel panel = (JPanel) frm.getContentPane();
@@ -176,18 +176,18 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         im.put(ks, action.getId());
         am.put(action.getId(), action);
     }
-
+    
     public void addAction(GenericAction action) {
-        actionKeys.add(action.getId());
+        actionKeys.add(action);
         fireTableDataChanged();
         addShortcut(action);
     }
-
+    
     @Reference
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
-
+    
     static {
         columnNames[KeyStrokesView.IconColumn] = "";
         columnNames[KeyStrokesView.ToolbarColumn] = "Toolbar ?";
@@ -195,17 +195,17 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         columnNames[KeyStrokesView.KeyStrokeColumn] = "Key Stroke";
     }
     private Object[][] rows;
-
+    
     @Override
     public int getRowCount() {
         return (rows == null) ? 0 : rows.length;
     }
-
+    
     @Override
     public int getColumnCount() {
         return KeyStrokesView.ColumnCount;
     }
-
+    
     @Override
     public Object getValueAt(int row, int col) {
         if (col == KeyStrokesView.ToolbarColumn) {
@@ -213,7 +213,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
         return (rows == null) ? "" : rows[row][col];
     }
-
+    
     @Override
     public boolean isCellEditable(int row, int column) {
         if (column == KeyStrokesView.KeyStrokeColumn) {
@@ -227,7 +227,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
         return false;
     }
-
+    
     @Override
     public Class<?> getColumnClass(int column) {
         if (column == KeyStrokesView.IconColumn) {
@@ -238,16 +238,16 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
         return String.class;
     }
-
+    
     public void setRows(Object[][] rowData) {
         rows = rowData;
     }
-
+    
     @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
-
+    
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == KeyStrokesView.ToolbarColumn && rows != null) {
@@ -277,7 +277,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
             }
         }
     }
-
+    
     public void refresh() {
         buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
         fireTableDataChanged();
@@ -292,21 +292,15 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        List<String> actionKeys = sortActionKeys();
+        List<GenericAction> actionKeys = sortActionKeys();
         Object[][] rows = new Object[actionKeys.size()][5];
         int i = 0;
-        for (String key : actionKeys) {
-            GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
-            if (genericAction == null) {
-                String logMsg = "!!! no GenericAction for key = " + key;
-                logger.warn(logMsg);
-                return;
-            }
+        for (GenericAction genericAction : actionKeys) {
             rows[i][ActionColumn] = genericAction.getDisplay();
             if (genericAction.getKeyStroke() != null) {
                 rows[i][KeyStrokeColumn] = genericAction.getKeyStrokeBinding().toUpperCase();
             }
-            rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
+            rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(genericAction.getId(), false));
             if (genericAction.isToolbarDefault()) {
                 rows[i][ToolbarColumn] = ExistentialTriad.IS;
             }
@@ -322,20 +316,14 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         }
         setRows(rows);
     }
-
-    private List<String> sortActionKeys() {
-        return Ordering.from(new ActionKeysComparator()).immutableSortedCopy(actionKeys);
+    
+    private List<GenericAction> sortActionKeys() {
+        
+        List<GenericAction> actions = actionKeys.stream()
+                .filter(action -> action.getText() != null)
+                .sorted((GenericAction a1, GenericAction a2) -> a1.getText().compareTo(a2.getText()))
+                .collect(Collectors.toList());
+        return actions;
+        
     }
-
-    private class ActionKeysComparator implements Comparator<String> {
-
-        @Override
-        public int compare(String o1, String o2) {
-            String action1 = o1.lastIndexOf('.') == -1 ? o1 : o1.substring(o1.lastIndexOf('.'));
-            String action2 = o2.lastIndexOf('.') == -1 ? o2 : o2.substring(o2.lastIndexOf('.'));
-            return action1.compareTo(action2);
-        }
-
-    }
-
 }

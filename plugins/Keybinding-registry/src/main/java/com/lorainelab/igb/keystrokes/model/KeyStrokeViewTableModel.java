@@ -292,7 +292,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
-        List<GenericAction> actionKeys = sortActionKeys();
+        List<GenericAction> actionKeys = getSortedActions();
         Object[][] rows = new Object[actionKeys.size()][5];
         int i = 0;
         for (GenericAction genericAction : actionKeys) {
@@ -317,13 +317,12 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         setRows(rows);
     }
     
-    private List<GenericAction> sortActionKeys() {
+    private List<GenericAction> getSortedActions() {
         
-        List<GenericAction> actions = actionKeys.stream()
+        return actionKeys.stream()
                 .filter(action -> action.getText() != null)
                 .sorted((GenericAction a1, GenericAction a2) -> a1.getText().compareTo(a2.getText()))
                 .collect(Collectors.toList());
-        return actions;
         
     }
 }

@@ -28,6 +28,7 @@ import com.lorainelab.igb.services.IgbService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -284,14 +285,18 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
 
     /**
      * Build the underlying data array. There is a fourth column, not shown in the table, but needed by the setValue()
-     * method.
+     * method. IconColumn = 0 ToolbarColumn = 1 ActionColumn = 2 KeyStrokeColumn = 3 IdColumn = 4 -> not displayed in
+     * table ColumnCount = 4
      *
      * @param keystroke_node
      * @param toolbar_node
      */
     private void buildRows(Preferences keystroke_node, Preferences toolbar_node) {
+        logger.debug("Build row called>>>>>>>>>>>>>>>>>>");
         List<String> actionKeys = sortActionKeys();
         Object[][] rows = new Object[actionKeys.size()][5];
+        logger.debug("Total number of Actions " + actionKeys.size());
+        int toolbarActions = actionKeys.size();
         int i = 0;
         for (String key : actionKeys) {
             GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(key);
@@ -305,21 +310,37 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
                 rows[i][KeyStrokeColumn] = genericAction.getKeyStrokeBinding().toUpperCase();
             }
             rows[i][ToolbarColumn] = ExistentialTriad.valueOf(toolbar_node.getBoolean(key, false));
-            if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {
+            if (genericAction.isToolbarDefault()) {
+                rows[i][ToolbarColumn] = ExistentialTriad.IS;
+            }
+            if (null == genericAction.getValue(Action.LARGE_ICON_KEY)) {    // I am not sure what exactly is this doing.
                 rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
             }
             if (!genericAction.isToolbarAction()) {
                 rows[i][ToolbarColumn] = ExistentialTriad.CANNOTBE;
+                toolbarActions--;
             }
             rows[i][IconColumn] = rows[i][ToolbarColumn] == ExistentialTriad.CANNOTBE ? null : genericAction.getValue(Action.SMALL_ICON);
             rows[i][IdColumn] = genericAction.getId(); // not displayed
             i++;
         }
+        logger.debug("Toolbar Actions " + toolbarActions);
         setRows(rows);
     }
 
     private List<String> sortActionKeys() {
-        return Ordering.natural().immutableSortedCopy(actionKeys);
+        return Ordering.from(new ActionKeysComparator()).immutableSortedCopy(actionKeys);
+    }
+
+    private class ActionKeysComparator implements Comparator<String> {
+
+        @Override
+        public int compare(String o1, String o2) {
+            String action1 = o1.lastIndexOf('.') == -1 ? o1 : o1.substring(o1.lastIndexOf('.'));
+            String action2 = o2.lastIndexOf('.') == -1 ? o2 : o2.substring(o2.lastIndexOf('.'));
+            return action1.compareTo(action2);
+        }
+
     }
 
 }

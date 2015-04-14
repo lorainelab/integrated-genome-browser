@@ -7,8 +7,8 @@ To get a copy, you can clone this repository or visit the [IGB Download](http://
 For documentation, visit:
 
 * [BioViz Web site](http://www.bioviz.org)
-* [User's Guide](https://wiki.transvar.org/display/igbman/Home) 
+* [Users Guide](https://wiki.transvar.org/display/igbman/Home) 
 * [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg)
 
-For information about development plans, visit the [IGB Issue Tracker site](http://jira.transvar.org).
+For information about development plans, visit the [IGB Issue Tracker site](https://jira.transvar.org/secure/RapidBoard.jspa?rapidView=7&view=planning&quickFilter=21&epics=visible).

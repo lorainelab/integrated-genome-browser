@@ -42,7 +42,7 @@ public class ExportImageInfo {
 
     private void validateDimensions() {
         if (width <= 0) {
-            logger.warn("Invalid image width, setting to default value.  Please report this error if the problem persist.");
+//            logger.warn("Invalid image width, setting to default value.  Please report this error if the problem persist.");
             width = DEFAULT_IMAGE_WIDTH;
         }
         if (height <= 0) {

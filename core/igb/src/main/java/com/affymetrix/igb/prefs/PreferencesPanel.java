@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -109,6 +108,18 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
         }
     }
 
+    public int getTabIndex(String tabName) {
+        for (int i = 0; i < tab_pane.getComponentCount(); i++) {
+            Component c = tab_pane.getComponentAt(i);
+            if (c instanceof PreferencesPanelProvider) {
+                if (((PreferencesPanelProvider) c).getName().equalsIgnoreCase(tabName)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     public int getTabIndex(Component component) {
         for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
             Component c = tabbedPane.getComponentAt(i);
@@ -163,12 +174,8 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
      * Gets a JFrame containing the PreferencesView
      */
     public JFrame getFrame() {
-        int width = 558;
-        int height = 582;
-        if (IS_LINUX) {
-            width = 574;
-            height = 610;
-        }
+        int width = 750;
+        int height = 650;
         if (frame == null) {
             frame = new JFrame(PREFERENCES);
             final Container cont = frame.getContentPane();

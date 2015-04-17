@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,9 +31,9 @@ public class PreferencesHelpTabAction extends HelpActionA {
 
     private void showHelpForTab() {
         Component c = PreferencesPanel.getSingleton().getSelectedTabComponent();
-        if (c instanceof IPrefEditorComponent) {
-            IPrefEditorComponent pec = (IPrefEditorComponent) c;
-            showHelpForPanel(PreferencesPanel.getSingleton(), pec);
+        if (c instanceof PreferencesPanelProvider) {
+            PreferencesPanelProvider pec = (PreferencesPanelProvider) c;
+            showHelpForPanel(PreferencesPanel.getSingleton(), pec.getPanel());
         } else {
             JOptionPane.showMessageDialog(PreferencesPanel.getSingleton(), "No help available for this tab",
                     "No Help", JOptionPane.INFORMATION_MESSAGE);

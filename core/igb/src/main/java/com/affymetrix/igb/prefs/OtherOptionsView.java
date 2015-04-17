@@ -14,13 +14,14 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import static com.affymetrix.igb.view.SeqMapView.default_edge_match_color;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import javax.swing.JPanel;
 
 /**
  *
  * @author nick
  */
-public class OtherOptionsView extends IPrefEditorComponent {
+public class OtherOptionsView extends JPanel implements PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
     String default_label_format = CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
@@ -35,6 +36,16 @@ public class OtherOptionsView extends IPrefEditorComponent {
         super();
         this.setName("Other Options");
         initComponents();
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public int getTabWeight() {
+        return 8;   
     }
 
     /**

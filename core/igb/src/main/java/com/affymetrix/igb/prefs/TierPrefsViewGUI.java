@@ -6,12 +6,12 @@ import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 
-public class TierPrefsViewGUI extends IPrefEditorComponent implements WindowListener, SeqMapRefreshed, GroupSelectionListener {
+public class TierPrefsViewGUI extends JPanel implements WindowListener, SeqMapRefreshed, GroupSelectionListener {
 
     private static final long serialVersionUID = 1L;
     public TierPrefsView tpv;

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.event.GroupSelectionEvent;
+import javax.swing.JPanel;
 
 /**
  * This is the subclass of TrackPreferencesPanel which is used to represent
@@ -25,6 +26,16 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
     protected void enableSpecificComponents() {
         autoRefreshCheckBox.setVisible(true);
         refreshButton.setVisible(true);
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public int getTabWeight() {
+        return 4;
     }
 
     @Override

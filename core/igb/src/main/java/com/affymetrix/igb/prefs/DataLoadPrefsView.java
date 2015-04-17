@@ -76,11 +76,16 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
     public DataLoadPrefsView() {
         super(ServerList.getServerInstance());
-        final JPanel synonymsPanel = initSynonymsPanel(this);
+        final JPanel synonymsPanel = initSynonymsPanel(this.getPanel());
         final JPanel cachePanel = initCachePanel();
 
         layout.setHorizontalGroup(layout.createParallelGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
         layout.setVerticalGroup(layout.createSequentialGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
+    }
+
+    @Override
+    public int getTabWeight() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -358,5 +363,10 @@ public final class DataLoadPrefsView extends ServerPrefsView {
         ServerList.getServerInstance().removeServer(url);
         ServerList.getServerInstance().removeServerFromPrefs(url);
         addDataSource(type, name, newUrl, order, isDefault, mirrorURL);
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
     }
 }

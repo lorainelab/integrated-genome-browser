@@ -19,7 +19,6 @@ import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -38,6 +37,7 @@ import javax.swing.JTabbedPane;
 
 public final class PreferencesPanel extends JPanel {
 
+    //TODO Delete these constants.
     public static int TAB_TIER_PREFS_VIEW = -1;
     public static int TAB_OTHER_OPTIONS_VIEW = -1;
     public static int TAB_DATALOAD_PREFS = -1;
@@ -80,9 +80,9 @@ public final class PreferencesPanel extends JPanel {
             }
         });
 
-        TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
-        TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(new OtherOptionsView());
-        TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
+        singleton.addPrefEditorComponent(singleton.tpvGUI);
+        singleton.addPrefEditorComponent(new OtherOptionsView());
+        singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
         return singleton;
     }
 
@@ -95,8 +95,8 @@ public final class PreferencesPanel extends JPanel {
         }
         tab_pane.setSelectedIndex(i);
         Component c = tab_pane.getComponentAt(i);
-        if (c instanceof IPrefEditorComponent) {
-            IPrefEditorComponent p = (IPrefEditorComponent) c;
+        if (c instanceof PreferencesPanelProvider) {
+            PreferencesPanelProvider p = (PreferencesPanelProvider) c;
             p.refresh();
         }
     }
@@ -119,17 +119,17 @@ public final class PreferencesPanel extends JPanel {
      * instance of java.awt.Component.
      * @return the index of the added tab in the tab pane.
      */
-    public int addPrefEditorComponent(final IPrefEditorComponent pec) {
-        tab_pane.add(pec);
-        pec.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentShown(ComponentEvent e) {
-                pec.refresh();
-            }
-        });
-        return tab_pane.indexOfComponent(pec);
-    }
+//    public int addPrefEditorComponent(final IPrefEditorComponent pec) {
+//        tab_pane.add(pec);
+//        pec.addComponentListener(new ComponentAdapter() {
+//
+//            @Override
+//            public void componentShown(ComponentEvent e) {
+//                pec.refresh();
+//            }
+//        });
+//        return tab_pane.indexOfComponent(pec);
+//    }
 
     public void addPrefEditorComponent(PreferencesPanelProvider panelProvider) {
         tab_pane.add(panelProvider.getPanel());
@@ -146,11 +146,11 @@ public final class PreferencesPanel extends JPanel {
         tab_pane.remove(panelProvider.getPanel());
     }
 
-    public IPrefEditorComponent[] getPrefEditorComponents() {
+    public PreferencesPanelProvider[] getPrefEditorComponents() {
         int count = tab_pane.getTabCount();
-        IPrefEditorComponent[] comps = new IPrefEditorComponent[count];
+        PreferencesPanelProvider[] comps = new PreferencesPanelProvider[count];
         for (int i = 0; i < count; i++) {
-            comps[i] = (IPrefEditorComponent) tab_pane.getComponentAt(i);
+            comps[i] = (PreferencesPanelProvider) tab_pane.getComponentAt(i);
         }
         return comps;
     }

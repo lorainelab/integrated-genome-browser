@@ -1,16 +1,17 @@
 package apollo.analysis;
 
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import apollo.util.GuiUtil;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunOpts {
+public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1;
 //	private JTextField startField;
@@ -55,6 +56,16 @@ public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunO
     @Override
     public RemoteBlastNCBI.BlastType getBlastType() {
         return (RemoteBlastNCBI.BlastType) types.getSelectedItem();
+    }
+
+    @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public int getTabWeight() {
+        return 6;
     }
 
     private void init() {

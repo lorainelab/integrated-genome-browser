@@ -80,7 +80,7 @@ import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
@@ -341,14 +341,14 @@ public class Activator implements BundleActivator {
     }
 
     private void addPrefEditorComponentListener(final BundleContext bundleContext) {
-        ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
+        ExtensionPointHandler<PreferencesPanelProvider> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, PreferencesPanelProvider.class);
         preferencesExtensionPoint.addListener(
-                new ExtensionPointListener<IPrefEditorComponent>() {
+                new ExtensionPointListener<PreferencesPanelProvider>() {
                     @Override
-                    public void removeService(IPrefEditorComponent prefs) {	/*cannot remove*/ }
+                    public void removeService(PreferencesPanelProvider prefs) {	/*cannot remove*/ }
 
                     @Override
-                    public void addService(IPrefEditorComponent prefs) {
+                    public void addService(PreferencesPanelProvider prefs) {
                         PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
                     }
                 }

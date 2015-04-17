@@ -22,7 +22,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
@@ -47,7 +47,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-public abstract class ServerPrefsView extends IPrefEditorComponent {
+public abstract class ServerPrefsView extends JPanel implements PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
     private static final Icon refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
@@ -61,16 +61,16 @@ public abstract class ServerPrefsView extends IPrefEditorComponent {
     public final SourceTableModel sourceTableModel;
 
     public ServerPrefsView(ServerList serverList) {
-        layout = new GroupLayout(this);
+        layout = new GroupLayout(this.getPanel());
         this.serverList = serverList;
         sourceTableModel = new SourceTableModel(serverList);
 
         sourcePanel = initSourcePanel(getViewName());
 
-        this.setName(getViewName());
-        this.setToolTipText(getToolTip());
+        this.getPanel().setName(getViewName());
+        this.getPanel().setToolTipText(getToolTip());
 
-        this.setLayout(layout);
+        this.getPanel().setLayout(layout);
 
         layout.setAutoCreateGaps(
                 true);

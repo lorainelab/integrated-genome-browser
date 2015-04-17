@@ -10,15 +10,16 @@ import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Anuj
  */
-public abstract class TrackPreferencesPanel extends IPrefEditorComponent implements SeqMapRefreshed, WindowListener, GroupSelectionListener {
+public abstract class TrackPreferencesPanel extends JPanel implements SeqMapRefreshed, WindowListener, GroupSelectionListener, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
     /**

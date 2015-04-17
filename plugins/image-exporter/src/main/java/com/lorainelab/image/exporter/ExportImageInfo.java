@@ -42,7 +42,6 @@ public class ExportImageInfo {
 
     private void validateDimensions() {
         if (width <= 0) {
-//            logger.warn("Invalid image width, setting to default value.  Please report this error if the problem persist.");
             width = DEFAULT_IMAGE_WIDTH;
         }
         if (height <= 0) {
@@ -57,7 +56,6 @@ public class ExportImageInfo {
         if (w > 0) {
             width = w;
         } else {
-            logger.warn("Invalid state detected, image width must be greater than 0.  Setting to default width of {}", DEFAULT_IMAGE_WIDTH);
             width = DEFAULT_IMAGE_WIDTH;
         }
     }
@@ -70,7 +68,6 @@ public class ExportImageInfo {
         if (h > 0) {
             height = h;
         } else {
-            logger.warn("Invalid state detected, image height must be greater than 0.  Setting to default height of {}", DEFAULT_IMAGE_HEIGHT);
             height = DEFAULT_IMAGE_HEIGHT;
         }
     }
@@ -83,7 +80,6 @@ public class ExportImageInfo {
         if (r > 0) {
             resolution = r;
         } else {
-            logger.warn("Invalid Image resolution, setting to default resolution.");
             resolution = DEFAULT_RESOLUTION;
         }
     }

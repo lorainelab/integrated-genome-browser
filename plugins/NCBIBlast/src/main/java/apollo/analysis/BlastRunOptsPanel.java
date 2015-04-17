@@ -23,6 +23,7 @@ public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, Preferenc
     private JTextField gapOpenCost;
     private JTextField gapExtendCost;
     private JTextField numOfHits;
+    private static final int TAB_POSITION = 6;
 //	private int start, end;
 
     public BlastRunOptsPanel() {
@@ -65,7 +66,7 @@ public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, Preferenc
 
     @Override
     public int getTabWeight() {
-        return 6;
+        return TAB_POSITION;
     }
 
     private void init() {

@@ -17,6 +17,7 @@ public class NCBIPrimerBlastPane extends JPanel implements NCBIPrimerBlastOpts, 
     private PrimerOptsPanel primerOptsPanel;
     private PrimerCheckOptsPanel primerCheckOptsPanel;
     private PrimerPostProcessPanel primerPostProcessPanel;
+    private static final int TAB_POSITION = 8;
 
     public NCBIPrimerBlastPane() {
         super();
@@ -40,7 +41,7 @@ public class NCBIPrimerBlastPane extends JPanel implements NCBIPrimerBlastOpts, 
 
     @Override
     public int getTabWeight() {
-        return 7;
+        return TAB_POSITION;
     }
 
     private void init() {

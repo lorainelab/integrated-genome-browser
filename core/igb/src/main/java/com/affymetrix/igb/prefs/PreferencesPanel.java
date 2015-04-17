@@ -28,12 +28,16 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PreferencesPanel extends JPanel {
 
@@ -49,12 +53,14 @@ public final class PreferencesPanel extends JPanel {
     private final static String PREFERENCES = BUNDLE.getString("Preferences");
     private final static String HELP = BUNDLE.getString("helpMenu");
     public TrackPreferencesPanel tpvGUI = null;
+    private static final Logger logger = LoggerFactory.getLogger(PreferencesPanel.class);
+    Map<String, PreferencesPanelProvider> prefPanels;
 
     private PreferencesPanel() {
         this.setLayout(new BorderLayout());
 
         tab_pane = new JTabbedPane();
-
+        prefPanels = new ConcurrentHashMap<>();
         this.add(tab_pane, BorderLayout.CENTER);
 
         // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
@@ -80,9 +86,9 @@ public final class PreferencesPanel extends JPanel {
             }
         });
 
-        singleton.addPrefEditorComponent(singleton.tpvGUI);
-        singleton.addPrefEditorComponent(new OtherOptionsView());
-        singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
+        singleton.addPreferencePanel(singleton.tpvGUI);
+        singleton.addPreferencePanel(new OtherOptionsView());
+        singleton.addPreferencePanel(DataLoadPrefsView.getSingleton());
         return singleton;
     }
 
@@ -130,9 +136,9 @@ public final class PreferencesPanel extends JPanel {
 //        });
 //        return tab_pane.indexOfComponent(pec);
 //    }
-
-    public void addPrefEditorComponent(PreferencesPanelProvider panelProvider) {
-        tab_pane.add(panelProvider.getPanel(), panelProvider.getTabWeight());
+    public void addPreferencePanel(PreferencesPanelProvider panelProvider) {
+        prefPanels.put(panelProvider.getPanel().getName(), panelProvider);
+        addPanelToTab(panelProvider);
         panelProvider.getPanel().addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -140,6 +146,22 @@ public final class PreferencesPanel extends JPanel {
                 panelProvider.refresh();
             }
         });
+    }
+
+    private void addPanelToTab(PreferencesPanelProvider panelProvider) {
+        boolean panelAdded = false;
+        for (int i = tab_pane.getTabCount(); i > 0 ; i--) {
+            JPanel panel = (JPanel) tab_pane.getComponentAt(i-1);
+            PreferencesPanelProvider prefPanel = prefPanels.get(panel.getName());
+            if(panelProvider.getTabWeight() > prefPanel.getTabWeight()) {
+                tab_pane.add(panelProvider.getPanel(), i);
+                panelAdded = true;
+                break;
+            }
+        }
+        if(!panelAdded) {
+            tab_pane.add(panelProvider.getPanel());
+        }
     }
 
     public void removePrefEditorComponent(PreferencesPanelProvider panelProvider) {

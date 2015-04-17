@@ -66,6 +66,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     protected JRPButton editAuthButton;
     protected JRPButton rankUpButton;
     protected JRPButton rankDownButton;
+    private static final int TAB_POSITION = 3;
 
     public static synchronized DataLoadPrefsView getSingleton() {
         if (singleton == null) {
@@ -85,7 +86,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
     @Override
     public int getTabWeight() {
-        return 3;
+        return TAB_POSITION;
     }
 
     @Override

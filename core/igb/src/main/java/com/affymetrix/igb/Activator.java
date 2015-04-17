@@ -349,7 +349,7 @@ public class Activator implements BundleActivator {
 
                     @Override
                     public void addService(PreferencesPanelProvider prefs) {
-                        PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
+                        PreferencesPanel.getSingleton().addPreferencePanel(prefs);
                     }
                 }
         );

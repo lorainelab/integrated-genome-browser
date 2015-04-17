@@ -13,6 +13,7 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel implements Prefere
 
     public static final String COMPONENT_NAME = "TrackDefaultsPanel";
     private static final long serialVersionUID = 1L;
+    private static final int TAB_POSITION = 1;
 
     //TODO remove this dependency on a singleton
     public TrackDefaultsPanel() {
@@ -37,7 +38,7 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel implements Prefere
 
     @Override
     public int getTabWeight() {
-        return 1;
+        return TAB_POSITION;
     }
 
     @Override

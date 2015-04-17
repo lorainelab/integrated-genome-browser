@@ -58,6 +58,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
     private final JPanel keyStrokePanel;
     private IgbService igbService;
+    private static final int TAB_POSITION = 7;
 
     @Reference
     public void addIgbService(IgbService igbService) {
@@ -203,7 +204,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
     @Override
     public int getTabWeight() {
-        return 1;
+        return TAB_POSITION;
     }
 
     @Override

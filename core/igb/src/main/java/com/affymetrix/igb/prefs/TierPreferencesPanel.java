@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 public class TierPreferencesPanel extends TrackPreferencesPanel {
 
     private static final long serialVersionUID = 1L;
+    private static final int TAB_POSITION = 2;
 
     /**
      * Creates new form TierPreferencesPanel
@@ -35,7 +36,7 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 
     @Override
     public int getTabWeight() {
-        return 2;
+        return TAB_POSITION;
     }
 
     @Override

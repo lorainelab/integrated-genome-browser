@@ -35,7 +35,7 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 
     @Override
     public int getTabWeight() {
-        return 4;
+        return 2;
     }
 
     @Override

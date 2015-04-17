@@ -132,7 +132,7 @@ public final class PreferencesPanel extends JPanel {
 //    }
 
     public void addPrefEditorComponent(PreferencesPanelProvider panelProvider) {
-        tab_pane.add(panelProvider.getPanel());
+        tab_pane.add(panelProvider.getPanel(), panelProvider.getTabWeight());
         panelProvider.getPanel().addComponentListener(new ComponentAdapter() {
 
             @Override

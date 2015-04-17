@@ -37,7 +37,7 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel implements Prefere
 
     @Override
     public int getTabWeight() {
-        return 2;
+        return 1;
     }
 
     @Override

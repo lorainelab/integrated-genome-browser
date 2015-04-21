@@ -66,7 +66,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     protected JRPButton editAuthButton;
     protected JRPButton rankUpButton;
     protected JRPButton rankDownButton;
-    private static final int TAB_POSITION = 3;
+    public static final int TAB_POSITION = 3;
 
     public static synchronized DataLoadPrefsView getSingleton() {
         if (singleton == null) {

@@ -15,6 +15,7 @@ import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.igb.prefs.DataLoadPrefsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
@@ -151,15 +152,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         if (src == this.serverPrefsB) {
             // Go to server prefs tab.
-
-            if (PreferencesPanel.TAB_DATALOAD_PREFS != -1) {
-                PreferencesPanel pv = PreferencesPanel.getSingleton();
-                pv.setTab(PreferencesPanel.TAB_DATALOAD_PREFS);	// Server preferences tab
-                JFrame f = pv.getFrame();
-                f.setVisible(true);
-            } else {
-                System.out.println("Data Load Preferences not instantiated");
-            }
+            PreferencesPanel pv = PreferencesPanel.getSingleton();
+            pv.setTab(DataLoadPrefsView.TAB_POSITION);	// Server preferences tab
+            JFrame f = pv.getFrame();
+            f.setVisible(true);
         }
     }
 

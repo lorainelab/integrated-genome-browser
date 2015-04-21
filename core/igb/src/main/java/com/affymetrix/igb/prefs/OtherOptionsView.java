@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 public class OtherOptionsView extends JPanel implements PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final int TAB_POSITION = 5;
+    public static final int TAB_POSITION = 5;
     String default_label_format = CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
     String[] label_format_options = new String[]{CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_FULL,
         CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA,

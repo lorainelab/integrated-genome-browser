@@ -11,6 +11,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.google.common.base.Strings;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Component;
@@ -45,6 +46,7 @@ public class IGBScriptEngine implements ScriptEngine {
     private final ImageExportService imageExportService;
     private static String splitter = "\\s";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
+    private static final String BASH_HOME = "~/"; // '~/' over '~' because ~Filename is a valid file name
 
     public static enum ExportMode {
 
@@ -221,24 +223,35 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
+    /**
+     * Every line in script is divided into two parts.
+     * Action and params. Action decide what operations should be performed on params.
+     * Assumptions: Action cannot have spaces.
+     *              First param of load mode will not have any space.
+     * @param line 
+     */
     public void doSingleAction(String line) {
         LOG.logp(Level.INFO, this.getClass().getName(), "doSingleAction",
                 "line: {0}", line);
-        String[] fields = line.split(splitter);
-        String action = fields[0].toLowerCase();
-        if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
-            // go to genome
-            goToGenome(join(fields, 1));
+        if (Strings.isNullOrEmpty(line) || line.indexOf(splitter) < 0) {
             return;
         }
-        if (action.equalsIgnoreCase("goto") && fields.length >= 2) {
+        String action = line.substring(0, line.indexOf(splitter)).trim();
+        String params = line.substring(line.indexOf(splitter) + 1).replace(BASH_HOME, System.getProperty("user.home")).trim();
+        //String[] fields = line.split(splitter);
+        if (action.equalsIgnoreCase("genome") && !Strings.isNullOrEmpty(params)) {
+            // go to genome
+            goToGenome(params);
+            return;
+        }
+        if (action.equalsIgnoreCase("goto") && !Strings.isNullOrEmpty(params)) {
             // go to region
-            goToRegion(join(fields, 1));
+            goToRegion(params);
             return;
         }
         if (action.equalsIgnoreCase("load")) {
             // Allowing multiple files to be specified, split by commas
-            String[] loadFiles = join(fields, 1).split(",");
+            String[] loadFiles = params.split(",");
             for (int i = 0; i < loadFiles.length; i++) {
                 if (i > 0) {
                     try {
@@ -254,7 +267,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         if (action.equalsIgnoreCase("unload") || action.equalsIgnoreCase("deleteTrack")) {
             // Allowing multiple files to be specified, split by commas
-            String[] loadFiles = join(fields, 1).split(",");
+            String[] loadFiles = params.split(",");
             for (int i = 0; i < loadFiles.length; i++) {
                 if (i > 0) {
                     try {
@@ -267,27 +280,22 @@ public class IGBScriptEngine implements ScriptEngine {
             }
             return;
         }
-        if (action.equalsIgnoreCase("loadfromserver")) {
-            if (fields.length >= 2) {
-                loadData(fields[1], join(fields, 2));
+        if (action.equalsIgnoreCase("loadmode")) {
+            String mode = params.substring(0, params.indexOf(splitter));
+            String featureUri = params.substring(params.indexOf(splitter) + 1);
+            if (Strings.isNullOrEmpty(mode) || Strings.isNullOrEmpty(featureUri)) {
                 return;
             }
-            return;
-        }
-        if (action.equalsIgnoreCase("loadmode")) {
-            if (fields.length >= 2) {
-                loadMode(fields[1], join(fields, 2));
-            }
+            loadMode(mode, featureUri);
             return;
         }
         if (action.equalsIgnoreCase("print")) {
-            if (fields.length == 1) {
+            if (Strings.isNullOrEmpty(params)) {
                 try {
                     igbService.print(0, true);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem trying to print.", ex, Level.SEVERE);
                 }
-                return;
             }
             return;
         }
@@ -295,23 +303,23 @@ public class IGBScriptEngine implements ScriptEngine {
             igbService.loadVisibleFeatures();
             return;
         }
-        if (action.equalsIgnoreCase("select") && fields.length >= 2) {
-            igbService.performSelection(join(fields, 1));
+        if (action.equalsIgnoreCase("select") && !Strings.isNullOrEmpty(params)) {
+            igbService.performSelection(params);
             return;
         }
-        if (action.equalsIgnoreCase("selectfeature") && fields.length >= 2) {
-            igbService.selectFeatureAndCenterZoomStripe(join(fields, 1));
+        if (action.equalsIgnoreCase("selectfeature") && !Strings.isNullOrEmpty(params)) {
+            igbService.selectFeatureAndCenterZoomStripe(params);
             return;
         }
-        if (action.equalsIgnoreCase("setZoomStripePosition") && fields.length >= 2) {
-            double position = Double.parseDouble(join(fields, 1));
+        if (action.equalsIgnoreCase("setZoomStripePosition") && !Strings.isNullOrEmpty(params)) {
+            double position = Double.parseDouble(params);
             igbService.getSeqMapView().setZoomSpotX(position);
             igbService.getSeqMapView().setZoomSpotY(0);
             return;
         }
-        if (action.equals("sleep") && fields.length == 2) {
+        if (action.equals("sleep") && !Strings.isNullOrEmpty(params)) {
             try {
-                int sleepTime = Integer.parseInt(fields[1]);
+                int sleepTime = Integer.parseInt(params);
                 Thread.sleep(sleepTime);
             } catch (Exception ex) {
                 LOG.logp(Level.SEVERE, this.getClass().getName(), "doActions", "", ex);
@@ -320,7 +328,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         if (action.equalsIgnoreCase("hidetrack")) {
             // Allowing multiple files to be specified, split by commas
-            String[] hideTrack = join(fields, 1).split(",");
+            String[] hideTrack = params.split(",");
             for (String aHideTrack : hideTrack) {
                 hideTrack(aHideTrack);
             }
@@ -328,7 +336,7 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         if (action.equalsIgnoreCase("showtrack")) {
             // Allowing multiple files to be specified, split by commas
-            String[] showTrack = join(fields, 1).split(",");
+            String[] showTrack = params.split(",");
             for (String aShowTrack : showTrack) {
                 showTrack(aShowTrack);
             }
@@ -349,8 +357,8 @@ public class IGBScriptEngine implements ScriptEngine {
             }
 
             // determine the file name, and export.
-            if (fields.length >= 1) {
-                snapShot(exportMode, new File(join(fields, 1)));	// second field and possibly others are a single filename
+            if (!Strings.isNullOrEmpty(params)) {
+                snapShot(exportMode, new File(params));	// second field and possibly others are a single filename
             } else {
                 // base filename upon organism and timestamp
                 String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
@@ -569,17 +577,6 @@ public class IGBScriptEngine implements ScriptEngine {
         }
 
         return feature;
-    }
-
-    /**
-     * Join fields from startField to end of fields.
-     */
-    private String join(String[] fields, int startField) {
-        StringBuilder buffer = new StringBuilder("");
-        for (int i = startField; i < fields.length; i++) {
-            buffer.append(fields[i]);
-        }
-        return buffer.toString();
     }
 
     /**

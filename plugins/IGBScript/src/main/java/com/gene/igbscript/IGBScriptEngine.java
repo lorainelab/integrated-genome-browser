@@ -44,7 +44,9 @@ public class IGBScriptEngine implements ScriptEngine {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IGBScriptEngine.class);
     private final ScriptEngineFactory igbFactory;
     private final ImageExportService imageExportService;
-    private static String splitter = "\\s";
+    private static final String SPACE = " ";
+    private static String SPACES = "\\s";
+    private static final String TAB = "\\t";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
     private static final String BASH_HOME = "~/"; // '~/' over '~' because ~Filename is a valid file name
 
@@ -223,22 +225,50 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
+    private String extractAction(String line) {
+        if (!Strings.isNullOrEmpty(line)) {
+            int spaceIndex = line.indexOf(SPACE);
+            if(spaceIndex > 0) {
+                return line.substring(0, spaceIndex).trim();
+            } else {
+                return line.trim();
+            }
+        }
+        return null;
+    }
+    
+    private String extractParams(String line) {
+        if(!Strings.isNullOrEmpty(line)) {
+            int spaceIndex = line.indexOf(SPACE);
+            if(spaceIndex > 0) {
+                return line.substring(spaceIndex).trim();
+            }
+        }
+        return null;
+    }
+    
+    private String cleanInput(String line) {
+        line = line.replaceAll("\\s+", SPACE);
+        line = line.replace(BASH_HOME, System.getProperty("user.home") + "/");
+        return line.trim();
+    }
+
     /**
-     * Every line in script is divided into two parts.
-     * Action and params. Action decide what operations should be performed on params.
-     * Assumptions: Action cannot have spaces.
-     *              First param of load mode will not have any space.
-     * @param line 
+     * Every line in script is divided into two parts. Action and params. Action
+     * decide what operations should be performed on params. Assumptions: Action
+     * cannot have spaces. First param of load mode will not have any space.
+     *
+     * @param line
      */
     public void doSingleAction(String line) {
         LOG.logp(Level.INFO, this.getClass().getName(), "doSingleAction",
                 "line: {0}", line);
-        if (Strings.isNullOrEmpty(line) || line.indexOf(splitter) < 0) {
+        if (Strings.isNullOrEmpty(line)) {
             return;
         }
-        String action = line.substring(0, line.indexOf(splitter)).trim();
-        String params = line.substring(line.indexOf(splitter) + 1).replace(BASH_HOME, System.getProperty("user.home")).trim();
-        //String[] fields = line.split(splitter);
+        line = cleanInput(line);
+        String action = extractAction(line);
+        String params = extractParams(line);
         if (action.equalsIgnoreCase("genome") && !Strings.isNullOrEmpty(params)) {
             // go to genome
             goToGenome(params);
@@ -281,8 +311,8 @@ public class IGBScriptEngine implements ScriptEngine {
             return;
         }
         if (action.equalsIgnoreCase("loadmode")) {
-            String mode = params.substring(0, params.indexOf(splitter));
-            String featureUri = params.substring(params.indexOf(splitter) + 1);
+            String mode = params.substring(0, params.indexOf(SPACES));
+            String featureUri = params.substring(params.indexOf(SPACES) + 1);
             if (Strings.isNullOrEmpty(mode) || Strings.isNullOrEmpty(featureUri)) {
                 return;
             }

@@ -358,8 +358,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         JMenu operationsMenu = addOperationMenu(Selections.rootSyms);
         popup.add(operationsMenu);
         operationsMenu.getPopupMenu().setBorder(finalBorder);
-        operationsMenu.setEnabled(operationsMenu.getItemCount() > 0);
-        operationsMenu.setEnabled(!coordinatesTrackSelected);
+        operationsMenu.setEnabled(operationsMenu.getItemCount() > 0 && !coordinatesTrackSelected);
 
         popup.add(new JSeparator());
 

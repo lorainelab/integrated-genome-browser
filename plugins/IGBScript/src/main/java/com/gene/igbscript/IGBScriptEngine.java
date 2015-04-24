@@ -45,7 +45,7 @@ public class IGBScriptEngine implements ScriptEngine {
     private final ScriptEngineFactory igbFactory;
     private final ImageExportService imageExportService;
     private static final String SPACE = " ";
-    private static String SPACES = "\\s";
+    private static final String SPACES = "\\s+";
     private static final String TAB = "\\t";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
     private static final String BASH_HOME = "~/"; // '~/' over '~' because ~Filename is a valid file name
@@ -248,8 +248,8 @@ public class IGBScriptEngine implements ScriptEngine {
     }
     
     private String cleanInput(String line) {
-        line = line.replaceAll("\\s+", SPACE);
-        line = line.replace(BASH_HOME, System.getProperty("user.home") + "/");
+        line = line.replaceAll(SPACES, SPACE);
+        line = line.replaceAll(BASH_HOME, System.getProperty("user.home") + "/");
         return line.trim();
     }
 
@@ -311,8 +311,8 @@ public class IGBScriptEngine implements ScriptEngine {
             return;
         }
         if (action.equalsIgnoreCase("loadmode")) {
-            String mode = params.substring(0, params.indexOf(SPACES));
-            String featureUri = params.substring(params.indexOf(SPACES) + 1);
+            String mode = params.substring(0, params.indexOf(SPACE));
+            String featureUri = params.substring(params.indexOf(SPACE) + 1);
             if (Strings.isNullOrEmpty(mode) || Strings.isNullOrEmpty(featureUri)) {
                 return;
             }

@@ -12,6 +12,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.igb.swing.script.ScriptManager;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
@@ -20,8 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.logging.Level;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -46,9 +49,9 @@ public class IGBScriptEngine implements ScriptEngine {
     private final ImageExportService imageExportService;
     private static final String SPACE = " ";
     private static final String SPACES = "\\s+";
-    private static final String TAB = "\\t";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
     private static final String BASH_HOME = "~/"; // '~/' over '~' because ~Filename is a valid file name
+    private String fileName;
 
     public static enum ExportMode {
 
@@ -100,6 +103,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
+        this.fileName = (String) context.getAttribute(ScriptManager.FILENAME);
         doActions(script);
         return null;
     }
@@ -243,12 +247,29 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
-    private String cleanInput(String line) {
-        line = line.replaceAll(SPACES, SPACE);
-        if (!CommonUtils.IS_WINDOWS) {
-            line = line.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
+    private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
+        if (CommonUtils.IS_WINDOWS) {
+            return filePath;
         }
-        return line.trim();
+        if(filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
+            return filePath;
+        }
+        String scriptLocation = File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
+        scriptLocation = URLDecoder.decode(scriptLocation, "UTF-8");
+        while (filePath.startsWith("../")) {
+            scriptLocation = scriptLocation.substring(0, scriptLocation.lastIndexOf("/"));
+            filePath = filePath.substring(filePath.indexOf("/") + 1);
+        }
+        if(filePath.startsWith(BASH_HOME)) {
+            filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
+        }
+        if (filePath.startsWith("./")) {
+            filePath = filePath.replace("./", scriptLocation + File.separator);
+        }
+        if (!filePath.startsWith("/")) {
+            filePath = scriptLocation + File.separator + filePath;
+        }
+        return filePath;
     }
 
     /**
@@ -260,7 +281,7 @@ public class IGBScriptEngine implements ScriptEngine {
      */
     public void doSingleAction(String line) {
         logger.info("doSingleAction line: {}", line);
-        line = cleanInput(line);
+        line = line.replaceAll(SPACES, SPACE);//cleanInput(line);
         try {
             String action = extractAction(line);
             String paramString = extractParamString(line);
@@ -285,7 +306,7 @@ public class IGBScriptEngine implements ScriptEngine {
                             logger.error("doSingleAction waiting", ex);
                         }
                     }
-                    loadFile(loadFiles[i]);
+                    loadFile(getAbsolutePath(loadFiles[i]));
                 }
                 return;
             }
@@ -300,7 +321,7 @@ public class IGBScriptEngine implements ScriptEngine {
                             logger.error("error while running unload action", ex);
                         }
                     }
-                    unLoadFile(loadFiles[i]);
+                    unLoadFile(getAbsolutePath(loadFiles[i]));
                 }
                 return;
             }
@@ -354,7 +375,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 // Allowing multiple files to be specified, split by commas
                 String[] hideTrack = paramString.split(",");
                 for (String aHideTrack : hideTrack) {
-                    hideTrack(aHideTrack);
+                    hideTrack(getAbsolutePath(aHideTrack));
                 }
                 return;
             }
@@ -362,7 +383,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 // Allowing multiple files to be specified, split by commas
                 String[] showTrack = paramString.split(",");
                 for (String aShowTrack : showTrack) {
-                    showTrack(aShowTrack);
+                    showTrack(getAbsolutePath(aShowTrack));
                 }
                 return;
             }
@@ -382,7 +403,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
                 // determine the file name, and export.
                 if (!Strings.isNullOrEmpty(paramString)) {
-                    snapShot(exportMode, new File(paramString));	// second field and possibly others are a single filename
+                    snapShot(exportMode, new File(getAbsolutePath(paramString)));	// second field and possibly others are a single filename
                 } else {
                     // base filename upon organism and timestamp
                     String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
@@ -406,7 +427,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 return;
             }
             logger.warn("Unrecognized or invalid command: {}", action);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             logger.warn("Illegal argument in script", e);
         }
     }

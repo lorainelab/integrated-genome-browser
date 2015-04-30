@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
 import javax.swing.JOptionPane;
 
 public class ScriptManager {
@@ -178,11 +180,14 @@ public class ScriptManager {
             }
 
             Reader reader = new InputStreamReader(is);
-            engine.eval(reader);
+            ScriptContext context = new SimpleScriptContext();
+            context.setAttribute(FILENAME, fileName, ScriptContext.ENGINE_SCOPE);
+            engine.eval(reader, context);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+    public static final String FILENAME = "FileName";
 
     public void pause() {
         JOptionPane.showMessageDialog(null, "script paused ...");

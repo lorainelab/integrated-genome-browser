@@ -228,7 +228,7 @@ public class IGBScriptEngine implements ScriptEngine {
     private String extractAction(String line) {
         if (!Strings.isNullOrEmpty(line)) {
             int spaceIndex = line.indexOf(SPACE);
-            if(spaceIndex > 0) {
+            if (spaceIndex > 0) {
                 return line.substring(0, spaceIndex).trim();
             } else {
                 return line.trim();
@@ -236,20 +236,22 @@ public class IGBScriptEngine implements ScriptEngine {
         }
         return null;
     }
-    
+
     private String extractParams(String line) {
-        if(!Strings.isNullOrEmpty(line)) {
+        if (!Strings.isNullOrEmpty(line)) {
             int spaceIndex = line.indexOf(SPACE);
-            if(spaceIndex > 0) {
+            if (spaceIndex > 0) {
                 return line.substring(spaceIndex).trim();
             }
         }
         return null;
     }
-    
+
     private String cleanInput(String line) {
         line = line.replaceAll(SPACES, SPACE);
-        line = line.replaceAll(BASH_HOME, System.getProperty("user.home") + "/");
+        if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
+            line = line.replaceAll(BASH_HOME, System.getProperty("user.home") + "/");
+        }
         return line.trim();
     }
 

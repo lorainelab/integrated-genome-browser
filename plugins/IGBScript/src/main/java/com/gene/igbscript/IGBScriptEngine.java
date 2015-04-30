@@ -103,7 +103,11 @@ public class IGBScriptEngine implements ScriptEngine {
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
-        this.fileName = (String) context.getAttribute(ScriptManager.FILENAME);
+        try {
+            fileName = URLDecoder.decode((String) context.getAttribute(ScriptManager.FILENAME), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            java.util.logging.Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
         doActions(script);
         return null;
     }
@@ -255,16 +259,8 @@ public class IGBScriptEngine implements ScriptEngine {
             return filePath;
         }
         String scriptLocation = File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
-        scriptLocation = URLDecoder.decode(scriptLocation, "UTF-8");
-        while (filePath.startsWith("../")) {
-            scriptLocation = scriptLocation.substring(0, scriptLocation.lastIndexOf("/"));
-            filePath = filePath.substring(filePath.indexOf("/") + 1);
-        }
         if(filePath.startsWith(BASH_HOME)) {
             filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
-        }
-        if (filePath.startsWith("./")) {
-            filePath = filePath.replace("./", scriptLocation + File.separator);
         }
         if (!filePath.startsWith("/")) {
             filePath = scriptLocation + File.separator + filePath;
@@ -281,7 +277,7 @@ public class IGBScriptEngine implements ScriptEngine {
      */
     public void doSingleAction(String line) {
         logger.info("doSingleAction line: {}", line);
-        line = line.replaceAll(SPACES, SPACE);//cleanInput(line);
+        line = line.replaceAll(SPACES, SPACE);
         try {
             String action = extractAction(line);
             String paramString = extractParamString(line);

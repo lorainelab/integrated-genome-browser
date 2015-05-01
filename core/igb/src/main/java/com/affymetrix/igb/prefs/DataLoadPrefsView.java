@@ -378,7 +378,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
     @Override
     public String getHelpHtml() {
-        try(InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.pref.DataLoadPrefsView.html")) {
+        try(InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.DataLoadPrefsView.html")) {
             return CommonUtils.getTextFromStream(stream);
         } catch(IOException ex) {
             logger.error("Help file not found ", ex);

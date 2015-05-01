@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.swing.JRPJPanel;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -96,7 +96,7 @@ public abstract class HelpActionA extends GenericAction {
      * @param parentPanel the parent of the panel to display text for
      * @param panel the panel to display text for
      */
-    protected void showHelpForPanel(JPanel parentPanel, JRPJPanel panel) {
+    protected void showHelpForPanel(JPanel parentPanel, HtmlHelpProvider panel) {
             String text = panel.getHelpHtml();
             showHelp(parentPanel, text);
     }

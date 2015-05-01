@@ -12,19 +12,20 @@ package com.lorainelab.igb.keystrokes;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JScrollPane;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
 @Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {PreferencesPanelProvider.class})
-public final class KeyStrokesView implements PreferencesPanelProvider {
+public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
     private JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
@@ -107,19 +108,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
     public KeyStrokesView() {
         table = new KeyStrokeViewTable("KeyStrokesView");
-        keyStrokePanel = new JRPJPanel(KeyStrokesView.class.getName(), new MigLayout("fill")) {
-
-            @Override
-            public String getHelpHtml() {
-                try (InputStream stream = this.getClass().getResourceAsStream("/help/keyStrokesViewGUI.html")) {
-                    return CommonUtils.getTextFromStream(stream);
-                } catch (IOException ex) {
-                    logger.error("Help file not found ", ex);
-                }
-                return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
-            }
-
-        };
+        keyStrokePanel = new JRPJPanel(KeyStrokesView.class.getName(), new MigLayout("fill"));
         JScrollPane scrollPane = new javax.swing.JScrollPane();
         scrollPane.setViewportView(table);
         keyStrokePanel.setName("Toolbar");
@@ -158,6 +147,17 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
         refresh();
         lsm.addListSelectionListener(listSelectionListener);
         PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(pcl);
+    }
+
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(KeyStrokesView.class.getResource("/help/keyStrokesViewGUI.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
+        }
+        return htmlText;
     }
 
     @Reference(optional = false)

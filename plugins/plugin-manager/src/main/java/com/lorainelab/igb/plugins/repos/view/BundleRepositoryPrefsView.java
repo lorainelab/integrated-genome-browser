@@ -9,14 +9,16 @@ import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.google.common.base.Charsets;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.io.Resources;
 import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import javax.swing.Icon;
 import javax.swing.JTable;
@@ -34,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @author dcnorris
  */
 @Component(name = BundleRepositoryPrefsView.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
-public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider {
+public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "Plugin Repositories";
@@ -151,12 +153,13 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
 
     @Override
     public String getHelpHtml() {
-        try(InputStream stream = this.getClass().getResourceAsStream("/help/bundleRepositoryPrefsView.html")) {
-            return CommonUtils.getTextFromStream(stream);
-        } catch(IOException ex) {
-            logger.error("Help file not found ", ex);
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(BundleRepositoryPrefsView.class.getResource("/help/bundleRepositoryPrefsView.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
         }
-        return super.getHelpHtml();
+        return htmlText;
     }
     
     /**

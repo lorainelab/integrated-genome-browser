@@ -1,10 +1,11 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.igb.swing.JRPJPanel;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.io.IOException;
-import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Anuj
  */
-public class TierPreferencesPanel extends TrackPreferencesPanel {
+public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = 2;
@@ -76,11 +77,12 @@ public class TierPreferencesPanel extends TrackPreferencesPanel {
 
     @Override
     public String getHelpHtml() {
-        try (InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.TierPreferencesPanel.html")) {
-            return CommonUtils.getTextFromStream(stream);
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(TierPreferencesPanel.class.getResource("/help/com.affymetrix.igb.prefs.TierPreferencesPanel.html"), Charsets.UTF_8);
         } catch (IOException ex) {
             logger.error("Help file not found ", ex);
         }
-        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
+        return htmlText;
     }
 }

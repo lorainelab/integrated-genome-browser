@@ -1,6 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
@@ -16,9 +15,12 @@ import com.affymetrix.igb.view.OrfAnalyzer;
 import static com.affymetrix.igb.view.SeqMapView.default_edge_match_color;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author nick
  */
-public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvider {
+public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
     public static final int TAB_POSITION = 5;
@@ -57,13 +59,14 @@ public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvi
 
     @Override
     public String getHelpHtml() {
-
-        try (InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.OtherOptionsView.html")) {
-            return CommonUtils.getTextFromStream(stream);
+        
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(OtherOptionsView.class.getResource("/help/com.affymetrix.igb.prefs.OtherOptionsView.html"), Charsets.UTF_8);
         } catch (IOException ex) {
-            logger.error("Help file not found ", ex);
+            java.util.logging.Logger.getLogger(OtherOptionsView.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
+        return htmlText;
     }
 
     /**

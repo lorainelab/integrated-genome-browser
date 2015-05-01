@@ -53,10 +53,6 @@ public class JRPJPanel extends JPanel implements WeightedJRPWidget {
         return -1;
     }
     
-    public String getHelpHtml() {
-        return "Some default html file"; //TODO
-    }
-
     private void init() {
         ScriptManager.getInstance().addWidget(this);
     }

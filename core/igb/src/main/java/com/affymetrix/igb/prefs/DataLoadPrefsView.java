@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.general.GenericServer;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_ORDER;
 import com.affymetrix.genometry.thread.CThreadHolder;
@@ -28,12 +27,14 @@ import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author sgblanch
  * @version $Id: DataLoadPrefsView.java 9956 2012-01-25 16:46:38Z dcnorris $
  */
-public final class DataLoadPrefsView extends ServerPrefsView {
+public final class DataLoadPrefsView extends ServerPrefsView implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
     private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
@@ -378,11 +379,12 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
     @Override
     public String getHelpHtml() {
-        try(InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.DataLoadPrefsView.html")) {
-            return CommonUtils.getTextFromStream(stream);
-        } catch(IOException ex) {
-            logger.error("Help file not found ", ex);
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(DataLoadPrefsView.class.getResource("/help/com.affymetrix.igb.prefs.DataLoadPrefsView.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
         }
-        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
+        return htmlText;
     }
 }

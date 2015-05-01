@@ -9,7 +9,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
@@ -22,6 +21,9 @@ import com.affymetrix.igb.action.PreferencesHelpTabAction;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,7 +34,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
@@ -42,7 +43,7 @@ import javax.swing.JMenuItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class PreferencesPanel extends JRPJPanel {
+public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvider {
 
     //TODO Delete these constants.
 //    public static int TAB_TIER_PREFS_VIEW = -1;
@@ -241,11 +242,12 @@ public final class PreferencesPanel extends JRPJPanel {
 
     @Override
     public String getHelpHtml() {
-        try (InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.PreferencesPanel.html")) {
-            return CommonUtils.getTextFromStream(stream);
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(PreferencesPanel.class.getResource("/help/com.affymetrix.igb.prefs.PreferencesPanel.html"), Charsets.UTF_8);
         } catch (IOException ex) {
-            logger.error("Help file not found ", ex);
+            logger.error("Help file not found " , ex);
         }
-        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
+        return htmlText;
     }
 }

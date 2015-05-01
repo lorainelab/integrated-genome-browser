@@ -1,6 +1,7 @@
 package apollo.analysis;
 
 import apollo.util.GuiUtil;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 
 import java.awt.GridBagConstraints;
@@ -8,10 +9,9 @@ import java.awt.GridBagLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, PreferencesPanelProvider {
+public class BlastRunOptsPanel extends JRPJPanel implements BlastRunOpts, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1;
 //	private JTextField startField;
@@ -27,7 +27,7 @@ public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, Preferenc
 //	private int start, end;
 
     public BlastRunOptsPanel() {
-        super();
+        super(BlastRunOptsPanel.class.getName());
         init();
         setName("Blast Options");
     }
@@ -60,12 +60,12 @@ public class BlastRunOptsPanel extends JPanel implements BlastRunOpts, Preferenc
     }
 
     @Override
-    public JPanel getPanel() {
+    public JRPJPanel getPanel() {
         return this;
     }
 
     @Override
-    public int getTabWeight() {
+    public int getWeight() {
         return TAB_POSITION;
     }
 

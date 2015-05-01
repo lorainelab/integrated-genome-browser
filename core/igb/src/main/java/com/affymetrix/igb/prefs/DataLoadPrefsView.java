@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.general.GenericServer;
 import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_ORDER;
 import com.affymetrix.genometry.thread.CThreadHolder;
@@ -23,6 +24,7 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -31,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
@@ -49,6 +52,7 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -67,6 +71,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     protected JRPButton rankUpButton;
     protected JRPButton rankDownButton;
     public static final int TAB_POSITION = 3;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataLoadPrefsView.class);
 
     public static synchronized DataLoadPrefsView getSingleton() {
         if (singleton == null) {
@@ -85,7 +90,7 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     }
 
     @Override
-    public int getTabWeight() {
+    public int getWeight() {
         return TAB_POSITION;
     }
 
@@ -367,7 +372,17 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     }
 
     @Override
-    public JPanel getPanel() {
+    public JRPJPanel getPanel() {
         return this;
+    }
+
+    @Override
+    public String getHelpHtml() {
+        try(InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.pref.DataLoadPrefsView.html")) {
+            return CommonUtils.getTextFromStream(stream);
+        } catch(IOException ex) {
+            logger.error("Help file not found ", ex);
+        }
+        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
     }
 }

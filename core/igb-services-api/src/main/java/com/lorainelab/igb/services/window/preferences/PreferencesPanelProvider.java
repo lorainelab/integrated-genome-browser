@@ -1,6 +1,6 @@
 package com.lorainelab.igb.services.window.preferences;
 
-import javax.swing.JPanel;
+import com.affymetrix.igb.swing.JRPJPanel;
 
 /**
  *
@@ -11,9 +11,9 @@ public interface PreferencesPanelProvider {
     public String getName();
 
     //determines position of tab relative to other tabs
-    public int getTabWeight();
+    public int getWeight();
 
-    public JPanel getPanel();
+    public JRPJPanel getPanel();
 
     //Mainly for backwards compatibility with old abstract class, but may be useful
     public void refresh();

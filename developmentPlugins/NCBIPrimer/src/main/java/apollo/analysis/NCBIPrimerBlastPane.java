@@ -1,6 +1,7 @@
 package apollo.analysis;
 
 import apollo.util.GuiUtil;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class NCBIPrimerBlastPane extends JPanel implements NCBIPrimerBlastOpts, PreferencesPanelProvider {
+public class NCBIPrimerBlastPane extends JRPJPanel implements NCBIPrimerBlastOpts, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
     private PrimerOptsPanel primerOptsPanel;
@@ -20,7 +21,7 @@ public class NCBIPrimerBlastPane extends JPanel implements NCBIPrimerBlastOpts, 
     private static final int TAB_POSITION = 8;
 
     public NCBIPrimerBlastPane() {
-        super();
+        super(NCBIPrimerBlastPane.class.getName());
         init();
         setName("Primer Options");
     }
@@ -35,12 +36,12 @@ public class NCBIPrimerBlastPane extends JPanel implements NCBIPrimerBlastOpts, 
     }
 
     @Override
-    public JPanel getPanel() {
+    public JRPJPanel getPanel() {
         return this;
     }
 
     @Override
-    public int getTabWeight() {
+    public int getWeight() {
         return TAB_POSITION;
     }
 

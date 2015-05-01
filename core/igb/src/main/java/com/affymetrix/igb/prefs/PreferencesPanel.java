@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.IGB;
@@ -18,6 +19,8 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
+import com.affymetrix.igb.swing.JRPJPanel;
+import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.BorderLayout;
@@ -28,18 +31,18 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class PreferencesPanel extends JPanel {
+public final class PreferencesPanel extends JRPJPanel {
 
     //TODO Delete these constants.
 //    public static int TAB_TIER_PREFS_VIEW = -1;
@@ -49,7 +52,7 @@ public final class PreferencesPanel extends JPanel {
     public static final String WINDOW_NAME = "Preferences Window";
     private JFrame frame = null;
     public static PreferencesPanel singleton = null;
-    private final JTabbedPane tabbedPane;
+    private final JRPTabbedPane tabbedPane;
     private final static String PREFERENCES = BUNDLE.getString("Preferences");
     private final static String HELP = BUNDLE.getString("helpMenu");
     public TrackPreferencesPanel tpvGUI = null;
@@ -57,9 +60,10 @@ public final class PreferencesPanel extends JPanel {
     Map<String, PreferencesPanelProvider> prefPanels;
 
     private PreferencesPanel() {
+        super(PreferencesPanel.class.getName());
         this.setLayout(new BorderLayout());
 
-        tabbedPane = new JTabbedPane();
+        tabbedPane = new JRPTabbedPane(PreferencesPanel.class.getName());
         prefPanels = new ConcurrentHashMap<>();
         this.add(tabbedPane, BorderLayout.CENTER);
     }
@@ -128,16 +132,15 @@ public final class PreferencesPanel extends JPanel {
 
     private void addPanelToTab(PreferencesPanelProvider panelProvider) {
         boolean panelAdded = false;
-        for (int i = tabbedPane.getTabCount(); i > 0 ; i--) {
-            JPanel panel = (JPanel) tabbedPane.getComponentAt(i-1);
-            PreferencesPanelProvider prefPanel = prefPanels.get(panel.getName());
-            if(panelProvider.getTabWeight() > prefPanel.getTabWeight()) {
+        for (int i = tabbedPane.getTabCount(); i > 0; i--) {
+            JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i - 1);
+            if (panelProvider.getWeight() > panel.getWeight()) {
                 tabbedPane.add(panelProvider.getPanel(), i);
                 panelAdded = true;
                 break;
             }
         }
-        if(!panelAdded) {
+        if (!panelAdded) {
             tabbedPane.add(panelProvider.getPanel());
         }
     }
@@ -234,5 +237,15 @@ public final class PreferencesPanel extends JPanel {
 
     public Component getSelectedTabComponent() {
         return tabbedPane.getSelectedComponent();
+    }
+
+    @Override
+    public String getHelpHtml() {
+        try (InputStream stream = this.getClass().getResourceAsStream("/help/com.affymetrix.igb.prefs.PreferencesPanel.html")) {
+            return CommonUtils.getTextFromStream(stream);
+        } catch (IOException ex) {
+            logger.error("Help file not found ", ex);
+        }
+        return super.getHelpHtml(); //To change body of generated methods, choose Tools | Templates.
     }
 }

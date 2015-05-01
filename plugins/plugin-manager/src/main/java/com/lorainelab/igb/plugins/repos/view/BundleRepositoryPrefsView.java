@@ -7,6 +7,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
@@ -14,9 +15,10 @@ import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -24,13 +26,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author dcnorris
  */
 @Component(name = BundleRepositoryPrefsView.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
-public class BundleRepositoryPrefsView extends JPanel implements PreferencesPanelProvider {
+public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "Plugin Repositories";
@@ -41,11 +45,13 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
     private AddBundleRepositoryFrame addBundleRepositoryFrame;
     private StyledJTable table;
     private IgbService igbService;
+    private static final Logger logger = LoggerFactory.getLogger(BundleRepositoryPrefsView.class);
 
     public BundleRepositoryPrefsView() {
+        super(BundleRepositoryPrefsView.class.getName());
         refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
     }
-
+    
     @Activate
     public void activate() {
         tableModel = pluginRepositoryListProvider.getBundleRepositoryTableModel();
@@ -143,6 +149,16 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
         this.pluginRepositoryListProvider = pluginRepositoryListProvider;
     }
 
+    @Override
+    public String getHelpHtml() {
+        try(InputStream stream = this.getClass().getResourceAsStream("/help/bundleRepositoryPrefsView.html")) {
+            return CommonUtils.getTextFromStream(stream);
+        } catch(IOException ex) {
+            logger.error("Help file not found ", ex);
+        }
+        return super.getHelpHtml();
+    }
+    
     /**
      * This method is called from within the constructor to
      * initialize the form.
@@ -224,12 +240,12 @@ public class BundleRepositoryPrefsView extends JPanel implements PreferencesPane
     }
 
     @Override
-    public int getTabWeight() {
+    public int getWeight() {
         return TAB_POSITION;
     }
 
     @Override
-    public JPanel getPanel() {
+    public JRPJPanel getPanel() {
         return this;
     }
 

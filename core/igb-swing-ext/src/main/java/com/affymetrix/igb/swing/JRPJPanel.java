@@ -12,7 +12,7 @@ import javax.swing.JPanel;
  *
  * @author dcnorris
  */
-public class JRPJPanel extends JPanel implements JRPWidget {
+public class JRPJPanel extends JPanel implements WeightedJRPWidget {
 
     private static final long serialVersionUID = 1L;
     private String id;
@@ -46,6 +46,15 @@ public class JRPJPanel extends JPanel implements JRPWidget {
             this.id = id;
             ScriptManager.getInstance().addWidget(this);
         }
+    }
+
+    @Override
+    public int getWeight() {
+        return -1;
+    }
+    
+    public String getHelpHtml() {
+        return "Some default html file"; //TODO
     }
 
     private void init() {

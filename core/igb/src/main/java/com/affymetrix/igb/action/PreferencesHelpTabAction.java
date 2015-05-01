@@ -33,7 +33,7 @@ public class PreferencesHelpTabAction extends HelpActionA {
         Component c = PreferencesPanel.getSingleton().getSelectedTabComponent();
         if (c instanceof PreferencesPanelProvider) {
             PreferencesPanelProvider pec = (PreferencesPanelProvider) c;
-            showHelpForPanel(PreferencesPanel.getSingleton(), pec.getPanel());
+            showHelp(PreferencesPanel.getSingleton(), pec.getPanel().getHelpHtml());
         } else {
             JOptionPane.showMessageDialog(PreferencesPanel.getSingleton(), "No help available for this tab",
                     "No Help", JOptionPane.INFORMATION_MESSAGE);

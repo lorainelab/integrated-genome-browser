@@ -7,10 +7,6 @@ import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
@@ -236,20 +232,5 @@ public class CommonUtils {
             return System.getProperty("developmentMode").equals("true");
         }
         return false;
-    }
-
-    public static String getTextFromStream(InputStream stream) {
-        StringBuilder builder = new StringBuilder();
-        try (Reader reader = new InputStreamReader(stream)) {
-            char buffer[] = new char[4096];
-
-            for (int read = reader.read(buffer, 0, buffer.length); read > 0; read = reader
-                    .read(buffer, 0, buffer.length)) {
-                builder.append(buffer);
-            }
-        } catch (IOException ex) {
-            logger.error("Help file not found ", ex);
-        }
-        return builder.toString();
     }
 }

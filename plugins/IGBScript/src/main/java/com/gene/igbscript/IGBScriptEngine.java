@@ -1,5 +1,6 @@
 package com.gene.igbscript;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.GenericFeature;
@@ -11,6 +12,8 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.igb.swing.script.ScriptManager;
+import com.google.common.base.Strings;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Component;
@@ -18,11 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.ConsoleHandler;
+import java.net.URLDecoder;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -30,6 +33,7 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -40,11 +44,14 @@ import org.slf4j.LoggerFactory;
  */
 public class IGBScriptEngine implements ScriptEngine {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IGBScriptEngine.class);
+    private static final Logger logger = LoggerFactory.getLogger(IGBScriptEngine.class);
     private final ScriptEngineFactory igbFactory;
     private final ImageExportService imageExportService;
-    private static String splitter = "\\s";
+    private static final String SPACE = " ";
+    private static final String SPACES = "\\s+";
     static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
+    private static final String BASH_HOME = "~/"; // '~/' over '~' because ~Filename is a valid file name
+    private String fileName;
 
     public static enum ExportMode {
 
@@ -65,14 +72,6 @@ public class IGBScriptEngine implements ScriptEngine {
     }
 
     private IgbService igbService;
-    private static final Logger LOG
-            = Logger.getLogger(IGBScriptEngine.class.getPackage().getName());
-
-    static {
-//		LOG.setLevel(Level.FINER); // FINER or FINEST for debugging.
-        LOG.addHandler(new ConsoleHandler());
-    }
-
     private ScriptContext defaultContext;
 
     public IGBScriptEngine(IGBScriptEngineFactory factory, IgbService igbService, ImageExportService imageExportService) {
@@ -104,6 +103,11 @@ public class IGBScriptEngine implements ScriptEngine {
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
+        try {
+            fileName = URLDecoder.decode((String) context.getAttribute(ScriptManager.FILENAME), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            java.util.logging.Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
         doActions(script);
         return null;
     }
@@ -210,170 +214,218 @@ public class IGBScriptEngine implements ScriptEngine {
                     // So, give a short sleep time between batch actions.
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
-                    LOG.log(Level.WARNING, "Thread interrupted while sleeping. Cancelling the script.");
+                    logger.warn("Thread interrupted while sleeping. Cancelling the script.");
                     break;
                 } finally {
                     igbService.removeNotLockedUpMsg("Executing script line: " + line);
                 }
             }
         } catch (Exception ex) {
-            LOG.logp(Level.SEVERE, this.getClass().getName(), "doActions", "", ex);
+            logger.error("doActions", ex);
         }
     }
 
-    public void doSingleAction(String line) {
-        LOG.logp(Level.INFO, this.getClass().getName(), "doSingleAction",
-                "line: {0}", line);
-        String[] fields = line.split(splitter);
-        String action = fields[0].toLowerCase();
-        if (action.equalsIgnoreCase("genome") && fields.length >= 2) {
-            // go to genome
-            goToGenome(join(fields, 1));
-            return;
-        }
-        if (action.equalsIgnoreCase("goto") && fields.length >= 2) {
-            // go to region
-            goToRegion(join(fields, 1));
-            return;
-        }
-        if (action.equalsIgnoreCase("load")) {
-            // Allowing multiple files to be specified, split by commas
-            String[] loadFiles = join(fields, 1).split(",");
-            for (int i = 0; i < loadFiles.length; i++) {
-                if (i > 0) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ex) {
-                        LOG.logp(Level.SEVERE, this.getClass().getName(),
-                                "doSingleAction", "waiting", ex);
-                    }
-                }
-                loadFile(loadFiles[i]);
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("unload") || action.equalsIgnoreCase("deleteTrack")) {
-            // Allowing multiple files to be specified, split by commas
-            String[] loadFiles = join(fields, 1).split(",");
-            for (int i = 0; i < loadFiles.length; i++) {
-                if (i > 0) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        logger.error("error while running unload action", ex);
-                    }
-                }
-                unLoadFile(loadFiles[i]);
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("loadfromserver")) {
-            if (fields.length >= 2) {
-                loadData(fields[1], join(fields, 2));
-                return;
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("loadmode")) {
-            if (fields.length >= 2) {
-                loadMode(fields[1], join(fields, 2));
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("print")) {
-            if (fields.length == 1) {
-                try {
-                    igbService.print(0, true);
-                } catch (Exception ex) {
-                    ErrorHandler.errorPanel("Problem trying to print.", ex, Level.SEVERE);
-                }
-                return;
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("refresh")) {
-            igbService.loadVisibleFeatures();
-            return;
-        }
-        if (action.equalsIgnoreCase("select") && fields.length >= 2) {
-            igbService.performSelection(join(fields, 1));
-            return;
-        }
-        if (action.equalsIgnoreCase("selectfeature") && fields.length >= 2) {
-            igbService.selectFeatureAndCenterZoomStripe(join(fields, 1));
-            return;
-        }
-        if (action.equalsIgnoreCase("setZoomStripePosition") && fields.length >= 2) {
-            double position = Double.parseDouble(join(fields, 1));
-            igbService.getSeqMapView().setZoomSpotX(position);
-            igbService.getSeqMapView().setZoomSpotY(0);
-            return;
-        }
-        if (action.equals("sleep") && fields.length == 2) {
-            try {
-                int sleepTime = Integer.parseInt(fields[1]);
-                Thread.sleep(sleepTime);
-            } catch (Exception ex) {
-                LOG.logp(Level.SEVERE, this.getClass().getName(), "doActions", "", ex);
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("hidetrack")) {
-            // Allowing multiple files to be specified, split by commas
-            String[] hideTrack = join(fields, 1).split(",");
-            for (String aHideTrack : hideTrack) {
-                hideTrack(aHideTrack);
-            }
-            return;
-        }
-        if (action.equalsIgnoreCase("showtrack")) {
-            // Allowing multiple files to be specified, split by commas
-            String[] showTrack = join(fields, 1).split(",");
-            for (String aShowTrack : showTrack) {
-                showTrack(aShowTrack);
-            }
-            return;
-        }
-        if (action.startsWith("snapshot")) {
-            // determine the export mode
-            action = action.substring(8, action.length());
-            IGBScriptEngine.ExportMode exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
-            if (action.length() == 0 || action.equalsIgnoreCase(IGBScriptEngine.ExportMode.WHOLEFRAME.toString())) {
-                exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
-            } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAIN.toString())) {
-                exportMode = IGBScriptEngine.ExportMode.MAIN;
-            } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAINWITHLABELS.toString())) {
-                exportMode = IGBScriptEngine.ExportMode.MAINWITHLABELS;
-            } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.SLICEDWITHLABELS.toString())) {
-                exportMode = IGBScriptEngine.ExportMode.SLICEDWITHLABELS;
-            }
-
-            // determine the file name, and export.
-            if (fields.length >= 1) {
-                snapShot(exportMode, new File(join(fields, 1)));	// second field and possibly others are a single filename
+    private String extractAction(String line) {
+        if (!Strings.isNullOrEmpty(line)) {
+            int spaceIndex = line.indexOf(SPACE);
+            if (spaceIndex > 0) {
+                return line.substring(0, spaceIndex).trim();
             } else {
-                // base filename upon organism and timestamp
-                String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
-                        : GenometryModel.getInstance().getSelectedSeqGroup().getID();
-                snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
+                return line.trim();
             }
-            return;
+        } else {
+            throw new IllegalArgumentException("Illegal argument in script");
         }
+    }
 
-        if (action.startsWith("homescreen")) {
-            igbService.setHome();
-            return;
+    private String extractParamString(String line) {
+        if (!Strings.isNullOrEmpty(line)) {
+            int spaceIndex = line.indexOf(SPACE);
+            if (spaceIndex > 0) {
+                return line.substring(spaceIndex).trim();
+            } else {
+                return null;
+            }
+        } else {
+            throw new IllegalArgumentException("Illegal argument in script");
         }
-        if (action.equalsIgnoreCase("bringToFront")) {
-            igbService.bringToFront();
-            return;
-        }
+    }
 
-        if (action.equalsIgnoreCase("deleteAllTracks")) {
-            igbService.deleteAllTracks();
-            return;
+    private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
+        if (CommonUtils.IS_WINDOWS) {
+            return filePath;
         }
-        LOG.log(Level.WARNING, "Unrecognized or invalid command: {0}", action);
+        if(filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
+            return filePath;
+        }
+        String scriptLocation = File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
+        if(filePath.startsWith(BASH_HOME)) {
+            filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
+        }
+        if (!filePath.startsWith("/")) {
+            filePath = scriptLocation + File.separator + filePath;
+        }
+        return filePath;
+    }
+
+    /**
+     * Every line in script is divided into two parts. Action and params. Action
+     * decide what operations should be performed on params. Assumptions: Action
+     * cannot have spaces. First param of load mode will not have any space.
+     *
+     * @param line
+     */
+    public void doSingleAction(String line) {
+        logger.info("doSingleAction line: {}", line);
+        line = line.replaceAll(SPACES, SPACE);
+        try {
+            String action = extractAction(line);
+            String paramString = extractParamString(line);
+            if (action.equalsIgnoreCase("genome") && !Strings.isNullOrEmpty(paramString)) {
+                // go to genome
+                goToGenome(paramString);
+                return;
+            }
+            if (action.equalsIgnoreCase("goto") && !Strings.isNullOrEmpty(paramString)) {
+                // go to region
+                goToRegion(paramString);
+                return;
+            }
+            if (action.equalsIgnoreCase("load")) {
+                // Allowing multiple files to be specified, split by commas
+                String[] loadFiles = paramString.split(",");
+                for (int i = 0; i < loadFiles.length; i++) {
+                    if (i > 0) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex) {
+                            logger.error("doSingleAction waiting", ex);
+                        }
+                    }
+                    loadFile(getAbsolutePath(loadFiles[i]));
+                }
+                return;
+            }
+            if (action.equalsIgnoreCase("unload") || action.equalsIgnoreCase("deleteTrack")) {
+                // Allowing multiple files to be specified, split by commas
+                String[] loadFiles = paramString.split(",");
+                for (int i = 0; i < loadFiles.length; i++) {
+                    if (i > 0) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException ex) {
+                            logger.error("error while running unload action", ex);
+                        }
+                    }
+                    unLoadFile(getAbsolutePath(loadFiles[i]));
+                }
+                return;
+            }
+            if (action.equalsIgnoreCase("loadmode")) {
+                String mode = paramString.substring(0, paramString.indexOf(SPACE));
+                String featureUri = paramString.substring(paramString.indexOf(SPACE) + 1);
+                if (Strings.isNullOrEmpty(mode) || Strings.isNullOrEmpty(featureUri)) {
+                    return;
+                }
+                loadMode(mode, featureUri);
+                return;
+            }
+            if (action.equalsIgnoreCase("print")) {
+                if (Strings.isNullOrEmpty(paramString)) {
+                    try {
+                        igbService.print(0, true);
+                    } catch (Exception ex) {
+                        ErrorHandler.errorPanel("Problem trying to print.", ex, Level.SEVERE);
+                    }
+                }
+                return;
+            }
+            if (action.equalsIgnoreCase("refresh")) {
+                igbService.loadVisibleFeatures();
+                return;
+            }
+            if (action.equalsIgnoreCase("select") && !Strings.isNullOrEmpty(paramString)) {
+                igbService.performSelection(paramString);
+                return;
+            }
+            if (action.equalsIgnoreCase("selectfeature") && !Strings.isNullOrEmpty(paramString)) {
+                igbService.selectFeatureAndCenterZoomStripe(paramString);
+                return;
+            }
+            if (action.equalsIgnoreCase("setZoomStripePosition") && !Strings.isNullOrEmpty(paramString)) {
+                double position = Double.parseDouble(paramString);
+                igbService.getSeqMapView().setZoomSpotX(position);
+                igbService.getSeqMapView().setZoomSpotY(0);
+                return;
+            }
+            if (action.equals("sleep") && !Strings.isNullOrEmpty(paramString)) {
+                try {
+                    int sleepTime = Integer.parseInt(paramString);
+                    Thread.sleep(sleepTime);
+                } catch (Exception ex) {
+                    logger.error("doActions", ex);
+                }
+                return;
+            }
+            if (action.equalsIgnoreCase("hidetrack")) {
+                // Allowing multiple files to be specified, split by commas
+                String[] hideTrack = paramString.split(",");
+                for (String aHideTrack : hideTrack) {
+                    hideTrack(getAbsolutePath(aHideTrack));
+                }
+                return;
+            }
+            if (action.equalsIgnoreCase("showtrack")) {
+                // Allowing multiple files to be specified, split by commas
+                String[] showTrack = paramString.split(",");
+                for (String aShowTrack : showTrack) {
+                    showTrack(getAbsolutePath(aShowTrack));
+                }
+                return;
+            }
+            if (action.startsWith("snapshot")) {
+                // determine the export mode
+                action = action.substring(8, action.length());
+                IGBScriptEngine.ExportMode exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
+                if (action.length() == 0 || action.equalsIgnoreCase(IGBScriptEngine.ExportMode.WHOLEFRAME.toString())) {
+                    exportMode = IGBScriptEngine.ExportMode.WHOLEFRAME;
+                } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAIN.toString())) {
+                    exportMode = IGBScriptEngine.ExportMode.MAIN;
+                } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.MAINWITHLABELS.toString())) {
+                    exportMode = IGBScriptEngine.ExportMode.MAINWITHLABELS;
+                } else if (action.equalsIgnoreCase(IGBScriptEngine.ExportMode.SLICEDWITHLABELS.toString())) {
+                    exportMode = IGBScriptEngine.ExportMode.SLICEDWITHLABELS;
+                }
+
+                // determine the file name, and export.
+                if (!Strings.isNullOrEmpty(paramString)) {
+                    snapShot(exportMode, new File(getAbsolutePath(paramString)));	// second field and possibly others are a single filename
+                } else {
+                    // base filename upon organism and timestamp
+                    String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
+                            : GenometryModel.getInstance().getSelectedSeqGroup().getID();
+                    snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
+                }
+                return;
+            }
+
+            if (action.startsWith("homescreen")) {
+                igbService.setHome();
+                return;
+            }
+            if (action.equalsIgnoreCase("bringToFront")) {
+                igbService.bringToFront();
+                return;
+            }
+
+            if (action.equalsIgnoreCase("deleteAllTracks")) {
+                igbService.deleteAllTracks();
+                return;
+            }
+            logger.warn("Unrecognized or invalid command: {}", action);
+        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+            logger.warn("Illegal argument in script", e);
+        }
     }
 
     /**
@@ -382,18 +434,15 @@ public class IGBScriptEngine implements ScriptEngine {
      * @param f
      */
     private void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
-        Logger.getLogger(IGBScriptEngine.class.getName()).log(
-                Level.INFO, "Exporting file {0} in mode: {1}", new Object[]{f.getName(), exportMode.toString()});
+        logger.info("Exporting file {} in mode: {}", new Object[]{f.getName(), exportMode.toString()});
         String ext = GeneralUtils.getExtension(f.getName().toLowerCase());
         if (ext.length() == 0) {
-            Logger.getLogger(IGBScriptEngine.class.getName()).log(
-                    Level.SEVERE, "no file extension given for file", f.getName());
+            logger.error("no file extension given for file", f.getName());
             return;
         }
 
         if (!isExt(ext)) {
-            Logger.getLogger(IGBScriptEngine.class.getName()).log(
-                    Level.SEVERE, "image file extension {0} is not supported", ext);
+            logger.error("image file extension {0} is not supported", ext);
             return;
         }
 
@@ -416,7 +465,7 @@ public class IGBScriptEngine implements ScriptEngine {
 
             imageExportService.headlessComponentExport(c, f, ext, true);
         } catch (Exception ex) {
-            Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error("ImageExport failed", ex);
         }
     }
 
@@ -435,7 +484,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 try {
                     Thread.sleep(300); // not finished initializing versions
                 } catch (InterruptedException ex) {
-                    LOG.logp(Level.SEVERE, this.getClass().getName(), "goToGenome", "", ex);
+                    logger.error("goToGenome", ex);
                 }
             }
         }
@@ -466,7 +515,7 @@ public class IGBScriptEngine implements ScriptEngine {
             try {
                 uri = new URI(fileName);
             } catch (URISyntaxException ex) {
-                LOG.logp(Level.SEVERE, this.getClass().getName(), "loadFile", "", ex);
+                logger.error("loadFile", ex);
                 return;
             }
         } else {
@@ -483,7 +532,7 @@ public class IGBScriptEngine implements ScriptEngine {
             try {
                 uri = new URI(fileName);
             } catch (URISyntaxException ex) {
-                LOG.logp(Level.SEVERE, this.getClass().getName(), "loadFile", "", ex);
+                logger.error("loadFile", ex);
                 return;
             }
         } else {
@@ -555,7 +604,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 igbService.loadAndDisplayAnnotations(feature);
             }
         } else {
-            LOG.log(Level.SEVERE, "Could not find feature: {0}", featureURIStr);
+            logger.error("Could not find feature: {}", featureURIStr);
         }
     }
 
@@ -569,17 +618,6 @@ public class IGBScriptEngine implements ScriptEngine {
         }
 
         return feature;
-    }
-
-    /**
-     * Join fields from startField to end of fields.
-     */
-    private String join(String[] fields, int startField) {
-        StringBuilder buffer = new StringBuilder("");
-        for (int i = startField; i < fields.length; i++) {
-            buffer.append(fields[i]);
-        }
-        return buffer.toString();
     }
 
     /**

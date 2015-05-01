@@ -64,7 +64,6 @@ import com.affymetrix.igb.action.ZoomOutXAction;
 import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -80,7 +79,6 @@ import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
@@ -184,7 +182,6 @@ public class Activator implements BundleActivator {
         addPopupListener(bundleContext);
         addAxisPopupListener(bundleContext);
         addScriptListener(bundleContext);
-        addPrefEditorComponentListener(bundleContext);
         initSeqMapViewActions();
         addStatusAlertListener(bundleContext);
         addSearchListener(bundleContext);
@@ -335,21 +332,6 @@ public class Activator implements BundleActivator {
 
                     @Override
                     public void notifyGenericAction(GenericAction genericAction) {
-                    }
-                }
-        );
-    }
-
-    private void addPrefEditorComponentListener(final BundleContext bundleContext) {
-        ExtensionPointHandler<IPrefEditorComponent> preferencesExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, IPrefEditorComponent.class);
-        preferencesExtensionPoint.addListener(
-                new ExtensionPointListener<IPrefEditorComponent>() {
-                    @Override
-                    public void removeService(IPrefEditorComponent prefs) {	/*cannot remove*/ }
-
-                    @Override
-                    public void addService(IPrefEditorComponent prefs) {
-                        PreferencesPanel.getSingleton().addPrefEditorComponent(prefs);
                     }
                 }
         );

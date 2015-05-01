@@ -18,8 +18,12 @@ import com.affymetrix.igb.action.ExportPreferencesAction;
 import com.affymetrix.igb.action.ImportPreferencesAction;
 import com.affymetrix.igb.action.PreferencesHelpAction;
 import com.affymetrix.igb.action.PreferencesHelpTabAction;
+import com.affymetrix.igb.swing.JRPJPanel;
+import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -29,36 +33,40 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class PreferencesPanel extends JPanel {
+public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvider {
 
-    public static int TAB_TIER_PREFS_VIEW = -1;
-    public static int TAB_OTHER_OPTIONS_VIEW = -1;
-    public static int TAB_DATALOAD_PREFS = -1;
+    //TODO Delete these constants.
+//    public static int TAB_TIER_PREFS_VIEW = -1;
+//    public static int TAB_OTHER_OPTIONS_VIEW = -1;
+//    public static int TAB_DATALOAD_PREFS = -1;
     private static final long serialVersionUID = 1L;
     public static final String WINDOW_NAME = "Preferences Window";
     private JFrame frame = null;
     public static PreferencesPanel singleton = null;
-    private final JTabbedPane tab_pane;
+    private final JRPTabbedPane tabbedPane;
     private final static String PREFERENCES = BUNDLE.getString("Preferences");
     private final static String HELP = BUNDLE.getString("helpMenu");
     public TrackPreferencesPanel tpvGUI = null;
+    private static final Logger logger = LoggerFactory.getLogger(PreferencesPanel.class);
+    Map<String, PreferencesPanelProvider> prefPanels;
 
     private PreferencesPanel() {
+        super(PreferencesPanel.class.getName());
         this.setLayout(new BorderLayout());
 
-        tab_pane = new JTabbedPane();
-
-        this.add(tab_pane, BorderLayout.CENTER);
-
-        // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
-        //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+        tabbedPane = new JRPTabbedPane(PreferencesPanel.class.getName());
+        prefPanels = new ConcurrentHashMap<>();
+        this.add(tabbedPane, BorderLayout.CENTER);
     }
 
     /**
@@ -80,9 +88,9 @@ public final class PreferencesPanel extends JPanel {
             }
         });
 
-        TAB_TIER_PREFS_VIEW = singleton.addPrefEditorComponent(singleton.tpvGUI);
-        TAB_OTHER_OPTIONS_VIEW = singleton.addPrefEditorComponent(new OtherOptionsView());
-        TAB_DATALOAD_PREFS = singleton.addPrefEditorComponent(DataLoadPrefsView.getSingleton());
+        singleton.addPreferencePanel(singleton.tpvGUI);
+        singleton.addPreferencePanel(new OtherOptionsView());
+        singleton.addPreferencePanel(DataLoadPrefsView.getSingleton());
         return singleton;
     }
 
@@ -90,20 +98,20 @@ public final class PreferencesPanel extends JPanel {
      * Set the tab pane to the given index.
      */
     public void setTab(int i) {
-        if (i < 0 || i >= tab_pane.getComponentCount()) {
+        if (i < 0 || i >= tabbedPane.getComponentCount()) {
             return;
         }
-        tab_pane.setSelectedIndex(i);
-        Component c = tab_pane.getComponentAt(i);
-        if (c instanceof IPrefEditorComponent) {
-            IPrefEditorComponent p = (IPrefEditorComponent) c;
+        tabbedPane.setSelectedIndex(i);
+        Component c = tabbedPane.getComponentAt(i);
+        if (c instanceof PreferencesPanelProvider) {
+            PreferencesPanelProvider p = (PreferencesPanelProvider) c;
             p.refresh();
         }
     }
 
     public int getTabIndex(Component component) {
-        for (int i = 0; i < tab_pane.getComponentCount(); i++) {
-            Component c = tab_pane.getComponentAt(i);
+        for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
+            Component c = tabbedPane.getComponentAt(i);
             if (component == c) {
                 return i;
             }
@@ -111,28 +119,9 @@ public final class PreferencesPanel extends JPanel {
         return -1;
     }
 
-    /**
-     * Adds the given component as a panel to the tab pane of preference
-     * editors.
-     *
-     * @param pec An implementation of PrefEditorComponent that must also be an
-     * instance of java.awt.Component.
-     * @return the index of the added tab in the tab pane.
-     */
-    public int addPrefEditorComponent(final IPrefEditorComponent pec) {
-        tab_pane.add(pec);
-        pec.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentShown(ComponentEvent e) {
-                pec.refresh();
-            }
-        });
-        return tab_pane.indexOfComponent(pec);
-    }
-
-    public void addPrefEditorComponent(PreferencesPanelProvider panelProvider) {
-        tab_pane.add(panelProvider.getPanel());
+    public void addPreferencePanel(PreferencesPanelProvider panelProvider) {
+        prefPanels.put(panelProvider.getPanel().getName(), panelProvider);
+        addPanelToTab(panelProvider);
         panelProvider.getPanel().addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -142,15 +131,30 @@ public final class PreferencesPanel extends JPanel {
         });
     }
 
-    public void removePrefEditorComponent(PreferencesPanelProvider panelProvider) {
-        tab_pane.remove(panelProvider.getPanel());
+    private void addPanelToTab(PreferencesPanelProvider panelProvider) {
+        boolean panelAdded = false;
+        for (int i = tabbedPane.getTabCount(); i > 0; i--) {
+            JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i - 1);
+            if (panelProvider.getWeight() > panel.getWeight()) {
+                tabbedPane.add(panelProvider.getPanel(), i);
+                panelAdded = true;
+                break;
+            }
+        }
+        if (!panelAdded) {
+            tabbedPane.add(panelProvider.getPanel());
+        }
     }
 
-    public IPrefEditorComponent[] getPrefEditorComponents() {
-        int count = tab_pane.getTabCount();
-        IPrefEditorComponent[] comps = new IPrefEditorComponent[count];
+    public void removePrefEditorComponent(PreferencesPanelProvider panelProvider) {
+        tabbedPane.remove(panelProvider.getPanel());
+    }
+
+    public PreferencesPanelProvider[] getPrefEditorComponents() {
+        int count = tabbedPane.getTabCount();
+        PreferencesPanelProvider[] comps = new PreferencesPanelProvider[count];
         for (int i = 0; i < count; i++) {
-            comps[i] = (IPrefEditorComponent) tab_pane.getComponentAt(i);
+            comps[i] = (PreferencesPanelProvider) tabbedPane.getComponentAt(i);
         }
         return comps;
     }
@@ -179,7 +183,7 @@ public final class PreferencesPanel extends JPanel {
                     // if the TierPrefsView is being displayed, the apply any changes from it.
                     // if it is not being displayed, then its changes have already been applied in componentHidden()
                     if (singleton.tpvGUI != null) {
-                        if (singleton.tab_pane.getSelectedComponent() == singleton.tpvGUI) {
+                        if (singleton.tabbedPane.getSelectedComponent() == singleton.tpvGUI) {
                             ((TierPrefsView) (singleton.tpvGUI.tdv)).removedFromView();
                         }
                     }
@@ -233,6 +237,17 @@ public final class PreferencesPanel extends JPanel {
     }
 
     public Component getSelectedTabComponent() {
-        return tab_pane.getSelectedComponent();
+        return tabbedPane.getSelectedComponent();
+    }
+
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(PreferencesPanel.class.getResource("/help/com.affymetrix.igb.prefs.PreferencesPanel.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
+        }
+        return htmlText;
     }
 }

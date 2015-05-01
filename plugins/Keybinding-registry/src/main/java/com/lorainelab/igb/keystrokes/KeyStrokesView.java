@@ -1,8 +1,9 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
- * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -14,15 +15,19 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -41,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
 @Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {PreferencesPanelProvider.class})
-public final class KeyStrokesView implements PreferencesPanelProvider {
+public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
     private JRPStyledTable table = new KeyStrokeViewTable("KeyStrokesView");
@@ -56,8 +61,9 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     private KeyStrokeEditPanel editPanel;
     private int selected = -1;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
-    private final JPanel keyStrokePanel;
+    private final JRPJPanel keyStrokePanel;
     private IgbService igbService;
+    private static final int TAB_POSITION = 7;
 
     @Reference
     public void addIgbService(IgbService igbService) {
@@ -102,7 +108,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
 
     public KeyStrokesView() {
         table = new KeyStrokeViewTable("KeyStrokesView");
-        keyStrokePanel = new JPanel(new MigLayout("fill"));
+        keyStrokePanel = new JRPJPanel(KeyStrokesView.class.getName(), new MigLayout("fill"));
         JScrollPane scrollPane = new javax.swing.JScrollPane();
         scrollPane.setViewportView(table);
         keyStrokePanel.setName("Toolbar");
@@ -143,13 +149,25 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
         PreferenceUtils.getKeystrokesNode().addPreferenceChangeListener(pcl);
     }
 
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(KeyStrokesView.class.getResource("/help/keyStrokesViewGUI.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
+        }
+        return htmlText;
+    }
+
     @Reference(optional = false)
     public void setModel(KeyStrokeViewTableModel model) {
         this.model = model;
     }
 
     /**
-     * Should fix the problems associated with updating entire table at every preference change.
+     * Should fix the problems associated with updating entire table at every
+     * preference change.
      */
     @Override
     public void refresh() {
@@ -202,12 +220,12 @@ public final class KeyStrokesView implements PreferencesPanelProvider {
     }
 
     @Override
-    public int getTabWeight() {
-        return 1;
+    public int getWeight() {
+        return TAB_POSITION;
     }
 
     @Override
-    public JPanel getPanel() {
+    public JRPJPanel getPanel() {
         return keyStrokePanel;
     }
 

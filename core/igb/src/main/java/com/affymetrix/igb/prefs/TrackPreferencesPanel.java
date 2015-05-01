@@ -9,8 +9,9 @@ import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -18,7 +19,7 @@ import java.awt.event.WindowListener;
  *
  * @author Anuj
  */
-public abstract class TrackPreferencesPanel extends IPrefEditorComponent implements SeqMapRefreshed, WindowListener, GroupSelectionListener {
+public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapRefreshed, WindowListener, GroupSelectionListener, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -35,7 +36,7 @@ public abstract class TrackPreferencesPanel extends IPrefEditorComponent impleme
     public SeqMapView smv;
 
     public TrackPreferencesPanel(String title, TrackPreferences tdv) {
-        super();
+        super(TrackPreferencesPanel.class.getName());
         this.tdv = tdv;
         this.setName(title);
         dtable = tdv.table;

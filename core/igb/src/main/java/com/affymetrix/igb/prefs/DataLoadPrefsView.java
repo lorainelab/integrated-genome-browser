@@ -23,9 +23,13 @@ import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -49,13 +53,14 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author sgblanch
  * @version $Id: DataLoadPrefsView.java 9956 2012-01-25 16:46:38Z dcnorris $
  */
-public final class DataLoadPrefsView extends ServerPrefsView {
+public final class DataLoadPrefsView extends ServerPrefsView implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
     private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
@@ -66,6 +71,8 @@ public final class DataLoadPrefsView extends ServerPrefsView {
     protected JRPButton editAuthButton;
     protected JRPButton rankUpButton;
     protected JRPButton rankDownButton;
+    public static final int TAB_POSITION = 3;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataLoadPrefsView.class);
 
     public static synchronized DataLoadPrefsView getSingleton() {
         if (singleton == null) {
@@ -76,11 +83,16 @@ public final class DataLoadPrefsView extends ServerPrefsView {
 
     public DataLoadPrefsView() {
         super(ServerList.getServerInstance());
-        final JPanel synonymsPanel = initSynonymsPanel(this);
+        final JPanel synonymsPanel = initSynonymsPanel(this.getPanel());
         final JPanel cachePanel = initCachePanel();
 
         layout.setHorizontalGroup(layout.createParallelGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
         layout.setVerticalGroup(layout.createSequentialGroup().addComponent(sourcePanel).addComponent(synonymsPanel).addComponent(cachePanel));
+    }
+
+    @Override
+    public int getWeight() {
+        return TAB_POSITION;
     }
 
     @Override
@@ -358,5 +370,21 @@ public final class DataLoadPrefsView extends ServerPrefsView {
         ServerList.getServerInstance().removeServer(url);
         ServerList.getServerInstance().removeServerFromPrefs(url);
         addDataSource(type, name, newUrl, order, isDefault, mirrorURL);
+    }
+
+    @Override
+    public JRPJPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(DataLoadPrefsView.class.getResource("/help/com.affymetrix.igb.prefs.DataLoadPrefsView.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found " , ex);
+        }
+        return htmlText;
     }
 }

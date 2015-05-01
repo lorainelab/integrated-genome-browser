@@ -2,13 +2,13 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
+import javax.swing.JPanel;
 
 /**
  *
  * @author lorainelab
  */
-public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapRefreshed {
+public class TrackDefaultViewGUI extends JPanel implements SeqMapRefreshed {
 
     private static final long serialVersionUID = 1L;
 
@@ -397,10 +397,6 @@ public class TrackDefaultViewGUI extends IPrefEditorComponent implements SeqMapR
     private javax.swing.JComboBox trackNameSizeComboBox;
     private javax.swing.JLabel trackNameSizeLabel;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void refresh() {
-    }
 
     public void mapRefresh() {
         if (isVisible()) {

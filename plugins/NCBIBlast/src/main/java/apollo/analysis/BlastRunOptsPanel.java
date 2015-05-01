@@ -1,7 +1,8 @@
 package apollo.analysis;
 
-import com.lorainelab.igb.services.window.preferences.IPrefEditorComponent;
 import apollo.util.GuiUtil;
+import com.affymetrix.igb.swing.JRPJPanel;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,7 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunOpts {
+public class BlastRunOptsPanel extends JRPJPanel implements BlastRunOpts, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1;
 //	private JTextField startField;
@@ -22,10 +23,11 @@ public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunO
     private JTextField gapOpenCost;
     private JTextField gapExtendCost;
     private JTextField numOfHits;
+    private static final int TAB_POSITION = 6;
 //	private int start, end;
 
     public BlastRunOptsPanel() {
-        super();
+        super(BlastRunOptsPanel.class.getName());
         init();
         setName("Blast Options");
     }
@@ -55,6 +57,16 @@ public class BlastRunOptsPanel extends IPrefEditorComponent implements BlastRunO
     @Override
     public RemoteBlastNCBI.BlastType getBlastType() {
         return (RemoteBlastNCBI.BlastType) types.getSelectedItem();
+    }
+
+    @Override
+    public JRPJPanel getPanel() {
+        return this;
+    }
+
+    @Override
+    public int getWeight() {
+        return TAB_POSITION;
     }
 
     private void init() {

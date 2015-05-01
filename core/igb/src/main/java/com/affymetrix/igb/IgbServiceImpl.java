@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
@@ -415,14 +416,10 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     @Override
     public void openPreferencesOtherPanel() {
-        if (PreferencesPanel.TAB_OTHER_OPTIONS_VIEW != -1) {
-            PreferencesPanel pv = PreferencesPanel.getSingleton();
-            pv.setTab(PreferencesPanel.TAB_OTHER_OPTIONS_VIEW);	// Other preferences tab
-            JFrame f = pv.getFrame();
-            f.setVisible(true);
-        } else {
-            System.out.println("Other Preferences not instantiated");
-        }
+        PreferencesPanel pv = PreferencesPanel.getSingleton();
+        pv.setTab(OtherOptionsView.TAB_POSITION);	// Other preferences tab
+        JFrame f = pv.getFrame();
+        f.setVisible(true);
     }
 
     @Override

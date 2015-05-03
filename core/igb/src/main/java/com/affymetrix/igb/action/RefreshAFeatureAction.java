@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.event.ActionEvent;
@@ -13,10 +13,10 @@ import java.awt.event.ActionEvent;
 public class RefreshAFeatureAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
-    private GenericFeature feature;
+    private DataSet feature;
 
-    public static RefreshAFeatureAction createRefreshAFeatureAction(final GenericFeature feature) {
-        final String text = "Load " + feature.getFeatureName();
+    public static RefreshAFeatureAction createRefreshAFeatureAction(final DataSet feature) {
+        final String text = "Load " + feature.getDataSetName();
         RefreshAFeatureAction refreshAFeature = new RefreshAFeatureAction(text);
         refreshAFeature.setFeature(feature);
         return refreshAFeature;
@@ -26,7 +26,7 @@ public class RefreshAFeatureAction extends GenericAction {
         super(text, "toolbarButtonGraphics/general/Refresh16.gif", null);
     }
 
-    private void setFeature(GenericFeature feature) {
+    private void setFeature(DataSet feature) {
         this.feature = feature;
         this.enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
     }

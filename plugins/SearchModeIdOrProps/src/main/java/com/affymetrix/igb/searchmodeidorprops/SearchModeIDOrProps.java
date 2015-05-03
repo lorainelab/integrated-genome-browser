@@ -1,7 +1,7 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.search.SearchUtils;
@@ -76,7 +76,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
                 if (span == null) {
                     // Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
                     SeqSpan tempSpan = result.getSpan(0);
-                    if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+                    if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getId().equals(tempSpan.getBioSeq().getId())) {
                         span = tempSpan;
                     }
                 }
@@ -95,10 +95,10 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 
     protected SearchResults<SeqSymmetry> search(final String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean remote, final boolean search_props) {
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
         String text = search_text;
 
-        String seq = chrFilter == null ? Constants.GENOME_SEQ_ID : chrFilter.getID();
+        String seq = chrFilter == null ? Constants.GENOME_SEQ_ID : chrFilter.getId();
         List<SeqSymmetry> localSymList = findLocalSyms(search_text, chrFilter, seq, search_props, statusHolder);
         List<SeqSymmetry> remoteSymList = null;
 
@@ -126,7 +126,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
             if (actualChars < 3) {
                 statusStr = MessageFormat.format(BUNDLE.getString("searchErrorShort"), friendlySearchStr);
                 ErrorHandler.errorPanel(statusStr);
-                return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+                return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, null);
             }
 
             //remoteSearches
@@ -136,7 +136,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
         if (localSymList.isEmpty() && (remoteSymList == null || remoteSymList.isEmpty())) {
             statusStr = BUNDLE.getString("searchNoResults");
             statusHolder.setStatus(statusStr);
-            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, null);
         }
 
         statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"),
@@ -164,12 +164,12 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
             }
         });
 
-        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, tableRows);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, tableRows);
     }
 
     protected List<SeqSymmetry> findLocalSyms(String search_text, final BioSeq chrFilter, final String seq, final boolean search_props, final IStatus statusHolder) {
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
         String text = search_text;
         Pattern regex = null;
         try {
@@ -179,7 +179,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
 
         String friendlySearchStr = MessageFormat.format(FRIENDLY_PATTERN, text, seq);
         statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearchingLocal"), friendlySearchStr));
-        List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(group, chrFilter, regex, search_props);
+        List<SeqSymmetry> localSymList = SearchUtils.findLocalSyms(genomeVersion, chrFilter, regex, search_props);
         return localSymList;
     }
 

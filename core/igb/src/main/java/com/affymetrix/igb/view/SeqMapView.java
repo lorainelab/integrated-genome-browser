@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -17,7 +17,7 @@ import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.event.SymSelectionListener;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.GraphState;
@@ -863,7 +863,7 @@ public class SeqMapView extends JPanel
         seqmap.updateWidget();
 
         //A Temporary hack to solve problem when a 'genome' is selected
-        if (IGBConstants.GENOME_SEQ_ID.equals((seq.getID()))) {
+        if (IGBConstants.GENOME_SEQ_ID.equals((seq.getId()))) {
             seqmap.scroll(NeoMap.X, seqmap.getScroller(NeoMap.X).getMinimum());
         }
 
@@ -1817,7 +1817,7 @@ public class SeqMapView extends JPanel
         TierGlyph tglyph = tierLabelManager.getTierGlyph(nevt);
 
         if (tglyph != null) {
-            GenericFeature feature = tglyph.getAnnotStyle().getFeature();
+            DataSet feature = tglyph.getAnnotStyle().getFeature();
             if (feature == null) {
                 //Check if clicked on axis.
                 if (tglyph == axis_tier) {
@@ -1958,14 +1958,14 @@ public class SeqMapView extends JPanel
 
     @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
-        AnnotatedSeqGroup current_group = null;
-        AnnotatedSeqGroup new_group = evt.getSelectedGroup();
+        GenomeVersion current_group = null;
+        GenomeVersion new_group = evt.getSelectedGroup();
         if (aseq != null) {
-            current_group = aseq.getSeqGroup();
+            current_group = aseq.getGenomeVersion();
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
+            logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getName() : "null"));
         }
 
         if ((new_group != current_group) && (current_group != null)) {
@@ -2199,7 +2199,7 @@ public class SeqMapView extends JPanel
         }
         SeqSpan span = getViewSeqSpan(sym);
         if (span != null) {
-            String chromID = span.getBioSeq().getID();
+            String chromID = span.getBioSeq().getId();
             props.put(CHROMOSOME, chromID);
             props.put(START,
                     NumberFormat.getIntegerInstance().format(span.getStart()));

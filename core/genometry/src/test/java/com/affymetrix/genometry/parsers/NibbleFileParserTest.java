@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.util.GeneralUtils;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,7 @@ public class NibbleFileParserTest {
     public void testOriginal() throws Exception {
         sb = new StringBuffer();
         isr = GeneralUtils.getInputStream(infile, sb);
-        BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"));
+        BioSeq seq = NibbleResiduesParser.parse(isr, new GenomeVersion("Test"));
         assertEquals(seq.getResidues(), input_string);
     }
 
@@ -75,7 +75,7 @@ public class NibbleFileParserTest {
         sb = new StringBuffer();
         isr = GeneralUtils.getInputStream(infile, sb);
         try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
-            boolean result = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"), start, end, outstream);
+            boolean result = NibbleResiduesParser.parse(isr, new GenomeVersion("Test"), start, end, outstream);
 
             if (start < end) {
                 start = Math.max(0, start);

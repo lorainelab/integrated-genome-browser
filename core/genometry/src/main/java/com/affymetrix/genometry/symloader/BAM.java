@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
@@ -16,8 +16,10 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableFTPStream;
 import com.google.common.base.Optional;
-
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
@@ -58,7 +60,7 @@ public final class BAM extends XAM {
 
     protected SAMFileHeader header;
 
-    public BAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public BAM(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
         strategyList.add(LoadStrategy.AUTOLOAD);
     }
@@ -103,7 +105,7 @@ public final class BAM extends XAM {
     private String getBamIndexUriStr(URI uri) throws BamIndexNotFoundException {
         // BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
         String baiUriStr = findIndexFile(uri.toString());
-        // Guess at the location of the .bai URL as BAM URL + ".bai"	
+        // Guess at the location of the .bai URL as BAM URL + ".bai"
         if (StringUtils.isBlank(baiUriStr)) {
             ErrorHandler.errorPanel("No BAM index file",
                     "Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
@@ -281,7 +283,7 @@ public final class BAM extends XAM {
         SAMFileWriter sfw = null;
         File tempBAMFile = null;
         try {
-            iter = reader.query(seq.getID(), min, max, false);
+            iter = reader.query(seq.getId(), min, max, false);
             //check for any records
             if (!iter.hasNext()) {
                 Logger.getLogger(BAM.class.getName()).log(Level.INFO, "No overlapping bam alignments.", "Min-Max: " + min + "-" + max);
@@ -300,7 +302,7 @@ public final class BAM extends XAM {
                     tempBAMFile.deleteOnExit();
                 } catch (IOException ex) {
                     logger.error("Cannot create temporary BAM file", ex);
-                    return; 
+                    return;
                 }
                 sfw = sfwf.makeBAMWriter(header, true, tempBAMFile);
             } else {
@@ -375,7 +377,7 @@ public final class BAM extends XAM {
     }
 
     public static String findIndexFile(String bamfile) throws BamIndexNotFoundException {
-        // Guess at the location of the .bai URL as BAM URL + ".bai"        
+        // Guess at the location of the .bai URL as BAM URL + ".bai"
         try {
             String baiUriStr = bamfile + ".bai";
             if (LocalUrlCacher.isValidURL(baiUriStr)) {
@@ -438,10 +440,10 @@ public final class BAM extends XAM {
         return "binary/BAM";
     }
 
-    public static List<? extends SeqSymmetry> parse(URI uri, InputStream istr, AnnotatedSeqGroup group, String featureName, SeqSpan overlap_span) throws Exception {
+    public static List<? extends SeqSymmetry> parse(URI uri, InputStream istr, GenomeVersion genomeVersion, String featureName, SeqSpan overlap_span) throws Exception {
         File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);
         bamfile.deleteOnExit();
-        BAM bam = new BAM(bamfile.toURI(), featureName, group);
+        BAM bam = new BAM(bamfile.toURI(), featureName, genomeVersion);
         //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
         if (uri.getScheme().equals(HTTP_PROTOCOL_SCHEME)) {
             return bam.parseAll(overlap_span.getBioSeq(), uri.toString());

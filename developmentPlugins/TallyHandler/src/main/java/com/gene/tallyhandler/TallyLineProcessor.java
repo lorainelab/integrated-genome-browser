@@ -115,7 +115,7 @@ public class TallyLineProcessor implements LineProcessor {
             return null;
         }
         String[] parts = line.split("\t");
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeqGroup().getSeq(parts[0]);
+        BioSeq seq = GenometryModel.getInstance().getSelectedGenomeVersion().getSeq(parts[0]);
         int location = Integer.parseInt(parts[1]);
         return new SimpleSeqSpan(location, location + 1, seq);
     }

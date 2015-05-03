@@ -1,5 +1,12 @@
 package com.affymetrix.genometry.symloader;
 
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.parsers.FileTypeHolder;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import com.affymetrix.genometry.util.GeneralUtils;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.AbstractList;
@@ -13,23 +20,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
-import com.affymetrix.genometry.util.GeneralUtils;
-
 import org.broad.tribble.readers.TabixReader;
 
 public class TbiZoomSymLoader extends IndexZoomSymLoader {
 
     private TabixReader tabixReader;
 
-    public TbiZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public TbiZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     private URI getFileURI(URI tbiUri) throws Exception {
@@ -43,7 +41,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
     @Override
     protected SymLoader getDataFileSymLoader() throws Exception {
         URI baseUri = getFileURI(uri);
-        return FileTypeHolder.getInstance().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, featureName, group);
+        return FileTypeHolder.getInstance().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, featureName, genomeVersion);
     }
 
     @Override

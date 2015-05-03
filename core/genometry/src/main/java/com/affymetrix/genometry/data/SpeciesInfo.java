@@ -1,7 +1,6 @@
 package com.affymetrix.genometry.data;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import java.util.Optional;
 
 /**
  *
@@ -10,12 +9,12 @@ import java.util.Optional;
 public class SpeciesInfo {
 
     private final String name;
-    private final Optional<String> commonName;
+    private final String commonName;
     private final String genomeVersionNamePrefix;
 
-    public SpeciesInfo(String name, Optional<String> commonName, String genomeVersionNamePrefix) {
+    public SpeciesInfo(String name, String commonName, String genomeVersionNamePrefix) {
         this.name = checkNotNull(name, "name is a required field.");
-        this.commonName = commonName == null ? Optional.empty() : commonName;
+        this.commonName = commonName;
         this.genomeVersionNamePrefix = checkNotNull(genomeVersionNamePrefix, "genomeVersionNamePrefix is a required field.");
     }
 
@@ -23,7 +22,7 @@ public class SpeciesInfo {
         return name;
     }
 
-    public Optional<String> getCommonName() {
+    public String getCommonName() {
         return commonName;
     }
 

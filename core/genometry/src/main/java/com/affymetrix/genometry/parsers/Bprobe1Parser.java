@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SharedProbesetInfo;
@@ -101,12 +101,12 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
         return type_prefix;
     }
 
-    public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
+    public List<SeqSymmetry> parse(InputStream istr, GenomeVersion genomeVersion,
             boolean annotate_seq, String default_type) throws IOException {
-        return parse(istr, group, annotate_seq, default_type, false);
+        return parse(istr, genomeVersion, annotate_seq, default_type, false);
     }
 
-    public static AnnotatedSeqGroup getSeqGroup(InputStream istr, AnnotatedSeqGroup group, GenometryModel gmodel) {
+    public static GenomeVersion getSeqGroup(InputStream istr, GenomeVersion genomeVersion, GenometryModel gmodel) {
         BufferedInputStream bis = null;
         DataInputStream dis = null;
         try {
@@ -132,17 +132,17 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
                 return null;
             }
 
-            if (group.isSynonymous(seq_group_id)) {
-                return group;
+            if (genomeVersion.isSynonymous(seq_group_id)) {
+                return genomeVersion;
             }
 
-            group = gmodel.getSeqGroup(seq_group_id);
+            genomeVersion = gmodel.getSeqGroup(seq_group_id);
 
-            if (group == null) {
-                group = gmodel.addSeqGroup(seq_group_id);
+            if (genomeVersion == null) {
+                genomeVersion = gmodel.addGenomeVersion(seq_group_id);
             }
 
-            return group;
+            return genomeVersion;
         } catch (Exception ex) {
             System.err.println("Error parsing file");
             return null;
@@ -152,7 +152,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
         }
     }
 
-    public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
+    public List<SeqSymmetry> parse(InputStream istr, GenomeVersion genomeVersion,
             boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
         System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
         BufferedInputStream bis;
@@ -184,8 +184,8 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
                 System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
                 return null;
             }
-            if (!group.isSynonymous(seq_group_id)) {
-                System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + group.getID()
+            if (!genomeVersion.isSynonymous(seq_group_id)) {
+                System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + genomeVersion.getName()
                         + " and group name+version in bprobe1 file: " + seq_group_id);
                 return null;
             }
@@ -243,11 +243,11 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
                     System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
                 }
 
-                BioSeq aseq = group.getSeq(seqid);
+                BioSeq aseq = genomeVersion.getSeq(seqid);
                 SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
                 if (aseq == null) {
                     int seqlength = seq2lengths.get(seqid);
-                    aseq = group.addSeq(seqid, seqlength);
+                    aseq = genomeVersion.addSeq(seqid, seqlength);
                 }
                 SimpleSymWithProps container_sym = new SimpleSymWithProps(probeset_count);
                 container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
@@ -274,7 +274,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
                     container_sym.addChild(psym);
                     results.add(psym);
                     if (populate_id_hash) {
-//						group.addToIndex(psym.getID(), psym);
+//						group.addToIndex(psym.getName(), psym);
                     }
                 }
                 if (annotate_seq) {
@@ -297,9 +297,9 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq aseq,
             String type, OutputStream outstream) {
         boolean success = false;
-        AnnotatedSeqGroup group = aseq.getSeqGroup();
-        String groupid = group.getID();
-        String seqid = aseq.getID();
+        GenomeVersion genomeVersion = aseq.getGenomeVersion();
+        String groupid = genomeVersion.getName();
+        String seqid = aseq.getId();
         int acount = syms.size();
 
         int probe_length = 0;
@@ -362,7 +362,7 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
     public static void convertGff(String gff_file, String output_file, String genome_id,
             String version_id, String annot_type, String id_prefix)
             throws IOException {
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
+        GenomeVersion seq_group = new GenomeVersion(genome_id);
         int probe_length = 25;
         Map<String, String> tagvals = new HashMap<>();
         tagvals.put("tagval_test_1", "testing1");
@@ -394,14 +394,14 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
             dos.writeUTF("bp2");
 
             dos.writeInt(1);
-            dos.writeUTF(seq_group.getID());
+            dos.writeUTF(seq_group.getName());
             dos.writeUTF(version_id);
             dos.writeUTF(annot_type);
             dos.writeInt(probe_length);
             dos.writeUTF(id_prefix);
             dos.writeInt(seq_count);
             for (BioSeq aseq : seq_group.getSeqList()) {
-                String seqid = aseq.getID();
+                String seqid = aseq.getId();
                 int seq_length = aseq.getLength();
                 int container_count = aseq.getAnnotationCount();
                 int annot_count = 0;
@@ -517,9 +517,9 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
          // After creating the file, parses it (for testing)
          try  {
          BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(out_file)));
-         AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
+         GenomeVersion genomeVersion = gmodel.addGenomeVersion(genomeid + versionid);
          Bprobe1Parser parser = new Bprobe1Parser();
-         parser.parse(bis, group, true, annot_type);
+         parser.parse(bis, genomeVersion, true, annot_type);
          }
          catch (Exception ex)  {
          ex.printStackTrace();
@@ -528,8 +528,8 @@ public final class Bprobe1Parser implements AnnotationWriter, Parser {
     }
 
     @Override
-    public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+    public List<? extends SeqSymmetry> parse(InputStream is, GenomeVersion genomeVersion,
             String nameType, String uri, boolean annotate_seq) throws Exception {
-        return parse(is, group, annotate_seq, uri, true);
+        return parse(is, genomeVersion, annotate_seq, uri, true);
     }
 }

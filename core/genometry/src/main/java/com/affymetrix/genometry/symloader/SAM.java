@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -24,6 +24,7 @@ import net.sf.samtools.SAMTextReader;
 import net.sf.samtools.util.BufferedLineReader;
 import net.sf.samtools.util.CloseableIterator;
 import org.broad.tribble.readers.LineReader;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,7 +32,9 @@ import org.broad.tribble.readers.LineReader;
  */
 public class SAM extends XAM implements LineProcessor {
 
-    public SAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SAM.class);
+
+    public SAM(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 
@@ -53,7 +56,7 @@ public class SAM extends XAM implements LineProcessor {
             ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n"
                     + "Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). "
                     + "See console for the details of the exception.\n", Level.SEVERE);
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
     }
 

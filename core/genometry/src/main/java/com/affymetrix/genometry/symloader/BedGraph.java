@@ -2,7 +2,7 @@ package com.affymetrix.genometry.symloader;
 
 import java.net.URI;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 
 public class BedGraph extends Wiggle implements AnnotationWriter {
@@ -13,7 +13,7 @@ public class BedGraph extends Wiggle implements AnnotationWriter {
         this(null, null, null);
     }
 
-    public BedGraph(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public BedGraph(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 

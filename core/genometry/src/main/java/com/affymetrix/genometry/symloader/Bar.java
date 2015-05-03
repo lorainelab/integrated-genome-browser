@@ -1,11 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import java.io.*;
-import java.util.*;
-import java.net.URI;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.graph.BarParser;
@@ -13,6 +9,10 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Bar extends SymLoader {
 
@@ -27,8 +27,8 @@ public final class Bar extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Bar(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public Bar(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class Bar extends SymLoader {
         InputStream dis = null;
         try {
             dis = LocalUrlCacher.getInputStream(uri.toURL());
-            seqs = BarParser.getSeqs(uri.toString(), dis, group, GenometryModel.getInstance(), true);
+            seqs = BarParser.getSeqs(uri.toString(), dis, genomeVersion, GenometryModel.getInstance(), true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -66,7 +66,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, null, 0, Integer.MAX_VALUE, uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), genomeVersion, null, 0, Integer.MAX_VALUE, uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -80,7 +80,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, seq, 0, seq.getMax() + 1, uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), genomeVersion, seq, 0, seq.getMax() + 1, uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -94,7 +94,7 @@ public final class Bar extends SymLoader {
         try {
             init();
             bis = LocalUrlCacher.getInputStream(uri.toURL());
-            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), group, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), false, true);
+            return BarParser.parse(uri.toString(), bis, GenometryModel.getInstance(), genomeVersion, span.getBioSeq(), span.getMin(), span.getMax(), uri.toString(), false, true);
         } catch (Exception ex) {
             throw ex;
         } finally {

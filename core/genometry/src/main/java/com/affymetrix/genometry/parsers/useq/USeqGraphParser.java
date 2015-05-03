@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers.useq;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.useq.data.PositionData;
 import com.affymetrix.genometry.parsers.useq.data.PositionScoreData;
@@ -70,7 +70,7 @@ public class USeqGraphParser {
 
             //check that they are loading the data into the correct genome build
             String genomeVersion = archiveInfo.getVersionedGenome();
-            AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
+            GenomeVersion asg = gmodel.getSelectedGenomeVersion();
             if (asg != null && !asg.isSynonymous(genomeVersion)) {
                 throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersion + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
             }
@@ -161,7 +161,7 @@ public class USeqGraphParser {
         try {
             //check that they are loading the data into the correct genome build
             String genomeVersion = archiveInfo.getVersionedGenome();
-            AnnotatedSeqGroup asg = gmodel.getSelectedSeqGroup();
+            GenomeVersion asg = gmodel.getSelectedGenomeVersion();
             if (asg != null && !asg.isSynonymous(genomeVersion)) {
                 throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersion + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
             }
@@ -208,7 +208,7 @@ public class USeqGraphParser {
 
     private GraphSym makeGraph(String chrom, String strand, int[] xcoords, float[] ycoords) {
         //get versionedGenome
-        AnnotatedSeqGroup versionGenomeASG = getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
+        GenomeVersion versionGenomeASG = getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
         //get chromosome
         BioSeq chromosomeBS = determineSeq(versionGenomeASG, chrom, archiveInfo.getVersionedGenome());
         checkSeqLength(chromosomeBS, xcoords);
@@ -259,18 +259,18 @@ public class USeqGraphParser {
         }
     }
 
-    public static BioSeq determineSeq(AnnotatedSeqGroup seq_group, String chromosome, String versionedGenome) {
-        // try to get standard AnnotatedSeqGroup seq id (chromosome) resolution first
+    public static BioSeq determineSeq(GenomeVersion seq_group, String chromosome, String versionedGenome) {
+        // try to get standard GenomeVersion seq id (chromosome) resolution first
         BioSeq seq = seq_group.getSeq(chromosome);
 
-        // if standard AnnotatedSeqGroup seq id resolution doesn't work, look through synonyms
+        // if standard GenomeVersion seq id resolution doesn't work, look through synonyms
         if (seq == null) {
             SynonymLookup lookup = SynonymLookup.getDefaultLookup();
             //TODO: Convert this to the standard way of getting synomous sequences,
             // but we may have to check for extra bar-specific synonyms involving seq group and version
             for (BioSeq testseq : seq_group.getSeqList()) {
                 // testing both seq id and version id (if version id is available)
-                if (lookup.isSynonym(testseq.getID(), chromosome)) {
+                if (lookup.isSynonym(testseq.getId(), chromosome)) {
                     seq = testseq;
                     break;
                 }
@@ -284,23 +284,23 @@ public class USeqGraphParser {
     }
 
     /**
-     * Try an match with an existing versionedGenome AnnotatedSeqGroup if it can't be found, create a new one using the
+     * Try an match with an existing versionedGenome GenomeVersion if it can't be found, create a new one using the
      * versionedGenome
      */
-    public static AnnotatedSeqGroup getSeqGroup(String versionedGenome, GenometryModel gmodel) {
-        AnnotatedSeqGroup group = null;
+    public static GenomeVersion getSeqGroup(String versionedGenome, GenometryModel gmodel) {
+        GenomeVersion genomeVersion = null;
         //attempt to find versionedGenome:versionedGenome
-        group = gmodel.getSeqGroup(versionedGenome + ":" + versionedGenome);
+        genomeVersion = gmodel.getSeqGroup(versionedGenome + ":" + versionedGenome);
         //attempt to find versionedGenome
-        if (group == null) {
-            group = gmodel.getSeqGroup(versionedGenome);
+        if (genomeVersion == null) {
+            genomeVersion = gmodel.getSeqGroup(versionedGenome);
         }
         // if no group found, create a new one using versionedGenome
-        if (group == null) {
-            group = gmodel.addSeqGroup(versionedGenome);
+        if (genomeVersion == null) {
+            genomeVersion = gmodel.addGenomeVersion(versionedGenome);
         }
         //add group
 
-        return group;
+        return genomeVersion;
     }
 }

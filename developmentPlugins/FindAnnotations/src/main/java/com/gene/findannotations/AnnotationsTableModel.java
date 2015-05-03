@@ -192,7 +192,7 @@ public class AnnotationsTableModel extends DefaultTableModel {
                 valueAt = BLANK_CELL;
                 if (results != null) {
                     SeqSpan span = results.get(row).getSpan(0);
-                    String region = (span.getBioSeq() == null ? "???" : span.getBioSeq().getID()) + ":" + span.getStart() + "-" + span.getEnd();
+                    String region = (span.getBioSeq() == null ? "???" : span.getBioSeq().getId()) + ":" + span.getStart() + "-" + span.getEnd();
                     valueAt = formatCell(region);
                 }
                 return valueAt;

@@ -1,11 +1,15 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.data.SpeciesInfo;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A special lookup designed for species. It is implemented using an internal
@@ -16,6 +20,8 @@ import java.util.regex.Pattern;
  * @version $Id: SpeciesLookup.java 9976 2012-01-25 21:03:58Z dcnorris $
  */
 public final class SpeciesLookup {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpeciesLookup.class);
 
     /**
      * Default behaviour of case sensitivity for synonym lookups. If true,
@@ -57,6 +63,14 @@ public final class SpeciesLookup {
      */
     public static void load(InputStream genericSpecies) throws IOException {
         speciesLookup.loadSynonyms(genericSpecies, true);
+    }
+
+    public static void load(SpeciesInfo speciesInfo) {
+        speciesLookup.preferredNames.add(speciesInfo.getName());
+        Set<String> row = Sets.newTreeSet();
+        row.add(speciesInfo.getCommonName());
+        row.add(speciesInfo.getGenomeVersionNamePrefix());
+        speciesLookup.addSynonyms(row);
     }
 
     /**

@@ -15,8 +15,8 @@
  */
 package com.affymetrix.genometry.parsers.gchp;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.io.File;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 public final class AffyCnChpParser implements Parser {
 
     public List<SeqSymmetry> parse(
-            File file, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotateSeq)
+            File file, InputStream istr, String stream_name, GenomeVersion seq_group, boolean annotateSeq)
             throws IOException {
 
         Logger.getLogger(AffyCnChpParser.class.getName()).log(
@@ -40,8 +40,8 @@ public final class AffyCnChpParser implements Parser {
         try {
             AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);
 
-            AffyDataGroup group = chpFile.groups.get(0);
-            AffyDataSet dataSet = group.getDataSets().get(0);
+            AffyDataGroup genomeVersion = chpFile.groups.get(0);
+            AffyDataSet dataSet = genomeVersion.getDataSets().get(0);
 
             for (String seq_name : dataSet.getChromosomeNames()) {
                 // Make sure that all the seq's mentioned in the header are
@@ -68,7 +68,7 @@ public final class AffyCnChpParser implements Parser {
         return results;
     }
 
-    private BioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {
+    private BioSeq getSeq(GenomeVersion seq_group, String seqid) {
         BioSeq aseq = seq_group.getSeq(seqid);
         if (aseq == null) {
             aseq = seq_group.addSeq(seqid, 1);
@@ -78,8 +78,8 @@ public final class AffyCnChpParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
-        return parse(null, is, annotate_seq ? uri : nameType, group, annotate_seq);
+        return parse(null, is, annotate_seq ? uri : nameType, genomeVersion, annotate_seq);
     }
 }

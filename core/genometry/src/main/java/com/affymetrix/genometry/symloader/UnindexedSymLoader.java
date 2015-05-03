@@ -1,5 +1,13 @@
 package com.affymetrix.genometry.symloader;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.comparator.BioSeqComparator;
+import com.affymetrix.genometry.comparator.SeqSymMinComparator;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,17 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.broad.tribble.readers.LineReader;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.comparator.BioSeqComparator;
-import com.affymetrix.genometry.comparator.SeqSymMinComparator;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
 /**
  * This SymLoader is designed to be used for FileTypes that have a LineReader
@@ -46,8 +44,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
     }
     private LineProcessor lineProcessor;
 
-    public UnindexedSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public UnindexedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
         lineProcessor = createLineProcessor(featureName);
     }
 
@@ -128,7 +126,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
         try {
             File file = chrList.get(seq);
             if (file == null) {
-                Logger.getLogger(UnindexedSymLoader.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                Logger.getLogger(UnindexedSymLoader.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<SeqSymmetry>emptyList();
             }
             istr = new FileInputStream(file);
@@ -190,7 +188,7 @@ public abstract class UnindexedSymLoader extends SymLoader {
                 }
 
                 SeqSpan span = lineProcessor.getSpan(line);
-                seq_name = span.getBioSeq().getID(); // seq id field
+                seq_name = span.getBioSeq().getId(); // seq id field
                 int end = span.getMax();
 
                 bw = chrs.get(seq_name);
@@ -229,10 +227,10 @@ public abstract class UnindexedSymLoader extends SymLoader {
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String seq_name = bioseq.getKey();
-            BioSeq seq = group.getSeq(seq_name);
+            BioSeq seq = genomeVersion.getSeq(seq_name);
             if (seq == null) {
                 //System.out.println("seq not recognized, creating new seq: " + seq_name);
-                seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
+                seq = genomeVersion.addSeq(seq_name, bioseq.getValue(), uri.toString());
             }
 
             chrList.put(seq, chrFiles.get(seq_name));

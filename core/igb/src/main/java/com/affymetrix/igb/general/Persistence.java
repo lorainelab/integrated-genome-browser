@@ -1,7 +1,7 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -20,7 +20,7 @@ public final class Persistence {
     private final static GenometryModel gmodel = GenometryModel.getInstance();
 
     /**
-     * Saves information on current group
+     * Saves information on current genomeVersion
      * Using Preferences node: [igb_root_pref]/genomes/[group_id]
      * Using PreferenceUtils to convert node names if they are too long
      * tagvals:
@@ -30,34 +30,34 @@ public final class Persistence {
      * SELECTED_SEQ_PREF
      */
     public static void saveCurrentView(SeqMapView gviewer) {
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
         if (gmodel.getSelectedSeq() != null) {
             BioSeq seq = gmodel.getSelectedSeq();
-            saveGroupSelection(group);
+            saveGroupSelection(genomeVersion);
             saveSeqSelection(seq);
             saveSeqVisibleSpan(gviewer);
         }
     }
 
-    public static void saveGroupSelection(AnnotatedSeqGroup group) {
+    public static void saveGroupSelection(GenomeVersion genomeVersion) {
         Preferences genomes_node = PreferenceUtils.getGenomesNode();
-        if (genomes_node == null || group == null) {
+        if (genomes_node == null || genomeVersion == null) {
             return;
         }
-        genomes_node.put(SELECTED_GENOME_PREF, group.getID());
+        genomes_node.put(SELECTED_GENOME_PREF, genomeVersion.getName());
 
-        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);
+        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, genomeVersion.getName(), true);
         //  encodes id via MD5 if too long, also remove forward slashes ("/")
-        group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
+        group_node.put(GENOME_ID, genomeVersion.getName());  // preserve actual ID, no MD5 encoding, no slash removal
 
     }
 
     /**
-     * Restore selection of group.
+     * Restore selection of genomeVersion.
      *
-     * @return the restored group which is an AnnotatedSeqGroup.
+     * @return the restored genomeVersion which is an GenomeVersion.
      */
-    public static AnnotatedSeqGroup restoreGroupSelection() {
+    public static GenomeVersion restoreGroupSelection() {
         Preferences genomes_node = PreferenceUtils.getGenomesNode();
         String group_id = genomes_node.get(SELECTED_GENOME_PREF, "");
         if (group_id == null || group_id.length() == 0) {
@@ -77,35 +77,35 @@ public final class Persistence {
             return;
         }
 
-        AnnotatedSeqGroup current_group = seq.getSeqGroup();
+        GenomeVersion current_group = seq.getGenomeVersion();
         if (current_group == null) {
             return;
         }
         Preferences genomes_node = PreferenceUtils.getGenomesNode();
-        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, current_group.getID(), true);
+        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, current_group.getName(), true);
         //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
-        group_node.put(SELECTED_SEQ_PREF, seq.getID());
+        group_node.put(SELECTED_SEQ_PREF, seq.getId());
     }
 
     /**
      * Restore the selected chromosome.
      *
-     * @param group
+     * @param genomeVersion
      * @return restore the selected chromosome which is a BioSeq
      */
-    public static BioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
+    public static BioSeq restoreSeqSelection(GenomeVersion genomeVersion) {
         Preferences genomes_node = PreferenceUtils.getGenomesNode();
-        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);
+        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, genomeVersion.getName(), true);
         //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
         String seq_id = group_node.get(SELECTED_SEQ_PREF, "");
         if (seq_id == null || seq_id.length() == 0) {
             return null;
         }
 
-        BioSeq seq = group.getSeq(seq_id);
-        // if selected or default seq can't be found, use first seq in group
-        if (seq == null && group.getSeqCount() > 0) {
-            seq = group.getSeq(0);
+        BioSeq seq = genomeVersion.getSeq(seq_id);
+        // if selected or default seq can't be found, use first seq in genomeVersion
+        if (seq == null && genomeVersion.getSeqCount() > 0) {
+            seq = genomeVersion.getSeq(0);
         }
         return seq;
     }
@@ -123,12 +123,12 @@ public final class Persistence {
         if (visible_span != null) {
             BioSeq seq = visible_span.getBioSeq();
             if (seq != null) {
-                AnnotatedSeqGroup group = seq.getSeqGroup();
+                GenomeVersion genomeVersion = seq.getGenomeVersion();
                 Preferences genomes_node = PreferenceUtils.getGenomesNode();
-                Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+                Preferences group_node = PreferenceUtils.getSubnode(genomes_node, genomeVersion.getName(), true);  //  encodes id via MD5 if too long
                 Preferences seqs_node = PreferenceUtils.getSubnode(group_node, "seqs");
-                Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
-                seq_node.put(SEQ_ID, seq.getID());   // in case node name is MD5 encoded
+                Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getId(), true);  //  encodes id via MD5 if too long
+                seq_node.put(SEQ_ID, seq.getId());   // in case node name is MD5 encoded
                 seq_node.putInt(SEQ_MIN_PREF, visible_span.getMin());
                 seq_node.putInt(SEQ_MAX_PREF, visible_span.getMax());
             }
@@ -145,11 +145,11 @@ public final class Persistence {
             return null;
         }
 
-        AnnotatedSeqGroup group = seq.getSeqGroup();
+        GenomeVersion genomeVersion = seq.getGenomeVersion();
         Preferences genomes_node = PreferenceUtils.getGenomesNode();
-        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+        Preferences group_node = PreferenceUtils.getSubnode(genomes_node, genomeVersion.getName(), true);  //  encodes id via MD5 if too long
         Preferences seqs_node = PreferenceUtils.getSubnode(group_node, "seqs");
-        Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
+        Preferences seq_node = PreferenceUtils.getSubnode(seqs_node, seq.getId(), true);  //  encodes id via MD5 if too long
         int seq_min = seq_node.getInt(SEQ_MIN_PREF, 0);
         int seq_max = seq_node.getInt(SEQ_MAX_PREF, seq.getLength());
         SeqSpan span = new SimpleSeqSpan(seq_min, seq_max, seq);

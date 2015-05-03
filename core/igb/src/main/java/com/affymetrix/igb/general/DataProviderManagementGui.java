@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
 import com.affymetrix.genoviz.swing.LabelTableCellRenderer;
 import com.affymetrix.igb.action.AutoLoadFeatureAction;
@@ -18,9 +19,9 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.net.Authenticator;
 import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,11 +31,13 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -70,7 +73,7 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
 
     public DataProviderManagementGui() {
         setLayout(new MigLayout("fill"));
-        dataSourcesTable = new StyledJTable();
+        dataSourcesTable = getStyledJTable();
         dataSourcesPanel = initilizeDataSourcesPanel();
         synonymsPanel = new SynonymsControlPanel(this).getPanel();
         cachePanel = CacheControlPanel.getCachePanel();
@@ -81,6 +84,30 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
         dataSourcesTable.setModel(dataProviderTableModel);
         initializeTable();
         initilizeLayout();
+    }
+
+    private StyledJTable getStyledJTable() {
+        StyledJTable table = new StyledJTable() {
+
+            @Override
+            public Component prepareRenderer(
+                    TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                JComponent jc = (JComponent) c;
+                final DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(row);
+                if (selectedDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                    jc.setToolTipText("Site not responding. Check the URL or contact site maintainers.");
+                    c.setBackground(Color.RED);
+                } else if (selectedDataProvider.useMirrorUrl()) {
+                    jc.setToolTipText("Using Mirror URL for this Data Source.");
+                    c.setBackground(Color.YELLOW);
+                } else {
+                    jc.setToolTipText("");
+                }
+                return c;
+            }
+        };
+        return table;
     }
 
     private void initilizeLayout() {
@@ -198,25 +225,12 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
         JTableHeader header = dataSourcesTable.getTableHeader();
         header.setDefaultRenderer(new HeaderRenderer(dataSourcesTable));
         initializeDefaultCellRenderer();
-        TableCellRenderer refreshRenderer = new LabelTableCellRenderer(REFRESH_ICON, true) {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int col) {
-                int modelRow = table.convertRowIndexToModel(row);
-                int enabledColumnIndex = dataProviderTableModel.getColumnIndex(DataProviderTableModel.DataProviderTableColumn.Enabled);
-                this.setEnabled((Boolean) dataProviderTableModel.getValueAt(modelRow, enabledColumnIndex));
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-            }
-        };
         Collections.list(dataSourcesTable.getColumnModel().getColumns()).forEach(column -> {
             DataProviderTableColumn current = DataProviderTableColumn.valueOf((String) column.getHeaderValue());
             switch (current) {
                 case Refresh:
                     column.setMaxWidth(20);
-                    column.setCellRenderer(refreshRenderer);
+                    column.setCellRenderer(getRefreshRenderer());
                     column.setCellEditor(new ButtonTableCellEditor(REFRESH_ICON));
                     break;
                 case Name:
@@ -236,13 +250,32 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
         dataSourcesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dataSourcesTable.setCellSelectionEnabled(false);
         dataSourcesTable.setRowSelectionAllowed(true);
-        dataSourcesTable.getSelectionModel().addListSelectionListener(event -> {
-            loadPriorityUpBtn.setEnabled(dataSourcesTable.getSelectedRow() > 0);
-            loadPriorityDownBtn.setEnabled(dataSourcesTable.getSelectedRow() < dataSourcesTable.getRowCount() - 1);
-            authBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
-            editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
-            removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
-        });
+        dataSourcesTable.getSelectionModel().addListSelectionListener(this::processListSelectionEvent);
+    }
+
+    private void processListSelectionEvent(ListSelectionEvent event) {
+        loadPriorityUpBtn.setEnabled(dataSourcesTable.getSelectedRow() > 0);
+        loadPriorityDownBtn.setEnabled(dataSourcesTable.getSelectedRow() < dataSourcesTable.getRowCount() - 1);
+        authBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
+        editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
+        removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
+    }
+
+    private TableCellRenderer getRefreshRenderer() {
+        TableCellRenderer refreshRenderer = new LabelTableCellRenderer(REFRESH_ICON, true) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int col) {
+                int modelRow = table.convertRowIndexToModel(row);
+                int enabledColumnIndex = dataProviderTableModel.getColumnIndex(DataProviderTableModel.DataProviderTableColumn.Enabled);
+                this.setEnabled((Boolean) dataProviderTableModel.getValueAt(modelRow, enabledColumnIndex));
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            }
+        };
+        return refreshRenderer;
     }
 
     private void initializeDefaultCellRenderer() {
@@ -282,8 +315,8 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
         DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(dataSourcesTable.getSelectedRow());
         try {
             URL u = new URL(selectedDataProvider.getUrl());
-            IGBAuthenticator.resetAuth(selectedDataProvider.getUrl());
-            Authenticator.requestPasswordAuthentication(
+            IGBAuthenticator.resetAuthentication(selectedDataProvider);
+            IGBAuthenticator.requestPasswordAuthentication(
                     u.getHost(),
                     null,
                     u.getPort(),

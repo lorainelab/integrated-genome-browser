@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -74,8 +74,8 @@ public class BED extends SymLoader implements LineProcessor {
     private String bedFileType;
     private final GenometryModel gmodel;
 
-    public BED(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public BED(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
         gmodel = GenometryModel.getInstance();
         trackLineParser = new TrackLineParser();
         trackName = uri.toString();
@@ -257,7 +257,7 @@ public class BED extends SymLoader implements LineProcessor {
         if (fieldCount >= 4) {
             geneName = BedUtils.parseName(fields[findex++]);
             if (geneName == null || geneName.length() == 0) {
-                geneName = group.getID();
+                geneName = genomeVersion.getName();
             }
         }
         if (fieldCount >= 5) {
@@ -275,22 +275,22 @@ public class BED extends SymLoader implements LineProcessor {
             return max <= maximum;
         }
 
-        BioSeq seq = group.getSeq(seq_name);
+        BioSeq seq = genomeVersion.getSeq(seq_name);
         if ((seq == null) && (seq_name.indexOf(';') > -1)) {
             // if no seq found, try and split up seq_name by ";", in case it is in format
             //    "seqid;genome_version"
             String seqid = seq_name.substring(0, seq_name.indexOf(';'));
             String version = seq_name.substring(seq_name.indexOf(';') + 1);
-            if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
+            if ((gmodel.getSeqGroup(version) == genomeVersion) || genomeVersion.getName().equals(version)) {
                 // for format [chrom_name];[genome_version]
-                seq = group.getSeq(seqid);
+                seq = genomeVersion.getSeq(seqid);
                 if (seq != null) {
                     seq_name = seqid;
                 }
-            } else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
+            } else if ((gmodel.getSeqGroup(seqid) == genomeVersion) || genomeVersion.getName().equals(seqid)) {
                 // for format [genome_version];[chrom_name]
                 seqid = version;
-                seq = group.getSeq(seqid);
+                seq = genomeVersion.getSeq(seqid);
                 if (seq != null) {
                     seq_name = seqid;
                 }
@@ -298,7 +298,7 @@ public class BED extends SymLoader implements LineProcessor {
         }
         if (seq == null) {
             //System.out.println("seq not recognized, creating new seq: " + seq_name);
-            seq = group.addSeq(seq_name, 0, uri.toString());
+            seq = genomeVersion.addSeq(seq_name, 0, uri.toString());
         }
 
         if (fieldCount >= 8) {
@@ -535,25 +535,25 @@ public class BED extends SymLoader implements LineProcessor {
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String seq_name = bioseq.getKey();
-            BioSeq seq = group.getSeq(seq_name);
+            BioSeq seq = genomeVersion.getSeq(seq_name);
             if ((seq == null) && (seq_name.indexOf(';') > -1)) {
                 // if no seq found, try and split up seq_name by ";", in case it is in format
                 //    "seqid;genome_version"
                 String seqid = seq_name.substring(0, seq_name.indexOf(';'));
                 String version = seq_name.substring(seq_name.indexOf(';') + 1);
                 //            System.out.println("    seq = " + seqid + ", version = " + version);
-                if ((gmodel.getSeqGroup(version) == group) || group.getID().equals(version)) {
+                if ((gmodel.getSeqGroup(version) == genomeVersion) || genomeVersion.getName().equals(version)) {
                     // for format [chrom_name];[genome_version]
-                    seq = group.getSeq(seqid);
+                    seq = genomeVersion.getSeq(seqid);
                     if (seq != null) {
                         seq_name = seqid;
                     }
-                } else if ((gmodel.getSeqGroup(seqid) == group) || group.getID().equals(seqid)) {
+                } else if ((gmodel.getSeqGroup(seqid) == genomeVersion) || genomeVersion.getName().equals(seqid)) {
                     // for format [genome_version];[chrom_name]
                     String temp = seqid;
                     seqid = version;
                     version = temp;
-                    seq = group.getSeq(seqid);
+                    seq = genomeVersion.getSeq(seqid);
                     if (seq != null) {
                         seq_name = seqid;
                     }
@@ -561,7 +561,7 @@ public class BED extends SymLoader implements LineProcessor {
             }
             if (seq == null) {
                 //System.out.println("seq not recognized, creating new seq: " + seq_name);
-                seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
+                seq = genomeVersion.addSeq(seq_name, bioseq.getValue(), uri.toString());
             }
 
             chrList.put(seq, chrFiles.get(seq_name));

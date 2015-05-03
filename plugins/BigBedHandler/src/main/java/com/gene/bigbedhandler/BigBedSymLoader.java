@@ -1,7 +1,7 @@
 package com.gene.bigbedhandler;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.SymLoader;
@@ -42,8 +42,8 @@ public class BigBedSymLoader extends SymLoader {
     private List<BioSeq> chromosomeList;
     private Map<String, String> cleanSeq2Seq;
 
-    public BigBedSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public BigBedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     private void initbbReader() {
@@ -77,8 +77,8 @@ public class BigBedSymLoader extends SymLoader {
         initbbReader();
 
         Map<String, BioSeq> seqMap = new HashMap<>();
-        for (BioSeq seq : group.getSeqList()) {
-            seqMap.put(seq.getID(), seq);
+        for (BioSeq seq : genomeVersion.getSeqList()) {
+            seqMap.put(seq.getId(), seq);
         }
         chromosomeList = new ArrayList<>();
         cleanSeq2Seq = new HashMap<>();
@@ -94,7 +94,7 @@ public class BigBedSymLoader extends SymLoader {
             cleanSeq2Seq.put(cleanSeqID, seqID);
             BioSeq seq = seqMap.get(cleanSeqID);
             if (seq == null) {
-                chromosomeList.add(group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString()));
+                chromosomeList.add(genomeVersion.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString()));
             } else {
                 chromosomeList.add(seq);
             }
@@ -122,7 +122,7 @@ public class BigBedSymLoader extends SymLoader {
     @Override
     public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
         init();
-        String seqString = cleanSeq2Seq.get(seq.getID());
+        String seqString = cleanSeq2Seq.get(seq.getId());
         return parse(seq, bbReader.getBigBedIterator(seqString, 0, seqString, Integer.MAX_VALUE, true));
     }
 
@@ -130,7 +130,7 @@ public class BigBedSymLoader extends SymLoader {
     public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
         List<? extends SeqSymmetry> regions = null;
         init();
-        String seqString = cleanSeq2Seq.get(span.getBioSeq().getID());
+        String seqString = cleanSeq2Seq.get(span.getBioSeq().getId());
         try {
             regions = parse(span.getBioSeq(), bbReader.getBigBedIterator(seqString, span.getStart(), seqString, span.getEnd(), true));
         } catch (RuntimeException x) {

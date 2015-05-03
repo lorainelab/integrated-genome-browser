@@ -1,16 +1,12 @@
 package com.affymetrix.genometry.parsers;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.UcscPslComparator;
 import com.affymetrix.genometry.symloader.PSL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,6 +17,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
 public class PSLParserTest {
 
@@ -37,14 +38,14 @@ public class PSLParserTest {
                 + "71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_query = true;
         String stream_name = "test_file";
         PSLParser instance = new PSLParser();
 
         List<UcscPslSym> syms = null;
         try {
-            syms = instance.parse(istr, stream_name, group, group, annot_query, true);
+            syms = instance.parse(istr, stream_name, genomeVersion, genomeVersion, annot_query, true);
         } catch (IOException ioe) {
             fail("Exception: " + ioe);
         }
@@ -52,7 +53,7 @@ public class PSLParserTest {
         Collections.sort(syms, new UcscPslComparator());
         // Now we have read the data into "syms", so let's try writing it.
 
-        BioSeq seq = group.getSeq("chr1");
+        BioSeq seq = genomeVersion.getSeq("chr1");
         String type = "test_type";
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -61,11 +62,11 @@ public class PSLParserTest {
         assertEquals(string, outstream.toString());
 
         File file = createFileFromString(string);
-        group = new AnnotatedSeqGroup("Test Group");
-        PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+        genomeVersion = new GenomeVersion("Test Group");
+        PSL psl = new PSL(file.toURI(), stream_name, genomeVersion, null, null,
                 true, false, false);
         syms = psl.getGenome();
-        seq = group.getSeq("chrl");
+        seq = genomeVersion.getSeq("chrl");
         outstream = new ByteArrayOutputStream();
         result = psl.writeAnnotations(syms, seq, type, outstream);
         assertEquals(true, result);
@@ -84,11 +85,11 @@ public class PSLParserTest {
         String type = "test_type";
 
         File file = createFileFromString(pslxString);
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-        PSL psl = new PSL(file.toURI(), stream_name, group, null, null,
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        PSL psl = new PSL(file.toURI(), stream_name, genomeVersion, null, null,
                 true, false, false);
         List<UcscPslSym> syms = psl.getGenome();
-        BioSeq seq = group.getSeq("target");
+        BioSeq seq = genomeVersion.getSeq("target");
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
         boolean result = psl.writeAnnotations(syms, seq, type, outstream);
         assertEquals(true, result);
@@ -125,14 +126,14 @@ public class PSLParserTest {
 
         InputStream istr = PSLParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         BioSeq seq = null;
 
         PSLParser instance = new PSLParser();
-        List<UcscPslSym> syms = instance.parse(istr, filename, null, group, true, true);
+        List<UcscPslSym> syms = instance.parse(istr, filename, null, genomeVersion, true, true);
         Collections.sort(syms, new UcscPslComparator());
 
-        PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, group, null, null,
+        PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, genomeVersion, null, null,
                 true, true, false);
         List<BioSeq> seqs = psl.getChromosomeList();
 
@@ -162,7 +163,7 @@ public class PSLParserTest {
             for (int j = 0; j < sym1.getSpanCount(); j++) {
                 SeqSpan span1 = sym1.getSpan(j);
                 SeqSpan span2 = sym2.getSpan(j);
-                assertEquals(span1.getBioSeq().getID(), span1.getBioSeq().getID());
+                assertEquals(span1.getBioSeq().getId(), span1.getBioSeq().getId());
                 assertEquals(span1.getMinDouble(), span2.getMinDouble(), 0);
                 assertEquals(span1.getMaxDouble(), span2.getMaxDouble(), 0);
             }

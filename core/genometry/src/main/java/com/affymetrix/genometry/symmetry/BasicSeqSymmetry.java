@@ -181,7 +181,7 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
         tprops.put("id", name);
         tprops.put("type", type);
         tprops.put("name", name);
-        tprops.put("seq id", seq.getID());
+        tprops.put("seq id", seq.getId());
         tprops.put("forward", forward);
         if (props != null) {
             tprops.putAll(props);
@@ -200,7 +200,7 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
         } else if (key.equals("name")) {
             return name;
         } else if (key.equals("seq id")) {
-            return seq.getID();
+            return seq.getId();
         } else if (key.equals("forward")) {
             return forward;
         } else if (props != null) {
@@ -227,7 +227,7 @@ public abstract class BasicSeqSymmetry implements SeqSpan, TypedSym, SymWithProp
     }
 
     private void outputBasicFormat(DataOutputStream out) throws IOException {
-        out.write(seq.getID().getBytes());
+        out.write(seq.getId().getBytes());
         out.write('\t');
         out.write(Integer.toString(txMin).getBytes());
         out.write('\t');

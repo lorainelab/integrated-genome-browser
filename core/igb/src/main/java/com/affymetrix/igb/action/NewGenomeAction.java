@@ -1,21 +1,12 @@
 package com.affymetrix.igb.action;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericVersion;
-import com.affymetrix.genometry.parsers.ChromInfoParser;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
-import com.affymetrix.genometry.util.Constants;
-import com.affymetrix.genometry.util.LoadUtils.ServerStatus;
-import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.view.CustomGenomeDialogPanel;
@@ -25,11 +16,6 @@ import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -63,28 +49,18 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
             String speciesName = getSpeciesName(ng);
             String genomeVersionName = getGenomeVersionName(ng);
             incrementCustomCounter(speciesName, genomeVersionName);
-            AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeVersionName);
+            GenomeVersion genomeVersion = gmodel.addGenomeVersion(genomeVersionName);
             String refSeqPath = ng.getRefSeqFile();
 
-            if (refSeqPath != null && refSeqPath.length() > 0) {
+            if (!Strings.isNullOrEmpty(refSeqPath)) {
                 String fileName = getFriendlyName(refSeqPath);
-                if (Constants.GENOME_TXT.equals(fileName) || Constants.MOD_CHROM_INFO_TXT.equals(fileName)) {
-                    try {
-                        ChromInfoParser.parse(getInputStream(refSeqPath), group, refSeqPath);
-                        GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
-                        ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ServerStatus.Initialized, false);
-                    } catch (Exception ex) {
-                        Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else {
-                    igbService.openURI(new File(refSeqPath).toURI(), fileName, group, speciesName, true);
-                }
+                igbService.openURI(new File(refSeqPath).toURI(), fileName, genomeVersion, speciesName, true);
             } else {
-                GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(group, speciesName);
-                ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ServerStatus.Initialized, false);
+                DataContainer version = GeneralLoadUtils.getLocalFileDataContainer(genomeVersion, speciesName);
+//                ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ResourceStatus.Initialized, false);
             }
 
-            gmodel.setSelectedSeqGroup(group);
+            gmodel.setSelectedGenomeVersion(genomeVersion);
 
         }
     }
@@ -115,25 +91,6 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         if (speciesName.equals(UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER) || versionName.equals(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER)) {
             CUSTOM_GENOME_COUNTER++;
         }
-    }
-
-    private InputStream getInputStream(String fileName) throws Exception {
-        return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
-    }
-
-    /* This method is used to convert the given file path from relative to absolute.
-     */
-    private URI relativeToAbsolute(String path) throws URISyntaxException {
-        if (!(path.startsWith(FILE_PROTOCOL) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(HTTPS_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL)))) {
-            return getAbsoluteFile(path).toURI();
-        }
-        return new URI(path);
-    }
-
-    /*Returns the File object at given path
-     */
-    private File getAbsoluteFile(String path) {
-        return new File(path).getAbsoluteFile();
     }
 
     private static String getFriendlyName(String urlStr) {

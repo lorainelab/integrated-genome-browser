@@ -42,7 +42,7 @@ public final class SeqSelectionEvent extends EventObject {
     @Override
     public String toString() {
         return "SeqSelectionEvent: seq count: " + selected_seqs.size()
-                + " first seq: '" + (primary_selection == null ? "null" : primary_selection.getID())
+                + " first seq: '" + (primary_selection == null ? "null" : primary_selection.getId())
                 + "' source: " + this.getSource();
     }
 }

@@ -2,7 +2,7 @@ package com.affymetrix.genometry.symloader;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
@@ -49,7 +49,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Sgr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public Sgr(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 
@@ -113,7 +113,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
         try {
             File file = chrList.get(seq);
             if (file == null) {
-                Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                Logger.getLogger(Sgr.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<GraphSym>emptyList();
             }
 
@@ -122,7 +122,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
             // Using whole file path so probably not needed : HV 02/20/12
             // Making sure the ID is unique on the seq
             // will make sure the GraphState is also unique on the seq.
-            // String gid = AnnotatedSeqGroup.getUniqueGraphTrackID(uri.toString(), this.featureName);
+            // String gid = GenomeVersion.getUniqueGraphTrackID(uri.toString(), this.featureName);
             boolean sort = parseLines(br, xlist, ylist, min, max, !file.canWrite());
 
             GraphSym sym = createResults(xlist, seq, ylist, uri.toString(), sort);
@@ -214,7 +214,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
         if (seq == null) {
             throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
         }
-        String seq_id = seq.getID();
+        String seq_id = seq.getId();
 
         BufferedOutputStream bos = null;
         DataOutputStream dos = null;
@@ -317,7 +317,7 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
             Iterator<? extends SeqSymmetry> iter = syms.iterator();
             for (GraphSym graf; iter.hasNext();) {
                 graf = (GraphSym) iter.next();
-                writeGraphPoints(graf, dos, graf.getGraphSeq().getID());
+                writeGraphPoints(graf, dos, graf.getGraphSeq().getId());
             }
 
             return true;

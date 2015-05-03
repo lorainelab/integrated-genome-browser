@@ -5,7 +5,7 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
@@ -33,7 +33,7 @@ public final class WiggleData {
      * Creates a GraphSym from the stored data, or returns null if no data
      * has been stored yet.
      */
-    public GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id, String uri) {
+    public GraphSym createGraph(GenomeVersion seq_group, String graph_id, String uri) {
         if (xData.isEmpty()) {
             return null;
         }

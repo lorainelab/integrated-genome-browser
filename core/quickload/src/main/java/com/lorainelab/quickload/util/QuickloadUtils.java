@@ -1,23 +1,29 @@
 package com.lorainelab.quickload.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.lorainelab.quickload.QuickloadConstants;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -39,11 +45,9 @@ public class QuickloadUtils {
         try {
             urlString = toExternalForm(urlString);
             urlString += QuickloadConstants.SYNONYMS_TXT;
-            URL url = new URL(urlString);
-            parseGenomeVersionSynonyms(getInputStream(url), genomeVersionSynonyms);
-        } catch (MalformedURLException ex) {
-            logger.warn("Optional quickload synonyms.txt file could not be loaded from {}", urlString);
-        } catch (IOException ex) {
+            URI uri = new URI(urlString);
+            parseGenomeVersionSynonyms(getInputStream(uri), genomeVersionSynonyms);
+        } catch (URISyntaxException | IOException ex) {
             logger.warn("Optional quickload synonyms.txt file could not be loaded from {}", urlString);
         }
 
@@ -62,10 +66,10 @@ public class QuickloadUtils {
         try {
             urlString = toExternalForm(urlString);
             urlString += QuickloadConstants.SPECIES_TXT;
-            URL url = new URL(urlString);
-            parseSpeciesInfo(getInputStream(url), speciesInfo);
-        } catch (IOException ex) {
-            logger.warn("Optional species.txt could not be loaded from: {}", urlString, ex);
+            URI uri = new URI(urlString);
+            parseSpeciesInfo(getInputStream(uri), speciesInfo);
+        } catch (IOException | URISyntaxException ex) {
+            logger.warn("Optional species.txt could not be loaded from: {}", urlString);
         }
     }
 
@@ -82,20 +86,20 @@ public class QuickloadUtils {
                 if (record.size() >= 3) {
                     genomeVersionPrefix = record.get(2);
                 }
-                SpeciesInfo info = new SpeciesInfo(speciesName, Optional.ofNullable(commonName), genomeVersionPrefix);
+                SpeciesInfo info = new SpeciesInfo(speciesName, commonName, genomeVersionPrefix);
                 speciesInfo.add(info);
             });
         }
     }
 
-    public static void loadSupportedGenomeVersionInfo(String urlString, Map<String, Optional<String>> supportedGenomeVersionInfo) throws IOException {
+    public static void loadSupportedGenomeVersionInfo(String urlString, Map<String, Optional<String>> supportedGenomeVersionInfo) throws IOException, URISyntaxException {
         try {
             urlString = toExternalForm(urlString);
             urlString += QuickloadConstants.CONTENTS_TXT;
-            URL url = new URL(urlString);
-            processContentsTextFile(getInputStream(url), supportedGenomeVersionInfo);
-        } catch (IOException ex) {
-            logger.error("Could not read contents.txt from: {}", urlString, ex);
+            URI uri = new URI(urlString);
+            processContentsTextFile(getInputStream(uri), supportedGenomeVersionInfo);
+        } catch (IOException | URISyntaxException ex) {
+            logger.warn("Could not read contents.txt from: {}", urlString);
             throw ex;
         }
     }
@@ -121,8 +125,8 @@ public class QuickloadUtils {
         String genomeVersionBaseUrl = getGenomeVersionBaseUrl(quickloadUrl, genomeVersionName);
         String annotsXmlUrl = genomeVersionBaseUrl + QuickloadConstants.ANNOTS_XML;
         try {
-            URL url = new URL(annotsXmlUrl);
-            try (Reader reader = new InputStreamReader(getInputStream(url))) {
+            URI uri = new URI(annotsXmlUrl);
+            try (Reader reader = new InputStreamReader(getInputStream(uri))) {
                 List<QuickloadFile> annotsFiles = ANNOTS_PARSER.getQuickloadFileList(reader);
                 if (!annotsFiles.isEmpty()) {
                     return Optional.of(Sets.newHashSet(annotsFiles));
@@ -131,20 +135,18 @@ public class QuickloadUtils {
                     supportedGenomeVersionInfo.remove(genomeVersionName);
                 }
             }
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | IOException ex) {
             logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, genomeVersionBaseUrl, ex);
-        } catch (IOException ex) {
-            logger.error("Could not read required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, genomeVersionBaseUrl, ex);
         }
         return Optional.empty();
     }
 
-    public static Optional<Map<String, Integer>> getAssemblyInfo(String quickloadUrl, String genomeVersionName) throws MalformedURLException, IOException {
+    public static Optional<SortedMap<String, Integer>> getAssemblyInfo(String quickloadUrl, String genomeVersionName) throws IOException, URISyntaxException {
         String genomeVersionBaseUrl = getGenomeVersionBaseUrl(quickloadUrl, genomeVersionName);
         String genomeTxtUrl = genomeVersionBaseUrl + QuickloadConstants.GENOME_TXT;
-        Map<String, Integer> assemblyInfo = Maps.newHashMap();
-        URL url = new URL(genomeTxtUrl);
-        try (Reader reader = new InputStreamReader(getInputStream(url))) {
+        SortedMap<String, Integer> assemblyInfo = Maps.newTreeMap();
+        URI uri = new URI(genomeTxtUrl);
+        try (Reader reader = new InputStreamReader(getInputStream(uri))) {
             getCSVRecordStreamFromTabDelimitedResource(reader).filter(record -> record.size() == 2).forEach(record -> {
                 assemblyInfo.put(record.get(0), Integer.parseInt(record.get(1)));
             });
@@ -177,9 +179,36 @@ public class QuickloadUtils {
         return StreamSupport.stream(records.spliterator(), false);
     }
 
+    public static boolean isValidRequest(URI uri) throws IOException {
+        if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+            File f = new File(uri);
+            return f.exists();
+        } else {
+            int code = -1;
+            try {
+                code = HttpRequest.get(uri.toURL())
+                        .trustAllCerts()
+                        .trustAllHosts()
+                        .followRedirects(true)
+                        .connectTimeout(1000)
+                        .code();
+            } catch (HttpRequestException ex) {
+            }
+            return code == HttpURLConnection.HTTP_OK;
+        }
+    }
+
     //TODO could easily be modified to use cache, but this is not required for now since cacheing needs to be updated before it will be useful
-    public static InputStream getInputStream(URL url) {
-        return HttpRequest.get(url)
+    public static InputStream getInputStream(URI uri) throws IOException {
+        if (!isValidRequest(uri)) {
+            throw new IOException();
+        }
+        if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+            File f = new File(uri);
+            InputStream inputStream = new FileInputStream(f);
+            return inputStream;
+        }
+        return HttpRequest.get(uri.toURL())
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()

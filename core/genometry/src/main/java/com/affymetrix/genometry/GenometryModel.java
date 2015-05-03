@@ -8,10 +8,8 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
 import java.util.ArrayList;
 import java.util.Collections;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -33,7 +31,7 @@ public final class GenometryModel {
      * objects can be selected simultaneously. Why? What does selection mean in
      * this context?
      */
-    private final Map<String, AnnotatedSeqGroup> seq_groups = new LinkedHashMap<>();
+    private final Map<String, GenomeVersion> genomeVersions = new LinkedHashMap<>();
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
     // maps sequences to lists of selected symmetries
@@ -43,8 +41,8 @@ public final class GenometryModel {
     private final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<>();
     private final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<>();
 
-    private AnnotatedSeqGroup selected_group = null;
-    private BioSeq selected_seq = null;
+    private GenomeVersion selectedGenomeVersion = null;
+    private BioSeq selectedBioSeq = null;
 
     private GenometryModel() {
     }
@@ -59,101 +57,98 @@ public final class GenometryModel {
      * reloaded.
      */
     public void resetGenometryModel() {
-        this.seq_groups.clear();
+        this.genomeVersions.clear();
         this.seq2selectedGraphSymsHash.clear();
 
         this.seq_selection_listeners.clear();
         group_selection_listeners.clear();
         sym_selection_listeners.clear();
 
-        selected_group = null;
-        selected_seq = null;
+        selectedGenomeVersion = null;
+        selectedBioSeq = null;
     }
 
     /**
-     * Returns a Map of String names to AnnotatedSeqGroup objects.
+     * Returns a Map of String names to GenomeVersion objects.
      *
      * @return
      */
-    public Map<String, AnnotatedSeqGroup> getSeqGroups() {
-        return Collections.unmodifiableMap(seq_groups);
+    public Map<String, GenomeVersion> getSeqGroups() {
+        return Collections.unmodifiableMap(genomeVersions);
     }
 
     public synchronized List<String> getSeqGroupNames() {
-        List<String> list = new ArrayList<>(seq_groups.keySet());
+        List<String> list = new ArrayList<>(genomeVersions.keySet());
         Collections.sort(list);
         return Collections.unmodifiableList(list);
     }
 
-    public AnnotatedSeqGroup getSeqGroup(String group_syn) {
+    public GenomeVersion getSeqGroup(String group_syn) {
         if (StringUtils.isBlank(group_syn)) {
             return null;
         }
-        AnnotatedSeqGroup group = seq_groups.get(group_syn);
-        if (group == null) {
+        GenomeVersion genomeVersion = genomeVersions.get(group_syn);
+        if (genomeVersion == null) {
             // try and find a synonym
-            for (AnnotatedSeqGroup curgroup : seq_groups.values()) {
+            for (GenomeVersion curgroup : genomeVersions.values()) {
                 if (curgroup.isSynonymous(group_syn)) {
                     return curgroup;
                 }
             }
         }
-        return group;
+        return genomeVersion;
     }
 
     /**
      * Returns the seq group with the given id, creating a new one if there
      * isn't an existing one.
      *
-     * @param group_id
-     * @return a non-null AnnotatedSeqGroup
+     * @param genomeVersionName
+     * @return a non-null GenomeVersion
      */
-    public synchronized AnnotatedSeqGroup addSeqGroup(String group_id) {
-        // if AnnotatedSeqGroup with same or synonymous id already exists, then return it
-        AnnotatedSeqGroup group = getSeqGroup(group_id);
-        // otherwise create a new AnnotatedSeqGroup
-        if (group == null) {
-            group = createSeqGroup(group_id);
-            seq_groups.put(group.getID(), group);
+    public synchronized GenomeVersion addGenomeVersion(String genomeVersionName) {
+        // if GenomeVersion with same or synonymous id already exists, then return it
+        GenomeVersion genomeVersion = getSeqGroup(genomeVersionName);
+        // otherwise create a new GenomeVersion
+        if (genomeVersion == null) {
+            genomeVersion = createGenomeVersion(genomeVersionName);
+            genomeVersions.put(genomeVersion.getName(), genomeVersion);
             //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
         }
-        return group;
+        return genomeVersion;
     }
 
     /**
-     * The routine that actually creates a new AnnotatedSeqGroup. Override this
-     * to provide a specific subclass of AnnotatedSeqGroup.
+     * The routine that actually creates a new GenomeVersion. Override this
+     * to provide a specific subclass of GenomeVersion.
      *
-     * @param group_id
+     * @param genomeVersionName
      * @return
      */
-    protected AnnotatedSeqGroup createSeqGroup(String group_id) {
-        return new AnnotatedSeqGroup(group_id);
+    protected GenomeVersion createGenomeVersion(String genomeVersionName) {
+        return new GenomeVersion(genomeVersionName);
     }
 
-    public void removeSeqGroup(String group_id) {
-        seq_groups.remove(group_id);
+    public void removeGenomeVersion(String genomeVersionName) {
+        genomeVersions.remove(genomeVersionName);
     }
 
-    public synchronized void addSeqGroup(AnnotatedSeqGroup group) {
-        seq_groups.put(group.getID(), group);
+    public synchronized void addSeqGroup(GenomeVersion genomeVersion) {
+        genomeVersions.put(genomeVersion.getName(), genomeVersion);
         //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
     }
 
-    public AnnotatedSeqGroup getSelectedSeqGroup() {
-        return selected_group;
+    public GenomeVersion getSelectedGenomeVersion() {
+        return selectedGenomeVersion;
     }
 
     // TODO: modify so that fireGroupSelectionEvent() is only called if
     //     group arg is different than previous selected_group
-    public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
-
-        logger.debug("group = " + (group == null ? null : group.getID()));
-
-        selected_group = group;
-        selected_seq = null;
-        List<AnnotatedSeqGroup> glist = new ArrayList<>();
-        glist.add(selected_group);
+    public void setSelectedGenomeVersion(GenomeVersion genomeVersion) {
+        selectedGenomeVersion = genomeVersion;
+        selectedBioSeq = null;
+        List<GenomeVersion> glist = new ArrayList<>();
+        glist.add(selectedGenomeVersion);
         fireGroupSelectionEvent(this, glist);
     }
 
@@ -165,7 +160,7 @@ public final class GenometryModel {
         group_selection_listeners.remove(listener);
     }
 
-    private void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
+    private void fireGroupSelectionEvent(Object src, List<GenomeVersion> glist) {
         GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
         for (GroupSelectionListener listener : group_selection_listeners) {
             listener.groupSelectionChanged(evt);
@@ -173,7 +168,7 @@ public final class GenometryModel {
     }
 
     public BioSeq getSelectedSeq() {
-        return selected_seq;
+        return selectedBioSeq;
     }
 
     public void setSelectedSeq(BioSeq seq) {
@@ -187,10 +182,10 @@ public final class GenometryModel {
      * important even if selected seq is same.
      */
     public void setSelectedSeq(BioSeq seq, Object src) {
-        logger.debug("seq = " + (seq == null ? null : seq.getID()));
-        selected_seq = seq;
+        logger.debug("seq = " + (seq == null ? null : seq.getId()));
+        selectedBioSeq = seq;
         ArrayList<BioSeq> slist = new ArrayList<>();
-        slist.add(selected_seq);
+        slist.add(selectedBioSeq);
         fireSeqSelectionEvent(src, slist);
     }
 
@@ -295,8 +290,8 @@ public final class GenometryModel {
                 continue;
             }
             BioSeq seq = null;
-            if (getSelectedSeqGroup() != null) { //fixes NPE
-                seq = getSelectedSeqGroup().getSeq(sym);
+            if (getSelectedGenomeVersion() != null) { //fixes NPE
+                seq = getSelectedGenomeVersion().getSeq(sym);
             }
             if (seq == null) {
                 continue;
@@ -318,7 +313,7 @@ public final class GenometryModel {
         // now perform the selections for each sequence that was matched
         for (Map.Entry<BioSeq, List<SeqSymmetry>> entry : seq2GraphSymsHash.entrySet()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getID());
+                logger.debug("Syms " + entry.getValue().size() + " on seq " + entry.getKey().getId());
             }
             setSelectedSymmetries(entry.getValue(), entry.getKey()); // do not send an event yet
         }

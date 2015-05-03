@@ -3,7 +3,7 @@ package com.affymetrix.genometry.symloader;
 /**
  * Genbank parser Adapted from Apollo Genbank parser
  */
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.impl.GenbankSym;
@@ -184,7 +184,7 @@ public final class Genbank extends SymLoader {
     private BioSeq currentSeq = null;
     protected final List<BioSeq> seqs = new ArrayList<>();
 
-    public Genbank(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public Genbank(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 
@@ -266,9 +266,9 @@ public final class Genbank extends SymLoader {
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String seq_name = bioseq.getKey();
-            BioSeq seq = group.getSeq(seq_name);
+            BioSeq seq = genomeVersion.getSeq(seq_name);
             if (seq == null) {
-                seq = group.addSeq(seq_name, bioseq.getValue(), uri.toString());
+                seq = genomeVersion.addSeq(seq_name, bioseq.getValue(), uri.toString());
             }
             seqs.add(seq);
         }
@@ -333,7 +333,7 @@ public final class Genbank extends SymLoader {
                     if (value != null && value.length() != 0) {
                         switch (tag) {
                             case "chromosome":
-                                seq = this.group.getSeq(value);
+                                seq = this.genomeVersion.getSeq(value);
                                 if (seq == null) {
                                     seq = new BioSeq(value, length);
                                 }
@@ -362,7 +362,7 @@ public final class Genbank extends SymLoader {
                 int loc1 = locs.get(0)[1];
                 if (loc1 > seq.getLength()) {
                     seq.setLength(loc1);
-                    chrLength.put(seq.getID(), seq.getLength());
+                    chrLength.put(seq.getId(), seq.getLength());
                 }
             }
         }
@@ -428,7 +428,7 @@ public final class Genbank extends SymLoader {
     }
 
     // loop until there are no more lines in the file or we hit the start of
-    // the next feature or the start of the next line group
+    // the next feature or the start of the next line genomeVersion
     private void readFeature(BufferedReader input, Map<String, GenbankSym> id2sym, BioSeq seq, int min, int max) {
         boolean done = false;
         //GenbankSequence seq = (GenbankSequence) curation.getRefSequence();
@@ -653,7 +653,7 @@ public final class Genbank extends SymLoader {
                     if (value != null && value.length() != 0) {
                         switch (tag) {
                             case "chromosome":
-                                currentSeq = this.group.getSeq(value);
+                                currentSeq = this.genomeVersion.getSeq(value);
                                 break;
                             case "organism":
                                 break;

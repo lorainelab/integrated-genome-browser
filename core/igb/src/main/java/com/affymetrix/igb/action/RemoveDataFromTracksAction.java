@@ -42,7 +42,7 @@ public class RemoveDataFromTracksAction extends SeqMapViewActionA {
         super.actionPerformed(e);
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
 
-        if (ModalUtils.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getID()),
+        if (ModalUtils.confirmPanel(MessageFormat.format(IGBConstants.BUNDLE.getString("confirmDelete"), seq.getId()),
                 PreferenceUtils.CONFIRM_BEFORE_CLEAR, PreferenceUtils.default_confirm_before_clear)) {
 
             // First split the graph.

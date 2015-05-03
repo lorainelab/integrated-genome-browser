@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
@@ -136,7 +136,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
     static boolean DEBUG = false;
     static List<String> pref_list = Arrays.asList("ead");
 
-    public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
+    public List<SeqSymmetry> parse(InputStream istr, GenomeVersion genomeVersion,
             boolean annotate_seq, String default_type) throws IOException {
         BufferedInputStream bis;
         Map<String, Object> tagvals = new LinkedHashMap<>();
@@ -159,8 +159,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
                 System.err.println("ead file does not specify a genome name or version, these are required!");
                 return null;
             }
-            if (!group.isSynonymous(seq_group_id)) {
-                System.err.println("In ExonArrayDesignParser, mismatch between AnnotatedSeqGroup argument: " + group.getID()
+            if (!genomeVersion.isSynonymous(seq_group_id)) {
+                System.err.println("In ExonArrayDesignParser, mismatch between AnnotatedSeqGroup argument: " + genomeVersion.getName()
                         + " and group name+version in ead file: " + seq_group_id);
                 return null;
             }
@@ -196,9 +196,9 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
                 int transcript_cluster_count = dis.readInt();
                 total_tcluster_count += transcript_cluster_count;
 
-                BioSeq aseq = group.getSeq(seqid);
+                BioSeq aseq = genomeVersion.getSeq(seqid);
                 if (aseq == null) {
-                    aseq = group.addSeq(seqid, seq_length);
+                    aseq = genomeVersion.addSeq(seqid, seq_length);
                 }
                 SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
 
@@ -359,12 +359,12 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
     }
 
     /**
-     * assumes seqs are SmartAnnotBioSeqs, and belong to same AnnotatedSeqGroup
+     * assumes seqs are SmartAnnotBioSeqs, and belong to same GenomeVersion
      */
     private static void writeEadHeader(SeqSymmetry tcluster_exemplar, String annot_type, List<BioSeq> seqs, DataOutputStream dos) throws IOException {
         // extract example EfficientProbesetSymA from an annotated seq in group
         BioSeq seq0 = seqs.get(0);
-        AnnotatedSeqGroup group = seq0.getSeqGroup();
+        GenomeVersion genomeVersion = seq0.getGenomeVersion();
 
         EfficientProbesetSymA probeset_exemplar;
         if (USE_FULL_HIERARCHY) {
@@ -377,7 +377,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
         int probe_length = probeset_exemplar.getProbeLength();
         String id_prefix = probeset_exemplar.getIDPrefix();
 
-        String groupid = group.getID();
+        String groupid = genomeVersion.getName();
         dos.writeUTF("ead");
         dos.writeInt(1);
         dos.writeUTF(groupid);
@@ -394,7 +394,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
      * assumes syms in collection contain span on aseq
      */
     private static void writeSeqWithAnnots(Collection<? extends SeqSymmetry> syms, BioSeq aseq, DataOutputStream dos) throws IOException {
-        String seqid = aseq.getID();
+        String seqid = aseq.getId();
         System.out.println("seqid: " + seqid + ", annot count: " + syms.size());
         dos.writeUTF(seqid);
         dos.writeInt(aseq.getLength());
@@ -549,9 +549,9 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
         if (READ) {
             try {
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(out_file)));
-                AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
+                GenomeVersion genomeVersion = gmodel.addGenomeVersion(genomeid + versionid);
                 ExonArrayDesignParser parser = new ExonArrayDesignParser();
-                List results = parser.parse(bis, group, true, annot_type);
+                List results = parser.parse(bis, genomeVersion, true, annot_type);
                 System.out.println("Finished reading ead file, transcript_clusters: " + results.size());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -568,7 +568,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
      */
     private static void convertGff(String in_file, String out_file, String genome_id,
             String annot_type, String id_prefix) {
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
+        GenomeVersion seq_group = new GenomeVersion(genome_id);
         int probe_length = 25;
         try {
             File gff_file = new File(in_file);
@@ -610,7 +610,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
                     //       c) PSR
                     //          d) probeset
                     //             e) probe
-                    // can't use just getID() for id because this depends on headers at start of gff that may not
+                    // can't use just getName() for id because this depends on headers at start of gff that may not
                     //    be set correctly (for example in some the tag for probeset ID is "probeset_name" instead of "probeset_id")
                     int tcount = annots.size();
 
@@ -745,7 +745,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
      * Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
      *
      */
-    private static boolean writeAnnotations(String annot_type, AnnotatedSeqGroup group, OutputStream outstream)
+    private static boolean writeAnnotations(String annot_type, GenomeVersion genomeVersion, OutputStream outstream)
             throws IOException {
         boolean success = false;
         try {
@@ -758,12 +758,12 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
                 dos = new DataOutputStream(new BufferedOutputStream(outstream));
             }
 
-            int scount = group.getSeqCount();
-            List<BioSeq> seqs = group.getSeqList();
+            int scount = genomeVersion.getSeqCount();
+            List<BioSeq> seqs = genomeVersion.getSeqList();
 
             SeqSymmetry tcluster_exemplar = null;
             if (seqs.size() > 0) {
-                BioSeq aseq = group.getSeq(0);
+                BioSeq aseq = genomeVersion.getSeq(0);
                 SymWithProps typesym = aseq.getAnnotation(annot_type);
                 SeqSymmetry container = typesym.getChild(0);
                 tcluster_exemplar = container.getChild(0);
@@ -772,7 +772,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
             writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
 
             for (int i = 0; i < scount; i++) {
-                BioSeq aseq = group.getSeq(i);
+                BioSeq aseq = genomeVersion.getSeq(i);
                 SymWithProps typesym = aseq.getAnnotation(annot_type);
                 // transcript clusters should be third level down in hierarchy:
                 //    1) type container
@@ -803,8 +803,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter, Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        return parse(is, group, annotate_seq, uri);
+        return parse(is, genomeVersion, annotate_seq, uri);
     }
 }

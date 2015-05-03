@@ -69,7 +69,7 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter {
     }
 
     private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
-        out.write(seq.getID().getBytes());
+        out.write(seq.getId().getBytes());
         out.write('\t');
         int min = span.getMin();
         int max = span.getMax();
@@ -85,7 +85,7 @@ public class BedDetailWriter extends BedParser implements AnnotationWriter {
                 } else if (propsym.getProperty(ID) != null) {
                     out.write(((String) propsym.getProperty(ID)).getBytes());
                 } else {
-                    out.write((seq.getID() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward() ? "+" : "-")).getBytes());
+                    out.write((seq.getId() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward() ? "+" : "-")).getBytes());
                 }
             }
             out.write('\t');

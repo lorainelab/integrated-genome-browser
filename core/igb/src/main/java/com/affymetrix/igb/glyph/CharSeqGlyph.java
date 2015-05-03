@@ -124,12 +124,12 @@ public class CharSeqGlyph extends SequenceGlyph {
                 cgl = new FillRectGlyph();
                 cgl.setColor(c3);
             } else {
-                switch (viewSeq.getID()) {
+                switch (viewSeq.getId()) {
                     case IGBConstants.GENOME_SEQ_ID: {
                         // hide axis numbering
                         axis.setLabelFormat(AxisGlyph.NO_LABELS);
                         cgl = new LabelledRectGlyph();
-                        String text = ospan.getBioSeq().getID();
+                        String text = ospan.getBioSeq().getId();
                         if (text.toLowerCase().startsWith("chr")) {
                             text = text.substring(3);
                         }

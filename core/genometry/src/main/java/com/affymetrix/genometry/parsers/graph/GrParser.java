@@ -17,8 +17,8 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -138,7 +138,7 @@ public final class GrParser implements GraphParser {
             sortXYDataOnX(xcoords, ycoords);
         }
         if (ensure_unique_id) {
-            name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq);
+            name = GenomeVersion.getUniqueGraphID(name, aseq);
         }
         graf = new GraphSym(xcoords, ycoords, name, aseq);
         System.out.println("loaded graph data, total points = " + count);
@@ -164,14 +164,14 @@ public final class GrParser implements GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         throw new IllegalStateException("Gr should not be processed here");
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         if (seq == null) {
@@ -188,12 +188,12 @@ public final class GrParser implements GraphParser {
         GraphSym graph = GrParser.parse(newstr, seq, stream_name);
         int max_x = graph.getMaxXCoord();
         BioSeq gseq = graph.getGraphSeq();
-        seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
+        seq_group.addSeq(gseq.getId(), max_x); // this stretches the seq to hold the graph
         return GraphParserUtil.getInstance().wrapInList(graph);
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         BufferedOutputStream bos = null;
         try {

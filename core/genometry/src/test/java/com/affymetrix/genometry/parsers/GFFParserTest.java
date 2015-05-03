@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGffSym;
 import java.io.File;
@@ -25,7 +25,7 @@ public class GFFParserTest {
         InputStream istr = new FileInputStream(filename);
         assertNotNull(istr);
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
 
         GFFParser instance = new GFFParser();
 

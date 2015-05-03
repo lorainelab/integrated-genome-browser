@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ public class BrsParserTest {
 
     String filename = "data/brs/refseq.brs";
     String versionString = "genomeVersion";
-    AnnotatedSeqGroup genome = null;
+    GenomeVersion genome = null;
     private List<SeqSymmetry> results = null;
     private BrsParser parser = new BrsParser();
 
@@ -33,7 +33,7 @@ public class BrsParserTest {
             istr = new FileInputStream(filename);
             BufferedInputStream bis = new BufferedInputStream(istr);
             DataInputStream dis = new DataInputStream(bis);
-            genome = new AnnotatedSeqGroup("testGenome");
+            genome = new GenomeVersion("testGenome");
             results = parser.parse(dis, filename, genome);
         } catch (Exception ex) {
             Logger.getLogger(BrsParserTest.class.getName()).log(Level.SEVERE, null, ex);

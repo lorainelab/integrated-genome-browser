@@ -13,8 +13,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.ExtensionPointHandler;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
@@ -135,8 +135,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             } catch (ParseException x) {
                 return super.findSpans(search_text, visibleSpan);
             }
-            AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-            BioSeq seq = group.getSeq(chrom_text);
+            GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+            BioSeq seq = genomeVersion.getSeq(chrom_text);
             List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 spans.add(new SimpleSeqSpan(start, end, seq));
@@ -170,8 +170,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             } catch (ParseException x) {
                 return super.findSpans(search_text, visibleSpan);
             }
-            AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-            BioSeq seq = group.getSeq(chrom_text);
+            GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+            BioSeq seq = genomeVersion.getSeq(chrom_text);
             List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 spans.add(new SimpleSeqSpan(start, end, seq));
@@ -208,8 +208,8 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             int width = (visibleSpan.getEnd() - visibleSpan.getStart());
             int start = Math.max(0, position - width / 2);
             int end = start + width;
-            AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-            BioSeq seq = group.getSeq(chrom_text);
+            GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+            BioSeq seq = genomeVersion.getSeq(chrom_text);
             List<SeqSpan> spans = new ArrayList<>();
             if (seq != null) {
                 if (end >= seq.getLength()) {
@@ -394,7 +394,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
     public void setRangeText(double start, double end) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        range_box.setText((seq == null ? "" : seq.getID() + ":") + nformat.format(start) + "-" + nformat.format(end));
+        range_box.setText((seq == null ? "" : seq.getId() + ":") + nformat.format(start) + "-" + nformat.format(end));
     }
 
     public void actionPerformed(ActionEvent evt) {
@@ -563,19 +563,19 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     private void zoomToSeqAndSpan(SeqMapView gview, SeqSpan span) throws NumberFormatException {
-        zoomToSeqAndSpan(gview, span.getBioSeq().getID(), span.getStart(), span.getEnd());
+        zoomToSeqAndSpan(gview, span.getBioSeq().getId(), span.getStart(), span.getEnd());
     }
 
     public void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        if (group == null) {
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+        if (genomeVersion == null) {
             Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");
             return;
         }
 
-        BioSeq newSeq = group.getSeq(chrom_text);
+        BioSeq newSeq = genomeVersion.getSeq(chrom_text);
         if (newSeq == null) {
-            Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, "Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, group.getID()});
+            Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, "Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, genomeVersion.getName()});
             return;
         }
 
@@ -627,7 +627,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         @Override
         public boolean updateHints(Object context) {
             String search_term = (String) context;
-            if (GenometryModel.getInstance().getSelectedSeqGroup() == null || search_term.length() <= 1) {
+            if (GenometryModel.getInstance().getSelectedGenomeVersion() == null || search_term.length() <= 1) {
                 return false;
             } else {
                 List<ISearchHints> modes = new ArrayList<>();

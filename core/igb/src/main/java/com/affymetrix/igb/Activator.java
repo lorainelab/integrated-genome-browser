@@ -9,7 +9,6 @@ import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
-import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
@@ -30,7 +29,6 @@ import com.affymetrix.igb.action.ExportFileAction;
 import com.affymetrix.igb.action.ExportSelectedAnnotationFileAction;
 import com.affymetrix.igb.action.FloatTiersAction;
 import com.affymetrix.igb.action.HideAction;
-import com.affymetrix.igb.action.HomeAction;
 import com.affymetrix.igb.action.LabelGlyphAction;
 import com.affymetrix.igb.action.RemoveDataFromTracksAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
@@ -63,7 +61,6 @@ import com.affymetrix.igb.action.ZoomInYAction;
 import com.affymetrix.igb.action.ZoomOutXAction;
 import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.action.ZoomingRepackAction;
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.CollapseExpandAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -77,8 +74,7 @@ import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
-import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
@@ -109,35 +105,26 @@ public class Activator implements BundleActivator {
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
         }
         //wait for consoleLogger service
-        setupConsoleServiceTracker(bundleContext);
+        setupServiceDependencyTracker(bundleContext);
         addGenericActionListener();
         initColorProvider(bundleContext);
         initFilter(bundleContext);
     }
 
-    private void setupConsoleServiceTracker(final BundleContext bundleContext) {
-        ServiceTracker<IgbMenuItemProvider, Object> consoleServiceTracker;
-        consoleServiceTracker = new ServiceTracker<IgbMenuItemProvider, Object>(bundleContext, IgbMenuItemProvider.class, null) {
+    private void setupServiceDependencyTracker(final BundleContext bundleContext) {
+        ServiceTracker<IgbServiceDependencyManager, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<IgbServiceDependencyManager, Object>(bundleContext, IgbServiceDependencyManager.class, null) {
             @Override
-            public Object addingService(ServiceReference<IgbMenuItemProvider> serviceReference) {
-                if (serviceReference.getProperty("component.name").equals("ShowConsoleAction")) {
-                    bundleContext.getService(serviceReference);
-                    run(bundleContext);
-                    logger.info("IGB Started");
-                }
+            public Object addingService(ServiceReference<IgbServiceDependencyManager> serviceReference) {
+                IgbServiceDependencyManager dependencyManager = bundleContext.getService(serviceReference);
+                run(bundleContext);
+                initializeWindowService(dependencyManager);
+                logger.info("IGB Started");
                 return super.addingService(serviceReference);
             }
-        };
-        consoleServiceTracker.open();
-    }
 
-    private void setupWindowServiceTracker(final BundleContext bundleContext) {
-        ServiceTracker<IWindowService, Object> serviceTracker;
-        serviceTracker = new ServiceTracker<IWindowService, Object>(bundleContext, IWindowService.class, null) {
-            @Override
-            public Object addingService(ServiceReference<IWindowService> windowServiceReference) {
-                logger.info("Starting Window Manager");
-                IWindowService windowService = bundleContext.getService(windowServiceReference);
+            private void initializeWindowService(IgbServiceDependencyManager dependencyManager) {
+                IWindowService windowService = dependencyManager.getWindowService();
                 final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
                 // set IgbService
                 bundleContext.registerService(IgbService.class, IgbServiceImpl.getInstance(), null);
@@ -145,11 +132,9 @@ public class Activator implements BundleActivator {
                 for (IgbTabPanelI tab : tabs) {
                     bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
                 }
-                logger.info("Window Manager Started");
-                return super.addingService(windowServiceReference);
             }
         };
-        serviceTracker.open();
+        dependencyTracker.open();
     }
 
     private void verifyJidesoftLicense() {
@@ -168,7 +153,6 @@ public class Activator implements BundleActivator {
      */
     private void run(final BundleContext bundleContext) {
         logger.info("Starting IGB");
-        setupWindowServiceTracker(bundleContext);
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
 
         igb.init(args, bundleContext);
@@ -185,7 +169,6 @@ public class Activator implements BundleActivator {
         initSeqMapViewActions();
         addStatusAlertListener(bundleContext);
         addSearchListener(bundleContext);
-        addServerInitListener(bundleContext);
         logger.trace("commandlinebatchFileStr....");
         if (IGB.commandLineBatchFileStr != null && IGB.commandLineBatchFileStr.length() > 0) {
             ScriptExecutor se = new ScriptExecutor();
@@ -215,7 +198,6 @@ public class Activator implements BundleActivator {
         ZoomOutXAction.getAction();
         ZoomInYAction.getAction();
         ZoomOutYAction.getAction();
-        HomeAction.getAction();
         ScrollUpAction.getAction();
         ScrollDownAction.getAction();
         ScrollLeftAction.getAction();
@@ -339,8 +321,8 @@ public class Activator implements BundleActivator {
 
     private void registerServices(final BundleContext bundleContext) {
 
-        bundleContext.registerService(WindowServiceLifecylceHook.class,
-                new WindowServiceLifecylceHook() {
+        bundleContext.registerService(WindowServiceLifecycleHook.class,
+                new WindowServiceLifecycleHook() {
                     @Override
                     public void stop() {
                         IGB.getInstance().saveToolBar();
@@ -433,23 +415,6 @@ public class Activator implements BundleActivator {
                     @Override
                     public void removeService(SearchListener searchListener) {
                         IGB.getInstance().getMapView().getMapRangeBox().removeSearchListener(searchListener);
-                    }
-                }
-        );
-    }
-
-    private void addServerInitListener(final BundleContext bundleContext) {
-        ExtensionPointHandler<GenericServerInitListener> searchExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, GenericServerInitListener.class);
-        searchExtensionPoint.addListener(
-                new ExtensionPointListener<GenericServerInitListener>() {
-                    @Override
-                    public void addService(GenericServerInitListener listener) {
-                        ServerList.getServerInstance().addServerInitListener(listener);
-                    }
-
-                    @Override
-                    public void removeService(GenericServerInitListener listener) {
-                        ServerList.getServerInstance().removeServerInitListener(listener);
                     }
                 }
         );

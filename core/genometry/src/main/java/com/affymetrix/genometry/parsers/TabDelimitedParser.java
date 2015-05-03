@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -46,7 +46,7 @@ public class TabDelimitedParser implements Parser {
     private final int type_col;   // column to use for setting feature type
     private int id_col;
 
-    // if makeProps, then each column (other than start, end, length, group) will become a
+    // if makeProps, then each column (other than start, end, length, genomeVersion) will become a
     //    property in the SymWithProps that is generated
     private boolean make_props = true;
 
@@ -69,7 +69,7 @@ public class TabDelimitedParser implements Parser {
      * @param header Whether there is a header line containing column names for properties
      */
     public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
-            int strand, int group, int id, boolean props, boolean header) {
+            int strand, int genomeVersion, int id, boolean props, boolean header) {
 
         if (chromosome < 0) {
             throw new IllegalArgumentException("Chromosome column number must be 0 or greater.");
@@ -79,14 +79,14 @@ public class TabDelimitedParser implements Parser {
         start_col = start;
         end_col = end;
         length_col = length;
-        group_col = group;
+        group_col = genomeVersion;
         type_col = type;
         strand_col = strand;
         id_col = id;
 
         has_header = header;
         use_length = (length >= 0);
-        use_group = (group >= 0);
+        use_group = (genomeVersion >= 0);
         use_type = (type >= 0);
         use_strand = (strand >= 0);
         has_id = (id >= 0);
@@ -95,14 +95,14 @@ public class TabDelimitedParser implements Parser {
     }
 
     /**
-     * Parses data into the given AnnotatedSeqGroup.
+     * Parses data into the given GenomeVersion.
      *
      * @param istr The source of the data
      * @param default_type The name to use for the "type" or "method" if the
      * "type" column parameter in the constructor was -1.
-     * @param seq_group The AnnotatedSeqGroup on which to add the data.
+     * @param seq_group The GenomeVersion on which to add the data.
      */
-    public List<SeqSymmetry> parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group, boolean annotateSeq) {
+    public List<SeqSymmetry> parse(InputStream istr, String default_type, GenomeVersion seq_group, boolean annotateSeq) {
 
         List<SeqSymmetry> results = new ArrayList<>();
         Map<String, SeqSymmetry> group_hash = new HashMap<>();
@@ -167,7 +167,7 @@ public class TabDelimitedParser implements Parser {
                 SingletonSymWithProps child = new SingletonSymWithProps(start, end, seq);
                 child.setProperty("method", type);
                 if (id == null) {
-                    id = type + " " + seq.getID() + ":" + start + "-" + end;
+                    id = type + " " + seq.getId() + ":" + start + "-" + end;
                 }
                 child.setProperty("id", id);
                 if (make_props) {
@@ -179,24 +179,24 @@ public class TabDelimitedParser implements Parser {
                 }
 
                 if (use_group) {
-                    String group = cols[group_col];
-                    SimpleSymWithProps parent = (SimpleSymWithProps) group_hash.get(group);
+                    String genomeVersion = cols[group_col];
+                    SimpleSymWithProps parent = (SimpleSymWithProps) group_hash.get(genomeVersion);
                     if (parent == null) {
                         parent = new SimpleSymWithProps();
                         SimpleMutableSeqSpan span = new SimpleMutableSeqSpan(start, end, seq);
                         parent.addSpan(span);
                         parent.setProperty("method", type);
                         if (id == null) {
-                            id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
+                            id = type + " " + span.getBioSeq().getId() + ":" + span.getStart() + "-" + span.getEnd();
                         }
 
                         parent.setProperty("id", id);
-                        group_hash.put(group, parent);
+                        group_hash.put(genomeVersion, parent);
                         // or maybe should add all parents to a grandparent, and add _grandparent_ to aseq???
                         results.add(parent);
                         if (annotateSeq) {
                             seq.addAnnotation(parent);
-//							seq_group.addToIndex(parent.getID(), parent);
+//							seq_group.addToIndex(parent.getName(), parent);
                         }
                     } else {
                         MutableSeqSpan pspan = (MutableSeqSpan) parent.getSpan(seq);
@@ -208,7 +208,7 @@ public class TabDelimitedParser implements Parser {
                     results.add(child);
                     if (annotateSeq) {
                         seq.addAnnotation(child);
-//						seq_group.addToIndex(child.getID(), child);
+//						seq_group.addToIndex(child.getName(), child);
                     }
                 }
             }
@@ -220,8 +220,8 @@ public class TabDelimitedParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        return parse(is, uri, group, annotate_seq);
+        return parse(is, uri, genomeVersion, annotate_seq);
     }
 }

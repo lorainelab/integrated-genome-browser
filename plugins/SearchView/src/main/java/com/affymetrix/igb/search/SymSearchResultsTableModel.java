@@ -87,9 +87,9 @@ public class SymSearchResultsTableModel extends SearchResultsTableModel {
                 return (span == null ? "" : span.getEnd());
             case CHROM_COLUMN:
                 if (sym instanceof UcscPslSym) {
-                    return ((UcscPslSym) sym).getTargetSeq().getID();
+                    return ((UcscPslSym) sym).getTargetSeq().getId();
                 }
-                return ((span == null || span.getBioSeq() == null) ? "" : span.getBioSeq().getID());
+                return ((span == null || span.getBioSeq() == null) ? "" : span.getBioSeq().getId());
             case STRAND_COLUMN:
                 if (sym instanceof UcscPslSym) {
                     return ((((UcscPslSym) sym).getSameOrientation())

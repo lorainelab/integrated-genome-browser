@@ -2,58 +2,53 @@
     "prefs": {
         "server": [
             {
-                "type": "quickload",
+                "factoryName": "quickload",
                 "name": "IGB Quickload",
                 "url": "http://igbquickload.org/quickload/",
-                "order": "0",
-                "default": "true",
+                "loadPriority": "0",
                 "mirror": "http://bioviz.org/quickload/"
             },
             {
-                "type": "quickload",
+                "factoryName": "quickload",
                 "name": "Pollen",
                 "url": "http://www.igbquickload.org/pollen",
-                "order": "1",
-                "default": "true",
+                "loadPriority": "1",
                 "mirror": "http://bioviz.org/pollen/"
             },
             {
-                "type": "quickload",
+                "factoryName": "quickload",
                 "name": "Cytokinin",
                 "url": "http://www.igbquickload.org/cyto",
-                "order": "2",
-                "default": "true",
+                "loadPriority": "2",
                 "mirror": "http://bioviz.org/cytopub/"
             },
             {
-                "type": "quickload",
+                "factoryName": "quickload",
                 "name": "Blueberry",
                 "url": "http://www.igbquickload.org/blueberry",
-                "order": "3",
-                "default": "true",
+                "loadPriority": "3",
                 "mirror": "http://bioviz.org/berrypub/"
             },
             {
-                "type": "das",
+                "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das/dsn",
-                "order": "5",
-                "default": "true"
+                "loadPriority": "5"
             },
             {
-                "type": "das",
+                "factoryName": "das",
                 "name": "Ensembl",
                 "url": "http://www.ensembl.org/das/dsn",
                 "enabled": "false",
-                "order": "6",
+                "loadPriority": "6",
                 "default": "true"
             },
             {
-                "type": "quickload",
+                "factoryName": "das",
                 "name": "BioVizServerCache",
                 "url": "http://bioviz.org/cached/",
                 "primary": "true",
-                "order": "7",
+                "loadPriority": "7",
                 "default": "true"
             }
         ],

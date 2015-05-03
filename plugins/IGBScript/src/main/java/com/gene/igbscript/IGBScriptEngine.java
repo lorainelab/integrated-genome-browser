@@ -1,11 +1,11 @@
 package com.gene.igbscript;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.Optional;
 import java.util.logging.Level;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -255,11 +256,11 @@ public class IGBScriptEngine implements ScriptEngine {
         if (CommonUtils.IS_WINDOWS) {
             return filePath;
         }
-        if(filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
+        if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;
         }
         String scriptLocation = File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
-        if(filePath.startsWith(BASH_HOME)) {
+        if (filePath.startsWith(BASH_HOME)) {
             filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
         }
         if (!filePath.startsWith("/")) {
@@ -402,8 +403,8 @@ public class IGBScriptEngine implements ScriptEngine {
                     snapShot(exportMode, new File(getAbsolutePath(paramString)));	// second field and possibly others are a single filename
                 } else {
                     // base filename upon organism and timestamp
-                    String id = GenometryModel.getInstance().getSelectedSeqGroup() == null ? "default"
-                            : GenometryModel.getInstance().getSelectedSeqGroup().getID();
+                    String id = GenometryModel.getInstance().getSelectedGenomeVersion() == null ? "default"
+                            : GenometryModel.getInstance().getSelectedGenomeVersion().getName();
                     snapShot(exportMode, new File(id + System.currentTimeMillis() + ".gif"));
                 }
                 return;
@@ -470,15 +471,15 @@ public class IGBScriptEngine implements ScriptEngine {
     }
 
     private void goToGenome(String genomeVersion) {
-        AnnotatedSeqGroup group = igbService.determineAndSetGroup(genomeVersion).orNull();
+        GenomeVersion group = igbService.determineAndSetGroup(genomeVersion).orElse(null);
         if (group == null) {
             return;
         }
         for (int i = 0; i < 100; i++) {
             // sleep until versions are initialized
-            for (GenericVersion version : group.getEnabledVersions()) {
+            for (DataContainer version : group.getAvailableDataContainers()) {
                 if (version.isInitialized()
-                        && group == GenometryModel.getInstance().getSelectedSeqGroup()) {
+                        && group == GenometryModel.getInstance().getSelectedGenomeVersion()) {
                     continue;
                 }
                 try {
@@ -495,10 +496,10 @@ public class IGBScriptEngine implements ScriptEngine {
     }
 
     private void loadData(String serverURIorName, String feature_url) {
-        GenericServer server = igbService.loadServer(serverURIorName);
-        GenericFeature feature = igbService.getFeature(
-                GenometryModel.getInstance().getSelectedSeqGroup(),
-                server, feature_url, true);
+        Optional<DataProvider> server = igbService.loadServer(serverURIorName);
+        DataSet feature = igbService.getDataSet(
+                GenometryModel.getInstance().getSelectedGenomeVersion(),
+                server.get(), feature_url, true);
 
         if (feature != null) {
             feature.setVisible();
@@ -521,8 +522,8 @@ public class IGBScriptEngine implements ScriptEngine {
         } else {
             uri = f.toURI();
         }
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        igbService.openURI(uri, fileName, group, group.getOrganism(), false);
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+        igbService.openURI(uri, fileName, genomeVersion, genomeVersion.getSpeciesName(), false);
     }
 
     private void unLoadFile(String fileName) {
@@ -580,16 +581,16 @@ public class IGBScriptEngine implements ScriptEngine {
         }
 
         // First try to look up for feature in current group.
-        AnnotatedSeqGroup seqGroup = GenometryModel.getInstance().getSelectedSeqGroup();
-        GenericFeature feature = null;
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+        DataSet feature = null;
 
         // If feature is not found in current group then look up all groups.
-        if (seqGroup != null) {
-            feature = findFeatureInGroup(seqGroup, featureURI);
+        if (genomeVersion != null) {
+            feature = findFeatureInGroup(genomeVersion, featureURI);
         }
 
         if (feature == null) {
-            for (AnnotatedSeqGroup group : GenometryModel.getInstance().getSeqGroups().values()) {
+            for (GenomeVersion group : GenometryModel.getInstance().getSeqGroups().values()) {
                 feature = findFeatureInGroup(group, featureURI);
                 if (feature != null) {
                     break;
@@ -608,9 +609,9 @@ public class IGBScriptEngine implements ScriptEngine {
         }
     }
 
-    private GenericFeature findFeatureInGroup(AnnotatedSeqGroup seqGroup, URI featureURI) {
-        GenericFeature feature = null;
-        for (GenericVersion version : seqGroup.getEnabledVersions()) {
+    private DataSet findFeatureInGroup(GenomeVersion genomeVersion, URI featureURI) {
+        DataSet feature = null;
+        for (DataContainer version : genomeVersion.getAvailableDataContainers()) {
             feature = igbService.findFeatureWithURI(version, featureURI);
             if (feature != null) {
                 break;

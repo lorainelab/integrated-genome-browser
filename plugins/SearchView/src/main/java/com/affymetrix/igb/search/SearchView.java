@@ -2,13 +2,11 @@ package com.affymetrix.igb.search;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.event.GenericServerInitEvent;
-import com.affymetrix.genometry.event.GenericServerInitListener;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
@@ -80,9 +78,9 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-@aQute.bnd.annotation.component.Component(name = SearchView.COMPONENT_NAME, provide = {IgbTabPanelI.class, SearchListener.class, GenericServerInitListener.class})
+@aQute.bnd.annotation.component.Component(name = SearchView.COMPONENT_NAME, provide = {IgbTabPanelI.class, SearchListener.class})
 public final class SearchView extends IgbTabPanel implements
-        GroupSelectionListener, SeqSelectionListener, GenericServerInitListener, SearchListener, IStatus {
+        GroupSelectionListener, SeqSelectionListener, SearchListener, IStatus {
 
     public static final String COMPONENT_NAME = "SearchView";
     private static final long serialVersionUID = 0;
@@ -268,7 +266,7 @@ public final class SearchView extends IgbTabPanel implements
     private JLabel status_bar = new JLabel(BUNDLE.getString("noResults"));
     private TableRowSorter<SearchResultsTableModel> sorter;
     private ListSelectionModel lsm;
-    private AnnotatedSeqGroup group;
+    private GenomeVersion group;
     private int seqCount = 0;
     private CThreadWorker<Object, Void> worker;
     private Map<String, ISearchMode> searchModeMap;
@@ -288,7 +286,7 @@ public final class SearchView extends IgbTabPanel implements
         @Override
         public boolean updateHints(Object context) {
             String search_term = (String) context;
-            if (GenometryModel.getInstance().getSelectedSeqGroup() == null || search_term.length() <= 1) {
+            if (GenometryModel.getInstance().getSelectedGenomeVersion() == null || search_term.length() <= 1) {
                 return false;
             } else {
                 if (!(selectedSearchMode instanceof ISearchHints)) {
@@ -312,11 +310,11 @@ public final class SearchView extends IgbTabPanel implements
 
     @Activate
     public void activate() {
-        group = gmodel.getSelectedSeqGroup();
+        group = gmodel.getSelectedGenomeVersion();
         this.setLayout(new BorderLayout());
         initSearchCB();
         initComponents();
-        String annotsStr = (group == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, group.getID());
+        String annotsStr = (group == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, group.getName());
         pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
         pan1.setLayout(new BoxLayout(pan1, BoxLayout.X_AXIS));
 
@@ -385,34 +383,35 @@ public final class SearchView extends IgbTabPanel implements
     }
 
     private void initOptionCheckBox() {
-        String searchMode = (String) searchCB.getSelectedItem();
-        selectedSearchMode = searchModeMap.get(searchMode);
-
-        if (selectedSearchMode == null) {
-            return;
-        }
-        if (selectedSearchMode instanceof SearchModeResidue) {
-            optionCheckBox.setVisible(false);
-            return;
-        } else {
-            optionCheckBox.setVisible(true);
-        }
-        if (selectedSearchMode instanceof ISearchModeExtended) {
-            ISearchModeExtended extenedSearch = (ISearchModeExtended) selectedSearchMode;
-            String name = extenedSearch.getOptionName();
-            optionCheckBox.setText(name);
-            optionCheckBox.setToolTipText(extenedSearch.getOptionTooltip());
-            boolean enabled = extenedSearch.getOptionEnable();
-            optionCheckBox.setEnabled(enabled);
-            if (!enabled) {
-                optionCheckBox.setSelected(false);
-            } else {
-                optionCheckBox.setSelected(extenedSearch.getOptionState());
-            }
-        } else {
-            optionCheckBox.setEnabled(false);
-            optionCheckBox.setSelected(false);
-        }
+        optionCheckBox.setVisible(false);
+//        String searchMode = (String) searchCB.getSelectedItem();
+//        selectedSearchMode = searchModeMap.get(searchMode);
+//
+//        if (selectedSearchMode == null) {
+//            return;
+//        }
+//        if (selectedSearchMode instanceof SearchModeResidue) {
+//            optionCheckBox.setVisible(false);
+//            return;
+//        } else {
+//            optionCheckBox.setVisible(true);
+//        }
+//        if (selectedSearchMode instanceof ISearchModeExtended) {
+//            ISearchModeExtended extenedSearch = (ISearchModeExtended) selectedSearchMode;
+//            String name = extenedSearch.getOptionName();
+//            optionCheckBox.setText(name);
+//            optionCheckBox.setToolTipText(extenedSearch.getOptionTooltip());
+//            boolean enabled = extenedSearch.getOptionEnable();
+//            optionCheckBox.setEnabled(enabled);
+//            if (!enabled) {
+//                optionCheckBox.setSelected(false);
+//            } else {
+//                optionCheckBox.setSelected(extenedSearch.getOptionState());
+//            }
+//        } else {
+//            optionCheckBox.setEnabled(false);
+//            optionCheckBox.setSelected(false);
+//        }
 
     }
 
@@ -447,10 +446,10 @@ public final class SearchView extends IgbTabPanel implements
                     sequenceCB.addItem(Constants.GENOME_SEQ_ID); // put this at top of list
                 }
                 for (BioSeq seq : group.getSeqList()) {
-                    if (seq.getID().equals(Constants.GENOME_SEQ_ID)) {
+                    if (seq.getId().equals(Constants.GENOME_SEQ_ID)) {
                         continue;
                     }
-                    sequenceCB.addItem(seq.getID());
+                    sequenceCB.addItem(seq.getId());
                 }
                 sequenceCB.setToolTipText(SEQUENCETOSEARCH);
                 sequenceCB.setEnabled(true);
@@ -560,8 +559,8 @@ public final class SearchView extends IgbTabPanel implements
         if (sym != null) {
             if (igbService.getSeqMapView().getItemFromTier(sym) == null) {
                 GenometryModel gmodel = GenometryModel.getInstance();
-                AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-                if (group == null) {
+                GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+                if (genomeVersion == null) {
                     return;
                 }
                 // Couldn't find sym in map view! Go ahead and zoom to it.
@@ -578,8 +577,8 @@ public final class SearchView extends IgbTabPanel implements
 
     private void zoomToCoord(SeqSymmetry sym) throws NumberFormatException {
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-        String seqID = sym.getSpanSeq(0).getID();
+        GenomeVersion group = gmodel.getSelectedGenomeVersion();
+        String seqID = sym.getSpanSeq(0).getId();
         BioSeq seq = group.getSeq(seqID);
         if (seq != null) {
             SeqSpan span = sym.getSpan(0);
@@ -660,11 +659,6 @@ public final class SearchView extends IgbTabPanel implements
     }
 
     @Override
-    public void genericServerInit(GenericServerInitEvent evt) {
-        initOptionCheckBox();
-    }
-
-    @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
         groupOrSeqChange();
         clearResults();
@@ -676,9 +670,9 @@ public final class SearchView extends IgbTabPanel implements
     }
 
     private void groupOrSeqChange() {
-        AnnotatedSeqGroup newGroup = gmodel.getSelectedSeqGroup();
+        GenomeVersion newGroup = gmodel.getSelectedGenomeVersion();
         int newSeqCount = (group == null) ? 0 : group.getSeqCount();
-        String annotsStr = (newGroup == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, newGroup.getID());
+        String annotsStr = (newGroup == null) ? FINDANNOTSNULL : MessageFormat.format(FINDANNOTS, newGroup.getName());
         pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
         this.searchCB.setEnabled(newGroup != null);
         this.searchButton.setEnabled(newGroup != null);
@@ -775,7 +769,7 @@ public final class SearchView extends IgbTabPanel implements
     // Set sequence checkbox value as current selected chromosome for residue search mode
     private void setSequenceCBValue() {
         if (selectedSearchMode instanceof SearchModeResidue && gmodel.getSelectedSeq() != null) {
-            sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getID());
+            sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getId());
         } else {
             sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
         }

@@ -20,7 +20,7 @@ public class ResidueTrackSymLoader extends SymLoader {
     private final SymLoader symL;
 
     public ResidueTrackSymLoader(SymLoader loader) {
-        super(loader.uri, loader.featureName, loader.group);
+        super(loader.uri, loader.featureName, loader.genomeVersion);
         this.symL = loader;
     }
 

@@ -1,14 +1,17 @@
 package com.affymetrix.genometry;
 
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
+import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,102 +21,84 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-/**
- *
- * @version $Id: AnnotatedSeqGroup.java 9896 2012-01-20 16:34:31Z hiralv $
- */
-public class AnnotatedSeqGroup {
+public class GenomeVersion {
 
     private final String UNKNOWN_ID = "UNKNOWN_SYM_";
     private int unknown_id_no = 1;
-    final private String id;
-    private String organism;
+    final private String name;
+    private String speciesName;
     private String description;
-    final private Set<GenericVersion> gVersions = new CopyOnWriteArraySet<>();	// list of (visible) GenericVersions associated with this group
-    private boolean use_synonyms;
+    private final Set<DataContainer> dataContainers;
+    private boolean useSynonyms;
     final private Map<String, BioSeq> id2seq;
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
-    private boolean id2seq_dirty_bit; // used to keep the lazy copy
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
-
     private SynonymLookup chrLookup;
+    private final LocalDataSetProvider localDataSetProvider;
+    private boolean id2seq_dirty_bit; // used to keep the lazy copy
 
-    public AnnotatedSeqGroup(String gid) {
-        id = gid;
-        use_synonyms = true;
+    public GenomeVersion(String name) {
+        this.name = name;
+        useSynonyms = true;
         id2seq = Collections.synchronizedMap(new LinkedHashMap<>());
         id2seq_dirty_bit = false;
         seqlist = new ArrayList<>();
+        dataContainers = Sets.newConcurrentHashSet();
+        localDataSetProvider = new LocalDataSetProvider();
     }
 
-    final public String getID() {
-        return id;
+    final public String getName() {
+        return name;
     }
 
-    final public void setDescription(String str) {
-        description = str;
+    final public void setDescription(String descr) {
+        description = descr;
     }
 
     final public String getDescription() {
         return description;
     }
 
-    /**
-     * may want to move set/getOrganism() to an AnnotatedGenome subclass
-     */
-    final public void setOrganism(String org) {
-        organism = org;
-    }
-
-    final public String getOrganism() {
-        if (organism != null && !("".equals(organism))) {
-            return organism;
+    final public String getSpeciesName() {
+        if (!Strings.isNullOrEmpty(speciesName)) {
+            return speciesName;
         }
 
-        String org = SpeciesLookup.getSpeciesName(id);
+        String specName = SpeciesLookup.getSpeciesName(name);
 
-        if (org != null && !("".equals(org))) {
-            this.organism = org;
+        if (!Strings.isNullOrEmpty(specName)) {
+            this.speciesName = specName;
         }
 
-        return organism;
+        return speciesName;
     }
 
-    final public void addVersion(GenericVersion gVersion) {
-        this.gVersions.add(gVersion);
+    public void setSpeciesName(String speciesName) {
+        this.speciesName = speciesName;
     }
 
-    /**
-     * Only return versions that should be visible.
-     */
-    final public Set<GenericVersion> getEnabledVersions() {
-        Set<GenericVersion> versions = new CopyOnWriteArraySet<>();
-        for (GenericVersion v : gVersions) {
-            if (v.getgServer().isEnabled()) {
-                versions.add(v);
-            }
-        }
-        return versions;
+    final public void addDataContainer(DataContainer dataContainer) {
+        this.dataContainers.add(dataContainer);
     }
 
-    final public GenericVersion getVersionOfServer(GenericServer gServer) {
-        for (GenericVersion v : gVersions) {
-            if (v.getgServer().equals(gServer)) {
-                return v;
-            }
-        }
-        return null; // No Associated version with provided server.
+    final public Set<DataContainer> getAvailableDataContainers() {
+        return dataContainers.stream()
+                .filter(dc -> dc.getDataProvider() != null)
+                .filter(dc -> dc.getDataProvider().getStatus() != Disabled)
+                .filter(dc -> dc.getDataProvider().getStatus() != NotResponding)
+                .collect(Collectors.toSet());
     }
 
-    /**
-     * Return all versions.
-     */
-    final public Set<GenericVersion> getAllVersions() {
-        return Collections.unmodifiableSet(gVersions);
+    final public Set<DataContainer> getDataContainers() {
+        return dataContainers;
+    }
+
+    public LocalDataSetProvider getLocalDataSetProvider() {
+        return localDataSetProvider;
     }
 
     final public void addType(String type, Integer annot_id) {
@@ -171,10 +156,10 @@ public class AnnotatedSeqGroup {
      * sequences.
      */
     public final void setUseSynonyms(boolean b) {
-        use_synonyms = b;
+        useSynonyms = b;
     }
 
-    public void loadSynonyms(InputStream istr) throws IOException {
+    public void loadChromosomeSynonyms(InputStream istr) throws IOException {
         if (chrLookup == null) {
             chrLookup = new SynonymLookup();
         }
@@ -189,21 +174,21 @@ public class AnnotatedSeqGroup {
      * @return a BioSeq for the given synonym or null
      */
     public BioSeq getSeq(String synonym) {
-        BioSeq aseq = id2seq.get(synonym.toLowerCase());
-        if (use_synonyms && aseq == null) {
+        BioSeq bioSeq = id2seq.get(synonym.toLowerCase());
+        if (useSynonyms && bioSeq == null) {
             // Try and find a synonym.
             // First look up species specific synonym
             if (chrLookup != null) {
-                aseq = findSeqSynonym(synonym, chrLookup);
+                bioSeq = findSeqSynonym(synonym, chrLookup);
             }
 
             // If synonym is not found in local then lookup global list
-            if (aseq == null) {
-                aseq = findSeqSynonym(synonym, SynonymLookup.getChromosomeLookup());
+            if (bioSeq == null) {
+                bioSeq = findSeqSynonym(synonym, SynonymLookup.getChromosomeLookup());
             }
 
         }
-        return aseq;
+        return bioSeq;
     }
 
     private BioSeq findSeqSynonym(String synonym, SynonymLookup lookup) {
@@ -229,7 +214,7 @@ public class AnnotatedSeqGroup {
         for (int i = 0; i < spancount; i++) {
             SeqSpan span = sym.getSpan(i);
             BioSeq seq1 = span.getBioSeq();
-            String seqid = seq1.getID();
+            String seqid = seq1.getId();
             BioSeq seq2 = id2seq.get(seqid.toLowerCase());
             if ((seq2 != null) && (seq1 == seq2)) {
                 return seq2;
@@ -239,7 +224,7 @@ public class AnnotatedSeqGroup {
     }
 
     public final boolean isSynonymous(String synonym) {
-        return id.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(id, synonym);
+        return name.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(name, synonym);
     }
 
     public boolean removeSeqsForUri(String uri) {
@@ -279,17 +264,17 @@ public class AnnotatedSeqGroup {
      * Adds the BioSeq to the group.
      */
     private void addSeq(BioSeq seq) {
-        String seqID = seq.getID();
+        String seqID = seq.getId();
         final BioSeq oldseq = id2seq.get(seqID.toLowerCase());
         if (oldseq == null) {
             synchronized (this) {
                 id2seq_dirty_bit = true;
                 id2seq.put(seqID.toLowerCase(), seq);
-                seq.setSeqGroup(this);
+                seq.setGenomeVersion(this);
             }
         } else {
             throw new IllegalStateException("ERROR! tried to add seq: " + seqID + " to AnnotatedSeqGroup: "
-                    + this.getID() + ", but seq with same id is already in group");
+                    + this.getName() + ", but seq with same id is already in group");
         }
     }
 
@@ -353,7 +338,7 @@ public class AnnotatedSeqGroup {
      * already using that id. Otherwise uses id to build a new unique id. The id
      * returned is unique for GraphSyms on all seqs in the given group.
      */
-    public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+    public static String getUniqueGraphID(String id, GenomeVersion seq_group) {
         String result = id;
         for (BioSeq seq : seq_group.getSeqList()) {
             result = getUniqueGraphID(result, seq);
@@ -382,21 +367,6 @@ public class AnnotatedSeqGroup {
             newid = id + "." + prevcount;
         }
         return newid;
-    }
-
-    /**
-     * Create a temporary shallow-copy genome, to avoid any side-effects.
-     *
-     * @param oldGenome
-     * @return tempGenome
-     */
-    public static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
-        AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());
-        tempGenome.setOrganism(oldGenome.getOrganism());
-        for (BioSeq seq : oldGenome.getSeqList()) {
-            tempGenome.addSeq(seq.getID(), seq.getLength());
-        }
-        return tempGenome;
     }
 
 }

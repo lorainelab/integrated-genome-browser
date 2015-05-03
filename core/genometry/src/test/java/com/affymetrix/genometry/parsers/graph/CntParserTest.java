@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import java.io.DataInputStream;
@@ -30,9 +30,9 @@ public class CntParserTest {
 
         CntParser cnt = new CntParser();
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
 
-        List<GraphSym> result = cnt.parse(dis, group, true);
+        List<GraphSym> result = cnt.parse(dis, genomeVersion, true);
         assertNotNull(result);
         assertEquals(2, result.size());
 

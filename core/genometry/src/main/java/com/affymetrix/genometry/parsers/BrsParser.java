@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -91,7 +91,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
     private static final Pattern emin_regex = Pattern.compile(",");
     private static final Pattern emax_regex = Pattern.compile(",");
 
-    /*public static List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+    /*public static List<SeqSymmetry> parse(String file_name, String annot_type, GenomeVersion seq_group)
      throws IOException {
      System.out.println("loading file: " + file_name);
      List<SeqSymmetry> result = null;
@@ -106,12 +106,12 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
      }
      return result;
      }*/
-    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
+    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, GenomeVersion seq_group)
             throws IOException {
         return parse(istr, annot_type, seq_group, true);
     }
 
-    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, GenomeVersion seq_group, boolean annotate_seq)
             throws IOException {
 
         // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
@@ -161,7 +161,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
                 }
 
                 if (name.length() == 0 && geneName.length() == 0) {
-                    name = seq_group.getID();
+                    name = seq_group.getName();
                 }
 
                 UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
@@ -225,7 +225,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
         BioSeq seq = tspan.getBioSeq();
         dos.writeUTF(gsym.getGeneName());
         dos.writeUTF(gsym.getName());
-        dos.writeUTF(seq.getID());
+        dos.writeUTF(seq.getId());
         if (tspan.isForward()) {
             dos.writeUTF("+");
         } else {
@@ -417,9 +417,9 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
         outputBrsFormat((UcscGeneSym) sym, dos);
     }
 
-    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion) {
         try {
-            return BrsParser.parse(dis, annot_type, group, false);
+            return BrsParser.parse(dis, annot_type, genomeVersion, false);
         } catch (IOException ex) {
             Logger.getLogger(BrsParser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -455,8 +455,8 @@ public final class BrsParser implements AnnotationWriter, IndexWriter, Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        return parse(is, uri, group, annotate_seq);
+        return parse(is, uri, genomeVersion, annotate_seq);
     }
 }

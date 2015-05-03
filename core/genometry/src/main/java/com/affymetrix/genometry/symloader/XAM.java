@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -58,7 +58,7 @@ public abstract class XAM extends SymLoader {
     public static final String SHOWMASK = "showMask";
     public static final String INSRESIDUESPROP = "insResidues";
 
-    public XAM(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public XAM(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
 
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -85,7 +85,7 @@ public abstract class XAM extends SymLoader {
                 }
                 String seqID = ssr.getSequenceName();
                 int seqLength = ssr.getSequenceLength();
-                BioSeq seq = group.addSeq(seqID, seqLength, uri.toString());
+                BioSeq seq = genomeVersion.addSeq(seqID, seqLength, uri.toString());
                 seqs.put(seq, seqID);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -105,7 +105,7 @@ public abstract class XAM extends SymLoader {
     public List<SeqSymmetry> getGenome() throws Exception {
         init();
         List<SeqSymmetry> results = new ArrayList<>();
-        for (BioSeq seq : group.getSeqList()) {
+        for (BioSeq seq : genomeVersion.getSeqList()) {
             results.addAll(getChromosome(seq));
         }
         return results;

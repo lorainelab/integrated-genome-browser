@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -71,7 +71,7 @@ public final class BgrParser implements GraphParser {
                 if (graf.getGraphSeq() == null) {
                     dos.writeUTF("null");
                 } else {
-                    dos.writeUTF(graf.getGraphSeq().getID());
+                    dos.writeUTF(graf.getGraphSeq().getId());
                 }
             } else {
                 dos.writeUTF((String) headers.get("seq_name"));
@@ -117,13 +117,13 @@ public final class BgrParser implements GraphParser {
         return true;
     }
 
-    public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException {
+    public static List<GraphSym> parse(InputStream istr, String stream_name, GenomeVersion seq_group) throws IOException {
         List<GraphSym> results = new ArrayList<>();
         results.add(parse(istr, stream_name, seq_group, true));
         return results;
     }
 
-    public static GraphSym parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
+    public static GraphSym parse(InputStream istr, String stream_name, GenomeVersion seq_group, boolean ensure_unique_id)
             throws IOException {
         Timer tim = new Timer();
         tim.start();
@@ -183,7 +183,7 @@ public final class BgrParser implements GraphParser {
 
         // need to replace seq_name with name of graph (some combo of group name and conditions...)
         if (ensure_unique_id) {
-            graph_name = AnnotatedSeqGroup.getUniqueGraphID(graph_name, seq);
+            graph_name = GenomeVersion.getUniqueGraphID(graph_name, seq);
         }
         GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
         graf.setProperties(props);
@@ -213,22 +213,22 @@ public final class BgrParser implements GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = false processed here
-        return parse(is, uri, group);
+        return parse(is, uri, genomeVersion);
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         return GraphParserUtil.getInstance().wrapInList(BgrParser.parse(newstr, stream_name, seq_group, true));
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         BufferedOutputStream bos = null;
         try {

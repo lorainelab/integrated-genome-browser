@@ -123,3 +123,4 @@ extbundles/
 /plugins/Keybinding-registry/target/
 /plugins/image-exporter/target/
 /optionalPlugins/23andMe-snp-converter/target/
+/core/quickload/target/

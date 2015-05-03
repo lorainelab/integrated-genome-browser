@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
@@ -50,8 +50,8 @@ public class ExportFileAction
         RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) atier.getInfo();
         FileTypeCategory category = rootSeqSymmetry.getCategory();
         if (FileTypeCategoryUtils.isFileTypeCategoryContainer(category) && (rootSeqSymmetry instanceof TypeContainerAnnot)) {
-            AnnotatedSeqGroup group = aseq.getSeqGroup();
-            List<BioSeq> seql = group.getSeqList();
+            GenomeVersion genomeVersion = aseq.getGenomeVersion();
+            List<BioSeq> seql = genomeVersion.getSeqList();
             for (BioSeq aseql : seql) {
                 RootSeqSymmetry rootSym = aseql.getAnnotation(((TypeContainerAnnot) atier.getInfo()).getType());
                 if (rootSym != null) {

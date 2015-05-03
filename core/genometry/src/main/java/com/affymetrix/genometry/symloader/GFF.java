@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.parsers.TrackLineParser;
@@ -83,7 +83,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     Map<String, Object> gff3_id_hash = new HashMap<>();
 
     /*
-     *  tag to group features on
+     *  tag to genomeVersion features on
      */
     String group_tag = null;
     String group_id_field_name = null;
@@ -103,11 +103,11 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
      * </p>
      */
     boolean GROUP_ID_TO_LOWER_CASE = false;
-    // When grouping, do you want to use the first item encountered as the parent of the group?
+    // When grouping, do you want to use the first item encountered as the parent of the genomeVersion?
     boolean use_first_one_as_group = false;
 
-    public GFF(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public GFF(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
         setUseStandardFilters(true);
     }
 
@@ -277,8 +277,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
 
     /**
      * Sets which tag to use to create groups. Most commonly, this will be set
-     * to "transcript_id" to group all entries from the same transcript. Can be
-     * set to null if no grouping is desired.
+ to "transcript_id" to genomeVersion all entries from the same transcript. Can be
+ set to null if no grouping is desired.
      */
     public void setGroupTag(String tag) {
         group_tag = tag;
@@ -368,16 +368,16 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 if (fields.length >= 9) {
                     last_field = fields[8];
                 } // creating a new String saves memory
-                // last_field is "group" in GFF1 or "attributes" in GFF2 and GFF3
+                // last_field is "genomeVersion" in GFF1 or "attributes" in GFF2 and GFF3
 
                 float score = UcscGffSym.UNKNOWN_SCORE;
                 if (!score_str.equals(".")) {
                     score = Float.parseFloat(score_str);
                 }
 
-                BioSeq seq = group.getSeq(seq_name);
+                BioSeq seq = genomeVersion.getSeq(seq_name);
                 if (seq == null) {
-                    seq = group.addSeq(seq_name, 0, "");
+                    seq = genomeVersion.addSeq(seq_name, 0, "");
                 }
 
                 if (gff_version == GFF3) {
@@ -400,11 +400,11 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 }
 
                 // add syms to a results List during parsing,
-                // then add group syms to BioSeq after entire parse is done.
+                // then add genomeVersion syms to BioSeq after entire parse is done.
                 if (use_hierarchy) {
                     useHierarchy(hier_parents, feature_type, current_h_level, line, sym, results);
                 } else if (USE_GROUPING) {
-                    group_count = useGrouping(sym, results, group_hash, source, track_name, group_count, group);
+                    group_count = useGrouping(sym, results, group_hash, source, track_name, group_count, genomeVersion);
                 } else {
                     // if not grouping, then simply add feature directly to results List
                     results.add(sym);
@@ -453,7 +453,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
         current_h_level = new_h_level;
     }
 
-    private int useGrouping(UcscGffSym sym, List<SeqSymmetry> results, Map<String, SingletonSymWithProps> group_hash, String source, String track_name, int group_count, AnnotatedSeqGroup seq_group) {
+    private int useGrouping(UcscGffSym sym, List<SeqSymmetry> results, Map<String, SingletonSymWithProps> group_hash, String source, String track_name, int group_count, GenomeVersion seq_group) {
         String group_id = null;
         if (sym.isGFF1()) {
             group_id = sym.getGroup();
@@ -470,17 +470,17 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             if (groupsym == null) {
                 if (use_first_one_as_group) {
                     // Take the first entry found with a given group_id and use it
-                    // as the parent symmetry for all members of the group
+                    // as the parent symmetry for all members of the genomeVersion
                     // (For example, a "transcript" line with transcript_id=3 might
                     //  be followed by several "exon" lines with transcript_id=3.
-                    //  The "transcript" line should be used as the group symmetry in this case.)
+                    //  The "transcript" line should be used as the genomeVersion symmetry in this case.)
                     groupsym = sym;
                 } else {
                     // Make a brand-new symmetry to hold all syms with a given group_id
                     groupsym = new SingletonSymWithProps(sym.getStart(), sym.getEnd(), sym.getBioSeq());
                     groupsym.addChild(sym);
-                    // Setting the "group" property might be needed if you plan to use the
-                    // outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
+                    // Setting the "genomeVersion" property might be needed if you plan to use the
+                    // outputGFF() method.  Otherwise it is probably not necessary since "id" is set to genomeVersion id below
                     groupsym.setProperty("group", group_id);
                     groupsym.setProperty("source", source);
                     if (this.use_track_lines && track_name != null) {
@@ -491,7 +491,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
                 }
                 group_count++;
                 // If one field, like "probeset_id" was chosen as the group_id_field_name,
-                // then make the contents of that field be the "id" of the group symmetry
+                // then make the contents of that field be the "id" of the genomeVersion symmetry
                 // and also index it in the IGB id-to-symmetry hash
                 String index_id = null;
                 if (group_id_field_name != null) {
@@ -584,8 +584,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq) {
         SeqSpan pspan = psym.getSpan(sortseq);
         boolean ascending = pspan.isForward();
-        //    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
-        //    System.out.println("sortseq: " + sortseq.getID());
+        //    System.out.println("sortseq: " + sortseq.getName() + ", child list: " + child_count);
+        //    System.out.println("sortseq: " + sortseq.getName());
         //    SeqUtils.printSymmetry(psym);
         int child_count = psym.getChildCount();
         if (child_count > 0) {
@@ -615,9 +615,9 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     /**
      * Process directive lines in the input, which are lines beginning with
      * "##". Directives that are not understood are treated as comments.
-     * Directives that are understood include "##IGB-filter-include x y z",
-     * "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x",
-     * and "##IGB-hierarchy 3 exon <exon_id>".
+ Directives that are understood include "##IGB-filter-include x y z",
+ "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-genomeVersion-by x",
+ and "##IGB-hierarchy 3 exon <exon_id>".
      */
     void processDirective(String line) throws IOException {
         Matcher m = directive_version.matcher(line);
@@ -896,7 +896,7 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     }
 
 //	public List<? extends SeqSymmetry> parse(InputStream is,
-//			AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+//			GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
 //			throws Exception {
 //		if (annotate_seq) {
 //			Logger.getLogger(GFF.class.getName()).log(Level.INFO, "Annotate Seqeuence set to true");

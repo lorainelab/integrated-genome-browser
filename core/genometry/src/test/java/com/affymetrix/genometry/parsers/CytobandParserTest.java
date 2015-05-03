@@ -4,12 +4,11 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.CytobandParser.Arm;
 import com.affymetrix.genometry.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -20,8 +19,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -38,7 +38,7 @@ public class CytobandParserTest {
         InputStream istr = CytobandParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion seq_group = new GenomeVersion("Test Group");
         boolean annot_seq = true;
 
         CytobandParser instance = new CytobandParser();
@@ -66,7 +66,7 @@ public class CytobandParserTest {
                 + "chr1\t56200000\t58700000\tp32.2\tgpos50\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion seq_group = new GenomeVersion("Test Group");
         boolean annot_seq = true;
 
         CytobandParser instance = new CytobandParser();
@@ -91,12 +91,12 @@ public class CytobandParserTest {
     @Test
     public void testWriteCytobandFormat() throws Exception {
         Writer out = new StringWriter();
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         String filename = "data/cyt/test1.cyt";
         filename = CytobandParserTest.class.getClassLoader().getResource(filename).getFile();
         InputStream istr = new FileInputStream(filename);
         assertNotNull(istr);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion seq_group = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         CytobandParser instance = new CytobandParser();
         List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);

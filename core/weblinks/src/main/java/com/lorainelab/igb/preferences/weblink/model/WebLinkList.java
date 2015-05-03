@@ -100,7 +100,7 @@ public class WebLinkList {
 
         //	if (webLinks.isEmpty()) {
         if (style.getFeature() != null) {
-            webLinks.addAll(getWebLink(sym, style.getFeature().getFeatureName()));
+            webLinks.addAll(getWebLink(sym, style.getFeature().getDataSetName()));
         }
         //	}
 
@@ -118,7 +118,7 @@ public class WebLinkList {
                 continue;
             }
             if (!Strings.isNullOrEmpty(link.getSpeciesName())) {
-                String current_version = GenometryModel.getInstance().getSelectedSeqGroup().getID();
+                String current_version = GenometryModel.getInstance().getSelectedGenomeVersion().getName();
                 String current_species = SpeciesLookup.getSpeciesName(current_version);
                 boolean isSynonym = SpeciesLookup.isSynonym(current_species, link.getSpeciesName());
                 if (!isSynonym) {

@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
@@ -51,7 +51,7 @@ public final class FastaParser implements Parser {
      * Returns the List of sequences that were read from the file, which will be
      * a subset of the sequences in the group.
      */
-    public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+    public static List<BioSeq> parseAll(InputStream istr, GenomeVersion genomeVersion) throws IOException {
         List<BioSeq> seqlist = new ArrayList<>();
         BufferedReader br = null;
         Matcher matcher = header_regex.matcher("");
@@ -106,14 +106,14 @@ public final class FastaParser implements Parser {
                 buf = null; // immediately allow the gc to use this memory
                 residues = residues.trim();
 
-                BioSeq seq = group.getSeq(seqid);
+                BioSeq seq = genomeVersion.getSeq(seqid);
                 if (seq == null && seqid.indexOf(' ') > 0) {
                     // It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
                     String name = seqid.substring(0, seqid.indexOf(' '));
-                    seq = group.getSeq(name);
+                    seq = genomeVersion.getSeq(name);
                 }
                 if (seq == null) {
-                    seq = group.addSeq(seqid, residues.length());
+                    seq = genomeVersion.addSeq(seqid, residues.length());
                 }
                 seq.setResidues(residues);
 
@@ -129,15 +129,15 @@ public final class FastaParser implements Parser {
         return seqlist;
     }
 
-    public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-        List<BioSeq> bioList = parseAll(istr, group);
+    public static BioSeq parseSingle(InputStream istr, GenomeVersion genomeVersion) throws IOException {
+        List<BioSeq> bioList = parseAll(istr, genomeVersion);
         if (bioList == null || bioList.isEmpty()) {
             return null;
         }
         return bioList.get(0);
     }
 
-    // Basically the same as parseAll, except that it returns the residues and doesn't change the AnnotatedSeqGroup
+    // Basically the same as parseAll, except that it returns the residues and doesn't change the GenomeVersion
     public static String parseResidues(InputStream istr) throws IOException {
         BufferedReader br = null;
         Matcher matcher = header_regex.matcher("");
@@ -346,11 +346,11 @@ public final class FastaParser implements Parser {
             seq = new BioSeq(seqid, residues.length());
             seq.setResidues(residues);
         } else {  // try to merge with existing seq
-            if (SynonymLookup.getDefaultLookup().isSynonym(seq.getID(), seqid)) {
+            if (SynonymLookup.getDefaultLookup().isSynonym(seq.getId(), seqid)) {
                 seq.setResidues(residues);
             } else {
                 System.out.println("*****  ABORTING MERGE, sequence ids don't match: "
-                        + "old seq id = " + seq.getID() + ", new seq id = " + seqid);
+                        + "old seq id = " + seq.getId() + ", new seq id = " + seqid);
             }
         }
         System.out.println("time to execute: " + tim.read() / 1000f);
@@ -587,10 +587,10 @@ public final class FastaParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = true processed here
-        parseAll(is, group);
+        parseAll(is, genomeVersion);
         return null;
     }
 }

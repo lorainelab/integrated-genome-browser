@@ -11,7 +11,7 @@ package com.affymetrix.genometry.symmetry.impl;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -122,7 +122,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
      *
      * @return a GraphSym or null if there was an error condition
      */
-    public final GraphIntervalSym makeGraphSym(String name, AnnotatedSeqGroup seq_group) {
+    public final GraphIntervalSym makeGraphSym(String name, GenomeVersion seq_group) {
         float[] scores = getScores(name);
         SeqSpan pspan = this.getSpan(0);
         if (scores == null) {
@@ -168,7 +168,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
      * @param orientation true for forward strand intervals.
      * @see #makeGraphSym(String,AnnotatedSeqGroup)
      */
-    public final GraphIntervalSym makeGraphSym(String name, boolean orientation, AnnotatedSeqGroup seq_group) {
+    public final GraphIntervalSym makeGraphSym(String name, boolean orientation, GenomeVersion seq_group) {
         float[] scores = getScores(name);
         SeqSpan pspan = this.getSpan(0);
         if (scores == null) {
@@ -228,7 +228,7 @@ public class ScoredContainerSym extends RootSeqSymmetry {
     // this score will map to this same graph ID for all other
     // ScoredContainerSym's that have the same ID, even if they
     // are on other BioSeq's.
-    public final String getGraphID(AnnotatedSeqGroup seq_group, String score_name, char strand) {
+    public final String getGraphID(GenomeVersion seq_group, String score_name, char strand) {
         // I'm just assuming that this combination will be unique
         String id = getID() + ":" + strand + ":" + score_name;
         if (id2gstate.get(id) == null) {

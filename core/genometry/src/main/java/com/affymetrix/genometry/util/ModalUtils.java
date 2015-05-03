@@ -35,6 +35,11 @@ public class ModalUtils {
         return ModalUtils.confirmPanel(getActiveWindow(), message, PreferenceUtils.getTopNode(), check, def_val);
     }
 
+    public static boolean confirmPanel(final String message, final Preferences node,
+            final String check, final boolean def_val) {
+        return confirmPanel(getActiveWindow(), message, node, check, def_val, "Do not show this message again");
+    }
+
     public static boolean confirmPanel(final Component comp, final String message, final Preferences node,
             final String check, final boolean def_val) {
         return confirmPanel(comp, message, node, check, def_val, "Do not show this message again");

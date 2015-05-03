@@ -1,10 +1,10 @@
 package com.affymetrix.genometry.quickload;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -40,13 +40,19 @@ public class QuickLoadSymLoader extends SymLoader {
     protected GenometryModel gmodel = GenometryModel.getInstance();
     protected boolean loadResidueAsTrack = false;
 
-    public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group, boolean loadResidueAsTrack) {
-        this(uri, featureName, group);
+    public QuickLoadSymLoader(URI uri, String featureName, GenomeVersion genomeVersion, boolean loadResidueAsTrack) {
+        this(uri, featureName, genomeVersion);
         this.loadResidueAsTrack = loadResidueAsTrack;
     }
 
-    public QuickLoadSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    //temporary hack --- this entire class should be removed and refactored in a set of utilities
+    public QuickLoadSymLoader(URI uri, String featureName, SymLoader symLoader, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
+        this.symL = symLoader;
+    }
+
+    public QuickLoadSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override
@@ -54,7 +60,9 @@ public class QuickLoadSymLoader extends SymLoader {
         if (this.isInitialized) {
             return;
         }
-        this.symL = ServerUtils.determineLoader(extension, uri, featureName, group);
+        if (symL == null) {
+            this.symL = ServerUtils.determineLoader(extension, uri, featureName, genomeVersion);
+        }
         this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
         if (isResidueLoader && loadResidueAsTrack) {
             this.symL = new ResidueTrackSymLoader(symL);
@@ -97,55 +105,55 @@ public class QuickLoadSymLoader extends SymLoader {
         return friendlyName;
     }
 
-    public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+    public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final DataSet dataSet)
             throws OutOfMemoryError, Exception {
         try {
             init();
-            feature.addLoadingSpanRequest(overlapSpan);	// this span is requested to be loaded.
+            dataSet.addLoadingSpanRequest(overlapSpan);	// this span is requested to be loaded.
 
             if (this.symL != null && this.symL.isResidueLoader()) {
-                loadResiduesThread(feature, overlapSpan);
+                loadResiduesThread(dataSet, overlapSpan);
                 return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
             } else {
-                return loadSymmetriesThread(feature, overlapSpan);
+                return loadSymmetriesThread(dataSet, overlapSpan);
             }
         } catch (Exception ex) {
             logException(ex);
             throw ex;
         } finally {
             if (Thread.currentThread().isInterrupted()) {
-                feature.removeCurrentRequest(overlapSpan);
+                dataSet.removeCurrentRequest(overlapSpan);
             } else {
-                feature.addLoadedSpanRequest(overlapSpan);
+                dataSet.addLoadedSpanRequest(overlapSpan);
             }
         }
     }
 
-    protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+    protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final DataSet dataSet, final SeqSpan overlapSpan)
             throws OutOfMemoryError, Exception {
         //Do not not anything in case of genome. Just refresh.
-        if (Constants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getID())) {
+        if (Constants.GENOME_SEQ_ID.equals(overlapSpan.getBioSeq().getId())) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
-        return loadAndAddSymmetries(feature, overlapSpan);
+        return loadAndAddSymmetries(dataSet, overlapSpan);
     }
 
     /**
      * For optimized file format load symmetries and add them.
      *
-     * @param feature
+     * @param dataSet
      * @param span
      * @throws IOException
      * @throws OutOfMemoryError
      */
-    private Map<String, List<? extends SeqSymmetry>> loadAndAddSymmetries(GenericFeature feature, final SeqSpan span)
+    private Map<String, List<? extends SeqSymmetry>> loadAndAddSymmetries(DataSet dataSet, final SeqSpan span)
             throws Exception, OutOfMemoryError {
 
         if (this.symL != null && !this.symL.getChromosomeList().contains(span.getBioSeq())) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }
 
-        setStyle(feature);
+        setStyle(dataSet);
 
         // short-circuit if there's a failure... which may not even be signaled in the code
         if (!this.isInitialized) {
@@ -159,16 +167,16 @@ public class QuickLoadSymLoader extends SymLoader {
         }
 
         if (results != null) {
-            return addSymmtries(span, results, feature);
+            return addSymmtries(span, results, dataSet);
         }
 
         return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
     }
 
-    public void loadAndAddAllSymmetries(final GenericFeature feature)
+    public void loadAndAddAllSymmetries(final DataSet dataSet)
             throws OutOfMemoryError {
 
-        setStyle(feature);
+        setStyle(dataSet);
 
         // short-circuit if there's a failure... which may not even be signaled in the code
         if (!this.isInitialized) {
@@ -178,15 +186,15 @@ public class QuickLoadSymLoader extends SymLoader {
         List<? extends SeqSymmetry> results = this.getGenome();
 
         if (Thread.currentThread().isInterrupted() || results == null) {
-            feature.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
+            dataSet.setLoadStrategy(LoadStrategy.NO_LOAD); //Change the loadStrategy for this type of files.
             //LoadModeTable.updateVirtualFeatureList();
             results = null;
             return;
         }
-        addAllSymmetries(feature, results);
+        addAllSymmetries(dataSet, results);
     }
 
-    protected void addAllSymmetries(final GenericFeature feature, List<? extends SeqSymmetry> results)
+    protected void addAllSymmetries(final DataSet dataSet, List<? extends SeqSymmetry> results)
             throws OutOfMemoryError {
 
         //For a file format that adds SeqSymmetries from
@@ -198,35 +206,35 @@ public class QuickLoadSymLoader extends SymLoader {
         for (Entry<BioSeq, List<SeqSymmetry>> seq_sym : seq_syms.entrySet()) {
             seq = seq_sym.getKey();
             span = new SimpleSeqSpan(seq.getMin(), seq.getMax() - 1, seq);
-            addSymmtries(span, seq_sym.getValue(), feature);
-            feature.addLoadedSpanRequest(span); // this span is now considered loaded.
+            addSymmtries(span, seq_sym.getValue(), dataSet);
+            dataSet.addLoadedSpanRequest(span); // this span is now considered loaded.
         }
 
     }
 
-    private void setStyle(GenericFeature feature) {
+    private void setStyle(DataSet dataSet) {
         // TODO - not necessarily unique, since the same file can be loaded to multiple tracks for different organisms
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, feature.getFeatureProps());
-        style.setFeature(feature);
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(this.uri.toString(), featureName, extension, dataSet.getProperties());
+        style.setFeature(dataSet);
 
         // TODO - probably not necessary
-        //style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, extension, feature.featureProps);
-        //style.setFeature(feature);
+        //style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(featureName, featureName, extension, dataSet.dataSetProps);
+        //style.setFeature(dataSet);
     }
 
-    protected Map<String, List<? extends SeqSymmetry>> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+    protected Map<String, List<? extends SeqSymmetry>> addSymmtries(final SeqSpan span, List<? extends SeqSymmetry> results, DataSet dataSet) {
         results = SeqUtils.filterForOverlappingSymmetries(span, results);
-        return SymLoader.splitFilterAndAddAnnotation(span, results, feature);
+        return SymLoader.splitFilterAndAddAnnotation(span, results, dataSet);
     }
 
-    private void loadResiduesThread(final GenericFeature feature, final SeqSpan span) throws Exception {
+    private void loadResiduesThread(final DataSet dataSet, final SeqSpan span) throws Exception {
         String results = QuickLoadSymLoader.this.getRegionResidues(span);
         if (results != null && !results.isEmpty()) {
             // TODO: make this more general.  Since we can't currently optimize all residue requests,
             // we are simply considering the span loaded if it loads the entire chromosome
             // Since all request are optimized considering every request to be loaded -- HV 07/26/11
             //if (span.getMin() <= span.getBioSeq().getMin() && span.getMax() >= span.getBioSeq().getMax()) {
-            //	feature.addLoadedSpanRequest(span);	// this span is now considered loaded.
+            //	dataSet.addLoadedSpanRequest(span);	// this span is now considered loaded.
             //}
             BioSeqUtils.addResiduesToComposition(span.getBioSeq(), results, span);
         }

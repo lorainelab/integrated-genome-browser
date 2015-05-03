@@ -2,7 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.style.PropertyConstants;
@@ -117,7 +117,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private boolean is_graph = false;
     private float track_name_size = default_track_name_size;
     private Map<String, Object> transient_properties;
-    private GenericFeature feature = null;
+    private DataSet feature = null;
     public boolean customise = false;
     private int summaryThreshold;
     private boolean separable = true;
@@ -194,7 +194,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
 
     public void restoreToDefault() {
         if (this.getFeature() != null) {
-            initStyle(IGBStateProvider.getDefaultTrackStyle(), this.getFeature().getFeatureProps());
+            initStyle(IGBStateProvider.getDefaultTrackStyle(), this.getFeature().getProperties());
         }
         this.setTrackName(original_track_name);
 
@@ -724,12 +724,12 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     @Override
-    public void setFeature(GenericFeature f) {
+    public void setFeature(DataSet f) {
         this.feature = f;
     }
 
     @Override
-    public GenericFeature getFeature() {
+    public DataSet getFeature() {
         return this.feature;
     }
 

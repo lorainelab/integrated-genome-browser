@@ -13,8 +13,8 @@
 package com.affymetrix.genometry.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -37,12 +37,12 @@ public final class ScoredMapParser implements Parser {
 
     static Pattern line_regex = Pattern.compile("\t");
 
-    public void parse(InputStream istr, String stream_name, BioSeq aseq, AnnotatedSeqGroup seq_group) {
+    public void parse(InputStream istr, String stream_name, BioSeq aseq, GenomeVersion seq_group) {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(istr));
             String line = null;
 
-            String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
+            String unique_container_name = GenomeVersion.getUniqueGraphID(stream_name, seq_group);
             ScoredContainerSym parent = new ScoredContainerSym();
             parent.setID(unique_container_name);
             parent.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
@@ -90,10 +90,10 @@ public final class ScoredMapParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = true processed here
-        parse(is, uri, GenometryModel.getInstance().getSelectedSeq(), group);
+        parse(is, uri, GenometryModel.getInstance().getSelectedSeq(), genomeVersion);
         return null;
     }
 }

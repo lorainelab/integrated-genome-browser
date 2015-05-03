@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.NibbleResiduesParser;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -36,8 +36,8 @@ public class BNIB extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public BNIB(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, "", group);
+    public BNIB(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, "", genomeVersion);
         this.isResidueLoader = true;
     }
 
@@ -65,7 +65,7 @@ public class BNIB extends SymLoader {
         SeekableStream sis = null;
         try {
             sis = LocalUrlCacher.getSeekableStream(uri);
-            BioSeq seq = NibbleResiduesParser.determineChromosome(sis, group);
+            BioSeq seq = NibbleResiduesParser.determineChromosome(sis, genomeVersion);
             if (seq != null) {
                 chrList.add(seq);
             }

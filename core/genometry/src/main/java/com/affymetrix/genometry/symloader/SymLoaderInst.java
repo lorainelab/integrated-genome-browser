@@ -1,10 +1,10 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.SeqSpan;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +18,8 @@ public class SymLoaderInst extends SymLoader {
 
     private final List<BioSeq> chromosomeList = new ArrayList<>();
 
-    public SymLoaderInst(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public SymLoaderInst(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override
@@ -29,8 +29,8 @@ public class SymLoaderInst extends SymLoader {
         }
         super.init();
 
-        for (BioSeq seq : SymLoader.getChromosomes(uri, featureName, group.getID())) {
-            chromosomeList.add(group.addSeq(seq.getID(), seq.getLength(), uri.toString()));
+        for (BioSeq seq : SymLoader.getChromosomes(uri, featureName, genomeVersion.getName())) {
+            chromosomeList.add(genomeVersion.addSeq(seq.getId(), seq.getLength(), uri.toString()));
         }
         Collections.sort(chromosomeList, new BioSeqComparator());
     }

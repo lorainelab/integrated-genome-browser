@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.comparator.UcscPslComparator;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -51,17 +51,17 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
      * before exiting this method.
      */
     public static List<UcscPslSym> parse(DataInputStream dis, String annot_type,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+            GenomeVersion query_group, GenomeVersion target_group,
             boolean annot_query, boolean annot_target)
             throws IOException {
 
         // make temporary seq groups to avoid null pointers later
         if (query_group == null) {
-            query_group = new AnnotatedSeqGroup("Query");
+            query_group = new GenomeVersion("Query");
             query_group.setUseSynonyms(false);
         }
         if (target_group == null) {
-            target_group = new AnnotatedSeqGroup("Target");
+            target_group = new GenomeVersion("Target");
             target_group.setUseSynonyms(false);
         }
 
@@ -143,7 +143,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
                         queryseq.addAnnotation(query_parent_sym);
                         query2sym.put(qname, query_parent_sym);
                     }
-//					query_group.addToIndex(sym.getID(), sym);
+//					query_group.addToIndex(sym.getName(), sym);
                     query_parent_sym.addChild(sym);
                 }
 
@@ -159,7 +159,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
                         target2sym.put(tname, target_parent_sym);
                     }
                     target_parent_sym.addChild(sym);
-//					target_group.addToIndex(sym.getID(), sym);
+//					target_group.addToIndex(sym.getName(), sym);
                 }
             }
         } catch (EOFException ex) {
@@ -234,9 +234,9 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
         return BpsParser.pref_list;
     }
 
-    public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+    public List<UcscPslSym> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion) {
         try {
-            return BpsParser.parse(dis, annot_type, null, group, false, false);
+            return BpsParser.parse(dis, annot_type, null, genomeVersion, false, false);
         } catch (IOException ex) {
             Logger.getLogger(BpsParser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -327,9 +327,9 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
     }
 
     @Override
-    public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+    public List<? extends SeqSymmetry> parse(InputStream is, GenomeVersion genomeVersion,
             String nameType, String uri, boolean annotate_seq) throws Exception {
         DataInputStream dis = new DataInputStream(is);
-        return parse(dis, uri, null, group, false, annotate_seq);
+        return parse(dis, uri, null, genomeVersion, false, annotate_seq);
     }
 }

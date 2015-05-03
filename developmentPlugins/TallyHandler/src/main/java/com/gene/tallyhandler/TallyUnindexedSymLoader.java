@@ -1,12 +1,11 @@
 package com.gene.tallyhandler;
 
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.symloader.LineProcessor;
+import com.affymetrix.genometry.symloader.UnindexedSymLoader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.symloader.UnindexedSymLoader;
-import com.affymetrix.genometry.symloader.LineProcessor;
 
 public class TallyUnindexedSymLoader extends UnindexedSymLoader {
 
@@ -16,8 +15,8 @@ public class TallyUnindexedSymLoader extends UnindexedSymLoader {
         pref_list.add("tally");
     }
 
-    public TallyUnindexedSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public TallyUnindexedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override

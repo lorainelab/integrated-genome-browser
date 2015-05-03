@@ -114,7 +114,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     private JMenu addOperationMenu(List<? extends SeqSymmetry> syms) {
         JMenu operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
-        if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
+        if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getId())) {
             return operationsMenu;
         }
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());

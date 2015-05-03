@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
@@ -26,13 +26,13 @@ public class ScoredIntervalParserTest {
         InputStream istr = ScoredIntervalParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
         String stream_name = "chr1";
-        AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
+        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
 
         ScoredIntervalParser tester = new ScoredIntervalParser();
         tester.parse(istr, stream_name, seq_group, true);
 
         //System.out.println("done testing ScoredIntervalParser");
-        String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
+        String unique_container_name = GenomeVersion.getUniqueGraphID(stream_name, seq_group);
         assertEquals("chr1.1", unique_container_name);
     }
 
@@ -40,7 +40,7 @@ public class ScoredIntervalParserTest {
     @Test
     public void testMakeNewSeq() {
 
-        AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
+        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
         String seqid = "chr1";
 
         BioSeq aseq = seq_group.getSeq(seqid);
@@ -48,7 +48,7 @@ public class ScoredIntervalParserTest {
 
         aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
         assertEquals(100208700, aseq.getLength());
-        assertEquals("chr1", aseq.getID());
+        assertEquals("chr1", aseq.getId());
     }
 
     @Ignore
@@ -62,13 +62,13 @@ public class ScoredIntervalParserTest {
                 + "chr1	100207533	100208700	.	230.0\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup seq_group = GenometryModel.getInstance().addSeqGroup("Test Seq Group");
+        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
         String stream_name = "chr1";
         ScoredIntervalParser tester = new ScoredIntervalParser();
         tester.parse(istr, stream_name, seq_group, true);
         assertEquals(1, seq_group.getSeqCount());
         BioSeq aseq = seq_group.getSeq(0);
-        assertEquals("chr1", aseq.getID());
+        assertEquals("chr1", aseq.getId());
         ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
         assertEquals("chr1", symI.getID());
         assertEquals(2, aseq.getAnnotationCount());

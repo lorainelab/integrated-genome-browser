@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
@@ -57,8 +57,8 @@ public class OpenURIAction extends SeqMapViewActionA {
         return filters;
     }
 
-    public static AnnotatedSeqGroup retrieveSeqGroup(String name) {
-        return gmodel.addSeqGroup(name);
+    public static GenomeVersion retrieveSeqGroup(String name) {
+        return gmodel.addGenomeVersion(name);
     }
     protected final IgbService igbService;
 
@@ -67,18 +67,18 @@ public class OpenURIAction extends SeqMapViewActionA {
         igbService = IgbServiceImpl.getInstance();
     }
 
-    public void openURI(URI uri, final String fileName, final boolean mergeSelected, final AnnotatedSeqGroup loadGroup, final String speciesName, boolean isReferenceSequence) {
+    public void openURI(URI uri, final String fileName, final boolean mergeSelected, final GenomeVersion genomeVersion, final String speciesName, boolean isReferenceSequence) {
 
         if (ScriptManager.getInstance().isScript(uri.toString())) {
             RunScriptAction.getAction().runScript(uri.toString());
             return;
         }
 
-        igbService.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
+        igbService.openURI(uri, fileName, genomeVersion, speciesName, isReferenceSequence);
 
         if (!mergeSelected) {
             CUSTOM_GENOME_COUNTER++;
-            gmodel.setSelectedSeqGroup(loadGroup);
+            gmodel.setSelectedGenomeVersion(genomeVersion);
         }
 
     }

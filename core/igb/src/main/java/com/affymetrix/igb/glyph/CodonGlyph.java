@@ -168,16 +168,16 @@ public class CodonGlyph extends AbstractAlignedTextGlyph {
         }
         if (residue.length() < 6 || residue.length() % 3 != 0) {
             errorMessage = "invalid length " + residue.length();
-//			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getID());
+//			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getId());
         } //		else if (!residue.substring(0, 3).equals(AminoAcid.START_CODON)) {
         //			errorMessage = "invalid start " + residue.substring(0, 3);
-        //			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getID());
+        //			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getId());
         //		}
         else {
 //		String endCodon = residue.substring(residue.length() - 3, residue.length());
 //			if (!(endCodon.equals(AminoAcid.STOP_CODONS[0]) || endCodon.equals(AminoAcid.STOP_CODONS[1]) || endCodon.equals(AminoAcid.STOP_CODONS[2]))) {
 //				errorMessage = "invalid stop " + endCodon;
-//				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getID());
+//				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, errorMessage + " for " + parentSym.getGeneName() + ":" + parentSym.getId());
 //			}
         }
         if (errorMessage != null) {

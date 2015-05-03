@@ -1,20 +1,22 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
-
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -33,10 +35,10 @@ public class BAMParserTest {
         DataInputStream dis = new DataInputStream(istr);
         assertNotNull(dis);
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
-        BioSeq seq = group.addSeq("chr1", 197069962);
+        GenomeVersion genomeVersion = new GenomeVersion("M_musculus_Mar_2006");
+        BioSeq seq = genomeVersion.addSeq("chr1", 197069962);
 
-        SymLoader symL = new BAM(new File(filename).toURI(), "featureName", group);
+        SymLoader symL = new BAM(new File(filename).toURI(), "featureName", genomeVersion);
         assertNotNull(symL);
 
         List<? extends SeqSymmetry> result = symL.getChromosome(seq);

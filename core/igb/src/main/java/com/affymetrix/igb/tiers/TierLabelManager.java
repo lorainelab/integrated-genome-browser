@@ -4,7 +4,7 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.EventUtils;
 import com.affymetrix.genometry.event.PropertyHolder;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
@@ -71,16 +71,16 @@ public final class TierLabelManager implements PropertyHolder {
         return getFeatureProperties(glyph.getAnnotStyle().getFeature());
     }
 
-    public static Map<String, Object> getFeatureProperties(GenericFeature feature) {
+    public static Map<String, Object> getFeatureProperties(DataSet feature) {
         if (feature == null) {
             return null;
         }
 
         Map<String, Object> props = new HashMap<>();
-        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.FILE_NAME), feature.getFeatureName());
+        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.FILE_NAME), feature.getDataSetName());
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.DESCRIPTION), feature.description());
         props.put(ToolTipConstants.URL, feature.getURI());
-        String server = feature.getgVersion().getgServer().getServerName() + " (" + feature.getgVersion().getgServer().getServerType().getServerName() + ")";
+        String server = feature.getDataContainer().getDataProvider().getName() + " (" + feature.getDataContainer().getDataProvider().getName() + ")";
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
 
         return props;

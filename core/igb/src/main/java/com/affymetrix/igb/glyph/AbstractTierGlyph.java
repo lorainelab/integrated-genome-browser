@@ -4,7 +4,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.search.SearchUtils;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -121,7 +121,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
 
     protected Map<String, List<? extends SeqSymmetry>> loadData(SeqSpan span) {
         try {
-            GenericFeature feature = style.getFeature();
+            DataSet feature = style.getFeature();
             if (feature == null) {
                 return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
             }

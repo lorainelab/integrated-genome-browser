@@ -242,7 +242,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     private void addToMap(SeqSpan span, HashMap<String, SeqSymmetry> map, BioSeq bioseq) {
 
         boolean currentForward = false;
-        String name = "J:" + bioseq.getID() + ":" + span.getMin() + "-" + span.getMax() + ":";
+        String name = "J:" + bioseq.getId() + ":" + span.getMin() + "-" + span.getMax() + ":";
         String leftResidues = bioseq.getResidues(span.getMin(), span.getMin() + 2);
         String rightResidues = bioseq.getResidues(span.getMax() - 2, span.getMax());
         if (map.containsKey(name)) {

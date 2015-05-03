@@ -1,15 +1,12 @@
 package com.gene.searchmodelucene;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchResults;
@@ -41,10 +38,10 @@ public class SearchModeLucene implements ISearchModeSym {
             // load span
             String seqName = doc.get("seq");
             BioSeq seq;
-            if (GenometryModel.getInstance().getSelectedSeqGroup() == null) {
+            if (GenometryModel.getInstance().getSelectedGenomeVersion() == null) {
                 seq = new BioSeq(seqName, 0);
             } else {
-                seq = GenometryModel.getInstance().getSelectedSeqGroup().getSeq(seqName);
+                seq = GenometryModel.getInstance().getSelectedGenomeVersion().getSeq(seqName);
             }
             int start = Integer.parseInt(doc.get("start"));
             int end = Integer.parseInt(doc.get("end"));
@@ -67,7 +64,7 @@ public class SearchModeLucene implements ISearchModeSym {
 //        String seqName = args.length > 3 ? args[2] : null;
 //        List<SeqSymmetry> results = luceneSearch.searchIndex(uri, searchTerm, MAX_HITS);
 //        for (SeqSymmetry result : results) {
-//            System.out.println(result.getID() + " @ " + result.getSpan(0));
+//            System.out.println(result.getName() + " @ " + result.getSpan(0));
 //        }
 //    }
     @Override
@@ -104,33 +101,33 @@ public class SearchModeLucene implements ISearchModeSym {
     public SearchResults<SeqSymmetry> search(String search_text, BioSeq chrFilter, IStatus statusHolder, boolean option) {
         List<SeqSymmetry> syms = new ArrayList<>();
         if (search_text != null && !search_text.isEmpty()) {
-            AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-            if (group != null) {
-                group.getEnabledVersions().stream().filter(gVersion -> gVersion.getgServer().getServerType() == LocalFilesServerType.getInstance() || gVersion.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(gVersion -> {
-                    for (GenericFeature feature : gVersion.getFeatures()) {
-                        if (feature.isVisible() && feature.getSymL() != null) {
-                            if (statusHolder != null) {
-                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.getSymL().uri.toString(), search_text));
-                            }
-                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_text, MAX_HITS);
-                            if (results != null) {
-                                syms.addAll(results);
-                            }
-                        }
-                    }
-                });
+            GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+            if (genomeVersion != null) {
+//                group.getAvailableDataContainers().stream().filter(dataContainer -> dataContainer.getgServer().getServerType() == LocalFilesServerType.getInstance() || dataContainer.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(dataContainer -> {
+//                    for (DataSet feature : dataContainer.getDataSets()) {
+//                        if (feature.isVisible() && feature.getSymL() != null) {
+//                            if (statusHolder != null) {
+//                                statusHolder.setStatus(MessageFormat.format(BUNDLE.getString("searchSearching"), feature.getSymL().uri.toString(), search_text));
+//                            }
+//                            List<SeqSymmetry> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_text, MAX_HITS);
+//                            if (results != null) {
+//                                syms.addAll(results);
+//                            }
+//                        }
+//                    }
+//                });
             }
         }
         String statusStr;
         if (syms.isEmpty()) {
             statusStr = BUNDLE.getString("searchNoResults");
             statusHolder.setStatus(statusStr);
-            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, null);
+            return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, null);
         }
         statusStr = MessageFormat.format(BUNDLE.getString("searchSummary"), syms.size());
         statusHolder.setStatus(statusStr);
 
-        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, syms);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, syms);
     }
 
 }

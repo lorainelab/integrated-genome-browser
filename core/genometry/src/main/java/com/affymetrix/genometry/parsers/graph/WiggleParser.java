@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
@@ -58,7 +58,7 @@ public final class WiggleParser implements GraphParser {
      * The format must be specified on the first line following a track line,
      * otherwise BED4 is assumed.
      */
-    public List<GraphSym> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name)
+    public List<GraphSym> parse(InputStream istr, GenomeVersion seq_group, boolean annotate_seq, String stream_name)
             throws IOException {
         WigFormat current_format = WigFormat.BED4;
 
@@ -143,7 +143,7 @@ public final class WiggleParser implements GraphParser {
         return grafs;
     }
 
-    private static int parseData(boolean previous_track_line, String line, WigFormat current_format, AnnotatedSeqGroup seq_group, WiggleData current_data, Map<String, WiggleData> current_datamap, String current_seq_id, int current_span, int current_start, int current_step) throws IllegalArgumentException {
+    private static int parseData(boolean previous_track_line, String line, WigFormat current_format, GenomeVersion seq_group, WiggleData current_data, Map<String, WiggleData> current_datamap, String current_seq_id, int current_span, int current_start, int current_step) throws IllegalArgumentException {
         // There should have been one track line at least...
         if (!previous_track_line) {
             throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
@@ -285,7 +285,7 @@ public final class WiggleParser implements GraphParser {
     /**
      * Finishes the current data section and creates a list of GraphSym objects.
      */
-    private static List<GraphSym> createGraphSyms(Map<String, String> track_hash, AnnotatedSeqGroup seq_group, Map<String, WiggleData> current_datamap, String stream_name) {
+    private static List<GraphSym> createGraphSyms(Map<String, String> track_hash, GenomeVersion seq_group, Map<String, WiggleData> current_datamap, String stream_name) {
         if (current_datamap == null) {
             return Collections.<GraphSym>emptyList();
         }
@@ -300,7 +300,7 @@ public final class WiggleParser implements GraphParser {
         String graph_name = graph_id;
 
         if (ensure_unique_id) {
-            graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);
+            graph_id = GenomeVersion.getUniqueGraphID(graph_id, seq_group);
         }
         track_hash.put(TrackLineParser.NAME, graph_id);
 
@@ -326,7 +326,7 @@ public final class WiggleParser implements GraphParser {
      */
     public static void writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
         BioSeq seq = graf.getGraphSeq();
-        String seq_id = (seq == null ? "." : seq.getID());
+        String seq_id = (seq == null ? "." : seq.getId());
         String human_name = graf.getGraphState().getTierStyle().getTrackName();
         String gname = graf.getGraphName();
         GraphState state = graf.getGraphState();
@@ -363,21 +363,21 @@ public final class WiggleParser implements GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         throw new IllegalStateException("wiggle should not be processed here");
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         return parse(newstr, seq_group, false, stream_name);
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         if (gsym instanceof GraphIntervalSym) {
             BufferedOutputStream bos = null;
@@ -385,7 +385,7 @@ public final class WiggleParser implements GraphParser {
                 GraphIntervalSym gisym = (GraphIntervalSym) gsym;
                 String genome_name = null;
                 if (seq_group != null) {
-                    genome_name = seq_group.getID();
+                    genome_name = seq_group.getName();
                 }
                 bos = new BufferedOutputStream(new FileOutputStream(file_name));
                 WiggleParser.writeBedFormat(gisym, genome_name, bos);

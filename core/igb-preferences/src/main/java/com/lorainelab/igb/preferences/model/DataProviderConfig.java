@@ -15,22 +15,22 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @XmlType(name = "", propOrder = {
     "value"
 })
-public class DataProvider {
+public class DataProviderConfig {
 
     @XmlValue
     protected String value;
     @Expose
-    @XmlAttribute(name = "type")
-    protected String type;
-    @Expose
     @XmlAttribute(name = "name")
     protected String name;
+    @Expose
+    @XmlAttribute(name = "factoryName")
+    protected String factoryName;
     @Expose
     @XmlAttribute(name = "url")
     protected String url;
     @Expose
-    @XmlAttribute(name = "order")
-    protected Integer order;
+    @XmlAttribute(name = "loadPriority")
+    protected Integer loadPriority;
     @SerializedName("default")
     @Expose
     @XmlAttribute(name = "default")
@@ -41,17 +41,6 @@ public class DataProvider {
     @Expose
     @XmlAttribute(name = "enabled")
     protected String enabled;
-    @Expose
-    @XmlAttribute(name = "password")
-    protected String password;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getValue() {
         return value;
@@ -59,14 +48,6 @@ public class DataProvider {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String value) {
-        this.type = value;
     }
 
     public String getName() {
@@ -77,6 +58,14 @@ public class DataProvider {
         this.name = value;
     }
 
+    public String getFactoryName() {
+        return factoryName;
+    }
+
+    public void setFactoryName(String factoryName) {
+        this.factoryName = factoryName;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -85,12 +74,12 @@ public class DataProvider {
         this.url = value;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getLoadPriority() {
+        return loadPriority;
     }
 
-    public void setOrder(Integer value) {
-        this.order = value;
+    public void setLoadPriority(Integer value) {
+        this.loadPriority = value;
     }
 
     public String getDefault() {
@@ -124,7 +113,7 @@ public class DataProvider {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(type).append(name).append(url).append(order).append(_default).append(mirror).append(enabled).toHashCode();
+        return new HashCodeBuilder().append(name).append(url).append(loadPriority).append(_default).append(mirror).append(enabled).toHashCode();
     }
 
     @Override
@@ -132,10 +121,10 @@ public class DataProvider {
         if (other == this) {
             return true;
         }
-        if ((other instanceof DataProvider) == false) {
+        if ((other instanceof DataProviderConfig) == false) {
             return false;
         }
-        DataProvider rhs = ((DataProvider) other);
-        return new EqualsBuilder().append(type, rhs.type).append(name, rhs.name).append(url, rhs.url).append(order, rhs.order).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).isEquals();
+        DataProviderConfig rhs = ((DataProviderConfig) other);
+        return new EqualsBuilder().append(name, rhs.name).append(url, rhs.url).append(loadPriority, rhs.loadPriority).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).isEquals();
     }
 }

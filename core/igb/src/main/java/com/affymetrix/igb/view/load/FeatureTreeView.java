@@ -2,17 +2,15 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.GenometryConstants;
-import com.affymetrix.genometry.das.DasServerType;
+import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericServer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -79,14 +77,13 @@ import javax.swing.tree.TreePath;
 public final class FeatureTreeView extends JComponent implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    private static boolean DEBUG = false;
 
     public final JScrollPane tree_scroller;
     private final JTree tree;
     private final JRPButton serverPrefsB;
     public static final String path_separator = "/";
     private static ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
-    private final static Map<GenericServer, ImageIcon> faviconReference = Maps.newHashMap();
+    private final static Map<DataProvider, ImageIcon> faviconReference = Maps.newHashMap();
 
     public FeatureTreeView() {
         this.setLayout(new BorderLayout());
@@ -151,6 +148,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      *
      * @param evt
      */
+    @Override
     public void actionPerformed(ActionEvent evt) {
         final Object src = evt.getSource();
 
@@ -170,7 +168,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      *
      * @param features
      */
-    void initOrRefreshTree(final List<GenericFeature> features) {
+    void initOrRefreshTree(final List<DataSet> features) {
         final TreeModel tmodel = new DefaultTreeModel(createTree(features), true);
         tree.setModel(tmodel);
 
@@ -235,15 +233,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param features
      * @return root which is of the type DefaultMutableTreeNode
      */
-    private static DefaultMutableTreeNode createTree(List<GenericFeature> features) {
+    private static DefaultMutableTreeNode createTree(List<DataSet> features) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
 
         if (features == null || features.isEmpty()) {
             return root;
         }
 
-        List<GenericServer> serverList = GeneralLoadUtils.getServersWithAssociatedFeatures(features);
-        for (GenericServer server : serverList) {
+        List<DataProvider> serverList = GeneralLoadUtils.getServersWithAssociatedFeatures(features);
+        for (DataProvider server : serverList) {
             DefaultMutableTreeNode serverRoot = new DefaultMutableTreeNode(server.toString());
 
             serverRoot.setUserObject(new TreeNodeUserInfo(server));
@@ -253,8 +251,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
              *//*
              * && canHandleFeature(feature)
              */
-            features.stream().filter(feature -> feature.getgVersion().getgServer().equals(server)).forEach(feature -> {
-                addOrFindNode(serverRoot, feature, feature.getFeatureName());
+            features.stream().filter(feature -> feature.getDataContainer().getDataProvider().equals(server)).forEach(feature -> {
+                addOrFindNode(serverRoot, feature, feature.getDataSetName());
             });
             if (serverRoot.getChildCount() > 0) {
                 root.add(serverRoot);
@@ -272,8 +270,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param feature
      * @param featureName
      */
-    private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
-        if (!featureName.contains(path_separator) || feature.getgVersion().getgServer().getServerType() == LocalFilesServerType.getInstance()) {
+    private static void addOrFindNode(DefaultMutableTreeNode root, DataSet feature, String featureName) {
+        if (!featureName.contains(path_separator)) {
             //This code adds a leaf
             TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
@@ -296,10 +294,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             if (nodeData instanceof TreeNodeUserInfo) {
                 nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
             }
-            GenericFeature candidateFeature = (GenericFeature) nodeData;
-            String candidateName = candidateFeature.getFeatureName();
+            DataSet candidateFeature = (DataSet) nodeData;
+            String candidateName = candidateFeature.getDataSetName();
             // See if this can go under a previous node.  Be sure we're working with the same version/server.
-            if (candidateName.equals(featureLeft) && candidateFeature.getgVersion().equals(feature.getgVersion())) {
+            if (candidateName.equals(featureLeft) && candidateFeature.getDataContainer().equals(feature.getDataContainer())) {
                 // Make sure we are really dealing with a non-leaf node.  This will
                 // fix bug caused by name collision when a folder and feature are
                 // named the same thing.
@@ -315,7 +313,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
         // Couldn't find matching node.  Add new one.
         // John -- not really sure what the following code is for. ?
-        GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.getgVersion(), null, null, autoload);
+        DataSet dummyFeature = new DataSet(featureLeft, null, feature.getDataContainer(), null, null, autoload);
         TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
         root.add(newNode);
@@ -442,11 +440,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
         }
 
-        if (nodeData instanceof GenericServer) {
-            return serverFriendlyURL((GenericServer) nodeData, tree, bounds, x, y);
+        if (nodeData instanceof DataProvider) {
+            return serverFriendlyURL((DataProvider) nodeData, tree, bounds, x, y);
         }
-        if (nodeData instanceof GenericFeature) {
-            return featureFriendlyURL((GenericFeature) nodeData, bounds, x, y);
+        if (nodeData instanceof DataSet) {
+            return featureFriendlyURL((DataSet) nodeData, bounds, x, y);
         }
         return Optional.empty();
 
@@ -461,13 +459,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param y
      * @return hyerlink for the feature name
      */
-    private static Optional<String> featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
-        if (!Strings.isNullOrEmpty(gFeature.getgVersion().getgServer().getUrlString())) {
+    private static Optional<String> featureFriendlyURL(DataSet gFeature, Rectangle bounds, int x, int y) {
+        if (!Strings.isNullOrEmpty(gFeature.getDataContainer().getDataProvider().getUrl())) {
             int iconWidth = 10 + 2 * 4;
             bounds.x += bounds.width - iconWidth;
             bounds.width = iconWidth;
             if (bounds.contains(x, y)) {
-                return Optional.ofNullable(gFeature.getgVersion().getgServer().getUrlString());
+                return Optional.ofNullable(gFeature.getDataContainer().getDataProvider().getUrl());
             }
         }
         return Optional.empty();
@@ -483,11 +481,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @param y
      * @return hyperlink of the server name
      */
-    private static Optional<String> serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
-        String friendlyURL = gServer.getUrlString();
+    private static Optional<String> serverFriendlyURL(DataProvider gServer, JTree thetree, Rectangle bounds, int x, int y) {
+        String friendlyURL = gServer.getUrl();
 
         if (friendlyURL != null) {
-            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getServerName(), thetree.getGraphics());
+            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getName(), thetree.getGraphics());
             bounds.width = (int) linkBound.getWidth();
             final Optional<ImageIcon> serverFavicon = getServerFavicon(gServer);
             if (serverFavicon.isPresent()) {
@@ -504,11 +502,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
     }
 
-    private static Optional<ImageIcon> getServerFavicon(GenericServer gServer) {
+    private static Optional<ImageIcon> getServerFavicon(DataProvider gServer) {
         if (faviconReference.containsKey(gServer)) {
             return Optional.ofNullable(faviconReference.get(gServer));
         }
-        final Optional<ImageIcon> serverFavicon = Optional.ofNullable(GeneralUtils.determineFriendlyIcon(gServer.getUrlString() + "/favicon.ico"));
+        final Optional<ImageIcon> serverFavicon = Optional.ofNullable(GeneralUtils.determineFriendlyIcon(gServer.getUrl() + "/favicon.ico"));
         serverFavicon.ifPresent(favicon -> faviconReference.put(gServer, favicon));
         return serverFavicon;
     }
@@ -525,7 +523,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         private final boolean focusPainted;
         private final boolean borderPaintedFlat;
         private final Border border;
-        private final Map<GenericFeature, FeatureCheckBox> leafCheckBoxes = new HashMap<>();
+        private final Map<DataSet, FeatureCheckBox> leafCheckBoxes = new HashMap<>();
         private final Color selectionBorderColor, selectionForeground;
         private final Color selectionBackground, textForeground, textBackground;
 
@@ -553,17 +551,17 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             }
         }
 
-        private FeatureCheckBox getLeafCheckBox(GenericFeature gFeature) {
-            FeatureCheckBox leafCheckBox = leafCheckBoxes.get(gFeature);
+        private FeatureCheckBox getLeafCheckBox(DataSet dataSet) {
+            FeatureCheckBox leafCheckBox = leafCheckBoxes.get(dataSet);
             if (leafCheckBox == null) {
-                leafCheckBox = new FeatureCheckBox(gFeature);
+                leafCheckBox = new FeatureCheckBox(dataSet);
                 leafCheckBox.setFont(fontValue);
                 leafCheckBox.setFocusPainted(focusPainted);
                 leafCheckBox.setBorderPaintedFlat(borderPaintedFlat);
                 if (border != null) {
                     leafCheckBox.setBorder(border);
                 }
-                leafCheckBoxes.put(gFeature, leafCheckBox);
+                leafCheckBoxes.put(dataSet, leafCheckBox);
             }
             return leafCheckBox;
         }
@@ -585,15 +583,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 genericData = ((TreeNodeUserInfo) nodeUObject).genericObject;
             }
 
-            if (genericData instanceof GenericServer) {
-                return renderServer((GenericServer) genericData, tree, sel, expanded, leaf, row, hasFocus, node);
+            if (genericData instanceof DataProvider) {
+                return renderServer((DataProvider) genericData, tree, sel, expanded, leaf, row, hasFocus, node);
             }
-            if (leaf && genericData instanceof GenericFeature) {
-                return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature) genericData, nodeUObject);
-            }
-
-            if (DEBUG) {
-                value = value + " [" + leafCount(node) + "]";
+            if (leaf && genericData instanceof DataSet) {
+                return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (DataSet) genericData, nodeUObject);
             }
 
             return super.getTreeCellRendererComponent(
@@ -614,15 +608,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             return count;
         }
 
-        private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, GenericFeature gFeature, Object nodeUObject) {
+        private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DataSet gFeature, Object nodeUObject) {
             // You must call super before each return.
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
-            String featureName = gFeature.getFeatureName();
-            String featureText = gFeature.getgVersion().getgServer().getServerType() != LocalFilesServerType.getInstance()
-                    ? featureName.substring(featureName.lastIndexOf(path_separator) + 1) : featureName;
+            String featureName = gFeature.getDataSetName();
+            String featureText = featureName;
             featureText = "<html>" + featureText;
-            if (!Strings.isNullOrEmpty(gFeature.getgVersion().getgServer().getUrlString())) {
+            if (!Strings.isNullOrEmpty(gFeature.getDataContainer().getDataProvider().getUrl())) {
                 featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
             }
 
@@ -647,19 +640,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             return leafCheckBox;
         }
 
-        private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
+        private Component renderServer(DataProvider gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
             String serverNameString = "";
-            if (gServer.getServerType() != DasServerType.getInstance()) {
-                // TODO - hack to ignore server hyperlinks for DAS/1.
-                serverNameString = "<a href='" + gServer.getUrlString() + "'><b>" + gServer.getServerName() + "</b></a>";
-            } else {
-                serverNameString = "<b>" + gServer.getServerName() + "</b>";
-            }
-            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getServerType().getServerName() + ")</i>";
-
-            if (DEBUG) {
-                serverNameString = serverNameString + " [" + leafCount(node) + "]";
-            }
+//            if (gServer.getServerType() != DasServerType.getInstance()) {
+//                // TODO - hack to ignore server hyperlinks for DAS/1.
+//                serverNameString = "<a href='" + gServer.getUrl() + "'><b>" + gServer.getName() + "</b></a>";
+//            } else {
+            serverNameString = "<b>" + gServer.getName() + "</b>";
+//            }
+            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getName() + ")</i>";
 
             super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
             getServerFavicon(gServer).ifPresent(this::setIcon);
@@ -690,9 +679,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                 if (nodeData instanceof TreeNodeUserInfo) {
                     ((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-                    if (tn.genericObject instanceof GenericFeature) {
-                        GenericFeature feature = (GenericFeature) tn.genericObject;
-                        if (feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance()) {
+                    if (tn.genericObject instanceof DataSet) {
+                        DataSet feature = (DataSet) tn.genericObject;
+                        if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider) {
                             String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
                             FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
                             if (fth == null) {
@@ -703,23 +692,28 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
-                            if (feature.getgVersion().getgServer().getServerType() == QuickloadServerType.getInstance() && !isURLReachable(feature.getURI())) {
-                                GenericServer gServer = feature.getgVersion().getgServer();
-                                if (!Strings.isNullOrEmpty(gServer.getMirrorUrl()) && ModalUtils.confirmPanel(gServer.getServerName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
-                                    for (GenericFeature gFeature : feature.getgVersion().getFeatures()) {
-                                        if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
-                                            URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrlString(), gServer.getMirrorUrl()));
-                                            gFeature.getSymL().setURI(newURI);
-                                            ((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader().setURI(newURI);
+                            if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider && !isURLReachable(feature.getURI())) {
+                                DataProvider gServer = feature.getDataContainer().getDataProvider();
+                                Optional<String> mirrorUrl = gServer.getMirrorUrl();
+                                if (mirrorUrl.isPresent() && !Strings.isNullOrEmpty(gServer.getMirrorUrl().get())) {
+                                    if (ModalUtils.confirmPanel(gServer.getName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
+                                        for (DataSet gFeature : feature.getDataContainer().getDataSets()) {
+                                            if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
+                                                if (gServer.getMirrorUrl().isPresent()) {
+                                                    URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrl(), gServer.getMirrorUrl().get()));
+                                                    gFeature.getSymL().setURI(newURI);
+                                                    ((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader().setURI(newURI);
+                                                }
+                                            }
                                         }
+                                        tn.setChecked(true);
+                                    } else {
+                                        //qlmirror
+                                        message = "The feature " + feature.getURI() + " is not reachable.";
+                                        ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
+                                        tn.setChecked(false);
+                                        return;
                                     }
-                                    tn.setChecked(true);
-                                } else {
-                                    //qlmirror
-                                    message = "The feature " + feature.getURI() + " is not reachable.";
-                                    ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
-                                    tn.setChecked(false);
-                                    return;
                                 }
                             }
 
@@ -732,7 +726,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                 GeneralLoadView.getLoadView().addFeature(feature);
                             }
                         } else {
-                            message = "Unchecking " + feature.getFeatureName()
+                            message = "Unchecking " + feature.getDataSetName()
                                     + " will remove all loaded data. \nDo you want to continue? ";
                             if (Strings.isNullOrEmpty(feature.getMethod()) || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
@@ -764,9 +758,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             Object nodeData = editedNode.getUserObject();
             if (nodeData instanceof TreeNodeUserInfo) {
                 TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-                if (tn.genericObject instanceof GenericFeature) {
-                    GenericFeature feature = (GenericFeature) tn.genericObject;
-                    extraInfo = feature.getgVersion().getgServer().getServerType() + ":" + feature.getgVersion().getgServer().getServerName() + "." + feature.getFeatureName();
+                if (tn.genericObject instanceof DataSet) {
+                    DataSet feature = (DataSet) tn.genericObject;
+                    extraInfo = feature.getDataContainer().getDataProvider().getName() + "." + feature.getDataSetName();
                 }
             }
             return extraInfo;
@@ -789,19 +783,19 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                             nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
                         }
 
-                        if (nodeData instanceof GenericFeature) {
+                        if (nodeData instanceof DataSet) {
                             Rectangle r = thetree.getPathBounds(path);
                             int x = mouseEvent.getX() - r.x;
                             if (renderer == null) {
                                 renderer = new FeatureTreeCellRenderer();
                             }
-                            FeatureCheckBox checkbox = renderer.getLeafCheckBox((GenericFeature) nodeData);
+                            FeatureCheckBox checkbox = renderer.getLeafCheckBox((DataSet) nodeData);
                             if (!checkbox.isFeatureLoadActionSet()) {
                                 checkbox.addActionListener(new FeatureLoadAction(checkbox, getExtraInfo()));
                             }
                             checkbox.setText("");
                             returnValue = editedNode.isLeaf() && x > 0 && x < checkbox.getPreferredSize().width;
-                        } else if (!(nodeData instanceof GenericServer)) {
+                        } else if (!(nodeData instanceof DataProvider)) {
                             throw new UnsupportedOperationException("isCellEditable with bad data");
                         }
                     }
@@ -873,10 +867,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         }
 
         public String getId() {
-            if (genericObject instanceof GenericServer) {
-                return ((GenericServer) genericObject).getServerType() + ":" + ((GenericServer) genericObject).getServerName();
-            } else if (genericObject instanceof GenericFeature) {
-                return ((GenericFeature) genericObject).getFeatureName();
+            if (genericObject instanceof DataProvider) {
+                return ((DataProvider) genericObject).getName();
+            } else if (genericObject instanceof DataSet) {
+                return ((DataSet) genericObject).getDataSetName();
             }
             return null;
         }
@@ -892,14 +886,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
         DefaultMutableTreeNode node;
         Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
-        GenericFeature feature = null;
+        DataSet feature = null;
         while (nodes.hasMoreElements()) {
             node = nodes.nextElement();
             Object nodeData = node.getUserObject();
             if (nodeData instanceof TreeNodeUserInfo) {
                 TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-                if (tn.genericObject instanceof GenericFeature) {
-                    feature = (GenericFeature) tn.genericObject;
+                if (tn.genericObject instanceof DataSet) {
+                    feature = (DataSet) tn.genericObject;
                     if (!feature.isVisible()) {
                         URI fUri = feature.getURI();
                         if (uri.equals(fUri)) {

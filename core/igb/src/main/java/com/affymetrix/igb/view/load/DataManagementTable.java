@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
@@ -88,7 +88,7 @@ public final class DataManagementTable {
         table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
         for (int row = 0; row < featureSize; row++) {
-            GenericFeature feature = ftm.getRowFeature(row);
+            DataSet feature = ftm.getRowFeature(row);
             ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
             JComboBox featureCB = new JComboBox(feature.getLoadChoices().toArray());
             featureCB.setRenderer(comboRenderer);
@@ -103,7 +103,7 @@ public final class DataManagementTable {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
                         style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
-                trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row, feature.getFeatureName(), Color.WHITE, Color.BLACK);
+                trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row, feature.getDataSetName(), Color.WHITE, Color.BLACK);
             }
             text.addEditorForRow(row, trackNameFieldEditor);
         }
@@ -145,7 +145,7 @@ public final class DataManagementTable {
                 JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
-            GenericFeature feature = ftm.getRowFeature(row);
+            DataSet feature = ftm.getRowFeature(row);
             if (value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
                 if (value.equals(gtextField.getText())) {
                     return gtextField;
@@ -220,7 +220,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
     @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
-        GenericFeature feature = ftm.getRowFeature(row);
+        DataSet feature = ftm.getRowFeature(row);
         ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
         if (feature == null) {
             return super.getCellRenderer(row, column);
@@ -233,7 +233,7 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
             boolean enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD
                     && feature.getLoadStrategy() != LoadStrategy.GENOME
                     && smv.getAnnotatedSeq() != null
-                    && !IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID()));
+                    && !IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getId()));
             return new LabelTableCellRenderer(DataManagementTable.refresh_icon, enabled);
         } else if (column == DataManagementTableModel.LOAD_STRATEGY_COLUMN) {
 //			if (!feature.isPrimary()) {
@@ -246,9 +246,9 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //					return new ErrorNotificationCellRenderer(feature.getVirtualFeature().featureName,
 //						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
 //				}
-                return new JRPTextFieldTableCellRenderer(feature.getFeatureName(), style.getTrackName(), style.getForeground(), style.getBackground());
+                return new JRPTextFieldTableCellRenderer(feature.getDataSetName(), style.getTrackName(), style.getForeground(), style.getBackground());
             } else {
-                return new JRPTextFieldTableCellRenderer(feature.getFeatureName(), feature.getFeatureName(), Color.BLACK, Color.WHITE);
+                return new JRPTextFieldTableCellRenderer(feature.getDataSetName(), feature.getDataSetName(), Color.BLACK, Color.WHITE);
             }
 
         } else if (column == DataManagementTableModel.DELETE_FEATURE_COLUMN) {
@@ -282,8 +282,8 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
         int colIndex = columnAtPoint(p);
         int realColumnIndex = convertColumnIndexToModel(colIndex);
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
-        GenericFeature feature = ftm.getRowFeature(rowIndex);
-        String featureName = feature.getFeatureName();
+        DataSet feature = ftm.getRowFeature(rowIndex);
+        String featureName = feature.getDataSetName();
         switch (realColumnIndex) {
             case DataManagementTableModel.REFRESH_FEATURE_COLUMN:
                 if (feature.getLoadStrategy() != LoadStrategy.NO_LOAD) {

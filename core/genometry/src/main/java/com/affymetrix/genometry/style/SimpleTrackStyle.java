@@ -11,7 +11,7 @@ package com.affymetrix.genometry.style;
 
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 
 import java.awt.Color;
 
@@ -167,12 +167,12 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
     }
 
     @Override
-    public GenericFeature getFeature() {
+    public DataSet getFeature() {
         return null;
     }
 
     @Override
-    public void setFeature(GenericFeature f) {
+    public void setFeature(DataSet f) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 

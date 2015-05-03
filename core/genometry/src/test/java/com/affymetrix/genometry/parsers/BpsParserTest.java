@@ -1,11 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +8,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 /**
  *
@@ -33,12 +33,12 @@ public class BpsParserTest {
             filename = BpsParserTest.class.getClassLoader().getResource(filename).getFile();
             istr = new FileInputStream(filename);
             assertNotNull(istr);
-            AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+            GenomeVersion genomeVersion = new GenomeVersion("Test Group");
             boolean annot_seq = true;
             String stream_name = "test_file";
 
             PSLParser parser = new PSLParser();
-            List<UcscPslSym> syms = parser.parse(istr, stream_name, group, group, annot_seq, true);
+            List<UcscPslSym> syms = parser.parse(istr, stream_name, genomeVersion, genomeVersion, annot_seq, true);
 
             BpsParser instance2 = new BpsParser();
             boolean writeResult = instance2.writeAnnotations(syms, null, "", outstream);

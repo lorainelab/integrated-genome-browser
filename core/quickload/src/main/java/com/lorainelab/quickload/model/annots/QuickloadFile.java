@@ -10,47 +10,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "")
 @XmlRootElement(name = "file")
 public class QuickloadFile {
 
-    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute(name = "title")
     protected String title;
-    @XmlAttribute(name = "url")
-    @XmlSchemaType(name = "anyURI")
     protected String url;
-    @XmlAttribute(name = "description")
     protected String description;
-    @XmlAttribute(name = "load_hint")
     protected String loadHint;
-    @XmlAttribute(name = "show2tracks")
     protected String show2Tracks;
-    @XmlAttribute(name = "label_field")
     protected String labelField;
-    @XmlAttribute(name = "foreground")
     protected String foreground;
-    @XmlAttribute(name = "background")
     protected String background;
-    @XmlAttribute(name = "positive_strand_color")
     protected String positiveStrandColor;
-    @XmlAttribute(name = "negative_strand_color")
     protected String negativeStrandColor;
-    @XmlAttribute(name = "name_size")
     protected String nameSize;
-    @XmlAttribute(name = "direction_type")
     protected String directionType;
-    @XmlAttribute(name = "max_depth")
     protected String maxDepth;
-    @XmlAttribute(name = "connected")
     protected String connected;
-    @XmlAttribute(name = "view_mode")
     protected String viewMode;
-    @XmlAttribute(name = "serverURL")
     protected String serverURL;
-    @XmlAttribute(name = "collapsed")
     protected String collapsed;
 
     private final Map<String, String> props = new HashMap<>();
@@ -63,9 +44,11 @@ public class QuickloadFile {
         return name;
     }
 
+    @XmlAttribute(name = "name", required = true)
     public void setName(String value) {
         this.name = value;
         if (!Strings.isNullOrEmpty(value)) {
+            props.put("name", value);
         }
     }
 
@@ -73,9 +56,11 @@ public class QuickloadFile {
         return title;
     }
 
+    @XmlAttribute(name = "title")
     public void setTitle(String value) {
         this.title = value;
         if (!Strings.isNullOrEmpty(value)) {
+            props.put("title", value);
         }
     }
 
@@ -83,6 +68,8 @@ public class QuickloadFile {
         return url;
     }
 
+    @XmlAttribute(name = "url")
+    @XmlSchemaType(name = "anyURI")
     public void setUrl(String value) {
         this.url = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -94,6 +81,7 @@ public class QuickloadFile {
         return description;
     }
 
+    @XmlAttribute(name = "description")
     public void setDescription(String value) {
         this.description = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -105,6 +93,7 @@ public class QuickloadFile {
         return loadHint;
     }
 
+    @XmlAttribute(name = "load_hint")
     public void setLoadHint(String value) {
         this.loadHint = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -116,6 +105,7 @@ public class QuickloadFile {
         return show2Tracks;
     }
 
+    @XmlAttribute(name = "show2tracks")
     public void setShow2Tracks(String value) {
         this.show2Tracks = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -127,6 +117,7 @@ public class QuickloadFile {
         return labelField;
     }
 
+    @XmlAttribute(name = "label_field")
     public void setLabelField(String value) {
         this.labelField = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -138,6 +129,7 @@ public class QuickloadFile {
         return foreground;
     }
 
+    @XmlAttribute(name = "foreground")
     public void setForeground(String value) {
         this.foreground = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -149,6 +141,7 @@ public class QuickloadFile {
         return background;
     }
 
+    @XmlAttribute(name = "background")
     public void setBackground(String value) {
         this.background = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -160,6 +153,7 @@ public class QuickloadFile {
         return positiveStrandColor;
     }
 
+    @XmlAttribute(name = "positive_strand_color")
     public void setPositiveStrandColor(String value) {
         this.positiveStrandColor = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -171,6 +165,7 @@ public class QuickloadFile {
         return negativeStrandColor;
     }
 
+    @XmlAttribute(name = "negative_strand_color")
     public void setNegativeStrandColor(String value) {
         this.negativeStrandColor = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -182,6 +177,7 @@ public class QuickloadFile {
         return nameSize;
     }
 
+    @XmlAttribute(name = "name_size")
     public void setNameSize(String value) {
         this.nameSize = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -193,6 +189,7 @@ public class QuickloadFile {
         return directionType;
     }
 
+    @XmlAttribute(name = "direction_type")
     public void setDirectionType(String value) {
         this.directionType = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -204,6 +201,7 @@ public class QuickloadFile {
         return maxDepth;
     }
 
+    @XmlAttribute(name = "max_depth")
     public void setMaxDepth(String value) {
         this.maxDepth = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -215,6 +213,7 @@ public class QuickloadFile {
         return connected;
     }
 
+    @XmlAttribute(name = "connected")
     public void setConnected(String value) {
         this.connected = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -226,6 +225,7 @@ public class QuickloadFile {
         return viewMode;
     }
 
+    @XmlAttribute(name = "view_mode")
     public void setViewMode(String value) {
         this.viewMode = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -237,6 +237,7 @@ public class QuickloadFile {
         return serverURL;
     }
 
+    @XmlAttribute(name = "serverURL")
     public void setServerURL(String value) {
         this.serverURL = value;
         if (!Strings.isNullOrEmpty(value)) {
@@ -247,6 +248,7 @@ public class QuickloadFile {
         return collapsed;
     }
 
+    @XmlAttribute(name = "collapsed")
     public void setCollapsed(String value) {
         this.collapsed = value;
         if (!Strings.isNullOrEmpty(value)) {

@@ -1,11 +1,11 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.filter.SymmetryFilterIntersecting;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
@@ -50,7 +50,7 @@ public abstract class SymLoader {
     protected volatile boolean isInitialized = false;
     protected final Map<BioSeq, File> chrList = new HashMap<>();
     protected final Map<BioSeq, Boolean> chrSort = new HashMap<>();
-    protected final AnnotatedSeqGroup group;
+    protected final GenomeVersion genomeVersion;
     public final String featureName;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -61,10 +61,10 @@ public abstract class SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+    public SymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
         this.uri = uri;
         this.featureName = featureName;
-        this.group = group;
+        this.genomeVersion = genomeVersion;
         extension = getExtension(uri);
     }
 
@@ -110,8 +110,8 @@ public abstract class SymLoader {
         }
     }
 
-    public AnnotatedSeqGroup getAnnotatedSeqGroup() {
-        return group;
+    public GenomeVersion getAnnotatedSeqGroup() {
+        return genomeVersion;
     }
 
     /**
@@ -268,7 +268,7 @@ public abstract class SymLoader {
     protected void createResults(Map<String, Integer> chrLength, Map<String, File> chrFiles) {
         for (Entry<String, Integer> bioseq : chrLength.entrySet()) {
             String key = bioseq.getKey();
-            chrList.put(group.addSeq(key, bioseq.getValue(), uri.toString()), chrFiles.get(key));
+            chrList.put(genomeVersion.addSeq(key, bioseq.getValue(), uri.toString()), chrFiles.get(key));
         }
     }
 
@@ -319,7 +319,7 @@ public abstract class SymLoader {
         return seq2Results;
     }
 
-    public static Map<String, List<? extends SeqSymmetry>> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+    public static Map<String, List<? extends SeqSymmetry>> splitFilterAndAddAnnotation(final SeqSpan span, List<? extends SeqSymmetry> results, DataSet feature) {
         Map<String, List<SeqSymmetry>> entries = SymLoader.splitResultsByTracks(results);
         Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
         SymmetryFilterIntersecting filter = new SymmetryFilterIntersecting();
@@ -341,7 +341,7 @@ public abstract class SymLoader {
                 addAnnotations(filteredFeats, span, feature.getURI(), feature);
                 added.put(entry.getKey(), filteredFeats);
             } else {
-                Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, "No method name in loaded syms for {0}", feature.getFeatureName());
+                Logger.getLogger(SymLoader.class.getName()).log(Level.SEVERE, "No method name in loaded syms for {0}", feature.getDataSetName());
             }
         }
 
@@ -349,7 +349,7 @@ public abstract class SymLoader {
     }
 
     public static void addAnnotations(
-            List<? extends SeqSymmetry> filteredFeats, SeqSpan span, URI uri, GenericFeature feature) {
+            List<? extends SeqSymmetry> filteredFeats, SeqSpan span, URI uri, DataSet feature) {
         if (filteredFeats.size() > 0 && filteredFeats.get(0) instanceof GraphSym) {
             GraphSym graphSym = (GraphSym) filteredFeats.get(0);
             if (filteredFeats.size() == 1 && graphSym.isSpecialGraph()) {
@@ -386,7 +386,7 @@ public abstract class SymLoader {
     }
 
     public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID) throws Exception {
-        AnnotatedSeqGroup temp_group = new AnnotatedSeqGroup(groupID);
+        GenomeVersion temp_group = new GenomeVersion(groupID);
         SymLoader temp = new SymLoader(uri, featureName, temp_group) {
         };
         List<? extends SeqSymmetry> syms = temp.getGenome();
@@ -409,7 +409,7 @@ public abstract class SymLoader {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension));
             return null;
         }
-        return fileTypeHandler.getParser().parse(new BufferedInputStream(is), group, featureName, uri.toString(), false);
+        return fileTypeHandler.getParser().parse(new BufferedInputStream(is), genomeVersion, featureName, uri.toString(), false);
     }
 
     public void clear() {

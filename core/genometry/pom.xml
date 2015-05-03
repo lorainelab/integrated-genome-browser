@@ -114,6 +114,16 @@
             <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.kevinsawicki</groupId>
+            <artifactId>http-request</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -162,7 +172,9 @@
                             com.affymetrix.genometry.util,
                             com.affymetrix.genometry.weblink,
                             com.affymetrix.genometry.tooltip,
-                            com.affymetrix.genometry.search
+                            com.affymetrix.genometry.search,
+                            com.affymetrix.genometry.data,
+                            com.affymetrix.genometry.data.*
                         </Export-Package>
                         <Import-Package>com.apple.laf,*;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

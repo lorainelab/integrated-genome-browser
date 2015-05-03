@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -292,17 +292,17 @@ public final class GFFParser implements AnnotationWriter, Parser {
 
     boolean use_track_lines = true;
 
-    public List<? extends SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+    public List<? extends SeqSymmetry> parse(InputStream istr, GenomeVersion seq_group, boolean create_container_annot)
             throws IOException {
         return this.parse(istr, ".", seq_group, create_container_annot);
     }
 
-    public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+    public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, GenomeVersion seq_group, boolean create_container_annot)
             throws IOException {
         return this.parse(istr, default_source, seq_group, create_container_annot, true);
     }
 
-    public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
+    public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, GenomeVersion seq_group,
             boolean create_container_annot, boolean annotate_seq)
             throws IOException {
         if (DEBUG) {
@@ -479,7 +479,7 @@ public final class GFFParser implements AnnotationWriter, Parser {
         current_h_level = new_h_level;
     }
 
-    private int useGrouping(UcscGffSym sym, List<SeqSymmetry> results, Map<String, SingletonSymWithProps> group_hash, String source, String track_name, int group_count, AnnotatedSeqGroup seq_group) {
+    private int useGrouping(UcscGffSym sym, List<SeqSymmetry> results, Map<String, SingletonSymWithProps> group_hash, String source, String track_name, int group_count, GenomeVersion seq_group) {
         String group_id = null;
         if (sym.isGFF1()) {
             group_id = sym.getGroup();
@@ -608,8 +608,8 @@ public final class GFFParser implements AnnotationWriter, Parser {
     public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq) {
         SeqSpan pspan = psym.getSpan(sortseq);
         boolean ascending = pspan.isForward();
-        //    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
-        //    System.out.println("sortseq: " + sortseq.getID());
+        //    System.out.println("sortseq: " + sortseq.getName() + ", child list: " + child_count);
+        //    System.out.println("sortseq: " + sortseq.getName());
         //    SeqUtils.printSymmetry(psym);
         int child_count = psym.getChildCount();
         if (child_count > 0) {
@@ -932,7 +932,7 @@ public final class GFFParser implements AnnotationWriter, Parser {
             SeqSpan span = csym.getSpan(seq);
 
             // GFF ==> seqname source feature start end score strand frame group
-            wr.write(seq.getID()); // seqname
+            wr.write(seq.getId()); // seqname
             wr.write('\t');
 
             // source
@@ -1088,11 +1088,11 @@ public final class GFFParser implements AnnotationWriter, Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
         if (annotate_seq) {
             setUseStandardFilters(true);
         }
-        return parse(is, uri, group, false, annotate_seq);
+        return parse(is, uri, genomeVersion, false, annotate_seq);
     }
 }

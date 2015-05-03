@@ -1,7 +1,7 @@
 package com.gene.bigbedhandler;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.IndexWriter;
@@ -37,8 +37,8 @@ public class BigBedHandler implements FileTypeHandler {
 
     @Override
     public SymLoader createSymLoader(URI uri, String featureName,
-            AnnotatedSeqGroup group) {
-        return new BigBedSymLoader(uri, featureName, group);
+            GenomeVersion genomeVersion) {
+        return new BigBedSymLoader(uri, featureName, genomeVersion);
     }
 
     @Override

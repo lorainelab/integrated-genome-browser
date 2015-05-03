@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -43,14 +43,14 @@ public class BedParserTest {
         DataInputStream dis = new DataInputStream(istr);
         assertNotNull(dis);
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
 
         IndexWriter parser = new BedParser();
-        List result = parser.parse(dis, filename, group);
+        List result = parser.parse(dis, filename, genomeVersion);
 
         testFileResult(result);
 
-        BED bed = new BED(new File(filename).toURI(), filename, group);
+        BED bed = new BED(new File(filename).toURI(), filename, genomeVersion);
         result = bed.getGenome();
         testFileResult(result);
     }
@@ -93,19 +93,19 @@ public class BedParserTest {
                 "599	chr2L	1965425	1965498	CR31942-RA	0	+	1965425	1965460	0	1	73,	0,\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
         BedParser instance = new BedParser();
 
-        List<SeqSymmetry> result = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
+        List<SeqSymmetry> result = instance.parse(istr, gmodel, genomeVersion, annot_seq, stream_name, create_container);
 
         testStringResult(result);
 
         File tempFile = createFileFromString(string);
 
-        BED bed = new BED(tempFile.toURI(), tempFile.getName(), group);
+        BED bed = new BED(tempFile.toURI(), tempFile.getName(), genomeVersion);
         result = bed.getGenome();
         testStringResult(result);
     }
@@ -233,8 +233,8 @@ public class BedParserTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-        BioSeq seq = group.addSeq("chr12", 500000);
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        BioSeq seq = genomeVersion.addSeq("chr12", 500000);
         SeqSpan span = new SimpleSeqSpan(500, 800, seq);
         SeqSpan[] span_array = new SeqSpan[]{span};
         SimpleMutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
@@ -268,7 +268,7 @@ public class BedParserTest {
                 + "chr2L	1965425	1965498	CR31942-RA	0	+	1965425	1965460	0	1	73,	0,\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
@@ -276,18 +276,18 @@ public class BedParserTest {
 
         Collection<SeqSymmetry> syms = null;
         try {
-            syms = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
+            syms = instance.parse(istr, gmodel, genomeVersion, annot_seq, stream_name, create_container);
         } catch (IOException ioe) {
             fail("Exception: " + ioe);
         }
 
-        BioSeq seq = group.getSeq("chr2L");
+        BioSeq seq = genomeVersion.getSeq("chr2L");
 
         testWrite(syms, seq, string);
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), file.getName(), group);
+        BED bed = new BED(file.toURI(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -306,7 +306,7 @@ public class BedParserTest {
                 + "chr1	457618	457865	EL049618	0	+	457618	457865	0	3	9,36,26,	0,97,221,\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
@@ -314,19 +314,19 @@ public class BedParserTest {
 
         Collection<SeqSymmetry> syms = null;
         try {
-            syms = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
+            syms = instance.parse(istr, gmodel, genomeVersion, annot_seq, stream_name, create_container);
         } catch (IOException ioe) {
             fail("Exception: " + ioe);
         }
 
         // Now we have read the data into "syms", so let's try writing it.
-        BioSeq seq = group.getSeq("chr1");
+        BioSeq seq = genomeVersion.getSeq("chr1");
 
         testWrite(syms, seq, string);
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), file.getName(), group);
+        BED bed = new BED(file.toURI(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -371,10 +371,10 @@ public class BedParserTest {
         String filename = "data/bed/bed_02.bed";
         filename = BedParserTest.class.getClassLoader().getResource(filename).getFile();
         assertTrue(new File(filename).exists());
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-        BioSeq seq = group.addSeq("chr2L", 1965498);
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        BioSeq seq = genomeVersion.addSeq("chr2L", 1965498);
 
-        BED bed = new BED(new File(filename).toURI(), filename, group);
+        BED bed = new BED(new File(filename).toURI(), filename, genomeVersion);
 
         List<BioSeq> allSeq = bed.getChromosomeList();
         assertEquals(4, allSeq.size());

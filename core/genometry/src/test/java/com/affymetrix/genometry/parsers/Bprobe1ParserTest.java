@@ -4,19 +4,17 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.EfficientProbesetSymA;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-
 import java.util.List;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -36,12 +34,12 @@ public class Bprobe1ParserTest {
         List<SeqSymmetry> result;
         try (InputStream istr = new FileInputStream(filename)) {
             assertNotNull(istr);
-            AnnotatedSeqGroup group = new AnnotatedSeqGroup("rn4");
+            GenomeVersion genomeVersion = new GenomeVersion("rn4");
             boolean annot_seq = true;
             String default_type = "test_type";
             boolean populate_id_hash = true;
             Bprobe1Parser parser = new Bprobe1Parser();
-            result = parser.parse(istr, group, annot_seq, default_type, populate_id_hash);
+            result = parser.parse(istr, genomeVersion, annot_seq, default_type, populate_id_hash);
         }
         assertEquals(5, result.size());
 

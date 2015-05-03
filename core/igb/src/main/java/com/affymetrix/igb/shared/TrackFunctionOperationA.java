@@ -2,8 +2,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.DefaultStateProvider;
@@ -76,7 +76,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 
         }
 
-        GenericFeature feature = createFeature(getMethod(vgs, false), getMethod(vgs, true), getOperator(), dps, vgs.get(0).getAnnotStyle());
+        DataSet feature = createFeature(getMethod(vgs, false), getMethod(vgs, true), getOperator(), dps, vgs.get(0).getAnnotStyle());
         GeneralLoadUtils.loadAndDisplayAnnotations(feature);
     }
 
@@ -140,7 +140,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
     }
 
-    private GenericFeature createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
+    private DataSet createFeature(String method, String featureName, Operator operator, List<Delegate.DelegateParent> dps, ITrackStyleExtended preferredStyle) {
         method = IGBStateProvider.getUniqueName("file:/" + removeIllegalCharacters(method));
 
         java.net.URI uri;
@@ -159,8 +159,8 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             uri = java.net.URI.create(GeneralUtils.URLEncode(method));
         }
 
-        GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), GeneralLoadView.getLoadView().getSelectedSpecies());
-        GenericFeature feature = GeneralLoadView.getLoadView().createFeature(featureName, new Delegate(uri, featureName, version.getGroup(), operator, dps));
+        DataContainer version = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), GeneralLoadView.getLoadView().getSelectedSpecies());
+        DataSet feature = GeneralLoadView.getLoadView().createDataSet(featureName, new Delegate(uri, featureName, version.getGenomeVersion(), operator, dps));
 
         ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, featureName, Delegate.EXT, null);
         if (preferredStyle != null) {

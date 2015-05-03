@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
@@ -70,7 +70,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Wiggle(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public Wiggle(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 
@@ -135,7 +135,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         try {
             File file = chrList.get(seq);
             if (file == null) {
-                Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                Logger.getLogger(Wiggle.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<GraphSym>emptyList();
             }
 
@@ -233,7 +233,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             if (firstChar == 't' && line.startsWith("track")) {
                 if (previous_track_line) {
                     // finish previous graph(s) using previous track properties
-                    grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString(), extension));
+                    grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), genomeVersion, current_datamap, uri.toString(), extension));
                 }
 
                 track_line_parser.parseTrackLine(line);
@@ -269,8 +269,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             current_start = parseData(
                     previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
         }
-        grafs.addAll(createGraphSyms(
-                track_line_parser.getCurrentTrackHash(), group, current_datamap, uri.toString(), extension));
+        grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), genomeVersion, current_datamap, uri.toString(), extension));
 
         return grafs;
     }
@@ -431,7 +430,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     /**
      * Finishes the current data section and creates a list of GraphSym objects.
      */
-    private static List<GraphSym> createGraphSyms(Map<String, String> track_hash, AnnotatedSeqGroup seq_group,
+    private static List<GraphSym> createGraphSyms(Map<String, String> track_hash, GenomeVersion seq_group,
             Map<String, WiggleData> current_datamap, String stream_name, String extension) {
         if (current_datamap == null) {
             return Collections.<GraphSym>emptyList();
@@ -449,7 +448,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         String graph_name = graph_id;
 
         if (!stream_name.equals(graph_id)) {
-            graph_id = AnnotatedSeqGroup.getUniqueGraphTrackID(stream_name, graph_id);
+            graph_id = GenomeVersion.getUniqueGraphTrackID(stream_name, graph_id);
         }
 //		track_hash.put(TrackLineParser.NAME, graph_id);
 
@@ -488,7 +487,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
      */
     public void writeBedFormat(GraphSym graf, String genome_version, OutputStream outstream) throws IOException {
         BioSeq seq = graf.getGraphSeq();
-        String seq_id = (seq == null ? "." : seq.getID());
+        String seq_id = (seq == null ? "." : seq.getId());
         String human_name = graf.getGraphState().getTierStyle().getTrackName();
         String gname = graf.getGraphName();
         GraphState state = graf.getGraphState();
@@ -680,7 +679,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             Iterator<? extends SeqSymmetry> iter = syms.iterator();
             for (GraphSym graf; iter.hasNext();) {
                 graf = (GraphSym) iter.next();
-                writeBedFormat(graf, graf.getGraphSeq().getID(), ostr);
+                writeBedFormat(graf, graf.getGraphSeq().getId(), ostr);
             }
 
             return true;

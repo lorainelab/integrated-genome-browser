@@ -83,7 +83,7 @@ public class BioSeqUtils {
         if (aseq.getResiduesProvider() != null) {
             SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
             BioSeq subseq = new BioSeq(
-                    aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getResiduesProvider().getLength());
+                    aseq.getId() + ":" + span.getMin() + "-" + span.getMax(), aseq.getResiduesProvider().getLength());
             subseq.setResiduesProvider(aseq.getResiduesProvider());
             addSubseqToComposition(aseq, span, subseq);
             return;
@@ -103,7 +103,7 @@ public class BioSeqUtils {
      */
     public static void addResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
         BioSeq subseq = new BioSeq(
-                aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues.length());
+                aseq.getId() + ":" + span.getMin() + "-" + span.getMax(), residues.length());
         subseq.setResidues(residues);
         addSubseqToComposition(aseq, span, subseq);
     }

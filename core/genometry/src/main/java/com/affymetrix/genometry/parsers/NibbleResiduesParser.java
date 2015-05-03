@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -47,12 +47,12 @@ public final class NibbleResiduesParser implements Parser {
      * BioSeq does exist that is not of the type NibbleBioSeq, an exception
      * will be thrown.
      */
-    public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+    public static BioSeq parse(InputStream istr, GenomeVersion seq_group) throws IOException {
         return parse(istr, seq_group, 0, Integer.MAX_VALUE);
     }
 
     //Returns bnib format
-    public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end) throws IOException {
+    public static BioSeq parse(InputStream istr, GenomeVersion seq_group, int start, int end) throws IOException {
         BioSeq result_seq = null;
         InputStream bis = null;
         DataInputStream dis = null;
@@ -118,21 +118,21 @@ public final class NibbleResiduesParser implements Parser {
 
     //Returns raw format
     public static boolean parse(InputStream istr, OutputStream output) throws IOException {
-        return parse(istr, new AnnotatedSeqGroup("No_Data"), output);
+        return parse(istr, new GenomeVersion("No_Data"), output);
     }
 
     //Returns raw format
-    public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, OutputStream output) throws IOException {
+    public static boolean parse(InputStream istr, GenomeVersion seq_group, OutputStream output) throws IOException {
         return parse(istr, seq_group, 0, Integer.MAX_VALUE, output);
     }
 
     //Returns raw format
     public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws IOException {
-        return parse(istr, new AnnotatedSeqGroup("No_Data"), start, end, output);
+        return parse(istr, new GenomeVersion("No_Data"), start, end, output);
     }
 
     //Returns raw format
-    public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end, OutputStream output) throws IOException {
+    public static boolean parse(InputStream istr, GenomeVersion seq_group, int start, int end, OutputStream output) throws IOException {
         BioSeq seq = parse(istr, seq_group, start, end);
         return writeAnnotations(seq, start, end, output);
     }
@@ -140,7 +140,7 @@ public final class NibbleResiduesParser implements Parser {
     /**
      * Determine the chromosome referenced by the BNIB stream.
      */
-    public static BioSeq determineChromosome(InputStream istr, AnnotatedSeqGroup seq_group) {
+    public static BioSeq determineChromosome(InputStream istr, GenomeVersion seq_group) {
         BioSeq result_seq = null;
         BufferedInputStream bis = null;
         DataInputStream dis = null;
@@ -300,14 +300,14 @@ public final class NibbleResiduesParser implements Parser {
         FileOutputStream fos = null;
         try {
             in = new FileInputStream(bnibFile);
-            BioSeq seq = NibbleResiduesParser.parse(in, new AnnotatedSeqGroup(bnibFile.toString()));
+            BioSeq seq = NibbleResiduesParser.parse(in, new GenomeVersion(bnibFile.toString()));
             String name = bnibFile.getName().replace(".bnib", ".fasta");
             File outFile = new File(bnibFile.getParentFile(), name);
 
             // We avoid string manipulation here; important for large chromosomes
             fos = new FileOutputStream(outFile);
             fos.write('>');
-            fos.write(seq.getID().getBytes());
+            fos.write(seq.getId().getBytes());
             fos.write('\n');
             NibbleResiduesParser.writeAnnotations(seq, 0, seq.getLength(), fos);
             fos.write('\n');
@@ -362,10 +362,10 @@ public final class NibbleResiduesParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = true processed here
-        BioSeq aseq = NibbleResiduesParser.parse(is, group);
+        BioSeq aseq = NibbleResiduesParser.parse(is, genomeVersion);
         if (aseq != GenometryModel.getInstance().getSelectedSeq()) {
             //TODO: maybe set the current seq to this seq
             Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.WARNING,

@@ -1,17 +1,11 @@
 package com.gene.searchmodelucene;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
-import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.lorainelab.igb.services.search.ISearchHints;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.lucene.document.Document;
 
@@ -45,17 +39,17 @@ public class SearchHints implements ISearchHints {
 
     public Set<String> search(String search_term) {
         Set<String> syms = new HashSet<>();
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        group.getEnabledVersions().stream().filter(gVersion -> gVersion.getgServer().getServerType() == LocalFilesServerType.getInstance() || gVersion.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(gVersion -> {
-            for (GenericFeature feature : gVersion.getFeatures()) {
-                if (feature.isVisible() && feature.getSymL() != null) {
-                    List<String> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_term, MAX_HITS);
-                    if (results != null) {
-                        syms.addAll(results);
-                    }
-                }
-            }
-        });
+//        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+//        group.getAvailableGenomeVersions().stream().filter(dataContainer -> dataContainer.getgServer().getServerType() == LocalFilesServerType.getInstance() || dataContainer.getgServer().getServerType() == QuickloadServerType.getInstance()).forEach(dataContainer -> {
+//            for (DataSet feature : dataContainer.getDataSets()) {
+//                if (feature.isVisible() && feature.getSymL() != null) {
+//                    List<String> results = luceneSearch.searchIndex(feature.getSymL().uri.toString(), search_term, MAX_HITS);
+//                    if (results != null) {
+//                        syms.addAll(results);
+//                    }
+//                }
+//            }
+//        });
         return syms;
     }
 

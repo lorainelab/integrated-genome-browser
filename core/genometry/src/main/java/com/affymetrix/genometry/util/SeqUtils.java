@@ -1364,7 +1364,7 @@ public class SeqUtils {
         // This DecimalFormat is used to insert commas between every three characters.
         java.text.DecimalFormat span_format = new java.text.DecimalFormat("#,###.###");
 
-        return ((seq == null ? "nullseq" : seq.getID()) + ": ["
+        return ((seq == null ? "nullseq" : seq.getId()) + ": ["
                 + span_format.format(span.getMin()) + " - " + span_format.format(span.getMax())
                 + "] ("
                 + (span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")");

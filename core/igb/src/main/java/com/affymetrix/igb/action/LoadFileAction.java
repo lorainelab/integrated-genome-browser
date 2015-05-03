@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -62,11 +62,14 @@ public final class LoadFileAction extends OpenURIAction {
 
         @Override
         public void openFileAction(List<File> files) {
-            AnnotatedSeqGroup loadGroup = getloadGroup();
+            GenomeVersion genomeVersion = getGenomeVersion();
             String speciesName = getSpeciesName();
+            if (speciesName.startsWith(UNKNOWN_SPECIES_PREFIX)) {
+                genomeVersion.setSpeciesName(speciesName);
+            }
             UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
             for (File f : files) {
-                openURIOrRunScript(f.toURI(), loadGroup, speciesName, f.getName(), all_known_types);
+                openURIOrRunScript(f.toURI(), genomeVersion, f.getName(), all_known_types);
                 mergeSelected = true; // loadGroup will not be null at this point
             }
         }
@@ -75,7 +78,12 @@ public final class LoadFileAction extends OpenURIAction {
         public void openURLAction(String url) {
             try {
                 UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
-                openURIOrRunScript(new URI(url.trim()), getloadGroup(), getSpeciesName(), url, all_known_types);
+                GenomeVersion loadGroup = getGenomeVersion();
+                String speciesName = getSpeciesName();
+                if (speciesName.startsWith(UNKNOWN_SPECIES_PREFIX)) {
+                    loadGroup.setSpeciesName(speciesName);
+                }
+                openURIOrRunScript(new URI(url.trim()), loadGroup, url, all_known_types);
             } catch (URISyntaxException ex) {
                 ex.printStackTrace();
                 ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
@@ -83,33 +91,33 @@ public final class LoadFileAction extends OpenURIAction {
         }
     };
 
-    private void openURIOrRunScript(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, String name, FileFilter all_known_types) {
-        if (openURI(uri, loadGroup, speciesName, all_known_types)) {
+    private void openURIOrRunScript(URI uri, GenomeVersion loadGroup, String name, FileFilter all_known_types) {
+        if (openURI(uri, loadGroup, all_known_types)) {
             return;
         }
         ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + name, Level.WARNING);
     }
 
-    private boolean openURI(URI uri, AnnotatedSeqGroup loadGroup, String speciesName, FileFilter all_known_types) {
+    private boolean openURI(URI uri, GenomeVersion genomeVersion, FileFilter all_known_types) {
         String unzippedName = GeneralUtils.getUnzippedName(uri.getPath());
         String friendlyName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
-        openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, false);//Always load as track
+        openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), false);//Always load as track
 
         return true;
     }
 
-    private AnnotatedSeqGroup getloadGroup() {
-        AnnotatedSeqGroup loadGroup = gmodel.getSelectedSeqGroup();
-        if (loadGroup == null) {
+    private GenomeVersion getGenomeVersion() {
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+        if (genomeVersion == null) {
             mergeSelected = false;
-            loadGroup = gmodel.addSeqGroup(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER);
+            genomeVersion = gmodel.addGenomeVersion(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER);
         } else {
             mergeSelected = true;
         }
-        return loadGroup;
+        return genomeVersion;
     }
 
     private String getSpeciesName() {
@@ -144,7 +152,7 @@ public final class LoadFileAction extends OpenURIAction {
         fileChooser.setMultipleMode(true);
 
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-        AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
+        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
         File[] files = null;
 
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {

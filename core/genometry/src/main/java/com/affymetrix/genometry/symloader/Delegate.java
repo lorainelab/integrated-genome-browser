@@ -1,10 +1,10 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
@@ -45,9 +45,9 @@ public class Delegate extends QuickLoadSymLoader {
     private List<DelegateParent> dps;
     private final List<LoadUtils.LoadStrategy> strategyList;
 
-    public Delegate(URI uri, String featureName, AnnotatedSeqGroup group,
+    public Delegate(URI uri, String featureName, GenomeVersion genomeVersion,
             Operator operator, List<DelegateParent> dps) {
-        super(uri, featureName, group);
+        super(uri, featureName, genomeVersion);
         this.operator = operator;
         this.dps = dps;
         strategyList = new ArrayList<>();
@@ -137,7 +137,7 @@ public class Delegate extends QuickLoadSymLoader {
     }
 
     @Override
-    public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final GenericFeature feature)
+    public Map<String, List<? extends SeqSymmetry>> loadFeatures(final SeqSpan overlapSpan, final DataSet feature)
             throws OutOfMemoryError, Exception {
         boolean notUpdatable = false;
 
@@ -194,7 +194,7 @@ public class Delegate extends QuickLoadSymLoader {
 
     @Override
     protected Map<String, List<? extends SeqSymmetry>> addSymmtries(
-            final SeqSpan span, List<? extends SeqSymmetry> results, GenericFeature feature) {
+            final SeqSpan span, List<? extends SeqSymmetry> results, DataSet feature) {
         Map<String, List<? extends SeqSymmetry>> added = new HashMap<>();
         added.put(uri.toString(), results);
 
@@ -235,7 +235,7 @@ public class Delegate extends QuickLoadSymLoader {
         return added;
     }
 
-    private void addWholeGraph(GraphSym graphSym, GenericFeature feature) {
+    private void addWholeGraph(GraphSym graphSym, DataSet feature) {
         BioSeq seq = graphSym.getGraphSeq();
 
         // Remove previous graph
@@ -257,10 +257,10 @@ public class Delegate extends QuickLoadSymLoader {
 
         String name;
         Boolean direction;
-        GenericFeature feature;
+        DataSet feature;
         SymmetryFilterI filter;
 
-        public DelegateParent(String name, Boolean direction, GenericFeature feature, SymmetryFilterI filter) {
+        public DelegateParent(String name, Boolean direction, DataSet feature, SymmetryFilterI filter) {
             this.name = name;
             this.direction = direction;
             this.feature = feature;

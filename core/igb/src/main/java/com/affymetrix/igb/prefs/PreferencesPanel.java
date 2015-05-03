@@ -89,7 +89,6 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
 
         singleton.addPreferencePanel(singleton.tpvGUI);
         singleton.addPreferencePanel(new OtherOptionsView());
-        singleton.addPreferencePanel(DataLoadPrefsView.getSingleton());
         return singleton;
     }
 
@@ -109,8 +108,8 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
     }
 
     public int getTabIndex(String tabName) {
-        for (int i = 0; i < tab_pane.getComponentCount(); i++) {
-            Component c = tab_pane.getComponentAt(i);
+        for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
+            Component c = tabbedPane.getComponentAt(i);
             if (c instanceof PreferencesPanelProvider) {
                 if (((PreferencesPanelProvider) c).getName().equalsIgnoreCase(tabName)) {
                     return i;
@@ -253,7 +252,7 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
         try {
             htmlText = Resources.toString(PreferencesPanel.class.getResource("/help/com.affymetrix.igb.prefs.PreferencesPanel.html"), Charsets.UTF_8);
         } catch (IOException ex) {
-            logger.error("Help file not found " , ex);
+            logger.error("Help file not found ", ex);
         }
         return htmlText;
     }

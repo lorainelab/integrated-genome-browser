@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.TwoBitParser;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
@@ -9,8 +9,8 @@ import com.affymetrix.genometry.util.SearchableCharIterator;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,11 +36,11 @@ public class TwoBit extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public TwoBit(URI uri, AnnotatedSeqGroup group, String seqName) {
-        super(uri, "", group);
+    public TwoBit(URI uri, GenomeVersion genomeVersion, String seqName) {
+        super(uri, "", genomeVersion);
         this.isResidueLoader = true;
         try {
-            BioSeq retseq = TwoBitParser.parse(uri, group, seqName);
+            BioSeq retseq = TwoBitParser.parse(uri, genomeVersion, seqName);
             if (retseq != null) {
                 chrMap.put(retseq, retseq.getResiduesProvider());
                 retseq.removeResidueProvider();
@@ -51,7 +51,7 @@ public class TwoBit extends SymLoader {
         }
     }
 
-    public TwoBit(URI uri, String featureName, AnnotatedSeqGroup group) {
+    public TwoBit(URI uri, String featureName, GenomeVersion group) {
         super(uri, "", group);
         this.isResidueLoader = true;
     }
@@ -61,7 +61,7 @@ public class TwoBit extends SymLoader {
         if (this.isInitialized) {
             return;
         }
-        List<BioSeq> seqs = TwoBitParser.parse(uri, group);
+        List<BioSeq> seqs = TwoBitParser.parse(uri, genomeVersion);
         if (seqs != null) {
             for (BioSeq seq : seqs) {
                 chrMap.put(seq, seq.getResiduesProvider());
@@ -90,7 +90,7 @@ public class TwoBit extends SymLoader {
             return chrMap.get(seq).substring(span.getMin(), span.getMax());
         }
 
-        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getID(), uri.toString()});
+        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
         return "";
     }
 

@@ -6,7 +6,7 @@
  */
 package com.affymetrix.genometry.parsers.das;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import java.io.File;
@@ -42,7 +42,7 @@ public class DASFeatureParserTest {
         InputStream istr = null;
         assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_1).getFile()).exists());
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion group = new GenomeVersion("Test Group");
         DASFeatureParser parser = new DASFeatureParser();
         parser.setAnnotateSeq(false);
 
@@ -88,7 +88,7 @@ public class DASFeatureParserTest {
         InputStream istr = null;
         assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_2).getFile()).exists());
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion group = new GenomeVersion("Test Group");
         DASFeatureParser parser = new DASFeatureParser();
         parser.setAnnotateSeq(false);
 

@@ -7,7 +7,7 @@ package com.lorainelab.igb.services.window;
  * closing the program (not abnormal shutdown) and will not
  * be run in any specified order.
  */
-public interface WindowServiceLifecylceHook {
+public interface WindowServiceLifecycleHook {
 
     /**
      * the routine to run at IGB exit.

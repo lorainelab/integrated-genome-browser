@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.SymLoader;
 import java.net.URI;
 
@@ -26,10 +26,10 @@ public interface FileTypeHandler {
      *
      * @param uri the URI for the symloader
      * @param featureName the feature name for the symloader
-     * @param group the AnnotatedSeqGroup for the symloader
+     * @param genomeVersion the GenomeVersion for the symloader
      * @return the SymLoader to use
      */
-    public SymLoader createSymLoader(URI uri, String featureName, AnnotatedSeqGroup group);
+    public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion);
 
     /**
      * get a Parser for the file type

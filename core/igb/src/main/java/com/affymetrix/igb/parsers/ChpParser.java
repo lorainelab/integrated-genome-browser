@@ -24,8 +24,8 @@ import affymetrix.fusion.chp.FusionCHPQuantificationData;
 import affymetrix.fusion.chp.FusionCHPQuantificationDetectionData;
 import affymetrix.fusion.chp.FusionCHPTilingData;
 import affymetrix.fusion.chp.FusionExpressionProbeSetResults;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
@@ -184,7 +184,7 @@ public final class ChpParser {
             file_prop_hash.put(pname, pval);
         }
 
-        AnnotatedSeqGroup group = null;
+        GenomeVersion genomeVersion = null;
         BioSeq aseq = null;
 
         for (int i = 0; i < seq_count; i++) {
@@ -195,40 +195,40 @@ public final class ChpParser {
             String seq_name = seq.getName();
             String seq_group_name = seq.getGroupName();
             String seq_vers = seq.getVersion();
-            System.out.println("seq " + i + ", name = " + seq_name + ", group = " + seq_group_name
+            System.out.println("seq " + i + ", name = " + seq_name + ", genomeVersion = " + seq_group_name
                     + ", version = " + seq_vers + ", datapoints = " + entry_count);
 
-            // try and match up chp seq to a BioSeq and AnnotatedSeqGroup in GenometryModel
-            // if seq group can't be matched, make a new seq group
+            // try and match up chp seq to a BioSeq and GenomeVersion in GenometryModel
+            // if seq genomeVersion can't be matched, make a new seq genomeVersion
             // if seq can't be matched, make a new seq
-            // trying three different ways of matching up to AnnotatedSeqGroup
-            // 1. concatenation of seq_group_name and seq_vers (standard way of mapping CHP ids to AnnotatedSeqGroup)
+            // trying three different ways of matching up to GenomeVersion
+            // 1. concatenation of seq_group_name and seq_vers (standard way of mapping CHP ids to GenomeVersion)
             // 2. just seq_group_name
             // 3. just seq_vers
             String groupid = seq_group_name + ":" + seq_vers;
-            group = gmodel.getSeqGroup(groupid);
-            if (group == null) {
-                group = gmodel.getSeqGroup(seq_group_name);
+            genomeVersion = gmodel.getSeqGroup(groupid);
+            if (genomeVersion == null) {
+                genomeVersion = gmodel.getSeqGroup(seq_group_name);
             }
-            if (group == null) {
-                group = gmodel.getSeqGroup(seq_vers);
+            if (genomeVersion == null) {
+                genomeVersion = gmodel.getSeqGroup(seq_vers);
             }
-            // if no AnnotatedSeqGroup matches found, create a new one
-            if (group == null) {
-                System.out.println("adding new seq group: " + groupid);
-                group = gmodel.addSeqGroup(groupid);
+            // if no GenomeVersion matches found, create a new one
+            if (genomeVersion == null) {
+                System.out.println("adding new seq genomeVersion: " + groupid);
+                genomeVersion = gmodel.addGenomeVersion(groupid);
             }
 
-            if (gmodel.getSelectedSeqGroup() != group) {
+            if (gmodel.getSelectedGenomeVersion() != genomeVersion) {
                 // This is necessary to make sure new groups get added to the DataLoadView.
                 // maybe need a SeqGroupModifiedEvent class instead.
-                gmodel.setSelectedSeqGroup(group);
+                gmodel.setSelectedGenomeVersion(genomeVersion);
             }
 
-            aseq = group.getSeq(seq_name);
+            aseq = genomeVersion.getSeq(seq_name);
             if (aseq == null) {
-                System.out.println("adding new seq: id = " + seq_name + ", group = " + group.getID());
-                aseq = group.addSeq(seq_name, 0);
+                System.out.println("adding new seq: id = " + seq_name + ", genomeVersion = " + genomeVersion.getName());
+                aseq = genomeVersion.addSeq(seq_name, 0);
             }
 
             int[] xcoords = new int[entry_count];
@@ -270,7 +270,7 @@ public final class ChpParser {
             }
         }
 
-        gmodel.setSelectedSeqGroup(group);
+        gmodel.setSelectedGenomeVersion(genomeVersion);
         gmodel.setSelectedSeq(aseq);
         return results;
     }
@@ -290,12 +290,12 @@ public final class ChpParser {
     // What if id does not exist, but id + ".1" does?
     // What if id + ".1" does not exist, but id + ".2" does?
     // Does this list need to be in order?
-    private static void findSyms(AnnotatedSeqGroup group, String id, List<SeqSymmetry> results, boolean try_appended_id) {
+    private static void findSyms(GenomeVersion genomeVersion, String id, List<SeqSymmetry> results, boolean try_appended_id) {
         if (id == null) {
             return;
         }
 
-        Set<SeqSymmetry> seqsym_list = group.findSyms(id);
+        Set<SeqSymmetry> seqsym_list = genomeVersion.findSyms(id);
         if (!seqsym_list.isEmpty()) {
             results.addAll(seqsym_list);
             return;
@@ -307,7 +307,7 @@ public final class ChpParser {
 
         // try id appended with ".n" where n is 0, 1, etc. till there is no match
         int postfix = 0;
-        for (Set<SeqSymmetry> seq_sym_list = group.findSyms(id + "." + postfix++); !seq_sym_list.isEmpty(); seq_sym_list = group.findSyms(id + "." + postfix++)) {
+        for (Set<SeqSymmetry> seq_sym_list = genomeVersion.findSyms(id + "." + postfix++); !seq_sym_list.isEmpty(); seq_sym_list = genomeVersion.findSyms(id + "." + postfix++)) {
             results.addAll(seq_sym_list);
         }
     }

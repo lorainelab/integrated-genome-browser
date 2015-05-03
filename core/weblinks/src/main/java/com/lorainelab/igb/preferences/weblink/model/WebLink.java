@@ -1,6 +1,6 @@
 package com.lorainelab.igb.preferences.weblink.model;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -192,7 +192,7 @@ public final class WebLink implements Comparable<WebLink> {
     }
 
     /**
-     * replace all "$:genome:$" in the url pattern with the current seqGroup id,
+     * replace all "$:genome:$" in the url pattern with the current genomeVersion id,
      * URLEncoded
      *
      * @param url
@@ -203,11 +203,11 @@ public final class WebLink implements Comparable<WebLink> {
             return url;
         }
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-        if (group != null) {
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+        if (genomeVersion != null) {
             String encoded_id = "";
             try {
-                encoded_id = URLEncoder.encode(group.getID(), "UTF-8");
+                encoded_id = URLEncoder.encode(genomeVersion.getName(), "UTF-8");
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
             }

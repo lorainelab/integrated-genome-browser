@@ -52,7 +52,7 @@ public class PrimerSearchAction extends GenericAction {
                 public void actionDone(GenericAction action) {
                     try {
                         String residues = SeqUtils.getResidues(residues_sym, aseq);
-                        Sequence seq = new Sequence(aseq.getID(), residues);
+                        Sequence seq = new Sequence(aseq.getId(), residues);
 
                         StrandedFeatureSetI sf = new StrandedFeatureSet();
                         sf.setRefSequence(seq);

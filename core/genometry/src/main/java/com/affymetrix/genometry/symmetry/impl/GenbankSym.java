@@ -208,7 +208,7 @@ public final class GenbankSym implements SeqSpan, SupportsCdsSpan, SymWithProps 
             super(start, end, seq);
         }
 
-        // For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getId(),
         // or must NOT implement SymWithProps.
         public String getID() {
             return GenbankSym.this.getID();

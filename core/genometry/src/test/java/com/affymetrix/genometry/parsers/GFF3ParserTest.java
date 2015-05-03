@@ -5,7 +5,7 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.GFF3;
 import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -40,7 +40,7 @@ public class GFF3ParserTest {
         try (InputStream istr = new FileInputStream(filename)) {
             assertNotNull(istr);
 
-            AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+            GenomeVersion seq_group = new GenomeVersion("test");
             assertNotNull(seq_group);
 
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
@@ -117,7 +117,7 @@ public class GFF3ParserTest {
         InputStream istr = new FileInputStream(filename);
         assertNotNull(istr);
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
 
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
 //			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.

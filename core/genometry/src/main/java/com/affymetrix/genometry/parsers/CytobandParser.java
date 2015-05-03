@@ -9,8 +9,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -74,7 +74,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
      * SmartAnnotBioSeq, it will in turn create a TypeContainerSym as parent of
      * the single SymWithProps)
      */
-    public List<SeqSymmetry> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+    public List<SeqSymmetry> parse(InputStream dis, GenomeVersion seq_group, boolean annotate_seq)
             throws IOException {
 
         int band_alternator = 1; // toggles dark/light when band color is missing
@@ -122,7 +122,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
             }
 
             if (annot_name == null || annot_name.length() == 0) {
-                annot_name = seq_group.getID();
+                annot_name = seq_group.getName();
             }
 
             CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);
@@ -201,7 +201,7 @@ public final class CytobandParser implements AnnotationWriter, Parser {
             CytobandSym cytosym = (CytobandSym) sym;
             SeqSpan span = cytosym.getSpan(seq);
             if (span != null) {
-                out.write(seq.getID());
+                out.write(seq.getId());
                 out.write('\t');
                 int min = span.getMin();
                 int max = span.getMax();
@@ -347,8 +347,8 @@ public final class CytobandParser implements AnnotationWriter, Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        return parse(is, group, annotate_seq);
+        return parse(is, genomeVersion, annotate_seq);
     }
 }

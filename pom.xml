@@ -176,7 +176,6 @@
                 <module>developmentPlugins/SampleSelection</module>
                 <module>developmentPlugins/SearchModeSymmetryFilter</module>
                 <module>developmentPlugins/TallyHandler</module>
-                <module>developmentPlugins/ThousandGenomesServerType</module>
                 <module>developmentPlugins/TranscriptIsoform</module>               
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/NCBIPrimer</module>
@@ -516,12 +515,6 @@
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>thousandGenomesServerType</artifactId>
-                <version>${project.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>com.affymetrix</groupId>
                 <artifactId>transcriptIsoForm</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
@@ -582,6 +575,11 @@
                 <version>${commonsLangVersion}</version>
                 <scope>provided</scope>
             </dependency>        
+            <dependency>
+                <groupId>org.biojava</groupId>
+                <artifactId>biojava-core</artifactId>
+                <version>4.0.0</version>
+            </dependency>
             <!--End of additional provided dependencies-->
 
 

@@ -1,13 +1,13 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import java.util.List;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -22,8 +22,8 @@ public class SymLoaderInstNC extends SymLoaderInst {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoaderInstNC(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public SymLoaderInstNC(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override

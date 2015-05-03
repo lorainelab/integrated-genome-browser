@@ -31,7 +31,7 @@ public class LinkControl implements ContextualPopupListener {
     }
 
     @Activate
-    public void activate() {
+    private void activate() {
         igbService.getSeqMapView().addPopupListener(this);
     }
 

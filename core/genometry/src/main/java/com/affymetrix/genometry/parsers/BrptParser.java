@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -104,7 +104,7 @@ public final class BrptParser implements Parser {
         dos.writeInt(pcount);  // how many seqs there are
         for (SeqSymmetry parent : parents) {
             BioSeq seq = parent.getSpanSeq(0);
-            String seqid = seq.getID();
+            String seqid = seq.getId();
             int rpt_count = parent.getChildCount();
             dos.writeUTF(seqid);
             dos.writeInt(rpt_count);
@@ -175,7 +175,7 @@ public final class BrptParser implements Parser {
         return parent_syms;
     }
 
-    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
+    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, GenomeVersion seq_group, boolean annot_seq)
             throws IOException {
         System.out.println("parsing brpt file");
         List<SeqSymmetry> rpt_syms = null;
@@ -246,7 +246,7 @@ public final class BrptParser implements Parser {
                 File ifil = new File(binfile);
                 InputStream istr = new FileInputStream(ifil);
                 GenometryModel gmodel = GenometryModel.getInstance();
-                AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+                GenomeVersion seq_group = gmodel.addGenomeVersion("Test Group");
                 parse(istr, "rpt", seq_group, true);
                 System.out.println("finished parsing in rpt data from .brpt file");
             } else {
@@ -283,9 +283,9 @@ public final class BrptParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        List<SeqSymmetry> alist = parse(is, uri, group, annotate_seq);
+        List<SeqSymmetry> alist = parse(is, uri, genomeVersion, annotate_seq);
         Logger.getLogger(BrptParser.class.getName()).log(
                 Level.FINE, "total repeats loaded: {0}", alist.size());
         return alist;

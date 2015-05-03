@@ -5,6 +5,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.IGB_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.SUPPORTED_PROTOCOL_SCHEMES;
+import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.hash.HashCode;
@@ -85,25 +86,6 @@ public final class LocalUrlCacher {
     public static final int READ_TIMEOUT = 20000;		// If you can't read any data in 20 seconds, fail.
 
     private static boolean offline = false;
-
-    /**
-     * Sets the cacher to off-line mode, in which case only cached data will be
-     * used, will never try to get data from the web.
-     *
-     * @param b
-     */
-    public static void setOffLine(boolean b) {
-        offline = b;
-    }
-
-    /**
-     * Returns the value of the off-line flag.
-     *
-     * @return true if offline
-     */
-    public static boolean getOffLine() {
-        return offline;
-    }
 
     /**
      * Determines whether the given URL string represents a file URL.
@@ -190,20 +172,11 @@ public final class LocalUrlCacher {
     private static InputStream getInputStream(
             String url, int cache_option, boolean write_to_cache, Map<String, String> rqstHeaders, Map<String, List<String>> respHeaders, boolean fileMayNotExist, boolean allowHtml)
             throws IOException {
-        //look to see if a sessionId is present in the headers
-        String sessionId = null;
-        if (rqstHeaders != null) {
-            if (rqstHeaders.containsKey("sessionId")) {
-                sessionId = rqstHeaders.get("sessionId");
-            }
-            //clear headers
-            rqstHeaders.clear();
-        }
 
         // if url is a file url, and not caching files, then just directly return stream
         if (isFile(url)) {
             //IGB.getInstance().logInfo("URL is file url, so not caching: " + furl);
-            return getUncachedFileStream(url, sessionId, fileMayNotExist);
+            return getUncachedFileStream(url, fileMayNotExist);
         }
 
         // if NORMAL_CACHE:
@@ -212,40 +185,29 @@ public final class LocalUrlCacher {
         //        on modification date of cached file
         //      if content is returned, check last-modified header just to be sure (some servers might ignore
         //        if-modified-since header?)
-        InputStream result_stream = null;
-        File cache_file = getCacheFile(CACHE_CONTENT_ROOT, url);
+        InputStream resultStream = null;
+        File cacheFile = getCacheFile(CACHE_CONTENT_ROOT, url);
         File header_cache_file = getCacheFile(CACHE_HEADER_ROOT, url);
         long local_timestamp = -1;
 
         // special-case when one cache file exists, but the other doesn't or is zero-length. Shouldn't happen, really.
-        if (cache_file.exists() && (!header_cache_file.exists() || header_cache_file.length() == 0)) {
-            cache_file.delete();
-        } else if ((!cache_file.exists() || cache_file.length() == 0) && header_cache_file.exists()) {
+        if (cacheFile.exists() && (!header_cache_file.exists() || header_cache_file.length() == 0)) {
+            cacheFile.delete();
+        } else if ((!cacheFile.exists() || cacheFile.length() == 0) && header_cache_file.exists()) {
             header_cache_file.delete();
         }
 
-        if ((offline || cache_option != IGNORE_CACHE) && cache_file.exists() && header_cache_file.exists()) {
-            local_timestamp = cache_file.lastModified();
+        if (cache_option != IGNORE_CACHE && cacheFile.exists() && header_cache_file.exists()) {
+            local_timestamp = cacheFile.lastModified();
         }
         URLConnection conn = null;
         long remote_timestamp = 0;
         boolean url_reachable = false;
         int http_status = -1;
 
-        if (offline) {
-            // ignore whatever option was specified when we are offline, only the
-            // cache is available.
-            cache_option = ONLY_CACHE;
-        }
-
-        // if offline or if cache_option == ONLY_CACHE, then don't even try to retrieve from url
         if (cache_option != ONLY_CACHE) {
             try {
-                conn = connectToUrl(url, sessionId, local_timestamp);
-
-                if (logger.isTraceEnabled()) {
-                    reportHeaders(conn);
-                }
+                conn = connectToUrl(url, local_timestamp);
 
                 if (respHeaders != null) {
                     respHeaders.putAll(conn.getHeaderFields());
@@ -265,7 +227,7 @@ public final class LocalUrlCacher {
 
                     //Handle one redirect
                     if (http_status == HTTP_TEMP_REDIRECT) {
-                        conn = handleTemporaryRedirect(conn, url, sessionId, local_timestamp);
+                        conn = handleTemporaryRedirect(conn, url, local_timestamp);
                         hcon = (HttpURLConnection) conn;
                         http_status = hcon.getResponseCode();
                     }
@@ -297,7 +259,7 @@ public final class LocalUrlCacher {
                 if (rqstHeaders != null) {
                     rqstHeaders.put("LocalUrlCacher", URL_NOT_REACHABLE);
                 }
-                if (!cache_file.exists()) {
+                if (!cacheFile.exists()) {
                     if (!fileMayNotExist) {
                         logger.warn("URL {} is not reachable, and is not cached!", url);
                     }
@@ -308,28 +270,28 @@ public final class LocalUrlCacher {
 
         // found cached data
         if (local_timestamp != -1) {
-            result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, remote_timestamp, local_timestamp, url, cache_option);
+            resultStream = TryToRetrieveFromCache(url_reachable, http_status, cacheFile, remote_timestamp, local_timestamp, url, cache_option);
             if (rqstHeaders != null) {
                 retrieveHeadersFromCache(rqstHeaders, header_cache_file);
             }
         }
 
         // Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
-        if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {
-            result_stream = RetrieveFromURL(conn, rqstHeaders, write_to_cache, cache_file, header_cache_file);
+        if (resultStream == null && url_reachable && (cache_option != ONLY_CACHE)) {
+            resultStream = RetrieveFromURL(conn, rqstHeaders, write_to_cache, cacheFile, header_cache_file);
         }
 
         if (rqstHeaders != null && logger.isTraceEnabled()) {
             reportHeaders(url, rqstHeaders);
         }
-        if (result_stream == null) {
+        if (resultStream == null) {
             logger.warn(
                     "couldn''t get content for: {}", url);
         }
-        return result_stream;
+        return resultStream;
     }
 
-    private static URLConnection handleTemporaryRedirect(URLConnection conn, String url, String sessionId, long local_timestamp) throws IOException {
+    private static URLConnection handleTemporaryRedirect(URLConnection conn, String url, long local_timestamp) throws IOException {
 
         String redirect_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
         if (redirect_url == null) {
@@ -340,39 +302,32 @@ public final class LocalUrlCacher {
         logger.warn(
                 "Url {} moved temporarily. \n Using redirect \nurl {}", new Object[]{url, redirect_url});
 
-        conn = connectToUrl(redirect_url, sessionId, local_timestamp);
+        conn = connectToUrl(redirect_url, local_timestamp);
 
         return conn;
     }
 
-    public static URLConnection connectToUrl(String url, String sessionId, long local_timestamp) throws IOException {
+    public static URLConnection connectToUrl(String url, long local_timestamp) throws IOException {
         URL theurl = new URL(url);
         URLConnection conn = theurl.openConnection();
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setReadTimeout(READ_TIMEOUT);
         conn.setRequestProperty("Accept-Encoding", "gzip");
-        //set sessionId?
-        if (sessionId != null) {
-            conn.setRequestProperty("Cookie", sessionId);
-        }
         if (local_timestamp != -1) {
             conn.setIfModifiedSince(local_timestamp);
-        } //    because some method calls on URLConnection like those below don't always throw errors
+        }
+        //    because some method calls on URLConnection like those below don't always throw errors
         //    when connection can't be opened -- which would end up allowing url_reachable to be set to true
         ///   even when there's no connection
         conn.connect();
         return conn;
     }
 
-    private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws IOException {
+    private static InputStream getUncachedFileStream(String url, boolean fileMayNotExist) throws IOException {
         URL furl = new URL(url);
         URLConnection huc = furl.openConnection();
         huc.setConnectTimeout(CONNECT_TIMEOUT);
         huc.setReadTimeout(READ_TIMEOUT);
-        //set sessionId
-        if (sessionId != null) {
-            huc.setRequestProperty("Cookie", sessionId);
-        }
         InputStream fstr = null;
         try {
             fstr = huc.getInputStream();
@@ -579,44 +534,6 @@ public final class LocalUrlCacher {
         PreferenceUtils.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
     }
 
-    public static void reportHeaders(URLConnection query_con) {
-        try {
-            logger.info(
-                    "URL: {}", query_con.getURL().toString());
-            int hindex = 0;
-            while (true) {
-                String val = query_con.getHeaderField(hindex);
-                String key = query_con.getHeaderFieldKey(hindex);
-                if (val == null && key == null) {
-                    break;
-                }
-                logger.info(
-                        "   header:   key = {}, val = {}", new Object[]{key, val});
-                hindex++;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void loadSynonyms(SynonymLookup lookup, String synonym_loc) {
-        InputStream syn_stream = null;
-        try {
-            // Don't cache.  Don't warn user if the synonyms file doesn't exist.
-            syn_stream = LocalUrlCacher.getInputStream(synonym_loc, getPreferredCacheUsage(), false, null, null, true);
-            if (syn_stream == null) {
-                return;
-            }
-            logger.info(
-                    "Synonyms found at: {}", synonym_loc);
-            lookup.loadSynonyms(syn_stream);
-        } catch (IOException ioe) {
-            logger.warn("Unable to load synonyms from '" + synonym_loc + "'", ioe);
-        } finally {
-            GeneralUtils.safeClose(syn_stream);
-        }
-    }
-
     private static void writeHeadersToCache(File header_cache_file, Properties headerprops) throws IOException {
         // cache headers also -- in [cache_dir]/headers ?
         if (logger.isTraceEnabled()) {
@@ -707,9 +624,14 @@ public final class LocalUrlCacher {
             is = new FileInputStream(new File(uri));
         } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             is = LocalUrlCacher.getInputStream(uri.toString());
+//            return HttpRequest.get(uri.toURL())
+//                    .acceptGzipEncoding()
+//                    .uncompress(true)
+//                    .trustAllCerts()
+//                    .trustAllHosts()
+//                    .followRedirects(true).buffer();
         } else {
-            logger.error(
-                    "URL scheme: {} not recognized", scheme);
+            logger.error("URL scheme: {} not recognized", scheme);
             return null;
         }
 
@@ -729,21 +651,21 @@ public final class LocalUrlCacher {
         InputStream is = null;
         try {
             if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
-                is = new FileInputStream(new File(uri));
+                return new BufferedInputStream(new FileInputStream(new File(uri)));
             } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
                 is = LocalUrlCacher.getInputStream(uri.toString());
+//                return HttpRequest.get(uri.toURL())
+//                        .acceptGzipEncoding()
+//                        .trustAllCerts()
+//                        .trustAllHosts()
+//                        .followRedirects(true).buffer();
             } else {
                 logger.error(
                         "URL scheme: {} not recognized", scheme);
                 return null;
             }
-
-            if (is instanceof BufferedInputStream) {
-                return (BufferedInputStream) is;
-            }
-            return new BufferedInputStream(is);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
         return null;
     }
@@ -797,7 +719,7 @@ public final class LocalUrlCacher {
                 return (bytesRead != -1);
 
             } catch (MalformedURLException ex) {
-                logger.warn("Malformed Invalid uri :{}", uri.toString());
+                logger.warn("Malformed Invalid uri: {}", uri.toString());
             } catch (IOException ex) {
                 //do nothing
             } finally {
@@ -806,6 +728,25 @@ public final class LocalUrlCacher {
         }
 
         return scheme.startsWith(IGB_PROTOCOL_SCHEME);
+    }
+
+    public static boolean isValidRequest(URI uri) throws IOException {
+        if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+            File f = new File(uri);
+            return f.exists();
+        } else {
+            int code = -1;
+            try {
+                code = HttpRequest.get(uri.toURL())
+                        .trustAllCerts()
+                        .trustAllHosts()
+                        .followRedirects(true)
+                        .connectTimeout(1000)
+                        .code();
+            } catch (HttpRequest.HttpRequestException ex) {
+            }
+            return code == HttpURLConnection.HTTP_OK;
+        }
     }
 
     public static String getReachableUrl(String urlString) {
@@ -820,7 +761,7 @@ public final class LocalUrlCacher {
             InputStream istr = null;
             try {
 
-                URLConnection conn = connectToUrl(urlString, null, -1);
+                URLConnection conn = connectToUrl(urlString, -1);
                 if (conn instanceof HttpURLConnection) {
                     String reachable_url = urlString;
                     HttpURLConnection hcon = (HttpURLConnection) conn;
@@ -829,7 +770,7 @@ public final class LocalUrlCacher {
                     //Handle one redirect
                     if (http_status == HTTP_TEMP_REDIRECT) {
                         reachable_url = conn.getHeaderField(HTTP_LOCATION_HEADER);
-                        conn = handleTemporaryRedirect(conn, urlString, null, -1);
+                        conn = handleTemporaryRedirect(conn, urlString, -1);
                         hcon = (HttpURLConnection) conn;
                         http_status = hcon.getResponseCode();
                     }
@@ -845,47 +786,13 @@ public final class LocalUrlCacher {
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error(ex.getMessage(), ex);
             } finally {
                 GeneralUtils.safeClose(istr);
             }
         }
 
         return null;
-    }
-
-    private static boolean DEBUG = false;
-
-    public static String httpGet(String urlStr) throws IOException {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn
-                = (HttpURLConnection) url.openConnection();
-
-        if (conn.getResponseCode() != 200) {
-            throw new IOException(conn.getResponseMessage());
-        }
-
-        if (DEBUG) {
-            logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
-        }
-
-        StringBuilder sb;
-        try ( // Buffer the result into a string
-                BufferedReader rd = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()))) {
-                    sb = new StringBuilder();
-                    String line;
-                    while ((line = rd.readLine()) != null) {
-                        sb.append(line);
-                    }
-                }
-                conn.disconnect();
-
-                if (DEBUG) {
-                    logger.info("Result {}", sb.toString());
-                }
-
-                return sb.toString();
     }
 
     public static String httpPost(String urlStr, Map<String, String> params) throws IOException {
@@ -915,18 +822,11 @@ public final class LocalUrlCacher {
             sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
         String content = sb.toString();
-        if (DEBUG) {
-            logger.info("Content :{}", content);
-        }
 
         try ( // Create the form content
                 DataOutputStream out = new DataOutputStream(conn.getOutputStream())) {
             out.writeBytes(content);
             out.flush();
-        }
-
-        if (DEBUG) {
-            logger.info("Response: {} {}", new Object[]{conn.getResponseCode(), conn.getResponseMessage()});
         }
 
         if (conn.getResponseCode() != 200) {
@@ -943,10 +843,6 @@ public final class LocalUrlCacher {
         rd.close();
 
         conn.disconnect();
-
-        if (DEBUG) {
-            logger.info("Result {}", sb.toString());
-        }
 
         return sb.toString();
     }

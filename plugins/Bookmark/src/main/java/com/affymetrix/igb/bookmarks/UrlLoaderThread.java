@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BpsParser;
@@ -79,7 +79,7 @@ public final class UrlLoaderThread extends Thread {
     @Override
     public void run() {
         BioSeq aseq = gmodel.getSelectedSeq();
-        AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
+        GenomeVersion seq_group = gmodel.getSelectedGenomeVersion();
         try {
             // should really move to using gmodel's currently selected  _group_ of sequences rather than
             //    a single sequence...
@@ -250,7 +250,7 @@ public final class UrlLoaderThread extends Thread {
             URL url, InputStream stream, String content_type, String file_extension, String type)
             throws IOException {
         BioSeq aseq = gmodel.getSelectedSeq();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        GenomeVersion group = gmodel.getSelectedGenomeVersion();
         if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
             logger.info("Attempting to load data from file: {}", url.toExternalForm());
 
@@ -318,7 +318,7 @@ public final class UrlLoaderThread extends Thread {
      * ending of the stream_name parameter, for example ".dasxml". The stream
      * will be passed through uncompression routines if necessary.
      */
-    private static void load(InputStream instr, String stream_name, AnnotatedSeqGroup selected_group, BioSeq input_seq) throws IOException {
+    private static void load(InputStream instr, String stream_name, GenomeVersion selected_group, BioSeq input_seq) throws IOException {
         if (selected_group == null) {
             // this should never happen
             throw new IOException("Must select a genome before loading a file");
@@ -347,14 +347,14 @@ public final class UrlLoaderThread extends Thread {
             GeneralUtils.safeClose(str);
         }
 
-        // The purpose of calling setSelectedSeqGroup, even if identity of
+        // The purpose of calling setSelectedGenomeVersion, even if identity of
         // the seq group has not changed, is to make sure that
         // the DataLoadView and the AnnotBrowserView update their displays.
         // (Because the contents of the seq group may have changed.)
         //
         // Note that this must be done regardless of whether this load() method was
         // called from inside this class or in loading a bookmark, etc.
-        gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+        gmodel.setSelectedGenomeVersion(gmodel.getSelectedGenomeVersion());
 
         if (the_exception != null) {
             if (the_exception instanceof IOException) {
@@ -368,7 +368,7 @@ public final class UrlLoaderThread extends Thread {
     }
 
     private static void DoParse(
-            InputStream str, AnnotatedSeqGroup group, BioSeq input_seq,
+            InputStream str, GenomeVersion group, BioSeq input_seq,
             String stream_name)
             throws Exception {
         int dotIndex = stream_name.lastIndexOf('.');

@@ -2,8 +2,8 @@ package com.affymetrix.genometry.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -27,13 +27,13 @@ public final class SgrParser implements GraphParser {
     private static final boolean DEBUG = false;
     private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-    public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+    public static List<GraphSym> parse(InputStream istr, String stream_name, GenomeVersion seq_group,
             boolean annotate_seq)
             throws IOException {
         return parse(istr, stream_name, seq_group, annotate_seq, true);
     }
 
-    public static List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+    public static List<GraphSym> parse(InputStream istr, String stream_name, GenomeVersion seq_group,
             boolean annotate_seq, boolean ensure_unique_id)
             throws IOException {
         if (DEBUG) {
@@ -52,7 +52,7 @@ public final class SgrParser implements GraphParser {
             if (ensure_unique_id) {
                 // Making sure the ID is unique on the whole genome, not just this seq
                 // will make sure the GraphState is also unique on the whole genome.
-                gid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq_group);
+                gid = GenomeVersion.getUniqueGraphID(gid, seq_group);
             }
 
             parseLines(br, xhash, yhash);
@@ -107,7 +107,7 @@ public final class SgrParser implements GraphParser {
         if (seq == null) {
             throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
         }
-        String seq_id = seq.getID();
+        String seq_id = seq.getId();
 
         BufferedOutputStream bos = null;
         DataOutputStream dos = null;
@@ -131,7 +131,7 @@ public final class SgrParser implements GraphParser {
     }
 
     private static void createResults(
-            Map<String, IntArrayList> xhash, AnnotatedSeqGroup seq_group, Map<String, FloatArrayList> yhash, String gid, List<GraphSym> results) {
+            Map<String, IntArrayList> xhash, GenomeVersion seq_group, Map<String, FloatArrayList> yhash, String gid, List<GraphSym> results) {
         for (Map.Entry<String, IntArrayList> keyval : xhash.entrySet()) {
             String seqid = keyval.getKey();
             BioSeq aseq = seq_group.getSeq(seqid);
@@ -168,21 +168,21 @@ public final class SgrParser implements GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         throw new IllegalStateException("sgr should not be processed here");
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         return parse(newstr, stream_name, seq_group, false);
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         BufferedOutputStream bos = null;
         try {

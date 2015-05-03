@@ -812,6 +812,20 @@ public abstract class PreferenceUtils {
         return null;
     }
 
+    public static Preferences getDataProvidersNode() {
+        return PreferenceUtils.getTopNode().node("dataProviders");
+    }
+
+    public static Preferences getDataProviderNode(String url) {
+        return getDataProvidersNode().node(convertUrlToHash(url));
+    }
+
+    private static String convertUrlToHash(String url) {
+        HashFunction hf = Hashing.md5();
+        HashCode hc = hf.newHasher().putString(url, Charsets.UTF_8).hash();
+        return hc.toString();
+    }
+
     private static interface PrefAndPropChangeListener
             extends PreferenceChangeListener, PropertyChangeListener {
     }

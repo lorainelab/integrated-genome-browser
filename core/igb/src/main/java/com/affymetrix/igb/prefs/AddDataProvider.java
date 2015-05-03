@@ -34,6 +34,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.osgi.framework.BundleContext;
@@ -212,7 +213,7 @@ public class AddDataProvider extends JFrame {
                             .add(typeCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .add(nameText)))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap(158, Short.MAX_VALUE)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, openDir)
                             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
@@ -279,6 +280,13 @@ public class AddDataProvider extends JFrame {
                     dataProvider.setUrl(urlText.getText());
                     dataProvider.setName(nameText.getText());
                     dataProvider.setStatus(LoadUtils.ResourceStatus.NotInitialized);
+                    Timer timer = new Timer(400, event -> {
+                        if (dataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                            ModalUtils.infoPanel("Your Data Source is not responding, please confirm you have entered everything correctly.");
+                        }
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
                 } else {
                     String url = urlText.getText();
                     String name = nameText.getText();
@@ -287,6 +295,9 @@ public class AddDataProvider extends JFrame {
                         if (factory.isPresent()) {
                             DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
                             dataProviderManager.addDataProvider(createdDataProvider);
+                            if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                                ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                            }
                         }
                     }
                 }

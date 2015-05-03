@@ -12,7 +12,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.affymetrix.igb.general.DataProviderManagementGui;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
@@ -139,7 +139,7 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
         Rectangle bounds = new Rectangle(100, 5, 70, 12);
         if (bounds.contains(evt.getX(), evt.getY())) {
             PreferencesPanel pp = PreferencesPanel.getSingleton();
-            pp.setTab(DataLoadPrefsView.TAB_POSITION);
+            pp.setTab(pp.getTabIndex(DataProviderManagementGui.TAB_NAME));
             javax.swing.JFrame f = pp.getFrame();
             f.setVisible(true);
         }

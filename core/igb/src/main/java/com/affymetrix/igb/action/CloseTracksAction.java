@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -41,7 +41,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
         String message = "Really remove entire data sets?";
 
         if (allGlyphs.size() == 1) {
-            message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().getFeatureName() + " data set?";
+            message = "Really remove entire " + allGlyphs.get(0).getAnnotStyle().getFeature().getDataSetName() + " data set?";
         }
 
         if (ModalUtils.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
@@ -58,7 +58,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
             });
 
             for (StyledGlyph vg : allGlyphs) {
-                GenericFeature gFeature = vg.getAnnotStyle().getFeature();
+                DataSet gFeature = vg.getAnnotStyle().getFeature();
                 if (gFeature != null) {
                     GeneralLoadView.getLoadView().removeFeature(gFeature, true);
                 }

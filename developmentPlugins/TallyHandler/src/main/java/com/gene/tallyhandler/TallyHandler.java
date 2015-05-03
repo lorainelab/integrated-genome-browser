@@ -1,18 +1,17 @@
 package com.gene.tallyhandler;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.IndexWriter;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TallyHandler implements FileTypeHandler {
 
@@ -34,7 +33,7 @@ public class TallyHandler implements FileTypeHandler {
 
     @Override
     public SymLoader createSymLoader(URI uri, String featureName,
-            AnnotatedSeqGroup group) {
+            GenomeVersion genomeVersion) {
         SymLoader symLoader = null;
         String uriString = uri.toString();
         if (uriString.startsWith(SymLoader.FILE_PREFIX)) {
@@ -43,7 +42,7 @@ public class TallyHandler implements FileTypeHandler {
         if (SymLoaderTabix.isTabix(uriString)) {
             TallyLineProcessor tlp = new TallyLineProcessor(featureName);
             try {
-                symLoader = new SymLoaderTabix(uri, featureName, group, tlp);
+                symLoader = new SymLoaderTabix(uri, featureName, genomeVersion, tlp);
             } catch (Exception ex) {
                 Logger.getLogger(TallyHandler.class.getName()).log(Level.SEVERE,
                         "Could not initialize tabix line reader for {0}.",
@@ -52,7 +51,7 @@ public class TallyHandler implements FileTypeHandler {
         } else {
             Logger.getLogger(this.getClass().getName()).log(
                     Level.WARNING, "unable to read index for tally file, reading full file");
-            symLoader = new TallyUnindexedSymLoader(uri, featureName, group);
+            symLoader = new TallyUnindexedSymLoader(uri, featureName, genomeVersion);
             try {
                 ((TallyUnindexedSymLoader) symLoader).init();
             } catch (Exception x) {

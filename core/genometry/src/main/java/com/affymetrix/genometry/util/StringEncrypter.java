@@ -13,9 +13,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.LoggerFactory;
 
 public class StringEncrypter {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(StringEncrypter.class);
     public static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
     public static final String DES_ENCRYPTION_SCHEME = "DES";
     public static final String RC4_ENCRYPTION_SCHEME = "RC4";
@@ -28,12 +30,11 @@ public class StringEncrypter {
 
     private static final String UNICODE_FORMAT = "UTF8";
 
-    public StringEncrypter(String encryptionScheme) throws EncryptionException {
+    public StringEncrypter(String encryptionScheme) {
         this(encryptionScheme, DEFAULT_ENCRYPTION_KEY);
     }
 
-    public StringEncrypter(String encryptionScheme, String encryptionKey)
-            throws EncryptionException {
+    public StringEncrypter(String encryptionScheme, String encryptionKey) {
 
         if (encryptionKey == null) {
             throw new IllegalArgumentException("encryption key was null");
@@ -61,8 +62,8 @@ public class StringEncrypter {
             keyFactory = SecretKeyFactory.getInstance(encryptionScheme);
             cipher = Cipher.getInstance(encryptionScheme);
 
-        } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new EncryptionException(e);
+        } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException ex) {
+            logger.error(ex.getMessage(), ex);
         }
 
     }

@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -45,7 +45,7 @@ public final class LiftParser {
 
     private static final boolean SET_COMPOSITION = true;
 
-    public static boolean loadChroms(String file_name, AnnotatedSeqGroup seq_group)
+    public static boolean loadChroms(String file_name, GenomeVersion seq_group)
             throws IOException {
         Logger.getLogger(LiftParser.class.getName()).log(
                 Level.FINE, "trying to load lift file: {0}", file_name);
@@ -65,18 +65,18 @@ public final class LiftParser {
      * @return A Map with chromosome ids as keys, and SmartAnnotBioSeqs representing
      * chromosomes in the lift file as values.
      */
-    public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+    public static boolean parse(InputStream istr, GenomeVersion seq_group) throws IOException {
         return parse(istr, seq_group, true);
     }
 
     /**
-     * Reads lift-format from the input stream and creates a new AnnotatedSeqGroup.
-     * The new AnnotatedSeqGroup will be inserted into the GenometryModel.
+     * Reads lift-format from the input stream and creates a new GenomeVersion.
+     * The new GenomeVersion will be inserted into the GenometryModel.
      *
-     * @return an AnnotatedSeqGroup containing SmartAnnotBioSeqs representing
-     * chromosomes in the lift file.
+     * @return an GenomeVersion containing SmartAnnotBioSeqs representing
+ chromosomes in the lift file.
      */
-    public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+    public static boolean parse(InputStream istr, GenomeVersion seq_group, boolean annotate_seq)
             throws IOException {
         Logger.getLogger(LiftParser.class.getName()).log(
                 Level.FINE, "parsing in lift file");
@@ -130,7 +130,7 @@ public final class LiftParser {
                 csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
                 csym.addSpan(new SimpleSeqSpan(0, match_length, contig));
                 csym.setProperty("method", "contig");
-                csym.setProperty("id", contig.getID());
+                csym.setProperty("id", contig.getId());
                 comp.addChild(csym);
                 isEmpty = false;
             }

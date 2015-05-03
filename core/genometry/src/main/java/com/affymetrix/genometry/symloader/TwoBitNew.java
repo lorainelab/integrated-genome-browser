@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class is a parser of UCSC Genome Browser file format .2bit used to store
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class TwoBitNew extends SymLoader {
 
-    public static boolean DEBUG = false;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TwoBitNew.class);
     public int DEFAULT_BUFFER_SIZE = 10000;
     //
     private SeekableBufferedStream raf;
@@ -56,8 +57,8 @@ public class TwoBitNew extends SymLoader {
 
     private final Map<BioSeq, String> chrMap = new HashMap<>();
 
-    public TwoBitNew(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public TwoBitNew(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override
@@ -68,13 +69,13 @@ public class TwoBitNew extends SymLoader {
         raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
         long sign = readFourBytes();
         if (sign == 0x1A412743) {
-            if (DEBUG) {
-                System.err.println("2bit: Normal number architecture");
+            if (logger.isDebugEnabled()) {
+                logger.debug("2bit: Normal number architecture");
             }
         } else if (sign == 0x4327411A) {
             reverse = true;
-            if (DEBUG) {
-                System.err.println("2bit: Reverse number architecture");
+            if (logger.isDebugEnabled()) {
+                logger.debug("2bit: Reverse number architecture");
             }
         } else {
             throw new Exception("Wrong start signature in 2BIT format");
@@ -91,7 +92,7 @@ public class TwoBitNew extends SymLoader {
                 chars[j] = (char) raf.read();
             }
             seq_name = new String(chars);
-            seq = group.getSeq(seq_name);
+            seq = genomeVersion.getSeq(seq_name);
             if (seq == null) {
                 continue;
             }
@@ -99,8 +100,8 @@ public class TwoBitNew extends SymLoader {
             chrMap.put(seq, seq_name);
             long pos = readFourBytes();
             seq2pos.put(seq_name, pos);
-            if (DEBUG) {
-                System.err.println("2bit: Sequence name=[" + seq_name + "], "
+            if (logger.isDebugEnabled()) {
+                logger.debug("2bit: Sequence name=[" + seq_name + "], "
                         + "pos=" + pos);
             }
         }
@@ -122,7 +123,7 @@ public class TwoBitNew extends SymLoader {
             return getResidueString(span.getMin(), span.getMax() - span.getMin());
         }
 
-        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getID(), uri.toString()});
+        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
         return "";
     }
 
@@ -183,8 +184,8 @@ public class TwoBitNew extends SymLoader {
         long pos = seq2pos.get(seq_name);
         raf.seek(pos);
         long dna_size = readFourBytes();
-        if (DEBUG) {
-            System.err.println("2bit: Sequence name=[" + cur_seq_name + "], dna_size=" + dna_size);
+        if (logger.isDebugEnabled()) {
+            logger.debug("2bit: Sequence name=[" + cur_seq_name + "], dna_size=" + dna_size);
         }
         cur_dna_size = dna_size;
         int nn_block_qnt = (int) readFourBytes();
@@ -195,12 +196,11 @@ public class TwoBitNew extends SymLoader {
         for (int i = 0; i < nn_block_qnt; i++) {
             cur_nn_blocks[i][1] = readFourBytes();
         }
-        if (DEBUG) {
-            System.err.print("NN-blocks: ");
+        if (logger.isDebugEnabled()) {
+            logger.debug("NN-blocks: ");
             for (int i = 0; i < nn_block_qnt; i++) {
-                System.err.print("[" + cur_nn_blocks[i][0] + "," + cur_nn_blocks[i][1] + "] ");
+                logger.debug("[" + cur_nn_blocks[i][0] + "," + cur_nn_blocks[i][1] + "] ");
             }
-            System.err.println();
         }
         int mask_block_qnt = (int) readFourBytes();
         cur_mask_blocks = new long[mask_block_qnt][2];
@@ -210,12 +210,11 @@ public class TwoBitNew extends SymLoader {
         for (int i = 0; i < mask_block_qnt; i++) {
             cur_mask_blocks[i][1] = readFourBytes();
         }
-        if (DEBUG) {
-            System.err.print("Mask-blocks: ");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Mask-blocks: ");
             for (int i = 0; i < mask_block_qnt; i++) {
-                System.err.print("[" + cur_mask_blocks[i][0] + "," + cur_mask_blocks[i][1] + "] ");
+                logger.debug("[" + cur_mask_blocks[i][0] + "," + cur_mask_blocks[i][1] + "] ");
             }
-            System.err.println();
         }
         readFourBytes();
         start_file_pos = raf.position();
@@ -285,8 +284,8 @@ public class TwoBitNew extends SymLoader {
             throw new IOException("Sequence is not set");
         }
         if (cur_seq_pos == cur_dna_size) {
-            if (DEBUG) {
-                System.err.println("End of sequence (file position:" + raf.position() + " )");
+            if (logger.isDebugEnabled()) {
+                logger.debug("End of sequence (file position:" + raf.position() + " )");
             }
             return -1;
         }

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -53,8 +53,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private final GeneralLoadView glv;
     private final SeqMapView smv;
     private final AffyLabelledTierMap map;
-    private final Map<GenericFeature, TrackStyle> feature2StyleReference;
-    public List<GenericFeature> features;
+    private final Map<DataSet, TrackStyle> feature2StyleReference;
+    public List<DataSet> features;
 
     DataManagementTableModel(GeneralLoadView glv) {
         this.glv = glv;
@@ -78,7 +78,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         TierPrefsView.getSingleton().clearTable();
     }
 
-    void generateFeature2StyleReference(List<GenericFeature> features) {
+    void generateFeature2StyleReference(List<DataSet> features) {
         // Sort these features so the features to be loaded are at the top.
         Collections.sort(features, new featureTableComparator());
         this.features = features;
@@ -90,7 +90,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     /*
      * Some file formats might have multiple tracks, try load GFF1_example.gff
      */
-    private void createPrimaryVirtualFeatures(GenericFeature gFeature) {
+    private void createPrimaryVirtualFeatures(DataSet gFeature) {
         for (TrackStyle style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
@@ -102,30 +102,30 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         features = new ArrayList<>(feature2StyleReference.keySet());
     }
 
-    private final static class featureTableComparator implements Comparator<GenericFeature> {
+    private final static class featureTableComparator implements Comparator<DataSet> {
 
         @Override
-        public int compare(GenericFeature left, GenericFeature right) {
+        public int compare(DataSet left, DataSet right) {
             if (left.getLoadStrategy() != right.getLoadStrategy()) {
                 return (left.getLoadStrategy().compareTo(right.getLoadStrategy()));
             }
-            if (left.getFeatureName().compareTo(right.getFeatureName()) != 0) {
-                return left.getFeatureName().compareTo(right.getFeatureName());
+            if (left.getDataSetName().compareTo(right.getDataSetName()) != 0) {
+                return left.getDataSetName().compareTo(right.getDataSetName());
             }
 
-            return left.getgVersion().getgServer().getServerType().getServerName().compareTo(right.getgVersion().getgServer().getServerType().getServerName());
+            return left.getDataContainer().getDataProvider().getName().compareTo(right.getDataContainer().getDataProvider().getName());
         }
     }
 
-    public GenericFeature getRowFeature(int row) {
+    public DataSet getRowFeature(int row) {
         return (getRowCount() <= row) ? null : features.get(row);
     }
 
-    public TrackStyle getStyleFromFeature(GenericFeature feature) {
+    public TrackStyle getStyleFromFeature(DataSet feature) {
         return feature2StyleReference.get(feature);
     }
 
-    private int getRow(GenericFeature feature) {
+    private int getRow(DataSet feature) {
         return features.indexOf(feature);
 
     }
@@ -155,7 +155,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
             return "";
         }
 
-        GenericFeature feature;
+        DataSet feature;
         TrackStyle style;
         if (getRowFeature(row) == null) {
             return "";
@@ -174,12 +174,12 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 //				}
                 return feature.getLoadStrategy().toString();
             case TRACK_NAME_COLUMN:
-                if (feature.getFeatureName().equals(CytobandParser.CYTOBAND_TIER_NAME)
-                        || feature.getFeatureName().equalsIgnoreCase(CytobandParser.CYTOBAND)
-                        || feature.getFeatureName().equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
-                    return feature.getFeatureName();
+                if (feature.getDataSetName().equals(CytobandParser.CYTOBAND_TIER_NAME)
+                        || feature.getDataSetName().equalsIgnoreCase(CytobandParser.CYTOBAND)
+                        || feature.getDataSetName().equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
+                    return feature.getDataSetName();
                 } else if (style == null) {
-                    return feature.getFeatureName();
+                    return feature.getDataSetName();
                 }
                 return style.getTrackName();
             case FOREGROUND_COLUMN:
@@ -220,7 +220,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        GenericFeature feature = getRowFeature(row);
+        DataSet feature = getRowFeature(row);
         TrackStyle style = feature2StyleReference.get(feature);
 
         if ((style == null)
@@ -247,7 +247,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
 
         if (col == REFRESH_FEATURE_COLUMN) {
-            if (smv.getAnnotatedSeq() == null || IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getID())) {
+            if (smv.getAnnotatedSeq() == null || IGBConstants.GENOME_SEQ_ID.equals(smv.getAnnotatedSeq().getId())) {
                 return false;
             }
             return true;
@@ -270,7 +270,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
     @Override
     public void setValueAt(Object value, int row, int col) {
-        GenericFeature feature = getRowFeature(row);
+        DataSet feature = getRowFeature(row);
         TrackStyle style = feature2StyleReference.get(feature);
         if (value == null || feature == null) {
             return;
@@ -278,7 +278,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
 
         switch (col) {
             case DELETE_FEATURE_COLUMN:
-                String message = "Really remove entire " + feature.getFeatureName() + " data set ?";
+                String message = "Really remove entire " + feature.getDataSetName() + " data set ?";
                 if (ScriptManager.SCRIPTING.equals(value) || ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                     features.stream().filter(gFeature -> gFeature.equals(feature)).forEach(gFeature -> {
@@ -357,7 +357,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         }
     }
 
-    private void setVisibleTracks(GenericFeature feature) {
+    private void setVisibleTracks(DataSet feature) {
         TrackStyle style = feature2StyleReference.get(feature);
         if (style.getShow()) {
             style.setShow(false);
@@ -385,7 +385,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
      * @param col
      * @param gFeature
      */
-    private void updatedStrategy(int row, int col, GenericFeature gFeature) {
+    private void updatedStrategy(int row, int col, DataSet gFeature) {
         fireTableCellUpdated(row, col);
 
         if (gFeature.getLoadStrategy() == LoadStrategy.GENOME) {
@@ -403,8 +403,8 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     @Override
     public void stateChanged(ChangeEvent evt) {//????
         Object src = evt.getSource();
-        if (src instanceof GenericFeature) {
-            int row = getRow((GenericFeature) src);
+        if (src instanceof DataSet) {
+            int row = getRow((DataSet) src);
             if (row >= 0) {  // if typestate is present in table, then send notification of row change
                 fireTableRowsUpdated(row, row);
             }

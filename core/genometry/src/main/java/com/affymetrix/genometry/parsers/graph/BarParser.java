@@ -2,8 +2,8 @@ package com.affymetrix.genometry.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
@@ -62,8 +62,8 @@ import java.util.logging.Logger;
  *
  * 11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
  * 12	Char	SEQNAMELEN	The sequence name.
- * 13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
- * 14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
+ * 13	Integer	4	The number of characters in the name of the sequence genomeVersion.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
+ * 14	Char	SEQGROUPNAMELEN	The name of the genomeVersion of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
  * 15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
  * 16	Char	SEQVERLEN	The sequence version.
  * 17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
@@ -123,12 +123,12 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         //     across bar files that have the exact same base coords
         int[] chunk_mins = (int[]) coordset2seqs.get(file_name);
 
-        AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+        GenomeVersion seq_group = aseq.getGenomeVersion();
 
         if (DEBUG) {
             Logger.getLogger(BarParser.class.getName()).log(
                     Level.INFO, "trying to get slice, min = {0}, max = {1}", new Object[]{min_base, max_base});
-            System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
+            System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getName() + ", seq: " + aseq.getId());
         }
         if (chunk_mins == null) {
             buildIndex(file_name, file_name, gmodel, seq_group);
@@ -170,7 +170,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     }
 
     private static GraphSym constructGraf(
-            String file_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, int min_index,
+            String file_name, GenometryModel gmodel, GenomeVersion seq_group, int min_index,
             boolean readToEnd, int max_index, int min_base, int max_base, BioSeq aseq, SeqSpan span, Timer tim)
             throws IOException {
         GraphSym graf = null;
@@ -283,7 +283,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
      *    least 10x > N), so overhead for reading extra data will be minor.
      * </pre>
      */
-    private static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
+    private static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, GenomeVersion seq_group)
             throws IOException {
         Timer tim = new Timer();
         tim.start();
@@ -384,7 +384,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     }
 
     private static List<BarSeqHeader> getSeqHeaders(String uri, InputStream istr,
-            AnnotatedSeqGroup default_seq_group, GenometryModel gmodel, boolean force_use_default_group) throws IOException {
+            GenomeVersion default_seq_group, GenometryModel gmodel, boolean force_use_default_group) throws IOException {
         BufferedInputStream bis = null;
         DataInputStream dis = null;
         List<BarSeqHeader> headers = new ArrayList<>(10);
@@ -415,20 +415,20 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         return headers;
     }
 
-    public static List<AnnotatedSeqGroup> getSeqGroups(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel)
+    public static List<GenomeVersion> getSeqGroups(String uri, InputStream istr, GenomeVersion default_seq_group, GenometryModel gmodel)
             throws IOException {
 
-        List<AnnotatedSeqGroup> groups = new ArrayList<>();
+        List<GenomeVersion> groups = new ArrayList<>();
         for (BarSeqHeader seq_header : getSeqHeaders(uri, istr, default_seq_group, gmodel, false)) {
-            AnnotatedSeqGroup group = seq_header.aseq.getSeqGroup();
-            if (!groups.contains(group)) {
-                groups.add(group);
+            GenomeVersion genomeVersion = seq_header.aseq.getGenomeVersion();
+            if (!groups.contains(genomeVersion)) {
+                groups.add(genomeVersion);
             }
         }
         return groups;
     }
 
-    public static List<BioSeq> getSeqs(String uri, InputStream istr, AnnotatedSeqGroup default_seq_group, GenometryModel gmodel, boolean force_use_default_group)
+    public static List<BioSeq> getSeqs(String uri, InputStream istr, GenomeVersion default_seq_group, GenometryModel gmodel, boolean force_use_default_group)
             throws IOException {
 
         List<BioSeq> seqs = new ArrayList<>();
@@ -442,7 +442,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
      * Parse a file in BAR format.
      */
     public static List<GraphSym> parse(String uri, InputStream istr, GenometryModel gmodel,
-            AnnotatedSeqGroup default_seq_group, BioSeq chrFilter, int min, int max, String stream_name,
+            GenomeVersion default_seq_group, BioSeq chrFilter, int min, int max, String stream_name,
             boolean ensure_unique_id, boolean force_use_default_group)
             throws IOException {
         BufferedInputStream bis = null;
@@ -549,11 +549,11 @@ public final class BarParser implements AnnotationWriter, GraphParser {
             }
         }
         if (DEBUG) {
-            System.out.println("^^^ creating GraphSym in BarParser, group = " + seq.getSeqGroup().getID() + ", seq = " + seq.getID());
+            System.out.println("^^^ creating GraphSym in BarParser, genomeVersion = " + seq.getGenomeVersion().getName() + ", seq = " + seq.getId());
             System.out.println("      graph id: " + graph_id);
         }
         if (ensure_unique_id) {
-            graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq);
+            graph_id = GenomeVersion.getUniqueGraphID(graph_id, seq);
         }
         xcoords.trimToSize();
         ycoords.trimToSize();
@@ -593,8 +593,8 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         String pm_name = graph_id + " : pm";
         String mm_name = graph_id + " : mm";
         if (ensure_unique_id) {
-            pm_name = AnnotatedSeqGroup.getUniqueGraphID(pm_name, seq);
-            mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
+            pm_name = GenomeVersion.getUniqueGraphID(pm_name, seq);
+            mm_name = GenomeVersion.getUniqueGraphID(mm_name, seq);
         }
         xcoords.trimToSize();
         ycoords.trimToSize();
@@ -690,7 +690,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     }
 
     private static BarSeqHeader parseSeqHeader(String uri, DataInput dis, GenometryModel gmodel,
-            AnnotatedSeqGroup default_seq_group, BarFileHeader file_header, boolean force_use_default_group) throws IOException {
+            GenomeVersion default_seq_group, BarFileHeader file_header, boolean force_use_default_group) throws IOException {
         int namelength = dis.readInt();
         byte[] barray = new byte[namelength];
         dis.readFully(barray);
@@ -707,7 +707,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
             dis.readFully(barray);
             groupname = new String(barray);
             if (DEBUG) {
-                System.out.println("group length: " + grouplength + ", group: " + groupname);
+                System.out.println("genomeVersion length: " + grouplength + ", genomeVersion: " + groupname);
             }
         }
 
@@ -743,11 +743,11 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         int total_points = dis.readInt();
         if (DEBUG) {
             System.out.println("   seqname = " + seqname + ", version = " + seqversion
-                    + ", group = " + groupname
+                    + ", genomeVersion = " + groupname
                     + ", data points = " + total_points);
         }
 
-        AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
+        GenomeVersion seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
         if (force_use_default_group) {
             seq_group = default_seq_group;
         }
@@ -755,23 +755,23 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         return new BarSeqHeader(seq, total_points, seq_tagvals);
     }
 
-    private static BioSeq determineSeq(String uri, AnnotatedSeqGroup seq_group, String seqname, String orig_seqname, String seqversion, String groupname, boolean bar2) {
-        // trying standard AnnotatedSeqGroup seq id resolution first
+    private static BioSeq determineSeq(String uri, GenomeVersion seq_group, String seqname, String orig_seqname, String seqversion, String groupname, boolean bar2) {
+        // trying standard GenomeVersion seq id resolution first
         BioSeq seq = seq_group.getSeq(seqname);
         if (seq == null) {
             seq = seq_group.getSeq(orig_seqname);
         }
-        // if standard AnnotatedSeqGroup seq id resolution doesn't work, try old technique
+        // if standard GenomeVersion seq id resolution doesn't work, try old technique
         //    (hopefully can eliminate this soon)
         if (seq == null) {
             SynonymLookup lookup = SynonymLookup.getDefaultLookup();
             //TODO: Convert this to the standard way of getting synomous sequences,
-            // but we may have to check for extra bar-specific synonyms involving seq group and version
+            // but we may have to check for extra bar-specific synonyms involving seq genomeVersion and version
             for (BioSeq testseq : seq_group.getSeqList()) {
                 // testing both seq id and version id (if version id is available)
-                if (lookup.isSynonym(testseq.getID(), seqname)) {
+                if (lookup.isSynonym(testseq.getId(), seqname)) {
                     // GAH 1-23-2005
-                    // need to ensure that if bar2 format, the seq group is also a synonym!
+                    // need to ensure that if bar2 format, the seq genomeVersion is also a synonym!
                     // GAH 7-7-2005
                     //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
                     //      groupname
@@ -782,7 +782,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
                         seq = testseq;
                         break;
                     } else {
-                        String test_version = seq_group.getID();
+                        String test_version = seq_group.getName();
                         if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
                             seq = testseq;
                             break;
@@ -798,39 +798,39 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     }
 
     /**
-     * if group and version are null/blank, assume default_seq_group is correct.
-     * otherwise try an match with an existing AnnotatedSeqGroup
-     * if existing AnnotatedSeqGroup can't be found, create a new one?
+     * if genomeVersion and version are null/blank, assume default_seq_group is correct.
+     * otherwise try an match with an existing GenomeVersion
+     * if existing GenomeVersion can't be found, create a new one?
      */
-    private static AnnotatedSeqGroup getSeqGroup(String groupname, String version, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group) {
-        AnnotatedSeqGroup group = null;
+    private static GenomeVersion getSeqGroup(String groupname, String version, GenometryModel gmodel, GenomeVersion default_seq_group) {
+        GenomeVersion genomeVersion = null;
         if ((version == null || version.trim().length() == 0)
                 && (groupname == null || groupname.trim().length() == 0)) {
             return default_seq_group;
         }
         if (groupname != null && version != null) {
-            group = gmodel.getSeqGroup(groupname + ":" + version);
+            genomeVersion = gmodel.getSeqGroup(groupname + ":" + version);
         }
-        if (group == null && groupname != null) {
-            group = gmodel.getSeqGroup(groupname);
+        if (genomeVersion == null && groupname != null) {
+            genomeVersion = gmodel.getSeqGroup(groupname);
         }
-        if (group == null && version != null) {
-            group = gmodel.getSeqGroup(version);
+        if (genomeVersion == null && version != null) {
+            genomeVersion = gmodel.getSeqGroup(version);
         }
-        if (group == null) {
-            //Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding to default group {1}", new Object[]{version, default_seq_group.getID()});
+        if (genomeVersion == null) {
+            //Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find genomeVersion {0}.  Adding to default genomeVersion {1}", new Object[]{version, default_seq_group.getName()});
             //return default_seq_group;
-            Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find group {0}.  Adding it as new group", groupname + ":" + version);
-            return gmodel.addSeqGroup(groupname + ":" + version);
+            Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Did not find genomeVersion {0}.  Adding it as new genomeVersion", groupname + ":" + version);
+            return gmodel.addGenomeVersion(groupname + ":" + version);
         }
-        if (group == default_seq_group) {
-            return group;	// nothing to do if the group that's found matches the default group.
+        if (genomeVersion == default_seq_group) {
+            return genomeVersion;	// nothing to do if the genomeVersion that's found matches the default genomeVersion.
         }
 
         // This is necessary to make sure new groups get added to the DataLoadView.
         // maybe need a SeqGroupModifiedEvent class instead.
-        // Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to group {0}", group.getID());
-        return group;
+        // Logger.getLogger(BarParser.class.getName()).log(Level.WARNING, "Switching to genomeVersion {0}", genomeVersion.getName());
+        return genomeVersion;
     }
 
     /**
@@ -874,14 +874,14 @@ public final class BarParser implements AnnotationWriter, GraphParser {
     }
 
     private static void writeTagValues(DataOutputStream dos) throws IOException {
-        // should write out all properties from group and/or graphs as tag/vals?  For now just saying no tag/vals
+        // should write out all properties from genomeVersion and/or graphs as tag/vals?  For now just saying no tag/vals
         dos.writeInt(0);
     }
 
     private static void writeSeqInfo(BioSeq seq, DataOutputStream dos) throws IOException {
-        AnnotatedSeqGroup group = seq.getSeqGroup();
-        String groupid = group.getID();
-        String seqid = seq.getID();
+        GenomeVersion genomeVersion = seq.getGenomeVersion();
+        String groupid = genomeVersion.getName();
+        String seqid = seq.getId();
         // assuming one graph for now, so only one seq section
         dos.writeInt(seqid.length());
         dos.writeBytes(seqid);
@@ -954,22 +954,22 @@ public final class BarParser implements AnnotationWriter, GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = false processed here
-        return parse(uri, is, GenometryModel.getInstance(), group, null, 0, Integer.MAX_VALUE, uri, false, false);
+        return parse(uri, is, GenometryModel.getInstance(), genomeVersion, null, 0, Integer.MAX_VALUE, uri, false, false);
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         return parse(stream_name, newstr, GenometryModel.getInstance(), seq_group, null, 0, Integer.MAX_VALUE, stream_name, true, false);
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         // not processed here
     }

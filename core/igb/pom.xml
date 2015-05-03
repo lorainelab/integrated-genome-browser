@@ -132,6 +132,11 @@
             <artifactId>miglayout-swing</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.kevinsawicki</groupId>
+            <artifactId>http-request</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -157,7 +162,7 @@
                             javax.swing.plaf.metal;resolution:=optional,
                             sun.reflect;resolution:=optional,
                             com.sun.awt;resolution:=optional,
-                            *;resolution:=optional
+                            *
                         </Import-Package>
                         <Bundle-Activator>com.affymetrix.igb.Activator</Bundle-Activator>
                         <Export-Package>

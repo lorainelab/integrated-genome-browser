@@ -7,11 +7,11 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometry.quickload.QuickloadServerType;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -25,15 +25,11 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.LocalFilesServerType;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.swing.JRPButton;
@@ -53,11 +49,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import org.slf4j.LoggerFactory;
 
 /**
  * a class for initializing components and background methods implementation.
@@ -66,6 +64,7 @@ import javax.swing.JTree;
  */
 public final class GeneralLoadView {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GeneralLoadView.class);
     private static final boolean DEBUG_EVENTS = false;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static SeqMapView gviewer;
@@ -142,10 +141,11 @@ public final class GeneralLoadView {
     public void loadResidues(final boolean partial) {
         final BioSeq seq = gmodel.getSelectedSeq();
 
-        CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>(MessageFormat.format(BUNDLE.getString(partial ? "loadPartialResidues" : "loadAllResidues"), seq.getID()), Thread.MIN_PRIORITY) {
+        CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>("Loading residues for " + seq.getId(), Thread.MIN_PRIORITY) {
 
+            @Override
             public Boolean runInBackground() {
-                return loadResidues(seq, gviewer.getVisibleSpan(), partial, false, true);
+                return loadResidues(gviewer.getVisibleSpan(), partial, false, true);
             }
 
             @Override
@@ -155,9 +155,9 @@ public final class GeneralLoadView {
                         gviewer.setAnnotatedSeq(seq, true, true, true);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(ex.getMessage(), ex);
                 } finally {
-//					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getID());
+//					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getName());
                 }
             }
         };
@@ -170,15 +170,13 @@ public final class GeneralLoadView {
         if (!span.isForward()) {
             span = new SimpleSeqSpan(span.getMin(), span.getMax(), span.getBioSeq());
         }
-        return loadResidues(span.getBioSeq(), span, true, tryFull, false);
+        return loadResidues(span, true, tryFull, false);
     }
 
-    private boolean loadResidues(final BioSeq seq,
-            final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
-        final String genomeVersionName = (String) SeqGroupView.getInstance().getVersionCB().getSelectedItem();
+    private boolean loadResidues(final SeqSpan viewspan, final boolean partial, final boolean tryFull, final boolean show_error_panel) {
         try {
             if (partial) {
-                if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, viewspan.getMin(), viewspan.getMax(), viewspan)
+                if (!GeneralLoadUtils.loadResidues(viewspan)
                         && !Thread.currentThread().isInterrupted()) {
                     if (!tryFull) {
                         if (show_error_panel) {
@@ -187,7 +185,8 @@ public final class GeneralLoadView {
                         Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING, "Unable to load partial sequence");
                         return false;
                     } else {
-                        if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)) {
+                        SimpleSeqSpan simpleSeqSpan = new SimpleSeqSpan(0, viewspan.getLength(), viewspan.getBioSeq());
+                        if (!GeneralLoadUtils.loadResidues(simpleSeqSpan)) {
                             if (show_error_panel) {
                                 ErrorHandler.errorPanel("Couldn't load partial or full sequence", "Couldn't locate the sequence.", Level.SEVERE);
                             }
@@ -198,7 +197,8 @@ public final class GeneralLoadView {
                     }
                 }
             } else {
-                if (!GeneralLoadUtils.loadResidues(genomeVersionName, seq, 0, seq.getLength(), null)
+                SimpleSeqSpan simpleSeqSpan = new SimpleSeqSpan(0, viewspan.getLength(), viewspan.getBioSeq());
+                if (!GeneralLoadUtils.loadResidues(simpleSeqSpan)
                         && !Thread.currentThread().isInterrupted()) {
                     if (show_error_panel) {
                         ErrorHandler.errorPanel("Couldn't load full sequence", "Couldn't locate the sequence.", Level.SEVERE);
@@ -209,7 +209,7 @@ public final class GeneralLoadView {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
             return false;
         }
 
@@ -220,10 +220,6 @@ public final class GeneralLoadView {
      * Load any data that's marked for visible range.
      */
     public void loadVisibleFeatures() {
-        if (DEBUG_EVENTS) {
-            SeqSpan request_span = gviewer.getVisibleSpan();
-            System.out.println("Visible load request span: " + request_span.getBioSeq() + ":" + request_span.getStart() + "-" + request_span.getEnd());
-        }
         List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
         loadStrategies.add(LoadStrategy.VISIBLE);
@@ -247,62 +243,56 @@ public final class GeneralLoadView {
      * Load any features that have a whole strategy and haven't already been
      * loaded.
      */
-    public static void loadWholeRangeFeatures(ServerTypeI serverType) {
+    public static void loadWholeRangeFeatures(DataProvider serverType) {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
         loadFeatures(loadStrategies, serverType);
     }
 
-    static void loadFeatures(List<LoadStrategy> loadStrategies, ServerTypeI serverType) {
-        for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-            if (GeneralLoadUtils.isLoaded(gFeature)) {
+    static void loadFeatures(List<LoadStrategy> loadStrategies, DataProvider serverType) {
+        for (DataSet dataSet : GeneralLoadUtils.getSelectedVersionFeatures()) {
+            if (GeneralLoadUtils.isLoaded(dataSet)) {
                 continue;
             }
-            loadFeature(loadStrategies, gFeature, serverType);
+            loadFeature(loadStrategies, dataSet, serverType);
         }
     }
 
-    static boolean loadFeature(List<LoadStrategy> loadStrategies, GenericFeature gFeature, ServerTypeI serverType) {
+    static boolean loadFeature(List<LoadStrategy> loadStrategies, DataSet gFeature, DataProvider serverType) {
         if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
             return false;
         }
 
         //TODO refactor code to not use serverType == null as a hack
-        if (serverType != null && gFeature.getgVersion().getgServer().getServerType() != serverType) {
-            return false;
-        }
-
+//        if (serverType != null && gFeature.getDataContainer().getDataProvider().getServerType() != serverType) {
+//            return false;
+//        }
         GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
 
         return true;
     }
 
-    public synchronized static void AutoloadQuickloadFeature() {
-        for (GenericFeature gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
-            if (gFeature.getLoadStrategy() != LoadStrategy.GENOME
-                    || gFeature.getgVersion().getgServer().getServerType() != QuickloadServerType.getInstance()) {
-                continue;
-            }
+    private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
-            if (GeneralLoadUtils.isLoaded(gFeature)) {
-                continue;
-            }
-
-            //If Loading whole genome for unoptimized file then load everything at once.
-            if (((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader() instanceof SymLoaderInst) {
-                GeneralLoadUtils.loadAllSymmetriesThread(gFeature);
-            } else {
-                GeneralLoadUtils.iterateSeqList(gFeature);
-            }
-        }
+    public synchronized static void loadGenomeLoadModeDataSets() {
+        GeneralLoadUtils.getSelectedVersionFeatures().stream()
+                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
+                .filter(isLoaded.negate())
+                .forEach(dataSet -> {
+                    if (dataSet.getSymL() instanceof SymLoaderInst) {
+                        GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
+                    } else {
+                        GeneralLoadUtils.iterateSeqList(dataSet);
+                    }
+                });
     }
 
-    public void useAsRefSequence(final GenericFeature feature) throws Exception {
+    public void useAsRefSequence(final DataSet feature) throws Exception {
         if (feature != null && feature.getSymL() != null) {
             final QuickLoadSymLoader quickload = (QuickLoadSymLoader) feature.getSymL();
             if (quickload.getSymLoader() instanceof ResidueTrackSymLoader) {
 
-                final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.getFeatureName()) {
+                final CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>(feature.getDataSetName()) {
 
                     @Override
                     protected Void runInBackground() {
@@ -354,7 +344,7 @@ public final class GeneralLoadView {
     }
 
     private void refreshTree() {
-        final List<GenericFeature> features = GeneralLoadUtils.getSelectedVersionFeatures();
+        final List<DataSet> features = GeneralLoadUtils.getSelectedVersionFeatures();
         if (features == null || features.isEmpty()) {
             tableModel.clearFeatures();
         }
@@ -369,7 +359,7 @@ public final class GeneralLoadView {
         });
     }
 
-    private static void refreshDataManagementTable(final List<GenericFeature> visibleFeatures) {
+    private static void refreshDataManagementTable(final List<DataSet> visibleFeatures) {
 
         ThreadUtils.runOnEventQueue(() -> {
             table.stopCellEditing();
@@ -379,7 +369,7 @@ public final class GeneralLoadView {
     }
 
     public void refreshDataManagementView() {
-        final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+        final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         refreshDataManagementTable(visibleFeatures);
 
         disableButtonsIfNecessary();
@@ -387,10 +377,10 @@ public final class GeneralLoadView {
     }
 
     private void initDataManagementTable() {
-        final List<GenericFeature> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+        final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         int maxFeatureNameLength = 1;
-        for (GenericFeature feature : visibleFeatures) {
-            maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.getFeatureName().length());
+        for (DataSet feature : visibleFeatures) {
+            maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.getDataSetName().length());
         }
         final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
         table.stopCellEditing();
@@ -435,9 +425,9 @@ public final class GeneralLoadView {
         boolean enabled = !IsGenomeSequence();
         if (enabled) {
             BioSeq curSeq = gmodel.getSelectedSeq();
-            enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
+            enabled = curSeq.getGenomeVersion() != null;	// Don't allow a null sequence group either.
             if (enabled) {		// Don't allow buttons for an "unknown" versionName
-                Set<GenericVersion> gVersions = curSeq.getSeqGroup().getEnabledVersions();
+                Set<DataContainer> gVersions = curSeq.getGenomeVersion().getAvailableDataContainers();
                 enabled = (!gVersions.isEmpty());
             }
         }
@@ -467,13 +457,13 @@ public final class GeneralLoadView {
      * Accessor method. See if we need to enable/disable the refresh_dataB
      * button by looking at the features' load strategies.
      */
-    void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {
+    void changeVisibleDataButtonIfNecessary(List<DataSet> features) {
         if (IsGenomeSequence()) {
             return;
             // Currently not enabling this button for the full sequence.
         }
         boolean enabled = false;
-        for (GenericFeature gFeature : features) {
+        for (DataSet gFeature : features) {
             if (gFeature.getLoadStrategy() != LoadStrategy.NO_LOAD && gFeature.getLoadStrategy() != LoadStrategy.GENOME) {
                 enabled = true;
                 break;
@@ -486,7 +476,7 @@ public final class GeneralLoadView {
 
     private static boolean IsGenomeSequence() {
         BioSeq curSeq = gmodel.getSelectedSeq();
-        final String seqID = curSeq == null ? null : curSeq.getID();
+        final String seqID = curSeq == null ? null : curSeq.getId();
         return (seqID == null || IGBConstants.GENOME_SEQ_ID.equals(seqID));
     }
 
@@ -494,33 +484,33 @@ public final class GeneralLoadView {
         return (String) SeqGroupView.getInstance().getSpeciesCB().getSelectedItem();
     }
 
-    public GenericFeature createFeature(String featureName, SymLoader loader) {
-        GenericVersion version = GeneralLoadUtils.getLocalFilesVersion(GenometryModel.getInstance().getSelectedSeqGroup(), getSelectedSpecies());
-        GenericFeature feature = new GenericFeature(featureName, null, version, loader, null, false);
-        version.addFeature(feature);
-        feature.setVisible(); // this should be automatically checked in the feature tree
-        ServerList.getServerInstance().fireServerInitEvent(ServerList.getServerInstance().getLocalFilesServer(), LoadUtils.ServerStatus.Initialized, true);
+    public DataSet createDataSet(String featureName, SymLoader loader) {
+        DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), getSelectedSpecies());
+        DataSet dataSet = new DataSet(featureName, null, dataContainer, loader, null, false);
+        dataContainer.addDataSet(dataSet);
+        dataSet.setVisible(); // this should be automatically checked in the feature tree
+        refreshTreeViewAndRestore();
         refreshDataManagementView();
 
-        return feature;
+        return dataSet;
     }
 
-    public void addFeature(final GenericFeature feature) {
-        feature.setVisible();
+    public void addFeature(final DataSet dataSet) {
+        dataSet.setVisible();
 
         List<LoadStrategy> loadStrategies = new java.util.ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
 
-        if (!loadFeature(loadStrategies, feature, null)) {
-            addFeatureTier(feature);
+        if (!loadFeature(loadStrategies, dataSet, null)) {
+            addFeatureTier(dataSet);
         }
 
         refreshDataManagementView();
     }
 
-    public static void addFeatureTier(final GenericFeature feature) {
+    public static void addFeatureTier(final DataSet feature) {
 
-        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getFeatureName(), Thread.MIN_PRIORITY) {
+        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getDataSetName(), Thread.MIN_PRIORITY) {
 
             @Override
             protected Object runInBackground() {
@@ -534,6 +524,7 @@ public final class GeneralLoadView {
 
                     private static final long serialVersionUID = 1L;
 
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
                         gviewer.getSeqMap().packTiers(false, true, true);
@@ -549,13 +540,13 @@ public final class GeneralLoadView {
         CThreadHolder.getInstance().execute(feature, worker);
     }
 
-    public void removeAllFeautres(Collection<GenericFeature> features) {
+    public void removeAllFeautres(Collection<DataSet> features) {
         features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
             removeFeature(feature, true);
         });
     }
 
-    public void removeFeature(final GenericFeature feature, final boolean refresh) {
+    public void removeFeature(final DataSet feature, final boolean refresh) {
         removeFeature(feature, refresh, true);
     }
 
@@ -563,10 +554,10 @@ public final class GeneralLoadView {
         final String method = style.getMethodName();
         if (method != null) {
             final BioSeq bioseq = GenometryModel.getInstance().getSelectedSeq();
-            final GenericFeature feature = style.getFeature();
+            final DataSet feature = style.getFeature();
 
             // If genome is selected then delete all syms on the all seqs.
-            if (IGBConstants.GENOME_SEQ_ID.equals(bioseq.getID())) {
+            if (IGBConstants.GENOME_SEQ_ID.equals(bioseq.getId())) {
                 removeFeature(feature, true);
                 return;
             }
@@ -601,17 +592,17 @@ public final class GeneralLoadView {
         }
     }
 
-    void removeFeature(final GenericFeature feature, final boolean refresh, final boolean removeLocal) {
+    void removeFeature(final DataSet feature, final boolean refresh, final boolean removeLocal) {
         if (feature == null) {
             return;
         }
 
-        CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.getFeatureName()) {
+        CThreadWorker<Void, Void> delete = new CThreadWorker<Void, Void>("Removing feature  " + feature.getDataSetName()) {
 
             @Override
             protected Void runInBackground() {
                 if (!Strings.isNullOrEmpty(feature.getMethod())) {
-                    for (BioSeq bioseq : feature.getgVersion().getGroup().getSeqList()) {
+                    for (BioSeq bioseq : feature.getDataContainer().getGenomeVersion().getSeqList()) {
                         TrackView.getInstance().deleteSymsOnSeq(gviewer, feature.getMethod(), bioseq, feature);
                     }
                 }
@@ -620,22 +611,22 @@ public final class GeneralLoadView {
 
             @Override
             protected void finished() {
-                boolean refSeq = feature.getgVersion().getgServer().getServerType().equals(LocalFilesServerType.getInstance()) && feature.getSymL().isResidueLoader();
-                if (removeLocal || refSeq) {
-                    // If feature is local then remove it from server.
-                    GenericVersion version = feature.getgVersion();
-                    if (version.getgServer().getServerType().equals(LocalFilesServerType.getInstance())) {
-                        if (version.removeFeature(feature)) {
-                            SeqGroupView.getInstance().refreshTable();
-                            if (gmodel.getSelectedSeqGroup().getSeqCount() > 0
-                                    && !gmodel.getSelectedSeqGroup().getSeqList().contains(gmodel.getSelectedSeq())) {
-                                gmodel.setSelectedSeq(gmodel.getSelectedSeqGroup().getSeqList().get(0));
-                            } else {
-                                gmodel.setSelectedSeq(null);
-                            }
-                        }
-                    }
-                }
+//                boolean refSeq = feature.getDataContainer().getDataProvider().getServerType().equals(LocalFilesServerType.getInstance()) && feature.getSymL().isResidueLoader();
+//                if (removeLocal || refSeq) {
+//                    // If feature is local then remove it from server.
+//                    DataContainer version = feature.getDataContainer();
+//                    if (version.getDataProvider().getServerType().equals(LocalFilesServerType.getInstance())) {
+//                        if (version.removeFeature(feature)) {
+//                            SeqGroupView.getInstance().refreshTable();
+//                            if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
+//                                    && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
+//                                gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
+//                            } else {
+//                                gmodel.setSelectedSeq(null);
+//                            }
+//                        }
+//                    }
+//                }
 
                 if (refresh) {
                     removeTier(feature.getURI().toString());

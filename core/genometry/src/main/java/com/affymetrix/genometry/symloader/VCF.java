@@ -1,5 +1,22 @@
 package com.affymetrix.genometry.symloader;
 
+import cern.colt.list.FloatArrayList;
+import cern.colt.list.IntArrayList;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.style.DefaultTrackStyle;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.style.ITrackStyle;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
+import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometry.tooltip.ToolTipConstants;
+import com.affymetrix.genometry.util.ErrorHandler;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,30 +29,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
-
-import cern.colt.list.FloatArrayList;
-import cern.colt.list.IntArrayList;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.style.DefaultTrackStyle;
-import com.affymetrix.genometry.style.GraphState;
-import com.affymetrix.genometry.style.ITrackStyle;
-import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symmetry.impl.BAMSym;
-import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
-import com.affymetrix.genometry.tooltip.ToolTipConstants;
-
 import org.broad.tribble.readers.LineReader;
 
 public class VCF extends UnindexedSymLoader implements LineProcessor {
@@ -163,8 +159,8 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private static final Pattern typePattern = Pattern.compile(",Type=\\w+,");
     private static final Pattern descriptionPattern = Pattern.compile(",Description=\\\"[^\\\"]+\\\",");
 
-    public VCF(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public VCF(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     /**
@@ -442,7 +438,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     private BAMSym getBAMSym(String nameType, BioSeq seq, String id, int start, int end, int width, String qualString, String filter, String ref, String alt) {
         Cigar cigar = null;
-// Cigar cigar = TextCigarCodec.getSingleton().decode(cigarString); 
+// Cigar cigar = TextCigarCodec.getSingleton().decode(cigarString);
         boolean equal = false;
         boolean equalLength = false;
         boolean insertion = false;
@@ -487,7 +483,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         residueSym.setInsResidues(insertion ? alt.substring(1) : "");
         residueSym.setProperty(BAM.SHOWMASK, true);
         residueSym.setProperty("type", nameType);
-        residueSym.setProperty("seq", seq.getID());
+        residueSym.setProperty("seq", seq.getId());
         residueSym.setProperty("pos", start);
         residueSym.setProperty("id", id);
         residueSym.setProperty("ref", ref);
@@ -667,7 +663,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         String ref = fields[3];
         int width = ref.length();
         int end = start + width;
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeqGroup().getSeq(seq_name);
+        BioSeq seq = GenometryModel.getInstance().getSelectedGenomeVersion().getSeq(seq_name);
         if (seq == null) {
             seq = new BioSeq(seq_name, 0);
         }

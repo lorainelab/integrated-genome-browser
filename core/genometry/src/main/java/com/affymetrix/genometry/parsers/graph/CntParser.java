@@ -14,8 +14,8 @@ package com.affymetrix.genometry.parsers.graph;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -47,7 +47,7 @@ public final class CntParser implements Parser {
 
     private final Map<String, String> unique_gids = new HashMap<>();
 
-    public List<GraphSym> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotateSeq)
+    public List<GraphSym> parse(InputStream dis, GenomeVersion seq_group, boolean annotateSeq)
             throws IOException {
 
         String line;
@@ -170,10 +170,10 @@ public final class CntParser implements Parser {
 
     }
 
-    String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
+    String getGraphIdForColumn(String column_id, GenomeVersion seq_group) {
         String gid = unique_gids.get(column_id);
         if (gid == null) {
-            gid = AnnotatedSeqGroup.getUniqueGraphID(column_id, seq_group);
+            gid = GenomeVersion.getUniqueGraphID(column_id, seq_group);
             unique_gids.put(column_id, gid);
         }
         return gid;
@@ -190,25 +190,25 @@ public final class CntParser implements Parser {
     }
 
     FloatArrayList[] getFloatsForSeq(BioSeq seq, int numScores) {
-        FloatArrayList[] floats = seq2Floats.get(seq.getID());
+        FloatArrayList[] floats = seq2Floats.get(seq.getId());
 
         if (floats == null) {
             floats = new FloatArrayList[numScores];
             for (int i = 0; i < numScores; i++) {
                 floats[i] = new FloatArrayList();
             }
-            seq2Floats.put(seq.getID(), floats);
+            seq2Floats.put(seq.getId(), floats);
         }
 
         return floats;
     }
 
     IntArrayList getXCoordsForSeq(BioSeq seq) {
-        IntArrayList xcoords = seqToIntList.get(seq.getID());
+        IntArrayList xcoords = seqToIntList.get(seq.getId());
 
         if (xcoords == null) {
             xcoords = new IntArrayList();
-            seqToIntList.put(seq.getID(), xcoords);
+            seqToIntList.put(seq.getId(), xcoords);
         }
 
         return xcoords;
@@ -216,8 +216,8 @@ public final class CntParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
-        return parse(is, group, annotate_seq);
+        return parse(is, genomeVersion, annotate_seq);
     }
 }

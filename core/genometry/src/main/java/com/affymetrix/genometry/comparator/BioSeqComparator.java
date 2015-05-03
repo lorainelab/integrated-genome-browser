@@ -12,7 +12,7 @@ public final class BioSeqComparator implements Comparator<BioSeq> {
     static final AlphanumComparator alphaNumComparator = new AlphanumComparator();
 
     public int compare(BioSeq o1, BioSeq o2) {
-        return compareStrings(o1.getID(), o2.getID());
+        return compareStrings(o1.getId(), o2.getId());
     }
 
     private static int compareStrings(String id1, String id2) {

@@ -9,12 +9,12 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.GraphType;
@@ -89,7 +89,7 @@ public class BookmarkController {
         }
     }
 
-    public static void applyProperties(IgbService igbService, final BioSeq seq, final ListMultimap<String, String> map, final GenericFeature gFeature, Map<String, ITrackStyleExtended> combos) {
+    public static void applyProperties(IgbService igbService, final BioSeq seq, final ListMultimap<String, String> map, final DataSet gFeature, Map<String, ITrackStyleExtended> combos) {
         double default_ypos = GraphState.DEFAULT_YPOS;
         double default_yheight = GraphState.DEFAULT_YHEIGHT;
         Color defaultForegroundColor = Color.decode("0x0247FE");
@@ -206,7 +206,7 @@ public class BookmarkController {
 
                     GraphState gstate = ((GraphSym) sym).getGraphState();
                     style = gstate.getTierStyle();
-                    GenericFeature feature = style.getFeature();
+                    DataSet feature = style.getFeature();
 
                     if (!gFeature.equals(feature)) {
                         continue;
@@ -225,7 +225,7 @@ public class BookmarkController {
 
                 } else {
                     style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(BioSeqUtils.determineMethod(sym));
-                    GenericFeature feature = style.getFeature();
+                    DataSet feature = style.getFeature();
 
                     if (!gFeature.equals(feature)) {
                         continue;
@@ -288,10 +288,10 @@ public class BookmarkController {
     public static void addSymmetries(Bookmarks bookmark) {
         BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         if (seq != null) {
-            AnnotatedSeqGroup group = seq.getSeqGroup();
+            GenomeVersion group = seq.getGenomeVersion();
 
-            for (GenericVersion version : group.getEnabledVersions()) {
-                version.getFeatures().stream().filter(feature -> feature.getLoadStrategy() != LoadStrategy.NO_LOAD
+            for (DataContainer version : group.getAvailableDataContainers()) {
+                version.getDataSets().stream().filter(feature -> feature.getLoadStrategy() != LoadStrategy.NO_LOAD
                         && !Delegate.EXT.equals(feature.getExtension())).forEach(feature -> {
                             bookmark.add(feature, false);
                         });
@@ -324,7 +324,7 @@ public class BookmarkController {
             if (sym instanceof TypeContainerAnnot) {
                 TypeContainerAnnot tca = (TypeContainerAnnot) sym;
                 ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
-                GenericFeature feature = style.getFeature();
+                DataSet feature = style.getFeature();
 
                 if (feature == null) {
                     unfound_labels.add(tca.getType());
@@ -338,7 +338,7 @@ public class BookmarkController {
             GraphSym graph = (GraphSym) sym;
             GraphState gstate = graph.getGraphState();
             ITrackStyleExtended style = gstate.getTierStyle();
-            GenericFeature feature = style.getFeature();
+            DataSet feature = style.getFeature();
 
             if (feature == null) {
                 unfound_labels.add(sym.getID());
@@ -405,8 +405,8 @@ public class BookmarkController {
         SeqSpan span = sym.getSpan(0);
         BioSeq seq = span.getBioSeq();
         ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.<String, String>builder();
-        builder.put(Bookmark.SEQID, seq.getID());
-        builder.put(Bookmark.VERSION, seq.getSeqGroup().getID());
+        builder.put(Bookmark.SEQID, seq.getId());
+        builder.put(Bookmark.VERSION, seq.getGenomeVersion().getName());
         builder.put(Bookmark.START, Integer.toString(span.getMin()));
         builder.put(Bookmark.END, Integer.toString(span.getMax()));
         return builder.build();
@@ -461,15 +461,15 @@ public class BookmarkController {
             return Optional.absent();
         }
 
-        String version = aseq.getSeqGroup().getID();
+        String version = aseq.getGenomeVersion().getName();
         Date date = new Date();
 
         SimpleSymWithProps mark_sym = new BookmarkSymmetry();
         mark_sym.addSpan(span);
 
-        String default_name = MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, version, aseq.getID(), span.getMin(), span.getMax());
+        String default_name = MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, version, aseq.getId(), span.getMin(), span.getMax());
         mark_sym.setProperty(Bookmark.VERSION, version);
-        mark_sym.setProperty(Bookmark.SEQID, aseq.getID());
+        mark_sym.setProperty(Bookmark.SEQID, aseq.getId());
         mark_sym.setProperty(Bookmark.START, span.getMin());
         mark_sym.setProperty(Bookmark.END, span.getMax());
         mark_sym.setProperty(Bookmark.LOADRESIDUES, Boolean.toString(aseq.isComplete()));
@@ -530,6 +530,6 @@ public class BookmarkController {
         if (aseq == null) {
             return null;
         }
-        return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getSeqGroup().getID(), aseq.getID(), span.getMin(), span.getMax());
+        return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getGenomeVersion().getName(), aseq.getId(), span.getMin(), span.getMax());
     }
 }

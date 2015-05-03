@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.useq.USeqArchive;
@@ -34,9 +34,9 @@ public class UseqParserTest {
         String filename = "data/useq/chr17_H_sapiens_Mar_2006_Region.useq";
         InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
+        GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Mar_2006");
         USeqRegionParser up = new USeqRegionParser();
-        List<SeqSymmetry> results = up.parse(istr, group, stream_name, false, null);
+        List<SeqSymmetry> results = up.parse(istr, genomeVersion, stream_name, false, null);
 
         //size of results
         //System.out.println("NumberRegions "+results.size());
@@ -74,9 +74,9 @@ public class UseqParserTest {
         InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("H_sapiens_Mar_2006");
-        gmodel.addSeqGroup(group);
-        gmodel.setSelectedSeqGroup(group);
+        GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Mar_2006");
+        gmodel.addSeqGroup(genomeVersion);
+        gmodel.setSelectedGenomeVersion(genomeVersion);
 
         USeqGraphParser up = new USeqGraphParser();
         List<GraphSym> results = up.parseGraphSyms(istr, gmodel, "test", null);
@@ -89,8 +89,8 @@ public class UseqParserTest {
         GraphSym gr0 = results.get(0);
 
         //check stream name
-        //System.out.println("StreamName "+gr0.getGraphSeq().getID());
-        assertEquals(stream_name, gr0.getGraphSeq().getID());
+        //System.out.println("StreamName "+gr0.getGraphSeq().getName());
+        assertEquals(stream_name, gr0.getGraphSeq().getId());
 
         //check point count
         //System.out.println("PointCount "+gr0.getPointCount());

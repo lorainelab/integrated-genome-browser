@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.Sgr;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import java.io.BufferedWriter;
@@ -25,17 +25,17 @@ public class SgrParserTest {
         InputStream istr = SgrParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
-        List<GraphSym> results = SgrParser.parse(istr, stream_name, group, annot_seq, ensure_unique_id);
+        List<GraphSym> results = SgrParser.parse(istr, stream_name, genomeVersion, annot_seq, ensure_unique_id);
 
         assertEquals(1, results.size());
         GraphSym gr0 = results.get(0);
 
-        assertEquals("16", gr0.getGraphSeq().getID());
+        assertEquals("16", gr0.getGraphSeq().getId());
         assertEquals(10, gr0.getPointCount());
         assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);
         assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
@@ -53,12 +53,12 @@ public class SgrParserTest {
                 + "16	948026	0.363933\n";
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
-        List<GraphSym> results = SgrParser.parse(istr, stream_name, group, annot_seq, ensure_unique_id);
+        List<GraphSym> results = SgrParser.parse(istr, stream_name, genomeVersion, annot_seq, ensure_unique_id);
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -70,7 +70,7 @@ public class SgrParserTest {
     @Test
     public void testSgr() throws Exception {
         String filename = "data/sgr/test4.sgr";
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         URL url = SgrParserTest.class.getClassLoader().getResource(filename);
         Sgr sgr = new Sgr(url.toURI(), filename, seq_group);
 
@@ -79,7 +79,7 @@ public class SgrParserTest {
         assertEquals(4, results.size());
         GraphSym gr0 = results.get(0);
 
-        assertEquals("16", gr0.getGraphSeq().getID());
+        assertEquals("16", gr0.getGraphSeq().getId());
         assertEquals(5, gr0.getPointCount());
         assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);
         assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
@@ -87,7 +87,7 @@ public class SgrParserTest {
 
         GraphSym gr1 = results.get(1);
 
-        assertEquals("17", gr1.getGraphSeq().getID());
+        assertEquals("17", gr1.getGraphSeq().getId());
         assertEquals(4, gr1.getPointCount());
         assertEquals(0.8384833, gr1.getGraphYCoord(1), 0.01);
         assertEquals(0.4523419, gr1.getGraphYCoord(2), 0.01);
@@ -95,7 +95,7 @@ public class SgrParserTest {
 
         GraphSym gr2 = results.get(2);
 
-        assertEquals("18", gr2.getGraphSeq().getID());
+        assertEquals("18", gr2.getGraphSeq().getId());
         assertEquals(2, gr2.getPointCount());
         assertEquals(0.9203930, gr2.getGraphYCoord(1), 0.01);
         assertEquals(0.2789456, gr2.getGraphYCoord(0), 0.01);
@@ -103,7 +103,7 @@ public class SgrParserTest {
 
         GraphSym gr3 = results.get(3);
 
-        assertEquals("19", gr3.getGraphSeq().getID());
+        assertEquals("19", gr3.getGraphSeq().getId());
         assertEquals(8, gr3.getPointCount());
         assertEquals(-0.0447924, gr3.getGraphYCoord(2), 0.01);
         assertEquals(0.275948, gr3.getGraphYCoord(3), 0.01);
@@ -117,7 +117,7 @@ public class SgrParserTest {
                 + "16	948026	0.363933\n";
 
         File file = createFileFromString(string);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         Sgr sgr = new Sgr(file.toURI(), file.getName(), seq_group);
         List<GraphSym> results = sgr.getGenome();
 

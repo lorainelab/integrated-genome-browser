@@ -7,7 +7,7 @@ public class SeqSpanComparator implements Comparator<SeqSpan> {
 
     @Override
     public int compare(SeqSpan ss1, SeqSpan ss2) {
-        int result = ss1.getBioSeq().getID().compareTo(ss2.getBioSeq().getID());
+        int result = ss1.getBioSeq().getId().compareTo(ss2.getBioSeq().getId());
         if (result == 0) {
             result = (ss1.isForward() ? 0 : 1) - (ss2.isForward() ? 0 : 1);
         }

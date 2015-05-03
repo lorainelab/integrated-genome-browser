@@ -17,7 +17,13 @@ public class AnnotsParserTest {
     public void filesTagAsRoot() throws IOException {
         Reader reader = new InputStreamReader(AnnotsParserTest.class.getClassLoader().getResourceAsStream("annots-1.xml"));
         AnnotsParser parser = new AnnotsParser();
-        Assert.assertEquals(3, parser.getQuickloadFileList(reader).size());
+//        Assert.assertEquals(3, parser.getQuickloadFileList(reader).size());
+        parser.getQuickloadFileList(reader).stream().forEach(file -> {
+            System.out.println(file.getName());
+            System.out.println(file.getTitle());
+            System.out.println(file.getUrl());
+            Assert.assertTrue("", !file.getProps().isEmpty());
+        });
     }
 
 }

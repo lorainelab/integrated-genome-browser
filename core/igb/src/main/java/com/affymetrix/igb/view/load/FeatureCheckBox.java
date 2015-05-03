@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.view.load.FeatureTreeView.FeatureTreeCellEditor.FeatureLoadAction;
 import java.awt.Insets;
@@ -12,7 +12,7 @@ public class FeatureCheckBox extends JRPCheckBox {
     private static final Insets insets = new Insets(0, 0, 0, 0);
     private boolean featureLoadActionSet;
 
-    public FeatureCheckBox(GenericFeature gFeature) {
+    public FeatureCheckBox(DataSet gFeature) {
         super(getId(gFeature));
         featureLoadActionSet = false;
     }
@@ -22,6 +22,7 @@ public class FeatureCheckBox extends JRPCheckBox {
         return insets;
     }
 
+    @Override
     public void addActionListener(ActionListener l) {
         super.addActionListener(l);
         if (l instanceof FeatureLoadAction) {
@@ -33,13 +34,13 @@ public class FeatureCheckBox extends JRPCheckBox {
         return featureLoadActionSet;
     }
 
-    private static final String getId(GenericFeature gFeature) {
-        String featureName = gFeature.getFeatureName();
-        String featureText = gFeature.getFeatureName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1).replaceAll(" ", "_");
+    private static String getId(DataSet dataSet) {
+        String featureName = dataSet.getDataSetName();
+        String featureText = dataSet.getDataSetName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1).replaceAll(" ", "_");
         return "FeatureTreeView_LeafCheckBox_"
-                + gFeature.getgVersion().getgServer().getServerType().getServerName()
+                + dataSet.getDataContainer().getDataProvider().getName()
                 + "_"
-                + gFeature.getgVersion().getgServer().getUrlString()
+                + dataSet.getDataContainer().getDataProvider().getUrl()
                 + "_"
                 + featureText;
     }

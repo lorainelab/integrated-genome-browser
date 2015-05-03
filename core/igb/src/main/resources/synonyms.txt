@@ -137,8 +137,6 @@ M_musculus_Feb_2003	Mouse_Feb_2003	Mouse feb2003	mm3	mm:Feb_2003	Mm:Feb_2003	Mm:
 M_musculus_Jul_2007	Mouse_Jul_2007	M_musculus_Aug_2007	Mouse_Aug_2007	mm9	Mm:NCBIv37	Mm:NCBI37	Mus_musculus.NCBIM37.reference
 M_musculus_Mar_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/34.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/34.1/
 M_musculus_Mar_2005	Mouse_Mar_2005	mm6	Mm:NCBIv34	Mm:NCBI34
-M_musculus_Mar_2006	http://www.ncbi.nlm.nih.gov/genome/M_musculus/36.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/36.1/
-M_musculus_Mar_2006	Mouse_Mar_2006	mm8	Mm:NCBIv36	Mm:NCBI36
 M_musculus_May_2004	http://www.ncbi.nlm.nih.gov/genome/M_musculus/33.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/33.1/
 M_musculus_May_2004	Mouse_May_2004	Mouse may2004	mm5	mm:May_2004	Mm:May_2004	Mm:NCBIv33	Mm:NCBI33
 M_musculus_Oct_2003	http://www.ncbi.nlm.nih.gov/genome/M_musculus/32.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/32.1/

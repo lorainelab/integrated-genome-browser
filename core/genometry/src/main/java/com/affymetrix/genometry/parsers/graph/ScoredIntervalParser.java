@@ -9,14 +9,10 @@
  */
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.BioSeq;
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
@@ -26,7 +22,24 @@ import com.affymetrix.genometry.symmetry.impl.ScoredContainerSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.util.GeneralUtils;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses "sin" file format into genometry model of ScoredContainerSyms with
@@ -93,9 +106,9 @@ public final class ScoredIntervalParser implements GraphParser {
     private static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
     private static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
-    public List<ScoredContainerSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+    public List<ScoredContainerSym> parse(InputStream istr, String stream_name, GenomeVersion seq_group, boolean annotate_seq)
             throws IOException {
-        String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
+        String unique_container_name = GenomeVersion.getUniqueGraphID(stream_name, seq_group);
 
         BufferedReader br = null;
         int line_count = 0;
@@ -375,7 +388,7 @@ public final class ScoredIntervalParser implements GraphParser {
     /**
      * Find the first matching symmetry in the seq_group, or null
      */
-    private static SeqSymmetry findSym(AnnotatedSeqGroup seq_group, String id) {
+    private static SeqSymmetry findSym(GenomeVersion seq_group, String id) {
         //TODO: Make this parser deal with the fact that there can be multiple
         // syms with the same ID rather than insisting on taking only the first match.
         // This probably will make this parser simpler, since we may be able to drop
@@ -422,7 +435,7 @@ public final class ScoredIntervalParser implements GraphParser {
             dos = new DataOutputStream(bos);
 
             BioSeq seq = graf.getGraphSeq();
-            String seq_id = (seq == null ? "." : seq.getID());
+            String seq_id = (seq == null ? "." : seq.getId());
 
             String human_name = graf.getGraphState().getTierStyle().getTrackName();
 
@@ -504,28 +517,28 @@ public final class ScoredIntervalParser implements GraphParser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = false processed here
-        return parse(is, uri, group, annotate_seq);
+        return parse(is, uri, genomeVersion, annotate_seq);
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         // not processed here
         return null;
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         if (gsym instanceof GraphIntervalSym) {
             BufferedOutputStream bos = null;
             try {
                 String genome_name = null;
                 if (seq_group != null) {
-                    genome_name = seq_group.getID();
+                    genome_name = seq_group.getName();
                 }
                 bos = new BufferedOutputStream(new FileOutputStream(file_name));
                 writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);

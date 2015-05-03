@@ -1,6 +1,6 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
@@ -28,7 +28,7 @@ public class UseAsReferenceSeqAction extends SeqMapViewActionA {
 
     private void useTrackAsReferenceSequence(TierGlyph tier) throws Exception {
         ITrackStyleExtended style = tier.getAnnotStyle();
-        GenericFeature feature = style.getFeature();
+        DataSet feature = style.getFeature();
         GeneralLoadView.getLoadView().useAsRefSequence(feature);
     }
 

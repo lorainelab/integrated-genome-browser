@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
@@ -151,8 +151,8 @@ public class TrackView {
     }
 
     void addDependentAndEmptyTrack(SeqMapView smv, BioSeq seq) {
-        for (GenericFeature feature : GeneralLoadUtils.getVisibleFeatures()) {
-            addEmptyTierFor(feature, smv);
+        for (DataSet dataSet : GeneralLoadUtils.getVisibleFeatures()) {
+            addEmptyTierFor(dataSet, smv);
         }
     }
 
@@ -166,7 +166,7 @@ public class TrackView {
         }
     }
 
-    public void deleteSymsOnSeq(SeqMapView smv, String method, BioSeq seq, GenericFeature feature) {
+    public void deleteSymsOnSeq(SeqMapView smv, String method, BioSeq seq, DataSet feature) {
 
         if (seq != null) {
             SeqSymmetry sym = seq.getAnnotation(method);
@@ -197,12 +197,12 @@ public class TrackView {
         }
     }
 
-    public void addEmptyTierFor(GenericFeature feature, SeqMapView gviewer) {
+    public void addEmptyTierFor(DataSet dataSet, SeqMapView gviewer) {
 
         // No sequence selected or if it is cytoband or it is residue file. Then return
-        if (gviewer.getAnnotatedSeq() == null || feature.getFeatureName().equals(CytobandParser.CYTOBAND)
-                || feature.getFeatureName().toLowerCase().contains(CytobandParser.CYTOBAND)
-                || (feature.getSymL() != null && (feature.getSymL().isResidueLoader() || feature.getSymL().getExtension().equalsIgnoreCase("cyt")))) {
+        if (gviewer.getAnnotatedSeq() == null || dataSet.getDataSetName().equals(CytobandParser.CYTOBAND)
+                || dataSet.getDataSetName().toLowerCase().contains(CytobandParser.CYTOBAND)
+                || (dataSet.getSymL() != null && (dataSet.getSymL().isResidueLoader() || dataSet.getSymL().getExtension().equalsIgnoreCase("cyt")))) {
             return;
         }
 
@@ -211,13 +211,13 @@ public class TrackView {
         // If feature has at least one track then don't add default.
         // Also if track has been loaded on one sequence then load it
         // for other sequence.
-        if (!Strings.isNullOrEmpty(feature.getMethod())) {
-            String method = feature.getMethod();
+        if (!Strings.isNullOrEmpty(dataSet.getMethod())) {
+            String method = dataSet.getMethod();
             if (method.endsWith(ProbeSetGlyphFactory.NETAFFX_PROBESETS)
                     || method.equals(CytobandParser.CYTOBAND_TIER_NAME)) {
                 return;
             }
-            style = getStyle(method, feature);
+            style = getStyle(method, dataSet);
 
             if (style == null) {
                 return;
@@ -226,16 +226,16 @@ public class TrackView {
             addTierFor(style, gviewer);
 
         } else {
-            style = getStyle(feature.getURI().toString(), feature);
-            style.setFeature(feature);
+            style = getStyle(dataSet.getURI().toString(), dataSet);
+            style.setFeature(dataSet);
             addTierFor(style, gviewer);
         }
 
     }
 
-    public ITrackStyleExtended getStyle(String method, GenericFeature feature) {
+    public ITrackStyleExtended getStyle(String method, DataSet feature) {
         if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
-            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(method, feature.getFeatureName(), feature.getExtension(), feature.getFeatureProps());
+            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(method, feature.getDataSetName(), feature.getExtension(), feature.getProperties());
 
             if (state.getTierStyle().isFloatTier()) {
                 return null;
@@ -243,7 +243,7 @@ public class TrackView {
 
             return state.getTierStyle();
         } else {
-            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, feature.getFeatureName(), feature.getExtension(), feature.getFeatureProps());
+            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, feature.getDataSetName(), feature.getExtension(), feature.getProperties());
         }
     }
 

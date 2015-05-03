@@ -97,7 +97,7 @@ public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym,
 
         Set<String> results = new HashSet<>();
 
-        GenometryModel.getInstance().getSelectedSeqGroup().searchHints(results, regex, 20);
+        GenometryModel.getInstance().getSelectedGenomeVersion().searchHints(results, regex, 20);
 
         return results;
     }

@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.SeqSpan;
@@ -117,7 +117,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
     private final TrackLineParser track_line_parser = new TrackLineParser();
 
     public List<SeqSymmetry> parse(InputStream istr, GenometryModel gmodel,
-            AnnotatedSeqGroup group, boolean annot_seq,
+            GenomeVersion genomeVersion, boolean annot_seq,
             String stream_name, boolean create_container)
             throws IOException {
         if (DEBUG) {
@@ -138,10 +138,10 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
             bis = new BufferedInputStream(istr);
         }
         DataInputStream dis = new DataInputStream(bis);
-        return parse(dis, gmodel, group, default_type);
+        return parse(dis, gmodel, genomeVersion, default_type);
     }
 
-    private List<SeqSymmetry> parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
+    private List<SeqSymmetry> parse(DataInputStream dis, GenometryModel gmodel, GenomeVersion seq_group, String default_type)
             throws IOException {
         if (DEBUG) {
             System.out.println("called BedParser.parseWithEvents()");
@@ -192,7 +192,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
         return symlist;
     }
 
-    private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel,
+    private void parseLine(String line, GenomeVersion seq_group, GenometryModel gmodel,
             String type, boolean use_item_rgb, String bedType,
             List<SeqSymmetry> symlist, Map<BioSeq, Map<String, SeqSymmetry>> seq2types)
             throws NumberFormatException, IOException {
@@ -240,13 +240,13 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
             String seqid = seq_name.substring(0, seq_name.indexOf(';'));
             String version = seq_name.substring(seq_name.indexOf(';') + 1);
             //            System.out.println("    seq = " + seqid + ", version = " + version);
-            if ((gmodel.getSeqGroup(version) == seq_group) || seq_group.getID().equals(version)) {
+            if ((gmodel.getSeqGroup(version) == seq_group) || seq_group.getName().equals(version)) {
                 // for format [chrom_name];[genome_version]
                 seq = seq_group.getSeq(seqid);
                 if (seq != null) {
                     seq_name = seqid;
                 }
-            } else if ((gmodel.getSeqGroup(seqid) == seq_group) || seq_group.getID().equals(seqid)) {
+            } else if ((gmodel.getSeqGroup(seqid) == seq_group) || seq_group.getName().equals(seqid)) {
                 // for format [genome_version];[chrom_name]
                 String temp = seqid;
                 seqid = version;
@@ -481,7 +481,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
     }
 
     private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
-        out.write(seq.getID().getBytes());
+        out.write(seq.getId().getBytes());
         out.write('\t');
         int min = span.getMin();
         int max = span.getMax();
@@ -497,7 +497,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
                 } else if (propsym.getProperty("id") != null) {
                     out.write(((String) propsym.getProperty("id")).getBytes());
                 } else {
-                    out.write((seq.getID() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward() ? "+" : "-")).getBytes());
+                    out.write((seq.getId() + ":" + Integer.toString(min) + "-" + Integer.toString(max) + ":" + (span.isForward() ? "+" : "-")).getBytes());
                 }
             }
             out.write('\t');
@@ -612,9 +612,9 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
         BedParser.writeSymmetry(dos, sym, seq);
     }
 
-    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion) {
         try {
-            return this.parse(dis, GenometryModel.getInstance(), group, false, annot_type, false);
+            return this.parse(dis, GenometryModel.getInstance(), genomeVersion, false, annot_type, false);
         } catch (IOException ex) {
             Logger.getLogger(BedParser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -647,9 +647,9 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
     }
 
     @Override
-    public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group, String nameType,
+    public List<? extends SeqSymmetry> parse(InputStream is, GenomeVersion genomeVersion, String nameType,
             String uri, boolean annotate_seq) throws Exception {
         // really need to switch create_container (last argument) to true soon!
-        return parse(is, GenometryModel.getInstance(), group, annotate_seq, uri, false);
+        return parse(is, GenometryModel.getInstance(), genomeVersion, annotate_seq, uri, false);
     }
 }

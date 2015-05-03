@@ -1,15 +1,14 @@
 package com.affymetrix.genometry;
 
-import static com.affymetrix.genometry.util.BioSeqUtils.determineMethod;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import static com.affymetrix.genometry.util.BioSeqUtils.determineMethod;
 import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometry.util.SearchableCharIterator;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -32,7 +31,7 @@ public class BioSeq implements SearchableCharIterator {
 
     private Map<String, RootSeqSymmetry> type_id2sym = null;   // lazy instantiation of type ids to container annotations
     private List<RootSeqSymmetry> annots;
-    private AnnotatedSeqGroup seq_group;
+    private GenomeVersion genomeVersion;
     private SearchableCharIterator residues_provider;
     // GAH 8-14-2002: need a residues field in case residues need to be cached
     // (rather than derived from composition), or if we choose to store residues here
@@ -71,16 +70,16 @@ public class BioSeq implements SearchableCharIterator {
         end = length;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
-    public AnnotatedSeqGroup getSeqGroup() {
-        return seq_group;
+    public GenomeVersion getGenomeVersion() {
+        return genomeVersion;
     }
 
-    public void setSeqGroup(AnnotatedSeqGroup group) {
-        seq_group = group;
+    public void setGenomeVersion(GenomeVersion genomeVersion) {
+        this.genomeVersion = genomeVersion;
     }
 
     public SeqSymmetry getComposition() {
@@ -110,6 +109,7 @@ public class BioSeq implements SearchableCharIterator {
         return length;
     }
 
+    @Override
     public int getLength() {
         if (length > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE - 1;
@@ -318,7 +318,7 @@ public class BioSeq implements SearchableCharIterator {
     }
 
     /**
-     * Remove annotation from the BioSeq and its parent AnnotatedSeqGroup.
+     * Remove annotation from the BioSeq and its parent GenomeVersion.
      *
      * @param annot
      */
@@ -632,7 +632,7 @@ public class BioSeq implements SearchableCharIterator {
 
     @Override
     public String toString() {
-        return this.getID();
+        return this.getId();
     }
 
 //    @Override

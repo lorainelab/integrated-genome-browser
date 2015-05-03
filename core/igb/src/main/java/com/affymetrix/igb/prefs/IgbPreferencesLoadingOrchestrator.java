@@ -3,25 +3,27 @@ package com.affymetrix.igb.prefs;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.general.GenericServer;
-import static com.affymetrix.genometry.general.GenericServerPrefKeys.SERVER_URL;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.general.ServerList;
-import com.google.common.base.Strings;
+import com.affymetrix.igb.EventService;
+import com.affymetrix.igb.general.DataProviderManager;
+import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
-import com.lorainelab.igb.preferences.model.DataProvider;
+import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
+import javax.swing.Timer;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +35,20 @@ public class IgbPreferencesLoadingOrchestrator {
     private static final Set<String> retiredServers = ImmutableSet.<String>of("http://bioviz.org/cached/");
 
     private IgbPreferencesService igbPreferencesService;
+    private DataProviderManager dataProviderManager;
+    private EventService eventService;
+    private EventBus eventBus;
 
     @Activate
     public void activate(BundleContext bundleContext) {
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
         loadIGBPrefs();
+    }
+
+    @Reference
+    public void setDataProviderManager(DataProviderManager dataProviderManager) {
+        this.dataProviderManager = dataProviderManager;
     }
 
     @Reference(optional = false)
@@ -44,78 +56,35 @@ public class IgbPreferencesLoadingOrchestrator {
         this.igbPreferencesService = igbPreferencesService;
     }
 
+    @Reference
+    public void setEventService(EventService eventService) {
+        this.eventService = eventService;
+    }
+
     public void loadIGBPrefs() {
         loadDefaultPrefs();
-
-        //Temporary migration step... can be removed after a few release cycles
-        loadOldPreferences();
-
         //Filter deprecated servers from preferences
         filterRetiredServersFromPrefs();
-
         //Load from persistence api
         loadFromPersistenceStorage();
-        DataLoadPrefsView.getSingleton().refreshServers();
-    }
-
-    private void loadOldPreferences() {
-        Collection<GenericServer> loadedServers = ServerList.getServerInstance().getAllServers();
-        try {
-            for (String nodeName : PreferenceUtils.getOldServersNode().childrenNames()) {
-                Preferences node = PreferenceUtils.getOldServersNode().node(nodeName);
-                String url = GeneralUtils.URLDecode(node.get("url", ""));
-                boolean nodeRemoved = false;
-                for (GenericServer server : loadedServers) {
-                    if (server.getUrlString().equals(url)) {
-                        node.removeNode();
-                        nodeRemoved = true;
-                        break;
-                    }
-                }
-                if (!nodeRemoved && isValidUrl(url)) {
-                    DataProvider dataProvider = new DataProvider();
-                    dataProvider.setUrl(url);
-                    dataProvider.setDefault(Boolean.FALSE.toString());
-                    dataProvider.setEnabled(node.get("enabled", "false"));
-                    dataProvider.setOrder(node.getInt("order", 1));
-                    dataProvider.setName(node.get("name", "unknown"));
-                    dataProvider.setType(node.get("type", ""));
-                    dataProvider.setPassword(node.get("password", ""));
-                    ServerList.getServerInstance().addServer(dataProvider);
-                }
-                node.removeNode();
-            }
-        } catch (BackingStoreException ex) {
-            logger.error("Error migrating old datasource providers to new format", ex);
-        } catch (IllegalStateException ex) {
-            //do nothing for node already removed illegalstateexceptions
-        }
-
-    }
-
-    private boolean isValidUrl(String url) {
-        try {
-            URL testUrl = new URL(url);
-            return true;
-        } catch (MalformedURLException ex) {
-            return false;
-        }
+        notifyUserOfNotRespondingServers();
     }
 
     private void loadDefaultPrefs() {
         Optional<IgbPreferences> igbPreferences = igbPreferencesService.fromDefaultPreferences();
         loadPreferences(igbPreferences);
+
     }
 
-    private static void loadPreferences(Optional<IgbPreferences> igbPreferences) {
+    private void loadPreferences(Optional<IgbPreferences> igbPreferences) {
         if (igbPreferences.isPresent()) {
             processDataProviders(igbPreferences.get().getDataProviders());
         }
     }
 
-    private static void processDataProviders(List<DataProvider> dataProviders) {
+    private void processDataProviders(List<DataProviderConfig> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
-        dataProviders.stream().distinct().forEach(ServerList.getServerInstance()::addServer);
+        dataProviders.stream().distinct().forEach(dataProviderManager::initializeDataProvider);
     }
 
     private void filterRetiredServersFromPrefs() {
@@ -139,14 +108,29 @@ public class IgbPreferencesLoadingOrchestrator {
     private void loadFromPersistenceStorage() {
         logger.info("Loading server preferences from the Java preferences subsystem");
         try {
-            Arrays.stream(PreferenceUtils.getServersNode().childrenNames())
-                    .map(nodeName -> PreferenceUtils.getServersNode().node(nodeName))
-                    .filter(node -> Strings.isNullOrEmpty(node.get(SERVER_URL, "")))
-                    .forEach(ServerList.getServerInstance()::addServer);
+            Arrays.stream(PreferenceUtils.getDataProvidersNode().childrenNames())
+                    .map(nodeName -> PreferenceUtils.getDataProvidersNode().node(nodeName))
+                    .forEach(dataProviderManager::initializeDataProvider);
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
         }
         logger.info("Completed loading server preferences from the Java preferences subsystem");
+    }
+
+    private void notifyUserOfNotRespondingServers() {
+        //wait 2 seconds for all servers to have time to initialize
+        Timer timer = new Timer(2000, (ActionEvent e) -> {
+            Set<String> notRespondingServerNames = DataProviderManager.getAllServers().stream()
+                    .filter(server -> server.getStatus() == LoadUtils.ResourceStatus.NotResponding)
+                    .map(server -> server.getName()).collect(Collectors.toSet());
+            if (!notRespondingServerNames.isEmpty()) {
+                ModalUtils.infoPanel("The following servers are not responding: " + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(notRespondingServerNames));
+            }
+            DataProviderManager.ALL_SOURCES_INITIALIZED = true;
+            eventBus.post(new DataProviderServiceChangeEvent());
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
 }

@@ -25,7 +25,7 @@ public class IgbPreferences {
     @SerializedName("server")
     @Expose
     @XmlElement(name = "server")
-    protected List<DataProvider> dataProviders = new ArrayList<>();
+    protected List<DataProviderConfig> dataProviders = new ArrayList<>();
     @Expose
     protected List<PluginRepository> repository = new ArrayList<>();
     @SerializedName("annotation_url")
@@ -33,11 +33,11 @@ public class IgbPreferences {
     @XmlElement(name = "annotation_url")
     protected List<AnnotationUrl> annotationUrl = new ArrayList<>();
 
-    public List<DataProvider> getDataProviders() {
+    public List<DataProviderConfig> getDataProviders() {
         return dataProviders;
     }
 
-    public void setDataProviders(List<DataProvider> dataProviders) {
+    public void setDataProviders(List<DataProviderConfig> dataProviders) {
         this.dataProviders = dataProviders;
     }
 

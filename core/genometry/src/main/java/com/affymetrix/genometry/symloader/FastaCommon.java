@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import java.net.URI;
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ public abstract class FastaCommon extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public FastaCommon(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, "", group);
+    public FastaCommon(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, "", genomeVersion);
         this.isResidueLoader = true;
     }
 

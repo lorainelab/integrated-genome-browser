@@ -3,7 +3,7 @@ package com.affymetrix.igb.view.factories;
 import aQute.bnd.annotation.component.Component;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -60,7 +60,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
     private static GraphIntervalSym[] determineGraphSyms(SeqMapViewExtendedI smv, BioSeq aseq, ScoredContainerSym original_container) {
         BioSeq vseq = smv.getViewSeq();
-        AnnotatedSeqGroup seq_group = GenometryModel.getInstance().getSelectedSeqGroup();
+        GenomeVersion seq_group = GenometryModel.getInstance().getSelectedGenomeVersion();
         if (aseq != vseq) {
             DerivedSeqSymmetry derived_sym = SeqUtils.copyToDerived(original_container);
             SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
@@ -70,7 +70,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
         return makeGraphs(original_container, seq_group);
     }
 
-    private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
+    private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, GenomeVersion seq_group) {
         int score_count = container.getScoreCount();
         List<GraphIntervalSym> results = null;
         if (separate_by_strand) {
@@ -101,7 +101,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     private static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym,
-            AnnotatedSeqGroup seq_group, BioSeq seq) {
+            GenomeVersion seq_group, BioSeq seq) {
         ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
 
         int score_count = original_container.getScoreCount();
@@ -137,7 +137,7 @@ public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
     // strands should be one of '+', '-' or '.'
     // name -- should be a score name in the original ScoredContainerSym
     private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
-            AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
+            GenomeVersion seq_group, BioSeq seq, final char strands) {
         ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
 
         float[] original_scores = original_container.getScores(name);

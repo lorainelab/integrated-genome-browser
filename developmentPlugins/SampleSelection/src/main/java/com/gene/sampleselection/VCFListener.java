@@ -1,5 +1,17 @@
 package com.gene.sampleselection;
 
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symloader.SymLoaderTabix;
+import com.affymetrix.genometry.symloader.VCF;
+import com.affymetrix.igb.shared.TrackClickListener;
+import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -7,24 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
-import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
-import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.affymetrix.genometry.symloader.SymLoader;
-import com.affymetrix.genometry.symloader.VCF;
-import com.lorainelab.igb.services.IgbService;
-import com.affymetrix.igb.shared.TrackClickListener;
-import com.affymetrix.genometry.symloader.SymLoaderTabix;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 
 public class VCFListener implements TrackClickListener, SampleSelectionCallback {
 
@@ -60,30 +58,29 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
     private void addTrackItem(JMenu parentMenu, final String fullTrackName, final String trackName, final List<String> selectedFields) {
         final JCheckBoxMenuItem dataItem = new JCheckBoxMenuItem(trackName);
         dataItem.setSelected(selectedFields.contains(fullTrackName));
-        dataItem.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-                        if (group != null) {
-                            Set<GenericVersion> versions = group.getEnabledVersions();
-                            if (versions != null) {
-                                for (GenericVersion gVersion : versions) {
-                                    for (GenericFeature feature : gVersion.getFeatures()) {
-                                        feature.clear();
-                                        feature.setVisible();
-                                    }
-                                }
+        dataItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+                if (genomeVersion != null) {
+                    Set<DataContainer> versions = genomeVersion.getAvailableDataContainers();
+                    if (versions != null) {
+                        for (DataContainer dataContainer : versions) {
+                            for (DataSet feature : dataContainer.getDataSets()) {
+                                feature.clear();
+                                feature.setVisible();
                             }
                         }
-                        if (dataItem.isSelected()) {
-                            selectedFields.add(fullTrackName);
-                        } else {
-                            selectedFields.remove(fullTrackName);
-                        }
-                        igbService.getSeqMap().updateWidget();
                     }
                 }
+                if (dataItem.isSelected()) {
+                    selectedFields.add(fullTrackName);
+                } else {
+                    selectedFields.remove(fullTrackName);
+                }
+                igbService.getSeqMap().updateWidget();
+            }
+        }
         );
         parentMenu.add(dataItem);
     }
@@ -94,12 +91,12 @@ public class VCFListener implements TrackClickListener, SampleSelectionCallback 
 
     @Override
     public void select(String name, boolean separateTracks, Map<String, List<String>> selections) { // callback from SampleSelectionView
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-        if (group != null) {
-            Set<GenericVersion> versions = group.getEnabledVersions();
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+        if (genomeVersion != null) {
+            Set<DataContainer> versions = genomeVersion.getAvailableDataContainers();
             if (versions != null) {
-                for (GenericVersion gVersion : versions) {
-                    for (GenericFeature feature : gVersion.getFeatures()) {
+                for (DataContainer dataContainer : versions) {
+                    for (DataSet feature : dataContainer.getDataSets()) {
                         if (feature.getSymL() != null && name.equals(feature.getSymL().featureName)) {
                             feature.clear();
                             feature.setVisible();

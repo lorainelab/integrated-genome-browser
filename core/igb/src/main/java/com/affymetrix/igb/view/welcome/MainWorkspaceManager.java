@@ -3,7 +3,7 @@ package com.affymetrix.igb.view.welcome;
 import be.pwnt.jflow.JFlowPanel;
 import be.pwnt.jflow.event.ShapeEvent;
 import be.pwnt.jflow.event.ShapeListener;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class manages the cover flow visualization. It has a card layout where
@@ -35,6 +37,7 @@ import javax.swing.JPanel;
  */
 public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(MainWorkspaceManager.class);
     private static final long serialVersionUID = 1L;
     public static final String WELCOME_PANE = "WelcomePane";
     public static final String SEQ_MAP_PANE = "SeqMapPane";
@@ -93,17 +96,17 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
                                 + "Please check that the appropriate data source is available.", Level.WARNING);
                         return;
                     }
-                    String groupStr = versionNames.get(0);
-                    AnnotatedSeqGroup group = gmodel.getSeqGroup(groupStr);
+                    String versionName = versionNames.get(0);
+                    GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
 
-                    if (group == null || group.getEnabledVersions().isEmpty()) {
-                        IGB.getInstance().setStatus(groupStr + " Not Available", true);
-                        ErrorHandler.errorPanel("NOTICE", groupStr + " not available at this time. "
+                    if (genomeVersion == null || genomeVersion.getAvailableDataContainers().isEmpty()) {
+                        IGB.getInstance().setStatus(versionName + " Not Available", true);
+                        ErrorHandler.errorPanel("NOTICE", versionName + " not available at this time. "
                                 + "Please check that the appropriate data source is available.", Level.WARNING);
                         return;
                     }
 
-                    SeqGroupView.getInstance().setSelectedGroup(groupStr);
+                    SeqGroupView.getInstance().setSelectedGenomeVersion(genomeVersion);
                 }
             }
 
@@ -133,7 +136,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
         CardLayout layout = (CardLayout) getLayout();
 //		System.out.println("MainWorkspaceManager:itemStateChanged hit");
         String species = e.getItem().toString();
-        if (gmodel.getSelectedSeqGroup() == null && SELECT_SPECIES.equals(species)) {
+        if (gmodel.getSelectedGenomeVersion() == null && SELECT_SPECIES.equals(species)) {
             layout.show(this, WELCOME_PANE);
         } else {
             layout.show(this, SEQ_MAP_PANE);

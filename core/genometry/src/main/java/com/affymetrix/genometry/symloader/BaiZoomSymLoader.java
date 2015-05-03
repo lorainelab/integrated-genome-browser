@@ -1,5 +1,13 @@
 package com.affymetrix.genometry.symloader;
 
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.parsers.FileTypeHolder;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.SynonymLookup;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -8,33 +16,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.StubBAMFileIndex;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import net.sf.samtools.seekablestream.SeekableFileStream;
 import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
 
-    public BaiZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public BaiZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     @Override
     protected SymLoader getDataFileSymLoader() throws Exception {
-        return FileTypeHolder.getInstance().getFileTypeHandler("bam").createSymLoader(getBamURI(uri), featureName, group);
+        return FileTypeHolder.getInstance().getFileTypeHandler("bam").createSymLoader(getBamURI(uri), featureName, genomeVersion);
     }
 
     private int getRefNo(String igbSeq, SAMSequenceDictionary ssd) {

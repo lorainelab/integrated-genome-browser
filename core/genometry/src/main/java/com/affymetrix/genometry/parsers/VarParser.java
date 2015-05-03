@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import java.io.BufferedReader;
@@ -37,7 +37,7 @@ public final class VarParser implements Parser {
 
     private static final Pattern line_regex = Pattern.compile("\\t");
 
-    public static List<SingletonSymWithProps> parse(InputStream dis, AnnotatedSeqGroup seq_group)
+    public static List<SingletonSymWithProps> parse(InputStream dis, GenomeVersion seq_group)
             throws IOException {
 
         String line;
@@ -98,8 +98,8 @@ public final class VarParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
-        return parse(is, group);
+        return parse(is, genomeVersion);
     }
 }

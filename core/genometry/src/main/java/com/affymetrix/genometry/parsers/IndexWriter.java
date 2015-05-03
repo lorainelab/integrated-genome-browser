@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public interface IndexWriter {
      *
      * @return list of SeqSymmetries.
      */
-    public List<? extends SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group);
+    public List<? extends SeqSymmetry> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion);
 
     /**
      * Get a comparator for the class.

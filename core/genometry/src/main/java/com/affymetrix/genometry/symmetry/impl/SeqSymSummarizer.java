@@ -11,7 +11,7 @@ package com.affymetrix.genometry.symmetry.impl;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.ResiduesChars;
 import com.affymetrix.genometry.SeqSpan;
@@ -292,7 +292,7 @@ public final class SeqSymSummarizer {
         // Originally, this returned a GraphSym with just x and y, but now has widths.
         // Since the x and y values are not changed, all old code that relies on them
         // does not need to change.
-        String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
+        String uid = GenomeVersion.getUniqueGraphID(gid, seq);
         GraphIntervalSym gsym
                 = new GraphIntervalSym(x_positions, widths, transition_ypos.elements(), uid, seq);
         return gsym;
@@ -595,7 +595,7 @@ public final class SeqSymSummarizer {
         transition_xpos.trimToSize();
         transition_ypos.trimToSize();
 
-        String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
+        String uid = GenomeVersion.getUniqueGraphID(gid, seq);
 
         return new GraphSym(transition_xpos.elements(), transition_ypos.elements(), uid, seq);
     }

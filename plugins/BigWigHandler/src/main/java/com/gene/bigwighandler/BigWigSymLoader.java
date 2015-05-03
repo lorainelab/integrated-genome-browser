@@ -2,7 +2,7 @@ package com.gene.bigwighandler;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symloader.SymLoader;
@@ -43,7 +43,7 @@ public class BigWigSymLoader extends SymLoader {
     private List<BioSeq> chromosomeList;
     private Map<String, String> realSeq2Seq;
 
-    public BigWigSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+    public BigWigSymLoader(URI uri, String featureName, GenomeVersion group) {
         super(uri, featureName, group);
     }
 
@@ -61,8 +61,8 @@ public class BigWigSymLoader extends SymLoader {
         initbbReader();
 
         Map<String, BioSeq> seqMap = new HashMap<>();
-        for (BioSeq seq : group.getSeqList()) {
-            seqMap.put(seq.getID(), seq);
+        for (BioSeq seq : genomeVersion.getSeqList()) {
+            seqMap.put(seq.getId(), seq);
         }
         chromosomeList = new ArrayList<>();
         realSeq2Seq = new HashMap<>();
@@ -75,9 +75,9 @@ public class BigWigSymLoader extends SymLoader {
             if (pos > -1) {
                 cleanSeqID = seqID.substring(0, pos);
             }
-            BioSeq seq = group.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString());
+            BioSeq seq = genomeVersion.addSeq(cleanSeqID, chromosomeNameMap.get(seqID), uri.toString());
             chromosomeList.add(seq);
-            realSeq2Seq.put(seq.getID(), seqID);
+            realSeq2Seq.put(seq.getId(), seqID);
         }
         this.isInitialized = true;
     }
@@ -120,7 +120,7 @@ public class BigWigSymLoader extends SymLoader {
     @Override
     public List<? extends SeqSymmetry> getChromosome(BioSeq seq) {
         init();
-        String seqString = realSeq2Seq.get(seq.getID());
+        String seqString = realSeq2Seq.get(seq.getId());
         return parse(seq, bbReader.getBigWigIterator(seqString, 0, seqString, Integer.MAX_VALUE, true));
     }
 
@@ -128,7 +128,7 @@ public class BigWigSymLoader extends SymLoader {
     public List<? extends SeqSymmetry> getRegion(SeqSpan span) {
         List<? extends SeqSymmetry> regions = null;
         init();
-        String seqString = realSeq2Seq.get(span.getBioSeq().getID());
+        String seqString = realSeq2Seq.get(span.getBioSeq().getId());
         try {
             regions = parse(span.getBioSeq(), bbReader.getBigWigIterator(seqString, span.getStart(), seqString, span.getEnd(), true));
         } catch (RuntimeException x) {

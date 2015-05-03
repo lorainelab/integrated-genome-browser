@@ -1,19 +1,17 @@
 package com.lorainelab.igb.services;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.google.common.base.Optional;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
@@ -26,6 +24,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -81,11 +80,11 @@ public interface IgbService {
 
     public JRPMenu addTopMenu(String id, String text, int index);
 
-    public void loadAndDisplayAnnotations(GenericFeature gFeature);
+    public void loadAndDisplayAnnotations(DataSet gFeature);
 
-    public void loadAndDisplaySpan(final SeqSpan span, final GenericFeature feature);
+    public void loadAndDisplaySpan(final SeqSpan span, final DataSet feature);
 
-    public void loadChromosomes(GenericFeature gFeature);
+    public void loadChromosomes(DataSet gFeature);
 
     public void updateGeneralLoadView();
 
@@ -95,9 +94,9 @@ public interface IgbService {
 
     public void performSelection(String selectParam);
 
-    public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported);
+    public DataSet getDataSet(GenomeVersion genomeVersion, DataProvider dataProvider, String feature_url, boolean showErrorForUnsupported);
 
-    public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version);
+    public Optional<GenomeVersion> determineAndSetGroup(final String version);
 
     public Color getDefaultBackgroundColor();
 
@@ -174,14 +173,14 @@ public interface IgbService {
     public List<TierGlyph> getVisibleTierGlyphs();
 
     // ServerList
-    public GenericServer loadServer(String server_url);
+    public Optional<DataProvider> loadServer(String server_url);
 
     public boolean areAllServersInited();
 
-    public GenericServer getServer(String URLorName);
+    public Optional<DataProvider> getServer(String URLorName);
 
     // Open Uri
-    public void openURI(URI uri, final String fileName, final AnnotatedSeqGroup loadGroup, final String speciesName, final boolean isReferenceSequence);
+    public void openURI(URI uri, final String fileName, final GenomeVersion loadGroup, final String speciesName, final boolean isReferenceSequence);
 
     public String getSelectedSpecies();
 
@@ -197,16 +196,14 @@ public interface IgbService {
 
     public IgbTabPanel getTabPanelFromDisplayName(String viewName);
 
-    public Set<GenericServer> getEnabledServerList();
+    public Set<DataProvider> getEnabledServerList();
 
-    public Collection<GenericServer> getAllServersList();
-
-    public void discoverServer(final GenericServer server);
+    public Collection<DataProvider> getAllServersList();
 
 //	public void changeViewMode(SeqMapViewI gviewer, ITrackStyleExtended style, String viewMode, RootSeqSymmetry rootSym, ITrackStyleExtended comboStyle);
     public void goToRegion(String region);
 
-    public GenericFeature findFeatureWithURI(GenericVersion version, URI featureURI);
+    public DataSet findFeatureWithURI(DataContainer version, URI featureURI);
 
     public void print(int pageFormat, boolean noDialog) throws PrinterException;
 
@@ -228,13 +225,7 @@ public interface IgbService {
 
     public void setHome();
 
-    public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order);
-
-    public GenericServer addServer(ServerTypeI serverType, String serverName, String serverURL, int order, String mirrorURL); //qlmirror
-
-    public void removeServer(GenericServer gServer);
-
-    public GenericFeature createFeature(String featureName, SymLoader loader);
+    public DataSet createFeature(String featureName, SymLoader loader);
 
     public List<String> getLoadedFeatureNames();
 

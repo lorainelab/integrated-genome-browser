@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.parsers.GFF3Parser;
@@ -51,12 +51,12 @@ public class GFF3 extends SymLoader implements LineProcessor {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public GFF3(URI uri, String featureName, AnnotatedSeqGroup group) {
-        this(uri, featureName, group, MERGE_CDS);
+    public GFF3(URI uri, String featureName, GenomeVersion genomeVersion) {
+        this(uri, featureName, genomeVersion, MERGE_CDS);
     }
 
-    public GFF3(URI uri, String featureName, AnnotatedSeqGroup group, boolean merge_cds) {
-        super(uri, featureName, group);
+    public GFF3(URI uri, String featureName, GenomeVersion genomeVersion, boolean merge_cds) {
+        super(uri, featureName, genomeVersion);
         this.parser = new GFF3Parser();
         this.merge_cds = merge_cds;
     }
@@ -113,11 +113,11 @@ public class GFF3 extends SymLoader implements LineProcessor {
         try {
             File file = chrList.get(seq);
             if (file == null) {
-                Logger.getLogger(GFF3.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                Logger.getLogger(GFF3.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<SeqSymmetry>emptyList();
             }
             istr = new FileInputStream(file);
-            return parser.parse(istr, uri.toString(), seq, group, false, merge_cds, min, max);
+            return parser.parse(istr, uri.toString(), seq, genomeVersion, false, merge_cds, min, max);
         } catch (Exception ex) {
             throw ex;
         } finally {
@@ -152,7 +152,7 @@ public class GFF3 extends SymLoader implements LineProcessor {
                 throw new UnsupportedOperationException();
             }
         };
-        return parser.parse(it, uri.toString(), seq, group, false, merge_cds, 0, Integer.MAX_VALUE);
+        return parser.parse(it, uri.toString(), seq, genomeVersion, false, merge_cds, 0, Integer.MAX_VALUE);
     }
 
     @Override

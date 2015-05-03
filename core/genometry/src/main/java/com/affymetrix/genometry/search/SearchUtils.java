@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.search;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
@@ -28,18 +28,18 @@ public class SearchUtils {
      * Due to disagreements between group ID search and BioSeq ID search, do
      * both and combine their results.
      */
-    public static List<SeqSymmetry> findLocalSyms(AnnotatedSeqGroup group, BioSeq chrFilter, Pattern regex, boolean search_props) {
+    public static List<SeqSymmetry> findLocalSyms(GenomeVersion genomeVersion, BioSeq chrFilter, Pattern regex, boolean search_props) {
 
         Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
             if (chrFilter == null) {
-                group.searchProperties(syms, regex, -1);
+                genomeVersion.searchProperties(syms, regex, -1);
             } else {
                 chrFilter.searchProperties(syms, regex, -1);
             }
         } else {
             if (chrFilter == null) {
-                group.search(syms, regex, -1);
+                genomeVersion.search(syms, regex, -1);
             } else {
                 chrFilter.search(syms, regex, -1);
             }
@@ -109,14 +109,14 @@ public class SearchUtils {
         }
     }
 
-    public static Set<String> findLocalSyms(AnnotatedSeqGroup group, Pattern regex, boolean search_props, int limit) {
+    public static Set<String> findLocalSyms(GenomeVersion genomeVersion, Pattern regex, boolean search_props, int limit) {
         String[] props_to_search;
         Set<SeqSymmetry> syms = new HashSet<>();
         if (search_props) {
-            group.searchProperties(syms, regex, limit);
+            genomeVersion.searchProperties(syms, regex, limit);
             props_to_search = new String[]{ID, NAME, TITLE, DESCRIPTION};
         } else {
-            group.search(syms, regex, -1);
+            genomeVersion.search(syms, regex, -1);
             props_to_search = new String[]{ID};
         }
 

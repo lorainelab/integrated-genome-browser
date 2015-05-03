@@ -158,7 +158,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 }
             }
             case Name: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding) {
                     return true;
                 }
             }
@@ -180,7 +180,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
         switch (tableColumns.get(column)) {
             case Refresh:
                 if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
-                    if (dataProvider.getStatus() == ResourceStatus.Disabled
+                    if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
                         dataProvider.setStatus(ResourceStatus.NotInitialized);
                     }
@@ -198,7 +198,9 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:
-                dataProvider.setName((String) editedValue);
+                if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
+                    dataProvider.setName((String) editedValue);
+                }
                 break;
             case URL:
                 //do nothing

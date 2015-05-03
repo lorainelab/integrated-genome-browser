@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.comparator.UcscPslComparator;
@@ -67,9 +67,9 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     String track_name_prefix = null;
     private static final String newLine = System.getProperty("line.separator");	// system-independent newline
 
-    private final AnnotatedSeqGroup query_group;
-    private final AnnotatedSeqGroup target_group;
-    private final AnnotatedSeqGroup other_group;
+    private final GenomeVersion query_group;
+    private final GenomeVersion target_group;
+    private final GenomeVersion other_group;
     private final boolean annotate_query;
     private final boolean annotate_target;
     private final boolean annotate_other;
@@ -88,12 +88,12 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         return strategyList;
     }
 
-    public PSL(URI uri, String featureName, AnnotatedSeqGroup group) {
-        this(uri, featureName, group, null, null, false, false, false);
+    public PSL(URI uri, String featureName, GenomeVersion genomeVersion) {
+        this(uri, featureName, genomeVersion, null, null, false, false, false);
     }
 
-    public PSL(URI uri, String featureName, AnnotatedSeqGroup target_group,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup other_group,
+    public PSL(URI uri, String featureName, GenomeVersion target_group,
+            GenomeVersion query_group, GenomeVersion other_group,
             boolean annotate_query, boolean annotate_target,
             boolean annotate_other) {
         super(uri, featureName, target_group);
@@ -306,7 +306,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
     /**
      * Whether or not to add new seqs from the file to the target
-     * AnnotatedSeqGroup. Normally false; set this to true for "link.psl" files.
+     * GenomeVersion. Normally false; set this to true for "link.psl" files.
      */
     public void setIsLinkPsl(boolean b) {
         is_link_psl = b;
@@ -317,7 +317,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         try {
             File file = chrList.get(seq);
             if (file == null) {
-                Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getID());
+                Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<UcscPslSym>emptyList();
             }
             istr = new FileInputStream(file);
@@ -330,7 +330,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     }
 
     private List<UcscPslSym> parse(InputStream istr, String annot_type, int min, int max,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group) {
+            GenomeVersion query_group, GenomeVersion target_group, GenomeVersion other_group) {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(istr));
         Iterator<String> it = new Iterator<String>() {
 
@@ -398,27 +398,27 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
     private List<UcscPslSym> tabixParse(
             Iterator<String> it, String annot_type, int min, int max,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-            AnnotatedSeqGroup other_group) {
+            GenomeVersion query_group, GenomeVersion target_group,
+            GenomeVersion other_group) {
 
         if (DEBUG) {
             System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
         }
         List<UcscPslSym> results = new ArrayList<>();
 
-        // Make temporary seq groups for any unspecified group.
+        // Make temporary seq groups for any unspecified genomeVersion.
         // These temporary groups do not require synonym matching, because they should
         // only refer to sequences from a single file.
         if (query_group == null) {
-            query_group = new AnnotatedSeqGroup("Query");
+            query_group = new GenomeVersion("Query");
             query_group.setUseSynonyms(false);
         }
         if (target_group == null) {
-            target_group = new AnnotatedSeqGroup("Target");
+            target_group = new GenomeVersion("Target");
             target_group.setUseSynonyms(false);
         }
         if (other_group == null) {
-            other_group = new AnnotatedSeqGroup("Other");
+            other_group = new GenomeVersion("Other");
             other_group.setUseSynonyms(false);
         }
 
@@ -518,38 +518,38 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
      * @param annot_type The method name for the annotation to load from the
      * file, if the track line is missing; if there is a track line in the file,
      * the name from the track line will be used instead.
-     * @param query_group An AnnotatedSeqGroup (or null) to look for query
+     * @param query_group An GenomeVersion (or null) to look for query
      * SeqSymmetries in and add SeqSymmetries to. Null is ok; this will cause a
-     * temporary AnnotatedSeqGroup to be created.
-     * @param target_group An AnnotatedSeqGroup (or null) to look for target
+     * temporary GenomeVersion to be created.
+     * @param target_group An GenomeVersion (or null) to look for target
      * SeqSymmetries in and add SeqSymmetries to.
-     * @param other_group An AnnotatedSeqGroup (or null) to look for other
+     * @param other_group An GenomeVersion (or null) to look for other
      * SeqSymmetries in (in PSL3 format) and add SeqSymmetries to. This
      * parameter is ignored if the file is not in psl3 format.
      */
     private List<UcscPslSym> parse(
             Iterator<String> it, String annot_type, int min, int max,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-            AnnotatedSeqGroup other_group) {
+            GenomeVersion query_group, GenomeVersion target_group,
+            GenomeVersion other_group) {
 
         if (DEBUG) {
             System.out.println("in PSL.parse(), create_container_annot: " + create_container_annot);
         }
         List<UcscPslSym> results = new ArrayList<>();
 
-        // Make temporary seq groups for any unspecified group.
+        // Make temporary seq groups for any unspecified genomeVersion.
         // These temporary groups do not require synonym matching, because they should
         // only refer to sequences from a single file.
         if (query_group == null) {
-            query_group = new AnnotatedSeqGroup("Query");
+            query_group = new GenomeVersion("Query");
             query_group.setUseSynonyms(false);
         }
         if (target_group == null) {
-            target_group = new AnnotatedSeqGroup("Target");
+            target_group = new GenomeVersion("Target");
             target_group.setUseSynonyms(false);
         }
         if (other_group == null) {
-            other_group = new AnnotatedSeqGroup("Other");
+            other_group = new GenomeVersion("Other");
             other_group.setUseSynonyms(false);
         }
 
@@ -637,8 +637,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     }
 
     private UcscPslSym createSym(String annot_type, int min, int max,
-            AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-            AnnotatedSeqGroup other_group, boolean in_bottom_of_link_psl, String[] fields,
+            GenomeVersion query_group, GenomeVersion target_group,
+            GenomeVersion other_group, boolean in_bottom_of_link_psl, String[] fields,
             Map<BioSeq, Map<String, SimpleSymWithProps>> target2types,
             Map<BioSeq, Map<String, SimpleSymWithProps>> query2types,
             Map<BioSeq, Map<String, SimpleSymWithProps>> other2types) {
@@ -753,7 +753,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         return findex;
     }
 
-    private BioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
+    private BioSeq determineSeq(GenomeVersion query_group, String qname, int qsize) {
         BioSeq qseq = query_group.getSeq(qname);
         if (qseq == null) {
             // Doing a new String() here gives a > 4X reduction in
@@ -770,11 +770,11 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     }
 
     private UcscPslSym determineSym(
-            AnnotatedSeqGroup query_group, String qname, int qsize,
-            AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl,
+            GenomeVersion query_group, String qname, int qsize,
+            GenomeVersion target_group, String tname, boolean in_bottom_of_link_psl,
             int tsize, boolean qforward, boolean tforward, String[] block_size_array,
             String[] q_start_array, String[] t_start_array, String annot_type,
-            String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group,
+            String[] fields, int findex, int childcount, GenomeVersion other_group,
             int match, int mismatch, int repmatch, int n_count, int q_gap_count,
             int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation,
             int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other,
@@ -875,19 +875,19 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
     }
 
     private static void annotate(
-            boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup) {
+            boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, GenomeVersion annGroup) {
         if (annotate) {
             if (create_container_annot) {
                 createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
             } else {
                 seq.addAnnotation(sym);
             }
-//			annGroup.addToIndex(sym.getID(), sym);
+//			annGroup.addToIndex(sym.getName(), sym);
         }
     }
 
     private static void annotateTarget(
-            boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup) {
+            boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, GenomeVersion annGroup) {
         if (annotate) {
             // force annotation of target if query and target are shared and file is ".link.psl" format
             if (create_container_annot) {
@@ -896,7 +896,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                 seq.addAnnotation(sym);
             }
             if (!in_bottom_of_link_psl) {
-//				annGroup.addToIndex(sym.getID(), sym);
+//				annGroup.addToIndex(sym.getName(), sym);
             }
         }
     }
@@ -1105,8 +1105,8 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         return ((UcscPslSym) sym).getTargetMax();
     }
 
-    public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
-        return parse(dis, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, null, group, null);
+    public List<UcscPslSym> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion) {
+        return parse(dis, annot_type, Integer.MIN_VALUE, Integer.MAX_VALUE, null, genomeVersion, null);
     }
 
     public void setTrackNamePrefix(String prefix) {

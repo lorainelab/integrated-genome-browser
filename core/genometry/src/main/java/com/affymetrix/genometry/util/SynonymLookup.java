@@ -54,7 +54,7 @@ public class SynonymLookup {
     protected final SetMultimap<String, String> thesaurus
             = Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, String>create());
 
-    private final Set<String> preferredNames = Sets.<String>newConcurrentHashSet();
+    protected final Set<String> preferredNames = Sets.<String>newConcurrentHashSet();
 
     /**
      * Returns the default instance of SynonymLookup. This is used to share a
@@ -88,23 +88,20 @@ public class SynonymLookup {
     }
 
     public void loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException {
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(istream);
+        try (Reader reader = new InputStreamReader(istream)) {
             Iterable<CSVRecord> records = CSVFormat.TDF
                     .withCommentMarker('#')
                     .withIgnoreSurroundingSpaces(true)
                     .withIgnoreEmptyLines(true)
                     .parse(reader);
             for (CSVRecord record : records) {
-                //TODO: look into why size should be greater than 2
                 if (record.size() >= 2) {
                     if (setPreferredNames) {
                         if (StringUtils.isNotEmpty(record.get(0))) {
                             preferredNames.add(record.get(0));
                         }
                     }
-                    Set<String> row = Sets.<String>newConcurrentHashSet();
+                    Set<String> row = Sets.newConcurrentHashSet();
                     for (String entry : record) {
                         if (StringUtils.isNotEmpty(entry)) {
                             row.add(entry);
@@ -113,9 +110,11 @@ public class SynonymLookup {
                     addSynonyms(row);
                 }
             }
-        } finally {
-            GeneralUtils.safeClose(reader);
         }
+    }
+
+    public Set<String> getPreferredNames() {
+        return preferredNames;
     }
 
     /**
@@ -126,7 +125,7 @@ public class SynonymLookup {
     public void addSynonyms(Set<String> row) {
         updateRowWithExistingSynonyms(row);
         for (String synonymCandidate : row) {
-            ImmutableSet<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonymCandidate)).build();
+            Set<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonymCandidate)).build();
             if (thesaurus.get(synonymCandidate).addAll(row)) {
                 for (String previousSynonym : previousSynonymList) {
                     thesaurus.get(previousSynonym).addAll(row);
@@ -178,7 +177,7 @@ public class SynonymLookup {
      * @return the set of matching synonyms for the given synonym or an epmty
      * set.
      */
-    public ImmutableSet<String> getSynonyms(String synonym, boolean cs) {
+    public Set<String> getSynonyms(String synonym, boolean cs) {
         if (synonym == null) {
             throw new IllegalArgumentException("str can not be null");
         }

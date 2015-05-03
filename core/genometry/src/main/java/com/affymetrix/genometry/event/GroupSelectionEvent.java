@@ -1,29 +1,29 @@
 package com.affymetrix.genometry.event;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
 public final class GroupSelectionEvent extends EventObject {
 
-    private List<AnnotatedSeqGroup> selected_groups;
-    private AnnotatedSeqGroup primary_selection = null;
+    private List<GenomeVersion> selected_groups;
+    private GenomeVersion primary_selection = null;
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
      *
      * @param src The source of the event
-     * @param groups a List of AnnotatedSeqGroup's that have been selected.
-     * (If null, will default to {@link Collections#EMPTY_LIST}.)
+     * @param groups a List of GenomeVersion's that have been selected.
+ (If null, will default to {@link Collections#EMPTY_LIST}.)
      */
-    public GroupSelectionEvent(Object src, List<AnnotatedSeqGroup> groups) {
+    public GroupSelectionEvent(Object src, List<GenomeVersion> groups) {
         super(src);
         this.selected_groups = groups;
         this.primary_selection = null;
         if (selected_groups == null) {
-            selected_groups = Collections.<AnnotatedSeqGroup>emptyList();
+            selected_groups = Collections.<GenomeVersion>emptyList();
         } else if (!selected_groups.isEmpty()) {
             primary_selection = groups.get(0);
         }
@@ -32,16 +32,16 @@ public final class GroupSelectionEvent extends EventObject {
     /**
      * Gets the first entry in the list {@link #getSelectedGroup()}.
      *
-     * @return an AnnotatedSeqGroup or null.
+     * @return an GenomeVersion or null.
      */
-    public AnnotatedSeqGroup getSelectedGroup() {
+    public GenomeVersion getSelectedGroup() {
         return primary_selection;
     }
 
     @Override
     public String toString() {
         return "GroupSelectionEvent: group count: " + selected_groups.size()
-                + " first group: '" + (primary_selection == null ? "null" : primary_selection.getID())
+                + " first group: '" + (primary_selection == null ? "null" : primary_selection.getName())
                 + "' source: " + this.getSource();
     }
 }

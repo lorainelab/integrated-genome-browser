@@ -2,10 +2,10 @@ package com.affymetrix.genometry.util;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
@@ -190,7 +190,7 @@ public final class GraphSymUtils {
      * do not specify a BioSeq, use this parameter to specify it. If null
      * then GenometryModel.getSelectedSeq() will be used.
      */
-    public static List<GraphSym> readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, BioSeq seq)
+    public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenomeVersion seq_group, BioSeq seq)
             throws IOException {
         StringBuffer stripped_name = new StringBuffer();
         GeneralUtils.unzipStream(istr, stream_name, stripped_name);
@@ -214,7 +214,7 @@ public final class GraphSymUtils {
      * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
      */
     public static String getUniqueGraphID(String id, BioSeq seq) {
-        return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
+        return GenomeVersion.getUniqueGraphID(id, seq);
     }
 
     /*
@@ -222,13 +222,13 @@ public final class GraphSymUtils {
      *  For each GraphSym in the list,
      *  Adds it as an annotation of the BioSeq it refers to.
      *  Sets the "source_url" to the given stream name.
-     *  Set the GenericFeature in its style.
+     *  Set the DataSet in its style.
      *  Calls setGraphName() with the given name;
      *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
      *  @param grafs  a List, empty or null is OK.
      */
     //@Deprecated
-    public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name, GenericFeature feature) {
+    public static void processGraphSyms(List<GraphSym> grafs, String original_stream_name, DataSet feature) {
         if (grafs == null) {
             return;
         }
@@ -262,9 +262,9 @@ public final class GraphSymUtils {
      * on the suffix of the filename.
      * Formats include ".gr", ".sgr", ".sin" == ".egr", ".bgr".
      *
-     * @param seq_group the AnnotatedSeqGroup the graph is on, needed for ".wig", ".egr", and ".sin" formats.
+     * @param seq_group the GenomeVersion the graph is on, needed for ".wig", ".egr", and ".sin" formats.
      */
-    public static void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group, String file_name) throws IOException {
+    public static void writeGraphFile(GraphSym gsym, GenomeVersion seq_group, String file_name) throws IOException {
         FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(file_name);
         if (fileTypeHandler != null) {
             Parser parser = fileTypeHandler.getParser();

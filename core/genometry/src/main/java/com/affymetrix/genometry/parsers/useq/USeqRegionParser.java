@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers.useq;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.graph.GraphParser;
@@ -46,7 +46,7 @@ public final class USeqRegionParser implements GraphParser {
     private List<SeqSymmetry> symlist = new ArrayList<>();
     private String nameOfTrack = null;
     //private boolean indexNames = false;
-    private AnnotatedSeqGroup group;
+    private GenomeVersion genomeVersion;
     private boolean addAnnotationsToSeq;
     private ArchiveInfo archiveInfo;
     public static final Pattern TAB = Pattern.compile("\\t");
@@ -54,17 +54,17 @@ public final class USeqRegionParser implements GraphParser {
     private BioSeq bioSeq;
 
     /*chrom, useqArchive, useqData, group, featureName) */
-    public List<SeqSymmetry> parse(USeqArchive useqArchive, USeqData[] useqData, AnnotatedSeqGroup group, String stream_name) {
-        this.group = group;
+    public List<SeqSymmetry> parse(USeqArchive useqArchive, USeqData[] useqData, GenomeVersion genomeVersion, String stream_name) {
+        this.genomeVersion = genomeVersion;
         symlist = new ArrayList<>();
         nameOfTrack = stream_name;
         archiveInfo = useqArchive.getArchiveInfo();
 
         try {
             //check that they are loading the data into the correct genome build
-            String genomeVersion = archiveInfo.getVersionedGenome();
-            if (!group.getAllVersions().isEmpty() && !group.isSynonymous(genomeVersion)) {
-                throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersion + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
+            String genomeVersionedGenome = archiveInfo.getVersionedGenome();
+            if (!genomeVersion.getDataContainers().isEmpty() && !genomeVersion.isSynonymous(genomeVersionedGenome)) {
+                throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersionedGenome + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
             }
 
             String dataType = useqArchive.getBinaryDataType();
@@ -119,8 +119,8 @@ public final class USeqRegionParser implements GraphParser {
         return symlist;
     }
 
-    public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {
-        this.group = group;
+    public List<SeqSymmetry> parse(InputStream istr, GenomeVersion genomeVersion, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) {
+        this.genomeVersion = genomeVersion;
         symlist = new ArrayList<>();
         nameOfTrack = stream_name;
         this.addAnnotationsToSeq = addAnnotationsToSeq;
@@ -159,9 +159,9 @@ public final class USeqRegionParser implements GraphParser {
             }
 
             //check that they are loading the data into the correct genome build
-            String genomeVersion = archiveInfo.getVersionedGenome();
-            if (!group.getAllVersions().isEmpty() && !group.isSynonymous(genomeVersion)) {
-                throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersion + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
+            String genomeVersionedGenome = archiveInfo.getVersionedGenome();
+            if (!genomeVersion.getDataContainers().isEmpty() && !genomeVersion.isSynonymous(genomeVersionedGenome)) {
+                throw new IOException("\nGenome versions differ! Cannot load this useq data from " + genomeVersionedGenome + " into the current genome in view. Navigate to the correct genome and reload or add a synonym.\n");
             }
 
             //for each entry parse, will contain all of the same kind of data so just parse first to find out data type
@@ -425,18 +425,18 @@ public final class USeqRegionParser implements GraphParser {
 
     /*find BioSeq or make a new one*/
     private void setBioSeq(String chromosome) {
-        bioSeq = group.getSeq(chromosome);
+        bioSeq = genomeVersion.getSeq(chromosome);
         if (bioSeq == null) {
-            bioSeq = group.addSeq(chromosome, 0);
+            bioSeq = genomeVersion.addSeq(chromosome, 0);
         }
     }
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         if (annotate_seq) {
-            return parse(is, group, uri, true, null);
+            return parse(is, genomeVersion, uri, true, null);
         } else {
             //find out what kind of data it is, graph or region, from the ArchiveInfo object
             ZipInputStream zis = new ZipInputStream(is);
@@ -446,18 +446,18 @@ public final class USeqRegionParser implements GraphParser {
                 USeqGraphParser gp = new USeqGraphParser();
                 return gp.parseGraphSyms(zis, GenometryModel.getInstance(), uri, archiveInfo);
             }
-            return parse(zis, group, uri, false, archiveInfo);
+            return parse(zis, genomeVersion, uri, false, archiveInfo);
         }
     }
 
     @Override
     public List<GraphSym> readGraphs(InputStream istr, String stream_name,
-            AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException {
+            GenomeVersion seq_group, BioSeq seq) throws IOException {
         return new USeqGraphParser().parseGraphSyms(istr, GenometryModel.getInstance(), stream_name, null);
     }
 
     @Override
-    public void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group,
+    public void writeGraphFile(GraphSym gsym, GenomeVersion seq_group,
             String file_name) throws IOException {
         // not processed here
     }

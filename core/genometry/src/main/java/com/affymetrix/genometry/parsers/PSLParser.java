@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.io.DataInputStream;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ public final class PSLParser extends AbstractPSLParser implements AnnotationWrit
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
         // reference to LoadFileAction.ParsePSL
         enableSharedQueryTarget(true);
@@ -30,6 +30,6 @@ public final class PSLParser extends AbstractPSLParser implements AnnotationWrit
         if (!annotate_seq) {
             is2 = new DataInputStream(is);
         }
-        return parse(is2, annotate_seq ? uri : nameType, null, group, null, false, annotate_seq, false);
+        return parse(is2, annotate_seq ? uri : nameType, null, genomeVersion, null, false, annotate_seq, false);
     }
 }

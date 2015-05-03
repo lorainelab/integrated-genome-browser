@@ -11,9 +11,11 @@ import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.XServiceRegistrar;
-import com.lorainelab.igb.services.window.WindowServiceLifecylceHook;
+import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleActivator;
@@ -38,8 +40,10 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 //        JRPMenu file_menu = igbService.getMenu("file");
 //        final int index = file_menu.getItemCount() - 1;
 //        file_menu.insertSeparator(index);
+        Dictionary props = new Hashtable();
+        props.put("service.pid", "BookmarkManagerViewGUI");
         return new ServiceRegistration[]{
-            bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), null)
+            bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), props)
         };
     }
 
@@ -85,8 +89,8 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 
         BookmarkActionManager.init(igbService, bookmark_menu, main_bookmark_list);
         final BookmarkActionManager bmark_action = BookmarkActionManager.getInstance();
-        bundleContext.registerService(WindowServiceLifecylceHook.class.getName(),
-                new WindowServiceLifecylceHook() {
+        bundleContext.registerService(WindowServiceLifecycleHook.class.getName(),
+                new WindowServiceLifecycleHook() {
                     @Override
                     public void stop() {
                         bmark_action.autoSaveBookmarks();

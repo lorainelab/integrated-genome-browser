@@ -9,7 +9,7 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
@@ -61,7 +61,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
         super(null, null, null);
     }
 
-    public Gr(URI uri, String featureName, AnnotatedSeqGroup seq_group) {
+    public Gr(URI uri, String featureName, GenomeVersion seq_group) {
         super(uri, featureName, seq_group);
     }
 
@@ -76,7 +76,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     }
 
     private void sort() throws Exception {
-        unnamed = group.getSeq(UNNAMED);
+        unnamed = genomeVersion.getSeq(UNNAMED);
 
         if (unnamed == null) {
             unnamed = new BioSeq(UNNAMED, 0);
@@ -108,7 +108,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        List<BioSeq> seqs = group.getSeqList();
+        List<BioSeq> seqs = genomeVersion.getSeqList();
         if (!seqs.isEmpty()) {
             return seqs;
         }
@@ -127,7 +127,7 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     @Override
     public List<GraphSym> getGenome() throws Exception {
         init();
-        BioSeq seq = group.addSeq(this.featureName, Integer.MAX_VALUE - 1, uri.toString());
+        BioSeq seq = genomeVersion.addSeq(this.featureName, Integer.MAX_VALUE - 1, uri.toString());
         return getChromosome(seq);
     }
 

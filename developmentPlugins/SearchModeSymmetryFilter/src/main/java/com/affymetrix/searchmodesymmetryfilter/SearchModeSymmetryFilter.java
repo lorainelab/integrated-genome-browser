@@ -79,7 +79,7 @@ public class SearchModeSymmetryFilter implements ISearchModeSym {
         }
         String statusStr = MessageFormat.format("Searching {0} - found {1} matches", search_text, "" + results.size());
         statusHolder.setStatus(statusStr);
-        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", statusStr, results);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", statusStr, results);
     }
 
     private List<SeqSymmetry> searchSym(SeqSymmetry sym) {

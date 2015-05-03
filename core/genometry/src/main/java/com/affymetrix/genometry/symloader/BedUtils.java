@@ -124,7 +124,7 @@ public class BedUtils {
     }
 
     private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
-        out.write(seq.getID().getBytes());
+        out.write(seq.getId().getBytes());
         out.write('\t');
         int min = span.getMin();
         int max = span.getMax();

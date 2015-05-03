@@ -1,7 +1,7 @@
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ final public class Bookmarks {
 
     private final List<SymBookmark> syms = new ArrayList<>();
 
-    public boolean add(GenericFeature feature, boolean isGraph) {
+    public boolean add(DataSet feature, boolean isGraph) {
         if (feature == null) {
             return false;
         }
@@ -29,9 +29,9 @@ final public class Bookmarks {
         return true;
     }
 
-    private void addToSyms(GenericFeature feature, boolean isGraph) {
-        GenericVersion version = feature.getgVersion();
-        syms.add(new SymBookmark(version.getgServer().getUrlString(), feature.getURI().toString(), isGraph));
+    private void addToSyms(DataSet feature, boolean isGraph) {
+        DataContainer dataContainer = feature.getDataContainer();
+        syms.add(new SymBookmark(dataContainer.getDataProvider().getUrl(), feature.getURI().toString(), isGraph));
     }
 
     /**

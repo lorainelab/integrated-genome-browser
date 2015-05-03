@@ -10,7 +10,6 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.das.DasServerInfo;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -68,7 +67,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
         if (!query.isEmpty()) {
             GeneralUtils.browse(UCSC_URL + query);
         } else {
-            ErrorHandler.errorPanel("Unable to map genome '" + igbService.getSeqMapView().getAnnotatedSeq().getSeqGroup().getID() + "' to a UCSC genome.");
+            ErrorHandler.errorPanel("Unable to map genome '" + igbService.getSeqMapView().getAnnotatedSeq().getGenomeVersion().getName() + "' to a UCSC genome.");
         }
     }
 
@@ -94,9 +93,9 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
             if (UCSCSources.isEmpty()) {
                 // Get the sources from the UCSC server.  If the server has already been initialized, get from there.
                 // This is done to avoid additional slow DAS queries.
-                DasServerInfo ucsc = new DasServerInfo(UCSC_DAS_URL);
+//                DasServerInfo ucsc = new DasServerInfo(UCSC_DAS_URL);
 
-                UCSCSources.addAll(ucsc.getDataSources().keySet());
+//                UCSCSources.addAll(ucsc.getDataSources().keySet());
             }
         }
     }
@@ -113,7 +112,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
             return "";
         }
 
-        String UcscVersion = getUcscGenomeVersion(aseq.getSeqGroup().getID());
+        String UcscVersion = getUcscGenomeVersion(aseq.getGenomeVersion().getName());
         if (!UcscVersion.isEmpty()) {
             return "db=" + UcscVersion + "&position=" + getRegionString();
         }

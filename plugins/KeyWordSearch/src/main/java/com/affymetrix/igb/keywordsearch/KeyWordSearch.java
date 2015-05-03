@@ -68,7 +68,7 @@ public class KeyWordSearch implements ISearchModeSym {
             }
         }
         statusHolder.setStatus(status.toString());
-        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getID() : "genome", status.toString(), results);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", status.toString(), results);
     }
 
     @Override

@@ -1,13 +1,14 @@
 package com.affymetrix.igb.tutorial;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionDoneCallback;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
-import com.affymetrix.genometry.general.GenericServer;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.igb.shared.IGBScriptAction;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.script.ScriptManager;
@@ -80,19 +81,18 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
     }
 
     private void initListeners() {
-        GenometryModel.getInstance().addGroupSelectionListener(
-                evt -> {
-                    AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
-                    String species = "";
-                    if (group != null && group.getOrganism() != null) {
-                        species = "." + group.getOrganism();
-                    }
-                    String version = "";
-                    if (group != null && group.getID() != null) {
-                        version = "." + group.getID();
-                    }
-                    doWaitFor("groupSelectionChanged" + species + version);
-                });
+        GenometryModel.getInstance().addGroupSelectionListener(evt -> {
+            GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+            String species = "";
+            if (genomeVersion != null && genomeVersion.getSpeciesName() != null) {
+                species = "." + genomeVersion.getSpeciesName();
+            }
+            String version = "";
+            if (genomeVersion != null && genomeVersion.getName() != null) {
+                version = "." + genomeVersion.getName();
+            }
+            doWaitFor("groupSelectionChanged" + species + version);
+        });
 
         igbService.addSpeciesItemListener(ie -> {
             if (ie.getItem() == null || ie.getStateChange() == ItemEvent.DESELECTED) {
@@ -355,9 +355,9 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
 
     //Manual check to ensure IGB Quickload is Enabled
     private boolean checkServer(String serverName) {
-        Set<GenericServer> enabledServers = igbService.getEnabledServerList();
-        for (GenericServer server : enabledServers) {
-            if (server.getServerName().equalsIgnoreCase(serverName)) {
+        Set<DataProvider> enabledServers = igbService.getEnabledServerList();
+        for (DataProvider server : enabledServers) {
+            if (server.getName().equalsIgnoreCase(serverName)) {
                 return true;
             }
         }
@@ -367,10 +367,9 @@ public class TutorialManager implements GenericActionListener, GenericActionDone
         Object[] params = {message};
         int yes = JOptionPane.showConfirmDialog(frame, params, "Continue?", JOptionPane.YES_NO_OPTION);
         if (yes == JOptionPane.YES_OPTION) {
-            for (GenericServer server : igbService.getAllServersList()) {
-                if (server.getServerName().equalsIgnoreCase(serverName)) {
-                    server.setEnabled(true);
-                    igbService.discoverServer(server);
+            for (DataProvider server : igbService.getAllServersList()) {
+                if (server.getName().equalsIgnoreCase(serverName)) {
+                    server.setStatus(LoadUtils.ResourceStatus.NotInitialized);
                     return true;
                 }
             }

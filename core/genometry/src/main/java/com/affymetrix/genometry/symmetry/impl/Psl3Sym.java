@@ -183,7 +183,7 @@ public final class Psl3Sym extends UcscPslSym {
 
     public Map<String, Object> cloneProperties() {
         Map<String, Object> tprops = super.cloneProperties();
-        tprops.put("other seq", getOtherSeq().getID());
+        tprops.put("other seq", getOtherSeq().getId());
         tprops.put("same other orientation", getSameOtherOrientation());
         return tprops;
     }
@@ -196,7 +196,7 @@ public final class Psl3Sym extends UcscPslSym {
             out.write('-');
         }
         out.write('\t');
-        out.write(otherseq.getID().getBytes());
+        out.write(otherseq.getId().getBytes());
         out.write('\t');
         out.write(Integer.toString(otherseq.getLength()).getBytes());
         out.write('\t');

@@ -175,7 +175,7 @@ public class UcscPslSym
      * Returns the queryseq id.
      */
     public String getID() {
-        return queryseq.getID();
+        return queryseq.getId();
     }
 
     /**
@@ -427,7 +427,7 @@ public class UcscPslSym
     public Map<String, Object> cloneProperties() {
         HashMap<String, Object> tprops = new HashMap<>();
 
-        tprops.put("id", getQuerySeq().getID());
+        tprops.put("id", getQuerySeq().getId());
         tprops.put("type", "Pairwise Alignment");
         tprops.put("same orientation", getSameOrientation());
         tprops.put("matches", getMatches());
@@ -436,8 +436,8 @@ public class UcscPslSym
         tprops.put("query bases inserted", getQueryBaseInserts());
         tprops.put("target inserts", getTargetNumInserts());
         tprops.put("target bases inserted", getTargetBaseInserts());
-        //tprops.put("query seq", getQuerySeq().getID());
-        //tprops.put("target seq", getTargetSeq().getID());
+        //tprops.put("query seq", getQuerySeq().getId());
+        //tprops.put("target seq", getTargetSeq().getId());
         if (props != null) {
             tprops.putAll(props);
         }
@@ -451,7 +451,7 @@ public class UcscPslSym
 
     public Object getProperty(String key) {
         if (key.equals("id")) {
-            return getQuerySeq().getID();
+            return getQuerySeq().getId();
         } else if (key.equals("method")) {
             return getType();
         } else if (key.equals("type")) {
@@ -472,8 +472,8 @@ public class UcscPslSym
             return Integer.toString(getTargetBaseInserts());
         } else if (key.equals("residues") && target_res_arr != null) {
             return getResidue(target_res_arr);
-        } //else if (key.equals("query seq")) { return getQuerySeq().getID(); }
-        //else if (key.equals("target seq")) { return  getTargetSeq().getID(); }
+        } //else if (key.equals("query seq")) { return getQuerySeq().getId(); }
+        //else if (key.equals("target seq")) { return  getTargetSeq().getId(); }
         // then try to match with any extras
         else if (props != null) {
             return props.get(key);
@@ -527,7 +527,7 @@ public class UcscPslSym
             out.write('-');
         }
         out.write('\t');
-        out.write(queryseq.getID().getBytes());
+        out.write(queryseq.getId().getBytes());
         out.write('\t');
         out.write(Integer.toString(queryseq.getLength()).getBytes());
         out.write('\t');
@@ -535,7 +535,7 @@ public class UcscPslSym
         out.write('\t');
         out.write(Integer.toString(qmax).getBytes());
         out.write('\t');
-        out.write(targetseq.getID().getBytes());
+        out.write(targetseq.getId().getBytes());
         out.write('\t');
         out.write(Integer.toString(targetseq.getLength()).getBytes());
         out.write('\t');
@@ -603,11 +603,11 @@ public class UcscPslSym
         dos.writeInt(tNumInsert);
         dos.writeInt(tBaseInsert);
         dos.writeBoolean(same_orientation);
-        dos.writeUTF(queryseq.getID());
+        dos.writeUTF(queryseq.getId());
         dos.writeInt(queryseq.getLength());
         dos.writeInt(qmin);
         dos.writeInt(qmax);
-        dos.writeUTF(targetseq.getID());
+        dos.writeUTF(targetseq.getId());
         dos.writeInt(targetseq.getLength());
         dos.writeInt(tmin);
         dos.writeInt(tmax);

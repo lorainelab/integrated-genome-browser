@@ -84,7 +84,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
     @Override
     public void selectionRefreshed() {
         resetAll(igbService.getSeqMapView().getAnnotatedSeq() != null
-                && !Constants.GENOME_SEQ_ID.equals(igbService.getSeqMapView().getAnnotatedSeq().getID()));
+                && !Constants.GENOME_SEQ_ID.equals(igbService.getSeqMapView().getAnnotatedSeq().getId()));
     }
 
     private void resetAll(boolean enable) {

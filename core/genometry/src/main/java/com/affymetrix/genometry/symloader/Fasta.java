@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -35,8 +35,8 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
         this(null, null, null);
     }
 
-    public Fasta(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, "", group);
+    public Fasta(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, "", genomeVersion);
     }
 
     /**
@@ -60,7 +60,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
                     continue;
                 }
                 String seqid = matcher.group(1).split(" ")[0];	//get rid of spaces
-                BioSeq seq = group.getSeq(seqid);
+                BioSeq seq = genomeVersion.getSeq(seqid);
                 int count = 0;
                 header = null;	// reset for next header
                 String line = null;
@@ -87,7 +87,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
                     count += line.trim().length();
                 }
                 if (seq == null) {
-                    seq = group.addSeq(seqid, count, uri.toString());
+                    seq = genomeVersion.addSeq(seqid, count, uri.toString());
                 }
                 chrSet.add(seq);
             }
@@ -160,7 +160,7 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
                 continue;
             }
             String seqid = matcher.group(1).split(" ")[0];	// get rid of spaces
-            BioSeq seq = group.getSeq(seqid);
+            BioSeq seq = genomeVersion.getSeq(seqid);
             //equals ?
             boolean seqMatch = (seq != null && seq.equals(spanSeq));
             header = null;	// reset for next header

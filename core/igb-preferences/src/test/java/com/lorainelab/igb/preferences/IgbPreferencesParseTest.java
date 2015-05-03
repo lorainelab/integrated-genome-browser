@@ -1,6 +1,6 @@
 package com.lorainelab.igb.preferences;
 
-import com.lorainelab.igb.preferences.model.DataProvider;
+import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import com.lorainelab.igb.preferences.model.JsonWrapper;
 import java.io.InputStreamReader;
@@ -39,10 +39,10 @@ public class IgbPreferencesParseTest {
     public void writePreferencesToJsonFromModel() {
         JsonWrapper jsonWrapper = new JsonWrapper();
         IgbPreferences prefs = new IgbPreferences();
-        DataProvider server = new DataProvider();
+        DataProviderConfig server = new DataProviderConfig();
         server.setName("IGB Quickload");
         server.setDefault("false");
-        List<DataProvider> list = new ArrayList<>();
+        List<DataProviderConfig> list = new ArrayList<>();
         list.add(server);
         prefs.setDataProviders(list);
         jsonWrapper.setPrefs(prefs);

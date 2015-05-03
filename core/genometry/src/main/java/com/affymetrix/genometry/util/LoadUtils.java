@@ -1,5 +1,8 @@
 package com.affymetrix.genometry.util;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public final class LoadUtils {
 
     public static enum LoadStrategy {
@@ -40,22 +43,32 @@ public final class LoadUtils {
         }
     }
 
-    public static enum ServerStatus {
+    public static enum ResourceStatus {
 
         NotInitialized("Not initialized"),
         Initialized("Initialized"),
-        NotResponding("Not responding");
+        NotResponding("Not responding"),
+        Disabled("Disabled");
 
-        private String name;
+        private final String name;
 
-        ServerStatus(String name) {
+        ResourceStatus(String name) {
             this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static Optional<ResourceStatus> fromName(String name) {
+            return Arrays.asList(values()).stream().filter(status -> status.getName().equals(name)).findFirst();
         }
 
         @Override
         public String toString() {
             return name;
         }
+
     }
 
     public static enum RefreshStatus {

@@ -4,8 +4,8 @@ import com.google.common.io.CharStreams;
 import static com.lorainelab.quickload.util.QuickloadUtils.getInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,8 +16,8 @@ import org.junit.Test;
 public class QuickloadUtilsTest {
 
     @Test
-    public void contentsTxtParserTest() throws MalformedURLException, IOException {
-        Assert.assertTrue(CharStreams.toString(new InputStreamReader(getInputStream(new URL("http://igbquickload.org/contents.txt")))).contains("A_thaliana_Jun_2009"));
+    public void contentsTxtParserTest() throws IOException, URISyntaxException {
+        Assert.assertTrue(CharStreams.toString(new InputStreamReader(getInputStream(new URI("http://igbquickload.org/contents.txt")))).contains("A_thaliana_Jun_2009"));
     }
 
 }

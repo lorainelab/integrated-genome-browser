@@ -9,27 +9,15 @@
  */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.general.GenericVersion;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LocalFilesServerType;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.google.common.base.Optional;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -48,79 +36,19 @@ public final class ServiceUtils {
         return instance;
     }
 
-    public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported) {
-        GenericFeature feature = null;
-
-        URI uri = URI.create(feature_url);
-        GenericVersion gVersion = seqGroup.getVersionOfServer(gServer);
-        if (gVersion == null && gServer.getServerType() != LocalFilesServerType.getInstance()) {
-            Logger.getLogger(ServiceUtils.class.getName()).log(
-                    Level.WARNING, "Couldn''t find version {0} in server {1}",
-                    new Object[]{seqGroup.getID(), gServer.getServerName()});
-            return null;
-        }
-
-        if (gVersion != null) {
-            feature = GeneralUtils.findFeatureWithURI(gVersion.getFeatures(), uri);
-        }
-
-        if (feature == null && gServer.getServerType() == LocalFilesServerType.getInstance()) {
-            String uriString = uri.toASCIIString().toLowerCase();
-            String unzippedStreamName = GeneralUtils.stripEndings(uriString);
-            String extension = GeneralUtils.getExtension(unzippedStreamName);
-            extension = extension.substring(extension.indexOf('.') + 1);
-
-            if (FileTypeHolder.getInstance().getFileTypeHandler(extension) == null) {
-                if (showErrorForUnsupported) {
-                    ErrorHandler.errorPanel("File type " + extension + " is not supported");
-                }
-                Logger.getLogger(ServiceUtils.class.getName()).log(
-                        Level.SEVERE, "File type {0} is not supported", extension);
-                return null;
-            }
-
-            // If feature doesn't not exist then add it.
-            String fileName = feature_url.substring(feature_url.lastIndexOf('/') + 1, feature_url.length());
-            feature = GeneralLoadUtils.getFeature(uri, fileName, seqGroup.getOrganism(), seqGroup, false);
-
-        }
-
-        return feature;
-    }
-
-    /**
-     * Finds server from server url and enables it, if found disabled.
-     *
-     * @param server_url	Server url string.
-     * @return	Returns GenericServer if found else null.
-     */
-    public GenericServer loadServer(String server_url) {
-        GenericServer gServer = ServerList.getServerInstance().getServer(server_url);
-        if (gServer == null) {
-
-            gServer = ServerList.getServerInstance().getLocalFilesServer();
-
-        } else if (!gServer.isEnabled()) {
-            // enable the server for this session only
-            gServer.enableForSession();
-            GeneralLoadUtils.discoverServer(gServer);
-        }
-        return gServer;
-    }
-
-    public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
-        final AnnotatedSeqGroup group;
+    public Optional<GenomeVersion> determineAndSetGroup(final String version) {
+        final GenomeVersion genomeVersion;
         GenometryModel gmodel = GenometryModel.getInstance();
         if (StringUtils.isBlank(version) || UNKNOWN_GENOME_VERSION.equals(version)) {
-            group = gmodel.getSelectedSeqGroup();
+            genomeVersion = gmodel.getSelectedGenomeVersion();
         } else {
-            group = gmodel.getSeqGroup(version);
+            genomeVersion = gmodel.getSeqGroup(version);
         }
-        if (group != null && !group.equals(gmodel.getSelectedSeqGroup())) {
+        if (genomeVersion != null && !genomeVersion.equals(gmodel.getSelectedGenomeVersion())) {
             GeneralLoadView.getLoadView().initVersion(version);
-            gmodel.setSelectedSeqGroup(group);
+            gmodel.setSelectedGenomeVersion(genomeVersion);
         }
-        return Optional.fromNullable(group);
+        return Optional.ofNullable(genomeVersion);
     }
 
     /**
@@ -145,10 +73,10 @@ public final class ServiceUtils {
             return;
         }
 
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
         List<SeqSymmetry> sym_list = new ArrayList<>(ids.length);
         for (String id : ids) {
-            sym_list.addAll(group.findSyms(id));
+            sym_list.addAll(genomeVersion.findSyms(id));
         }
 
         GenometryModel.getInstance().setSelectedSymmetriesAndSeq(sym_list, ServiceUtils.class);
@@ -167,13 +95,13 @@ public final class ServiceUtils {
             return;
         }
 
-        AnnotatedSeqGroup group = GenometryModel.getInstance().getSelectedSeqGroup();
+        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
         List<SeqSymmetry> sym_list = new ArrayList<>(ids.length);
         SeqSpan span;
         double midpoint = -1;
 
         for (String id : ids) {
-            for (SeqSymmetry sym : group.findSyms(id)) {
+            for (SeqSymmetry sym : genomeVersion.findSyms(id)) {
                 span = sym.getSpan(0);
                 if (midpoint == -1) {
                     midpoint = span.getMin() + (span.getLengthDouble() / 2);

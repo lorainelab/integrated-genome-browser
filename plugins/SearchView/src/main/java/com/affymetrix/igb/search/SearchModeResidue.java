@@ -3,8 +3,8 @@ package com.affymetrix.igb.search;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.color.RGB;
@@ -12,7 +12,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -26,11 +26,11 @@ import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.DNAUtils;
+import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.search.ISearchMode;
 import com.lorainelab.igb.services.search.ISearchModeExtended;
 import com.lorainelab.igb.services.search.IStatus;
 import com.lorainelab.igb.services.search.SearchResults;
-import com.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.net.URI;
@@ -104,7 +104,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
                         style.setLabelField("match");
                         style.setSeparate(false);
 
-                        GenericFeature feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getInstance().getSelectedSeqGroup()));
+                        DataSet feature = igbService.createFeature(trackId, new DummySymLoader(trackId, "Search Track", GenometryModel.getInstance().getSelectedGenomeVersion()));
                         igbService.loadAndDisplayAnnotations(feature);
                     } catch (URISyntaxException ex) {
                         Logger.getLogger(SearchModeResidue.class.getName()).log(Level.SEVERE, null, ex);
@@ -147,7 +147,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
 
         if (vseq != igbService.getSeqMapView().getAnnotatedSeq()) {
             boolean confirm = ModalUtils.confirmPanel(MessageFormat.format(BUNDLE.getString("searchSelectSeq"),
-                    vseq.getID(), vseq.getID()), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
+                    vseq.getId(), vseq.getId()), CONFIRM_BEFORE_SEQ_CHANGE, default_confirm_before_seq_change);
             if (!confirm) {
                 return BUNDLE.getString("searchCancelled");
             }
@@ -266,7 +266,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
                 searchSummary.append(st).append(" : ").append("Search skipped because character length is less than 4.");
             }
         }
-        return new SearchResults<>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);
+        return new SearchResults<>(getName(), search_text, chrFilter.getId(), searchSummary.toString(), glyphs);
     }
 
     private SearchResults<GlyphI> search(String search_text, final BioSeq chrFilter, IStatus statusHolder) {
@@ -278,12 +278,12 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
 //		if (!isComplete) {
 //			igbService.loadResidues(igbService.getSeqMapView().getVisibleSpan(), true);
 //		}
-        String friendlySearchStr = MessageFormat.format(BUNDLE.getString("friendlyPattern"), search_text, chrFilter.getID());
+        String friendlySearchStr = MessageFormat.format(BUNDLE.getString("friendlyPattern"), search_text, chrFilter.getId());
         Pattern regex = null;
         try {
             regex = Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
         } catch (Exception ex) { // should not happen already checked above
-            return new SearchResults<>(getName(), search_text, chrFilter.getID(), ex.getLocalizedMessage(), null);
+            return new SearchResults<>(getName(), search_text, chrFilter.getId(), ex.getLocalizedMessage(), null);
         }
 
         statusHolder.setStatus(friendlySearchStr);
@@ -326,7 +326,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
             }
         });
         color++;
-        return new SearchResults<>(getName(), search_text, chrFilter.getID(), statusStr, glyphs);
+        return new SearchResults<>(getName(), search_text, chrFilter.getId(), statusStr, glyphs);
     }
 
     @Override
@@ -344,8 +344,8 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
 
         }
 
-        public DummySymLoader(String trackId, String featureName, AnnotatedSeqGroup group) throws URISyntaxException {
-            super(new URI(trackId), featureName, group);
+        public DummySymLoader(String trackId, String featureName, GenomeVersion genomeVersion) throws URISyntaxException {
+            super(new URI(trackId), featureName, genomeVersion);
         }
 
         @Override

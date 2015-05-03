@@ -3,7 +3,7 @@ package com.affymetrix.igb.view.factories;
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
@@ -27,7 +27,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 
     protected static void doMiddlegroundShading(TierGlyph tierGlyph, SeqMapViewExtendedI gviewer, BioSeq seq) {
         tierGlyph.clearMiddleGlyphs();
-        GenericFeature feature = tierGlyph.getAnnotStyle().getFeature();
+        DataSet feature = tierGlyph.getAnnotStyle().getFeature();
         if (feature != null) {
             SeqSymmetry inverse = SeqUtils.inverse(feature.getRequestSym(), seq);
             if (seq != gviewer.getViewSeq()) {

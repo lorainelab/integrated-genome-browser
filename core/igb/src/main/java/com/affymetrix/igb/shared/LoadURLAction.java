@@ -1,6 +1,6 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -88,7 +88,7 @@ public class LoadURLAction extends OpenURIAction {
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
 
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-        AnnotatedSeqGroup loadGroup = GenometryModel.getInstance().getSelectedSeqGroup();
+        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
 
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
             JDialog dialog = pane.createDialog(igbService.getApplicationFrame(), BUNDLE.getString("openURL"));

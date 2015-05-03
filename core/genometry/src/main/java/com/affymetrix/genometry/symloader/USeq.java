@@ -1,11 +1,14 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
-import com.affymetrix.genometry.parsers.useq.*;
+import com.affymetrix.genometry.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometry.parsers.useq.USeqArchive;
+import com.affymetrix.genometry.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometry.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometry.parsers.useq.data.USeqData;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -43,8 +46,8 @@ public class USeq extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public USeq(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public USeq(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     public List<LoadStrategy> getLoadChoices() {
@@ -69,7 +72,7 @@ public class USeq extends SymLoader {
             HashMap<String, Integer> chromBase = useqArchive.fetchChromosomesAndLastBase();
             for (String chrom : chromBase.keySet()) {
                 //fetch the BioSeq from the AnnotationGroup if it exists
-                chromosomeList.put(group.addSeq(chrom, chromBase.get(chrom), uri.toString()), chrom);
+                chromosomeList.put(genomeVersion.addSeq(chrom, chromBase.get(chrom), uri.toString()), chrom);
             }
             Collections.sort(new ArrayList<>(chromosomeList.keySet()), new BioSeqComparator());
 
@@ -93,7 +96,7 @@ public class USeq extends SymLoader {
                 //must be a region dataset
             } else {
                 USeqRegionParser rp = new USeqRegionParser();
-                return rp.parse(zis, group, uri.toString(), false, archiveInfo);
+                return rp.parse(zis, genomeVersion, uri.toString(), false, archiveInfo);
             }
         } catch (Exception ex) {
             throw ex;
@@ -126,7 +129,7 @@ public class USeq extends SymLoader {
                 //must be a region dataset
             } else {
                 USeqRegionParser rp = new USeqRegionParser();
-                return rp.parse(useqArchive, useqData, group, uri.toString());
+                return rp.parse(useqArchive, useqData, genomeVersion, uri.toString());
             }
         } catch (Exception ex) {
             throw ex;

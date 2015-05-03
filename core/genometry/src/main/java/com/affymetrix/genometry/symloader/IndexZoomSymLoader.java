@@ -1,20 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import java.net.URI;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import net.sf.samtools.util.BlockCompressedFilePointerUtil;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.operator.DepthOperator;
 import com.affymetrix.genometry.operator.Operator;
@@ -25,6 +12,17 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometry.util.SynonymLookup;
+import java.net.URI;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.samtools.util.BlockCompressedFilePointerUtil;
 
 public abstract class IndexZoomSymLoader extends SymLoader {
 
@@ -33,8 +31,8 @@ public abstract class IndexZoomSymLoader extends SymLoader {
     private BioSeq saveSeq;
     private GraphSym saveSym;
 
-    public IndexZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public IndexZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
     }
 
     protected abstract SymLoader getDataFileSymLoader() throws Exception;

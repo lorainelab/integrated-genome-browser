@@ -12,8 +12,8 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.affymetrix.igb.shared.SequenceLoader;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public abstract class BlastSearchAction extends GenericAction {
                 try {
                     StrandedFeatureSetI sf = new StrandedFeatureSet();
                     String id = MessageFormat.format("{0} {1}:{2}-{3} {4} {5} [{6}]",
-                            residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getSeqGroup().getID(), aseq.getSeqGroup().getOrganism());
+                            residues_sym.getID(), aseq, span.getStart(), span.getEnd(), span.isForward() ? "+" : "-", aseq.getGenomeVersion().getName(), aseq.getGenomeVersion().getSpeciesName());
                     Sequence seq = new Sequence(id, getSequence(residues_sym));
 
                     RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());

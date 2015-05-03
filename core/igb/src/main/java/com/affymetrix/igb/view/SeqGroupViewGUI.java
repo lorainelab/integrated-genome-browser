@@ -3,6 +3,7 @@ package com.affymetrix.igb.view;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
@@ -165,7 +166,10 @@ public class SeqGroupViewGUI extends IgbTabPanel {
 	private void speciesPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_speciesPanelMousePressed
         Rectangle bounds = new Rectangle(10, 5, 50, 12);
         if (bounds.contains(evt.getX(), evt.getY())) {
+            GenometryModel.getInstance().setSelectedGenomeVersion(null);
+            GenometryModel.getInstance().setSelectedSeq(null);
             seqGroupModel.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+            seqGroupModel.getVersionCB().setSelectedItem(SeqGroupView.SELECT_GENOME);
         }// TODO add your handling code here:
 	}//GEN-LAST:event_speciesPanelMousePressed
 

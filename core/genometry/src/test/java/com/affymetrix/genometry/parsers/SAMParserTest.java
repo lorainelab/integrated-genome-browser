@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -33,7 +33,7 @@ public class SAMParserTest {
         DataInputStream dis = new DataInputStream(istr);
         assertNotNull(dis);
 
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("M_musculus_Mar_2006");
+        GenomeVersion group = new GenomeVersion("M_musculus_Mar_2006");
         BioSeq seq = group.addSeq("chr1", 197069962);
 
         SymLoader symL = new SAM(new File(filename).toURI(), "featureName", group);

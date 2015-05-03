@@ -1,8 +1,8 @@
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -22,20 +22,20 @@ import java.util.Map;
  */
 public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 
-    public QuickLoadSymLoaderChp(URI uri, String featureName, AnnotatedSeqGroup group) {
-        super(uri, featureName, group);
+    public QuickLoadSymLoaderChp(URI uri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, featureName, genomeVersion);
         if (!extension.endsWith("chp")) {
             throw new IllegalStateException("wrong QuickLoad for chp file");
         }
     }
 
-    protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final GenericFeature feature, final SeqSpan overlapSpan)
+    protected Map<String, List<? extends SeqSymmetry>> loadSymmetriesThread(final DataSet feature, final SeqSpan overlapSpan)
             throws OutOfMemoryError, Exception {
         // special-case chp files, due to their LazyChpSym DAS/2 loading
         return addMethodsToFeature(feature, QuickLoadSymLoaderChp.this.getGenome());
     }
 
-    protected void addAllSymmetries(final GenericFeature feature, List<? extends SeqSymmetry> results)
+    protected void addAllSymmetries(final DataSet feature, List<? extends SeqSymmetry> results)
             throws OutOfMemoryError {
         // special-case chp files, due to their LazyChpSym DAS/2 loading
         addMethodsToFeature(feature, results);
@@ -43,7 +43,7 @@ public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 
     //Only used for "chp"
     private static Map<String, List<? extends SeqSymmetry>> addMethodsToFeature(
-            GenericFeature feature, List<? extends SeqSymmetry> results) {
+            DataSet feature, List<? extends SeqSymmetry> results) {
         if (results == null) {
             return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
         }

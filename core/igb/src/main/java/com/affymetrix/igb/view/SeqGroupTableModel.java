@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.igb.IGBConstants;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -11,15 +11,15 @@ import javax.swing.table.AbstractTableModel;
 final class SeqGroupTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
-    private final AnnotatedSeqGroup group;
+    private final GenomeVersion genomeVersion;
     private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
-    public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
-        group = seq_group;
+    public SeqGroupTableModel(GenomeVersion seq_group) {
+        genomeVersion = seq_group;
     }
 
     public int getRowCount() {
-        return (group == null ? 0 : group.getSeqCount());
+        return (genomeVersion == null ? 0 : genomeVersion.getSeqCount());
     }
 
     public int getColumnCount() {
@@ -27,13 +27,13 @@ final class SeqGroupTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int row, int col) {
-        if (group != null) {
-            BioSeq seq = group.getSeq(row);
+        if (genomeVersion != null) {
+            BioSeq seq = genomeVersion.getSeq(row);
             if (seq != null) {
                 if (col == 0) {
-                    return seq.getID();
+                    return seq.getId();
                 } else if (col == 1) {
-                    if (IGBConstants.GENOME_SEQ_ID.equals(seq.getID())) {
+                    if (IGBConstants.GENOME_SEQ_ID.equals(seq.getId())) {
                         return "";	// don't show the "whole genome" size, because it disagrees with the chromosome total
                     }
                     return Long.toString((long) seq.getLengthDouble());

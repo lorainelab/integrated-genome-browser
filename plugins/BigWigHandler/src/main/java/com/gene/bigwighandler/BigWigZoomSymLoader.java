@@ -1,6 +1,6 @@
 package com.gene.bigwighandler;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -48,7 +48,7 @@ public class BigWigZoomSymLoader extends SymLoader {
     private Map<String, String> bwSeq2igbSeq;
     private BigWigSymLoader defaultSymLoader;
 
-    public BigWigZoomSymLoader(URI uri, String featureName, AnnotatedSeqGroup group) {
+    public BigWigZoomSymLoader(URI uri, String featureName, GenomeVersion group) {
         super(uri, featureName, group);
         String uriString = GeneralUtils.fixFileName(uri.toString());
         try {
@@ -81,8 +81,8 @@ public class BigWigZoomSymLoader extends SymLoader {
             return;
         }
         Map<String, BioSeq> seqMap = new HashMap<>();
-        for (BioSeq seq : group.getSeqList()) {
-            seqMap.put(seq.getID(), seq);
+        for (BioSeq seq : genomeVersion.getSeqList()) {
+            seqMap.put(seq.getId(), seq);
         }
         chromosomeList = new ArrayList<>();
         igbSeq2bwSeq = new HashMap<>();
@@ -101,7 +101,7 @@ public class BigWigZoomSymLoader extends SymLoader {
             bwSeq2igbSeq.put(bwSeqID, igbSeqID);
             BioSeq seq = seqMap.get(igbSeqID);
             if (seq == null) {
-                chromosomeList.add(group.addSeq(igbSeqID, chromosomeNameMap.get(bwSeqID), uri.toString()));
+                chromosomeList.add(genomeVersion.addSeq(igbSeqID, chromosomeNameMap.get(bwSeqID), uri.toString()));
             } else {
                 chromosomeList.add(seq);
             }
@@ -167,7 +167,7 @@ public class BigWigZoomSymLoader extends SymLoader {
         int startBase = span.getMin();
         int endBase = span.getMax();
         BioSeq igbSeq = span.getBioSeq();
-        String bwSeq = igbSeq2bwSeq.get(igbSeq.getID());
+        String bwSeq = igbSeq2bwSeq.get(igbSeq.getId());
         if (bwSeq != null) {
             ZoomLevelIterator zoomIterator = bbReader.getZoomLevelIterator(level,
                     bwSeq, startBase, bwSeq, endBase, true);

@@ -3,6 +3,8 @@ package com.affymetrix.genometry.thread;
 import com.google.common.collect.Range;
 import javax.swing.SwingWorker;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -10,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class CThreadWorker<T, V> extends SwingWorker<T, V> {
 
+    private static final Logger logger = LoggerFactory.getLogger(CThreadWorker.class);
     private static final boolean DEBUG = false;
     private final String message;
     private final int priority;
@@ -68,8 +71,9 @@ public abstract class CThreadWorker<T, V> extends SwingWorker<T, V> {
         T t;
         try {
             t = runInBackground();
-        } catch (Exception x) {
-            throw (x);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            throw (ex);
         }
         if (DEBUG) {
             System.out.println("))))) Thread " + Thread.currentThread() + " = " + getMessage() + " background done");

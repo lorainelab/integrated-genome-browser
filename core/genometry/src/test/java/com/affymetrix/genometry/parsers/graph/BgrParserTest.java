@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,21 +19,21 @@ public class BgrParserTest {
     /**
      *
      * //Creates a Bgr format file
-     * public void CreateBgrFile() throws IOException {
-     *
-     * String string =
-     * "16	948025	0.128646\n" +
-     * "16	948026	0.363933\n";
-     *
-     * InputStream istr = new ByteArrayInputStream(string.getBytes());
-     *
-     * AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-     * boolean annot_seq = true;
-     * String stream_name = "test_file";
-     * boolean ensure_unique_id = true;
-     *
-     *
-     * List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
+ public void CreateBgrFile() throws IOException {
+
+ String string =
+ "16	948025	0.128646\n" +
+ "16	948026	0.363933\n";
+
+ InputStream istr = new ByteArrayInputStream(string.getBytes());
+
+ GenomeVersion seq_group = new GenomeVersion("Test Group");
+ boolean annot_seq = true;
+ String stream_name = "test_file";
+ boolean ensure_unique_id = true;
+
+
+ List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
      *
      * FileOutputStream fout;
      * File file=new File("test1.bgr");
@@ -57,13 +57,13 @@ public class BgrParserTest {
         try (InputStream istr = BgrParserTest.class.getClassLoader().getResourceAsStream(filename)) {
             assertNotNull(istr);
             String stream_name = "test_file";
-            AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+            GenomeVersion seq_group = new GenomeVersion("Test Group");
             boolean annot_seq = true;
             boolean ensure_unique_id = true;
             gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
         }
 
-        assertEquals("16", gr0.getGraphSeq().getID());
+        assertEquals("16", gr0.getGraphSeq().getId());
         assertEquals(2, gr0.getPointCount());
         assertEquals(0.128646, gr0.getGraphYCoord(0), 0.01);
         assertEquals(0.363933, gr0.getGraphYCoord(1), 0.01);
@@ -80,7 +80,7 @@ public class BgrParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion seq_group = new GenomeVersion("Test Group");
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;

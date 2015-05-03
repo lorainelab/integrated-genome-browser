@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -69,7 +69,7 @@ public final class TwoBitParser implements Parser {
 
     private static final boolean DEBUG = false;
 
-    public static List<BioSeq> parse(URI uri, AnnotatedSeqGroup seq_group) throws IOException {
+    public static List<BioSeq> parse(URI uri, GenomeVersion seq_group) throws IOException {
         SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
         loadBuffer(bistr, buffer);
@@ -79,7 +79,7 @@ public final class TwoBitParser implements Parser {
         return seqs;
     }
 
-    public static BioSeq parse(URI uri, AnnotatedSeqGroup seq_group, String seqName) throws IOException {
+    public static BioSeq parse(URI uri, GenomeVersion seq_group, String seqName) throws IOException {
         SeekableBufferedStream bistr = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
         ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
         loadBuffer(bistr, buffer);
@@ -90,25 +90,25 @@ public final class TwoBitParser implements Parser {
     }
 
     public static BioSeq parse(URI uri) throws IOException {
-        return parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
+        return parse(uri, new GenomeVersion("No_Data")).get(0);
     }
 
     public static boolean parse(URI uri, OutputStream out) throws IOException {
-        BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
+        BioSeq seq = parse(uri, new GenomeVersion("No_Data")).get(0);
         return writeAnnotations(seq, 0, seq.getLength(), out);
     }
 
     public static boolean parse(URI uri, int start, int end, OutputStream out) throws IOException {
-        BioSeq seq = parse(uri, new AnnotatedSeqGroup("No_Data")).get(0);
+        BioSeq seq = parse(uri, new GenomeVersion("No_Data")).get(0);
         return writeAnnotations(seq, start, end, out);
     }
 
-    public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, OutputStream out) throws IOException {
+    public static boolean parse(URI uri, GenomeVersion seq_group, OutputStream out) throws IOException {
         BioSeq seq = parse(uri, seq_group).get(0);
         return writeAnnotations(seq, 0, seq.getLength(), out);
     }
 
-    public static boolean parse(URI uri, AnnotatedSeqGroup seq_group, int start, int end, OutputStream out) throws IOException {
+    public static boolean parse(URI uri, GenomeVersion seq_group, int start, int end, OutputStream out) throws IOException {
         BioSeq seq = parse(uri, seq_group).get(0);
         return writeAnnotations(seq, start, end, out);
     }
@@ -159,7 +159,7 @@ public final class TwoBitParser implements Parser {
         return seq_count;
     }
 
-    private static List<BioSeq> readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group) throws IOException {
+    private static List<BioSeq> readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, GenomeVersion seq_group) throws IOException {
         String name;
         int name_length;
         long offset, position;
@@ -181,11 +181,7 @@ public final class TwoBitParser implements Parser {
             name = getString(buffer, name_length);
             offset = buffer.getInt() & INT_MASK;
 
-//			if (DEBUG) {
-//				System.out.println("Sequence '" + name + "', offset " + offset);
-//			}
             seqOffsets.put(name, offset);
-            //seqs.add(readSequenceHeader(uri, bistr, buffer.order(), offset, seq_group, name));
         }
 
         for (Entry<String, Long> seqOffset : seqOffsets.entrySet()) {
@@ -195,7 +191,7 @@ public final class TwoBitParser implements Parser {
         return seqs;
     }
 
-    private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, AnnotatedSeqGroup seq_group, String synonym) throws IOException {
+    private static BioSeq readSequenceIndex(URI uri, SeekableBufferedStream bistr, ByteBuffer buffer, int seq_count, GenomeVersion seq_group, String synonym) throws IOException {
         String name;
         int name_length;
         long offset, position;
@@ -226,7 +222,7 @@ public final class TwoBitParser implements Parser {
         return seq;
     }
 
-    private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, AnnotatedSeqGroup seq_group, String name) throws IOException {
+    private static BioSeq readSequenceHeader(URI uri, SeekableBufferedStream bistr, ByteOrder order, long offset, GenomeVersion seq_group, String name) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(INT_SIZE);
         buffer.order(order);
         long residueOffset = offset;
@@ -327,7 +323,7 @@ public final class TwoBitParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         throw new IllegalStateException("2bit should not be processed here");
     }

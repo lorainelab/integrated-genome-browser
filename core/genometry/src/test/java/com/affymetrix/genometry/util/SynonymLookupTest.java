@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.util;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class SynonymLookupTest {
 
     @Test
     public void testAddSynonym() throws IOException {
-        ImmutableSet<String> synonymSet;
+        Set<String> synonymSet;
 
         boolean cs = true;
 

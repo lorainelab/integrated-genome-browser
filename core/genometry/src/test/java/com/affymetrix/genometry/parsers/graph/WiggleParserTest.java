@@ -6,7 +6,7 @@
  */
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.Scored;
@@ -41,7 +41,7 @@ public class WiggleParserTest {
         InputStream istr = WiggleParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
 
         WiggleParser parser = new WiggleParser();
 
@@ -55,7 +55,7 @@ public class WiggleParserTest {
 
         // BED format
         assertTrue(gr0 instanceof GraphIntervalSym);
-        assertEquals("chr19", gr0.getGraphSeq().getID());
+        assertEquals("chr19", gr0.getGraphSeq().getId());
         assertEquals(9, gr0.getPointCount());
 //		assertEquals(59302000, gr0.getSpan(seq).getMin());
 //		assertEquals(59304700, gr0.getSpan(seq).getMax());
@@ -93,7 +93,7 @@ public class WiggleParserTest {
     public void testWiggle1() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
         BioSeq aseq = seq_group.addSeq("chr19", 59310300);
 
@@ -107,7 +107,7 @@ public class WiggleParserTest {
 
         // BED format
         assertTrue(gr0 instanceof GraphIntervalSym);
-        assertEquals("chr19", gr0.getGraphSeq().getID());
+        assertEquals("chr19", gr0.getGraphSeq().getId());
         assertEquals(9, gr0.getPointCount());
 //		assertEquals(59302000, gr0.getSpan(seq).getMin());
 //		assertEquals(59304700, gr0.getSpan(seq).getMax());
@@ -129,9 +129,9 @@ public class WiggleParserTest {
         assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
         String filelocation = url.toURI().toString();
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
         GraphState state = gr1.getGraphState();
         assertEquals(0.0, state.getVisibleMinY(), 0.00001);
@@ -145,7 +145,7 @@ public class WiggleParserTest {
         gr0 = results.get(0);
 
         assertTrue(gr0 instanceof GraphIntervalSym);
-        assertEquals("chr19", gr0.getGraphSeq().getID());
+        assertEquals("chr19", gr0.getGraphSeq().getId());
         assertEquals(9, gr0.getPointCount());
 //		assertEquals(59302000, gr0.getSpan(seq).getMin());
 //		assertEquals(59304700, gr0.getSpan(seq).getMax());
@@ -165,15 +165,15 @@ public class WiggleParserTest {
 //		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
         assertEquals(300.0f, ((Scored) gr2.getChild(7)).getScore(), 0.00000001);
 
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
-        assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+        assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
 
         List<BioSeq> allSeqs = wiggle.getChromosomeList();
         assertEquals(allSeqs.size(), 1);
 
         seq = allSeqs.get(0);
-        assertEquals(seq.getID(), "chr19");
+        assertEquals(seq.getId(), "chr19");
     }
 
     //Test to see if multiple files are created.
@@ -181,7 +181,7 @@ public class WiggleParserTest {
     public void testWiggle2() throws Exception {
         String filename = "data/wiggle/wiggleExample2.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
         List<GraphSym> results = wiggle.getGenome();
@@ -199,7 +199,7 @@ public class WiggleParserTest {
 
         // BED format
         assertTrue(gr0 instanceof GraphIntervalSym);
-        assertEquals("chr19", gr0.getGraphSeq().getID());
+        assertEquals("chr19", gr0.getGraphSeq().getId());
         assertEquals(9, gr0.getPointCount());
 //		assertEquals(59302000, gr0.getSpan(seq).getMin());
 //		assertEquals(59304700, gr0.getSpan(seq).getMax());
@@ -208,7 +208,7 @@ public class WiggleParserTest {
         GraphSym gr1 = results.get(1);
         seq = gr1.getGraphSeq();
         assertTrue(gr1 instanceof GraphIntervalSym);
-        assertEquals("chr20", gr1.getGraphSeq().getID());
+        assertEquals("chr20", gr1.getGraphSeq().getId());
         assertEquals(9, gr1.getChildCount());
         assertTrue(gr1.getChild(0) instanceof Scored);
 //		assertEquals(59304701 - 1, gr1.getSpan(seq).getMin());	// variableStep: 1-relative format
@@ -218,7 +218,7 @@ public class WiggleParserTest {
         GraphSym gr2 = results.get(2);
         seq = gr2.getGraphSeq();
         assertTrue(gr2 instanceof GraphIntervalSym);
-        assertEquals("chr21", gr2.getGraphSeq().getID());
+        assertEquals("chr21", gr2.getGraphSeq().getId());
         assertEquals(10, gr2.getChildCount());
 //		assertEquals(59307401 - 1, gr2.getSpan(seq).getMin());			// fixedStep: 1-relative format
 //		assertEquals(59310301 - 1, gr2.getSpan(seq).getMax());			// fixedStep: 1-relative format
@@ -226,9 +226,9 @@ public class WiggleParserTest {
 
         if (checkId) {
             String filelocation = new File(filename).toURI().toString();
-            assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
-            assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
-            assertEquals(AnnotatedSeqGroup.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
+            assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "Bed Format"), gr0.getID());
+            assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "variableStep"), gr1.getID());
+            assertEquals(GenomeVersion.getUniqueGraphTrackID(filelocation, "fixedStep"), gr2.getID());
         }
 
         return true;
@@ -237,7 +237,7 @@ public class WiggleParserTest {
     public void testWriteBarFormat() throws Exception {
         String filename = "wiggleExample.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
         List<GraphSym> results = wiggle.getGenome();
@@ -246,7 +246,7 @@ public class WiggleParserTest {
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
-        boolean written = Wiggle.writeBarFormat(results, seq_group.getID(), outstream);
+        boolean written = Wiggle.writeBarFormat(results, seq_group.getName(), outstream);
         assertTrue(written);
 
         GenometryModel gmodel = GenometryModel.getInstance();
@@ -255,7 +255,7 @@ public class WiggleParserTest {
         results = BarParser.parse(url.getFile(), istr, gmodel, seq_group, null, 0, Integer.MAX_VALUE, "chr19", true, false);
 
         GraphSym gr1 = results.get(0);
-        assertEquals(gr0.getGraphSeq().getID(), gr1.getGraphSeq().getID());
+        assertEquals(gr0.getGraphSeq().getId(), gr1.getGraphSeq().getId());
         assertEquals(gr0.getGraphSeq().getMin(), gr1.getGraphSeq().getMin());
         assertEquals(gr0.getGraphSeq().getMax(), gr1.getGraphSeq().getMax());
     }
@@ -264,7 +264,7 @@ public class WiggleParserTest {
     public void testWriteAnnotation() throws Exception {
         String filename = "wiggleExample2.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+        GenomeVersion seq_group = new GenomeVersion("test");
         Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
 
         List<GraphSym> results = wiggle.getGenome();

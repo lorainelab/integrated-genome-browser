@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +24,10 @@ public final class ChromInfoParser {
     private static final Pattern tab_regex = Pattern.compile("\t");
 
     /**
-     * Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
-     * adds it to the GenometryModel.
+     * Parses a chrom_info.txt file, creates a new GenomeVersion and
+ adds it to the GenometryModel.
      */
-    public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, String uri)
+    public static boolean parse(InputStream istr, GenomeVersion seq_group, String uri)
             throws IOException {
         BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
         String line;

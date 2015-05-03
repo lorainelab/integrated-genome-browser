@@ -14,7 +14,7 @@ package com.affymetrix.genometry.style;
 
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.genometry.general.GenericFeature;
+import com.affymetrix.genometry.general.DataSet;
 import java.awt.Color;
 
 public interface ITrackStyleExtended extends ITrackStyle {
@@ -60,9 +60,9 @@ public interface ITrackStyleExtended extends ITrackStyle {
 
     String getLabelField();
 
-    public void setFeature(GenericFeature f);
+    public void setFeature(DataSet f);
 
-    public GenericFeature getFeature();
+    public DataSet getFeature();
 
     public boolean drawCollapseControl();
 

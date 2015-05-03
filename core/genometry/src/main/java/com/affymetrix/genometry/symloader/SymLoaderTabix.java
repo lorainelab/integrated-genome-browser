@@ -1,19 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
@@ -24,14 +12,23 @@ import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.samtools.util.BlockCompressedInputStream;
-
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-
 import org.broad.tribble.readers.LineReader;
 import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
@@ -43,7 +40,7 @@ import org.broad.tribble.readers.TabixReader;
 public class SymLoaderTabix extends SymLoader {
 
     private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
-    protected final Map<BioSeq, String> seqs = new HashMap<>();
+    protected final Map<BioSeq, String> seqs = Maps.newConcurrentMap();
     private final LineProcessor lineProcessor;
     private final GenericObjectPool<TabixReader> pool;
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -56,8 +53,8 @@ public class SymLoaderTabix extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoaderTabix(final URI uri, String featureName, AnnotatedSeqGroup group, LineProcessor lineProcessor) throws Exception {
-        super(uri, featureName, group);
+    public SymLoaderTabix(final URI uri, String featureName, GenomeVersion genomeVersion, LineProcessor lineProcessor) throws Exception {
+        super(uri, featureName, genomeVersion);
         this.lineProcessor = lineProcessor;
         PoolableObjectFactory<TabixReader> poolFactory = new TabixReaderPoolableObjectFactory();
         this.pool = new GenericObjectPool<>(poolFactory);
@@ -92,11 +89,11 @@ public class SymLoaderTabix extends SymLoader {
         TabixReader tabixReader = pool.borrowObject();
         try {
             for (String seqID : tabixReader.mChr2tid.keySet()) {
-                BioSeq seq = group.getSeq(seqID);
+                BioSeq seq = genomeVersion.getSeq(seqID);
                 if (seq == null) {
                     //int length = 1000000000;
                     int length = 200000000;
-                    seq = group.addSeq(seqID, length);
+                    seq = genomeVersion.addSeq(seqID, length);
 //				Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.INFO,
 //						"Sequence not found. Adding {0} with default length {1}",
 //						new Object[]{seqID,length});
@@ -123,7 +120,7 @@ public class SymLoaderTabix extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-        return new ArrayList<>(seqs.keySet());
+        return ImmutableList.copyOf(seqs.keySet());
     }
 
     @Override
@@ -229,14 +226,8 @@ public class SymLoaderTabix extends SymLoader {
     public static SymLoader getSymLoader(SymLoader sym) {
         try {
             URI uri = new URI(sym.uri.toString() + ".tbi");
-            if (LocalUrlCacher.isValidURI(uri)) {
-                String uriString = sym.uri.toString();
-                if (uriString.startsWith(FILE_PREFIX)) {
-                    uriString = sym.uri.getPath();
-                }
-                if (isTabix(uriString) && sym instanceof LineProcessor) {
-                    return new SymLoaderTabix(sym.uri, sym.featureName, sym.group, (LineProcessor) sym);
-                }
+            if (sym instanceof LineProcessor && LocalUrlCacher.isValidRequest(uri)) {
+                return new SymLoaderTabix(sym.uri, sym.featureName, sym.genomeVersion, (LineProcessor) sym);
             }
         } catch (URISyntaxException ex) {
             Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, null, ex);

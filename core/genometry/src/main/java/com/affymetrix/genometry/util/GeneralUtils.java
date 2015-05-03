@@ -1,6 +1,16 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.general.DataContainer;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import static com.google.common.io.Closeables.close;
 import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,12 +23,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -30,26 +43,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
-
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
-import net.sf.samtools.util.BlockCompressedInputStream;
-
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericVersion;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
-import static com.google.common.io.Closeables.close;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.net.ServerSocket;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import net.sf.samtools.seekablestream.SeekableStream;
 import net.sf.samtools.seekablestream.SeekableStreamFactory;
+import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.LoggerFactory;
@@ -362,12 +360,12 @@ public final class GeneralUtils {
         }
     }
 
-    public static GenericFeature findFeatureWithURI(Collection<GenericFeature> features, URI uri) {
+    public static DataSet findFeatureWithURI(Collection<DataSet> features, URI uri) {
         if (uri == null || features.isEmpty()) {
             return null;
         }
 
-        for (GenericFeature feature : features) {
+        for (DataSet feature : features) {
             if (uri.equals(feature.getURI())) {
                 return feature;
             }
@@ -469,7 +467,7 @@ public final class GeneralUtils {
         boolean blockedGZip = false;
         GZIPInputStream gis = null;
         try {
-            URLConnection conn = LocalUrlCacher.connectToUrl(url, null, -1);
+            URLConnection conn = LocalUrlCacher.connectToUrl(url, -1);
             gis = new GZIPInputStream(conn.getInputStream());
             gis.read();
         } catch (ZipException x) {
@@ -485,7 +483,7 @@ public final class GeneralUtils {
         if (blockedGZip) {
             gzstr = new BlockCompressedInputStream(istr);
         } else {
-            URLConnection conn = LocalUrlCacher.connectToUrl(url, null, -1);
+            URLConnection conn = LocalUrlCacher.connectToUrl(url, -1);
             gzstr = new GZIPInputStream(conn.getInputStream());
         }
 
@@ -586,8 +584,8 @@ public final class GeneralUtils {
      */
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
-    public static String getPreferredVersionName(Set<GenericVersion> gVersions) {
-        return LOOKUP.getPreferredName(gVersions.iterator().next().getVersionName());
+    public static String getPreferredVersionName(Set<DataContainer> gVersions) {
+        return LOOKUP.getPreferredName(gVersions.iterator().next().getName());
     }
 
     public static String preferencesDisplay(Preferences prefs) {

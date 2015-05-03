@@ -9,9 +9,12 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometry.util.ServerUtils;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
@@ -19,18 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * A class that's useful for visualizing a generic feature. A feature is unique
- * to a genome version/species/server. Thus, there is a many-to-one map to
- * GenericVersion. (Even if the feature names and version names match, but the
- * servers don't, we can't guarantee that they would contain the same
- * information.)
- *
- * @version $Id: GenericFeature.java 10112 2012-02-02 16:24:42Z imnick $
- */
-public final class GenericFeature {
+public final class DataSet {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataSet.class);
     public static final String LOAD_WARNING_MESSAGE = GenometryConstants.BUNDLE.getString("howtoloadmessage");
     public static final String REFERENCE_SEQUENCE_LOAD_MESSAGE = GenometryConstants.BUNDLE.getString("howToLoadReferenceSequence");
     public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
@@ -38,15 +34,16 @@ public final class GenericFeature {
 
     private static final String WHOLE_GENOME = "Whole Sequence";
 
-    private final String featureName;      // friendly name of the feature.
-    private final Map<String, String> featureProps;
-    private final GenericVersion gVersion;        // Points to the version that uses this feature.
+    private final String name;      // friendly name of the feature.
+    private final Map<String, String> properties;
+    private final DataContainer dataContainer;        // Points to the version that uses this feature.
     private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
     private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
     private RefreshStatus lastRefresh;
     private final Object typeObj;    // Das2Type, ...?
-    private final SymLoader symL;
+    private SymLoader symL;
     private String method;
+    private URI uri;
 
     private final boolean isReferenceSequence;
 
@@ -60,33 +57,57 @@ public final class GenericFeature {
     // Request that are currently going on. (To avoid parsing more than once)
     private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
 
-    public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader symLoader, Object typeObj, boolean autoload) {
-        this(featureName, featureProps, gVersion, symLoader, typeObj, autoload, false);
+    public DataSet(URI uri, Map<String, String> dataSetProps, DataContainer dataContainer) {
+        this.uri = uri;
+        boolean autoload = PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load);
+        this.name = dataSetProps.get("title");
+        this.properties = dataSetProps;
+        this.setAutoload(autoload);
+        this.dataContainer = dataContainer;
+        this.lastRefresh = RefreshStatus.NOT_REFRESHED;
+        this.isReferenceSequence = false;
+        this.typeObj = null;
+    }
+
+    public DataSet(String name, Map<String, String> featureProps, DataContainer dataContainer,
+            SymLoader symLoader, Object typeObj, boolean autoload) {
+        this(null, name, featureProps, dataContainer, symLoader, typeObj, autoload, false);
     }
 
     /**
-     * @param featureName
-     * @param featureProps
-     * @param gVersion
+     * @param name
+     * @param props
+     * @param dataContainer
      * @param typeObj
      */
-    public GenericFeature(
-            String featureName, Map<String, String> featureProps, GenericVersion gVersion, SymLoader symLoader, Object typeObj, boolean autoload, boolean isReferenceSequence) {
-        this.featureName = featureName;
-        this.featureProps = featureProps;
-        this.gVersion = gVersion;
+    public DataSet(URI uri,
+            String name, Map<String, String> props, DataContainer dataContainer, SymLoader symLoader, Object typeObj, boolean autoload, boolean isReferenceSequence) {
+        this.uri = uri;
+        this.name = name;
+        this.properties = props;
+        this.dataContainer = dataContainer;
         this.symL = symLoader;
         this.typeObj = typeObj;
 
         this.setAutoload(autoload);
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
         this.isReferenceSequence = isReferenceSequence;
-        //methods.add(featureName);
+        //methods.add(name);
+    }
+
+    public static String detemineFriendlyName(URI uri) {
+        String uriString = uri.toASCIIString().toLowerCase();
+        String unzippedStreamName = GeneralUtils.stripEndings(uriString);
+        String ext = GeneralUtils.getExtension(unzippedStreamName);
+
+        String unzippedName = GeneralUtils.getUnzippedName(uri.toString());
+        String strippedName = unzippedName.substring(unzippedName.lastIndexOf('/') + 1);
+        String friendlyName = strippedName.substring(0, strippedName.toLowerCase().indexOf(ext));
+        return friendlyName;
     }
 
     public boolean setAutoload(boolean auto) {
-        if (shouldAutoLoad(getFeatureProps(), WHOLE_GENOME) && auto) {
+        if (shouldAutoLoad(getProperties(), WHOLE_GENOME) && auto) {
             setLoadStrategy(LoadStrategy.GENOME);
             this.setVisible();
             return true;
@@ -102,7 +123,7 @@ public final class GenericFeature {
         if (this.loadStrategy != LoadStrategy.NO_LOAD) {
             return;
         }
-        if (getgVersion() != null && getgVersion().getgServer() != null) {
+        if (getDataContainer() != null && getDataContainer().getDataProvider() != null) {
             if (this.getSymL() != null) {
                 if (this.getSymL().getLoadChoices().contains(LoadStrategy.VISIBLE)) {
                     setLoadStrategy(LoadStrategy.VISIBLE);
@@ -143,7 +164,7 @@ public final class GenericFeature {
             return true;
         } else {
             setLoadStrategy(getLoadChoices().get(1));
-            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING,
+            Logger.getLogger(DataSet.class.getName()).log(Level.WARNING,
                     "Given {0} strategy is not permitted instead using {1} "
                     + "strategy.", new Object[]{loadStrategy, getLoadStrategy()});
         }
@@ -161,9 +182,9 @@ public final class GenericFeature {
     }
 
     public String description() {
-        if (this.getFeatureProps() != null) {
-            String summary = getFeatureProps().get("summary");
-            String descrip = getFeatureProps().get("description");
+        if (this.getProperties() != null) {
+            String summary = getProperties().get("summary");
+            String descrip = getProperties().get("description");
 
             if (summary != null && summary.length() > 0) {
                 return summary;
@@ -175,7 +196,7 @@ public final class GenericFeature {
                 return descrip;
             }
         }
-        return getFeatureName();
+        return getDataSetName();
     }
 
     public String getMethod() {
@@ -184,7 +205,7 @@ public final class GenericFeature {
 
     public void setMethod(String method) {
         this.method = method;
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), getFeatureProps());
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), getProperties());
         style.setFeature(this);
     }
 
@@ -218,7 +239,7 @@ public final class GenericFeature {
         // Remove all childred from request
         requestSym.removeChildren();
         if (currentRequestSym.getChildCount() > 0) {
-            Logger.getLogger(GenericFeature.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", getgVersion().getgServer().getServerType());
+            Logger.getLogger(DataSet.class.getName()).log(Level.WARNING, "Genericfeature contains current request sym for server {0}", getDataContainer().getDataProvider());
             currentRequestSym.removeChildren();
         }
         method = null;
@@ -273,7 +294,7 @@ public final class GenericFeature {
         removeCurrentRequest(span);
     }
 
-    public synchronized final void removeCurrentRequest(SeqSpan span) {
+    public final synchronized void removeCurrentRequest(SeqSpan span) {
         for (int i = 0; i < currentRequestSym.getChildCount(); i++) {
             SeqSymmetry sym = currentRequestSym.getChild(i);
             if (span == sym.getSpan(span.getBioSeq())) {
@@ -303,23 +324,16 @@ public final class GenericFeature {
     @Override
     public String toString() {
         // remove all but the last "/", since these will be represented in a friendly tree view.
-        if (!this.featureName.contains("/")) {
-            return this.getFeatureName();
+        if (!this.name.contains("/")) {
+            return this.getDataSetName();
         }
 
-        int lastSlash = this.getFeatureName().lastIndexOf('/');
-        return this.getFeatureName().substring(lastSlash + 1, getFeatureName().length());
+        int lastSlash = this.getDataSetName().lastIndexOf('/');
+        return this.getDataSetName().substring(lastSlash + 1, getDataSetName().length());
     }
 
     public URI getURI() {
-        if (getTypeObj() instanceof String) {
-            return URI.create(getTypeObj().toString());
-        }
-
-        if (getSymL() != null) {
-            return getSymL().uri;
-        }
-        return null;
+        return uri;
     }
 
     public String getExtension() {
@@ -331,24 +345,24 @@ public final class GenericFeature {
     }
 
     /**
-     * @return the featureName
+     * @return the name
      */
-    public String getFeatureName() {
-        return featureName;
+    public String getDataSetName() {
+        return name;
     }
 
     /**
      * @return the featureProps
      */
-    public Map<String, String> getFeatureProps() {
-        return featureProps;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
     /**
-     * @return the gVersion
+     * @return the dataContainer
      */
-    public GenericVersion getgVersion() {
-        return gVersion;
+    public DataContainer getDataContainer() {
+        return dataContainer;
     }
 
     /**
@@ -362,6 +376,9 @@ public final class GenericFeature {
      * @return the symL
      */
     public SymLoader getSymL() {
+        if (symL == null) {
+            symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, detemineFriendlyName(uri), dataContainer.getGenomeVersion());
+        }
         return symL;
     }
 }

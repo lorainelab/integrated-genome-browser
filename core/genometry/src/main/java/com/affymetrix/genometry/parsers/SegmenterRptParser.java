@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
@@ -43,7 +43,7 @@ public final class SegmenterRptParser implements Parser {
     private int cn_change_col;  // column to use for determining cn change type ("dup", "del", etc.)
     private int file_col;  // column to use for sample file name
 
-    // if makeProps, then each column (other than start, end, length, group) will become a
+    // if makeProps, then each column (other than start, end, length, genomeVersion) will become a
     //    property in the SymWithProps that is generated
     private final boolean make_props;
 
@@ -121,7 +121,7 @@ public final class SegmenterRptParser implements Parser {
         }
     }
 
-    public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
+    public void parse(InputStream istr, String default_type, GenomeVersion seq_group) {
 
         List<String> col_names = null;
 
@@ -210,7 +210,7 @@ public final class SegmenterRptParser implements Parser {
 
                 SingletonSymWithProps sym = new SingletonSymWithProps(start, end, seq);
                 sym.setProperty("method", THE_METHOD); // typically the value of the "file" column
-                String id = change_type + " " + seq.getID() + ":" + start + "-" + end;
+                String id = change_type + " " + seq.getId() + ":" + start + "-" + end;
                 sym.setProperty("id", id);
 
                 if (make_props) {
@@ -253,10 +253,10 @@ public final class SegmenterRptParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri,
+            GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
         // only annotate_seq = true processed here
-        parse(is, uri, group);
+        parse(is, uri, genomeVersion);
         return null;
     }
 }

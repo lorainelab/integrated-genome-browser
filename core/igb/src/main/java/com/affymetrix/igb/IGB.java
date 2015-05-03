@@ -14,8 +14,8 @@ import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GroupSelectionEvent;
@@ -29,7 +29,6 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -114,7 +113,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     private IGBToolBar toolbar;
     private SeqMapView mapView;
     private Image applicationIconImage;
-    private AnnotatedSeqGroup prev_selected_group = null;
+    private GenomeVersion prev_selected_group = null;
     private BioSeq prev_selected_seq = null;
     public static volatile String commandLineBatchFileStr = null;	// Used to run batch file actions if passed via command-line
     private IWindowService windowService;
@@ -168,8 +167,10 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     private void loadSynonyms() {
-        loadSynonyms(Constants.SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
-        loadSynonyms(Constants.CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
+        String SYNONYMS_TXT = "synonyms.txt";
+        String CHROMOSOMES_TXT = "chromosomes.txt";
+        loadSynonyms(SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
+        loadSynonyms(CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
     }
 
     private void loadSynonyms(String file, SynonymLookup lookup) {
@@ -246,7 +247,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             if (title.length() > 0) {
                 title.append(" - ");
             }
-            String seqid = seq.getID().trim();
+            String seqid = seq.getId().trim();
             Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
             if (pattern.matcher(seqid).matches()) {
                 seqid = seqid.replace("chr", "Chromosome ");
@@ -270,12 +271,12 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             return null;
         }
         String version_info = null;
-        if (seq.getSeqGroup() != null) {
-            AnnotatedSeqGroup group = seq.getSeqGroup();
-            if (group.getDescription() != null) {
-                version_info = group.getDescription();
+        if (seq.getGenomeVersion() != null) {
+            GenomeVersion genomeVersion = seq.getGenomeVersion();
+            if (genomeVersion.getDescription() != null) {
+                version_info = genomeVersion.getDescription();
             } else {
-                version_info = group.getID();
+                version_info = genomeVersion.getName();
             }
         }
         if (null != version_info) {
@@ -309,7 +310,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         }
         // when HTTP authentication is needed, getPasswordAuthentication will
         //    be called on the authenticator set as the default
-        Authenticator.setDefault(new IGBAuthenticator(igbMainFrame));
+//        Authenticator.setDefault(new IGBAuthenticator(igbMainFrame));
+        Authenticator.setDefault(new IGBAuthenticator());
         StateProvider stateProvider = new IGBStateProvider();
         DefaultStateProvider.setGlobalStateProvider(stateProvider);
         igbMainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -317,8 +319,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         GenometryModel gmodel = GenometryModel.getInstance();
         gmodel.addGroupSelectionListener(this);
         gmodel.addSeqSelectionListener(this);
-        // WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
-        //    otherwise assumptions for persisting group / seq / span prefs are not valid!
+        // WARNING!!  IGB _MUST_ be added as genomeVersion and seq selection listener to model _BEFORE_ map_view is,
+        //    otherwise assumptions for persisting genomeVersion / seq / span prefs are not valid!
         MenuUtil.setAccelerators(
                 new AbstractMap<String, KeyStroke>() {
 
@@ -470,7 +472,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     @Override
     public void groupSelectionChanged(GroupSelectionEvent evt) {
-        AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
+        GenomeVersion selected_group = evt.getSelectedGroup();
         if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
             Persistence.saveSeqSelection(prev_selected_seq);
             Persistence.saveSeqVisibleSpan(mapView);

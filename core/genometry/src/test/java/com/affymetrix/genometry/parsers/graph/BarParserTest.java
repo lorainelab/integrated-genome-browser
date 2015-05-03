@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.graph.BarParser.BarFileHeader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -46,15 +46,15 @@ public class BarParserTest {
         assertNotNull(istr);
 
         GenometryModel gmodel = GenometryModel.getInstance();
-        AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
         String stream_name = "chr15_random";
 
         boolean ensure_unique_id = true;
 
-        List<GraphSym> results = BarParser.parse(filename, istr, gmodel, group, null, 0, Integer.MAX_VALUE, stream_name, ensure_unique_id, false);
+        List<GraphSym> results = BarParser.parse(filename, istr, gmodel, genomeVersion, null, 0, Integer.MAX_VALUE, stream_name, ensure_unique_id, false);
         assertEquals(1, results.size());
         GraphSym gr0 = results.get(0);
-        assertEquals(stream_name, gr0.getGraphSeq().getID());
+        assertEquals(stream_name, gr0.getGraphSeq().getId());
         assertEquals(38, gr0.getPointCount());
         assertEquals(0, gr0.getGraphYCoord(2), 0);
         assertEquals(0, gr0.getGraphYCoord(3), 0.01);
@@ -69,7 +69,7 @@ public class BarParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+        GenomeVersion seq_group = new GenomeVersion("Test Group");
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
@@ -112,10 +112,10 @@ public class BarParserTest {
     public void TestGetSlice() throws Exception {
         String filename = "data/bar/small.bar";
         URL url = BarParserTest.class.getClassLoader().getResource(filename);
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
+        GenomeVersion seq_group = new GenomeVersion("test_group");
         BioSeq aseq = seq_group.addSeq("chr15_random", 1881177);
         GraphSym gr0 = BarParser.getRegion(url.getFile(), new SimpleSeqSpan(1880135, 1880205, aseq));
-        assertEquals("chr15_random", gr0.getGraphSeq().getID());
+        assertEquals("chr15_random", gr0.getGraphSeq().getId());
         assertEquals(2, gr0.getPointCount());
         assertEquals(0.2127714902162552, gr0.getGraphYCoord(0), 0.01);
         assertEquals(0.23889116942882538, gr0.getGraphYCoord(1), 0.01);

@@ -10,7 +10,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.bookmarks.model.Bookmark;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -269,7 +269,7 @@ public final class BookmarksParser {
 
         BedParser bparser = new BedParser();
 
-        AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
+        GenomeVersion seq_group = new GenomeVersion("unknown");
         List<SeqSymmetry> annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
 
         if ((annots != null)) {

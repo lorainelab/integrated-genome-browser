@@ -150,7 +150,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
             super(start, end, seq);
         }
 
-        // For the web links to be constructed properly, this class must implement getID(),
+        // For the web links to be constructed properly, this class must implement getId(),
         // or must NOT implement SymWithProps.
         public String getID() {
             return UcscBedSym.this.getID();
@@ -222,7 +222,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
     }
 
     public void outputBedFormat(DataOutputStream out) throws IOException {
-        out.write(seq.getID().getBytes());
+        out.write(seq.getId().getBytes());
         out.write('\t');
         out.write(Integer.toString(txMin).getBytes());
         out.write('\t');

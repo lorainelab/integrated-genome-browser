@@ -10,24 +10,20 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.GenericFeature;
-import com.affymetrix.genometry.general.GenericServer;
-import com.affymetrix.genometry.general.GenericVersion;
+import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.thread.CThreadHolder;
-import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.ServerTypeI;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
+import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
@@ -45,7 +41,6 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
@@ -60,13 +55,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
 
 /**
  * implementation of the IgbService, using the IGB instance for all of the
@@ -74,7 +68,7 @@ import org.osgi.framework.BundleContext;
  * public.
  *
  */
-public class IgbServiceImpl implements IgbService, BundleActivator {
+public class IgbServiceImpl implements IgbService {
 
     private static IgbServiceImpl instance = new IgbServiceImpl();
 
@@ -84,14 +78,6 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
 
     private IgbServiceImpl() {
         super();
-    }
-
-    @Override
-    public void start(BundleContext bundleContext) throws Exception {
-    }
-
-    @Override
-    public void stop(BundleContext bundleContext) throws Exception {
     }
 
     @Override
@@ -121,18 +107,18 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public void loadAndDisplayAnnotations(GenericFeature gFeature) {
+    public void loadAndDisplayAnnotations(DataSet gFeature) {
         GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
     }
 
     @Override
-    public void loadAndDisplaySpan(SeqSpan span, GenericFeature feature) {
+    public void loadAndDisplaySpan(SeqSpan span, DataSet feature) {
         GeneralLoadUtils.loadAndDisplaySpan(span, feature);
     }
 
     @Override
-    public void loadChromosomes(GenericFeature gFeature) {
-        GeneralLoadUtils.addFeature(gFeature);
+    public void loadChromosomes(DataSet gFeature) {
+        GeneralLoadUtils.addDataSet(gFeature);
     }
 
     @Override
@@ -157,12 +143,12 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public GenericFeature getFeature(AnnotatedSeqGroup seqGroup, GenericServer gServer, String feature_url, boolean showErrorForUnsupported) {
-        return ServiceUtils.getInstance().getFeature(seqGroup, gServer, feature_url, showErrorForUnsupported);
+    public DataSet getDataSet(GenomeVersion genomeVersion, DataProvider gServer, String feature_url, boolean showErrorForUnsupported) {
+        return null;
     }
 
     @Override
-    public Optional<AnnotatedSeqGroup> determineAndSetGroup(final String version) {
+    public Optional<GenomeVersion> determineAndSetGroup(final String version) {
         return ServiceUtils.getInstance().determineAndSetGroup(version);
     }
 
@@ -308,22 +294,23 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public GenericServer loadServer(String server_url) {
-        return ServiceUtils.getInstance().loadServer(server_url);
+    public java.util.Optional<DataProvider> loadServer(String server_url) {
+        return DataProviderManager.getServerFromUrlStatic(server_url);
     }
 
     @Override
     public boolean areAllServersInited() {
-        return ServerList.getServerInstance().areAllServersInited();
+        return DataProviderManager.ALL_SOURCES_INITIALIZED;
     }
 
     @Override
-    public GenericServer getServer(String URLorName) {
-        return ServerList.getServerInstance().getServer(URLorName);
+    public Optional<DataProvider> getServer(String url) {
+        return DataProviderManager.getServerFromUrlStatic(url);
+
     }
 
     @Override
-    public void openURI(URI uri, String fileName, AnnotatedSeqGroup loadGroup, String speciesName, boolean isReferenceSequence) {
+    public void openURI(URI uri, String fileName, GenomeVersion loadGroup, String speciesName, boolean isReferenceSequence) {
         GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
     }
 
@@ -358,30 +345,13 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public Set<GenericServer> getEnabledServerList() {
-        return ServerList.getServerInstance().getEnabledServers();
+    public Set<DataProvider> getEnabledServerList() {
+        return DataProviderManager.getEnabledServers();
     }
 
     @Override
-    public Collection<GenericServer> getAllServersList() {
-        return ServerList.getServerInstance().getAllServers();
-    }
-
-    @Override
-    public void discoverServer(final GenericServer server) {
-        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("discover server " + server.getServerName()) {
-
-            @Override
-            protected Void runInBackground() {
-                GeneralLoadUtils.discoverServer(server);
-                return null;
-            }
-
-            @Override
-            protected void finished() {
-            }
-        };
-        CThreadHolder.getInstance().execute(server, worker);
+    public Collection<DataProvider> getAllServersList() {
+        return DataProviderManager.getAllServers();
     }
 
     @Override
@@ -390,8 +360,8 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public GenericFeature findFeatureWithURI(GenericVersion version, URI featureURI) {
-        return GeneralUtils.findFeatureWithURI(version.getFeatures(), featureURI);
+    public DataSet findFeatureWithURI(DataContainer version, URI featureURI) {
+        return GeneralUtils.findFeatureWithURI(version.getDataSets(), featureURI);
     }
 
     @Override
@@ -438,32 +408,8 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     }
 
     @Override
-    public GenericServer addServer(ServerTypeI serverType,
-            String serverName, String serverURL, int order) {
-        GenericServer server = GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
-                serverName, serverURL, order, false, null); // qlmirror
-        DataLoadPrefsView.getSingleton().refreshServers();
-        return server;
-    }
-
-    @Override
-    public GenericServer addServer(ServerTypeI serverType,
-            String serverName, String serverURL, int order, String mirrorURL) { // qlmirror
-        GenericServer server = GeneralLoadUtils.addServer(ServerList.getServerInstance(), serverType,
-                serverName, serverURL, order, false, mirrorURL);
-        DataLoadPrefsView.getSingleton().refreshServers();
-        return server;
-    }
-
-    @Override
-    public void removeServer(GenericServer gServer) {
-        ServerList.getServerInstance().removeServer(gServer.getUrlString());
-        DataLoadPrefsView.getSingleton().refreshServers();
-    }
-
-    @Override
-    public GenericFeature createFeature(String featureName, SymLoader loader) {
-        return GeneralLoadView.getLoadView().createFeature(featureName, loader);
+    public DataSet createFeature(String featureName, SymLoader loader) {
+        return GeneralLoadView.getLoadView().createDataSet(featureName, loader);
     }
 
     @Override
@@ -494,8 +440,8 @@ public class IgbServiceImpl implements IgbService, BundleActivator {
     @Override
     public List<String> getLoadedFeatureNames() {
         ImmutableList.Builder<String> builder = new ImmutableList.Builder<>();
-        for (GenericFeature vFeature : GeneralLoadView.getLoadView().getTableModel().features) {
-            builder.add(vFeature.getFeatureName());
+        for (DataSet vFeature : GeneralLoadView.getLoadView().getTableModel().features) {
+            builder.add(vFeature.getDataSetName());
         }
         return builder.build();
     }

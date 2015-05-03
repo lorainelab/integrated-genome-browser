@@ -243,6 +243,16 @@
                                     <artifactId>org.apache.felix.webconsole.all</artifactId>
                                     <version>${felix-webconsole-version}</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.github.kevinsawicki</groupId>
+                                    <artifactId>http-request</artifactId>
+                                    <version>6.0</version>
+                                </artifactItem>
+                                <dependency>
+                                    <groupId>org.biojava</groupId>
+                                    <artifactId>biojava-core</artifactId>
+                                    <version>4.0.0</version>
+                                </dependency>
                                 <!-- End of development only bundles -->                                                                      
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>

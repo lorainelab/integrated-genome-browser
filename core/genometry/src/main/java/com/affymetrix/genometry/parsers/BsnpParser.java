@@ -12,8 +12,8 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -119,7 +119,7 @@ public class BsnpParser implements Parser {
         dos.writeInt(pcount);  // how many seqs there are
         for (SeqSymmetry parent : parents) {
             BioSeq seq = parent.getSpanSeq(0);
-            String seqid = seq.getID();
+            String seqid = seq.getId();
             int snp_count = parent.getChildCount();
             dos.writeUTF(seqid);
             dos.writeInt(snp_count);
@@ -154,7 +154,7 @@ public class BsnpParser implements Parser {
      * </pre>
      */
     private static List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
-        AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+        GenomeVersion seq_group = gmodel.addGenomeVersion("Test Group");
 
         List<SeqSymmetry> results = new ArrayList<>();
         GFFParser gff_parser = new GFFParser();
@@ -162,7 +162,7 @@ public class BsnpParser implements Parser {
         int problem_count = 0;
         for (BioSeq aseq : seq_group.getSeqList()) {
             int acount = aseq.getAnnotationCount();
-            String seqid = aseq.getID();
+            String seqid = aseq.getId();
             System.out.println("seq = " + seqid + ", annots = " + acount);
             // for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
             // therefore just taking first annotation
@@ -231,7 +231,7 @@ public class BsnpParser implements Parser {
         return parent_syms;
     }
 
-    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
+    public static List<SeqSymmetry> parse(InputStream istr, String annot_type, GenomeVersion seq_group, boolean annot_seq)
             throws IOException {
         Timer tim = new Timer();
         tim.start();
@@ -340,9 +340,9 @@ public class BsnpParser implements Parser {
 
     @Override
     public List<? extends SeqSymmetry> parse(InputStream is,
-            AnnotatedSeqGroup group, String nameType, String uri, boolean annotate_seq)
+            GenomeVersion genomeVersion, String nameType, String uri, boolean annotate_seq)
             throws Exception {
-        List<SeqSymmetry> alist = parse(is, uri, group, annotate_seq);
+        List<SeqSymmetry> alist = parse(is, uri, genomeVersion, annotate_seq);
         Logger.getLogger(BsnpParser.class.getName()).log(Level.FINE, "total snps loaded: {0}", alist.size());
         return alist;
     }

@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
@@ -66,9 +66,9 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
     //   exonStarts int[exoncount]
     //     exonEnds int[exoncount]
     //
-    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+    public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, GenomeVersion genomeVersion) {
         try {
-            return this.parse(dis, annot_type, group, false);
+            return this.parse(dis, annot_type, genomeVersion, false);
         } catch (IOException ex) {
             Logger.getLogger(BgnParser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -85,7 +85,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
      * @throws java.io.IOException
      */
     public List<SeqSymmetry> parse(InputStream istr, String annot_type,
-            AnnotatedSeqGroup seq_group, boolean annotate_seq) throws IOException {
+            GenomeVersion seq_group, boolean annotate_seq) throws IOException {
         if (seq_group == null) {
             throw new IllegalArgumentException("BgnParser called with seq_group null.");
         }
@@ -239,7 +239,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
             dos = new DataOutputStream(os);
         }
         dos.writeUTF(name);
-        dos.writeUTF(seq.getID());
+        dos.writeUTF(seq.getId());
         if (tspan.isForward()) {
             dos.writeUTF("+");
         } else {
@@ -278,7 +278,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
         }
     }
 
-    public void convertTextToBinary(String text_file, String bin_file, AnnotatedSeqGroup seq_group) {
+    public void convertTextToBinary(String text_file, String bin_file, GenomeVersion seq_group) {
         System.out.println("loading file: " + text_file);
         int count = 0;
         long flength = 0;
@@ -320,7 +320,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
 
     }
 
-    private void writeLines(BufferedReader br, int count, AnnotatedSeqGroup seq_group, DataOutputStream dos, int biguns, int total_exon_count, int max_exons, int max_tlength, Timer tim, long flength, int max_spliced_length, int big_spliced) throws NumberFormatException, IOException {
+    private void writeLines(BufferedReader br, int count, GenomeVersion seq_group, DataOutputStream dos, int biguns, int total_exon_count, int max_exons, int max_tlength, Timer tim, long flength, int max_spliced_length, int big_spliced) throws NumberFormatException, IOException {
         String line = null;
         while ((line = br.readLine()) != null) {
             count++;
@@ -455,8 +455,8 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
     }
 
     @Override
-    public List<? extends SeqSymmetry> parse(InputStream is, AnnotatedSeqGroup group,
+    public List<? extends SeqSymmetry> parse(InputStream is, GenomeVersion genomeVersion,
             String nameType, String uri, boolean annotate_seq) throws Exception {
-        return parse(is, uri, group, annotate_seq);
+        return parse(is, uri, genomeVersion, annotate_seq);
     }
 }

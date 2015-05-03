@@ -4,7 +4,7 @@
  */
 package com.affymetrix.sequenceviewer;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -266,8 +266,8 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
      */
 
     private void getTitle() {
-        AnnotatedSeqGroup ag = gm.getSelectedSeqGroup();
-        version = ag.getID();
+        GenomeVersion ag = gm.getSelectedGenomeVersion();
+        version = ag.getName();
         if (isGenomicRequest) {
             title = residues_sym.getSpan(0).getStart() + " - " + (residues_sym.getSpan(0).getEnd() - 1) + " : " + version + " : " + this.aseq;
 //			seqview.setFirstOrdinal(residues_sym.getSpan(0).getStart());

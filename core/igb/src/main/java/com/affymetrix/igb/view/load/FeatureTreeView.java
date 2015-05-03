@@ -14,8 +14,6 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.igb.prefs.DataLoadPrefsView;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTree;
 import com.affymetrix.igb.swing.util.Idable;
@@ -54,7 +52,6 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -152,13 +149,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     public void actionPerformed(ActionEvent evt) {
         final Object src = evt.getSource();
 
-        if (src == this.serverPrefsB) {
-            // Go to server prefs tab.
-            PreferencesPanel pv = PreferencesPanel.getSingleton();
-            pv.setTab(DataLoadPrefsView.TAB_POSITION);	// Server preferences tab
-            JFrame f = pv.getFrame();
-            f.setVisible(true);
-        }
+//        if (src == this.serverPrefsB) {
+//            // Go to server prefs tab.
+//            PreferencesPanel pv = PreferencesPanel.getSingleton();
+//            pv.setTab(DataLoadPrefsView.TAB_POSITION);	// Server preferences tab
+//            JFrame f = pv.getFrame();
+//            f.setVisible(true);
+//        }
     }
 
     /**

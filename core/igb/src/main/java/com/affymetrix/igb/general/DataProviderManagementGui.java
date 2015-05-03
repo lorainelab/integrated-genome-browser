@@ -15,6 +15,7 @@ import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTabl
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Type;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.URL;
 import com.affymetrix.igb.prefs.AddDataProvider;
+import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.util.IGBAuthenticator;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author dcnorris
  */
 @aQute.bnd.annotation.component.Component(name = DataProviderManagementGui.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
-public class DataProviderManagementGui extends JPanel implements PreferencesPanelProvider {
+public class DataProviderManagementGui extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "DataProviderManagementGui";
     private static final Logger logger = LoggerFactory.getLogger(DataProviderManagementGui.class);
@@ -72,6 +73,7 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
     private AddDataProvider addDataProvider;
 
     public DataProviderManagementGui() {
+        super(COMPONENT_NAME);
         setLayout(new MigLayout("fill"));
         dataSourcesTable = getStyledJTable();
         dataSourcesPanel = initilizeDataSourcesPanel();
@@ -336,13 +338,13 @@ public class DataProviderManagementGui extends JPanel implements PreferencesPane
     }
 
     @Override
-    public int getTabWeight() {
-        return TAB_POSITION;
+    public JRPJPanel getPanel() {
+        return this;
     }
 
     @Override
-    public JPanel getPanel() {
-        return this;
+    public int getWeight() {
+        return TAB_POSITION;
     }
 
     @Override

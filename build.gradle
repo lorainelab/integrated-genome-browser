@@ -54,9 +54,24 @@ clean {
     delete buildDir
 }
 
-task packageRelease(dependsOn: media, type: Zip) {
+def zipDirectory = new File('distribution/build/igb')
+
+task createZipDir(dependsOn: media) << {
+    zipDirectory.mkdirs()
+    zipDirectory.createNewFile()
+}
+
+task copyZipContents(type: Copy) {
+    from('.'){
+        fileMode 0755
+        include 'NOTICES.txt', 'LICENSE.html','run_igb.bat','run_igb.command','run_igb.sh', 'README.md', 'igb_exe.jar'
+    }
+    into 'distribution/build/igb'
+}
+
+task packageRelease(dependsOn: copyZipContents, type: Zip) {
     archiveName 'igb.zip'
-    from '.'
+    from 'distribution/build/'
     fileMode 0755
-    include 'NOTICES.txt', 'LICENSE.html','run_igb.bat','run_igb.command','run_igb.sh', 'README.md', 'igb_exe.jar'
+    include 'igb/*'
 }

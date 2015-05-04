@@ -3,6 +3,7 @@ package com.affymetrix.igb.general;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
@@ -13,9 +14,12 @@ import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeE
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Enabled;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Name;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Refresh;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.lorainelab.igb.services.IgbService;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -32,6 +36,8 @@ public final class DataProviderTableModel extends AbstractTableModel {
     private DataProviderManager dataProviderManager;
     private EventService eventService;
     private EventBus eventBus;
+    private IgbService igbService;
+    private GeneralLoadView loadView;
 
     public static enum DataProviderTableColumn {
 
@@ -40,8 +46,11 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     private final List<DataProviderTableColumn> tableColumns;
     private List<DataProvider> sortedDataProviders;
+    private GenometryModel gmodel;
 
     public DataProviderTableModel() {
+        gmodel = GenometryModel.getInstance();
+        loadView = GeneralLoadView.getLoadView();
         tableColumns = Lists.newArrayList(DataProviderTableColumn.values());
         sortDataSources();
     }
@@ -50,6 +59,11 @@ public final class DataProviderTableModel extends AbstractTableModel {
     public void activate() {
         eventBus = eventService.getEventBus();
         eventBus.register(this);
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 
     @Reference
@@ -185,16 +199,25 @@ public final class DataProviderTableModel extends AbstractTableModel {
                         dataProvider.setStatus(ResourceStatus.NotInitialized);
                     }
                 }
+
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Enabled:
                 if ((Boolean) editedValue) {
                     dataProvider.setStatus(ResourceStatus.NotInitialized);
+                    dataProviderManager.initializeDataProvider(dataProvider);
+                    GeneralLoadUtils.initVersionAndSeq(gmodel.getSelectedGenomeVersion().getName());
+                    GenometryModel.getInstance().refreshCurrentGenome();
                 } else {
                     if (confirmDelete()) {
+                        //remove all data sets
+                        GeneralLoadUtils.getAllFeatures().stream()
+                                .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
+                                .forEach(ds -> loadView.removeDataSet(ds, true));
                         dataProvider.setStatus(ResourceStatus.Disabled);
                     }
                 }
+                igbService.updateGeneralLoadView();
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:

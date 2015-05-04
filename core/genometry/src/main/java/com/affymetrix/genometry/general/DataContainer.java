@@ -7,6 +7,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public final class DataContainer implements Comparable<DataContainer> {
 
@@ -81,6 +83,27 @@ public final class DataContainer implements Comparable<DataContainer> {
 
     public DataProvider getDataProvider() {
         return dataProvider;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(genomeVersion).append(dataProvider).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof DataContainer) == false) {
+            return false;
+        }
+        DataContainer rhs = ((DataContainer) other);
+        return new EqualsBuilder()
+                .append(getName(), rhs.getName())
+                .append(dataProvider, rhs.getDataProvider())
+                .append(genomeVersion, rhs.getGenomeVersion())
+                .isEquals();
     }
 
 }

@@ -8,6 +8,7 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -140,6 +141,10 @@ public final class GenometryModel {
 
     public GenomeVersion getSelectedGenomeVersion() {
         return selectedGenomeVersion;
+    }
+
+    public void refreshCurrentGenome() {
+        fireGroupSelectionEvent(this, ImmutableList.of(selectedGenomeVersion));
     }
 
     // TODO: modify so that fireGroupSelectionEvent() is only called if

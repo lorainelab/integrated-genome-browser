@@ -60,7 +60,7 @@ public class CloseTracksAction extends SeqMapViewActionA implements SymSelection
             for (StyledGlyph vg : allGlyphs) {
                 DataSet gFeature = vg.getAnnotStyle().getFeature();
                 if (gFeature != null) {
-                    GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+                    GeneralLoadView.getLoadView().removeDataSet(gFeature, true);
                 }
             }
         }

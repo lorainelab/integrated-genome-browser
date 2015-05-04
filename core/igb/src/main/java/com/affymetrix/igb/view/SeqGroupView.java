@@ -419,9 +419,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             curGroup = null;
             return;
         }
-        if (curGroup == genomeVersion) {
-            return;
-        }
+//        if (curGroup == genomeVersion) {
+//            return;
+//        }
         curGroup = genomeVersion;
 
         Set<DataContainer> dataContainers = genomeVersion.getAvailableDataContainers();

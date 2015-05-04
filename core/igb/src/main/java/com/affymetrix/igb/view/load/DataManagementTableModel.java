@@ -282,7 +282,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 if (ScriptManager.SCRIPTING.equals(value) || ModalUtils.confirmPanel(message,
                         PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
                     features.stream().filter(gFeature -> gFeature.equals(feature)).forEach(gFeature -> {
-                        GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+                        GeneralLoadView.getLoadView().removeDataSet(gFeature, true);
                     });
                     this.fireTableDataChanged(); //clear row selection
                 }

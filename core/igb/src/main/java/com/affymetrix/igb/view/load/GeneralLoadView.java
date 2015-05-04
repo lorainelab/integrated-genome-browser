@@ -250,7 +250,7 @@ public final class GeneralLoadView {
     }
 
     static void loadFeatures(List<LoadStrategy> loadStrategies, DataProvider serverType) {
-        for (DataSet dataSet : GeneralLoadUtils.getSelectedVersionFeatures()) {
+        for (DataSet dataSet : GeneralLoadUtils.getGenomeVersionDataSets()) {
             if (GeneralLoadUtils.isLoaded(dataSet)) {
                 continue;
             }
@@ -275,7 +275,7 @@ public final class GeneralLoadView {
     private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
     public synchronized static void loadGenomeLoadModeDataSets() {
-        GeneralLoadUtils.getSelectedVersionFeatures().stream()
+        GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
                 .filter(isLoaded.negate())
                 .forEach(dataSet -> {
@@ -344,7 +344,7 @@ public final class GeneralLoadView {
     }
 
     private void refreshTree() {
-        final List<DataSet> features = GeneralLoadUtils.getSelectedVersionFeatures();
+        final List<DataSet> features = GeneralLoadUtils.getGenomeVersionDataSets();
         if (features == null || features.isEmpty()) {
             tableModel.clearFeatures();
         }
@@ -540,13 +540,13 @@ public final class GeneralLoadView {
         CThreadHolder.getInstance().execute(feature, worker);
     }
 
-    public void removeAllFeautres(Collection<DataSet> features) {
+    public void removeAllDataSets(Collection<DataSet> features) {
         features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
-            removeFeature(feature, true);
+            removeDataSet(feature, true);
         });
     }
 
-    public void removeFeature(final DataSet feature, final boolean refresh) {
+    public void removeDataSet(final DataSet feature, final boolean refresh) {
         removeFeature(feature, refresh, true);
     }
 
@@ -558,7 +558,7 @@ public final class GeneralLoadView {
 
             // If genome is selected then delete all syms on the all seqs.
             if (IGBConstants.GENOME_SEQ_ID.equals(bioseq.getId())) {
-                removeFeature(feature, true);
+                removeDataSet(feature, true);
                 return;
             }
 
@@ -616,7 +616,7 @@ public final class GeneralLoadView {
 //                    // If feature is local then remove it from server.
 //                    DataContainer version = feature.getDataContainer();
 //                    if (version.getDataProvider().getServerType().equals(LocalFilesServerType.getInstance())) {
-//                        if (version.removeFeature(feature)) {
+//                        if (version.removeDataSet(feature)) {
 //                            SeqGroupView.getInstance().refreshTable();
 //                            if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
 //                                    && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {

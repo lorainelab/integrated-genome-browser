@@ -238,7 +238,7 @@ public final class GeneralLoadUtils {
     /*
      * Returns the list of features for currently selected genomeVersion.
      */
-    public static List<DataSet> getSelectedVersionFeatures() {
+    public static List<DataSet> getGenomeVersionDataSets() {
         GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
         return getDataSets(genomeVersion);
     }
@@ -454,7 +454,7 @@ public final class GeneralLoadUtils {
         SeqSpan leftSpan = new SimpleSeqSpan(Math.max(0, min - length), min, seq);
         SeqSpan rightSpan = new SimpleSeqSpan(max, Math.min(seq.getLength(), max + length), seq);
 
-        for (DataSet gFeature : GeneralLoadUtils.getSelectedVersionFeatures()) {
+        for (DataSet gFeature : GeneralLoadUtils.getGenomeVersionDataSets()) {
             if (gFeature.getLoadStrategy() != LoadStrategy.AUTOLOAD) {
                 continue;
             }
@@ -1098,7 +1098,7 @@ public final class GeneralLoadUtils {
 
     private static boolean removeFeatureAndRefresh(DataSet gFeature, String msg) {
         if (ModalUtils.confirmPanel(msg)) {
-            GeneralLoadView.getLoadView().removeFeature(gFeature, true);
+            GeneralLoadView.getLoadView().removeDataSet(gFeature, true);
             return true;
         }
         return false;

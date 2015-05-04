@@ -50,7 +50,7 @@ public class RemoveFeatureAction extends SeqMapViewActionA implements SymSelecti
         String message = "Really remove all selected data set ?";
         if (ModalUtils.confirmPanel(message, PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
             allStyles.stream().filter(style -> style.getFeature() != null).forEach(style -> {
-                GeneralLoadView.getLoadView().removeFeature(style.getFeature(), true);
+                GeneralLoadView.getLoadView().removeDataSet(style.getFeature(), true);
             });
         }
         getSeqMapView().dataRemoved();	// refresh

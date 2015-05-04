@@ -123,7 +123,7 @@ public class IgbServiceImpl implements IgbService {
 
     @Override
     public void updateGeneralLoadView() {
-        GeneralLoadView.getLoadView().refreshTreeView();
+        GeneralLoadView.getLoadView().refreshTreeViewAndRestore();
         GeneralLoadView.getLoadView().refreshDataManagementView();
     }
 
@@ -460,14 +460,14 @@ public class IgbServiceImpl implements IgbService {
 
     @Override
     public void deleteAllTracks() {
-        GeneralLoadView.getLoadView().removeAllFeautres(GeneralLoadUtils.getVisibleFeatures());
+        GeneralLoadView.getLoadView().removeAllDataSets(GeneralLoadUtils.getVisibleFeatures());
     }
 
     @Override
     public void deleteTrack(URI uri) {
         GeneralLoadUtils.findFeatureFromUri(uri)
                 .ifPresent(featureToRemove -> {
-                    GeneralLoadView.getLoadView().removeFeature(featureToRemove, true);
+                    GeneralLoadView.getLoadView().removeDataSet(featureToRemove, true);
                 });
     }
 

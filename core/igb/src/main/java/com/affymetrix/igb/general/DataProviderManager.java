@@ -10,6 +10,7 @@ import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
+import com.affymetrix.genometry.general.DataContainer;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
@@ -18,7 +19,6 @@ import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
-import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
@@ -31,6 +31,7 @@ import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SC
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -72,9 +73,11 @@ public class DataProviderManager {
     private final StringEncrypter encrypter;
     private final Map<String, ServiceReference> dataProviderServiceReferences;
     private EventService eventService;
+    private GeneralLoadView loadView;
     private EventBus eventBus;
 
     public DataProviderManager() {
+        loadView = GeneralLoadView.getLoadView();
         dataProviderServiceReferences = Maps.newConcurrentMap();
         encrypter = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
     }
@@ -233,7 +236,7 @@ public class DataProviderManager {
         }
     }
 
-    private void initializeDataProvider(DataProvider dataProvider) {
+    public void initializeDataProvider(DataProvider dataProvider) {
         dataProvider.initialize();
         if (dataProvider.getStatus() == Initialized) {
             loadGenomeVersionSynonyms(dataProvider);
@@ -263,11 +266,14 @@ public class DataProviderManager {
             if (dataProvider instanceof ReferenceSequenceResource) {
                 referenceSequenceResources.remove((ReferenceSequenceResource) dataProvider);
             }
-            eventBus.post(new DataProviderServiceChangeEvent());
+            GeneralLoadUtils.getAllFeatures().stream()
+                    .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
+                    .forEach(ds -> loadView.removeDataSet(ds, true));
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
         }
+        eventBus.post(new DataProviderServiceChangeEvent());
     }
 
     public void removeServer(String url) {

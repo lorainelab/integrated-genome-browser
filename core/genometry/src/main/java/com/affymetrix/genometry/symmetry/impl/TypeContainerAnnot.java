@@ -45,7 +45,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         this.type = type;
         this.ext = ext;
         this.index = index;
-        id2sym_hash = !index ? null : new TreeMap<>();
+        id2sym_hash = !index ? null : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public String getType() {
@@ -103,7 +103,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
         if (id2sym_hash == null || id == null) {
             return;
         }
-        Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
+        Set<SeqSymmetry> sym_list = id2sym_hash.get(id);
         if (sym_list != null) {
             results.addAll(sym_list);
         }

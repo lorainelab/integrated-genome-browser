@@ -46,6 +46,10 @@ public final class DataContainer implements Comparable<DataContainer> {
         return this.isInitialized;
     }
 
+    public void setIsInitialized(boolean isInitialized) {
+        this.isInitialized = isInitialized;
+    }
+
     /**
      * Return versions, but don't allow them to be modified.
      */

@@ -210,7 +210,6 @@ public final class DataProviderTableModel extends AbstractTableModel {
                         dataProviderManager.disableDataProvider(dataProvider);
                     }
                 }
-                igbService.updateGeneralLoadView();
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:

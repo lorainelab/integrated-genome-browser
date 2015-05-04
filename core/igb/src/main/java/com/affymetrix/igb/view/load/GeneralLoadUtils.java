@@ -308,16 +308,16 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        Set<DataContainer> availableGenomeVersions = genomeVersion.getAvailableDataContainers().stream()
+        Set<DataContainer> uninitializedDataContainers = genomeVersion.getAvailableDataContainers().stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
                 .collect(Collectors.toSet());
-        for (DataContainer gv : availableGenomeVersions) {
+        for (DataContainer gv : uninitializedDataContainers) {
             if (loadGeneomeVersionAssemblyInfo(gv)) {
                 break;
             }
         }
-        availableGenomeVersions.forEach(dataContainer -> {
+        uninitializedDataContainers.forEach(dataContainer -> {
             initializeDataContainer(dataContainer);
             dataContainer.setInitialized();
         });

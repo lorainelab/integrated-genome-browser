@@ -337,10 +337,15 @@ public class DataProviderManager {
     public void disableDataProvider(DataProvider dataProvider) {
         final Set<DataSet> allDataSets = GeneralLoadUtils.getAllDataSets();
         handleSinglePatternCausedRaceCondition();
+        Set<DataContainer> allAssociatedDataContainers = Sets.newHashSet();
         //remove all data sets
         allDataSets.stream()
                 .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
-                .forEach(ds -> loadView.removeDataSet(ds, true));
+                .forEach(ds -> {
+                    allAssociatedDataContainers.add(ds.getDataContainer());
+                    loadView.removeDataSet(ds, true);
+                });
+        allAssociatedDataContainers.forEach(dc -> dc.setIsInitialized(false));
 
         dataProvider.setStatus(ResourceStatus.Disabled);
     }
@@ -353,6 +358,8 @@ public class DataProviderManager {
             GeneralLoadUtils.initVersionAndSeq(selectedGenomeVersion.get().getName());
             GenometryModel.getInstance().refreshCurrentGenome();
             GeneralLoadView.loadWholeRangeFeatures(dataProvider);
+            handleSinglePatternCausedRaceCondition();
+            loadView.refreshTreeView();
         }
     }
 

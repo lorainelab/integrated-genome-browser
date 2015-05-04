@@ -3,6 +3,7 @@ package com.affymetrix.igb.general;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
@@ -22,6 +23,7 @@ import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.services.IgbService;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -206,8 +208,11 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 if ((Boolean) editedValue) {
                     dataProvider.setStatus(ResourceStatus.NotInitialized);
                     dataProviderManager.initializeDataProvider(dataProvider);
-                    GeneralLoadUtils.initVersionAndSeq(gmodel.getSelectedGenomeVersion().getName());
-                    GenometryModel.getInstance().refreshCurrentGenome();
+                    final Optional<GenomeVersion> selectedGenomeVersion = Optional.ofNullable(gmodel.getSelectedGenomeVersion());
+                    if (selectedGenomeVersion.isPresent()) {
+                        GeneralLoadUtils.initVersionAndSeq(selectedGenomeVersion.get().getName());
+                        GenometryModel.getInstance().refreshCurrentGenome();
+                    }
                 } else {
                     if (confirmDelete()) {
                         //remove all data sets

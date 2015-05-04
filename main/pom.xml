@@ -90,6 +90,11 @@
             <artifactId>weblinks</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>quickload</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--End of core module dependencies-->
         
         <!-- Start of external bundle dependencies-->

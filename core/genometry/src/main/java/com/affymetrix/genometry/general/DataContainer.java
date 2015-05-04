@@ -33,7 +33,7 @@ public final class DataContainer implements Comparable<DataContainer> {
         dataSets.add(f);
     }
 
-    public boolean removeFeature(DataSet f) {
+    public boolean removeDataSet(DataSet f) {
         dataSets.remove(f);
         return getGenomeVersion().removeSeqsForUri(f.getSymL().uri.toString());
     }

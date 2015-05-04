@@ -727,7 +727,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                     + " will remove all loaded data. \nDo you want to continue? ";
                             if (Strings.isNullOrEmpty(feature.getMethod()) || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-                                GeneralLoadView.getLoadView().removeFeature(feature, true, false);
+                                GeneralLoadView.getLoadView().removeDataSet(feature, true, false);
                             } else {
                                 tn.setChecked(true);
                             }

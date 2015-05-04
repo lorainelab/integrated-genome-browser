@@ -243,10 +243,10 @@ public final class GeneralLoadView {
      * Load any features that have a whole strategy and haven't already been
      * loaded.
      */
-    public static void loadWholeRangeFeatures(DataProvider serverType) {
+    public static void loadWholeRangeFeatures(DataProvider dataProvider) {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
-        loadFeatures(loadStrategies, serverType);
+        loadFeatures(loadStrategies, dataProvider);
     }
 
     static void loadFeatures(List<LoadStrategy> loadStrategies, DataProvider serverType) {
@@ -547,7 +547,7 @@ public final class GeneralLoadView {
     }
 
     public void removeDataSet(final DataSet feature, final boolean refresh) {
-        removeFeature(feature, refresh, true);
+        removeDataSet(feature, refresh, true);
     }
 
     public void clearTrack(final ITrackStyleExtended style) {
@@ -592,7 +592,7 @@ public final class GeneralLoadView {
         }
     }
 
-    void removeFeature(final DataSet feature, final boolean refresh, final boolean removeLocal) {
+    void removeDataSet(final DataSet feature, final boolean refresh, final boolean removeLocal) {
         if (feature == null) {
             return;
         }
@@ -611,22 +611,16 @@ public final class GeneralLoadView {
 
             @Override
             protected void finished() {
-//                boolean refSeq = feature.getDataContainer().getDataProvider().getServerType().equals(LocalFilesServerType.getInstance()) && feature.getSymL().isResidueLoader();
-//                if (removeLocal || refSeq) {
-//                    // If feature is local then remove it from server.
-//                    DataContainer version = feature.getDataContainer();
-//                    if (version.getDataProvider().getServerType().equals(LocalFilesServerType.getInstance())) {
-//                        if (version.removeDataSet(feature)) {
-//                            SeqGroupView.getInstance().refreshTable();
-//                            if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
-//                                    && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
-//                                gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
-//                            } else {
-//                                gmodel.setSelectedSeq(null);
-//                            }
-//                        }
-//                    }
-//                }
+                DataContainer dataContainer = feature.getDataContainer();
+                if (dataContainer.removeDataSet(feature)) {
+                    SeqGroupView.getInstance().refreshTable();
+                    if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
+                            && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
+                        gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
+                    } else {
+                        gmodel.setSelectedSeq(null);
+                    }
+                }
 
                 if (refresh) {
                     removeTier(feature.getURI().toString());

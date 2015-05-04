@@ -19,6 +19,7 @@ import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
@@ -236,7 +237,7 @@ public class DataProviderManager {
         }
     }
 
-    public void initializeDataProvider(DataProvider dataProvider) {
+    private void initializeDataProvider(DataProvider dataProvider) {
         dataProvider.initialize();
         if (dataProvider.getStatus() == Initialized) {
             loadGenomeVersionSynonyms(dataProvider);
@@ -266,7 +267,7 @@ public class DataProviderManager {
             if (dataProvider instanceof ReferenceSequenceResource) {
                 referenceSequenceResources.remove((ReferenceSequenceResource) dataProvider);
             }
-            GeneralLoadUtils.getAllFeatures().stream()
+            GeneralLoadUtils.getAllDataSets().stream()
                     .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
                     .forEach(ds -> loadView.removeDataSet(ds, true));
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
@@ -330,6 +331,35 @@ public class DataProviderManager {
                 speciesName = SpeciesLookup.getSpeciesName(genomeName);
             }
             GeneralLoadUtils.retrieveDataContainer(dataProvider, speciesName, versionName);
+        }
+    }
+
+    public void disableDataProvider(DataProvider dataProvider) {
+        final Set<DataSet> allDataSets = GeneralLoadUtils.getAllDataSets();
+        handleSinglePatternCausedRaceCondition();
+        //remove all data sets
+        allDataSets.stream()
+                .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
+                .forEach(ds -> loadView.removeDataSet(ds, true));
+
+        dataProvider.setStatus(ResourceStatus.Disabled);
+    }
+
+    public void enableDataProvider(DataProvider dataProvider) {
+        dataProvider.setStatus(ResourceStatus.NotInitialized);
+        initializeDataProvider(dataProvider);
+        final Optional<GenomeVersion> selectedGenomeVersion = Optional.ofNullable(gmodel.getSelectedGenomeVersion());
+        if (selectedGenomeVersion.isPresent()) {
+            GeneralLoadUtils.initVersionAndSeq(selectedGenomeVersion.get().getName());
+            GenometryModel.getInstance().refreshCurrentGenome();
+            GeneralLoadView.loadWholeRangeFeatures(dataProvider);
+        }
+    }
+
+    //TODO an obvious hack which will not be needed once the singleton randomly intialized by convention is removed
+    private void handleSinglePatternCausedRaceCondition() {
+        if (loadView == null) {
+            loadView = GeneralLoadView.getLoadView();
         }
     }
 

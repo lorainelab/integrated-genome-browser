@@ -74,6 +74,10 @@
             <groupId>com.boxysystems</groupId>
             <artifactId>jgoogleanalytics</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.kevinsawicki</groupId>
+            <artifactId>http-request</artifactId>
+        </dependency>
     </dependencies>
 
     
@@ -248,11 +252,6 @@
                                     <artifactId>http-request</artifactId>
                                     <version>6.0</version>
                                 </artifactItem>
-                                <dependency>
-                                    <groupId>org.biojava</groupId>
-                                    <artifactId>biojava-core</artifactId>
-                                    <version>4.0.0</version>
-                                </dependency>
                                 <!-- End of development only bundles -->                                                                      
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
@@ -302,7 +301,8 @@
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
-                            org.jfree.graphics2d.svg
+                            org.jfree.graphics2d.svg,
+                            com.github.kevinsawicki.http    
                         </Export-Package>
                     </instructions>
                     <archive>

@@ -191,7 +191,7 @@ public final class GeneralLoadUtils {
 
     public static Optional<DataSet> findFeatureFromUri(URI featurePath) {
         checkNotNull(featurePath);
-        return GeneralLoadUtils.getAllFeatures().stream()
+        return GeneralLoadUtils.getAllDataSets().stream()
                 .filter(feature -> feature.getURI().equals(featurePath)).findFirst();
     }
 
@@ -212,7 +212,7 @@ public final class GeneralLoadUtils {
         return featureList;
     }
 
-    public static Set<DataSet> getAllFeatures() {
+    public static Set<DataSet> getAllDataSets() {
         Set<DataSet> featureList = Sets.newHashSet();
         GenometryModel.getInstance().getSeqGroups().values().stream()
                 .flatMap(genomeVersion -> GeneralLoadUtils.getDataSets(genomeVersion).stream()).forEach(featureList::add);
@@ -287,7 +287,7 @@ public final class GeneralLoadUtils {
      *
      * @param dataContainer
      */
-    private static void loadGenomeVersionDataSets(final DataContainer dataContainer) {
+    private static void initializeDataContainer(final DataContainer dataContainer) {
         if (!dataContainer.getDataSets().isEmpty()) {
             return;
         }
@@ -318,7 +318,7 @@ public final class GeneralLoadUtils {
             }
         }
         availableGenomeVersions.forEach(dataContainer -> {
-            loadGenomeVersionDataSets(dataContainer);
+            initializeDataContainer(dataContainer);
             dataContainer.setInitialized();
         });
 
@@ -1051,7 +1051,7 @@ public final class GeneralLoadUtils {
 
             private boolean removeFeature(String msg) {
                 if (ModalUtils.confirmPanel(msg)) {
-                    if (gFeature.getDataContainer().removeFeature(gFeature)) {
+                    if (gFeature.getDataContainer().removeDataSet(gFeature)) {
                         SeqGroupView.getInstance().refreshTable();
                     }
                     return true;

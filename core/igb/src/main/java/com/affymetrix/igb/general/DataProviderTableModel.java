@@ -3,7 +3,6 @@ package com.affymetrix.igb.general;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
@@ -15,7 +14,6 @@ import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeE
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Enabled;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Name;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Refresh;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
@@ -23,7 +21,6 @@ import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.services.IgbService;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -198,7 +195,8 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
-                        dataProvider.setStatus(ResourceStatus.NotInitialized);
+                        dataProviderManager.disableDataProvider(dataProvider);
+                        dataProviderManager.enableDataProvider(dataProvider);
                     }
                 }
 
@@ -206,20 +204,10 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 break;
             case Enabled:
                 if ((Boolean) editedValue) {
-                    dataProvider.setStatus(ResourceStatus.NotInitialized);
-                    dataProviderManager.initializeDataProvider(dataProvider);
-                    final Optional<GenomeVersion> selectedGenomeVersion = Optional.ofNullable(gmodel.getSelectedGenomeVersion());
-                    if (selectedGenomeVersion.isPresent()) {
-                        GeneralLoadUtils.initVersionAndSeq(selectedGenomeVersion.get().getName());
-                        GenometryModel.getInstance().refreshCurrentGenome();
-                    }
+                    dataProviderManager.enableDataProvider(dataProvider);
                 } else {
                     if (confirmDelete()) {
-                        //remove all data sets
-                        GeneralLoadUtils.getAllFeatures().stream()
-                                .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
-                                .forEach(ds -> loadView.removeDataSet(ds, true));
-                        dataProvider.setStatus(ResourceStatus.Disabled);
+                        dataProviderManager.disableDataProvider(dataProvider);
                     }
                 }
                 igbService.updateGeneralLoadView();

@@ -307,7 +307,7 @@ public class IGBScriptEngine implements ScriptEngine {
                 }
                 return;
             }
-            if (action.equalsIgnoreCase("unload") || action.equalsIgnoreCase("deleteTrack")) {
+            if (action.equalsIgnoreCase("unload")) {
                 // Allowing multiple files to be specified, split by commas
                 String[] loadFiles = paramString.split(",");
                 for (int i = 0; i < loadFiles.length; i++) {
@@ -419,10 +419,6 @@ public class IGBScriptEngine implements ScriptEngine {
                 return;
             }
 
-            if (action.equalsIgnoreCase("deleteAllTracks")) {
-                igbService.deleteAllTracks();
-                return;
-            }
             logger.warn("Unrecognized or invalid command: {}", action);
         } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             logger.warn("Illegal argument in script", e);

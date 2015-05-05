@@ -4,8 +4,8 @@ import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
@@ -57,8 +56,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
 
         getOperationCB().addMouseListener(new HoverEffect());
         getOperationCB().addItemListener(e -> setOperationDisplay(true));
-
-
 
         getTransformationParamLabel().setVisible(false);
         getTransformationParam().setVisible(false);
@@ -212,18 +209,17 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     }
 
     private void setTransformationDisplay(boolean enable) {
-        setAtionDisplay(getTransformationCB(), getTransformationParamLabel(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
+        setAtionDisplay(getTransformationCB(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
         invalidate();
     }
 
     private void setOperationDisplay(boolean enable) {
-        setAtionDisplay(getOperationCB(), getOperationParamLabel(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
+        setAtionDisplay(getOperationCB(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
         invalidate();
     }
 
     private static void setAtionDisplay(
             JComboBox ationCB,
-            JLabel ationParamLabel,
             JTextField ationParam,
             Map<String, Operator> name2ation,
             JButton ationGoB,
@@ -232,37 +228,28 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     ) {
         String selection = (String) ationCB.getSelectedItem();
         if (!enable || selection == null) {
-            ationParamLabel.setText(" ");
-            ationParamLabel.setEnabled(false);
             ationParam.setEditable(false);
             ationParam.setEnabled(false);
             ationParam.setVisible(false);
-            ationParamLabel.setVisible(false);
         } else {
             Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
             Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
-            if (params == null || params.isEmpty() || (!singleOK && rootSyms.size() < 2)) {
-                ationParamLabel.setText(" ");
-                ationParamLabel.setEnabled(false);
+            if (params == null || params.isEmpty() || (!singleOK && Selections.rootSyms.size() < 2)) {
                 ationParam.setEditable(false);
                 ationParam.setEnabled(false);
                 ationParam.setVisible(false);
-                ationParamLabel.setVisible(false);
             } else {
                 Entry<String, Class<?>> param = params.entrySet().iterator().next();
-                ationParamLabel.setText(param.getKey() + " :"); // only one parameter, for now
                 if (Integer.class.isAssignableFrom(param.getValue())) {
                     ((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
                 } else if (Number.class.isAssignableFrom(param.getValue())) {
                     ((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
                 }
-                ationParamLabel.setEnabled(true);
                 ationParam.setEditable(true);
                 ationParam.setText("");
                 ationParam.setEnabled(true);
                 ationParam.setVisible(true);
-                ationParamLabel.setVisible(true);
             }
         }
     }
@@ -279,7 +266,6 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
     private static final String selectMinGraphsMessage = BUNDLE.getString("operatorMinTooltip");
     private static final String selectMaxGraphsMessage = BUNDLE.getString("operatorMaxTooltip");
     private static final String selectRangeGraphsMessage = BUNDLE.getString("operatorRangeTooltip");
-
 
     public static String getTooltipMessage(Operator operator) {
         if (operator == null) {

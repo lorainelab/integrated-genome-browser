@@ -22,6 +22,7 @@ import com.lorainelab.igb.services.IgbService;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -196,7 +197,13 @@ public final class DataProviderTableModel extends AbstractTableModel {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
                         dataProviderManager.disableDataProvider(dataProvider);
-                        dataProviderManager.enableDataProvider(dataProvider);
+                        //timer allows any async actions triggered in callstack of disableDataProvider to complete
+                        Timer timer = new Timer(500, evt -> {
+                            dataProviderManager.enableDataProvider(dataProvider);
+                            fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
+                        });
+                        timer.setRepeats(false);
+                        timer.start();
                     }
                 }
 

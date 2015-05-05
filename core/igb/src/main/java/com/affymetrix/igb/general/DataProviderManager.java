@@ -346,7 +346,6 @@ public class DataProviderManager {
                     loadView.removeDataSet(ds, true);
                 });
         allAssociatedDataContainers.forEach(dc -> dc.setIsInitialized(false));
-
         dataProvider.setStatus(ResourceStatus.Disabled);
     }
 

@@ -8,6 +8,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -75,6 +76,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
         panel.addListener(new ShapeListener() {
             @Override
             public void shapeClicked(ShapeEvent e) {
+                if (!DataProviderManager.ALL_SOURCES_INITIALIZED) {
+                    return;
+                }
                 MouseEvent me = e.getMouseEvent();
                 if (!me.isConsumed() && me.getButton() == MouseEvent.BUTTON1
                         && me.getClickCount() == 1) {

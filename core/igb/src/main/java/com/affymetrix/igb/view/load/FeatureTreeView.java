@@ -1,13 +1,10 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataSet;
-import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -38,7 +35,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -678,14 +674,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                     if (tn.genericObject instanceof DataSet) {
                         DataSet feature = (DataSet) tn.genericObject;
-                        if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider) {
-                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
-                            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
-                            if (fth == null) {
-                                ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
-                                return;
-                            }
-                        }
+//                        if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider) {
+//                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
+////                            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+////                            if (fth == null) {
+////                                ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
+////                                return;
+////                            }
+//                        }
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not

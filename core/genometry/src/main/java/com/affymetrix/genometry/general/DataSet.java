@@ -69,6 +69,11 @@ public final class DataSet {
         this.typeObj = null;
     }
 
+    public DataSet(URI uri, String name, Map<String, String> featureProps, DataContainer dataContainer,
+            SymLoader symLoader, Object typeObj, boolean autoload) {
+        this(uri, name, featureProps, dataContainer, symLoader, typeObj, autoload, false);
+    }
+
     public DataSet(String name, Map<String, String> featureProps, DataContainer dataContainer,
             SymLoader symLoader, Object typeObj, boolean autoload) {
         this(null, name, featureProps, dataContainer, symLoader, typeObj, autoload, false);

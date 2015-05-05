@@ -2,8 +2,8 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.DefaultStateProvider;
@@ -160,7 +160,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
 
         DataContainer version = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), GeneralLoadView.getLoadView().getSelectedSpecies());
-        DataSet feature = GeneralLoadView.getLoadView().createDataSet(featureName, new Delegate(uri, featureName, version.getGenomeVersion(), operator, dps));
+        DataSet feature = GeneralLoadView.getLoadView().createDataSet(uri, featureName, new Delegate(uri, featureName, version.getGenomeVersion(), operator, dps));
 
         ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, featureName, Delegate.EXT, null);
         if (preferredStyle != null) {

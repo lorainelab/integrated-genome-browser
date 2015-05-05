@@ -34,6 +34,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -44,6 +45,8 @@ import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -484,15 +487,31 @@ public final class GeneralLoadView {
         return (String) SeqGroupView.getInstance().getSpeciesCB().getSelectedItem();
     }
 
-    public DataSet createDataSet(String featureName, SymLoader loader) {
+    public DataSet createDataSet(URI uri, String dataSetName, SymLoader loader) {
+        if (uri == null) {
+            try {
+                uri = new URI(IGBStateProvider.getUniqueName("file:/" + removeIllegalCharacters(dataSetName)));
+            } catch (URISyntaxException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        }
         DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), getSelectedSpecies());
-        DataSet dataSet = new DataSet(featureName, null, dataContainer, loader, null, false);
+        DataSet dataSet = new DataSet(uri, dataSetName, null, dataContainer, loader, null, false);
         dataContainer.addDataSet(dataSet);
         dataSet.setVisible(); // this should be automatically checked in the feature tree
         refreshTreeViewAndRestore();
         refreshDataManagementView();
 
         return dataSet;
+    }
+
+    private static String removeIllegalCharacters(String string) {
+        string = string.replaceAll("\\s+", "_");
+        string = string.replaceAll("\\|", "_");
+        string = string.replaceAll("\u221E", "infinite");
+        string = string.replaceAll("\\[", "(");
+        string = string.replaceAll("\\]", ")");
+        return string;
     }
 
     public void addFeature(final DataSet dataSet) {

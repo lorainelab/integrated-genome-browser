@@ -773,8 +773,13 @@ public final class GeneralLoadUtils {
         for (SeqSpan optimized_span : optimized_spans) {
 
             //TODO - remove quickloadsymloader and make general utils class of some sort
-            QuickLoadSymLoader quickLoadSymLoader = new QuickLoadSymLoader(dataSet.getURI(), dataSet.getDataSetName(), dataSet.getSymL(), dataSet.getDataContainer().getGenomeVersion());
-            Map<String, List<? extends SeqSymmetry>> results = quickLoadSymLoader.loadFeatures(optimized_span, dataSet);
+            QuickLoadSymLoader symLoader;
+            if (!(dataSet.getSymL() instanceof QuickLoadSymLoader)) {
+                symLoader = new QuickLoadSymLoader(dataSet.getURI(), dataSet.getDataSetName(), dataSet.getSymL(), dataSet.getDataContainer().getGenomeVersion());
+            } else {
+                symLoader = (QuickLoadSymLoader) dataSet.getSymL();
+            }
+            Map<String, List<? extends SeqSymmetry>> results = symLoader.loadFeatures(optimized_span, dataSet);
 
             // If thread was interruped then it might return null.
             // So avoid null pointer exception, check it here.

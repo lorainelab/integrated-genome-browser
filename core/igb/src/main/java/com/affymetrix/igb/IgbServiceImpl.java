@@ -409,7 +409,7 @@ public class IgbServiceImpl implements IgbService {
 
     @Override
     public DataSet createFeature(String featureName, SymLoader loader) {
-        return GeneralLoadView.getLoadView().createDataSet(featureName, loader);
+        return GeneralLoadView.getLoadView().createDataSet(null, featureName, loader);
     }
 
     @Override

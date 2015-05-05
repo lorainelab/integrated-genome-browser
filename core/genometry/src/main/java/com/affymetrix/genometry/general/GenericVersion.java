@@ -3,6 +3,7 @@ package com.affymetrix.genometry.general;
 import com.affymetrix.genometry.AnnotatedSeqGroup;
 import com.affymetrix.genometry.comparator.StringVersionDateComparator;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -79,4 +80,31 @@ public final class GenericVersion implements Comparable<GenericVersion> {
     public void clear() {
         features.clear();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.versionName);
+        hash = 47 * hash + Objects.hashCode(this.gServer);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GenericVersion other = (GenericVersion) obj;
+        if (!Objects.equals(this.versionName, other.versionName)) {
+            return false;
+        }
+        if (!Objects.equals(this.gServer, other.gServer)) {
+            return false;
+        }
+        return true;
+    }
+
 }

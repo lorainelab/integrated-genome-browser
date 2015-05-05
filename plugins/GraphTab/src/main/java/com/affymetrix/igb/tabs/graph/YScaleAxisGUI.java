@@ -80,7 +80,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
         by_percentileRB_val.setIconTextGap(2);
         by_percentileRB_val.addActionListener(this::by_percentileRB_valActionPerformed);
 
-        rangeSlider.setToolTipText("Set left knob to minimum and right know to maxium.");
+        rangeSlider.setToolTipText("Set left know to minimum and right know to maxium.");
 
         minValLabel.setText("Min:");
 

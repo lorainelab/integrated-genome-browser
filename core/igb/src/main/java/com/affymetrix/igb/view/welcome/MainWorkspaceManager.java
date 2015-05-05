@@ -6,12 +6,14 @@ import be.pwnt.jflow.event.ShapeListener;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.google.common.eventbus.EventBus;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -43,6 +45,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
     public static final String WELCOME_PANE = "WelcomePane";
     public static final String SEQ_MAP_PANE = "SeqMapPane";
     private static MainWorkspaceManager singleton;
+    private final EventBus eventBus;
 
     private static final String SELECT_SPECIES = IGBConstants.BUNDLE.getString("speciesCap");
 
@@ -59,6 +62,7 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
         super(id);
         this.setLayout(new CardLayout());
         gmodel = GenometryModel.getInstance();
+        eventBus = EventService.getModuleEventBus();
     }
 
     public void setSeqMapViewObj(SeqMapView obj) {
@@ -78,6 +82,8 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
             public void shapeClicked(ShapeEvent e) {
                 if (!DataProviderManager.ALL_SOURCES_INITIALIZED) {
                     return;
+                } else {
+                    eventBus.post(new DataProviderManager.DataProviderServiceChangeEvent());
                 }
                 MouseEvent me = e.getMouseEvent();
                 if (!me.isConsumed() && me.getButton() == MouseEvent.BUTTON1

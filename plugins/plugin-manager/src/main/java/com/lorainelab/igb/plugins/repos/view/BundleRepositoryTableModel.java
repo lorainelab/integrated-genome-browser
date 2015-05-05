@@ -2,7 +2,9 @@ package com.lorainelab.igb.plugins.repos.view;
 
 import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
 import com.lorainelab.igb.preferences.model.PluginRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -23,7 +25,7 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
 
     public BundleRepositoryTableModel(PluginRepositoryListProvider pluginRepositoryListProvider) {
         this.pluginRepositoryListProvider = pluginRepositoryListProvider;
-        this.pluginRepositories = pluginRepositoryListProvider.getPluginRepositories();
+        this.pluginRepositories = new ArrayList<>(pluginRepositoryListProvider.getPluginRepositories());
     }
 
     public int getColumnIndex(String columnName) {
@@ -41,8 +43,8 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
         }
     }
 
-    public void updateRepositories(List<PluginRepository> pluginRepositories) {
-        this.pluginRepositories = pluginRepositories;
+    public void updateRepositories(Set<PluginRepository> pluginRepositories) {
+        this.pluginRepositories = new ArrayList<>(pluginRepositories);
         fireTableDataChanged();
     }
 
@@ -114,7 +116,7 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
         PluginRepository pluginRepository = pluginRepositories.get(rowIndex);
         switch (getColumnName(columnIndex)) {
             case REFRESH_COLOMN:
-                pluginRepositoryListProvider.pluginRepositoryRefreshed();
+                pluginRepositoryListProvider.pluginRepositoryRefreshed(pluginRepository);
             case NAME_COLOMN:
                 if (aValue instanceof String) {
                     pluginRepository.setName((String) aValue);

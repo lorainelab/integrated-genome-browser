@@ -7,18 +7,19 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.plugins.PluginsView;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import com.lorainelab.igb.preferences.model.PluginRepository;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javax.swing.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +33,12 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     public static final String COMPONENT_NAME = "PluginRepositoryList";
     private static final Logger logger = LoggerFactory.getLogger(PluginRepositoryList.class);
     private IgbPreferencesService igbPreferencesService;
-    private final List<PluginRepository> pluginRepositories;
+    private final Set<PluginRepository> pluginRepositories;
     private PluginsView pluginsView;
     private BundleRepositoryTableModel bundleRepositoryTableModel;
 
     public PluginRepositoryList() {
-        pluginRepositories = new ArrayList<>();
+        pluginRepositories = Sets.newTreeSet((PluginRepository p1, PluginRepository p2) -> p1.getName().compareTo(p2.getName()));
     }
 
     @Activate
@@ -95,7 +96,7 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     }
 
     @Override
-    public List<PluginRepository> getPluginRepositories() {
+    public Set<PluginRepository> getPluginRepositories() {
         return pluginRepositories;
     }
 
@@ -173,8 +174,16 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
     }
 
     @Override
-    public void pluginRepositoryRefreshed() {
-        pluginsView.updateBundleTable();
+    public void pluginRepositoryRefreshed(PluginRepository pluginRepository) {
+        removePluginRepository(pluginRepository);
+        //allow time for any async operations from remove to complete
+        Timer timer = new Timer(250, evt -> {
+            addPluginRepository(pluginRepository);
+            pluginRepository.setEnabled(true);
+            pluginRepoAvailabilityChanged(pluginRepository);
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override

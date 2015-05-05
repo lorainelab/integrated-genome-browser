@@ -2,7 +2,7 @@ package com.lorainelab.igb.plugins.repos;
 
 import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.model.PluginRepository;
-import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface PluginRepositoryListProvider {
 
-    public List<PluginRepository> getPluginRepositories();
+    public Set<PluginRepository> getPluginRepositories();
 
     public void addPluginRepository(PluginRepository pluginRepository);
 
@@ -18,7 +18,7 @@ public interface PluginRepositoryListProvider {
 
     public void updatePluginRepoPrefs(PluginRepository pluginRepository);
 
-    public void pluginRepositoryRefreshed();
+    public void pluginRepositoryRefreshed(PluginRepository pluginRepository);
 
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository);
 

@@ -10,13 +10,13 @@ import com.affymetrix.genometry.util.Constants;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.lorainelab.igb.services.IgbService;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackTransformAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
+import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.track.operations.OperationsPanelGui;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
@@ -219,18 +218,17 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
     }
 
     private void setTransformationDisplay(boolean enable) {
-        setAtionDisplay(getTransformationCB(), getTransformationParamLabel(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
+        setAtionDisplay(getTransformationCB(), getTransformationParam(), name2transformation, getTransformationGoB(), enable, true);
         invalidate();
     }
 
     private void setOperationDisplay(boolean enable) {
-        setAtionDisplay(getOperationCB(), getOperationParamLabel(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
+        setAtionDisplay(getOperationCB(), getOperationParam(), name2operation, getOperationGoB(), enable, false);
         invalidate();
     }
 
     private static void setAtionDisplay(
             JComboBox ationCB,
-            JLabel ationParamLabel,
             JTextField ationParam,
             Map<String, Operator> name2ation,
             JButton ationGoB,
@@ -239,37 +237,28 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
     ) {
         String selection = (String) ationCB.getSelectedItem();
         if (!enable || selection == null) {
-            ationParamLabel.setText(" ");
-            ationParamLabel.setEnabled(false);
             ationParam.setEditable(false);
             ationParam.setEnabled(false);
             ationParam.setVisible(false);
-            ationParamLabel.setVisible(false);
         } else {
             Operator operator = name2ation.get(selection);
 //			ationGoB.setToolTipText(getTooltipMessage(operator));
             Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
             if (params == null || params.isEmpty() || (!singleOK && Selections.rootSyms.size() < 2)) {
-                ationParamLabel.setText(" ");
-                ationParamLabel.setEnabled(false);
                 ationParam.setEditable(false);
                 ationParam.setEnabled(false);
                 ationParam.setVisible(false);
-                ationParamLabel.setVisible(false);
             } else {
                 Entry<String, Class<?>> param = params.entrySet().iterator().next();
-                ationParamLabel.setText(param.getKey() + " :"); // only one parameter, for now
                 if (Integer.class.isAssignableFrom(param.getValue())) {
                     ((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
                 } else if (Number.class.isAssignableFrom(param.getValue())) {
                     ((AbstractDocument) ationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
                 }
-                ationParamLabel.setEnabled(true);
                 ationParam.setEditable(true);
                 ationParam.setText("");
                 ationParam.setEnabled(true);
                 ationParam.setVisible(true);
-                ationParamLabel.setVisible(true);
             }
         }
     }

@@ -72,7 +72,7 @@ public abstract class OperationsPanelGui extends javax.swing.JPanel {
                         .add(5, 5, 5)
                         .add(transformationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 38, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
-                        .add(transformationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(transformationParam, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)))
                 .add(0, 0, 0))
         );
         stPanelLayout.setVerticalGroup(
@@ -121,7 +121,7 @@ public abstract class OperationsPanelGui extends javax.swing.JPanel {
                         .add(15, 15, 15)
                         .add(operationParamLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 32, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(0, 0, 0)
-                        .add(operationParam, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(operationParam)))
                 .add(0, 0, 0))
         );
         mtPanelLayout.setVerticalGroup(

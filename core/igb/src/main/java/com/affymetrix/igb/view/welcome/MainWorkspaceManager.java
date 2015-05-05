@@ -80,10 +80,9 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
         panel.addListener(new ShapeListener() {
             @Override
             public void shapeClicked(ShapeEvent e) {
-                if (!DataProviderManager.ALL_SOURCES_INITIALIZED) {
-                    return;
-                } else {
+                if (!DataProviderManager.ALL_SOURCES_INITIALIZED || SeqGroupView.getInstance().getSpeciesCB().getItemCount() == 0) {
                     eventBus.post(new DataProviderManager.DataProviderServiceChangeEvent());
+                    return;
                 }
                 MouseEvent me = e.getMouseEvent();
                 if (!me.isConsumed() && me.getButton() == MouseEvent.BUTTON1

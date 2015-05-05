@@ -290,7 +290,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             DataSet candidateFeature = (DataSet) nodeData;
             String candidateName = candidateFeature.getDataSetName();
             // See if this can go under a previous node.  Be sure we're working with the same version/server.
-            if (candidateName.equals(featureLeft) && candidateFeature.getDataContainer().equals(feature.getDataContainer())) {
+            if (candidateName.equals(featureLeft)) {
                 // Make sure we are really dealing with a non-leaf node.  This will
                 // fix bug caused by name collision when a folder and feature are
                 // named the same thing.
@@ -601,24 +601,24 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             return count;
         }
 
-        private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DataSet gFeature, Object nodeUObject) {
+        private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DataSet dataSet, Object nodeUObject) {
             // You must call super before each return.
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-            FeatureCheckBox leafCheckBox = getLeafCheckBox(gFeature);
-            String featureName = gFeature.getDataSetName();
-            String featureText = featureName;
+            FeatureCheckBox leafCheckBox = getLeafCheckBox(dataSet);
+            String featureName = dataSet.getDataSetName();
+            String featureText = dataSet.getDataSetName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1);
             featureText = "<html>" + featureText;
-            if (!Strings.isNullOrEmpty(gFeature.getDataContainer().getDataProvider().getUrl())) {
+            if (!Strings.isNullOrEmpty(dataSet.getDataContainer().getDataProvider().getUrl())) {
                 featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
             }
 
-            if (!gFeature.isVisible()) {
+            if (!dataSet.isVisible()) {
                 ((TreeNodeUserInfo) nodeUObject).checked = false;
             }
 
             boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
             leafCheckBox.setText(featureText);
-            leafCheckBox.setToolTipText(gFeature.description());
+            leafCheckBox.setToolTipText(dataSet.description());
             leafCheckBox.setSelected(isChecked);
             //leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
             if (selected) {

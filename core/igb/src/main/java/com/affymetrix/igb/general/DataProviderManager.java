@@ -267,6 +267,7 @@ public class DataProviderManager {
             if (dataProvider instanceof ReferenceSequenceResource) {
                 referenceSequenceResources.remove((ReferenceSequenceResource) dataProvider);
             }
+            handleSinglePatternCausedRaceCondition();
             GeneralLoadUtils.getAllDataSets().stream()
                     .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
                     .forEach(ds -> loadView.removeDataSet(ds, true));

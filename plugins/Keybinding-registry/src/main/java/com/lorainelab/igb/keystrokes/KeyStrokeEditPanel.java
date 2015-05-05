@@ -97,7 +97,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                                 keyField.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
-                                PreferenceUtils.getKeystrokesNode().put(useCommand, "");
+                                PreferenceUtils.getKeystrokesNode().put(useCommand, "something");
                                 keyField.setText(command);
                                 applyAction(keyField.getText().trim());
                             }
@@ -144,6 +144,7 @@ public final class KeyStrokeEditPanel extends JPanel {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 if (KeyStrokeEditPanel.this.lastCommand != null) {
                     applyAction(KeyStrokeEditPanel.this.lastCommand);
+                    KeyStrokeEditPanel.this.lastCommand = "";
                 }
             }
 

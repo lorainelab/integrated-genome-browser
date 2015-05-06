@@ -14,7 +14,6 @@ import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -37,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *
@@ -69,7 +68,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     private void init(Class clazz, Object label, Filter<T> filter, boolean includeNone) throws SecurityException {
-        setLayout(new BorderLayout());
+        setLayout(new MigLayout());
 
         comboBox = new JComboBox();
         comboBox.setRenderer(new IDListCellRenderer());
@@ -105,11 +104,10 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         }
         optionsBox.add(comboBox);
 
-        paramsPanel = new JPanel();
-        paramsPanel.setLayout(new BoxLayout(paramsPanel, BoxLayout.PAGE_AXIS));
+        paramsPanel = new JPanel(new MigLayout("fill"));
 
-        add(optionsBox, BorderLayout.CENTER);
-        add(paramsPanel, BorderLayout.PAGE_END);
+        add(optionsBox, "wrap");
+        add(paramsPanel);
 
         addListeners();
 
@@ -123,9 +121,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     private void addOptions(final IParameters cp, final JPanel paramsPanel) {
         paramMap = new HashMap<>();
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.add(new JLabel("                "));
+        JPanel panel = new JPanel(new MigLayout("fill"));
 
         paramsPanel.removeAll();
         if (cp != null && cp.getParametersType() != null) {
@@ -150,7 +146,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
                     final JTextField tf;
                     if (Number.class.isAssignableFrom(clazz)) {
-                        tf = new JTextField(6);
+                        tf = new JTextField();
                         if (Integer.class.isAssignableFrom(clazz)) {
                             ((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(Integer.MIN_VALUE, Integer.MAX_VALUE));
                         } else {
@@ -158,7 +154,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                         }
 
                     } else {
-                        tf = new JTextField(10);
+                        tf = new JTextField();
                     }
                     tf.setText(String.valueOf(cp.getParameterValue(label)));
                     tf.getDocument().addDocumentListener(new DocumentListener() {
@@ -197,8 +193,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                         }
                     });
 
-                    tf.setMaximumSize(new java.awt.Dimension(40, 20));
-                    tf.setPreferredSize(new java.awt.Dimension(40, 20));
+//                    tf.setMaximumSize(new java.awt.Dimension(40, 20));
+//                    tf.setPreferredSize(new java.awt.Dimension(40, 20));
                     tf.setMinimumSize(new java.awt.Dimension(40, 20));
                     component = tf;
                 } else if (Color.class.isAssignableFrom(clazz)) {
@@ -248,13 +244,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 }
 
                 if (component != null) {
-                    panel.add(new JLabel(label));
-                    panel.add(component);
-                    panel.add(Box.createHorizontalStrut(30));
+                    panel.add(new JLabel(label), "gap rel");
+                    panel.add(component, "grow");
+//                    panel.add(Box.createHorizontalStrut(30));
                 }
 
                 if (panel.getComponentCount() > 4) {
-                    paramsPanel.add(Box.createVerticalStrut(10));
                     paramsPanel.add(panel);
                     panel = new JPanel();
                     panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -264,8 +259,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         }
 
         if (panel.getComponentCount() > 0) {
-            paramsPanel.add(Box.createVerticalStrut(10));
-            paramsPanel.add(panel);
+            paramsPanel.add(panel, "right, grow");
         }
     }
 
@@ -351,6 +345,10 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
         }
         return returnValue;
+    }
+
+    public JComboBox getComboBox() {
+        return comboBox;
     }
 
     /**

@@ -108,6 +108,9 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="transformationCB">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="transformationCBActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPComboBoxWithSingleListener(&quot;TrackOperationsTab_transformation&quot;)"/>
           </AuxValues>
@@ -184,6 +187,9 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JComboBox" name="operationCB">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="operationCBActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPComboBoxWithSingleListener(&quot;TrackOperationsTab_operation&quot;)"/>
           </AuxValues>

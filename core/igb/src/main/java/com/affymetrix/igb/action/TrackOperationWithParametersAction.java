@@ -23,7 +23,7 @@ public class TrackOperationWithParametersAction extends TrackOperationAction {
         optionDialog.setTitle("Track Operation");
         optionDialog.setLocationRelativeTo(getSeqMapView());
         optionDialog.setInitialValue(getOperator());
-        optionDialog.setEnabled(false);
+//        optionDialog.setEnabled(false);
         optionDialog.setVisible(true);
         Object value = optionDialog.getValue();
 

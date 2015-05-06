@@ -10,14 +10,9 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.IParameters;
-import com.affymetrix.genometry.operator.Operator;
-import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.IDComparator;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.GENOME_SEQ_ID;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
@@ -44,13 +39,11 @@ import com.affymetrix.igb.action.ShowMinusStrandAction;
 import com.affymetrix.igb.action.ShowMismatchAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
-import com.affymetrix.igb.action.TrackOperationWithParametersAction;
+import com.affymetrix.igb.action.TrackOperationMenuItemAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.Selections;
-import com.affymetrix.igb.shared.TrackOperationAction;
-import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -61,8 +54,6 @@ import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -112,35 +103,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         repackStub.repack(fullRepack, tierChanged);
     }
 
-    private JMenu addOperationMenu(List<? extends SeqSymmetry> syms) {
-        JMenu operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
+    private JMenuItem addOperationMenuItem(List<RootSeqSymmetry> syms, boolean coordinatesTrackSelected) {
+        JMenuItem operationsMenu = new JMenuItem(BUNDLE.getString("operationsMenu") + "...");
+        if (coordinatesTrackSelected) {
+            operationsMenu.setEnabled(false);
+            return operationsMenu;
+        }
         if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getId())) {
             return operationsMenu;
         }
-        TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
-        operators.addAll(OperatorServiceRegistry.getOperators());
-        for (Operator operator : operators) {
-            if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
-                String title = operator.getDisplay();
-                Operator newOperator = operator.newInstance();
-                if (newOperator == null) {
-                    logger.error("Could not create instance for operator {}", title);
-                    continue;
-                }
-
-                Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
-
-                if (params != null && !params.isEmpty()) {
-                    JMenuItem operatorMI = new JMenuItem(title);
-                    operatorMI.addActionListener(new TrackOperationWithParametersAction(newOperator));
-                    operationsMenu.add(operatorMI);
-                } else {
-                    JMenuItem operatorMI = new JMenuItem(title);
-                    operatorMI.addActionListener(new TrackOperationAction(newOperator));
-                    operationsMenu.add(operatorMI);
-                }
-            }
-        }
+        operationsMenu.addActionListener(new TrackOperationMenuItemAction(syms));
         return operationsMenu;
     }
 
@@ -321,15 +293,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         collapse.setText("Collapse");
         collapse.setIcon(null);
         popup.add(collapse);
-        
+
         JMenuItem lockTierHeight = new JCheckBoxMenuItem();
         lockTierHeight.setText(BUNDLE.getString("lockTierHeightAction"));
         List<TierGlyph> selectedTiers = tierLabelManager.getSelectedTiers();
-        if(selectedTiers.size() != 1) {
+        if (selectedTiers.size() != 1) {
             lockTierHeight.setEnabled(false);
         } else {
             TierGlyph tier = selectedTiers.get(0);
-            if(tier.isManuallyResizable()) {
+            if (tier.isManuallyResizable()) {
                 lockTierHeight.setAction(LockTierHeightAction.getAction());
                 lockTierHeight.setSelected(false);
             } else {
@@ -338,7 +310,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             }
         }
         popup.add(lockTierHeight);
-        
+
         JMenuItem customize = new JRPMenuItemTLP(CustomizeAction.getAction());
         customize.setIcon(null);
         customize.setText("Customize...");
@@ -354,14 +326,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         useBaseQuality.setSelected(anyAlignment && anyShadeBasedOnQuality);
         popup.add(useBaseQuality);
         popup.add(new JSeparator());
-
-        JMenu operationsMenu = addOperationMenu(Selections.rootSyms);
+        JMenuItem operationsMenu = addOperationMenuItem(Selections.rootSyms, coordinatesTrackSelected);
         popup.add(operationsMenu);
-        operationsMenu.getPopupMenu().setBorder(finalBorder);
-        operationsMenu.setEnabled(operationsMenu.getItemCount() > 0 && !coordinatesTrackSelected);
-
-        popup.add(new JSeparator());
-
         JMenuItem setColorBy = new JRPMenuItemTLP(ColorByAction.getAction());
         setColorBy.setIcon(null);
         setColorBy.setEnabled(allSameCategory && (category == FileTypeCategory.Annotation
@@ -437,7 +403,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             });
         }
     }
-    
+
 // purely for debugging
     private void doDebugAction() {
         for (TierGlyph tg : tierLabelManager.getSelectedTiers()) {

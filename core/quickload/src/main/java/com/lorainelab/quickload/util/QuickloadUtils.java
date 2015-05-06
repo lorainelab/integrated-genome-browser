@@ -4,6 +4,7 @@ import com.affymetrix.genometry.data.SpeciesInfo;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -180,7 +181,11 @@ public class QuickloadUtils {
     }
 
     public static boolean isValidRequest(URI uri) throws IOException {
-        if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+        final String scheme = uri.getScheme();
+        if (Strings.isNullOrEmpty(scheme)) {
+            return false;
+        }
+        if (scheme.equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
             File f = new File(uri);
             return f.exists();
         } else {

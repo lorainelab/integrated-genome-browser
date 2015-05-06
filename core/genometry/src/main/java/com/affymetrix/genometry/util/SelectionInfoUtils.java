@@ -41,6 +41,13 @@ public class SelectionInfoUtils {
         } else if (isGFFSym(sym)) {
             propertyKeys = GFF_PROP_LIST;
         } else {
+            if (logger.isDebugEnabled()) {
+                if (sym != null) {
+                    logger.debug("Sym class not handled: " + sym.getClass().getSimpleName());
+                } else {
+                    logger.debug("Sym class is null, fallback to default properties");
+                }
+            }
             propertyKeys = DEFAULT_PROP_LIST;
         }
         return orderProperties(propertyKeys, properties);

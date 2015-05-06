@@ -23,7 +23,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = 7;
     private JRPStyledTable seqtable;
-    private SeqGroupView seqGroupModel;
+    private SeqGroupView seqGroupView;
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;
     private IgbService igbService;
 
@@ -40,8 +40,8 @@ public class SeqGroupViewGUI extends IgbTabPanel {
     @Activate
     public void activate() {
         SeqGroupView.init(igbService);
-        seqGroupModel = SeqGroupView.getInstance();
-        seqtable = seqGroupModel.getTable();
+        seqGroupView = SeqGroupView.getInstance();
+        seqtable = seqGroupView.getTable();
         JScrollPane scroller = new JScrollPane(seqtable);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(scroller);
@@ -90,9 +90,9 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         currentSequenceTable = seqtable;
         speciesPanel = new javax.swing.JPanel();
-        speciesCB = seqGroupModel.getSpeciesCB();
+        speciesCB = speciesCB = seqGroupView.getSpeciesCB();
         genomeVersionPanel = new javax.swing.JPanel();
-        versionCB = seqGroupModel.getVersionCB();
+        versionCB = seqGroupView.getVersionCB();
 
         currentSequenceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -116,7 +116,11 @@ public class SeqGroupViewGUI extends IgbTabPanel {
             }
         });
 
-        speciesCB.addActionListener(this::speciesCBActionPerformed);
+        speciesCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                speciesCBActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout speciesPanelLayout = new org.jdesktop.layout.GroupLayout(speciesPanel);
         speciesPanel.setLayout(speciesPanelLayout);
@@ -168,8 +172,8 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         if (bounds.contains(evt.getX(), evt.getY())) {
             GenometryModel.getInstance().setSelectedGenomeVersion(null);
             GenometryModel.getInstance().setSelectedSeq(null);
-            seqGroupModel.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
-            seqGroupModel.getVersionCB().setSelectedItem(SeqGroupView.SELECT_GENOME);
+            seqGroupView.getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
+            seqGroupView.getVersionCB().setSelectedItem(SeqGroupView.SELECT_GENOME);
         }// TODO add your handling code here:
 	}//GEN-LAST:event_speciesPanelMousePressed
 

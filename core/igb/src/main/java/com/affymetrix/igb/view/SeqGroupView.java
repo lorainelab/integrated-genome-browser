@@ -158,6 +158,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         singleton = new SeqGroupView(igbService);
         singleton.addListeners();
         EventService.getModuleEventBus().register(singleton);
+        EventService.getModuleEventBus().post(new DataProviderServiceChangeEvent());
     }
 
     public static SeqGroupView getInstance() {

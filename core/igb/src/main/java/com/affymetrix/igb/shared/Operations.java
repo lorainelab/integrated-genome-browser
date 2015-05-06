@@ -46,6 +46,12 @@ public abstract class Operations extends javax.swing.JPanel {
         transformationParam.setEditable(false);
         ((javax.swing.text.AbstractDocument)transformationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
 
+        transformationCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                transformationCBActionPerformed(evt);
+            }
+        });
+
         transformationParamLabel.setText(null);
         transformationParamLabel.setMaximumSize(new java.awt.Dimension(50, 16));
         transformationParamLabel.setMinimumSize(new java.awt.Dimension(50, 16));
@@ -83,6 +89,12 @@ public abstract class Operations extends javax.swing.JPanel {
                     .add(transformationCB, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(transformationGoB)))
         );
+
+        operationCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                operationCBActionPerformed(evt);
+            }
+        });
 
         operationParam.setEditable(false);
         ((javax.swing.text.AbstractDocument)operationParam.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
@@ -176,6 +188,14 @@ public abstract class Operations extends javax.swing.JPanel {
             operationGoBActionPerformedA(evt);
         }
     }//GEN-LAST:event_operationGoBActionPerformed
+
+    private void operationCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_operationCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_operationCBActionPerformed
+
+    private void transformationCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_transformationCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_transformationCBActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btPanel;

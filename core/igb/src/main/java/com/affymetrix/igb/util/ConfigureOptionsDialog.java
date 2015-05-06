@@ -98,4 +98,9 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
         configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer) optionPane.getValue() == JOptionPane.OK_OPTION);
         return optionPane.getValue();
     }
+
+    public ConfigureOptionsPanel<T> getConfigureOptionPanel() {
+        return configureOptionPanel;
+    }
+
 }

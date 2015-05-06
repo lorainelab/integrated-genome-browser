@@ -633,18 +633,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             return leafCheckBox;
         }
 
-        private Component renderServer(DataProvider gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
-            String serverNameString = "";
-//            if (gServer.getServerType() != DasServerType.getInstance()) {
-//                // TODO - hack to ignore server hyperlinks for DAS/1.
-//                serverNameString = "<a href='" + gServer.getUrl() + "'><b>" + gServer.getName() + "</b></a>";
-//            } else {
-            serverNameString = "<b>" + gServer.getName() + "</b>";
-//            }
-            serverNameString = "<html>" + serverNameString + " <i>(" + gServer.getName() + ")</i>";
-
+        private Component renderServer(DataProvider dataProvider, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
+            String serverNameString = "<html><b>" + dataProvider.getName() + "</b>";
+            if (dataProvider.getFactoryName().isPresent()) {
+                serverNameString = serverNameString + " <i>(" + dataProvider.getFactoryName().get() + ")</i>";
+            }
+            serverNameString += "</html>";
             super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
-            getServerFavicon(gServer).ifPresent(this::setIcon);
+            getServerFavicon(dataProvider).ifPresent(this::setIcon);
             return this;
         }
     }

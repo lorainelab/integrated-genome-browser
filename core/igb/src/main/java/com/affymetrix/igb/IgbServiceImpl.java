@@ -53,6 +53,7 @@ import java.awt.event.ItemListener;
 import java.awt.print.PrinterException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -143,8 +144,17 @@ public class IgbServiceImpl implements IgbService {
     }
 
     @Override
-    public DataSet getDataSet(GenomeVersion genomeVersion, DataProvider gServer, String feature_url, boolean showErrorForUnsupported) {
-        return null;
+    public Optional<DataSet> getDataSet(GenomeVersion genomeVersion, DataProvider gServer, String feature_url, boolean showErrorForUnsupported) {
+        try {
+            URI uri = new URI(feature_url);
+            return genomeVersion.getAvailableDataContainers().stream()
+                    .filter(dc -> dc.getDataProvider() == gServer)
+                    .flatMap(dc -> dc.getDataSets().stream())
+                    .filter(ds -> ds.getURI().toString().equals(uri.toString()))
+                    .findFirst();
+        } catch (URISyntaxException ex) {
+            return Optional.empty();
+        }
     }
 
     @Override

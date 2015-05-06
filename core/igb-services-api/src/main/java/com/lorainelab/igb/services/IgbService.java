@@ -4,8 +4,8 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -94,7 +94,7 @@ public interface IgbService {
 
     public void performSelection(String selectParam);
 
-    public DataSet getDataSet(GenomeVersion genomeVersion, DataProvider dataProvider, String feature_url, boolean showErrorForUnsupported);
+    public Optional<DataSet> getDataSet(GenomeVersion genomeVersion, DataProvider dataProvider, String feature_url, boolean showErrorForUnsupported);
 
     public Optional<GenomeVersion> determineAndSetGroup(final String version);
 

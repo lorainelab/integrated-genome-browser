@@ -493,13 +493,13 @@ public class IGBScriptEngine implements ScriptEngine {
 
     private void loadData(String serverURIorName, String feature_url) {
         Optional<DataProvider> server = igbService.loadServer(serverURIorName);
-        DataSet feature = igbService.getDataSet(
+        Optional<DataSet> feature = igbService.getDataSet(
                 GenometryModel.getInstance().getSelectedGenomeVersion(),
                 server.get(), feature_url, true);
 
-        if (feature != null) {
-            feature.setVisible();
-            feature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+        if (feature.isPresent()) {
+            feature.get().setVisible();
+            feature.get().setPreferredLoadStrategy(LoadStrategy.VISIBLE);
         }
 
         igbService.refreshDataManagementView();

@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
@@ -456,14 +456,15 @@ public final class BookmarkUnibrowControlServlet {
         //if (!LocalUrlCacher.isValidURL(query_url)) {
         //	return null;
         //}
-        DataSet dataSet = igbService.getDataSet(genomeVersion, gServer, query_url, false);
+        java.util.Optional<DataSet> dataSet = igbService.getDataSet(genomeVersion, gServer, query_url, false);
 
-        if (dataSet == null) {
+        if (!dataSet.isPresent()) {
             Logger.getLogger(GeneralUtils.class.getName()).log(
                     Level.SEVERE, "Couldn''t find feature for bookmark url {}", query_url);
+            return null;
         }
 
-        return dataSet;
+        return dataSet.get();
     }
 
     private void loadFeature(IgbService igbService, DataSet gFeature, int start, int end) {

@@ -33,7 +33,7 @@ C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wor
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
 C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
 C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
-C_elegans_Oct_2010	ce10	WS 140	WS140
+C_elegans_Oct_2010	ce10	WS220
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_familiaris_Sep_2011	canFam3	CanFam3.1
@@ -129,7 +129,7 @@ M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
 M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0	Macaca_mulatta.MMUL_1.reference
 M_musculus_Dec_2011	mm10	GRCm38
 M_musculus_Jul_2007	Mm:NCBIv37	Mm:NCBI37	mm9
-M_musculus_Feb_2006	Mm:NCBIv36	Mm:NCBI36	mm8
+M_musculus_Mar_2006	Mm:NCBIv36	Mm:NCBI36	mm8
 M_musculus_Aug_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1/
 M_musculus_Aug_2005	Mouse_Aug_2005	mm7	Mm:NCBIv35	Mm:NCBI35
 M_musculus_Feb_2002	Mouse_Feb_2002	Mouse feb2002	mm2	mm:Feb_2002	Mm:Feb_2002

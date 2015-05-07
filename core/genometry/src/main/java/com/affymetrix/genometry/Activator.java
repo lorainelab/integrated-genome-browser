@@ -1,8 +1,5 @@
 package com.affymetrix.genometry;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
@@ -13,6 +10,8 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.util.ServerTypeI;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * OSGi Activator for genometry bundle
@@ -103,20 +102,20 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.ExclusiveBOperator(FileTypeCategory.Annotation), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.ExclusiveBOperator(FileTypeCategory.Alignment), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.ExclusiveBOperator(FileTypeCategory.ProbeSet), null);
-		//bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.FilterOperator(FileTypeCategory.Annotation, new SymmetryFilterProps()), null);
+        //bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.FilterOperator(FileTypeCategory.Annotation, new SymmetryFilterProps()), null);
         //bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.IdentityTransform(), null); //Same as copy graph operator
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.IntersectionOperator(FileTypeCategory.Annotation), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.IntersectionOperator(FileTypeCategory.Alignment), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.IntersectionOperator(FileTypeCategory.ProbeSet), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseTransformer(), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(Math.E), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(2.0), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(10.0), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(Math.E, true), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(2.0, true), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.InverseLogTransform(10.0, true), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(Math.E), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(2.0), null);
-        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(10.0), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(Math.E, true), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(2.0, true), null);
+        bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.LogTransform(10.0, true), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.PowerTransformer(), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.PowerTransformer(0.5), null);
         bundleContext.registerService(Operator.class, new com.affymetrix.genometry.operator.MaxOperator(), null);

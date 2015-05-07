@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -233,22 +234,19 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 }
 
                 if (component != null) {
-                    panel.add(new JLabel(label), "gap rel");
-                    panel.add(component);
+                    panel.add(new JLabel(label), new CC().gap("rel").alignX("right"));
+                    panel.add(component, new CC().growX().alignY("top"));
 //                    panel.add(Box.createHorizontalStrut(30));
                 }
 
-                if (panel.getComponentCount() > 4) {
-                    paramsPanel.add(panel);
-                    panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-                    panel.add(new JLabel("                "));
-                }
+//                if (panel.getComponentCount() > 4) {
+//                    paramsPanel.add(panel);
+//                }
             }
         }
 
         if (panel.getComponentCount() > 0) {
-            paramsPanel.add(panel, "right, grow");
+            paramsPanel.add(panel, "growx");
         }
     }
 

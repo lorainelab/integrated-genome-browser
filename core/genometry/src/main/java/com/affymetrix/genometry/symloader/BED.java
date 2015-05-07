@@ -304,10 +304,10 @@ public class BED extends SymLoader implements LineProcessor {
         int field_count = fields.length;
 
         // Check BED detail type for few non-comment lines if 'bedDetail' attribute not specified in track line
-        if (!bedDetail && field_count == BED_DETAIL_FIELD_COUNT && (BED_DETAIL_LINE_CHECK_COUNT++ < BED_DETAIL_LINE_CHECK_LIMIT)) {
+        if (!bedDetail && field_count == BED_DETAIL_FIELD_COUNT) {
             bedDetail = true;
         }
-        if (bedDetail) {
+        if (bedDetail && field_count == BED_DETAIL_FIELD_COUNT) {
             detailSymbol = fields[field_count - 2];
             detailDescription = fields[field_count - 1];
             field_count -= 2;

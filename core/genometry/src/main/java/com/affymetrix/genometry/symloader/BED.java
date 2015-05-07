@@ -220,8 +220,7 @@ public class BED extends SymLoader implements LineProcessor {
         int fieldCount = fields.length;
         boolean isBedDetail = isBedDetailType(bedFileType);
 
-        //Consider removing this specification violation support
-        if (isBedDetail || fieldCount == BED_DETAIL_FIELD_COUNT) {
+        if (isBedDetail && fieldCount == BED_DETAIL_FIELD_COUNT) {
             isBedDetail = true;
             detailSymbol = fields[fieldCount - 2];
             detailDescription = fields[fieldCount - 1];

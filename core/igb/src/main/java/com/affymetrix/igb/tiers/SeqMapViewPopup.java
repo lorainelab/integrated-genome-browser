@@ -9,6 +9,7 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
@@ -69,9 +70,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(SeqMapViewPopup.class);
     private static final boolean DEBUG = false;
     private final SeqMapView gviewer;
     private final TierLabelManager tierLabelManager;
@@ -113,7 +117,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             operationsMenu.setEnabled(false);
             return operationsMenu;
         }
-        if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getId())) {
+        if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getID())) {
             return operationsMenu;
         }
         if (syms.stream().map(sy -> sy.getCategory()).allMatch(cat -> cat == FileTypeCategory.Graph)) {
@@ -127,7 +131,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     private JMenuItem createOperatorOptionsMenu(JMenuItem operationsMenu, List<RootSeqSymmetry> syms) {
         operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
         TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
-        operators.addAll(OperatorServiceRegistry.getOperators());
+        operators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
         for (Operator operator : operators) {
             if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
                 String title = operator.getDisplay();

@@ -1,11 +1,11 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.operator.Operator;
-import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.util.IDComparator;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
@@ -46,7 +46,7 @@ public class TrackOperationMenuItemAction extends AbstractAction {
             return;
         }
         Set<Operator> allOperators = new TreeSet<>(new IDComparator());
-        allOperators.addAll(OperatorServiceRegistry.getOperators());
+        allOperators.addAll(ExtensionPointHandler.getExtensionPoint(Operator.class).getExtensionPointImpls());
         int size = syms.size();
         List<Operator> matchingOperators = Lists.newArrayList();
         for (Operator operator : allOperators) {
@@ -61,7 +61,7 @@ public class TrackOperationMenuItemAction extends AbstractAction {
 
         ConfigureOptionsDialog<Operator> configureOptionsDialog = new ConfigureOptionsDialog<>(Operator.class, "Track Operation", operator -> matchingOperators.contains(operator));
         configureOptionsDialog.setTitle("Track Operation");
-        configureOptionsDialog.setLocationRelativeTo(IGB.getInstance().getMapView());
+        configureOptionsDialog.setLocationRelativeTo(Application.getSingleton().getMapView());
         configureOptionsDialog.setInitialValue(matchingOperators.get(0));
         configureOptionsDialog.setVisible(true);
         Object value = configureOptionsDialog.getValue();

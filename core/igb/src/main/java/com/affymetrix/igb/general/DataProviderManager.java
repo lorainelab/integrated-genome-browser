@@ -323,6 +323,8 @@ public class DataProviderManager {
             String genomeName = SynonymLookup.getDefaultLookup().findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
             String versionName, speciesName;
             GenomeVersion genomeVersion = gmodel.addGenomeVersion(genomeName);
+            Optional<String> genomeVersionDescription = dataProvider.getGenomeVersionDescription(genomeVersionName);
+            genomeVersionDescription.ifPresent(description -> genomeVersion.setDescription(description));
             Set<DataContainer> gVersions = genomeVersion.getAvailableDataContainers();
             if (!gVersions.isEmpty()) {
                 versionName = GeneralUtils.getPreferredVersionName(gVersions);

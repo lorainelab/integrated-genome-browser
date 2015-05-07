@@ -68,7 +68,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     private void init(Class clazz, Object label, Filter<T> filter, boolean includeNone) throws SecurityException {
-        setLayout(new MigLayout());
+        setLayout(new MigLayout("fill"));
 
         comboBox = new JComboBox();
         comboBox.setRenderer(new IDListCellRenderer());
@@ -106,8 +106,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
         paramsPanel = new JPanel(new MigLayout("fill"));
 
-        add(optionsBox, "wrap");
-        add(paramsPanel);
+        add(optionsBox, "growx, wrap");
+        add(paramsPanel, "growx");
 
         addListeners();
 
@@ -140,8 +140,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem()));
 
                     //cb.setMaximumSize(new java.awt.Dimension(70, 60));
-                    cb.setPreferredSize(new java.awt.Dimension(70, 60));
-                    cb.setMinimumSize(new java.awt.Dimension(70, 60));
+//                    cb.setPreferredSize(new java.awt.Dimension(70, 60));
+//                    cb.setMinimumSize(new java.awt.Dimension(70, 60));
                     component = cb;
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
                     final JTextField tf;
@@ -245,7 +245,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
                 if (component != null) {
                     panel.add(new JLabel(label), "gap rel");
-                    panel.add(component, "grow");
+                    panel.add(component);
 //                    panel.add(Box.createHorizontalStrut(30));
                 }
 

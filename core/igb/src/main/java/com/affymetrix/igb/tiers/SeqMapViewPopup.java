@@ -10,9 +10,13 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.general.IParameters;
+import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.util.IDComparator;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.IGBConstants.GENOME_SEQ_ID;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
@@ -40,10 +44,13 @@ import com.affymetrix.igb.action.ShowMismatchAction;
 import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationMenuItemAction;
+import com.affymetrix.igb.action.TrackOperationWithParametersAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
 import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.shared.TrackOperationAction;
+import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -54,6 +61,8 @@ import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -112,7 +121,40 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         if (GENOME_SEQ_ID.equals(gviewer.getAnnotatedSeq().getId())) {
             return operationsMenu;
         }
-        operationsMenu.addActionListener(new TrackOperationMenuItemAction(syms));
+        if (syms.stream().map(sy -> sy.getCategory()).allMatch(cat -> cat == FileTypeCategory.Graph)) {
+            operationsMenu.addActionListener(new TrackOperationMenuItemAction(syms));
+        } else {
+            operationsMenu = createOperatorOptionsMenu(operationsMenu, syms);
+        }
+        return operationsMenu;
+    }
+
+    private JMenuItem createOperatorOptionsMenu(JMenuItem operationsMenu, List<RootSeqSymmetry> syms) {
+        operationsMenu = new JMenu(BUNDLE.getString("operationsMenu"));
+        TreeSet<Operator> operators = new TreeSet<>(new IDComparator());
+        operators.addAll(OperatorServiceRegistry.getOperators());
+        for (Operator operator : operators) {
+            if (TrackUtils.getInstance().checkCompatible(syms, operator)) {
+                String title = operator.getDisplay();
+                Operator newOperator = operator.newInstance();
+                if (newOperator == null) {
+                    logger.error("Could not create instance for operator {}", title);
+                    continue;
+                }
+
+                Map<String, Class<?>> params = operator instanceof IParameters ? ((IParameters) operator).getParametersType() : null;
+
+                if (params != null && !params.isEmpty()) {
+                    JMenuItem operatorMI = new JMenuItem(title);
+                    operatorMI.addActionListener(new TrackOperationWithParametersAction(newOperator));
+                    operationsMenu.add(operatorMI);
+                } else {
+                    JMenuItem operatorMI = new JMenuItem(title);
+                    operatorMI.addActionListener(new TrackOperationAction(newOperator));
+                    operationsMenu.add(operatorMI);
+                }
+            }
+        }
         return operationsMenu;
     }
 
@@ -328,6 +370,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         popup.add(new JSeparator());
         JMenuItem operationsMenu = addOperationMenuItem(Selections.rootSyms, coordinatesTrackSelected);
         popup.add(operationsMenu);
+        if (operationsMenu instanceof JMenu) {
+            ((JMenu) operationsMenu).getPopupMenu().setBorder(finalBorder);
+            operationsMenu.setEnabled(((JMenu) operationsMenu).getItemCount() > 0);
+            popup.add(new JSeparator());
+        }
         JMenuItem setColorBy = new JRPMenuItemTLP(ColorByAction.getAction());
         setColorBy.setIcon(null);
         setColorBy.setEnabled(allSameCategory && (category == FileTypeCategory.Annotation

@@ -247,12 +247,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 if (component != null) {
                     panel.add(new JLabel(label), new CC().gap("rel").alignX("right"));
                     panel.add(component, new CC().growX().alignY("top"));
-//                    panel.add(Box.createHorizontalStrut(30));
                 }
 
-//                if (panel.getComponentCount() > 4) {
-//                    paramsPanel.add(panel);
-//                }
             }
         }
 

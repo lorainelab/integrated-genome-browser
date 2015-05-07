@@ -15,7 +15,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
 
     protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
 
-    private String paramPrompt;
+    protected String paramPrompt;
     protected double base;
     protected String name;
     protected boolean parameterized;

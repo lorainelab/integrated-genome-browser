@@ -129,7 +129,7 @@ M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
 M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0	Macaca_mulatta.MMUL_1.reference
 M_musculus_Dec_2011	mm10	GRCm38
 M_musculus_Jul_2007	Mm:NCBIv37	Mm:NCBI37	mm9
-M_musculus_Mar_2006	Mm:NCBIv36	Mm:NCBI36	mm8
+M_musculus_Feb_2006	Mm:NCBIv36	Mm:NCBI36	mm8
 M_musculus_Aug_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1/
 M_musculus_Aug_2005	Mouse_Aug_2005	mm7	Mm:NCBIv35	Mm:NCBI35
 M_musculus_Feb_2002	Mouse_Feb_2002	Mouse feb2002	mm2	mm:Feb_2002	Mm:Feb_2002

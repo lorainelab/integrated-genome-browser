@@ -12,7 +12,7 @@ public abstract class AbstractLogTransform extends AbstractMathTransform {
         super();
         this.base = base;
         name = getBaseName() + "_" + base;
-        parameterized = false;
+        parameterized = true;
     }
 
     protected abstract String getBaseName();

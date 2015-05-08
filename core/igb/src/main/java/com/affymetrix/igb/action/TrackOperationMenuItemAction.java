@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +27,6 @@ public class TrackOperationMenuItemAction extends AbstractAction {
 
     private static final Logger logger = LoggerFactory.getLogger(TrackOperationMenuItemAction.class);
     private final List<RootSeqSymmetry> syms;
-    private JOptionPane optionPane;
-    private JButton okOption, cancelOption;
 
     public TrackOperationMenuItemAction(List<RootSeqSymmetry> syms) {
         this.syms = syms;
@@ -63,14 +60,13 @@ public class TrackOperationMenuItemAction extends AbstractAction {
         configureOptionsDialog.setTitle("Track Operation");
         configureOptionsDialog.setLocationRelativeTo(Application.getSingleton().getMapView());
         configureOptionsDialog.setInitialValue(matchingOperators.get(0));
-        configureOptionsDialog.setVisible(true);
+        Operator showDialog = configureOptionsDialog.showDialog();
         Object value = configureOptionsDialog.getValue();
         if (value != null && (Integer) value == JOptionPane.OK_OPTION) {
-            Operator selectedItem = (Operator) configureOptionsDialog.getConfigureOptionPanel().getComboBox().getSelectedItem();
-            if (selectedItem == null) {
+            if (showDialog == null) {
                 return;
             }
-            new TrackOperationAction(selectedItem).actionPerformed(e);
+            new TrackOperationAction(showDialog).actionPerformed(e);
         }
     }
 

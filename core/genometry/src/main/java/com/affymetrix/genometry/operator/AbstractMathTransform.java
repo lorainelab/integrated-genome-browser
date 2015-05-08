@@ -101,9 +101,9 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     public Operator newInstance() {
         try {
             if (parameterized) {
-                return getClass().getConstructor().newInstance();
+                return getClass().getConstructor(Double.class).newInstance(base);
             }
-            return getClass().getConstructor(Double.class).newInstance(base);
+            return getClass().getConstructor().newInstance();
         } catch (Exception ex) {
         }
         return null;
@@ -121,4 +121,5 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     protected boolean allowNegative() {
         return true;
     }
+
 }

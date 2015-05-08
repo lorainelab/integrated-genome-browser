@@ -122,7 +122,7 @@ public class SearchModeResidue implements ISearchModeExtended,
         if (vseq == null) {
             return MessageFormat.format(BUNDLE.getString("searchErrorNotLoaded"), seq);
         }
-        if (search_text.length() <= 3) {
+        if (search_text.isEmpty()) {
             return BUNDLE.getString("searchErrorShort");
         }
         try {
@@ -247,11 +247,11 @@ public class SearchModeResidue implements ISearchModeExtended,
         StringBuilder searchSummary = new StringBuilder();
         for (String st : search_terms) {
             st = st.trim();
-            if (st.length() > 3) {
+            if (st.length() > 0) {
                 SearchResults<GlyphI> results = search(st, chrFilter, statusHolder);
                 searchSummary.append(st).append(" : ").append(results.getSearchSummary()).append(" ");
             } else {
-                searchSummary.append(st).append(" : ").append("Search skipped because character length is less than 4.");
+                searchSummary.append(st).append(" : ").append("Search skipped because character length is 0.");
             }
         }
         return new SearchResults<>(getName(), search_text, chrFilter.getID(), searchSummary.toString(), glyphs);

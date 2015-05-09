@@ -61,7 +61,7 @@ task createZipDir(dependsOn: media) << {
     zipDirectory.createNewFile()
 }
 
-task copyZipContents(type: Copy) {
+task copyZipContents(dependsOn: createZipDir, type: Copy) {
     from('.'){
         fileMode 0755
         include 'NOTICES.txt', 'LICENSE.html','run_igb.bat','run_igb.command','run_igb.sh', 'README.md', 'igb_exe.jar'

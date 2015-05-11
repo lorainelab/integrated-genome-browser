@@ -6,6 +6,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,6 +16,7 @@ import java.util.Map;
 public abstract class AbstractMathTransform extends AbstractFloatTransformer implements Operator, IParameters {
 
     protected static final DecimalFormat DF = new DecimalFormat("#,##0.##");
+    private static final Logger logger = LoggerFactory.getLogger(AbstractMathTransform.class);
 
     protected String paramPrompt;
     protected double base;
@@ -101,10 +104,15 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     public Operator newInstance() {
         try {
             if (parameterized) {
-                return getClass().getConstructor(Double.class).newInstance(base);
+                try {
+                    return getClass().getConstructor(Double.class).newInstance(base);
+                } catch (NoSuchMethodException ex) {
+                    return getClass().getConstructor().newInstance();
+                }
             }
             return getClass().getConstructor().newInstance();
         } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
         return null;
     }

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -89,13 +88,13 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         }
 
         JPanel optionsBox = new JPanel();
-        optionsBox.setLayout(new BoxLayout(optionsBox, BoxLayout.X_AXIS));
+        optionsBox.setLayout(new MigLayout("fillx", "[]rel[grow]", "[]"));
         if (label instanceof JComponent) {
-            optionsBox.add((JComponent) label);
+            optionsBox.add((JComponent) label, "right");
         } else if (label instanceof String) {
-            optionsBox.add(new JLabel(label + " :  "));
+            optionsBox.add(new JLabel(label + ""), "right");
         }
-        optionsBox.add(comboBox);
+        optionsBox.add(comboBox, "growx");
 
         paramsPanel = new JPanel(new MigLayout("fill"));
 

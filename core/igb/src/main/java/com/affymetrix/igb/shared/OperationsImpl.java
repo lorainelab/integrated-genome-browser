@@ -218,7 +218,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
         invalidate();
     }
 
-    private static void setAtionDisplay(
+    private void setAtionDisplay(
             JComboBox ationCB,
             JTextField ationParam,
             Map<String, Operator> name2ation,
@@ -250,6 +250,7 @@ public class OperationsImpl extends Operations implements RefreshSelectionListen
                 ationParam.setText("");
                 ationParam.setEnabled(true);
                 ationParam.setVisible(true);
+                getStPanel().revalidate();
             }
         }
     }

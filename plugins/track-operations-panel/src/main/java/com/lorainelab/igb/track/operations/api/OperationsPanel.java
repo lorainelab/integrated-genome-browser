@@ -227,7 +227,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
         invalidate();
     }
 
-    private static void setAtionDisplay(
+    private void setAtionDisplay(
             JComboBox ationCB,
             JTextField ationParam,
             Map<String, Operator> name2ation,
@@ -259,6 +259,7 @@ public class OperationsPanel extends OperationsPanelGui implements RefreshSelect
                 ationParam.setText("");
                 ationParam.setEnabled(true);
                 ationParam.setVisible(true);
+                getStPanel().revalidate();
             }
         }
     }

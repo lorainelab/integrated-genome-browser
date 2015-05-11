@@ -9,33 +9,51 @@
  */
 package com.affymetrix.igb.thresholding;
 
+import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.util.DisplayUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.NeoWidget;
+import com.affymetrix.igb.service.api.IGBService;
+import com.affymetrix.igb.shared.GraphGlyph;
+import com.affymetrix.igb.shared.GraphGlyphUtils;
+import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.JRPRadioButton;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.NeoWidget;
-import com.affymetrix.genometry.operator.Operator;
-import com.affymetrix.igb.service.api.IGBService;
-import com.affymetrix.genometry.util.PreferenceUtils;
-import com.affymetrix.genometry.util.DisplayUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.shared.*;
-
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.ResourceBundle;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public final class GraphScoreThreshSetter extends JPanel
         implements ChangeListener, ActionListener, FocusListener {
@@ -543,10 +561,12 @@ public final class GraphScoreThreshSetter extends JPanel
             }
         } else if (src == tier_threshB) {
             //pickleThreshold(sggl);
-            graphs.stream().filter(sggl -> sggl.isVisible()).forEach(sggl -> {
-                new ThresholdOperationAction(new ThresholdOperator(sggl, ((NeoWidget) widg).getView())).actionPerformed(null);
-                //pickleThreshold(sggl);
-            });
+            for (GraphGlyph sggl : graphs) {
+                if (sggl.isVisible()) {
+                    new ThresholdOperationAction(new ThresholdOperator(sggl, ((NeoWidget) widg).getView())).actionPerformed(null);
+                    //pickleThreshold(sggl);
+                }
+            }
             widg.updateWidget();
         } else if (src == threshCB) {
             String selection = (String) (threshCB).getSelectedItem();

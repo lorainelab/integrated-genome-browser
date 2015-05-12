@@ -9,7 +9,9 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.tiers.IGBStateProvider;
+import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -362,6 +364,83 @@ public class TrackDefaultView extends TrackPreferences implements ListSelectionL
                     if (!style.equals(defaultStyle)) {
                         entry = file2types[row - 1];
                         element = entry.getValue();
+                    }
+                    switch (col) {
+                        case COL_FOREGROUND:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_FOREGROUND, value);
+                            }
+                            style.setForeground((Color) value);
+                            fgColorComboBox.setSelectedColor((Color) value);
+                            break;
+                        case COL_BACKGROUND:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_BACKGROUND, value);
+                            }
+                            style.setBackground((Color) value);
+                            bgColorComboBox.setSelectedColor((Color) value);
+                            break;
+                        case COL_TRACK_NAME_SIZE:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_FONT_SIZE, value.toString());
+                                style.setTrackNameSize((Float) value);
+                            }
+                            style.setTrackNameSize((Float) value);
+                            trackNameSizeComboBox.setSelectedItem(value);
+                            break;
+                        case COL_LABEL_FIELD:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_LABEL_FIELD, value.toString());
+                            }
+                            style.setLabelField((String) value);
+                            break;
+                        case COL_MAX_DEPTH: {
+                            int i = parseInteger(((String) value), 0, style.getMaxDepth());
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_MAX_DEPTH, value.toString());
+                            }
+                            style.setMaxDepth(i);
+                        }
+                        break;
+                        case COL_DIRECTION_TYPE:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_DIRECTION_TYPE, value.toString());
+                            }
+                            style.setDirectionType((TrackConstants.DirectionType) value);
+                            break;
+                        case COL_SHOW_2_TRACKS:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_SEPARATE, ((Object) (!(Boolean) value)).toString());
+                            }
+                            style.setSeparate(!((Boolean) value));
+                            break;
+                        case COL_COLLAPSED:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_COLLAPSED, value.toString());
+                            }
+                            style.setCollapsed(((Boolean) value).booleanValue());
+                            break;
+                        case COL_POS_STRAND_COLOR:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_START_COLOR, value);
+                            }
+                            style.setForwardColor((Color) value);
+                            break;
+                        case COL_NEG_STRAND_COLOR:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_END_COLOR, value);
+                            }
+                            style.setReverseColor((Color) value);
+                            break;
+                        case COL_LABEL_COLOR:
+                            if (!style.equals(defaultStyle)) {
+                                element.getPropertyMap().put(PROP_LABEL_FOREGROUND, value);
+                            }
+                            style.setLabelForeground((Color) value);
+                            labelColorComboBox.setSelectedColor((Color) value);
+                            break;
+                        default:
+                            System.out.println("Unknown column selected: " + col);
                     }
                     fireTableCellUpdated(row, col);
                 } catch (Exception e) {

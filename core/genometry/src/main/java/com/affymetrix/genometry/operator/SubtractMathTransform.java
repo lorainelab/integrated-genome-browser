@@ -7,7 +7,7 @@ package com.affymetrix.genometry.operator;
 public class SubtractMathTransform extends AbstractMathTransform {
 
     private static final String BASE_NAME = "subtract";
-    private static final String PARAMETER_NAME = "subtract by";
+    private static final String PARAMETER_NAME = "subtract";
 
     @Override
     protected String getParameterName() {

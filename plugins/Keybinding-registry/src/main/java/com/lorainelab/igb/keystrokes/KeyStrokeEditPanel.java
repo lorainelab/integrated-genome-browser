@@ -45,10 +45,11 @@ public final class KeyStrokeEditPanel extends JPanel {
     private final JLabel keyLabel;
     private final JLabel noteLabel;
     private final JRPButton clear_button;
-    private String key = null;
-    private String lastTimeFocusGained = "";
-    private String lastCommand = "";
+    private String key;
+    private String lastTimeFocusGained;
+    private String lastCommand;
     private IgbService igbService;
+    public static final String NO_SHORTCUT = "something";
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeEditPanel.class);
 
     @Reference(optional = false)
@@ -97,7 +98,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                                 keyField.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
-                                PreferenceUtils.getKeystrokesNode().put(useCommand, "something");
+                                PreferenceUtils.getKeystrokesNode().put(useCommand, NO_SHORTCUT);
                                 keyField.setText(command);
                                 applyAction(keyField.getText().trim());
                             }
@@ -136,15 +137,15 @@ public final class KeyStrokeEditPanel extends JPanel {
                 Object o = fe.getSource();
                 if (o instanceof JTextField) {
                     JTextField tf = (JTextField) o;
-                    KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+                    lastTimeFocusGained = tf.getText();
                 }
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                if (KeyStrokeEditPanel.this.lastCommand != null) {
-                    applyAction(KeyStrokeEditPanel.this.lastCommand);
-                    KeyStrokeEditPanel.this.lastCommand = "";
+                if (lastCommand != null) {
+                    applyAction(lastCommand);
+                    lastCommand = null;
                 }
             }
 

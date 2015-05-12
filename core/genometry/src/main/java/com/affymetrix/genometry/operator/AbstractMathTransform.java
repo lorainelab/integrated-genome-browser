@@ -3,6 +3,7 @@ package com.affymetrix.genometry.operator;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.general.IParameters;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     public boolean setParameterValue(String key, Object value) {
         if (parameterized && value != null) {
             try {
-                base = Double.parseDouble(value.toString());
+                base = NumberFormat.getNumberInstance().parse(value.toString()).doubleValue();
                 if (!allowNegative() && base < 0) {
                     return false;
                 }

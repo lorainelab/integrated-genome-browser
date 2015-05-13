@@ -7,6 +7,8 @@ package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
@@ -272,6 +274,8 @@ public class AddDataProvider extends JFrame {
 
         CThreadWorker<Boolean, Void> worker;
         worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText().trim()) {
+            boolean isUnavailable = false;
+
             @Override
             protected Boolean runInBackground() {
                 if (isEditPanel) {
@@ -294,7 +298,7 @@ public class AddDataProvider extends JFrame {
                             DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
                             dataProviderManager.addDataProvider(createdDataProvider);
                             if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                                return false;
+                                isUnavailable = true;
                             }
                         }
                     }
@@ -310,10 +314,12 @@ public class AddDataProvider extends JFrame {
                 } catch (InterruptedException | ExecutionException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
-
-                if (serverAdded) {
+                GenometryModel gmodel = GenometryModel.getInstance();
+                GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+                if (serverAdded && genomeVersion != null) {
                     ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText().trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
-                } else {
+                }
+                if (isUnavailable) {
                     ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
                 }
 

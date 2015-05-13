@@ -196,7 +196,7 @@ public class QuickloadUtils {
                         .trustAllCerts()
                         .trustAllHosts()
                         .followRedirects(true)
-                        .connectTimeout(1000);
+                        .connectTimeout(5000);
                 code = httpRequest.code();
             } catch (HttpRequestException ex) {
             }

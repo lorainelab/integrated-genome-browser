@@ -122,7 +122,7 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             return;
         }
 
-        if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
+        if (main_bookmark_list != null) {
             String filename = f.getAbsolutePath();
             File parent_dir = f.getParentFile();
             if (parent_dir != null) {

@@ -49,7 +49,6 @@ public final class KeyStrokeEditPanel extends JPanel {
     private String lastTimeFocusGained;
     private String lastCommand;
     private IgbService igbService;
-    public static final String NO_SHORTCUT = "something";
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeEditPanel.class);
 
     @Reference(optional = false)
@@ -98,7 +97,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                                 keyField.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
-                                PreferenceUtils.getKeystrokesNode().put(useCommand, NO_SHORTCUT);
+                                PreferenceUtils.getKeystrokesNode().put(useCommand, "");
                                 keyField.setText(command);
                                 applyAction(keyField.getText().trim());
                             }

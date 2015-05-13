@@ -690,7 +690,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                                 if (gServer.getMirrorUrl().isPresent()) {
                                                     URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrl(), gServer.getMirrorUrl().get()));
                                                     gFeature.getSymL().setURI(newURI);
-                                                    gFeature.getSymL().setURI(newURI);
                                                 }
                                             }
                                         }

@@ -52,6 +52,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -143,7 +144,7 @@ public final class GeneralLoadView {
      * buttons.
      */
     public void loadResidues(final boolean partial) {
-        final BioSeq seq = gmodel.getSelectedSeq();
+        final BioSeq seq = gmodel.getSelectedSeq().orElse(null);
 
         CThreadWorker<Boolean, Void> worker = new CThreadWorker<Boolean, Void>("Loading residues for " + seq.getId(), Thread.MIN_PRIORITY) {
 
@@ -428,7 +429,7 @@ public final class GeneralLoadView {
     public static boolean getIsDisableNecessary() {
         boolean enabled = !IsGenomeSequence();
         if (enabled) {
-            BioSeq curSeq = gmodel.getSelectedSeq();
+            BioSeq curSeq = gmodel.getSelectedSeq().orElse(null);
             enabled = curSeq.getGenomeVersion() != null;	// Don't allow a null sequence group either.
             if (enabled) {		// Don't allow buttons for an "unknown" versionName
                 Set<DataContainer> gVersions = curSeq.getGenomeVersion().getAvailableDataContainers();
@@ -479,7 +480,7 @@ public final class GeneralLoadView {
     }
 
     private static boolean IsGenomeSequence() {
-        BioSeq curSeq = gmodel.getSelectedSeq();
+        BioSeq curSeq = gmodel.getSelectedSeq().orElse(null);
         final String seqID = curSeq == null ? null : curSeq.getId();
         return (seqID == null || IGBConstants.GENOME_SEQ_ID.equals(seqID));
     }
@@ -573,7 +574,7 @@ public final class GeneralLoadView {
     public void clearTrack(final ITrackStyleExtended style) {
         final String method = style.getMethodName();
         if (method != null) {
-            final BioSeq bioseq = GenometryModel.getInstance().getSelectedSeq();
+            final BioSeq bioseq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
             final DataSet feature = style.getFeature();
 
             // If genome is selected then delete all syms on the all seqs.
@@ -635,8 +636,9 @@ public final class GeneralLoadView {
                 if (dataContainer.getDataProvider() instanceof LocalDataSetProvider) {
                     if (dataContainer.removeDataSet(feature)) {
                         SeqGroupView.getInstance().refreshTable();
+                        final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
                         if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
-                                && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
+                                && selectedSeq.isPresent() && !gmodel.getSelectedGenomeVersion().getSeqList().contains(selectedSeq.get())) {
                             gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
                         } else {
                             gmodel.setSelectedSeq(null);

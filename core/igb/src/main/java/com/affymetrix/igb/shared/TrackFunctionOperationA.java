@@ -108,7 +108,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
     }
 
     private void addNonUpdateableTier(List<? extends GlyphI> vgs) {
-        BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq aseq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         ITrackStyleExtended preferredStyle = null;
         List<SeqSymmetry> seqSymList = new ArrayList<>();
         for (GlyphI gl : vgs) {

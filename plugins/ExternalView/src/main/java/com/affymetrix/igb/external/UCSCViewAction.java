@@ -23,6 +23,7 @@ import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -51,7 +52,8 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public void activate() {
         GenometryModel model = GenometryModel.getInstance();
         model.addSeqSelectionListener(this);
-        this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.singletonList(model.getSelectedSeq())));
+        final Optional<BioSeq> selectedSeq = model.getSelectedSeq();
+        this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.singletonList(selectedSeq.orElse(null))));
     }
 
     @Reference(optional = false)

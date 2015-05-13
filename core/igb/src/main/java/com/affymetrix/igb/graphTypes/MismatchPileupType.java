@@ -13,6 +13,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class MismatchPileupType extends MismatchGraphType {
 
@@ -48,9 +49,11 @@ public class MismatchPileupType extends MismatchGraphType {
             int draw_end_index, double offset, double yscale, ViewI view,
             Point curr_x_plus_width, Graphics g, Point max_x_plus_width, GraphSym graphSym) {
         MisMatchPileupGraphSym mmgs = (MisMatchPileupGraphSym) graphSym;
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        if (!mmgs.hasReferenceSequence()) {
-            seq.getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
+        Optional<BioSeq> seq = GenometryModel.getInstance().getSelectedSeq();
+        if (seq.isPresent()) {
+            if (!mmgs.hasReferenceSequence()) {
+                seq.get().getResidues(graphSym.getMinXCoord(), graphSym.getMaxXCoord()); // so all are loaded, not one by one
+            }
         }
         super.bigDrawLoop(draw_beg_index, draw_end_index, offset, yscale, view, curr_x_plus_width,
                 g, max_x_plus_width, graphSym);
@@ -65,7 +68,7 @@ public class MismatchPileupType extends MismatchGraphType {
 //		final int width = Math.max(1, curr_x_plus_width.x - curr_point.x - 1);
         final int width = curr_x_plus_width.x;
 
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         // need to draw coverage first, then mismatches so that the mismatches are not covered up
         g.setColor(MATCH_COLOR);
         super.doBigDraw(g, graphSym, curr_x_plus_width, max_x_plus_width, ytemp, draw_end_index, offset, yscale, view, i);
@@ -78,9 +81,7 @@ public class MismatchPileupType extends MismatchGraphType {
         Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
         x_plus_width2D.x = xtemp + 1;
         int savey = zero_point.y;
-        char referenceBase = mmgs.hasReferenceSequence()
-                ? mmgs.getReferenceBase(i)
-                : seq.getResidues(xtemp, xtemp + 1).toUpperCase().charAt(0);
+        char referenceBase = mmgs.hasReferenceSequence() ? mmgs.getReferenceBase(i) : seq.getResidues(xtemp, xtemp + 1).toUpperCase().charAt(0);
         float y_accum = 0;
         int[] barOrder = BAR_ORDERS.get(referenceBase);
         if (barOrder == null) {

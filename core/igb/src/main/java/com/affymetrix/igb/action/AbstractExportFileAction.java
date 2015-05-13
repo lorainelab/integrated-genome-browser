@@ -104,12 +104,12 @@ public abstract class AbstractExportFileAction
             int option = chooser.showSaveDialog(null);
             if (option == JFileChooser.APPROVE_OPTION) {
                 FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-                BioSeq aseq = gmodel.getSelectedSeq();
+                Optional<BioSeq> aseq = gmodel.getSelectedSeq();
                 File fil = chooser.getSelectedFile();
                 try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
                     UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
                     preferredFilters.put(rootSym.getCategory(), selectedFilter);
-                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq, atier);
+                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq.orElse(null), atier);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }

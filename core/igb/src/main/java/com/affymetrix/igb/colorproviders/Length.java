@@ -29,6 +29,6 @@ public class Length extends ColorProvider {
 
     @Override
     public Color getColor(SeqSymmetry sym) {
-        return cp.getColor(String.valueOf(sym.getSpan(model.getSelectedSeq()).getLength()));
+        return cp.getColor(String.valueOf(sym.getSpan(model.getSelectedSeq().orElse(null)).getLength()));
     }
 }

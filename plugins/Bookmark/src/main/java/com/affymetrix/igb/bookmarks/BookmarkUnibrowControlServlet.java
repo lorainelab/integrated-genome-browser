@@ -277,9 +277,12 @@ public final class BookmarkUnibrowControlServlet {
                     }
 
                     if (loadResidue) {
-                        BioSeq vseq = GenometryModel.getInstance().getSelectedSeq();
-                        SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
-                        igbService.loadResidues(span, true);
+                        final java.util.Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+                        if (selectedSeq.isPresent()) {
+                            BioSeq vseq = selectedSeq.get();
+                            SeqSpan span = new SimpleMutableSeqSpan(start, end, vseq);
+                            igbService.loadResidues(span, true);
+                        }
                     }
                 } catch (Throwable t) {
                     //Catch all to ensure thread does not continue indefinitely
@@ -383,7 +386,6 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private List<DataSet> loadData(final IgbService igbService, final GenomeVersion genomeVersion, final List<DataProvider> dataProivders, final List<String> query_urls, int start, int end) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
         List<DataSet> gFeatures = new ArrayList<>();
         int i = 0;
         for (String queryUrl : query_urls) {
@@ -468,18 +470,21 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private void loadFeature(IgbService igbService, DataSet gFeature, int start, int end) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        //a bit of a hack to force track creation since with no overlap there is currently no track being created.
-        if (end == 0) {
-            end = 1;
+        final java.util.Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+        if (selectedSeq.isPresent()) {
+            BioSeq seq = selectedSeq.get();
+            //a bit of a hack to force track creation since with no overlap there is currently no track being created.
+            if (end == 0) {
+                end = 1;
+            }
+            SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
+            gFeature.setVisible();
+            gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+            if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
+                overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
+            }
+            igbService.loadAndDisplaySpan(overlap, gFeature);
         }
-        SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-        gFeature.setVisible();
-        gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-        if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
-            overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-        }
-        igbService.loadAndDisplaySpan(overlap, gFeature);
     }
 
     private List<DataProvider> loadServers(IgbService igbService, List<String> server_urls) {
@@ -571,7 +576,7 @@ public final class BookmarkUnibrowControlServlet {
         } else {
             // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
-            if (book_seq != gmodel.getSelectedSeq()) {
+            if (book_seq != gmodel.getSelectedSeq().get()) {
                 gmodel.setSelectedSeq(book_seq);
             }
         }
@@ -584,7 +589,7 @@ public final class BookmarkUnibrowControlServlet {
         //   for group if not already populated
         BioSeq book_seq;
         if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
-            book_seq = gmodel.getSelectedSeq();
+            book_seq = gmodel.getSelectedSeq().get();
             if (book_seq == null && gmodel.getSelectedGenomeVersion() != null && gmodel.getSelectedGenomeVersion().getSeqCount() > 0) {
                 book_seq = gmodel.getSelectedGenomeVersion().getSeq(0);
             }

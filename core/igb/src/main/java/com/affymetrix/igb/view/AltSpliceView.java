@@ -116,8 +116,9 @@ public class AltSpliceView extends IgbTabPanel
         this.addComponentListener(this);
         buffer_sizeTF.addActionListener(this);
         slice_by_selectionCB.addItemListener(this);
+        final GenometryModel gmodel = GenometryModel.getInstance();
 
-        spliced_view.setAnnotatedSeq(GenometryModel.getInstance().getSelectedSeq());
+        spliced_view.setAnnotatedSeq(gmodel.getSelectedSeq().orElse(null));
         GenometryModel.getInstance().addSeqSelectionListener(this);
         GenometryModel.getInstance().addSymSelectionListener(this);
         PreferenceUtils.getTopNode().addPreferenceChangeListener(this);
@@ -182,7 +183,7 @@ public class AltSpliceView extends IgbTabPanel
         if (IgbService.DEBUG_EVENTS) {
             System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
         }
-        BioSeq newseq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq newseq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         if (last_seq_changed != newseq) {
             last_seq_changed = newseq;
             if (this.isShowing() && slice_by_selection_on) {

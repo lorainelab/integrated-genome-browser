@@ -54,6 +54,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -769,7 +770,10 @@ public final class SearchView extends IgbTabPanel implements
     // Set sequence checkbox value as current selected chromosome for residue search mode
     private void setSequenceCBValue() {
         if (selectedSearchMode instanceof SearchModeResidue && gmodel.getSelectedSeq() != null) {
-            sequenceCB.setSelectedItem(gmodel.getSelectedSeq().getId());
+            final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+            if (selectedSeq.isPresent()) {
+                sequenceCB.setSelectedItem(selectedSeq.get().getId());
+            }
         } else {
             sequenceCB.setSelectedItem(Constants.GENOME_SEQ_ID);
         }

@@ -1,16 +1,14 @@
 package com.gene.findannotations;
 
-import java.awt.event.ActionEvent;
-import java.text.MessageFormat;
-
-import javax.swing.JTextField;
-
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.lorainelab.igb.services.IgbService;
+import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
+import javax.swing.JTextField;
 
 public class TrackFromHitsAction extends GenericAction {
 
@@ -32,7 +30,8 @@ public class TrackFromHitsAction extends GenericAction {
         super.actionPerformed(e);
         String type = MessageFormat.format(TYPE, textField.getText());
         TypeContainerAnnot containerSym = new TypeContainerAnnot(type);
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        final GenometryModel gmodel = GenometryModel.getInstance();
+        BioSeq seq = gmodel.getSelectedSeq().orElse(null);
         // copy children
         for (SeqSymmetry sym : tableModel.getResults()) {
             if (sym.getSpan(seq) != null) {

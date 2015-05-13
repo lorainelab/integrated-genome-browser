@@ -35,6 +35,7 @@ import com.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.DefaultComboBoxModel;
@@ -243,12 +244,16 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
                 }
             }
             Set<String> fields = getFields(style);
-            SeqSymmetry sym = GenometryModel.getInstance().getSelectedSeq().getAnnotation(style.getMethodName());
-            if (sym instanceof SeqSymmetry) {
-                if (allFields == null) {
-                    allFields = new TreeSet<>(fields);
-                } else {
-                    allFields.retainAll(fields);
+            final GenometryModel gmodel = GenometryModel.getInstance();
+            final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+            if (selectedSeq.isPresent()) {
+                SeqSymmetry sym = selectedSeq.get().getAnnotation(style.getMethodName());
+                if (sym instanceof SeqSymmetry) {
+                    if (allFields == null) {
+                        allFields = new TreeSet<>(fields);
+                    } else {
+                        allFields.retainAll(fields);
+                    }
                 }
             }
         }
@@ -378,7 +383,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
     private Set<String> getFields(ITrackStyleExtended style) {
         Set<String> fields = new TreeSet<>();
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().get();
         if (seq != null) {
             SeqSymmetry sym = seq.getAnnotation(style.getMethodName());
             if (sym != null && sym.getChildCount() > 0) {

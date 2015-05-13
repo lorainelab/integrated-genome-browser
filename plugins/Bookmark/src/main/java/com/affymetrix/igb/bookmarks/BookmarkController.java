@@ -9,12 +9,12 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.GraphType;
@@ -286,8 +286,10 @@ public class BookmarkController {
     }
 
     public static void addSymmetries(Bookmarks bookmark) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
-        if (seq != null) {
+        final GenometryModel gmodel = GenometryModel.getInstance();
+        final java.util.Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+        if (selectedSeq.isPresent()) {
+            BioSeq seq = selectedSeq.get();
             GenomeVersion group = seq.getGenomeVersion();
 
             for (DataContainer version : group.getAvailableDataContainers()) {
@@ -300,86 +302,88 @@ public class BookmarkController {
     }
 
     public static void addProperties(SymWithProps mark_sym) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        final GenometryModel gmodel = GenometryModel.getInstance();
+        final java.util.Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+        if (selectedSeq.isPresent()) {
+            BioSeq seq = selectedSeq.get();
+            Map<ITrackStyle, Integer> combo_styles = new HashMap<>();
 
-        Map<ITrackStyle, Integer> combo_styles = new HashMap<>();
+            // Holds a list of labels of graphs for which no url could be found.
+            Set<String> unfound_labels = new LinkedHashSet<>();
 
-        // Holds a list of labels of graphs for which no url could be found.
-        Set<String> unfound_labels = new LinkedHashSet<>();
+            // "j" loops throug all graphs, while "i" counts only the ones
+            // that are actually book-markable (thus i <= j)
+            int i = -1;
 
-        // "j" loops throug all graphs, while "i" counts only the ones
-        // that are actually book-markable (thus i <= j)
-        int i = -1;
+            for (int j = 0; j < seq.getAnnotationCount(); j++) {
 
-        for (int j = 0; j < seq.getAnnotationCount(); j++) {
+                SeqSymmetry sym = seq.getAnnotation(j);
 
-            SeqSymmetry sym = seq.getAnnotation(j);
-
-            if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
-                continue;
-            }
-
-            i++;
-
-            if (sym instanceof TypeContainerAnnot) {
-                TypeContainerAnnot tca = (TypeContainerAnnot) sym;
-                ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
-                DataSet feature = style.getFeature();
-
-                if (feature == null) {
-                    unfound_labels.add(tca.getType());
+                if (!(sym instanceof GraphSym) && !(sym instanceof TypeContainerAnnot)) {
                     continue;
                 }
 
-                addStyleProps(style, mark_sym, feature.getURI().toString(), style.getTrackName(), tca.getType(), i);
-                continue;
-            }
+                i++;
 
-            GraphSym graph = (GraphSym) sym;
-            GraphState gstate = graph.getGraphState();
-            ITrackStyleExtended style = gstate.getTierStyle();
-            DataSet feature = style.getFeature();
+                if (sym instanceof TypeContainerAnnot) {
+                    TypeContainerAnnot tca = (TypeContainerAnnot) sym;
+                    ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(tca.getType());
+                    DataSet feature = style.getFeature();
 
-            if (feature == null) {
-                unfound_labels.add(sym.getID());
-                continue;
-            }
+                    if (feature == null) {
+                        unfound_labels.add(tca.getType());
+                        continue;
+                    }
 
-            addStyleProps(style, mark_sym, feature.getURI().toString(), graph.getGraphName(), graph.getID(), i);
-
-            mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (Boolean.toString(gstate.getShowLabel())));
-            mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (Boolean.toString(gstate.getShowAxis())));
-            mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gstate.getVisibleMinY()));
-            mark_sym.setProperty(GRAPH.MAXVIS.toString() + i, Double.toString(gstate.getVisibleMaxY()));
-            mark_sym.setProperty(GRAPH.SCORE_THRESH.toString() + i, Double.toString(gstate.getMinScoreThreshold()));
-            mark_sym.setProperty(GRAPH.MAXGAP_THRESH.toString() + i, Integer.toString(gstate.getMaxGapThreshold()));
-            mark_sym.setProperty(GRAPH.MINRUN_THRESH.toString() + i, Integer.toString(gstate.getMinRunThreshold()));
-            mark_sym.setProperty(GRAPH.SHOW_THRESH.toString() + i, (Boolean.toString(gstate.getShowThreshold())));
-            mark_sym.setProperty(GRAPH.STYLE.toString() + i, gstate.getGraphStyle().toString());
-            mark_sym.setProperty(GRAPH.THRESH_DIRECTION.toString() + i, Integer.toString(gstate.getThresholdDirection()));
-            if (gstate.getGraphStyle() == GraphType.HEAT_MAP && gstate.getHeatMap() != null) {
-                mark_sym.setProperty(GRAPH.HEATMAP.toString() + i, gstate.getHeatMap().getName());
-            }
-
-            ITrackStyle combo_style = gstate.getComboStyle();
-            if (combo_style != null) {
-                Integer combo_style_num = combo_styles.get(combo_style);
-                if (combo_style_num == null) {
-                    combo_style_num = combo_styles.size() + 1;
-                    combo_styles.put(combo_style, combo_style_num);
+                    addStyleProps(style, mark_sym, feature.getURI().toString(), style.getTrackName(), tca.getType(), i);
+                    continue;
                 }
-                mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());
+
+                GraphSym graph = (GraphSym) sym;
+                GraphState gstate = graph.getGraphState();
+                ITrackStyleExtended style = gstate.getTierStyle();
+                DataSet feature = style.getFeature();
+
+                if (feature == null) {
+                    unfound_labels.add(sym.getID());
+                    continue;
+                }
+
+                addStyleProps(style, mark_sym, feature.getURI().toString(), graph.getGraphName(), graph.getID(), i);
+
+                mark_sym.setProperty(GRAPH.SHOW_LABEL.toString() + i, (Boolean.toString(gstate.getShowLabel())));
+                mark_sym.setProperty(GRAPH.SHOW_AXIS.toString() + i, (Boolean.toString(gstate.getShowAxis())));
+                mark_sym.setProperty(GRAPH.MINVIS.toString() + i, Double.toString(gstate.getVisibleMinY()));
+                mark_sym.setProperty(GRAPH.MAXVIS.toString() + i, Double.toString(gstate.getVisibleMaxY()));
+                mark_sym.setProperty(GRAPH.SCORE_THRESH.toString() + i, Double.toString(gstate.getMinScoreThreshold()));
+                mark_sym.setProperty(GRAPH.MAXGAP_THRESH.toString() + i, Integer.toString(gstate.getMaxGapThreshold()));
+                mark_sym.setProperty(GRAPH.MINRUN_THRESH.toString() + i, Integer.toString(gstate.getMinRunThreshold()));
+                mark_sym.setProperty(GRAPH.SHOW_THRESH.toString() + i, (Boolean.toString(gstate.getShowThreshold())));
+                mark_sym.setProperty(GRAPH.STYLE.toString() + i, gstate.getGraphStyle().toString());
+                mark_sym.setProperty(GRAPH.THRESH_DIRECTION.toString() + i, Integer.toString(gstate.getThresholdDirection()));
+                if (gstate.getGraphStyle() == GraphType.HEAT_MAP && gstate.getHeatMap() != null) {
+                    mark_sym.setProperty(GRAPH.HEATMAP.toString() + i, gstate.getHeatMap().getName());
+                }
+
+                ITrackStyle combo_style = gstate.getComboStyle();
+                if (combo_style != null) {
+                    Integer combo_style_num = combo_styles.get(combo_style);
+                    if (combo_style_num == null) {
+                        combo_style_num = combo_styles.size() + 1;
+                        combo_styles.put(combo_style, combo_style_num);
+                    }
+                    mark_sym.setProperty(GRAPH.COMBO.toString() + i, combo_style_num.toString());
+                }
+
             }
 
+            // TODO: Now save the colors and such of the combo graphs!
+            if (!unfound_labels.isEmpty()) {
+                ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
+                        "Warning: could not bookmark some graphs.\n"
+                        + "No source URL was available for: " + unfound_labels.toString(), Level.WARNING);
+            }
         }
-
-        // TODO: Now save the colors and such of the combo graphs!
-        if (!unfound_labels.isEmpty()) {
-            ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
-                    "Warning: could not bookmark some graphs.\n"
-                    + "No source URL was available for: " + unfound_labels.toString(), Level.WARNING);
-        }
-
     }
 
     private static void addStyleProps(ITrackStyleExtended style, SymWithProps mark_sym,

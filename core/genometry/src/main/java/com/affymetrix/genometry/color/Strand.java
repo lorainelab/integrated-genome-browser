@@ -1,9 +1,11 @@
 package com.affymetrix.genometry.color;
 
-import com.affymetrix.genometry.general.Parameter;
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.awt.Color;
+import java.util.Optional;
 
 /**
  *
@@ -33,7 +35,8 @@ public class Strand extends ColorProvider {
 
     @Override
     public Color getColor(SeqSymmetry sym) {
-        if (sym.getSpan(model.getSelectedSeq()).isForward()) {
+        final Optional<BioSeq> selectedSeq = model.getSelectedSeq();
+        if (sym.getSpan(selectedSeq.get()).isForward()) {
             return forwardColor.get();
         }
         return reverseColor.get();

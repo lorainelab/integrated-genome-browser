@@ -32,7 +32,7 @@ public final class Persistence {
     public static void saveCurrentView(SeqMapView gviewer) {
         GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
         if (gmodel.getSelectedSeq() != null) {
-            BioSeq seq = gmodel.getSelectedSeq();
+            BioSeq seq = gmodel.getSelectedSeq().orElse(null);
             saveGroupSelection(genomeVersion);
             saveSeqSelection(seq);
             saveSeqVisibleSpan(gviewer);

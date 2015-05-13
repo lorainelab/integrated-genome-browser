@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BpsParser;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
@@ -20,8 +20,8 @@ import com.affymetrix.genometry.parsers.das.DASFeatureParser;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.lorainelab.igb.services.IgbService;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import com.lorainelab.igb.services.IgbService;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +32,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.swing.SwingUtilities;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
@@ -78,12 +79,12 @@ public final class UrlLoaderThread extends Thread {
 
     @Override
     public void run() {
-        BioSeq aseq = gmodel.getSelectedSeq();
+        Optional<BioSeq> aseq = gmodel.getSelectedSeq();
         GenomeVersion seq_group = gmodel.getSelectedGenomeVersion();
         try {
             // should really move to using gmodel's currently selected  _group_ of sequences rather than
             //    a single sequence...
-            if (aseq == null) {
+            if (!aseq.isPresent()) {
                 throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq");
             }
             if (seq_group == null) {
@@ -123,7 +124,7 @@ public final class UrlLoaderThread extends Thread {
 
                 // update the view, except for the last time where we let the "finally" block do it
                 if (i < urls.length) {
-                    updateViewer(aseq);
+                    updateViewer(aseq.get());
                 }
             }
 
@@ -134,7 +135,7 @@ public final class UrlLoaderThread extends Thread {
         } finally {
             //if (monitor != null) {monitor.closeDialogEventually();}
             // update the view again, mainly in case the thread was interrupted
-            updateViewer(aseq);
+            updateViewer(aseq.get());
         }
     }
 
@@ -249,7 +250,7 @@ public final class UrlLoaderThread extends Thread {
     private static void parseDataFromStream(
             URL url, InputStream stream, String content_type, String file_extension, String type)
             throws IOException {
-        BioSeq aseq = gmodel.getSelectedSeq();
+        Optional<BioSeq> aseq = gmodel.getSelectedSeq();
         GenomeVersion group = gmodel.getSelectedGenomeVersion();
         if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
             logger.info("Attempting to load data from file: {}", url.toExternalForm());
@@ -258,7 +259,9 @@ public final class UrlLoaderThread extends Thread {
             // url.getPath() is OK for this purpose, url.getFile() is not because
             // url.getFile() = url.getPath() + url.getQuery()
             String filename = url.getPath();
-            load(stream, filename, group, aseq);
+            if (aseq.isPresent()) {
+                load(stream, filename, group, aseq.get());
+            }
         } else if (content_type == null
                 || content_type.startsWith("content/unknown")
                 || content_type.startsWith("application/zip")
@@ -273,7 +276,9 @@ public final class UrlLoaderThread extends Thread {
                 }
                 filename += file_extension;
             }
-            load(stream, filename, group, aseq);
+            if (aseq.isPresent()) {
+                load(stream, filename, group, aseq.get());
+            }
         } else if (content_type.startsWith("binary/bps")) {
             DataInputStream dis = null;
             try {

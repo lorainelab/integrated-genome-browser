@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -36,6 +37,12 @@ import java.util.regex.Pattern;
 public final class ScoredMapParser implements Parser {
 
     static Pattern line_regex = Pattern.compile("\t");
+
+    private GenometryModel gmodel;
+
+    public ScoredMapParser() {
+        gmodel = GenometryModel.getInstance();
+    }
 
     public void parse(InputStream istr, String stream_name, BioSeq aseq, GenomeVersion seq_group) {
         try {
@@ -92,8 +99,11 @@ public final class ScoredMapParser implements Parser {
     public List<? extends SeqSymmetry> parse(InputStream is,
             GenomeVersion genomeVersion, String nameType, String uri,
             boolean annotate_seq) throws Exception {
+        final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
         // only annotate_seq = true processed here
-        parse(is, uri, GenometryModel.getInstance().getSelectedSeq(), genomeVersion);
+        if (selectedSeq.isPresent()) {
+            parse(is, uri, selectedSeq.get(), genomeVersion);
+        }
         return null;
     }
 }

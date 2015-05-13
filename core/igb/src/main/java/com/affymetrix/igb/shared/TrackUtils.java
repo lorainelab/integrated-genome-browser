@@ -39,7 +39,7 @@ public class TrackUtils {
 
     public void addTrack(SeqSymmetry sym, String method, Operator operator, ITrackStyleExtended preferredStyle) {
         makeNonPersistentStyle((SymWithProps) sym, method, operator, preferredStyle);
-        BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq aseq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         aseq.addAnnotation(sym);
         IGB.getInstance().getMapView().setAnnotatedSeq(aseq, true, true);
     }

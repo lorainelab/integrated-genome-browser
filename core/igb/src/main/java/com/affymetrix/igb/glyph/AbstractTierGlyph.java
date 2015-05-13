@@ -142,7 +142,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     }
 
     public void initUnloaded() {
-        addMiddleGlyphs(GenometryModel.getInstance().getSelectedSeq());
+        addMiddleGlyphs(GenometryModel.getInstance().getSelectedSeq().orElse(null));
         Glyph glyph = new FillRectGlyph();
         glyph.setCoords(0, 0, 0, getChildHeight());
         addChild(glyph);

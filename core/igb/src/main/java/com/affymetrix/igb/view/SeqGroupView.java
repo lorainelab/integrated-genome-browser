@@ -345,7 +345,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             if (srow >= 0) {
                 String seq_name = (String) seqtable.getValueAt(srow, 0);
                 selected_seq = gmodel.getSelectedGenomeVersion().getSeq(seq_name);
-                if (selected_seq != gmodel.getSelectedSeq()) {
+                if (selected_seq != gmodel.getSelectedSeq().orElse(null)) {
                     gmodel.setSelectedSeq(selected_seq);
                 }
             }

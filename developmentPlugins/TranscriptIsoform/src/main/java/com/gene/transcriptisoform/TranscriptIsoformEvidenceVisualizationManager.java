@@ -13,9 +13,9 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
@@ -213,7 +214,8 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
 
     private void displayIsoforms(List<TierGlyph> labelGlyphs) {
         clearExonConnectorGlyphs();
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        Optional<BioSeq> seq = GenometryModel.getInstance().getSelectedSeq();
+
         for (TierGlyph reference_tier : labelGlyphs) {
             if (reference_tier.getChildren() != null && isCigarTier(reference_tier)) {
                 for (GlyphI glyph : reference_tier.getChildren()) {
@@ -229,7 +231,9 @@ public class TranscriptIsoformEvidenceVisualizationManager implements SeqMapRefr
         for (TierGlyph refSeqTier : refSeqTiers) {
             Set<SimpleSeqSpan> foundSpans = new HashSet<>();
             if (refSeqTier.getInfo() instanceof SeqSymmetry) {
-                foundSpans.addAll(addFoundIntrons(seq, refSeqTier));
+                if (seq.isPresent()) {
+                    foundSpans.addAll(addFoundIntrons(seq.get(), refSeqTier));
+                }
             }
             if (showUnfound) {
                 StyledGlyph.Direction direction = refSeqTier.getDirection();

@@ -1,6 +1,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.EventUtils;
 import com.affymetrix.genometry.event.PropertyHolder;
@@ -42,6 +43,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -457,7 +459,10 @@ public final class TierLabelManager implements PropertyHolder {
         GenometryModel gmodel = GenometryModel.getInstance();
         Set<SeqSymmetry> graph_symmetries = new LinkedHashSet<>();
         Set<RootSeqSymmetry> all_symmetries = new HashSet<>();
-        graph_symmetries.addAll(gmodel.getSelectedSymmetries(gmodel.getSelectedSeq()));
+        final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+        if (selectedSeq.isPresent()) {
+            graph_symmetries.addAll(gmodel.getSelectedSymmetries(selectedSeq.get()));
+        }
 
         if (!preserve_selection) {
             graph_symmetries.clear();

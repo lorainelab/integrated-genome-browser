@@ -36,6 +36,12 @@ import java.util.List;
 
 public final class GrParser implements GraphParser {
 
+    private GenometryModel gmodel;
+
+    public GrParser() {
+        gmodel = GenometryModel.getInstance();
+    }
+
     public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
         BufferedOutputStream bos = null;
         DataOutputStream dos = null;
@@ -175,7 +181,7 @@ public final class GrParser implements GraphParser {
         StringBuffer stripped_name = new StringBuffer();
         InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         if (seq == null) {
-            seq = GenometryModel.getInstance().getSelectedSeq();
+            seq = gmodel.getSelectedSeq().orElse(null);
         }
         // If this is a newly-created seq group, then go ahead and add a new
         // unnamed seq to it if necessary.

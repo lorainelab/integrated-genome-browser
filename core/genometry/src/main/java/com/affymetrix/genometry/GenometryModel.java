@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.commons.lang3.StringUtils;
@@ -172,8 +173,8 @@ public final class GenometryModel {
         }
     }
 
-    public BioSeq getSelectedSeq() {
-        return selectedBioSeq;
+    public Optional<BioSeq> getSelectedSeq() {
+        return Optional.ofNullable(selectedBioSeq);
     }
 
     public void setSelectedSeq(BioSeq seq) {
@@ -259,8 +260,9 @@ public final class GenometryModel {
      */
     public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> graph_syms, Object src) {
         List<BioSeq> seqs_with_selections = setSelectedSymmetries(graph_syms);
-        if (!seqs_with_selections.contains(getSelectedSeq())) {
-            if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
+        final Optional<BioSeq> selectedSeq = getSelectedSeq();
+        if (selectedSeq.isPresent() && !seqs_with_selections.contains(selectedSeq.get())) {
+            if (getSelectedSymmetries(selectedSeq.get()).isEmpty()) {
                 BioSeq seq = null;
                 if (!seqs_with_selections.isEmpty()) {
                     seq = seqs_with_selections.get(0);

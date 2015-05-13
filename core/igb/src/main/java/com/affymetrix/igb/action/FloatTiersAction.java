@@ -92,7 +92,7 @@ public class FloatTiersAction extends SeqMapViewActionA {
         SwingUtilities.invokeLater(() -> {
             SeqMapView v = getSeqMapView();
             GenometryModel m = GenometryModel.getInstance();
-            BioSeq s = m.getSelectedSeq();
+            BioSeq s = m.getSelectedSeq().orElse(null);
             v.setAnnotatedSeq(s, true, true);
             v.getSeqMap().packTiers(false, false, true); //Fire event for sort in data management table
             v.postSelections(); // to disable partner.

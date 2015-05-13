@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -1822,8 +1822,11 @@ public class SeqMapView extends JPanel
                 //Check if clicked on axis.
                 if (tglyph == axis_tier) {
                     SeqSpan visible = getVisibleSpan();
-                    if (selected_syms.isEmpty() && !gmodel.getSelectedSeq().isAvailable(visible.getMin(), visible.getMax())) {
-                        popup.add(load_partial_sequence);
+                    final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+                    if (selectedSeq.isPresent()) {
+                        if (selected_syms.isEmpty() && !selectedSeq.get().isAvailable(visible.getMin(), visible.getMax())) {
+                            popup.add(load_partial_sequence);
+                        }
                     }
 
                     if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {

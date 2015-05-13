@@ -442,11 +442,12 @@ public final class GeneralLoadUtils {
 
     protected static void bufferDataForAutoload() {
         SeqSpan visible = gviewer.getVisibleSpan();
-        BioSeq seq = gmodel.getSelectedSeq();
+        Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
 
-        if (visible == null || seq == null) {
+        if (visible == null || !selectedSeq.isPresent()) {
             return;
         }
+        BioSeq seq = selectedSeq.get();
 
         int length = visible.getLength();
         int min = visible.getMin();
@@ -477,7 +478,7 @@ public final class GeneralLoadUtils {
 //				&& ((QuickLoad)gFeature.symL).getSymLoader() instanceof SymLoaderInstNC){
 //			return false;
 //		}
-        BioSeq selected_seq = gmodel.getSelectedSeq();
+        BioSeq selected_seq = gmodel.getSelectedSeq().orElse(null);
         BioSeq visible_seq = gviewer.getViewSeq();
         if ((selected_seq == null || visible_seq == null)) {
             //      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
@@ -504,7 +505,7 @@ public final class GeneralLoadUtils {
             return;
         }
 
-        BioSeq selected_seq = gmodel.getSelectedSeq();
+        BioSeq selected_seq = gmodel.getSelectedSeq().orElse(null);
         if (selected_seq == null) {
             ErrorHandler.errorPanel("Couldn't find genome data on server for file, genome = " + gFeature.getDataContainer().getGenomeVersion().getName());
             return;
@@ -595,7 +596,7 @@ public final class GeneralLoadUtils {
                     }
 
                     protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {
-                        final BioSeq current_seq = gmodel.getSelectedSeq();
+                        final BioSeq current_seq = gmodel.getSelectedSeq().orElse(null);
 
                         if (current_seq != null) {
                             loadOnSequence(current_seq);
@@ -619,7 +620,7 @@ public final class GeneralLoadUtils {
                     protected Void multiThreadedLoad(List<BioSeq> chrList) throws Exception {
                         internalExecutor = Executors.newFixedThreadPool(MAX_INTERNAL_THREAD);
 
-                        final BioSeq current_seq = gmodel.getSelectedSeq();
+                        final BioSeq current_seq = gmodel.getSelectedSeq().orElse(null);
 
                         if (current_seq != null) {
                             internalExecutor.submit(() -> {
@@ -660,7 +661,7 @@ public final class GeneralLoadUtils {
 
                     @Override
                     protected void process(List<BioSeq> seqs) {
-                        BioSeq selectedSeq = gmodel.getSelectedSeq();
+                        BioSeq selectedSeq = gmodel.getSelectedSeq().orElse(null);
                         BioSeq seq = seqs.get(0);
                         // If user has switched sequence then do not process it
                         if (selectedSeq == seq) {
@@ -674,7 +675,7 @@ public final class GeneralLoadUtils {
                             feature.setLoadStrategy(LoadStrategy.NO_LOAD);
                         }
 
-                        BioSeq seq = gmodel.getSelectedSeq();
+                        BioSeq seq = gmodel.getSelectedSeq().orElse(null);
                         if (seq != null) {
                             gviewer.setAnnotatedSeq(seq, true, true);
                         } else if (gmodel.getSelectedGenomeVersion() != null) {
@@ -737,7 +738,7 @@ public final class GeneralLoadUtils {
                     @Override
                     protected void finished() {
 
-                        BioSeq aseq = gmodel.getSelectedSeq();
+                        BioSeq aseq = gmodel.getSelectedSeq().orElse(null);
 
                         if (aseq != null) {
                             gviewer.setAnnotatedSeq(aseq, true, true);
@@ -1084,7 +1085,7 @@ public final class GeneralLoadUtils {
                         gmodel.setSelectedSeq(loadGroup.getSeq(0));
                     }
                 } else {
-                    gmodel.setSelectedSeq(gmodel.getSelectedSeq());
+                    gmodel.setSelectedSeq(gmodel.getSelectedSeq().orElse(null));
                 }
 //                DataProviderManager.getInstance().fireServerInitEvent(DataProviderManager.getInstance().getLocalFilesServer(), ResourceStatus.Initialized, true);
                 if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved) {
@@ -1337,7 +1338,7 @@ public final class GeneralLoadUtils {
             @Override
             protected void finished() {
                 try {
-                    BioSeq aseq = GenometryModel.getInstance().getSelectedSeq();
+                    BioSeq aseq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
                     if (aseq != null) {
                         gviewer.setAnnotatedSeq(aseq, true, true);
                     } else if (GenometryModel.getInstance().getSelectedSeq() == null && loadSymLoader.getAnnotatedSeqGroup() != null) {

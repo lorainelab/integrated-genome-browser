@@ -260,7 +260,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             } catch (ParseException x) {
                 return super.findSpans(search_text, visibleSpan);
             }
-            BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+            BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
             List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
@@ -291,7 +291,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             } catch (ParseException x) {
                 return super.findSpans(search_text, visibleSpan);
             }
-            BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+            BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
             List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
@@ -324,7 +324,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             int width = end - start;
             start = (center - width / 2);
             end = (center + width / 2);
-            BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+            BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
             List<SeqSpan> spans = new ArrayList<>();
             spans.add(new SimpleSeqSpan(start, end, seq));
             return spans;
@@ -393,7 +393,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     public void setRangeText(double start, double end) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         range_box.setText((seq == null ? "" : seq.getId() + ":") + nformat.format(start) + "-" + nformat.format(end));
     }
 
@@ -579,11 +579,11 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             return;
         }
 
-        if (newSeq != GenometryModel.getInstance().getSelectedSeq()) {
+        if (newSeq != GenometryModel.getInstance().getSelectedSeq().orElse(null)) {
             // set the chromosome, and sleep until it's set.
             GenometryModel.getInstance().setSelectedSeq(newSeq);
             for (int i = 0; i < 100; i++) {
-                if (GenometryModel.getInstance().getSelectedSeq() != newSeq) {
+                if (GenometryModel.getInstance().getSelectedSeq().orElse(null) != newSeq) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException ex) {

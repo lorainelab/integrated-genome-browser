@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.seekablestream.SeekableStream;
@@ -38,6 +39,12 @@ import net.sf.samtools.seekablestream.SeekableStream;
 public final class NibbleResiduesParser implements Parser {
 
     private static int BUFSIZE = 65536;	// buffer for outputting
+
+    private GenometryModel gmodel;
+
+    public NibbleResiduesParser() {
+        gmodel = GenometryModel.getInstance();
+    }
 
     /**
      * Parses an input stream.
@@ -366,7 +373,8 @@ public final class NibbleResiduesParser implements Parser {
             boolean annotate_seq) throws Exception {
         // only annotate_seq = true processed here
         BioSeq aseq = NibbleResiduesParser.parse(is, genomeVersion);
-        if (aseq != GenometryModel.getInstance().getSelectedSeq()) {
+        final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
+        if (aseq != selectedSeq.orElse(null)) {
             //TODO: maybe set the current seq to this seq
             Logger.getLogger(NibbleResiduesParser.class.getName()).log(Level.WARNING,
                     "This is not the currently-selected sequence.");

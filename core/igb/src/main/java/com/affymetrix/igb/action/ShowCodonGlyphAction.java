@@ -3,8 +3,8 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.affymetrix.igb.glyph.CodonGlyph;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import java.awt.event.ActionEvent;
 
 /**
@@ -15,7 +15,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 //	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_THREE_LETTER = new ShowCodonGlyphAction("3 letter", 3);
 //	private static final ShowCodonGlyphAction SHOW_CODON_GLYPH_ACTION_ONE_LETTER = new ShowCodonGlyphAction("1 letter", 1);
 //	private static final ShowCodonGlyphAction HIDE_CODON_GLYPH = new ShowCodonGlyphAction("hide", 0);
-//	
+//
 //	public static ShowCodonGlyphAction getThreeLetterAction() {
 //		return SHOW_CODON_GLYPH_ACTION_THREE_LETTER;
 //	}
@@ -23,7 +23,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
 //	public static ShowCodonGlyphAction getOneLetterAction() {
 //		return SHOW_CODON_GLYPH_ACTION_ONE_LETTER;
 //	}
-//	
+//
 //	public static ShowCodonGlyphAction getHideCodonAction() {
 //		return HIDE_CODON_GLYPH;
 //	}
@@ -45,7 +45,7 @@ public class ShowCodonGlyphAction extends SeqMapViewActionA {
     }
 
     private void redraw(SeqMapViewI seqMapView) {
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         seqMapView.setAnnotatedSeq(seq, true, true, true);
     }
 }

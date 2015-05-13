@@ -88,7 +88,7 @@ public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.Refr
             }
         });
 
-        rangeSlider.setToolTipText("Set left know to minimum and right know to maxium.");
+        rangeSlider.setToolTipText("Set left knob to minimum and right knob to maximum.");
 
         minValLabel.setText("Min:");
 

@@ -227,7 +227,11 @@ public class QuickloadUtils {
     }
 
     private static boolean isGzipContentEncoding(final HttpRequest httpRequest) {
-        return httpRequest.contentEncoding().equals("gzip");
+        final String contentEncoding = httpRequest.contentEncoding();
+        if (!Strings.isNullOrEmpty(contentEncoding)) {
+            return contentEncoding.equals("gzip");
+        }
+        return false;
     }
 
 }

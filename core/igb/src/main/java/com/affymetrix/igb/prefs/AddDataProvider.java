@@ -12,7 +12,6 @@ import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
-import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
@@ -273,12 +271,12 @@ public class AddDataProvider extends JFrame {
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 
         CThreadWorker<Boolean, Void> worker;
-        worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText()) {
+        worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText().trim()) {
             @Override
             protected Boolean runInBackground() {
                 if (isEditPanel) {
-                    dataProvider.setUrl(urlText.getText());
-                    dataProvider.setName(nameText.getText());
+                    dataProvider.setUrl(urlText.getText().trim());
+                    dataProvider.setName(nameText.getText().trim());
                     dataProvider.setStatus(LoadUtils.ResourceStatus.NotInitialized);
                     Timer timer = new Timer(400, event -> {
                         if (dataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
@@ -288,15 +286,15 @@ public class AddDataProvider extends JFrame {
                     timer.setRepeats(false);
                     timer.start();
                 } else {
-                    String url = urlText.getText();
-                    String name = nameText.getText();
+                    String url = urlText.getText().trim();
+                    String name = nameText.getText().trim();
                     if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
                         Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
                         if (factory.isPresent()) {
                             DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
                             dataProviderManager.addDataProvider(createdDataProvider);
                             if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                                ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                                return false;
                             }
                         }
                     }
@@ -314,17 +312,15 @@ public class AddDataProvider extends JFrame {
                 }
 
                 if (serverAdded) {
-                    ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText().trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
                 } else {
-                    ErrorHandler.errorPanel(
-                            "Unable to Load Data Source",
-                            "Unable to load " + (String) typeCombo.getSelectedItem() + " data source" + urlText.getText() + ".", Level.SEVERE);
+                    ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
                 }
 
             }
         };
 
-        Optional<DataProvider> server = dataProviderManager.getServerFromUrl(urlText.getText());
+        Optional<DataProvider> server = dataProviderManager.getServerFromUrl(urlText.getText().trim());
         if (!server.isPresent() || isEditPanel) {
             CThreadHolder.getInstance().execute(evt, worker);
         } else {

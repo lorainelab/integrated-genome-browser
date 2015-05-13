@@ -5,7 +5,6 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataSet;
-import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -691,7 +690,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                                                 if (gServer.getMirrorUrl().isPresent()) {
                                                     URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrl(), gServer.getMirrorUrl().get()));
                                                     gFeature.getSymL().setURI(newURI);
-                                                    ((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader().setURI(newURI);
+                                                    gFeature.getSymL().setURI(newURI);
                                                 }
                                             }
                                         }

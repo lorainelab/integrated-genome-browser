@@ -12,7 +12,6 @@ import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
-import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
@@ -296,7 +294,7 @@ public class AddDataProvider extends JFrame {
                             DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
                             dataProviderManager.addDataProvider(createdDataProvider);
                             if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                                ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                                return false;
                             }
                         }
                     }
@@ -316,9 +314,7 @@ public class AddDataProvider extends JFrame {
                 if (serverAdded) {
                     ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText().trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
                 } else {
-                    ErrorHandler.errorPanel(
-                            "Unable to Load Data Source",
-                            "Unable to load " + (String) typeCombo.getSelectedItem() + " data source" + urlText.getText().trim() + ".", Level.SEVERE);
+                    ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
                 }
 
             }

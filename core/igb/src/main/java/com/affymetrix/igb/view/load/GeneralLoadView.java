@@ -6,6 +6,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.LocalDataSetProvider;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
@@ -631,13 +632,15 @@ public final class GeneralLoadView {
             @Override
             protected void finished() {
                 DataContainer dataContainer = feature.getDataContainer();
-                if (dataContainer.removeDataSet(feature)) {
-                    SeqGroupView.getInstance().refreshTable();
-                    if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
-                            && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
-                        gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
-                    } else {
-                        gmodel.setSelectedSeq(null);
+                if (dataContainer.getDataProvider() instanceof LocalDataSetProvider) {
+                    if (dataContainer.removeDataSet(feature)) {
+                        SeqGroupView.getInstance().refreshTable();
+                        if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
+                                && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq())) {
+                            gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
+                        } else {
+                            gmodel.setSelectedSeq(null);
+                        }
                     }
                 }
 

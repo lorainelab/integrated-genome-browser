@@ -2,7 +2,6 @@ package com.lorainelab.quickload.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.common.base.Strings;
@@ -192,12 +191,12 @@ public class QuickloadUtils {
         } else {
             int code = -1;
             try {
-                final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
+                code = HttpRequest.get(uri.toURL())
                         .trustAllCerts()
                         .trustAllHosts()
                         .followRedirects(true)
-                        .connectTimeout(1000);
-                code = httpRequest.code();
+                        .connectTimeout(1000)
+                        .code();
             } catch (HttpRequestException ex) {
             }
             return code == HttpURLConnection.HTTP_OK;
@@ -214,20 +213,12 @@ public class QuickloadUtils {
             InputStream inputStream = new FileInputStream(f);
             return inputStream;
         }
-        final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
+        return HttpRequest.get(uri.toURL())
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()
                 .trustAllHosts()
-                .followRedirects(true);
-        if (isGzipContentEncoding(httpRequest)) {
-            return GeneralUtils.getGZipInputStream(uri.toString(), httpRequest.buffer());
-        }
-        return httpRequest.buffer();
-    }
-
-    private static boolean isGzipContentEncoding(final HttpRequest httpRequest) {
-        return httpRequest.contentEncoding().equals("gzip");
+                .followRedirects(true).buffer();
     }
 
 }

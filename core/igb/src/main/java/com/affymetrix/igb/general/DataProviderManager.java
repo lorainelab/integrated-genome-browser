@@ -271,6 +271,7 @@ public class DataProviderManager {
             GeneralLoadUtils.getAllDataSets().stream()
                     .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
                     .forEach(ds -> loadView.removeDataSet(ds, true));
+            dataProvider.setStatus(Disabled);
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);

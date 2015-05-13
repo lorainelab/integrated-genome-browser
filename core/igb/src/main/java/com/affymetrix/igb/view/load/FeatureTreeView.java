@@ -681,27 +681,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
                             if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider && !isURLReachable(feature.getURI())) {
-                                DataProvider gServer = feature.getDataContainer().getDataProvider();
-                                Optional<String> mirrorUrl = gServer.getMirrorUrl();
-                                if (mirrorUrl.isPresent() && !Strings.isNullOrEmpty(gServer.getMirrorUrl().get())) {
-                                    if (ModalUtils.confirmPanel(gServer.getName() + " is unreachable at this time.\nWould you like to use the mirror site?")) {
-                                        for (DataSet gFeature : feature.getDataContainer().getDataSets()) {
-                                            if (!gFeature.isVisible() && Strings.isNullOrEmpty(gFeature.getMethod())) {
-                                                if (gServer.getMirrorUrl().isPresent()) {
-                                                    URI newURI = URI.create(gFeature.getSymL().uri.toString().replaceAll(gServer.getUrl(), gServer.getMirrorUrl().get()));
-                                                    gFeature.getSymL().setURI(newURI);
-                                                }
-                                            }
-                                        }
-                                        tn.setChecked(true);
-                                    } else {
-                                        //qlmirror
-                                        message = "The feature " + feature.getURI() + " is not reachable.";
-                                        ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
-                                        tn.setChecked(false);
-                                        return;
-                                    }
-                                }
+                                message = "The feature " + feature.getURI() + " is not reachable.";
+                                ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
+                                tn.setChecked(false);
+                                return;
                             }
 
                             // prevent from adding duplicated features

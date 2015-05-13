@@ -207,7 +207,7 @@ public abstract class GenericAction extends AbstractAction {
 
     public String getKeyStrokeBinding() {
         String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
-        if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
+        if (prefKeyStrokeBinding == null) {
             prefKeyStrokeBinding = keyStrokeBinding;
         } else {
             keyStrokeBinding = prefKeyStrokeBinding;
@@ -218,7 +218,7 @@ public abstract class GenericAction extends AbstractAction {
 
     public void setKeyStrokeBinding(String keyStrokeBinding) {
         String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
-        if (Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
+        if (prefKeyStrokeBinding == null) {
             prefKeyStrokeBinding = keyStrokeBinding;
         }
         this.keyStrokeBinding = prefKeyStrokeBinding;

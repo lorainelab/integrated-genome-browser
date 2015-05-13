@@ -45,9 +45,9 @@ public final class KeyStrokeEditPanel extends JPanel {
     private final JLabel keyLabel;
     private final JLabel noteLabel;
     private final JRPButton clear_button;
-    private String key = null;
-    private String lastTimeFocusGained = "";
-    private String lastCommand = "";
+    private String key;
+    private String lastTimeFocusGained;
+    private String lastCommand;
     private IgbService igbService;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeEditPanel.class);
 
@@ -136,14 +136,15 @@ public final class KeyStrokeEditPanel extends JPanel {
                 Object o = fe.getSource();
                 if (o instanceof JTextField) {
                     JTextField tf = (JTextField) o;
-                    KeyStrokeEditPanel.this.lastTimeFocusGained = tf.getText();
+                    lastTimeFocusGained = tf.getText();
                 }
             }
 
             @Override
             public void focusLost(java.awt.event.FocusEvent evt) {
-                if (KeyStrokeEditPanel.this.lastCommand != null) {
-                    applyAction(KeyStrokeEditPanel.this.lastCommand);
+                if (lastCommand != null) {
+                    applyAction(lastCommand);
+                    lastCommand = null;
                 }
             }
 

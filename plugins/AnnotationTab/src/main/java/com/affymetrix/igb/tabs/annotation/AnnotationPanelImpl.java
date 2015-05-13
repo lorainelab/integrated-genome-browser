@@ -383,7 +383,7 @@ public class AnnotationPanelImpl extends AnnotationPanel implements Selections.R
 
     private Set<String> getFields(ITrackStyleExtended style) {
         Set<String> fields = new TreeSet<>();
-        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().get();
+        BioSeq seq = GenometryModel.getInstance().getSelectedSeq().orElse(null);
         if (seq != null) {
             SeqSymmetry sym = seq.getAnnotation(style.getMethodName());
             if (sym != null && sym.getChildCount() > 0) {

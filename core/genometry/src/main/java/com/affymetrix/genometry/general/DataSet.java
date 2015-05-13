@@ -248,7 +248,7 @@ public final class DataSet {
             currentRequestSym.removeChildren();
         }
         method = null;
-        if (getSymL() != null) {
+        if (symL != null) {
             getSymL().clear();
         }
         setInvisible();

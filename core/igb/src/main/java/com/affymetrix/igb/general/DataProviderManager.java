@@ -270,8 +270,11 @@ public class DataProviderManager {
             handleSinglePatternCausedRaceCondition();
             GeneralLoadUtils.getAllDataSets().stream()
                     .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
-                    .forEach(ds -> loadView.removeDataSet(ds, true));
-            dataProvider.setStatus(Disabled);
+                    .forEach(ds -> {
+                        loadView.removeDataSet(ds, true);
+                        ds.getDataContainer().getGenomeVersion().removeDataContainer(ds.getDataContainer());
+                    });
+
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);

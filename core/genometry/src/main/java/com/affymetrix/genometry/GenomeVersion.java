@@ -85,6 +85,10 @@ public class GenomeVersion {
         this.dataContainers.add(dataContainer);
     }
 
+    final public void removeDataContainer(DataContainer dataContainer) {
+        this.dataContainers.remove(dataContainer);
+    }
+
     final public Set<DataContainer> getAvailableDataContainers() {
         return dataContainers.stream()
                 .filter(dc -> dc.getDataProvider() != null)

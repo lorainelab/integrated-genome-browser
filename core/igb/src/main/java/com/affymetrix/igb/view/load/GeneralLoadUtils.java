@@ -1080,7 +1080,7 @@ public final class GeneralLoadUtils {
                 if (result) {
                     GeneralLoadView.addFeatureTier(gFeature);
                     SeqGroupView.getInstance().refreshTable();
-                    if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq() == null) {
+                    if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq().orElse(null) == null) {
                         // select a chromosomes
                         gmodel.setSelectedSeq(loadGroup.getSeq(0));
                     }

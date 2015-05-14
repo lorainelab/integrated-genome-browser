@@ -69,6 +69,7 @@ import com.affymetrix.igb.shared.UnlockTierHeightAction;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
+import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.search.ISearchHints;
@@ -76,6 +77,7 @@ import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import java.net.Authenticator;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -99,6 +101,7 @@ public class Activator implements BundleActivator {
     @Override
     public void start(final BundleContext bundleContext) throws Exception {
         verifyJidesoftLicense();
+        initializeIgbAuthenticator();
         igb = IGB.getInstance();
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
@@ -109,6 +112,13 @@ public class Activator implements BundleActivator {
         addGenericActionListener();
         initColorProvider(bundleContext);
         initFilter(bundleContext);
+    }
+
+    public void initializeIgbAuthenticator() {
+        // when HTTP authentication is needed, getPasswordAuthentication will
+        //    be called on the authenticator set as the default
+//        Authenticator.setDefault(new IGBAuthenticator(igbMainFrame));
+        Authenticator.setDefault(new IGBAuthenticator());
     }
 
     private void setupServiceDependencyTracker(final BundleContext bundleContext) {

@@ -44,7 +44,6 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
@@ -67,7 +66,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
@@ -308,10 +306,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                 mi.setDockIconImage(applicationIconImage);
             }
         }
-        // when HTTP authentication is needed, getPasswordAuthentication will
-        //    be called on the authenticator set as the default
-//        Authenticator.setDefault(new IGBAuthenticator(igbMainFrame));
-        Authenticator.setDefault(new IGBAuthenticator());
         StateProvider stateProvider = new IGBStateProvider();
         DefaultStateProvider.setGlobalStateProvider(stateProvider);
         igbMainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

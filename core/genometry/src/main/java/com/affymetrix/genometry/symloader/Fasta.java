@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
  */
 public class Fasta extends FastaCommon implements AnnotationWriter {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Fasta.class);
     private static final Pattern header_regex
             = Pattern.compile("^\\s*>\\s*(.+)");
     private static final int COLUMNS = 50;
@@ -205,14 +207,12 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
                     }
                     if (count + line.length() >= max) {
                         //Special case when the whole line is read in one go
-                        int toBeAdded = count + line.length() - max;
-                        if (count + toBeAdded < max && line.length() >= max) {
-                            line = line.substring(min, max);
-                            count += line.length();
-                        } else {
-                            // skip ending characters
-                            line = line.substring(0, count + line.length() - max);
-                        }
+                        // skip ending characters
+                        line = line.substring(0, max - count);
+                        buf.append(line);
+                        break;
+                    } else {
+                        count += line.length();
                     }
                     buf.append(line);
                 }

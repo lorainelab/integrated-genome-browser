@@ -57,8 +57,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreesvg</artifactId>
+            <groupId>org.freehep</groupId>
+            <artifactId>freehep-graphicsio-svg</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

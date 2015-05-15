@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -18,8 +19,8 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
-import org.jfree.graphics2d.svg.SVGGraphics2D;
-import org.jfree.graphics2d.svg.SVGUtils;
+import org.freehep.graphicsio.svg.SVGExportFileType;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +43,15 @@ public class HeadLessExport {
         "Portable Network Graphics (*.png)",
         "Joint Photographic Experts Group (*.jpeg)",};
 
+    protected final Properties svgProperties;
+    protected final SVGExportFileType svgExport;
     protected BufferedImage exportImage;
     protected ExportImageInfo imageInfo;
 
     public HeadLessExport() {
-        exportNode = PreferenceUtils.getExportPrefsNode();
+        svgProperties = new Properties();
+        svgExport = new SVGExportFileType();
+         exportNode = PreferenceUtils.getExportPrefsNode();
     }
 
     public void headlessComponentExport(Component component, File f, String ext, boolean isHeadlessExport) {
@@ -61,9 +66,11 @@ public class HeadLessExport {
             }
 
             if (ext.equals(EXTENSION[0])) {
-                SVGGraphics2D g2 = new SVGGraphics2D((int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-                component.paint(g2);
-                SVGUtils.writeToSVG(f, g2.getSVGElement());
+
+                svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
+                        (int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
+                svgExport.exportToFile(f, component, null, svgProperties, "");
+
             } else {
                 exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
                 Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."

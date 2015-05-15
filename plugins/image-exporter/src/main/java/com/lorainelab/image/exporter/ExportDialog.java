@@ -192,6 +192,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         exportDialogGui.getExtComboBox().addActionListener((java.awt.event.ActionEvent evt) -> {
             extComboBoxActionPerformed();
         });
+        toggleInputForExt();
     }
 
     private void initializeDefaultExportFile() {
@@ -610,6 +611,10 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             }
         }
 
+        toggleInputForExt();
+    }
+
+    private void toggleInputForExt() {
         if (selectedExt.equals(EXTENSION[0])) {
             exportDialogGui.getMvRadioButton().setSelected(true);
             exportDialogGui.getWfRadioButton().setEnabled(false);

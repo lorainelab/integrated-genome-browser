@@ -10,12 +10,15 @@ import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SC
 import com.affymetrix.igb.general.DataProviderManager;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
@@ -38,6 +41,8 @@ public class IGBAuthenticator extends Authenticator {
     private static final Logger logger = LoggerFactory.getLogger(IGBAuthenticator.class);
     private static final Set<String> HOSTIGNORELIST = Sets.newHashSet();
     private static final StringEncrypter ENCRYPTER = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
+    private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -46,6 +51,9 @@ public class IGBAuthenticator extends Authenticator {
         }
         final JPanel panel = new JPanel(new MigLayout("wrap 2"));
         panel.add(new JLabel(getRequestingHost() + " asks for authentication:"), "span 2");
+        final JLabel errorLoginLabel = new JLabel("");
+        panel.add(errorLoginLabel, "span 2");
+        errorLoginLabel.setForeground(Color.red);
         panel.add(new JLabel("User:"));
         final JTextField user = new JTextField(20);
         panel.add(user);
@@ -85,9 +93,14 @@ public class IGBAuthenticator extends Authenticator {
             rememberCredentials.setSelected(currentRememberStatus);
             panel.add(rememberCredentials);
         }
-        if (JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION) {
-            temporarilyIgnoreHost();
-            return null;
+        int option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
+        String pwd = new String(password.getPassword());
+        String uname = user.getText();
+        while (option != JOptionPane.CANCEL_OPTION && !testAuthentication(uname, pwd)) {
+            errorLoginLabel.setText(ERROR_LOGIN);
+            option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
+            pwd = new String(password.getPassword());
+            uname = user.getText();
         }
         // work around Java's internal ISO-8859-1 encoding
         final String string = new String(password.getPassword());
@@ -109,7 +122,12 @@ public class IGBAuthenticator extends Authenticator {
             dataProvider.get().setLogin(username);
             dataProvider.get().setPassword(passwordPlainText);
         }
-        return new PasswordAuthentication(username, chars);
+        if (testAuthentication(username, pwd)) {
+            return new PasswordAuthentication(username, chars);
+        } else {
+            temporarilyIgnoreHost();
+            return null;
+        }
     }
 
     private void temporarilyIgnoreHost() {
@@ -136,6 +154,17 @@ public class IGBAuthenticator extends Authenticator {
             Authenticator.setDefault(this);
         }
         return pa;
+    }
+
+    private boolean testAuthentication(String username, String password) {
+        String hostUrl = getRequestingHost();
+        try {
+            URL url = new URL(hostUrl);
+            url.openStream();
+        } catch (IOException ex) {
+            return false;
+        }
+        return true;
     }
 
     public static void resetAuthentication(DataProvider dataProvider) {

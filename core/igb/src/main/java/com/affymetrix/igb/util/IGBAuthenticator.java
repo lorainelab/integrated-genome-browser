@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -43,6 +42,7 @@ public class IGBAuthenticator extends Authenticator {
     private static final StringEncrypter ENCRYPTER = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
+    private static int loginAttempts = 0;
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -93,15 +93,12 @@ public class IGBAuthenticator extends Authenticator {
             rememberCredentials.setSelected(currentRememberStatus);
             panel.add(rememberCredentials);
         }
-        int option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
-        String pwd = new String(password.getPassword());
-        String uname = user.getText();
-        while (option != JOptionPane.CANCEL_OPTION && !testAuthentication(uname, pwd)) {
+        if(loginAttempts > 0) {
             errorLoginLabel.setText(ERROR_LOGIN);
-            option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
-            pwd = new String(password.getPassword());
-            uname = user.getText();
+        } else {
+            loginAttempts++;
         }
+        int option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
         // work around Java's internal ISO-8859-1 encoding
         final String string = new String(password.getPassword());
         final byte[] bytes;
@@ -122,10 +119,11 @@ public class IGBAuthenticator extends Authenticator {
             dataProvider.get().setLogin(username);
             dataProvider.get().setPassword(passwordPlainText);
         }
-        if (testAuthentication(username, pwd)) {
+        if (option == JOptionPane.OK_OPTION) {
             return new PasswordAuthentication(username, chars);
         } else {
             temporarilyIgnoreHost();
+            loginAttempts = 0;
             return null;
         }
     }
@@ -154,17 +152,6 @@ public class IGBAuthenticator extends Authenticator {
             Authenticator.setDefault(this);
         }
         return pa;
-    }
-
-    private boolean testAuthentication(String username, String password) {
-        String hostUrl = getRequestingHost();
-        try {
-            URL url = new URL(hostUrl);
-            url.openStream();
-        } catch (IOException ex) {
-            return false;
-        }
-        return true;
     }
 
     public static void resetAuthentication(DataProvider dataProvider) {

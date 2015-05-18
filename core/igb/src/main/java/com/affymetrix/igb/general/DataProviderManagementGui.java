@@ -201,7 +201,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     }
 
     private void initAuthBtn() {
-        authBtn = new JButton("Authenticate\u2026");
+        authBtn = new JButton("Enter Password\u2026");
         authBtn.addActionListener((ActionEvent e) -> {
             handleEditAuthenticationEvent();
         });

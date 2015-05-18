@@ -170,6 +170,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         initializeResolutionComboBox();
         initSpinner(currentUnit);
         initializeUnitComboBox();
+        updateExportDialogComponents();
     }
 
     private void initializeUnitComboBox() {
@@ -192,7 +193,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         exportDialogGui.getExtComboBox().addActionListener((java.awt.event.ActionEvent evt) -> {
             extComboBoxActionPerformed();
         });
-        updateExportDialogComponents();
     }
 
     private void initializeDefaultExportFile() {

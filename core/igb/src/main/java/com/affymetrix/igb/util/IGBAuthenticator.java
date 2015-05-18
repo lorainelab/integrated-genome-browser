@@ -120,6 +120,9 @@ public class IGBAuthenticator extends Authenticator {
             dataProvider.get().setPassword(passwordPlainText);
         }
         if (option == JOptionPane.OK_OPTION) {
+            if(Strings.isNullOrEmpty(username) || chars.length == 0) {
+                return null;
+            }
             return new PasswordAuthentication(username, chars);
         } else {
             temporarilyIgnoreHost();

@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
 import javax.swing.BorderFactory;
@@ -316,9 +317,10 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         dataSourcesTable.stopCellEditing();
         DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(dataSourcesTable.getSelectedRow());
         try {
+            selectedDataProvider.initialize();
             URL u = new URL(selectedDataProvider.getUrl());
             IGBAuthenticator.resetAuthentication(selectedDataProvider);
-            IGBAuthenticator.requestPasswordAuthentication(
+            PasswordAuthentication pa = IGBAuthenticator.requestPasswordAuthentication(
                     u.getHost(),
                     null,
                     u.getPort(),
@@ -327,6 +329,11 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                     null,
                     u,
                     RequestorType.SERVER);
+            while(pa == null) {
+                pa = IGBAuthenticator.requestPasswordAuthentication(
+                        u.getHost(), null, u.getPort(), u.getProtocol(), 
+                        "Server credentials", null, u, RequestorType.SERVER);
+            }
         } catch (MalformedURLException ex) {
             logger.error(ex.getMessage(), ex);
         }

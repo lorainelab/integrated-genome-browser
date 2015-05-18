@@ -42,7 +42,7 @@ public class IGBAuthenticator extends Authenticator {
     private static final StringEncrypter ENCRYPTER = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
-    private static int loginAttempts = 0;
+    private int loginAttempts = 0;
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {

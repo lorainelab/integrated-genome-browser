@@ -93,7 +93,7 @@ public class IGBAuthenticator extends Authenticator {
             rememberCredentials.setSelected(currentRememberStatus);
             panel.add(rememberCredentials);
         }
-        if(loginAttempts > 0) {
+        if (loginAttempts > 0) {
             errorLoginLabel.setText(ERROR_LOGIN);
         } else {
             loginAttempts++;
@@ -120,7 +120,7 @@ public class IGBAuthenticator extends Authenticator {
             dataProvider.get().setPassword(passwordPlainText);
         }
         if (option == JOptionPane.OK_OPTION) {
-            if(Strings.isNullOrEmpty(username) || chars.length == 0) {
+            if (Strings.isNullOrEmpty(username) || chars.length == 0) {
                 return null;
             }
             return new PasswordAuthentication(username, chars);

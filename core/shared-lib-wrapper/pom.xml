@@ -297,7 +297,6 @@
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
-                            org.jfree.graphics2d.svg,
                             com.github.kevinsawicki.http    
                         </Export-Package>
                     </instructions>

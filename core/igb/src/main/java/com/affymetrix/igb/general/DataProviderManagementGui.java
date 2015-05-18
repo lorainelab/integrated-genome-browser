@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
+import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -56,9 +57,12 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
 
     public static final String COMPONENT_NAME = "DataProviderManagementGui";
     private static final Logger logger = LoggerFactory.getLogger(DataProviderManagementGui.class);
-    public static final String TAB_NAME = "Data Sources";
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
+    public static final String TAB_NAME = BUNDLE.getString("dataSourceTabName");
     private static final int TAB_POSITION = 3;
     private static final Icon REFRESH_ICON = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
+    private static final String SERVER_CREDENTIALS = BUNDLE.getString("serverCredentials");
+    private final String EDIT_DATA_SOURCE = BUNDLE.getString("editDataSource");
     private DataProviderManager dataProviderManager;
     private final StyledJTable dataSourcesTable;
     private DataProviderTableModel dataProviderTableModel;
@@ -99,10 +103,10 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                 JComponent jc = (JComponent) c;
                 final DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(row);
                 if (selectedDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                    jc.setToolTipText("Site not responding. Check the URL or contact site maintainers.");
+                    jc.setToolTipText(BUNDLE.getString("siteNotResponding"));
                     c.setBackground(Color.RED);
                 } else if (selectedDataProvider.useMirrorUrl()) {
-                    jc.setToolTipText("Using Mirror URL for this Data Source.");
+                    jc.setToolTipText(BUNDLE.getString("mirrorUrlMessage"));
                     c.setBackground(Color.YELLOW);
                 } else {
                     jc.setToolTipText("");
@@ -210,7 +214,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
             final DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(row);
-            addDataProvider.init(true, "Edit Data Source", selectedDataProvider);
+            addDataProvider.init(true, EDIT_DATA_SOURCE, selectedDataProvider);
         });
         editBtn.setEnabled(false);
     }
@@ -220,7 +224,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         addBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
-            addDataProvider.init(false, "Edit Data Source", null);
+            addDataProvider.init(false, EDIT_DATA_SOURCE, null);
         });
     }
 
@@ -317,7 +321,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         dataSourcesTable.stopCellEditing();
         DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(dataSourcesTable.getSelectedRow());
         try {
-            selectedDataProvider.initialize();
             URL u = new URL(selectedDataProvider.getUrl());
             IGBAuthenticator.resetAuthentication(selectedDataProvider);
             PasswordAuthentication pa = IGBAuthenticator.requestPasswordAuthentication(
@@ -325,15 +328,10 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                     null,
                     u.getPort(),
                     u.getProtocol(),
-                    "Server Credentials",
+                    SERVER_CREDENTIALS,
                     null,
                     u,
                     RequestorType.SERVER);
-            while(pa == null) {
-                pa = IGBAuthenticator.requestPasswordAuthentication(
-                        u.getHost(), null, u.getPort(), u.getProtocol(), 
-                        "Server credentials", null, u, RequestorType.SERVER);
-            }
         } catch (MalformedURLException ex) {
             logger.error(ex.getMessage(), ex);
         }

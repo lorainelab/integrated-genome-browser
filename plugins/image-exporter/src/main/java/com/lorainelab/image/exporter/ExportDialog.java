@@ -170,6 +170,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         initializeResolutionComboBox();
         initSpinner(currentUnit);
         initializeUnitComboBox();
+        updateExportDialogComponents();
     }
 
     private void initializeUnitComboBox() {
@@ -610,6 +611,10 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             }
         }
 
+        updateExportDialogComponents();
+    }
+
+    private void updateExportDialogComponents() {
         if (selectedExt.equals(EXTENSION[0])) {
             exportDialogGui.getMvRadioButton().setSelected(true);
             exportDialogGui.getWfRadioButton().setEnabled(false);

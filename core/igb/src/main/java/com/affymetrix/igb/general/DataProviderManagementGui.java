@@ -150,7 +150,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private void initLoadPriorityUpBtn() {
         ImageIcon up_icon = MenuUtil.getIcon("16x16/actions/up.png");
         loadPriorityUpBtn = new JButton(up_icon);
-        loadPriorityUpBtn.setToolTipText("Increase load priority");
+        loadPriorityUpBtn.setToolTipText(BUNDLE.getString("increaseLoadPriority"));
         loadPriorityUpBtn.addActionListener(e -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
@@ -171,7 +171,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private void initLoadPriorityDownBtn() {
         ImageIcon downIcon = MenuUtil.getIcon("16x16/actions/down.png");
         loadPriorityDownBtn = new JButton(downIcon);
-        loadPriorityDownBtn.setToolTipText("Decrease sequence server priority");
+        loadPriorityDownBtn.setToolTipText(BUNDLE.getString("decreaseSeqServerPriority"));
         loadPriorityDownBtn.addActionListener(e -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
@@ -190,7 +190,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     }
 
     private void initRemoveBtn() {
-        removeBtn = new JButton("Remove\u2026");
+        removeBtn = new JButton(BUNDLE.getString("removeButton"));
         removeBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
@@ -201,7 +201,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     }
 
     private void initAuthBtn() {
-        authBtn = new JButton("Authenticate\u2026");
+        authBtn = new JButton(BUNDLE.getString("authenticateButton"));
         authBtn.addActionListener((ActionEvent e) -> {
             handleEditAuthenticationEvent();
         });
@@ -209,7 +209,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     }
 
     private void initEditBtn() {
-        editBtn = new JButton("Edit\u2026");
+        editBtn = new JButton(BUNDLE.getString("editButton"));
         editBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
@@ -220,7 +220,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     }
 
     private void initAddBtn() {
-        addBtn = new JButton("Add\u2026");
+        addBtn = new JButton(BUNDLE.getString("addButton"));
         addBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();

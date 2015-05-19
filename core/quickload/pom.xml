@@ -67,14 +67,24 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-              <groupId>org.apache.commons</groupId>
-                <artifactId>commons-csv</artifactId>
-           <scope>provided</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

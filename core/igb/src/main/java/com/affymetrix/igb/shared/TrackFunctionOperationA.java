@@ -4,7 +4,9 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.operator.AbstractMathTransform;
 import com.affymetrix.genometry.operator.Operator;
+import com.affymetrix.genometry.operator.PowerTransformer;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -24,6 +26,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -92,7 +95,12 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
                 break;
             }
         }
-        meth.append(getOperator().getDisplay()).append("- ");
+        Optional<String> operationParam = getOperatorParam();
+        if (operationParam.isPresent()) {
+            meth.append(getOperator().getDisplay()).append("(" + operationParam.get() + ")").append("- ");
+        } else {
+            meth.append(getOperator().getDisplay()).append("- ");
+        }
         boolean started = false;
         for (GlyphI gl : vgs) {
             if (started) {
@@ -105,6 +113,19 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
             started = true;
         }
         return meth.toString();
+    }
+
+    private Optional<String> getOperatorParam() {
+        Operator operator = getOperator();
+        if (operator instanceof AbstractMathTransform) {
+            AbstractMathTransform op = (AbstractMathTransform) operator;
+            return Optional.of(op.getParameterValue(op.getParamPrompt()).toString());
+        }
+        if(operator instanceof PowerTransformer) {
+            PowerTransformer op = (PowerTransformer) operator;
+            return Optional.of(op.getParameterValue(op.getParamPrompt()).toString());
+        }
+        return Optional.empty();
     }
 
     private void addNonUpdateableTier(List<? extends GlyphI> vgs) {

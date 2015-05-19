@@ -4,7 +4,8 @@ import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils;
-import java.util.Collections;
+import com.google.common.collect.Sets;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -25,8 +26,8 @@ public class LocalDataSetProvider implements DataSetProvider {
     }
 
     @Override
-    public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
-        return Collections.EMPTY_SET;
+    public LinkedHashSet<DataSet> getAvailableDataSets(DataContainer dataContainer) {
+        return Sets.newLinkedHashSet();
     }
 
     @Override

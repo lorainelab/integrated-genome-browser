@@ -26,6 +26,7 @@ import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -133,12 +134,12 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
     }
 
     @Override
-    public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
+    public LinkedHashSet<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         final GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersion.getName(), supportedGenomeVersionInfo);
         if (genomeVersionData.isPresent()) {
             Set<QuickloadFile> versionFiles = genomeVersionData.get();
-            Set<DataSet> dataSets = Sets.newHashSet();
+            LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
             versionFiles.stream().forEach((file) -> {
                 try {
                     URI uri = new URI(getUrl() + genomeVersion.getName() + "/" + file.getName());
@@ -150,7 +151,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
             });
             return dataSets;
         } else {
-            return Sets.newHashSet();
+            return Sets.newLinkedHashSet();
         }
     }
 

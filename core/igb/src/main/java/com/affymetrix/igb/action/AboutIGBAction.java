@@ -1,10 +1,14 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -26,11 +30,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author aloraine
  */
-public class AboutIGBAction extends GenericAction {
+public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
     private static final AboutIGBAction ACTION = new AboutIGBAction();
     private static final Logger logger = LoggerFactory.getLogger(AboutIGBAction.class);
+    private static final String CACHE_COMMENT = "<!-- cacheInfo -->";
+    private static final String DATA_DIR_COMMENT = "<!-- dataDir -->";
+    private static final String VERSION_COMMENT = "<!-- igbVersion -->";
+    private static final String PERIOD = ".";
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -74,6 +82,17 @@ public class AboutIGBAction extends GenericAction {
         j.setVisible(true);
     }
 
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(AboutIGBAction.class.getResource("/help/com.lorainelab.igb.AboutIGB.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found ", ex);
+        }
+        return htmlText;
+    }
+
     /**
      * Create an HTML-formatted String containing information about IGB.
      *
@@ -81,44 +100,33 @@ public class AboutIGBAction extends GenericAction {
      */
     public String makeText() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<head>");
-        sb.append("</head>");
-        sb.append("<body bgcolor=\"FFFFFF\">");
-        sb.append("<h1><center>About Integrated Genome Browser</center></h1>");
-        sb.append("<p>");
-        sb.append("IGB (pronounced ig-bee) is a fast, flexible, desktop genome browser"
-                + " first developed at <a href=\"http://www.affymetrix.com\">Affymetrix</a> for tiling arrays."
-                + " IGB is now open source software supported by grants and donations."
-                + " To find out more, visit <a href=\"http://www.bioviz.org/igb\">BioViz.org</a>."
-        );
-        sb.append("</p>");
-        sb.append("<p>");
-        sb.append("If you use IGB in your research, please cite "
-                + "Nicol JW, Helt GA, Blanchard SG Jr, Raja A, Loraine AE. "
-                + "<a href=\"http://www.ncbi.nlm.nih.gov/pubmed/19654113\">The Integrated Genome "
-                + " Browser: free software for distribution and exploration of"
-                + "genome-scale datasets.</a> Bioinformatics. 2009 25(20):2730-1."
-        );
-        sb.append("</p>");
+        sb = new StringBuilder(getHelpHtml());
 
         String cache_root = com.affymetrix.genometry.util.LocalUrlCacher.getCacheRoot();
         File cache_file = new File(cache_root);
         if (cache_file.exists()) {
-            sb.append("<p>");
-            sb.append("Cached data are stored in ").append(cache_file.getAbsolutePath());
-            sb.append("</p>");
+            StringBuilder cacheInfo = new StringBuilder();
+            cacheInfo.append("<p>");
+            cacheInfo.append("Cached data are stored in ").append(cache_file.getAbsolutePath()).append(PERIOD);
+            cacheInfo.append("</p>");
+            replace(CACHE_COMMENT, cacheInfo.toString(), sb);
         }
         String data_dir = PreferenceUtils.getAppDataDirectory();
         if (data_dir != null) {
             File data_dir_f = new File(data_dir);
-            sb.append("<p>");
-            sb.append("Application data stored in ").append(data_dir_f.getAbsolutePath());
-            sb.append("</p>");
+            StringBuilder dataDirInfo = new StringBuilder();
+            dataDirInfo.append("<p>");
+            dataDirInfo.append("Application data are stored in ").append(data_dir_f.getAbsolutePath()).append(PERIOD);
+            dataDirInfo.append("</p>");
+            replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
         }
-        sb.append("</body>");
-        sb.append("</html>");
+        replace(VERSION_COMMENT, CommonUtils.getInstance().getAppVersion(), sb);
         return sb.toString();
+    }
+    
+    private void replace(String origStr, String newStr, StringBuilder sb) {
+        int index = sb.indexOf(origStr);
+        sb.replace(index, index + origStr.length(), newStr);
     }
 
 }

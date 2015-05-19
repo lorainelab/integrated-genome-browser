@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.operator.AbstractLogTransform;
 import com.affymetrix.genometry.operator.AbstractMathTransform;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.operator.PowerTransformer;
@@ -117,7 +118,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
 
     private Optional<String> getOperatorParam() {
         Operator operator = getOperator();
-        if (operator instanceof AbstractMathTransform) {
+        if (operator instanceof AbstractMathTransform && !(operator instanceof AbstractLogTransform)) {
             AbstractMathTransform op = (AbstractMathTransform) operator;
             return Optional.of(op.getParameterValue(op.getParamPrompt()).toString());
         }

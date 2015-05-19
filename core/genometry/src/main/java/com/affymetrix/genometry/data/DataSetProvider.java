@@ -2,7 +2,7 @@ package com.affymetrix.genometry.data;
 
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -10,6 +10,6 @@ import java.util.Set;
  */
 public interface DataSetProvider extends DataProvider {
 
-    public Set<DataSet> getAvailableDataSets(DataContainer dataContainer);
+    public LinkedHashSet<DataSet> getAvailableDataSets(DataContainer dataContainer);
 
 }

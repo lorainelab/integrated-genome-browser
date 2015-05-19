@@ -1,8 +1,9 @@
 /**
  * Copyright (c) 2001-2004 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
- * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -24,6 +25,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -38,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public final class KeyStrokeEditPanel extends JPanel {
 
     public static final String COMPONENT_NAME = "KeyStrokeEditPanel";
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("keybindingRegistry");
     private static final long serialVersionUID = 1L;
     private static final boolean DEBUG = false;
     private final JRPTextField keyField;
@@ -89,11 +93,7 @@ public final class KeyStrokeEditPanel extends JPanel {
                             GenericAction genericAction = GenericActionHolder.getInstance().getGenericAction(useCommand);
                             String actionDisplayName = (genericAction == null) ? "???" : genericAction.getDisplay();
                             keyField.removeFocusListener(lois);
-                            if (!ModalUtils.confirmPanel(KeyStrokeEditPanel.this,
-                                    "This shortcut is currently in use; \n"
-                                    + "reassigning this will remove the shortcut for '"
-                                    + actionDisplayName + "'.\n"
-                                    + "Do you want to proceed?", null, null, false)) {
+                            if (!ModalUtils.confirmPanel(KeyStrokeEditPanel.this, MessageFormat.format(BUNDLE.getString("shortcutInUse"), actionDisplayName), null, null, false)) {
                                 keyField.setText(lastTimeFocusGained);
                                 lastCommand = null;
                             } else { // cancelled
@@ -150,10 +150,10 @@ public final class KeyStrokeEditPanel extends JPanel {
 
         };
         keyField = new JRPTextField("KeyStrokeEditPanel_key_field", 20);
-        toolbarField = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", "Toolbar ?");
-        keyLabel = new JLabel("Type a shortcut: ");
+        toolbarField = new JRPCheckBox("KeyStrokeEditPanel_toolbar_field", BUNDLE.getString("toolbar"));
+        keyLabel = new JLabel(BUNDLE.getString("typeShortcut"));
         noteLabel = new JLabel();
-        clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", "Clear");
+        clear_button = new JRPButton("KeyStrokeEditPanel_clear_button", BUNDLE.getString("clearButton"));
     }
 
     private String isCommandInUse(String command) {
@@ -170,12 +170,12 @@ public final class KeyStrokeEditPanel extends JPanel {
     void setPreferenceKey(String key, String defaultValue) {
         this.key = key;
         if (PreferenceUtils.getKeystrokesNode() == null || key == null) {
-            keyLabel.setText("Make a selection");
+            keyLabel.setText(BUNDLE.getString("makeSelection"));
             keyField.setText("");
             setEnabled(false);
             return;
         } else {
-            keyLabel.setText("Type a shortcut for \"" + this.key + "\":");
+            keyLabel.setText(MessageFormat.format(BUNDLE.getString("typeShortcutFor"), this.key));
             String value = PreferenceUtils.getKeystrokesNode().get(key, defaultValue);
             keyField.setText(value);
             setEnabled(true);
@@ -202,14 +202,14 @@ public final class KeyStrokeEditPanel extends JPanel {
         KeyStroke ks = KeyStroke.getKeyStroke(str);
 
         if (str.length() > 0 && ks == null) {
-            ErrorHandler.errorPanel("Unknown Key",
-                    "Unknown key code: \"" + str + "\"");
+            ErrorHandler.errorPanel(BUNDLE.getString("unknownKeyTitle"),
+                    MessageFormat.format(BUNDLE.getString("unknownKeyMessage"), str));
             keyField.setText("");
             return;
         }
         if (str.length() > 0 && (isModifierKey(ks) || (str.contains("unknown")))) {
-            ErrorHandler.errorPanel("Bad Keystroke",
-                    "Illegal shortcut: \"" + str + "\"");
+            ErrorHandler.errorPanel(BUNDLE.getString("badKeystrokeTitle"),
+                    MessageFormat.format(BUNDLE.getString("badKeystrokeMessage"), str));
             keyField.setText("");
             return;
         }
@@ -220,9 +220,9 @@ public final class KeyStrokeEditPanel extends JPanel {
             // then any time the letter "Z" is pressed in any input box,
             // a zoom will happen, and the user won't be able to type things
             // like "zebra genome".
-            ErrorHandler.errorPanel("Bad Keystroke",
-                    "Illegal shortcut: \"" + str + "\"\n"
-                    + "Must contain a modifier key (ctrl, alt, ...)");
+            ErrorHandler.errorPanel(BUNDLE.getString("badKeystrokeTitle"),
+                    MessageFormat.format(BUNDLE.getString("badKeystrokeMessage"), str)
+                    + "\n" + BUNDLE.getString("modifierKeyMissing"));
             keyField.setText("");
             return;
         }
@@ -274,7 +274,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     private void clearAction() {
         if (PreferenceUtils.getKeystrokesNode() == null || key == null) {
             // shouldn't happen
-            ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
+            ErrorHandler.errorPanel(BUNDLE.getString("error"), BUNDLE.getString("shortcutMissing"));
             setEnabled(false);
             return;
         }
@@ -302,8 +302,10 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * Convert a KeyStroke to a String in the same format used by KeyStroke.getKeyStroke(String). Modified, originally
-     * from the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * Convert a KeyStroke to a String in the same format used by
+     * KeyStroke.getKeyStroke(String). Modified, originally from the Java
+     * Developer's Almanac 1.4.
+     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     public static String keyStroke2String(KeyStroke key) {
         StringBuilder s = new StringBuilder(50);
@@ -340,7 +342,8 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * From the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * From the Java Developer's Almanac 1.4.
+     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     private static String getKeyText(int keyCode) {
         if (keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9

@@ -78,7 +78,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
         pane.setMargin(new Insets(10, 10, 10, 10));
         JFrame j = new JFrame("About Integrated Genome Browser");
         j.add(pane);
-        j.setSize(new Dimension(500, 500));
+        j.setSize(new Dimension(1000, 500));
         j.setVisible(true);
     }
 

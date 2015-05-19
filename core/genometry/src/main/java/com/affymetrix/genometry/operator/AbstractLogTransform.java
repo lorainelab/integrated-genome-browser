@@ -22,7 +22,7 @@ public abstract class AbstractLogTransform extends AbstractMathTransform {
         if (base == Math.E) {
             return GenometryConstants.BUNDLE.getString("operator_" + getBaseName() + "_ln");
         } else {
-            return GenometryConstants.BUNDLE.getString("operator_" + getBaseName());
+            return GenometryConstants.BUNDLE.getString("operator_" + getBaseName()) + (base == 0 ? "" : " " + DF.format(base));
         }
     }
 

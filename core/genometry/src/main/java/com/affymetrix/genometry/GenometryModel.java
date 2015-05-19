@@ -113,22 +113,11 @@ public final class GenometryModel {
         GenomeVersion genomeVersion = getSeqGroup(genomeVersionName);
         // otherwise create a new GenomeVersion
         if (genomeVersion == null) {
-            genomeVersion = createGenomeVersion(genomeVersionName);
+            genomeVersion = new GenomeVersion(genomeVersionName);
             genomeVersions.put(genomeVersion.getName(), genomeVersion);
             //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
         }
         return genomeVersion;
-    }
-
-    /**
-     * The routine that actually creates a new GenomeVersion. Override this
-     * to provide a specific subclass of GenomeVersion.
-     *
-     * @param genomeVersionName
-     * @return
-     */
-    protected GenomeVersion createGenomeVersion(String genomeVersionName) {
-        return new GenomeVersion(genomeVersionName);
     }
 
     public void removeGenomeVersion(String genomeVersionName) {

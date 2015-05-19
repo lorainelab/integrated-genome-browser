@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
@@ -249,7 +250,7 @@ public class SymLoaderTabix extends SymLoader {
         @Override
         public TabixReader makeObject() throws Exception {
             String uriString = uri.toString();
-            if (uriString.startsWith(FILE_PREFIX)) {
+            if (uriString.startsWith(FILE_PROTOCOL)) {
                 uriString = uri.getPath();
             }
             return new TabixReader(uriString);

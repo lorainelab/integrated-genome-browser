@@ -5,6 +5,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.IndexWriter;
 import com.affymetrix.genometry.parsers.Parser;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import java.net.URI;
@@ -36,8 +37,8 @@ public class TallyHandler implements FileTypeHandler {
             GenomeVersion genomeVersion) {
         SymLoader symLoader = null;
         String uriString = uri.toString();
-        if (uriString.startsWith(SymLoader.FILE_PREFIX)) {
-            uriString = uriString.substring(SymLoader.FILE_PREFIX.length());
+        if (uriString.startsWith(FILE_PROTOCOL)) {
+            uriString = uriString.substring(FILE_PROTOCOL.length());
         }
         if (SymLoaderTabix.isTabix(uriString)) {
             TallyLineProcessor tlp = new TallyLineProcessor(featureName);

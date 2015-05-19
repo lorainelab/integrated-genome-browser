@@ -10,10 +10,10 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.TypedSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
-import com.affymetrix.genometry.symmetry.TypedSym;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -72,25 +72,6 @@ public class BioSeqUtils {
             results.add(info);
         }
         return results;
-    }
-
-    /**
-     * Add residues to composition (full sequence loaded).
-     *
-     * @param aseq
-     */
-    public static void addResiduesToComposition(BioSeq aseq) {
-        if (aseq.getResiduesProvider() != null) {
-            SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
-            BioSeq subseq = new BioSeq(
-                    aseq.getId() + ":" + span.getMin() + "-" + span.getMax(), aseq.getResiduesProvider().getLength());
-            subseq.setResiduesProvider(aseq.getResiduesProvider());
-            addSubseqToComposition(aseq, span, subseq);
-            return;
-        }
-        String residues = aseq.getResidues();
-        SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
-        addResiduesToComposition(aseq, residues, span);
     }
 
     /**

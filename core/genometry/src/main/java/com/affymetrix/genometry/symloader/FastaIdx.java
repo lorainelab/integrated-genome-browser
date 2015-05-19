@@ -3,6 +3,7 @@ package com.affymetrix.genometry.symloader;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -25,7 +26,7 @@ public class FastaIdx extends FastaCommon {
 
     public FastaIdx(URI uri, String featureName, GenomeVersion genomeVersion) {
         super(uri, "", genomeVersion);
-        if (!uri.toString().startsWith(FILE_PREFIX)) {
+        if (!uri.toString().startsWith(FILE_PROTOCOL)) {
             fastaFile = null;
             sequenceDict = null;
             return;
@@ -40,7 +41,7 @@ public class FastaIdx extends FastaCommon {
         }
         fastaFile = tempFile;
         String uriString = uri.toString();
-        if (uriString.startsWith(FILE_PREFIX)) {
+        if (uriString.startsWith(FILE_PROTOCOL)) {
             uriString = uri.getPath();
         }
         ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(new File(uriString));

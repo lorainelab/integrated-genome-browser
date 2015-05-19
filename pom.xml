@@ -121,6 +121,7 @@
         <module>core/igb-preferences</module>
         <module>core/weblinks</module>
         <module>core/quickload</module>
+        <module>core/das</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -261,6 +262,12 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>quickload</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>das</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -790,11 +797,6 @@
                 <version>${commonsVfsVersion}</version>
             </dependency>
             <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>0.1.46</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
                 <version>3.6.0</version>
@@ -813,11 +815,6 @@
                 <groupId>fi.iki.elonen</groupId>
                 <artifactId>NanoHTTPD</artifactId>
                 <version>2.0.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.kevinsawicki</groupId>
-                <artifactId>http-request</artifactId>
-                <version>6.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -131,7 +131,7 @@ public class QuickloadUtils {
             try (Reader reader = new InputStreamReader(getInputStream(uri))) {
                 List<QuickloadFile> annotsFiles = ANNOTS_PARSER.getQuickloadFileList(reader);
                 if (!annotsFiles.isEmpty()) {
-                    return Optional.of(Sets.newHashSet(annotsFiles));
+                    return Optional.of(Sets.newLinkedHashSet(annotsFiles));
                 } else {
                     logger.error("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site {}", genomeVersionBaseUrl);
                     supportedGenomeVersionInfo.remove(genomeVersionName);

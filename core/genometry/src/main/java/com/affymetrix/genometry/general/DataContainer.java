@@ -26,7 +26,7 @@ public final class DataContainer implements Comparable<DataContainer> {
     public DataContainer(GenomeVersion genomeVersion, DataProvider dataProvider) {
         this.genomeVersion = checkNotNull(genomeVersion);
         this.dataProvider = dataProvider;
-        dataSets = Sets.newHashSet();
+        dataSets = Sets.newLinkedHashSet();
     }
 
     public void addDataSet(DataSet f) {

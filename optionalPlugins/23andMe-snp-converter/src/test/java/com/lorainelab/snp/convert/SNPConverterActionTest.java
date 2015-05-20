@@ -3,8 +3,6 @@ package com.lorainelab.snp.convert;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JTextArea;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +24,7 @@ public class SNPConverterActionTest {
     String outputDirectory;
     String outputFileName;
 
-    @Before
+//    @Before // -- uncomment to enable test, but this is too expensive to routinely run on the build server
     public void setup() {
         inputFileNamePath = SNPConverterActionTest.class.getClassLoader().getResource(INPUT_FILE_NAME).getFile();
         outputDirectory = inputFileNamePath.substring(0, inputFileNamePath.lastIndexOf(File.separator));
@@ -37,7 +35,7 @@ public class SNPConverterActionTest {
         }
     }
 
-    @Ignore
+//    @Test // -- uncomment to enable test, but this is too expensive to routinely run on the build server
     public void conversionWithReferenceTest() throws IOException {
 
         JTextArea mockProgress = new JTextArea();

@@ -418,6 +418,10 @@ public class IGBScriptEngine implements ScriptEngine {
                 igbService.bringToFront();
                 return;
             }
+            if (action.equalsIgnoreCase("LoadSequence")) {
+                igbService.loadResidues(true);
+                return;
+            }
 
             logger.warn("Unrecognized or invalid command: {}", action);
         } catch (IllegalArgumentException | UnsupportedEncodingException e) {

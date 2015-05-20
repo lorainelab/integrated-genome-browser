@@ -85,7 +85,7 @@ public interface IgbService {
     public void loadAndDisplaySpan(final SeqSpan span, final DataSet feature);
 
     public void loadChromosomes(DataSet gFeature);
-
+    
     public void updateGeneralLoadView();
 
     public void doActions(final String batchFileStr);
@@ -123,6 +123,8 @@ public interface IgbService {
 
     // for SearchView
     public boolean loadResidues(final SeqSpan viewspan, final boolean partial);
+    
+    public void loadResidues(final boolean partial);
 
     public GenericAction loadResidueAction(final SeqSpan viewspan, final boolean partial);
 

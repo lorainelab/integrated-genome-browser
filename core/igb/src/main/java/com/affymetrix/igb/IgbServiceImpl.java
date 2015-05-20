@@ -87,6 +87,11 @@ public class IgbServiceImpl implements IgbService {
     }
 
     @Override
+    public void loadResidues(boolean partial) {
+        GeneralLoadView.getLoadView().loadResidues(partial);
+    }
+
+    @Override
     public void removeNotLockedUpMsg(String message) {
         IGB.getInstance().removeNotLockedUpMsg(message);
     }

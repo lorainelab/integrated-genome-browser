@@ -2,10 +2,9 @@ package com.lorainelab.snp.convert;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
 import javax.swing.JTextArea;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ public class SNPConverterActionTest {
         }
     }
 
-    @Test
+    @Ignore
     public void conversionWithReferenceTest() throws IOException {
 
         JTextArea mockProgress = new JTextArea();

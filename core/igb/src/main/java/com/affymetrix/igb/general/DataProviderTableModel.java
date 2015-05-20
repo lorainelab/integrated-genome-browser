@@ -222,6 +222,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
             case Name:
                 if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     dataProvider.setName((String) editedValue);
+                    loadView.refreshTreeViewAndRestore();
                 }
                 break;
             case URL:

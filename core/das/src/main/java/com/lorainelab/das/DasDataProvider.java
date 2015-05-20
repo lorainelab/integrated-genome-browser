@@ -7,6 +7,7 @@ import com.affymetrix.genometry.general.DataSet;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class DasDataProvider extends BaseDataProvider implements DataSetProvider
     }
 
     @Override
-    public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
+    public LinkedHashSet<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

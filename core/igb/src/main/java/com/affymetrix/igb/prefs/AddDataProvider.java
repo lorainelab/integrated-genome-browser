@@ -279,10 +279,24 @@ public class AddDataProvider extends JFrame {
             @Override
             protected Boolean runInBackground() {
                 if (isEditPanel) {
-                    dataProvider.setUrl(urlText.getText().trim());
-                    dataProvider.setName(nameText.getText().trim());
-                    dataProvider.setStatus(LoadUtils.ResourceStatus.NotInitialized);
-                    Timer timer = new Timer(400, event -> {
+                    String existingName = dataProvider.getName();
+                    final String updatedName = nameText.getText().trim();
+                    String existingUrl = toExternalForm(dataProvider.getUrl());
+                    final String updatedUrl = toExternalForm(urlText.getText().trim());
+                    if (!existingName.equals(updatedName)) {
+                        dataProvider.setName(updatedName);
+                    }
+                    if (!existingUrl.equalsIgnoreCase(updatedUrl)) {
+                        dataProvider.setUrl(updatedUrl);
+                        dataProviderManager.disableDataProvider(dataProvider);
+                        //timer allows any async actions triggered in callstack of disableDataProvider to complete
+                        Timer timer = new Timer(500, evt -> {
+                            dataProviderManager.enableDataProvider(dataProvider);
+                        });
+                        timer.setRepeats(false);
+                        timer.start();
+                    }
+                    Timer timer = new Timer(2000, event -> {
                         if (dataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
                             ModalUtils.infoPanel("Your Data Source is not responding, please confirm you have entered everything correctly.");
                         }
@@ -307,6 +321,7 @@ public class AddDataProvider extends JFrame {
             }
 
             @Override
+
             protected void finished() {
                 boolean serverAdded = true;
                 try {
@@ -366,5 +381,13 @@ public class AddDataProvider extends JFrame {
         file = chooser.getSelectedFile();
         FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
         return file;
+    }
+
+    public static String toExternalForm(String urlString) {
+        urlString = urlString.trim();
+        if (!urlString.endsWith("/")) {
+            urlString += "/";
+        }
+        return urlString;
     }
 }

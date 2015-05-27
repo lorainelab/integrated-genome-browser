@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.util;
 
-import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.general.DataContainer;
+import com.affymetrix.genometry.general.DataSet;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import static com.google.common.io.Closeables.close;
@@ -584,8 +584,8 @@ public final class GeneralUtils {
      */
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
-    public static String getPreferredVersionName(Set<DataContainer> gVersions) {
-        return LOOKUP.getPreferredName(gVersions.iterator().next().getName());
+    public static String getPreferredVersionName(Set<DataContainer> dataContainers) {
+        return LOOKUP.getPreferredName(dataContainers.iterator().next().getName());
     }
 
     public static String preferencesDisplay(Preferences prefs) {

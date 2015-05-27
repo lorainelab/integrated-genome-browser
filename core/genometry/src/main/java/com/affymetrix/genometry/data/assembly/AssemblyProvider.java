@@ -3,8 +3,8 @@ package com.affymetrix.genometry.data.assembly;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.general.DataContainer;
 import com.google.common.collect.Multimap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.SortedMap;
 
 /**
  *
@@ -36,7 +36,7 @@ public interface AssemblyProvider {
      */
     public void setLoadPriority(int loadPriority);
 
-    public SortedMap<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion);
+    public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion);
 
     public default Optional<Multimap<String, String>> getChromosomeSynonyms(DataContainer dataContainer) {
         return Optional.empty();

@@ -3,11 +3,10 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.LocalDataSetProvider;
+import com.affymetrix.genometry.LocalDataProvider;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
-import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceProvider;
@@ -153,7 +152,7 @@ public final class GeneralLoadUtils {
         }
 
         for (DataContainer dataContainer : genomeVersion.getAvailableDataContainers()) {
-            if (dataContainer.getDataProvider() instanceof LocalDataSetProvider) {
+            if (dataContainer.getDataProvider() instanceof LocalDataProvider) {
                 return dataContainer;
             }
         }
@@ -292,13 +291,10 @@ public final class GeneralLoadUtils {
             return;
         }
         DataProvider dataProvider = dataContainer.getDataProvider();
-        if (dataProvider instanceof DataSetProvider) {
-            DataSetProvider dataSetProvider = (DataSetProvider) dataProvider;
-            Set<DataSet> availableDataSets = dataSetProvider.getAvailableDataSets(dataContainer);
-            availableDataSets.stream().forEach(dataSet -> {
-                dataContainer.addDataSet(dataSet);
-            });
-        }
+        Set<DataSet> availableDataSets = dataProvider.getAvailableDataSets(dataContainer);
+        availableDataSets.stream().forEach(dataSet -> {
+            dataContainer.addDataSet(dataSet);
+        });
     }
 
     /**
@@ -348,8 +344,6 @@ public final class GeneralLoadUtils {
     }
 
     private static void addGenomeVirtualSeq(GenomeVersion genomeVersion) {
-        final Stopwatch stopwatch = Stopwatch.createStarted();
-        stopwatch.stop();
         int chrom_count = genomeVersion.getSeqCount();
         if (chrom_count <= 1) {
             // no need to make a virtual "genome" chrom if there is only a single chromosome
@@ -384,7 +378,6 @@ public final class GeneralLoadUtils {
             // Add seq to virtual genome.  Keep values above 0 if possible.
             addSeqToVirtualGenome(seqBounds < 0 ? 0.0 : default_genome_min, spacer, genome_seq, chrom_seq);
         }
-        logger.info("STOPWATCH METRICS for addGenomeVirtualSeq {}", stopwatch);
     }
 
     /**
@@ -858,8 +851,8 @@ public final class GeneralLoadUtils {
             String serverDescription = dataProvider.getName() + " " + dataProvider.getUrl();
 
             try {
-                if (dataProvider instanceof LocalDataSetProvider) {
-                    LocalDataSetProvider dataSetProvider = (LocalDataSetProvider) dataProvider;
+                if (dataProvider instanceof LocalDataProvider) {
+                    LocalDataProvider dataSetProvider = (LocalDataProvider) dataProvider;
                     if (dataSetProvider.isContainsReferenceSequenceData()) {
                         Optional<DataSet> refSeqDataSet = dataContainer.getDataSets().stream()
                                 .filter(ds -> ds.isReferenceSequence())
@@ -880,9 +873,9 @@ public final class GeneralLoadUtils {
                     }
                     if (dataProvider instanceof ReferenceSequenceProvider) {
                         ReferenceSequenceProvider rsp = ReferenceSequenceProvider.class.cast(dataProvider);
-                        Optional<String> sequence = rsp.getSequence(dataContainer, span);
-                        if (sequence.isPresent()) {
-                            BioSeqUtils.addResiduesToComposition(span.getBioSeq(), sequence.get(), span);
+                        String sequence = rsp.getSequence(dataContainer, span);
+                        if (!Strings.isNullOrEmpty(sequence)) {
+                            BioSeqUtils.addResiduesToComposition(span.getBioSeq(), sequence, span);
                             residuesLoaded = true;
                         }
                     }

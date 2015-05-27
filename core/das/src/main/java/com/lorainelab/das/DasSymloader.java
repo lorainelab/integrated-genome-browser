@@ -4,12 +4,20 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.lorainelab.das.DasResiduesHandler;
-import com.affymetrix.genometry.general.DataContainer;
+import com.lorainelab.das.parser.DASFeatureParser;
+import com.lorainelab.das.parser.DASSymmetry;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.SynonymLookup;
+import com.github.kevinsawicki.http.HttpRequest;
+import com.lorainelab.das.utils.DasServerUtils;
+import static com.lorainelab.das.utils.DasServerUtils.toExternalForm;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,40 +25,39 @@ import java.util.Optional;
  */
 public class DasSymloader extends SymLoader {
 
+    private static final Logger logger = LoggerFactory.getLogger(DasSymloader.class);
     private static final String DAS_EXT = "DAS";
     private final GenometryModel gmodel;
-    private final DataContainer container;
+    private Set<String> chromosomes;
+    private final String contextRoot;
 
-    public DasSymloader(DataContainer container, String featureName, GenomeVersion genomeVersion) {
-        super(featureName, genomeVersion);
+    public DasSymloader(URI contextRoot, String typeName, GenomeVersion genomeVersion) {
+        super(contextRoot, typeName, genomeVersion);
         this.extension = DAS_EXT;
-        this.container = container;
+        this.contextRoot = contextRoot.toString().substring(0, contextRoot.toString().indexOf("/" + typeName));
         gmodel = GenometryModel.getInstance();
     }
 
     @Override
-    public String getRegionResidues(SeqSpan span) throws Exception {
-        Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
-        if (selectedSeq.isPresent()) {
-            final BioSeq bioSeq = selectedSeq.get();
-            String seqName = bioSeq.getId();
-            DasResiduesHandler dasResiduesHandler = new DasResiduesHandler();
-            String residues = dasResiduesHandler.getDasResidues(container, seqName, span.getMin(), span.getMax());
-            if (residues != null) {
-                return residues;
-            }
-        }
-        return "";
-    }
-
-    @Override
-    public boolean isResidueLoader() {
-        return super.isResidueLoader(); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
-        return super.getRegion(overlapSpan); //To change body of generated methods, choose Tools | Templates.
+        List<DASSymmetry> results;
+        DASFeatureParser parser = new DASFeatureParser();
+        parser.setAnnotateSeq(false);
+        final int min = overlapSpan.getMin() == 0 ? 1 : overlapSpan.getMin();
+        final int max = overlapSpan.getMax() - 1;
+        String segmentParam = getChromosomeSynonym(overlapSpan) + ":" + min + "," + max + ";";
+        //e.g. http://genome.cse.ucsc.edu/cgi-bin/das/hg38/features?type=altLocations;segment=chr1%3A1%2C14422303;
+        final String request = toExternalForm(contextRoot) + "features";
+        HttpRequest remoteHttpRequest = HttpRequest.get(request, true, "type", featureName, "segment", segmentParam)
+                .acceptGzipEncoding()
+                .uncompress(true)
+                .trustAllCerts()
+                .trustAllHosts()
+                .followRedirects(true);
+        logger.info(remoteHttpRequest.toString());
+        try (InputStream inputStream = remoteHttpRequest.buffer()) {
+            return parser.parse(inputStream, genomeVersion);
+        }
     }
 
     @Override
@@ -65,12 +72,20 @@ public class DasSymloader extends SymLoader {
 
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
-        return super.getChromosomeList(); //To change body of generated methods, choose Tools | Templates.
+        return genomeVersion.getSeqList();
     }
 
     @Override
     protected void init() throws Exception {
         super.init(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private String getChromosomeSynonym(SeqSpan span) {
+        BioSeq currentSeq = span.getBioSeq();
+        if (chromosomes == null) {
+            chromosomes = DasServerUtils.retrieveAssemblyInfoByContextRoot(contextRoot).keySet();
+        }
+        return SynonymLookup.getDefaultLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
     }
 
 }

@@ -6,7 +6,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.LocalDataSetProvider;
+import com.affymetrix.genometry.LocalDataProvider;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
@@ -267,13 +267,7 @@ public final class GeneralLoadView {
         if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
             return false;
         }
-
-        //TODO refactor code to not use serverType == null as a hack
-//        if (serverType != null && gFeature.getDataContainer().getDataProvider().getServerType() != serverType) {
-//            return false;
-//        }
         GeneralLoadUtils.loadAndDisplayAnnotations(gFeature);
-
         return true;
     }
 
@@ -633,7 +627,7 @@ public final class GeneralLoadView {
             @Override
             protected void finished() {
                 DataContainer dataContainer = feature.getDataContainer();
-                if (dataContainer.getDataProvider() instanceof LocalDataSetProvider) {
+                if (dataContainer.getDataProvider() instanceof LocalDataProvider) {
                     if (dataContainer.removeDataSet(feature)) {
                         SeqGroupView.getInstance().refreshTable();
                         final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();

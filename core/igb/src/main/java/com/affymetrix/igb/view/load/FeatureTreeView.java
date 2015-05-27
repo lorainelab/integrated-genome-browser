@@ -2,7 +2,6 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.data.DataProvider;
-import com.affymetrix.genometry.data.DataSetProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -668,7 +667,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     ((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                     if (tn.genericObject instanceof DataSet) {
-                        DataSet feature = (DataSet) tn.genericObject;
+                        DataSet dataSet = (DataSet) tn.genericObject;
 //                        if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider) {
 //                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
 ////                            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
@@ -680,27 +679,27 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
-                            if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider && !isURLReachable(feature.getURI())) {
-                                message = "The feature " + feature.getURI() + " is not reachable.";
+                            if (!isReachable(dataSet)) {
+                                message = "The feature " + dataSet.getURI() + " is not reachable.";
                                 ErrorHandler.errorPanel("Cannot load feature", message, Level.SEVERE);
                                 tn.setChecked(false);
                                 return;
                             }
 
                             // prevent from adding duplicated features
-                            if (GeneralLoadUtils.getLoadedFeature(feature.getURI()) != null) {
-                                message = "The feature " + feature.getURI() + " has already been added.";
+                            if (GeneralLoadUtils.getLoadedFeature(dataSet.getURI()) != null) {
+                                message = "The feature " + dataSet.getURI() + " has already been added.";
                                 ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
                                 tn.setChecked(false);
                             } else {
-                                GeneralLoadView.getLoadView().addFeature(feature);
+                                GeneralLoadView.getLoadView().addFeature(dataSet);
                             }
                         } else {
-                            message = "Unchecking " + feature.getDataSetName()
+                            message = "Unchecking " + dataSet.getDataSetName()
                                     + " will remove all loaded data. \nDo you want to continue? ";
-                            if (Strings.isNullOrEmpty(feature.getMethod()) || ModalUtils.confirmPanel(message,
+                            if (Strings.isNullOrEmpty(dataSet.getMethod()) || ModalUtils.confirmPanel(message,
                                     PreferenceUtils.CONFIRM_BEFORE_DELETE, PreferenceUtils.default_confirm_before_delete)) {
-                                GeneralLoadView.getLoadView().removeDataSet(feature, true, false);
+                                GeneralLoadView.getLoadView().removeDataSet(dataSet, true, false);
                             } else {
                                 tn.setChecked(true);
                             }
@@ -710,9 +709,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             }
         }
 
-        private boolean isURLReachable(URI uri) {
+        private boolean isReachable(DataSet dataSet) {
             try {
-                if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
+                if (LocalUrlCacher.getInputStream(dataSet.getURI().toURL()) == null) {
                     return false;
                 }
             } catch (IOException ex) {

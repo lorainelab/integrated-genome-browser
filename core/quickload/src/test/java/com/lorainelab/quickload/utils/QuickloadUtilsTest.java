@@ -1,7 +1,7 @@
 package com.lorainelab.quickload.utils;
 
+import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.io.CharStreams;
-import static com.lorainelab.quickload.util.QuickloadUtils.getInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;

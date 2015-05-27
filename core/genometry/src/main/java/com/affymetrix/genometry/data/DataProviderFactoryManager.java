@@ -6,6 +6,8 @@ import com.google.common.collect.Sets;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class DataProviderFactoryManager {
 
     public static final String COMPONENT_NAME = "DataProviderFactoryManager";
+    private static final Logger logger = LoggerFactory.getLogger(DataProviderFactoryManager.class);
 
     public final Set<DataProviderFactory> factories;
 
@@ -29,6 +32,18 @@ public class DataProviderFactoryManager {
 
     public void removeDataProviderFactory(DataProviderFactory factory) {
         factories.remove(factory);
+    }
+
+    //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
+    @Reference(target = "(&(component.name=QuickloadFactory))")
+    public void trackQuickloadDataProviderFactory(DataProviderFactory quickloadFactory) {
+        logger.info("QuickloadFactory now available.");
+    }
+
+    //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
+    @Reference(target = "(&(component.name=DasDataProviderFactory))")
+    public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
+        logger.info("Das Factory now available.");
     }
 
     public Optional<DataProviderFactory> findFactoryByName(String factoryName) {

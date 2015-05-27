@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.parsers.das;
+package com.lorainelab.das.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -8,6 +8,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
+import com.affymetrix.genometry.data.GenomeVersionProvider;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
 import com.affymetrix.genometry.general.DataContainer;
@@ -240,9 +241,13 @@ public class DataProviderManager {
     private void initializeDataProvider(DataProvider dataProvider) {
         dataProvider.initialize();
         if (dataProvider.getStatus() == Initialized) {
-            loadGenomeVersionSynonyms(dataProvider);
-            loadSpeciesInfo(dataProvider);
-            loadSupportedGenomeVersions(dataProvider);
+            //TODO don't assume GenomeVersionProvider instances are all derrived from DataProvider instances... a separate whiteboard/service listener would improve design.
+            if (dataProvider instanceof GenomeVersionProvider) {
+                GenomeVersionProvider genomeVersionProvider = GenomeVersionProvider.class.cast(dataProvider);
+                loadGenomeVersionSynonyms(genomeVersionProvider);
+                loadSpeciesInfo(genomeVersionProvider);
+                loadSupportedGenomeVersions(genomeVersionProvider);
+            }
             //TODO don't assume AssemblyProvider instances are all derrived from DataProvider instances, but skip this detail for now since it can wait for feature parity with old code
             if (dataProvider instanceof AssemblyProvider) {
                 assemblyProviders.add((AssemblyProvider) dataProvider);
@@ -253,6 +258,7 @@ public class DataProviderManager {
                 referenceSequenceResources.add((ReferenceSequenceResource) dataProvider);
                 loadReferenceSequenceData((ReferenceSequenceResource) dataProvider);
             }
+            dataProviders.stream().filter(dp -> !(dp instanceof GenomeVersionProvider)).forEach(this::createSupportingDataContainers);
         }
     }
 
@@ -306,14 +312,14 @@ public class DataProviderManager {
         //ReferenceSequenceDataSetProvider
     }
 
-    private void loadSpeciesInfo(DataProvider dataProvider) {
-        dataProvider.getSpeciesInfo().ifPresent(speciesInfo -> {
+    private void loadSpeciesInfo(GenomeVersionProvider genomeVersionProvider) {
+        genomeVersionProvider.getSpeciesInfo().ifPresent(speciesInfo -> {
             speciesInfo.stream().forEach(SpeciesLookup::load);
         });
     }
 
-    private void loadGenomeVersionSynonyms(DataProvider dataProvider) {
-        dataProvider.getGenomeVersionSynonyms().ifPresent(genomeVersionSynonyms -> {
+    private void loadGenomeVersionSynonyms(GenomeVersionProvider genomeVersionProvider) {
+        genomeVersionProvider.getGenomeVersionSynonyms().ifPresent(genomeVersionSynonyms -> {
             genomeVersionSynonyms.keySet().stream().forEach(key -> {
                 SynonymLookup.getDefaultLookup().getPreferredNames().add(key);
                 SynonymLookup.getDefaultLookup().addSynonyms(Sets.newConcurrentHashSet(genomeVersionSynonyms.get(key)));
@@ -322,16 +328,37 @@ public class DataProviderManager {
         );
     }
 
-    private void loadSupportedGenomeVersions(DataProvider dataProvider) {
-        for (String genomeVersionName : dataProvider.getSupportedGenomeVersionNames()) {
+    private void loadSupportedGenomeVersions(GenomeVersionProvider genomeVersionProvider) {
+        for (String genomeVersionName : genomeVersionProvider.getSupportedGenomeVersionNames()) {
             String genomeName = SynonymLookup.getDefaultLookup().findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
             String versionName, speciesName;
-            GenomeVersion genomeVersion = gmodel.addGenomeVersion(genomeName);
-            Optional<String> genomeVersionDescription = dataProvider.getGenomeVersionDescription(genomeVersionName);
+            GenomeVersion genomeVersion;
+            genomeVersion = gmodel.addGenomeVersion(genomeName);
+            Optional<String> genomeVersionDescription = ((GenomeVersionProvider) genomeVersionProvider).getGenomeVersionDescription(genomeVersionName);
             genomeVersionDescription.ifPresent(description -> genomeVersion.setDescription(description));
-            Set<DataContainer> gVersions = genomeVersion.getAvailableDataContainers();
-            if (!gVersions.isEmpty()) {
-                versionName = GeneralUtils.getPreferredVersionName(gVersions);
+            Set<DataContainer> availableContainers = genomeVersion.getAvailableDataContainers();
+            if (!availableContainers.isEmpty()) {
+                versionName = GeneralUtils.getPreferredVersionName(availableContainers);
+                speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
+            } else {
+                versionName = genomeName;
+                speciesName = SpeciesLookup.getSpeciesName(genomeName);
+            }
+            GeneralLoadUtils.retrieveDataContainer((DataProvider) genomeVersionProvider, speciesName, versionName);
+        }
+    }
+
+    private void createSupportingDataContainers(DataProvider dataProvider) {
+        for (String genomeVersionName : dataProvider.getAvailableGenomeVersionNames()) {
+            String genomeName = SynonymLookup.getDefaultLookup().findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
+            String versionName, speciesName;
+            GenomeVersion genomeVersion = gmodel.getSeqGroup(genomeName);
+            if (genomeVersion == null) {
+                continue;
+            }
+            Set<DataContainer> availableContainers = genomeVersion.getAvailableDataContainers();
+            if (!availableContainers.isEmpty()) {
+                versionName = GeneralUtils.getPreferredVersionName(availableContainers);
                 speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
             } else {
                 versionName = genomeName;

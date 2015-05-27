@@ -32,23 +32,15 @@
             {
                 "factoryName": "das",
                 "name": "UCSC",
-                "url": "http://genome.cse.ucsc.edu/cgi-bin/das/dsn",
+                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5"
             },
             {
                 "factoryName": "das",
                 "name": "Ensembl",
-                "url": "http://www.ensembl.org/das/dsn",
+                "url": "http://www.ensembl.org/das",
                 "enabled": "false",
                 "loadPriority": "6",
-                "default": "true"
-            },
-            {
-                "factoryName": "das",
-                "name": "BioVizServerCache",
-                "url": "http://bioviz.org/cached/",
-                "primary": "true",
-                "loadPriority": "7",
                 "default": "true"
             }
         ],

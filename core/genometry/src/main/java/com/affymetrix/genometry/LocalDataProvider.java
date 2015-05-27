@@ -1,6 +1,6 @@
 package com.affymetrix.genometry;
 
-import com.affymetrix.genometry.data.DataSetProvider;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils;
@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-public class LocalDataSetProvider implements DataSetProvider {
+public class LocalDataProvider implements DataProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalDataSetProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalDataProvider.class);
     private static final String PROVIDER_NAME = "Local Files";
     private boolean containsReferenceSequenceData;
 
-    public LocalDataSetProvider() {
+    public LocalDataProvider() {
         containsReferenceSequenceData = false;
     }
 
@@ -85,7 +85,7 @@ public class LocalDataSetProvider implements DataSetProvider {
     }
 
     @Override
-    public Set<String> getSupportedGenomeVersionNames() {
+    public Set<String> getAvailableGenomeVersionNames() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

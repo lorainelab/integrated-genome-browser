@@ -91,8 +91,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
 
     @Override
     public Set<String> getAvailableGenomeVersionNames() {
-        logger.info(name);
-        genomeContextRootMap.keySet().stream().forEach(System.out::println);
         return genomeContextRootMap.keySet();
     }
 

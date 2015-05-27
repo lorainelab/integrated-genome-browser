@@ -1,8 +1,9 @@
 /**
  * Copyright (c) 2001-2004 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
- * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -24,6 +25,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Level;
+import java.util.prefs.BackingStoreException;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -158,12 +161,15 @@ public final class KeyStrokeEditPanel extends JPanel {
 
     private String isCommandInUse(String command) {
 
-        for (String key : PreferenceUtils.getKeystrokesNodeNames()) {
-            if (command.equalsIgnoreCase(PreferenceUtils.getKeystrokesNode().get(key, ""))) {
-                return key;
+        try {
+            for (String key : PreferenceUtils.getKeystrokesNode().keys()) {
+                if (command.equalsIgnoreCase(PreferenceUtils.getKeystrokesNode().get(key, ""))) {
+                    return key;
+                }
             }
+        } catch (BackingStoreException ex) {
+            java.util.logging.Logger.getLogger(KeyStrokeEditPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return null;
     }
 
@@ -302,8 +308,10 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * Convert a KeyStroke to a String in the same format used by KeyStroke.getKeyStroke(String). Modified, originally
-     * from the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * Convert a KeyStroke to a String in the same format used by
+     * KeyStroke.getKeyStroke(String). Modified, originally from the Java
+     * Developer's Almanac 1.4.
+     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     public static String keyStroke2String(KeyStroke key) {
         StringBuilder s = new StringBuilder(50);
@@ -340,7 +348,8 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
 
     /**
-     * From the Java Developer's Almanac 1.4. http://javaalmanac.com/egs/javax.swing/Key2Str.html
+     * From the Java Developer's Almanac 1.4.
+     * http://javaalmanac.com/egs/javax.swing/Key2Str.html
      */
     private static String getKeyText(int keyCode) {
         if (keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9

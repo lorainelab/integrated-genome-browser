@@ -71,6 +71,7 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -78,9 +79,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -123,6 +126,13 @@ public final class GeneralLoadUtils {
 
     static final Map<String, String> versionName2species
             = new HashMap<>();	// the species associated with the given version.
+
+    final static Comparator<DataContainer> DATA_CONTAINER_PRIORITY_COMPARATOR = (DataContainer o1, DataContainer o2) -> {
+        DataProviderComparator dataProviderComparator = new DataProviderComparator();
+        return dataProviderComparator.compare(o1.getDataProvider(), o2.getDataProvider());
+    };
+
+    final static Supplier<TreeSet<DataContainer>> DATA_CONTAINER_SORTED_SUPPLIER = () -> new TreeSet<>(DATA_CONTAINER_PRIORITY_COMPARATOR);
 
     public static Map<String, String> getVersionName2Species() {
         return versionName2species;
@@ -304,10 +314,10 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        Set<DataContainer> uninitializedDataContainers = genomeVersion.getAvailableDataContainers().stream()
+        TreeSet<DataContainer> uninitializedDataContainers = genomeVersion.getAvailableDataContainers().stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(DATA_CONTAINER_SORTED_SUPPLIER));
         for (DataContainer gv : uninitializedDataContainers) {
             if (loadGeneomeVersionAssemblyInfo(gv)) {
                 break;
@@ -330,8 +340,9 @@ public final class GeneralLoadUtils {
      * chromosome names will be closer to what is expected.
      */
     private static void loadChromInfo(GenomeVersion genomeVersion) {
-
-        for (DataContainer dataContainer : genomeVersion.getAvailableDataContainers()) {
+        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
+        sortedContainers.addAll(genomeVersion.getAvailableDataContainers());
+        for (DataContainer dataContainer : sortedContainers) {
             if (dataContainer.getDataProvider() instanceof AssemblyProvider) {
                 AssemblyProvider assemblyProvider = (AssemblyProvider) dataContainer.getDataProvider();
                 //TODO load chromosome info
@@ -834,11 +845,14 @@ public final class GeneralLoadUtils {
      */
     // Most confusing thing here -- certain parsers update the composition, and certain ones do not.
     // DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
-    public static boolean getResidues(Set<DataContainer> versionsWithChrom, SeqSpan span) {
+    private static boolean getResidues(Set<DataContainer> versionsWithChrom, SeqSpan span) {
         BioSeq bioSeq = span.getBioSeq();
         String bioSeqId = bioSeq.getId();
         boolean residuesLoaded = false;
-        for (DataContainer dataContainer : versionsWithChrom) {
+
+        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
+        sortedContainers.addAll(versionsWithChrom);
+        for (DataContainer dataContainer : sortedContainers) {
             final DataProvider dataProvider = dataContainer.getDataProvider();
             if (dataProvider.getStatus() == ResourceStatus.Disabled
                     || dataProvider.getStatus() == ResourceStatus.NotResponding) {

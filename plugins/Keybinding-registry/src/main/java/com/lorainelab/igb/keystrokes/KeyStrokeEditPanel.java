@@ -27,6 +27,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.prefs.BackingStoreException;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -158,12 +160,15 @@ public final class KeyStrokeEditPanel extends JPanel {
 
     private String isCommandInUse(String command) {
 
-        for (String key : PreferenceUtils.getKeystrokesNodeNames()) {
-            if (command.equalsIgnoreCase(PreferenceUtils.getKeystrokesNode().get(key, ""))) {
-                return key;
+        try {
+            for (String key : PreferenceUtils.getKeystrokesNode().keys()) {
+                if (command.equalsIgnoreCase(PreferenceUtils.getKeystrokesNode().get(key, ""))) {
+                    return key;
+                }
             }
+        } catch (BackingStoreException ex) {
+            java.util.logging.Logger.getLogger(KeyStrokeEditPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return null;
     }
 

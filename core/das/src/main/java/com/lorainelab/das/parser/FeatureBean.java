@@ -1,7 +1,7 @@
-package com.affymetrix.genometry.parsers.das;
+package com.lorainelab.das.parser;
 
 import com.affymetrix.genometry.Scored;
-import com.affymetrix.genometry.parsers.das.DASFeatureParser.Orientation;
+import com.lorainelab.das.parser.DASFeatureParser.Orientation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

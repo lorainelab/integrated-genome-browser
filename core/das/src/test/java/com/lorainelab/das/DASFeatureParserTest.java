@@ -4,8 +4,10 @@
  *
  * Created on October 6, 2006, 3:19 PM
  */
-package com.affymetrix.genometry.parsers.das;
+package com.lorainelab.das;
 
+import com.lorainelab.das.parser.DASFeatureParser;
+import com.lorainelab.das.parser.DASSymmetry;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;

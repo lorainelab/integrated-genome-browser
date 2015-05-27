@@ -1,31 +1,23 @@
 package com.lorainelab.quickload.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.github.kevinsawicki.http.HttpRequest;
-import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
-import com.google.common.base.Strings;
+import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.lorainelab.quickload.QuickloadConstants;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -143,10 +135,10 @@ public class QuickloadUtils {
         return Optional.empty();
     }
 
-    public static Optional<SortedMap<String, Integer>> getAssemblyInfo(String quickloadUrl, String genomeVersionName) throws IOException, URISyntaxException {
+    public static Optional<Map<String, Integer>> getAssemblyInfo(String quickloadUrl, String genomeVersionName) throws IOException, URISyntaxException {
         String genomeVersionBaseUrl = getGenomeVersionBaseUrl(quickloadUrl, genomeVersionName);
         String genomeTxtUrl = genomeVersionBaseUrl + QuickloadConstants.GENOME_TXT;
-        SortedMap<String, Integer> assemblyInfo = Maps.newTreeMap();
+        Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         URI uri = new URI(genomeTxtUrl);
         try (Reader reader = new InputStreamReader(getInputStream(uri))) {
             getCSVRecordStreamFromTabDelimitedResource(reader).filter(record -> record.size() == 2).forEach(record -> {
@@ -179,59 +171,6 @@ public class QuickloadUtils {
                 .withIgnoreEmptyLines(true)
                 .parse(reader);
         return StreamSupport.stream(records.spliterator(), false);
-    }
-
-    public static boolean isValidRequest(URI uri) throws IOException {
-        final String scheme = uri.getScheme();
-        if (Strings.isNullOrEmpty(scheme)) {
-            return false;
-        }
-        if (scheme.equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
-            File f = new File(uri);
-            return f.exists();
-        } else {
-            int code = -1;
-            try {
-                final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
-                        .trustAllCerts()
-                        .trustAllHosts()
-                        .followRedirects(true)
-                        .connectTimeout(5000);
-                code = httpRequest.code();
-            } catch (HttpRequestException ex) {
-            }
-            return code == HttpURLConnection.HTTP_OK;
-        }
-    }
-
-    //TODO could easily be modified to use cache, but this is not required for now since cacheing needs to be updated before it will be useful
-    public static InputStream getInputStream(URI uri) throws IOException {
-        if (!isValidRequest(uri)) {
-            throw new IOException();
-        }
-        if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
-            File f = new File(uri);
-            InputStream inputStream = new FileInputStream(f);
-            return inputStream;
-        }
-        final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
-                .acceptGzipEncoding()
-                .uncompress(true)
-                .trustAllCerts()
-                .trustAllHosts()
-                .followRedirects(true);
-        if (isGzipContentEncoding(httpRequest)) {
-            return GeneralUtils.getGZipInputStream(uri.toString(), httpRequest.buffer());
-        }
-        return httpRequest.buffer();
-    }
-
-    private static boolean isGzipContentEncoding(final HttpRequest httpRequest) {
-        final String contentEncoding = httpRequest.contentEncoding();
-        if (!Strings.isNullOrEmpty(contentEncoding)) {
-            return contentEncoding.equals("gzip");
-        }
-        return false;
     }
 
 }

@@ -38,7 +38,7 @@ public class GenomeVersion {
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
     private SynonymLookup chrLookup;
-    private final LocalDataSetProvider localDataSetProvider;
+    private final LocalDataProvider localDataSetProvider;
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
 
     public GenomeVersion(String name) {
@@ -48,7 +48,7 @@ public class GenomeVersion {
         id2seq_dirty_bit = false;
         seqlist = new ArrayList<>();
         dataContainers = Sets.newConcurrentHashSet();
-        localDataSetProvider = new LocalDataSetProvider();
+        localDataSetProvider = new LocalDataProvider();
     }
 
     final public String getName() {
@@ -101,7 +101,7 @@ public class GenomeVersion {
         return dataContainers;
     }
 
-    public LocalDataSetProvider getLocalDataSetProvider() {
+    public LocalDataProvider getLocalDataSetProvider() {
         return localDataSetProvider;
     }
 

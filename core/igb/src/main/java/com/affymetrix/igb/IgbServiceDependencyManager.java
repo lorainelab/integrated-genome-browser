@@ -39,6 +39,12 @@ public class IgbServiceDependencyManager {
         logger.info("QuickloadFactory now available.");
     }
 
+    //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
+    @Reference(target = "(&(component.name=DasDataProviderFactory))")
+    public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
+        logger.info("Das Factory now available.");
+    }
+
     @Reference
     public void trackWindowService(IWindowService windowService) {
         logger.info("Window Service now available.");

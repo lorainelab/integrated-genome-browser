@@ -17,7 +17,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ public abstract class BaseDataProvider implements DataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDataProvider.class);
     private final Preferences preferencesNode;
-    private String url;
+    protected String url;
     protected String mirrorUrl;
     protected String name;
     protected String login;
@@ -179,9 +178,6 @@ public abstract class BaseDataProvider implements DataProvider {
             disable();
         }
     }
-
-    @Override
-    public abstract Set<String> getSupportedGenomeVersionNames();
 
     private Optional<ResourceStatus> getMatchingResourceStatus(String preferenceValue) {
         return Arrays.asList(ResourceStatus.values()).stream()

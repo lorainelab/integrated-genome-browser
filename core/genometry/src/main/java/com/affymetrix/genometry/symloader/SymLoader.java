@@ -59,11 +59,6 @@ public abstract class SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoader(String featureName, GenomeVersion genomeVersion) {
-        this.featureName = featureName;
-        this.genomeVersion = genomeVersion;
-    }
-
     public SymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
         this.uri = uri;
         this.featureName = featureName;

@@ -2,7 +2,7 @@ package com.lorainelab.quickload;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.data.BaseDataProvider;
-import com.affymetrix.genometry.data.DataSetProvider;
+import com.affymetrix.genometry.data.GenomeVersionProvider;
 import com.affymetrix.genometry.data.SpeciesInfo;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
@@ -10,6 +10,7 @@ import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
+import static com.affymetrix.genometry.util.UriUtils.isValidRequest;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -30,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-public class QuickloadDataProvider extends BaseDataProvider implements DataSetProvider, ReferenceSequenceDataSetProvider, AssemblyProvider {
+public class QuickloadDataProvider extends BaseDataProvider implements ReferenceSequenceDataSetProvider, AssemblyProvider, GenomeVersionProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(QuickloadDataProvider.class);
 
@@ -134,7 +134,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
     }
 
     @Override
-    public LinkedHashSet<DataSet> getAvailableDataSets(DataContainer dataContainer) {
+    public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         final GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersion.getName(), supportedGenomeVersionInfo);
         if (genomeVersionData.isPresent()) {
@@ -156,9 +156,9 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
     }
 
     @Override
-    public SortedMap<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
+    public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
         try {
-            final Optional<SortedMap<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersion.getName());
+            final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersion.getName());
             if (assemblyInfo.isPresent()) {
                 return assemblyInfo.get();
             }
@@ -178,7 +178,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
         URI uri = null;
         try {
             uri = new URI(sequenceFileLocation);
-            if (QuickloadUtils.isValidRequest(uri)) {
+            if (isValidRequest(uri)) {
                 return Optional.of(uri);
             }
         } catch (URISyntaxException | IOException ex) {
@@ -193,5 +193,10 @@ public class QuickloadDataProvider extends BaseDataProvider implements DataSetPr
         return Optional.of(QUICKLOAD_FACTORY_NAME);
     }
     private static final String QUICKLOAD_FACTORY_NAME = "Quickload";
+
+    @Override
+    public Set<String> getAvailableGenomeVersionNames() {
+        return supportedGenomeVersionInfo.keySet();
+    }
 
 }

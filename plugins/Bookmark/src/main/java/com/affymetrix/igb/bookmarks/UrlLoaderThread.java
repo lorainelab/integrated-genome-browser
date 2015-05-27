@@ -16,7 +16,6 @@ import com.affymetrix.genometry.parsers.BpsParser;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.parsers.PSLParser;
-import com.affymetrix.genometry.parsers.das.DASFeatureParser;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.SwingUtilities;
-import javax.xml.stream.XMLStreamException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,22 +284,6 @@ public final class UrlLoaderThread extends Thread {
                 BpsParser.parse(dis, type, null, group, false, true);
             } finally {
                 GeneralUtils.safeClose(dis);
-            }
-        } else if (content_type.startsWith("text/plain")
-                || content_type.startsWith("text/html")
-                || content_type.startsWith("text/xml")) {
-            // Note that some http servers will return "text/html" even when that is untrue.
-            // we could try testing whether the filename extension is a recognized extension, like ".psl"
-            // and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-            BufferedInputStream bis = null;
-            try {
-                bis = new BufferedInputStream(stream);
-                DASFeatureParser das_parser = new DASFeatureParser();
-                das_parser.parse(bis, group);
-            } catch (XMLStreamException ex) {
-                logger.error("Unable to parse DAS response", ex);
-            } finally {
-                GeneralUtils.safeClose(bis);
             }
         } else if (content_type.startsWith("text/psl")) {
             BufferedInputStream bis = null;

@@ -1,7 +1,6 @@
 package com.affymetrix.genometry.parsers;
 
 import com.affymetrix.genometry.GenomeVersion;
-import com.affymetrix.genometry.parsers.das.DASFeatureParser;
 import com.affymetrix.genometry.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometry.parsers.graph.BarParser;
 import com.affymetrix.genometry.parsers.graph.BgrParser;
@@ -225,7 +224,6 @@ public class FileTypeHolder {
         addFileTypeHandler("Graph", new String[]{"chp"}, FileTypeCategory.ScoredContainer, null, SymLoaderInstNC.class); // chp files are handles elsewhere, this is just to get them in the FileChooser popup
         addFileTypeHandler("Copy Number", new String[]{"cnt"}, FileTypeCategory.Graph, CntParser.class, SymLoaderInst.class);
         addFileTypeHandler("Cytobands", new String[]{"cyt"}, /*FileTypeCategory.Cytoband*/ null, CytobandParser.class, SymLoaderInst.class);
-        addFileTypeHandler("DAS", new String[]{"das", "dasxml"}, FileTypeCategory.Annotation, DASFeatureParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("Binary", new String[]{"ead"}, FileTypeCategory.Annotation, ExonArrayDesignParser.class, SymLoaderInstNC.class);
         addFileTypeHandler(new FileTypeHandler() {
             String[] extensions = new String[]{"fa", "fas", "fasta", "fna", "fsa", "mpfa"};
@@ -305,7 +303,7 @@ public class FileTypeHolder {
                 if (type_prefix != null) {
                     parser.setTrackNamePrefix(type_prefix);
                 }
-                        // assume that want to annotate target seqs, and that these are the seqs
+                // assume that want to annotate target seqs, and that these are the seqs
                 //    represented in seq_genomeVersion
                 parser.setIsLinkPsl(true);
                 parser.enableSharedQueryTarget(true);

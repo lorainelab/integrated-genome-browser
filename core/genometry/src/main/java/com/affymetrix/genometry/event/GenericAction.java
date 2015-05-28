@@ -48,7 +48,7 @@ public abstract class GenericAction extends AbstractAction {
     public GenericAction(String text, String iconPath, String largeIconPath) {
         this(text, null, iconPath, largeIconPath, KeyEvent.VK_UNDEFINED);
     }
-
+    
     public GenericAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic) {
         this(text, tooltip, iconPath, largeIconPath, mnemonic, null, false);
     }
@@ -101,7 +101,7 @@ public abstract class GenericAction extends AbstractAction {
         loadPreferredKeystrokes();
     }
 
-    private void loadPreferredKeystrokes() {
+    protected final void loadPreferredKeystrokes() {
         String prefKeyStrokeBinding = getPreferredKeyStrokeBinding();
         if (!Strings.isNullOrEmpty(prefKeyStrokeBinding)) {
             this.keyStrokeBinding = prefKeyStrokeBinding;

@@ -80,8 +80,9 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
         this.display = "Toggle " + one.getDisplay() + " and " + two.getDisplay();
         this.ordinal = Math.min(one.getOrdinal(), two.getOrdinal()) - 1;
         this.setEnabled(one.isEnabled() || two.isEnabled());
+        loadPreferredKeystrokes();
     }
-
+    
     private void switchTo(SeqMapViewActionA a) {
         assert a == this.shownAction || a == this.hiddenAction;
         if (a == this.hiddenAction) {

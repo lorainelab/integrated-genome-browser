@@ -42,6 +42,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
     private String display = null;
 
     private SeqMapViewActionA shownAction, hiddenAction;
+    private boolean isToolbarDefault = false;
     private PropertyChangeListener toggle = new PropertyChangeListener() {
 
         @Override
@@ -59,6 +60,11 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
         }
 
     };
+    
+    public SeqMapToggleAction(SeqMapViewActionA one, SeqMapViewActionA two, boolean isToolbarDefault) {
+        this(one, two);
+        this.isToolbarDefault = isToolbarDefault;
+    }
 
     public SeqMapToggleAction(SeqMapViewActionA one, SeqMapViewActionA two) {
         super(one.getText(), one.getIconPath(), one.getLargeIconPath());
@@ -139,4 +145,10 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
         return this;
     }
 
+    @Override
+    public boolean isToolbarDefault() {
+        return isToolbarDefault;
+    }
+
+    
 }

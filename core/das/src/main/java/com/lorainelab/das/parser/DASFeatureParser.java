@@ -23,6 +23,7 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -30,6 +31,8 @@ import javax.xml.stream.events.XMLEvent;
  * @version $Id: DASFeatureParser.java 11467 2012-05-08 20:44:01Z hiralv $
  */
 public final class DASFeatureParser implements Parser {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DASFeatureParser.class);
 
     static enum Orientation {
 
@@ -64,24 +67,27 @@ public final class DASFeatureParser implements Parser {
         GroupBean group = new GroupBean();
         TargetBean target = new TargetBean();
         Map<String, DASSymmetry> groupMap = new HashMap<>();
-
-        while (reader.hasNext() && !Thread.currentThread().isInterrupted()) {
-            current = reader.nextEvent();
-            switch (current.getEventType()) {
-                case XMLEvent.START_ELEMENT:
-                    startElement(current.asStartElement(), feature, link, group, target, genomeVersion);
-                    stack.push(current.asStartElement());
-                    break;
-                case XMLEvent.CHARACTERS:
-                    characters(current.asCharacters(), stack.peek(), feature, link, target);
-                    break;
-                case XMLEvent.END_ELEMENT:
-                    stack.pop();
-                    endElement(current.asEndElement(), stack.peek(), groupMap, feature, link, group, target, genomeVersion);
-                    break;
+        try {
+            while (reader.hasNext() && !Thread.currentThread().isInterrupted()) {
+                current = reader.nextEvent();
+                switch (current.getEventType()) {
+                    case XMLEvent.START_ELEMENT:
+                        startElement(current.asStartElement(), feature, link, group, target, genomeVersion);
+                        stack.push(current.asStartElement());
+                        break;
+                    case XMLEvent.CHARACTERS:
+                        characters(current.asCharacters(), stack.peek(), feature, link, target);
+                        break;
+                    case XMLEvent.END_ELEMENT:
+                        stack.pop();
+                        endElement(current.asEndElement(), stack.peek(), groupMap, feature, link, group, target, genomeVersion);
+                        break;
+                }
             }
+        } catch (XMLStreamException ex) {
+            logger.warn("Invalid XML received from the Das server, unable to parse invalid xml. IGB will show this region as empty.", ex);
+            return Collections.<DASSymmetry>emptyList();
         }
-
         if (Thread.currentThread().isInterrupted()) {
             return Collections.<DASSymmetry>emptyList();
         }

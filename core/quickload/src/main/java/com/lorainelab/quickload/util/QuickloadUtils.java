@@ -120,8 +120,9 @@ public class QuickloadUtils {
         String annotsXmlUrl = genomeVersionBaseUrl + QuickloadConstants.ANNOTS_XML;
         try {
             URI uri = new URI(annotsXmlUrl);
-            try (Reader reader = new InputStreamReader(getInputStream(uri))) {
-                List<QuickloadFile> annotsFiles = ANNOTS_PARSER.getQuickloadFileList(reader);
+
+            try (InputStream inputStream = getInputStream(uri)) {
+                List<QuickloadFile> annotsFiles = ANNOTS_PARSER.getQuickloadFileList(inputStream);
                 if (!annotsFiles.isEmpty()) {
                     return Optional.of(Sets.newLinkedHashSet(annotsFiles));
                 } else {

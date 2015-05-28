@@ -1,17 +1,23 @@
 package com.lorainelab.quickload.util;
 
 import com.google.common.collect.Lists;
-import com.lorainelab.quickload.model.annots.QuickloadFile;
 import com.lorainelab.quickload.model.annots.AnnotsRootElement;
+import com.lorainelab.quickload.model.annots.QuickloadFile;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  *
@@ -32,20 +38,28 @@ public class AnnotsParser {
         }
     }
 
-    public List<QuickloadFile> getQuickloadFileList(Reader reader) throws IOException {
+    public List<QuickloadFile> getQuickloadFileList(InputStream inputStream) throws IOException {
         List<QuickloadFile> annotsFileList = Lists.newArrayList();
-        fromXml(reader).ifPresent(filesTag -> filesTag.getFiles().stream().forEach(annotsFileList::add));
+        fromXml(inputStream).ifPresent(filesTag -> filesTag.getFiles().stream().forEach(annotsFileList::add));
         return annotsFileList;
     }
 
-    private Optional<AnnotsRootElement> fromXml(Reader reader) throws IOException {
+    private Optional<AnnotsRootElement> fromXml(InputStream inputStream) throws IOException {
         try {
-            return Optional.ofNullable((AnnotsRootElement) primaryUnmarshaller.unmarshal(reader));
-        } catch (JAXBException ex) {
+            SAXSource saxSource = createSaxSource(inputStream);
+            return Optional.ofNullable((AnnotsRootElement) primaryUnmarshaller.unmarshal(saxSource));
+        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
             logger.error("Error Loading xml preferences file", ex);
         }
 
         return Optional.empty();
+    }
+
+    private static SAXSource createSaxSource(final InputStream inputSteam) throws SAXException, ParserConfigurationException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        XMLReader xr = (XMLReader) spf.newSAXParser().getXMLReader();
+        SAXSource source = new SAXSource(xr, new InputSource(inputSteam));
+        return source;
     }
 
 }

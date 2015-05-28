@@ -142,7 +142,12 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
             versionFiles.stream().forEach((file) -> {
                 try {
-                    URI uri = new URI(getUrl() + genomeVersion.getName() + "/" + file.getName());
+                    URI uri;
+                    if (!file.getName().startsWith("http")) {
+                        uri = new URI(getUrl() + genomeVersion.getName() + "/" + file.getName());
+                    } else {
+                        uri = new URI(file.getName());
+                    }
                     DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
                     dataSets.add(dataSet);
                 } catch (URISyntaxException ex) {

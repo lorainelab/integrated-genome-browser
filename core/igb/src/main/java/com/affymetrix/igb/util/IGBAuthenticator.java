@@ -42,7 +42,7 @@ public class IGBAuthenticator extends Authenticator {
     private static final StringEncrypter ENCRYPTER = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
-    private int loginAttempts = 0;
+    private static int loginAttempts = 0;
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -160,6 +160,6 @@ public class IGBAuthenticator extends Authenticator {
     public static void resetAuthentication(DataProvider dataProvider) {
         Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.getUrl());
         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
+        loginAttempts = 0;
     }
-
 }

@@ -59,14 +59,9 @@ public class StartAutoScrollAction extends SeqMapViewActionA {
     public boolean isToolbarAction() {
         return false;
     }
-    
-    @Override
-    public boolean isToolbarDefault() {
-        return true; 
-    }
 
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
+        return TOOLBAR_INDEX;
     }
 }

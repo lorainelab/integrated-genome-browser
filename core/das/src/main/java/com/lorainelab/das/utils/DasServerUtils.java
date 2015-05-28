@@ -204,6 +204,8 @@ public class DasServerUtils {
 
     private static SAXSource createSaxSource(final InputStream inputSteam) throws SAXException, ParserConfigurationException {
         SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        spf.setFeature("http://xml.org/sax/features/validation", false);
         XMLReader xr = (XMLReader) spf.newSAXParser().getXMLReader();
         SAXSource source = new SAXSource(xr, new InputSource(inputSteam));
         return source;

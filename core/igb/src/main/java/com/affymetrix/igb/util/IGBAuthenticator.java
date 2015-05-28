@@ -11,6 +11,8 @@ import com.affymetrix.igb.general.DataProviderManager;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +45,13 @@ public class IGBAuthenticator extends Authenticator {
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     private static final String ERROR_LOGIN = BUNDLE.getString("errorLogin");
     private int loginAttempts = 0;
+    private Timer attemptResetTimer = new Timer(2000, new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loginAttempts = 0;
+        }
+    });
 
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -123,6 +132,11 @@ public class IGBAuthenticator extends Authenticator {
             if (Strings.isNullOrEmpty(username) || chars.length == 0) {
                 return null;
             }
+            if (attemptResetTimer.isRunning()) {
+                attemptResetTimer.restart();
+            } else {
+                attemptResetTimer.start();
+            }
             return new PasswordAuthentication(username, chars);
         } else {
             temporarilyIgnoreHost();
@@ -161,5 +175,4 @@ public class IGBAuthenticator extends Authenticator {
         Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.getUrl());
         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
     }
-
 }

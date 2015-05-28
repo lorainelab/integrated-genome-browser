@@ -321,7 +321,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
         
         return actionKeys.stream()
                 .filter(action -> action.getText() != null)
-                .sorted((GenericAction a1, GenericAction a2) -> a1.getText().compareTo(a2.getText()))
+                .sorted((GenericAction a1, GenericAction a2) -> a1.getDisplay().compareTo(a2.getDisplay()))
                 .collect(Collectors.toList());
         
     }

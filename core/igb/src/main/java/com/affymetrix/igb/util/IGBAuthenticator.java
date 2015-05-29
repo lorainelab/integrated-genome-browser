@@ -72,10 +72,16 @@ public class IGBAuthenticator extends Authenticator {
         panel.add(showPassword, "wrap");
         Optional<DataProvider> dataProvider = DataProviderManager.getServerFromUrlStatic(this.getRequestingURL().toString());
         final JCheckBox rememberCredentials = new JCheckBox("Save Password");
+
+        if (loginAttempts > 0) {
+            errorLoginLabel.setText(ERROR_LOGIN);
+        } else {
+            loginAttempts++;
+        }
         if (dataProvider.isPresent()) {
             Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
             final boolean currentRememberStatus = dataProviderNode.getBoolean(REMEMBER_CREDENTIALS, false);
-            if (currentRememberStatus && loginAttempts == 0) {
+            if (currentRememberStatus) {
                 String userName = dataProviderNode.get(LOGIN, null);
                 String prefPwd = dataProviderNode.get(PASSWORD, null);
                 if (!Strings.isNullOrEmpty(userName) || !Strings.isNullOrEmpty(prefPwd)) {
@@ -84,8 +90,7 @@ public class IGBAuthenticator extends Authenticator {
                         PasswordAuthentication persistedCredentials = validateAuthentication(userName, new JPasswordField(prefPwd).getPassword());
                         return persistedCredentials;
                     } catch (IOException ex) {
-                        //technically shouldn't happen so log exception, but continue to avoid lockout under fail conditions
-                        logger.error(ex.getMessage(), ex);
+                        logger.error(BUNDLE.getString("invalidCredentials"));
                         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
                     }
                 }
@@ -93,11 +98,7 @@ public class IGBAuthenticator extends Authenticator {
             rememberCredentials.setSelected(currentRememberStatus);
             panel.add(rememberCredentials);
         }
-        if (loginAttempts > 0) {
-            errorLoginLabel.setText(ERROR_LOGIN);
-        } else {
-            loginAttempts++;
-        }
+
         int option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
         // work around Java's internal ISO-8859-1 encoding
         if (option == JOptionPane.OK_OPTION) {
@@ -145,12 +146,20 @@ public class IGBAuthenticator extends Authenticator {
     private PasswordAuthentication validateAuthentication(final String username, final char[] pwd) throws IOException {
         PasswordAuthentication pa = new PasswordAuthentication(username, pwd);
         Authenticator.setDefault(new Authenticator() {
+            int authenticationValidationCount = 0;
+
             @Override
             public PasswordAuthentication getPasswordAuthentication() {
+                if (authenticationValidationCount > 0) {
+                    return null;
+                }
+                authenticationValidationCount++;
                 return pa;
             }
         });
         try (InputStream temp = getRequestingURL().openStream()) {
+        } catch (IOException ex) {
+            throw ex;
         } finally {
             Authenticator.setDefault(this);
         }

@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final int TAB_POSITION = 2;
     private static final Logger logger = LoggerFactory.getLogger(TierPreferencesPanel.class);
+    public static final int TAB_POSITION = 1;
 
     /**
      * Creates new form TierPreferencesPanel
@@ -39,11 +39,6 @@ public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlH
     @Override
     public JRPJPanel getPanel() {
         return this;
-    }
-
-    @Override
-    public int getWeight() {
-        return TAB_POSITION;
     }
 
     @Override
@@ -85,4 +80,10 @@ public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlH
         }
         return htmlText;
     }
+
+    @Override
+    public int getWeight() {
+        return TAB_POSITION;
+    }
+
 }

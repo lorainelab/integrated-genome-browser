@@ -63,7 +63,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpP
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KeyStrokesView.class);
     private final JRPJPanel keyStrokePanel;
     private IgbService igbService;
-    private static final int TAB_POSITION = 7;
+    private static final int TAB_POSITION = 3;
 
     @Reference
     public void addIgbService(IgbService igbService) {

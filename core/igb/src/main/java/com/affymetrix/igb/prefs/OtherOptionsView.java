@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
-    public static final int TAB_POSITION = 5;
+    private static final int TAB_POSITION = 4;
     String default_label_format = CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
     String[] label_format_options = new String[]{CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_FULL,
         CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA,

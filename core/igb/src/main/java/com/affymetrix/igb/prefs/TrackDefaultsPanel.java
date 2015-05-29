@@ -19,7 +19,7 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel implements Prefere
 
     public static final String COMPONENT_NAME = "TrackDefaultsPanel";
     private static final long serialVersionUID = 1L;
-    private static final int TAB_POSITION = 1;
+    private static final int TAB_POSITION = 2;
     private static final Logger logger = LoggerFactory.getLogger(TrackDefaultsPanel.class);
 
     //TODO remove this dependency on a singleton

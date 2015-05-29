@@ -23,7 +23,7 @@ public class BlastRunOptsPanel extends JRPJPanel implements BlastRunOpts, Prefer
     private JTextField gapOpenCost;
     private JTextField gapExtendCost;
     private JTextField numOfHits;
-    private static final int TAB_POSITION = 6;
+    private static final int TAB_POSITION = -1;
 //	private int start, end;
 
     public BlastRunOptsPanel() {

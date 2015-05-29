@@ -139,7 +139,7 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
         Rectangle bounds = new Rectangle(100, 5, 70, 12);
         if (bounds.contains(evt.getX(), evt.getY())) {
             PreferencesPanel pp = PreferencesPanel.getSingleton();
-            pp.setTab(pp.getTabIndex(DataProviderManagementGui.TAB_NAME));
+            pp.setTab(DataProviderManagementGui.class);
             javax.swing.JFrame f = pp.getFrame();
             f.setVisible(true);
         }

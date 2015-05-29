@@ -40,7 +40,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "Plugin Repositories";
-    private static final int TAB_POSITION = 6;
+    private static final int TAB_POSITION = 5;
     private BundleRepositoryTableModel tableModel;
     private PluginRepositoryListProvider pluginRepositoryListProvider;
     private final Icon refresh_icon;
@@ -77,7 +77,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     public void showTabPanelEvent(ShowBundleRepositoryPanelEvent event) {
         int tabIndex = igbService.getPreferencesPanelTabIndex(this); //should probably be the same as TAB_POSITION but might not be
         if (tabIndex != -1) {
-            igbService.openPreferencesPanelTab(tabIndex);
+            igbService.openPreferencesPanelTab(BundleRepositoryPrefsView.class);
         }
     }
 

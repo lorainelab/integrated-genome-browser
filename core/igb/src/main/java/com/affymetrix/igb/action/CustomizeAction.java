@@ -30,7 +30,7 @@ public class CustomizeAction extends SeqMapViewActionA {
     private void showCustomizer() {
         TierLabelManager handler = getTierManager();
         PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(OtherOptionsView.TAB_POSITION);
+        pv.setTab(OtherOptionsView.class);
         ((TierPrefsView) pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
 
 //		// If and only if the selected track is coordinate track, will open 'Other Options' panel 

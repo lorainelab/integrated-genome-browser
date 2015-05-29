@@ -75,7 +75,7 @@ public class IGBAuthenticator extends Authenticator {
         if (dataProvider.isPresent()) {
             Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
             final boolean currentRememberStatus = dataProviderNode.getBoolean(REMEMBER_CREDENTIALS, false);
-            if (currentRememberStatus) {
+            if (currentRememberStatus && loginAttempts == 0) {
                 String userName = dataProviderNode.get(LOGIN, null);
                 String prefPwd = dataProviderNode.get(PASSWORD, null);
                 if (!Strings.isNullOrEmpty(userName) || !Strings.isNullOrEmpty(prefPwd)) {
@@ -100,26 +100,26 @@ public class IGBAuthenticator extends Authenticator {
         }
         int option = JOptionPane.showConfirmDialog(null, panel, getRequestingPrompt(), JOptionPane.OK_CANCEL_OPTION);
         // work around Java's internal ISO-8859-1 encoding
-        final String string = new String(password.getPassword());
-        final byte[] bytes;
-        try {
-            bytes = string.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-        final char[] chars = new char[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            chars[i] = (char) (bytes[i] & 0xff);
-        }
-        String username = user.getText();
-        String passwordPlainText = new String(chars);
-        if (dataProvider.isPresent() && rememberCredentials.isSelected()) {
-            Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
-            dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, true);
-            dataProvider.get().setLogin(username);
-            dataProvider.get().setPassword(passwordPlainText);
-        }
         if (option == JOptionPane.OK_OPTION) {
+            final String string = new String(password.getPassword());
+            final byte[] bytes;
+            try {
+                bytes = string.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            final char[] chars = new char[bytes.length];
+            for (int i = 0; i < bytes.length; i++) {
+                chars[i] = (char) (bytes[i] & 0xff);
+            }
+            String username = user.getText();
+            String passwordPlainText = new String(chars);
+            if (dataProvider.isPresent() && rememberCredentials.isSelected()) {
+                Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
+                dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, true);
+                dataProvider.get().setLogin(username);
+                dataProvider.get().setPassword(passwordPlainText);
+            }
             if (Strings.isNullOrEmpty(username) || chars.length == 0) {
                 return null;
             }

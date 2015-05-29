@@ -45,6 +45,7 @@ import com.google.common.collect.ImmutableList;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.genoviz.extensions.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
@@ -402,7 +403,7 @@ public class IgbServiceImpl implements IgbService {
     @Override
     public void openPreferencesOtherPanel() {
         PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(OtherOptionsView.TAB_POSITION);	// Other preferences tab
+        pv.setTab(OtherOptionsView.class);	// Other preferences tab
         JFrame f = pv.getFrame();
         f.setVisible(true);
     }
@@ -439,9 +440,9 @@ public class IgbServiceImpl implements IgbService {
     }
 
     @Override
-    public void openPreferencesPanelTab(int tabIndex) {
+    public void openPreferencesPanelTab(Class<? extends PreferencesPanelProvider> cls) {
         PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(tabIndex);
+        pv.setTab(cls);
         JFrame f = pv.getFrame();
         f.setVisible(true);
     }

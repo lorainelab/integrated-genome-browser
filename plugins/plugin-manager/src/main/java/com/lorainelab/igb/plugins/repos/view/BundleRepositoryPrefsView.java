@@ -77,7 +77,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     public void showTabPanelEvent(ShowBundleRepositoryPanelEvent event) {
         int tabIndex = igbService.getPreferencesPanelTabIndex(this); //should probably be the same as TAB_POSITION but might not be
         if (tabIndex != -1) {
-            igbService.openPreferencesPanelTab(tabIndex);
+            igbService.openPreferencesPanelTab(BundleRepositoryPrefsView.class);
         }
     }
 

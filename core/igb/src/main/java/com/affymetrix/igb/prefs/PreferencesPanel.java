@@ -95,15 +95,15 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
     /**
      * Set the tab pane to the given index.
      */
-    public void setTab(int i) {
-        if (i < 0 || i >= tabbedPane.getComponentCount()) {
-            return;
-        }
-        tabbedPane.setSelectedIndex(i);
-        Component c = tabbedPane.getComponentAt(i);
-        if (c instanceof PreferencesPanelProvider) {
-            PreferencesPanelProvider p = (PreferencesPanelProvider) c;
-            p.refresh();
+    public void setTab(Class<? extends PreferencesPanelProvider> cls) {
+        for(int i = 0; i<tabbedPane.getComponentCount(); i++) {
+            Component comp = tabbedPane.getComponentAt(i);
+            if(cls.isInstance(comp)) {
+                tabbedPane.setSelectedIndex(i);
+                PreferencesPanelProvider p = (PreferencesPanelProvider) comp;
+                p.refresh();
+                break;
+            }
         }
     }
 
@@ -145,7 +145,7 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
         boolean panelAdded = false;
         for (int i = tabbedPane.getTabCount(); i > 0; i--) {
             JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i - 1);
-            if (panelProvider.getWeight() > panel.getWeight()) {
+            if (panelProvider.getWeight() > panel.getWeight() && panel.getWeight() != -1) {
                 tabbedPane.add(panelProvider.getPanel(), i);
                 panelAdded = true;
                 break;

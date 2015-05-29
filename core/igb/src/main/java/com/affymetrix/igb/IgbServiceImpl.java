@@ -24,7 +24,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.DataProviderManager;
-import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
@@ -398,14 +397,6 @@ public class IgbServiceImpl implements IgbService {
     @Override
     public void selectFeatureAndCenterZoomStripe(String selectParam) {
         ServiceUtils.getInstance().selectFeatureAndCenterZoomStripe(selectParam);
-    }
-
-    @Override
-    public void openPreferencesOtherPanel() {
-        PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(OtherOptionsView.class);	// Other preferences tab
-        JFrame f = pv.getFrame();
-        f.setVisible(true);
     }
 
     @Override

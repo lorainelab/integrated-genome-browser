@@ -98,9 +98,9 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
         Optional<String> operationParam = getOperatorParam();
         if (operationParam.isPresent()) {
-            meth.append(getOperator().getDisplay()).append("(" + operationParam.get() + ")").append("- ");
+            meth.append(getOperator().getDisplay()).append(" " + operationParam.get() + ": ");
         } else {
-            meth.append(getOperator().getDisplay()).append("- ");
+            meth.append(getOperator().getDisplay()).append(": ");
         }
         boolean started = false;
         for (GlyphI gl : vgs) {
@@ -124,7 +124,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
         if(operator instanceof PowerTransformer) {
             PowerTransformer op = (PowerTransformer) operator;
-            return Optional.of(op.getParameterValue(op.getParamPrompt()).toString());
+            return Optional.ofNullable((String)op.getParameterValue(op.getParamPrompt()));
         }
         return Optional.empty();
     }

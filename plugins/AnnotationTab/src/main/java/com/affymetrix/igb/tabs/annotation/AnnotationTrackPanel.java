@@ -4,7 +4,6 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.affymetrix.igb.shared.SelectAllAction;
@@ -82,7 +81,7 @@ public class AnnotationTrackPanel extends TrackViewPanel {
 
     @Override
     protected void customButtonActionPerformedA(java.awt.event.ActionEvent evt) {
-        igbService.openPreferencesPanelTab(OtherOptionsView.class);
+        igbService.openPreferencesOtherPanel();
     }
 
     @Override

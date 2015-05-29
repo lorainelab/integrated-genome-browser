@@ -216,6 +216,8 @@ public interface IgbService {
 
     public void selectFeatureAndCenterZoomStripe(String selectParam);
 
+    public void openPreferencesOtherPanel();
+
     public void openPreferencesPanelTab(Class<? extends PreferencesPanelProvider> cls);
 
     public int getPreferencesPanelTabIndex(Component c);

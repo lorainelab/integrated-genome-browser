@@ -492,7 +492,7 @@ public final class GeneralLoadView {
             }
         }
         DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), getSelectedSpecies());
-        DataSet dataSet = new DataSet(uri, dataSetName, null, dataContainer, loader, null, false);
+        DataSet dataSet = new DataSet(uri, dataSetName, null, dataContainer, loader, false);
         dataContainer.addDataSet(dataSet);
         dataSet.setVisible(); // this should be automatically checked in the feature tree
         refreshTreeViewAndRestore();

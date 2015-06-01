@@ -34,6 +34,13 @@
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5"
+            },
+            {
+                "factoryName": "das2",
+                "name": "UofUtahBioinfoCore",
+                "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
+                "loadPriority": "6",
+                "enabled": "false"
             }
         ],
         "repository": [

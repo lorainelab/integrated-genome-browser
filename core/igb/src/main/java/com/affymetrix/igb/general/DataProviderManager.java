@@ -198,7 +198,26 @@ public class DataProviderManager {
                 ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
                 dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
             });
+        } else {
+            if (!Strings.isNullOrEmpty(status)) {
+                DataProvider dataProvider = null;
+                if (Strings.isNullOrEmpty(mirrorUrl)) {
+                    if (dataProviderServiceReferences.containsKey(url)) {
+                        dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
+                    }
+                } else {
+                    if (!dataProviderServiceReferences.containsKey(url)) {
+                        if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
+                            dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
+                        }
+                    }
+                }
+                if (dataProvider != null) {
+                    dataProvider.setStatus(ResourceStatus.fromName(status).get());
+                }
+            }
         }
+
         eventBus.post(new DataProviderServiceChangeEvent());
     }
 
@@ -239,7 +258,9 @@ public class DataProviderManager {
     }
 
     private void initializeDataProvider(DataProvider dataProvider) {
-        dataProvider.initialize();
+        if (dataProvider.getStatus() != Disabled) {
+            dataProvider.initialize();
+        }
         if (dataProvider.getStatus() == Initialized) {
             //TODO don't assume GenomeVersionProvider instances are all derrived from DataProvider instances... a separate whiteboard/service listener would improve design.
             if (dataProvider instanceof GenomeVersionProvider) {

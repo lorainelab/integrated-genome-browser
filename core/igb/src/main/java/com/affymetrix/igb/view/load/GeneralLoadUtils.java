@@ -63,7 +63,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1158,7 +1157,7 @@ public final class GeneralLoadUtils {
                             ? new QuickLoadSymLoaderChp(uri, friendlyName, dataContainer.getGenomeVersion())
                             : new QuickLoadSymLoader(uri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
 
-            dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, File.class, autoload, isReferenceSequence);
+            dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
 
             dataContainer.addDataSet(dataSet);
 

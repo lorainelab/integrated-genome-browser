@@ -34,16 +34,19 @@ public class DataProviderFactoryManager {
         factories.remove(factory);
     }
 
-    //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
     @Reference(target = "(&(component.name=QuickloadFactory))")
     public void trackQuickloadDataProviderFactory(DataProviderFactory quickloadFactory) {
         logger.info("QuickloadFactory now available.");
     }
 
-    //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
     @Reference(target = "(&(component.name=DasDataProviderFactory))")
     public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
         logger.info("Das Factory now available.");
+    }
+
+    @Reference(target = "(&(component.name=Das2DataProviderFactory))")
+    public void trackDas2DataProviderFactory(DataProviderFactory quickloadFactory) {
+        logger.info("Das2 Factory now available.");
     }
 
     public Optional<DataProviderFactory> findFactoryByName(String factoryName) {

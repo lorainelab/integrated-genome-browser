@@ -40,10 +40,10 @@ public final class DataSet {
     private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
     private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
     private RefreshStatus lastRefresh;
-    private final Object typeObj;    // Das2Type, ...?
     private SymLoader symL;
     private String method;
     private URI uri;
+    private boolean supportsAvailabilityCheck;
 
     private final boolean isReferenceSequence;
 
@@ -66,17 +66,17 @@ public final class DataSet {
         this.dataContainer = dataContainer;
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
         this.isReferenceSequence = false;
-        this.typeObj = null;
+        this.supportsAvailabilityCheck = false;
     }
 
     public DataSet(URI uri, String name, Map<String, String> featureProps, DataContainer dataContainer,
-            SymLoader symLoader, Object typeObj, boolean autoload) {
-        this(uri, name, featureProps, dataContainer, symLoader, typeObj, autoload, false);
+            SymLoader symLoader, boolean autoload) {
+        this(uri, name, featureProps, dataContainer, symLoader, autoload, false);
     }
 
     public DataSet(String name, Map<String, String> featureProps, DataContainer dataContainer,
             SymLoader symLoader, Object typeObj, boolean autoload) {
-        this(null, name, featureProps, dataContainer, symLoader, typeObj, autoload, false);
+        this(null, name, featureProps, dataContainer, symLoader, autoload, false);
     }
 
     /**
@@ -86,17 +86,17 @@ public final class DataSet {
      * @param typeObj
      */
     public DataSet(URI uri,
-            String name, Map<String, String> props, DataContainer dataContainer, SymLoader symLoader, Object typeObj, boolean autoload, boolean isReferenceSequence) {
+            String name, Map<String, String> props, DataContainer dataContainer, SymLoader symLoader, boolean autoload, boolean isReferenceSequence) {
         this.uri = uri;
         this.name = name;
         this.properties = props;
         this.dataContainer = dataContainer;
         this.symL = symLoader;
-        this.typeObj = typeObj;
 
         this.setAutoload(autoload);
         this.lastRefresh = RefreshStatus.NOT_REFRESHED;
         this.isReferenceSequence = isReferenceSequence;
+        this.supportsAvailabilityCheck = false;
         //methods.add(name);
     }
 
@@ -371,13 +371,6 @@ public final class DataSet {
     }
 
     /**
-     * @return the typeObj
-     */
-    public Object getTypeObj() {
-        return typeObj;
-    }
-
-    /**
      * @return the symL
      */
     public SymLoader getSymL() {
@@ -386,4 +379,13 @@ public final class DataSet {
         }
         return symL;
     }
+
+    public boolean isSupportsAvailabilityCheck() {
+        return supportsAvailabilityCheck;
+    }
+
+    public void setSupportsAvailabilityCheck(boolean supportsAvailabilityCheck) {
+        this.supportsAvailabilityCheck = supportsAvailabilityCheck;
+    }
+
 }

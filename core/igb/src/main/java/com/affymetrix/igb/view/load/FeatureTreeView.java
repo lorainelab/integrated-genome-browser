@@ -710,15 +710,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         }
 
         private boolean isReachable(DataSet dataSet) {
-            try {
-                if (LocalUrlCacher.getInputStream(dataSet.getURI().toURL()) == null) {
+            if (dataSet.isSupportsAvailabilityCheck()) {
+                try {
+                    if (LocalUrlCacher.getInputStream(dataSet.getURI().toURL()) == null) {
+                        return false;
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
             }
-
             return true;
         }
 

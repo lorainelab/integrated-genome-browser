@@ -95,6 +95,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     private JRPComboBox versionCB;
     private final IgbService igbService;
     private SelectVersionPanel selectVersionPanel;
+    private boolean defSort = true;
 
     SeqGroupView(IgbService igbService) {
         this.igbService = igbService;
@@ -288,10 +289,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     /**
      * This method is used to toggle view in the gViewer when the user has only
-     * selected the
-     * species and yet to choose the version.
-     * The method considers that the gviewer has the seqmap as the last
-     * component added.
+     * selected the species and yet to choose the version. The method considers
+     * that the gviewer has the seqmap as the last component added.
      *
      * @param isVersionSelected
      */
@@ -361,6 +360,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
                 return;
             }
             warnAboutNewlyAddedChromosomes(previousSeqCount, genomeVersion);
+        } else {
+            defSort = true;
         }
 
         previousGroup = genomeVersion;
@@ -383,7 +384,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         seqtable.setModel(mod);
         //Disabled for now
         seqtable.setRowSorter(sorter);
-        sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
+        if (defSort) {
+            defSort = false;
+        } else {
+            sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
+        }
 
         TableColumn c = seqtable.getColumnModel().getColumn(1);
         c.setCellRenderer(new ColumnRenderer());

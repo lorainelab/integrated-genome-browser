@@ -172,7 +172,6 @@ public class MainMenuUtil implements MainMenuManager {
         JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), menuItemCounter++);
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
-        //MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
         toolsMenu.add(scripts_menu);
         toolsMenu.addSeparator(menuItemCounter++);
     }

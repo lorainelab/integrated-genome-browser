@@ -14,6 +14,7 @@ import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.google.common.collect.Sets;
@@ -53,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * @author dcnorris
  */
 @Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, provide = KeyStrokeViewTableModel.class)
-public class KeyStrokeViewTableModel extends AbstractTableModel {
+public class KeyStrokeViewTableModel extends AbstractTableModel implements GenericActionListener{
     
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
     private static final String COMMAND_KEY = "meta";
@@ -75,6 +76,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     public void activator(BundleContext bundleContext) {
         loadDefaultToolbarActionsAndKeystrokeBindings();
         addShortcuts();
+        GenericActionHolder.getInstance().addGenericActionListener(this);
         
         actionKeys.addAll(GenericActionHolder.getInstance().getGenericActions());
         refresh();
@@ -246,6 +248,15 @@ public class KeyStrokeViewTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int col) {
         return columnNames[col];
+    }
+
+    @Override
+    public void notifyGenericAction(GenericAction genericAction) {
+    }
+
+    @Override
+    public void onCreateGenericAction(GenericAction genericAction) {
+        addAction(genericAction);
     }
     
     @Override

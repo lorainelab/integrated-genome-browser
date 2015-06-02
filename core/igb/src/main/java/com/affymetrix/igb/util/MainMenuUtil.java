@@ -206,6 +206,22 @@ public class MainMenuUtil implements MainMenuManager {
         return null;
     }
 
+    private JRPMenu getMenu(IgbMenuItemProvider igbMenuItemProvider) {
+        String parentMenu = igbMenuItemProvider.getParentMenuName();
+        JRPMenu menu = getMenu(parentMenu);
+        if (igbMenuItemProvider.getSubMenuName().isPresent()) {
+            String subMenuId = ID_PREFIX + parentMenu + "Menu_" + igbMenuItemProvider.getSubMenuName().get();
+            int menuCompCount = menu.getMenuComponentCount();
+            java.awt.Component[] menuComponents = menu.getMenuComponents();
+            for (java.awt.Component comp : menuComponents) {
+                if (comp instanceof JRPMenu && subMenuId.equals(((JRPMenu) comp).getId())) {
+                    return (JRPMenu)comp;
+                }
+            }
+        }
+        return menu;
+    }
+
     //TODO replace all instances of AMenuItem with IgbMenuItemProvider
     @Reference(optional = true, multiple = true, unbind = "removeAMenuItem", dynamic = true)
     public void addAMenuItem(AMenuItem aMenuItem) {
@@ -237,7 +253,7 @@ public class MainMenuUtil implements MainMenuManager {
     @Reference(optional = true, multiple = true, unbind = "removeMenuItem", dynamic = true)
     public void addMenuItem(IgbMenuItemProvider igbMenuItemProvider) {
         if (componentActivated) {
-            JRPMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
+            JRPMenu parent = getMenu(igbMenuItemProvider);
             if (parent == null) {
                 logger.warn("No menu found with name {}. {} is not added.", new Object[]{igbMenuItemProvider.getParentMenuName(), igbMenuItemProvider.getMenuItem()});
                 return;

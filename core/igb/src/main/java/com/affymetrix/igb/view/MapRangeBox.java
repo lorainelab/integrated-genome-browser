@@ -1,14 +1,11 @@
 /**
  * Copyright (c) 2006-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License").
- * A copy of the license must be included with any distribution of
- * this source code.
- * Distributions from Affymetrix, Inc., place this in the
- * IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- * The license is also available at
- * http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.view;
 
@@ -24,6 +21,7 @@ import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
@@ -514,13 +512,13 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     /**
-     * Set range of view. This will go through all the ISearchMode
-     * instances registered, including plugins. The standard forms
-     * of region entry are hard coded. This method tries all the
-     * ISearchModes until the first one that gives a positive result.
+     * Set range of view. This will go through all the ISearchMode instances
+     * registered, including plugins. The standard forms of region entry are
+     * hard coded. This method tries all the ISearchModes until the first one
+     * that gives a positive result.
      *
-     * @param search_text - any search string like "chr1: 40000 - 60000",
-     * or "ADAR" (a gene name)
+     * @param search_text - any search string like "chr1: 40000 - 60000", or
+     * "ADAR" (a gene name)
      */
     public void setRange(String search_text) {
         List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
@@ -536,6 +534,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             }
         } else {
 //			NextSearchSpanAction.getAction().setEnabled(false);
+            ModalUtils.infoPanel("No match found for \"" + search_text + "\".");
             IGB.getInstance().setStatus("unable to match entry");
         }
     }

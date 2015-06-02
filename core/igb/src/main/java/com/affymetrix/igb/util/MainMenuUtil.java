@@ -10,6 +10,7 @@ import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
+import com.affymetrix.igb.action.CancelScriptAction;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.ClearVisualTools;
 import com.affymetrix.igb.action.ConfigureScrollAction;
@@ -172,6 +173,7 @@ public class MainMenuUtil implements MainMenuManager {
         JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), menuItemCounter++);
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
         toolsMenu.add(scripts_menu);
         toolsMenu.addSeparator(menuItemCounter++);
     }

@@ -1,6 +1,7 @@
 package com.lorainelab.igb.services.window.menus;
 
 import com.affymetrix.igb.swing.JRPMenuItem;
+import java.util.Optional;
 
 /**
  *
@@ -13,4 +14,8 @@ public interface IgbMenuItemProvider {
     public JRPMenuItem getMenuItem();
 
     public int getMenuItemWeight();
+    
+    public default Optional<String> getSubMenuName() {
+        return Optional.empty();
+    }
 }

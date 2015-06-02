@@ -10,7 +10,6 @@ import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.AboutIGBAction;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
-import com.affymetrix.igb.action.CancelScriptAction;
 import com.affymetrix.igb.action.ClampViewAction;
 import com.affymetrix.igb.action.ClearVisualTools;
 import com.affymetrix.igb.action.ConfigureScrollAction;
@@ -72,7 +71,7 @@ public class MainMenuUtil implements MainMenuManager {
     private final List<AMenuItem> aMenuItemQueue;
     private boolean componentActivated;
     public static final int TOOLS_MENU_POSITION = 3;
-
+        
     public MainMenuUtil() {
         componentActivated = false;
         igbMenuItemProviderQueue = new ArrayList<>();
@@ -173,7 +172,7 @@ public class MainMenuUtil implements MainMenuManager {
         JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), menuItemCounter++);
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
         MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
+        //MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
         toolsMenu.add(scripts_menu);
         toolsMenu.addSeparator(menuItemCounter++);
     }
@@ -207,6 +206,22 @@ public class MainMenuUtil implements MainMenuManager {
         }
         return null;
     }
+    
+    private JRPMenu getMenu(IgbMenuItemProvider igbMenuItemProvider) {
+        String parentMenu = igbMenuItemProvider.getParentMenuName();
+        JRPMenu menu = getMenu(parentMenu);
+        if(igbMenuItemProvider.getSubMenuName().isPresent()) {
+            String subMenuId = parentMenu + "Menu_" + igbMenuItemProvider.getSubMenuName().get();
+            int menuCompCount = menu.getMenuComponentCount();
+            for(int i = 0 ; i< menuCompCount; i++) {
+                JRPMenu subMenu = (JRPMenu) menu.getComponent(i);
+                if(subMenuId.equals(subMenu.getId())) {
+                    return subMenu;
+                }
+            }
+        }
+        return menu;
+    }
 
     //TODO replace all instances of AMenuItem with IgbMenuItemProvider
     @Reference(optional = true, multiple = true, unbind = "removeAMenuItem", dynamic = true)
@@ -239,7 +254,7 @@ public class MainMenuUtil implements MainMenuManager {
     @Reference(optional = true, multiple = true, unbind = "removeMenuItem", dynamic = true)
     public void addMenuItem(IgbMenuItemProvider igbMenuItemProvider) {
         if (componentActivated) {
-            JRPMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
+            JRPMenu parent = getMenu(igbMenuItemProvider);
             if (parent == null) {
                 logger.warn("No menu found with name {}. {} is not added.", new Object[]{igbMenuItemProvider.getParentMenuName(), igbMenuItemProvider.getMenuItem()});
                 return;

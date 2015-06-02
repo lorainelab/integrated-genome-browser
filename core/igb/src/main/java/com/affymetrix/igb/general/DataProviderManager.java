@@ -31,6 +31,7 @@ import com.affymetrix.genometry.util.StringEncrypter;
 import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SCHEME;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.EventService;
+import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Strings;
@@ -361,6 +362,9 @@ public class DataProviderManager {
                 speciesName = SpeciesLookup.getSpeciesName(genomeName);
             }
             GeneralLoadUtils.retrieveDataContainer((DataProvider) genomeVersionProvider, speciesName, versionName, false);
+        }
+        if (SeqGroupView.getInstance() != null) { //ugly but required since bad patterns have been used historically
+            SeqGroupView.getInstance().refreshSpeciesCB();
         }
     }
 

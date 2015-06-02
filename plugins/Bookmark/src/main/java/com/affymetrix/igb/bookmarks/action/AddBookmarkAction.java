@@ -37,14 +37,4 @@ public class AddBookmarkAction extends BookmarkAction {
         super.actionPerformed(e);
         BookmarkEditor.run(igbService.getSeqMapView().getVisibleSpan());
     }
-    
-    @Override
-    public boolean isToolbarDefault() {
-        return true; 
-    }
-
-    @Override
-    public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
-    }
 }

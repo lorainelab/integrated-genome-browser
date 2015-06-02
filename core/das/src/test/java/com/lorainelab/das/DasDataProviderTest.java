@@ -26,7 +26,7 @@ public class DasDataProviderTest {
 
     @Test
     public void retrieveSupportedGenomeVersions() {
-        Assert.assertTrue(dasDataProvider.getAvailableGenomeVersionNames().contains(HUMAN_GENOME_ID));
+        Assert.assertTrue(dasDataProvider.getSupportedGenomeVersionNames().contains(HUMAN_GENOME_ID));
 //        dasDataProvider.getSupportedGenomeVersionNames().forEach(logger::info);
     }
 

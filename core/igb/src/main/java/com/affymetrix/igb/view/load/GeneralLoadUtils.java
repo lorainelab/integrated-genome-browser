@@ -166,10 +166,10 @@ public final class GeneralLoadUtils {
             }
         }
 
-        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName);
+        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true);
     }
 
-    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName) {
+    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh) {
         // Make sure we use the preferred synonym for the genome version.
         String preferredVersionName = LOOKUP.getPreferredName(versionName);
         GenomeVersion genomeVersion = gmodel.addGenomeVersion(preferredVersionName); // returns existing genomeVersion if found, otherwise creates a new genomeVersion
@@ -180,7 +180,7 @@ public final class GeneralLoadUtils {
         if (!dataContainers.contains(dataContainer)) {
             dataContainers.add(dataContainer);
         }
-        if (isNewSpecies) {
+        if (isNewSpecies && immediatelyRefresh) {
             if (SeqGroupView.getInstance() != null) { //ugly
                 SeqGroupView.getInstance().refreshSpeciesCB();
             }

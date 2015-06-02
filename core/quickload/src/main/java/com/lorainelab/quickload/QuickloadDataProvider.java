@@ -2,7 +2,6 @@ package com.lorainelab.quickload;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.data.BaseDataProvider;
-import com.affymetrix.genometry.data.GenomeVersionProvider;
 import com.affymetrix.genometry.data.SpeciesInfo;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-public class QuickloadDataProvider extends BaseDataProvider implements ReferenceSequenceDataSetProvider, AssemblyProvider, GenomeVersionProvider {
+public class QuickloadDataProvider extends BaseDataProvider implements ReferenceSequenceDataSetProvider, AssemblyProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(QuickloadDataProvider.class);
 
@@ -198,10 +197,5 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         return Optional.of(QUICKLOAD_FACTORY_NAME);
     }
     private static final String QUICKLOAD_FACTORY_NAME = "Quickload";
-
-    @Override
-    public Set<String> getAvailableGenomeVersionNames() {
-        return supportedGenomeVersionInfo.keySet();
-    }
 
 }

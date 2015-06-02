@@ -3,7 +3,6 @@ package com.lorainelab.das;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.BaseDataProvider;
-import com.affymetrix.genometry.data.GenomeVersionProvider;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceProvider;
 import com.affymetrix.genometry.general.DataContainer;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-public final class DasDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider, GenomeVersionProvider {
+public final class DasDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(DasDataProvider.class);
     private Map<String, String> genomeContextRootMap;
@@ -91,7 +90,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     }
 
     @Override
-    public Set<String> getAvailableGenomeVersionNames() {
+    public Set<String> getSupportedGenomeVersionNames() {
         return genomeContextRootMap.keySet();
     }
 
@@ -142,11 +141,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     @Override
     public Optional<String> getFactoryName() {
         return Optional.of(DasDataProviderFactory.FACTORY_NAME);
-    }
-
-    @Override
-    public Set<String> getSupportedGenomeVersionNames() {
-        return genomeContextRootMap.keySet();
     }
 
 }

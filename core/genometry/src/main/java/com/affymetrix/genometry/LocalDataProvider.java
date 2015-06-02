@@ -85,7 +85,7 @@ public class LocalDataProvider implements DataProvider {
     }
 
     @Override
-    public Set<String> getAvailableGenomeVersionNames() {
+    public Set<String> getSupportedGenomeVersionNames() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

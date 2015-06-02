@@ -109,7 +109,7 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     }
 
     @Override
-    public Set<String> getAvailableGenomeVersionNames() {
+    public Set<String> getSupportedGenomeVersionNames() {
         if (availableGenomeVersionNames == null) {
             availableGenomeVersionNames = versionInfo.stream().map(version -> version.getTitle()).collect(Collectors.toCollection(LinkedHashSet::new));
         }
@@ -120,7 +120,7 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
         Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         try {
-            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getAvailableGenomeVersionNames());
+            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getSupportedGenomeVersionNames());
             if (matchingGenomeVersionName.isPresent()) {
                 String genomeVersionName = matchingGenomeVersionName.get();
                 Optional<Version> matchingVersion = versionInfo.stream().filter(version -> version.getTitle().equals(genomeVersionName)).findFirst();

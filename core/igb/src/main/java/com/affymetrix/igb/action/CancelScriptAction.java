@@ -1,28 +1,32 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Optional;
 import java.util.logging.Level;
 import javax.swing.SwingWorker;
 
 /**
  * note !!! - depending on the script, it may not be possible to cancel it
  */
-@Component(name = CancelScriptAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
-public class CancelScriptAction extends GenericAction implements IgbMenuItemProvider {
+public class CancelScriptAction extends GenericAction {
 
-    public static final String COMPONENT_NAME = "CancelScriptAction";
     private static final long serialVersionUID = 1L;
+    private static final CancelScriptAction ACTION = new CancelScriptAction();
 
-    public CancelScriptAction() {
+    static {
+        GenericActionHolder.getInstance().addGenericAction(ACTION);
+    }
+
+    public static CancelScriptAction getAction() {
+        return ACTION;
+    }
+
+    private CancelScriptAction() {
         super(BUNDLE.getString("cancelScript"), null, "16x16/actions/cancel_script.png", "22x22/actions/cancel_script.png", KeyEvent.VK_X);
     }
 
@@ -40,26 +44,4 @@ public class CancelScriptAction extends GenericAction implements IgbMenuItemProv
             }
         }
     }
-
-    @Override
-    public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Scripts_CancelScript", this);
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return 8;
-    }
-
-    @Override
-    public String getParentMenuName() {
-        return "tools";
-    }
-
-    @Override
-    public Optional<String> getSubMenuName() {
-        return Optional.of("scripts"); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
 }

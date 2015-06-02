@@ -96,9 +96,9 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
                 break;
             }
         }
-        Optional<String> operationParam = getOperatorParam();
+        Optional<Object> operationParam = getOperatorParam();
         if (operationParam.isPresent()) {
-            meth.append(getOperator().getDisplay()).append(" " + operationParam.get() + ": ");
+            meth.append(getOperator().getDisplay()).append(" " + operationParam.get().toString() + ": ");
         } else {
             meth.append(getOperator().getDisplay()).append(": ");
         }
@@ -116,7 +116,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         return meth.toString();
     }
 
-    private Optional<String> getOperatorParam() {
+    private Optional<Object> getOperatorParam() {
         Operator operator = getOperator();
         if (operator instanceof AbstractMathTransform && !(operator instanceof AbstractLogTransform)) {
             AbstractMathTransform op = (AbstractMathTransform) operator;
@@ -124,7 +124,7 @@ public abstract class TrackFunctionOperationA extends SeqMapViewActionA {
         }
         if(operator instanceof PowerTransformer) {
             PowerTransformer op = (PowerTransformer) operator;
-            return Optional.ofNullable((String)op.getParameterValue(op.getParamPrompt()));
+            return Optional.ofNullable(op.getParameterValue(op.getParamPrompt()));
         }
         return Optional.empty();
     }

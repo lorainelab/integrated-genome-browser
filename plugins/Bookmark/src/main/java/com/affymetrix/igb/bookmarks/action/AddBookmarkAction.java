@@ -32,7 +32,6 @@ public class AddBookmarkAction extends BookmarkAction {
         super(BUNDLE.getString("addBookmark"), "16x16/actions/bookmark-new.png",
                 "22x22/actions/bookmark-new.png");
         setKeyStrokeBinding("ctrl D");
-        logger.debug("BookMarkAction added");
     }
 
     @Override

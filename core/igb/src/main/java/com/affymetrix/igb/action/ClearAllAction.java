@@ -19,7 +19,7 @@ public class ClearAllAction extends GenericAction {
     public static final String COMPONENT_NAME = "ClearAllAction";
     private static final long serialVersionUID = 1L;
 
-    private ClearAllAction() {
+    public ClearAllAction() {
         super(MessageFormat.format(BUNDLE.getString("menuItemHasDialog"), BUNDLE.getString("clearAll")), KeyEvent.VK_C);
     }
 

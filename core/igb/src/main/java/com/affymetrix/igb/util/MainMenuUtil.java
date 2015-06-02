@@ -71,7 +71,7 @@ public class MainMenuUtil implements MainMenuManager {
     private final List<AMenuItem> aMenuItemQueue;
     private boolean componentActivated;
     public static final int TOOLS_MENU_POSITION = 3;
-        
+
     public MainMenuUtil() {
         componentActivated = false;
         igbMenuItemProviderQueue = new ArrayList<>();
@@ -206,17 +206,17 @@ public class MainMenuUtil implements MainMenuManager {
         }
         return null;
     }
-    
+
     private JRPMenu getMenu(IgbMenuItemProvider igbMenuItemProvider) {
         String parentMenu = igbMenuItemProvider.getParentMenuName();
         JRPMenu menu = getMenu(parentMenu);
-        if(igbMenuItemProvider.getSubMenuName().isPresent()) {
-            String subMenuId = parentMenu + "Menu_" + igbMenuItemProvider.getSubMenuName().get();
+        if (igbMenuItemProvider.getSubMenuName().isPresent()) {
+            String subMenuId = ID_PREFIX + parentMenu + "Menu_" + igbMenuItemProvider.getSubMenuName().get();
             int menuCompCount = menu.getMenuComponentCount();
-            for(int i = 0 ; i< menuCompCount; i++) {
-                JRPMenu subMenu = (JRPMenu) menu.getComponent(i);
-                if(subMenuId.equals(subMenu.getId())) {
-                    return subMenu;
+            java.awt.Component[] menuComponents = menu.getMenuComponents();
+            for (java.awt.Component comp : menuComponents) {
+                if (comp instanceof JRPMenu && subMenuId.equals(((JRPMenu) comp).getId())) {
+                    return (JRPMenu)comp;
                 }
             }
         }

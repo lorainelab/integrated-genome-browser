@@ -576,7 +576,7 @@ public final class BookmarkUnibrowControlServlet {
         } else {
             // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
-            if (book_seq != gmodel.getSelectedSeq().get()) {
+            if (!gmodel.getSelectedSeq().isPresent() || book_seq != gmodel.getSelectedSeq().get()) {
                 gmodel.setSelectedSeq(book_seq);
             }
         }

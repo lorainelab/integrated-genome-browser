@@ -220,7 +220,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:
-                if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
+                if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     dataProvider.setName((String) editedValue);
                     loadView.refreshTreeViewAndRestore();
                 }

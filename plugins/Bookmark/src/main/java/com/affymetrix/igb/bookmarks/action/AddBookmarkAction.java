@@ -5,6 +5,8 @@ import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AddBookmarkAction extends BookmarkAction {
 
@@ -12,6 +14,7 @@ public class AddBookmarkAction extends BookmarkAction {
     private static AddBookmarkAction ACTION;
     private final IgbService igbService;
     private final int TOOLBAR_INDEX = 9;
+    private static final Logger logger = LoggerFactory.getLogger(AddBookmarkAction.class);
 
     public static void createAction(IgbService igbService) {
         ACTION = new AddBookmarkAction(igbService);
@@ -33,15 +36,5 @@ public class AddBookmarkAction extends BookmarkAction {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         BookmarkEditor.run(igbService.getSeqMapView().getVisibleSpan());
-    }
-    
-    @Override
-    public boolean isToolbarDefault() {
-        return true; 
-    }
-
-    @Override
-    public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
     }
 }

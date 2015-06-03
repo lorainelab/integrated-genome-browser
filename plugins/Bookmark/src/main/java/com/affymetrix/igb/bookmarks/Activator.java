@@ -75,7 +75,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             SimpleBookmarkServer.setServerPort(portString);
         }
         SimpleBookmarkServer.init(igbService);
-
+        
         AddBookmarkAction.createAction(igbService);
 
         BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");

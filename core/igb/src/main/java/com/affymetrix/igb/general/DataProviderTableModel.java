@@ -187,13 +187,13 @@ public final class DataProviderTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         DataProvider dataProvider = sortedDataProviders.get(rowIndex);
-        setColumnValue(dataProvider, aValue, columnIndex);
+        setColumnValue(dataProvider, aValue, rowIndex, columnIndex);
     }
 
-    public void setColumnValue(DataProvider dataProvider, Object editedValue, int column) {
+    public void setColumnValue(DataProvider dataProvider, Object editedValue, int rowindex, int column) {
         switch (tableColumns.get(column)) {
             case Refresh:
-                if ((Boolean) getValueAt(column, getColumnIndex(DataProviderTableColumn.Enabled))) {
+                if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
                         dataProviderManager.disableDataProvider(dataProvider);

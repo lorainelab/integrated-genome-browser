@@ -54,8 +54,8 @@ import org.slf4j.LoggerFactory;
  * @author dcnorris
  */
 @Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, provide = KeyStrokeViewTableModel.class)
-public class KeyStrokeViewTableModel extends AbstractTableModel implements GenericActionListener{
-    
+public class KeyStrokeViewTableModel extends AbstractTableModel implements GenericActionListener {
+
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";
     private static final String COMMAND_KEY = "meta";
     private static final String CONTROL_KEY = "ctrl";
@@ -66,18 +66,18 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
     List<GenericAction> actionQueue;
     ServiceTracker<GenericAction, Object> actionServiceTracker;
-    
+
     public KeyStrokeViewTableModel() {
         actionKeys = Sets.newCopyOnWriteArraySet();
         actionQueue = new ArrayList<>();
     }
-    
+
     @Activate
     public void activator(BundleContext bundleContext) {
         loadDefaultToolbarActionsAndKeystrokeBindings();
         addShortcuts();
         GenericActionHolder.getInstance().addGenericActionListener(this);
-        
+
         actionKeys.addAll(GenericActionHolder.getInstance().getGenericActions());
         refresh();
         try {
@@ -90,11 +90,11 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         }
         setupActionServiceTracker(bundleContext);
     }
-    
+
     private void setupActionServiceTracker(final BundleContext bundleContext) {
-        
+
         actionServiceTracker = new ServiceTracker<GenericAction, Object>(bundleContext, GenericAction.class, null) {
-            
+
             @Override
             public Object addingService(ServiceReference<GenericAction> reference) {
                 GenericAction action = bundleContext.getService(reference);
@@ -104,7 +104,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         };
         actionServiceTracker.open();
     }
-    
+
     private void loadDefaultToolbarActionsAndKeystrokeBindings() {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
             //Save current preferences
@@ -131,7 +131,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
             logger.debug("Cannot load preferences ", ex);
         }
     }
-    
+
     private void addShortcuts() {
         JFrame frm = igbService.getApplicationFrame();
         JPanel panel = (JPanel) frm.getContentPane();
@@ -165,7 +165,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
             logger.trace("Some keyboard shortcuts may not be set ");
         }
     }
-    
+
     private void addShortcut(GenericAction action) {
         JFrame frm = igbService.getApplicationFrame();
         JPanel panel = (JPanel) frm.getContentPane();
@@ -178,18 +178,19 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         im.put(ks, action.getId());
         am.put(action.getId(), action);
     }
-    
+
     public void addAction(GenericAction action) {
-        actionKeys.add(action);
-        fireTableDataChanged();
-        addShortcut(action);
+        if (actionKeys.add(action)) {
+            fireTableDataChanged();
+            addShortcut(action);
+        }
     }
-    
+
     @Reference
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
-    
+
     static {
         columnNames[KeyStrokesView.IconColumn] = "";
         columnNames[KeyStrokesView.ToolbarColumn] = "Toolbar ?";
@@ -197,17 +198,17 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         columnNames[KeyStrokesView.KeyStrokeColumn] = "Key Stroke";
     }
     private Object[][] rows;
-    
+
     @Override
     public int getRowCount() {
         return (rows == null) ? 0 : rows.length;
     }
-    
+
     @Override
     public int getColumnCount() {
         return KeyStrokesView.ColumnCount;
     }
-    
+
     @Override
     public Object getValueAt(int row, int col) {
         if (col == KeyStrokesView.ToolbarColumn) {
@@ -215,7 +216,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         }
         return (rows == null) ? "" : rows[row][col];
     }
-    
+
     @Override
     public boolean isCellEditable(int row, int column) {
         if (column == KeyStrokesView.KeyStrokeColumn) {
@@ -229,7 +230,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         }
         return false;
     }
-    
+
     @Override
     public Class<?> getColumnClass(int column) {
         if (column == KeyStrokesView.IconColumn) {
@@ -240,11 +241,11 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         }
         return String.class;
     }
-    
+
     public void setRows(Object[][] rowData) {
         rows = rowData;
     }
-    
+
     @Override
     public String getColumnName(int col) {
         return columnNames[col];
@@ -258,7 +259,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
     public void onCreateGenericAction(GenericAction genericAction) {
         addAction(genericAction);
     }
-    
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == KeyStrokesView.ToolbarColumn && rows != null) {
@@ -288,16 +289,17 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
             }
         }
     }
-    
+
     public void refresh() {
         buildRows(PreferenceUtils.getKeystrokesNode(), PreferenceUtils.getToolbarNode());
         fireTableDataChanged();
     }
 
     /**
-     * Build the underlying data array. There is a fourth column, not shown in the table, but needed by the setValue()
-     * method. IconColumn = 0 ToolbarColumn = 1 ActionColumn = 2 KeyStrokeColumn = 3 IdColumn = 4 -> not displayed in
-     * table ColumnCount = 4
+     * Build the underlying data array. There is a fourth column, not shown in
+     * the table, but needed by the setValue() method. IconColumn = 0
+     * ToolbarColumn = 1 ActionColumn = 2 KeyStrokeColumn = 3 IdColumn = 4 ->
+     * not displayed in table ColumnCount = 4
      *
      * @param keystroke_node
      * @param toolbar_node
@@ -327,13 +329,13 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         }
         setRows(rows);
     }
-    
+
     private List<GenericAction> getSortedActions() {
-        
+
         return actionKeys.stream()
                 .filter(action -> action.getText() != null)
                 .sorted((GenericAction a1, GenericAction a2) -> a1.getDisplay().compareTo(a2.getDisplay()))
                 .collect(Collectors.toList());
-        
+
     }
 }

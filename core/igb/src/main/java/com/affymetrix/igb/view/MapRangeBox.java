@@ -1,14 +1,11 @@
 /**
  * Copyright (c) 2006-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License").
- * A copy of the license must be included with any distribution of
- * this source code.
- * Distributions from Affymetrix, Inc., place this in the
- * IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
+ * of the license must be included with any distribution of this source code.
+ * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
- * The license is also available at
- * http://www.opensource.org/licenses/cpl.php
+ * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.view;
 
@@ -21,9 +18,12 @@ import com.affymetrix.genometry.event.GroupSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
@@ -46,6 +46,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.geom.Rectangle2D;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ import java.util.regex.Pattern;
  *
  * @version $Id: MapRangeBox.java 10972 2012-04-05 17:00:51Z lfrohman $
  */
-public final class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener {
+public final class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener, SymSelectionListener {
 
     public static final int NO_ZOOM_SPOT = -1;
 
@@ -74,6 +75,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     private List<SeqSpan> foundSpans;
     private int spanPointer;
     private final Set<SearchListener> search_listeners = new CopyOnWriteArraySet<>();
+    private double start, end;
 //	private static String[] regexChars = new String[]{"|","(",")","+"};//Tk
 
     // Use the ENGLISH locale here because we want the user to be able to
@@ -92,6 +94,11 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     IStatus application_statusbar = text -> IGB.getInstance().setStatus(text);
+
+    @Override
+    public void symSelectionChanged(SymSelectionEvent evt) {
+        setRangeText(start, end);
+    }
 
     private static abstract class EmptySearch {
 
@@ -366,6 +373,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
         GenometryModel.getInstance().addGroupSelectionListener(this);
         GenometryModel.getInstance().addSeqSelectionListener(this);
+        GenometryModel.getInstance().addSymSelectionListener(this);
     }
 
     public String getText() {
@@ -378,7 +386,9 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
     public void viewBoxChanged(NeoViewBoxChangeEvent e) {
         Rectangle2D.Double vbox = e.getCoordBox();
-        setRangeText(vbox.x, vbox.width + vbox.x);
+        this.start = vbox.x;
+        this.end = vbox.width + vbox.x;
+        setRangeText(start, end);
     }
 
     @Override
@@ -399,16 +409,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
 
     public void actionPerformed(ActionEvent evt) {
         setRange(range_box.getText().trim());
-        // But if the user tries to zoom to something illogical, this can be helpful
-        // generally this is redundant, because zooming the view will make
-        // a call back to change this text.
-        // But if the user tries to zoom to something illogical, this can be helpful
-        SeqSpan span = gview.getVisibleSpan();
-        if (span == null) {
-            range_box.setText("");
-        } else {
-            setRangeText(span.getStart(), span.getEnd());
-        }
+        range_box.requestFocus();
     }
 
     FocusListener focus_listener = new FocusListener() {
@@ -514,13 +515,13 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     /**
-     * Set range of view. This will go through all the ISearchMode
-     * instances registered, including plugins. The standard forms
-     * of region entry are hard coded. This method tries all the
-     * ISearchModes until the first one that gives a positive result.
+     * Set range of view. This will go through all the ISearchMode instances
+     * registered, including plugins. The standard forms of region entry are
+     * hard coded. This method tries all the ISearchModes until the first one
+     * that gives a positive result.
      *
-     * @param search_text - any search string like "chr1: 40000 - 60000",
-     * or "ADAR" (a gene name)
+     * @param search_text - any search string like "chr1: 40000 - 60000", or
+     * "ADAR" (a gene name)
      */
     public void setRange(String search_text) {
         List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
@@ -528,15 +529,13 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
             foundSpans = mergedSpans;
             spanPointer = 0;
             if (foundSpans.size() > 1) {
-//				IGB.getInstance().setStatus("found " + foundSpans.size() + " spans");
                 IGB.getInstance().setStatus(null);
-//				NextSearchSpanAction.getAction().setEnabled(true);
             } else {
-//				NextSearchSpanAction.getAction().setEnabled(false);
             }
         } else {
-//			NextSearchSpanAction.getAction().setEnabled(false);
-            IGB.getInstance().setStatus("unable to match entry");
+            String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("searchTextNotFound"), search_text);
+            ModalUtils.infoPanel(errorMessage);
+            IGB.getInstance().setStatus(errorMessage);
         }
     }
 

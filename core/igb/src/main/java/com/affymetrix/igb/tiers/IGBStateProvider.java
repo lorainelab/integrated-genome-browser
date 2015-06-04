@@ -139,7 +139,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
             if (!getShowFullFilePathInTrackMark()) {
                 if (track_name != null) {
-                    if (IS_WINDOWS && !track_name.startsWith("http")) {
+                    if(track_name.contains(File.separator)) {
                         track_name = track_name.substring(track_name.lastIndexOf(File.separator) + 1);
                     } else {
                         track_name = track_name.substring(track_name.lastIndexOf("/") + 1);

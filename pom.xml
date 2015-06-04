@@ -105,7 +105,6 @@
         <module>plugins/PropertyView</module>
         <module>plugins/RestrictionSites</module>
         <module>plugins/SearchModeIdOrProps</module>
-        <module>plugins/SearchModeLucene</module>
         <module>plugins/SearchView</module>
         <module>plugins/SequenceViewer</module>
         <module>plugins/Survey</module>
@@ -149,6 +148,7 @@
                 <module>developmentPlugins/TranscriptIsoform</module>               
                 <module>developmentPlugins/ParentOperators</module>
                 <module>developmentPlugins/NCBIPrimer</module>
+                <module>developmentPlugins/SearchModeLucene</module>
                 
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
@@ -334,12 +334,6 @@
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
-                <artifactId>searchModeLucene</artifactId>
-                <version>${project.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.affymetrix</groupId>
                 <artifactId>searchView</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
@@ -507,6 +501,12 @@
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency> 
+            <dependency>
+                <groupId>com.affymetrix</groupId>
+                <artifactId>searchModeLucene</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <!-- End of development plugins -->
   
             <!--Start of logging dependencies-->

@@ -33,7 +33,6 @@ www/release_notes/images/Thumbs.db
 /plugins/PropertyView/target/
 /plugins/GraphTab/target/
 /plugins/ApolloLibrary/target/
-/plugins/SearchModeLucene/target/
 /plugins/SearchModeSymmetryFilter/target/
 /plugins/SearchModeLength/target/
 /plugins/SearchView/target/
@@ -126,3 +125,4 @@ extbundles/
 /core/quickload/target/
 /core/das/target/
 /core/das2/target/
+/developmentPlugins/SearchModeLucene/target/

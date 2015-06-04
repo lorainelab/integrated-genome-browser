@@ -118,6 +118,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private float track_name_size = default_track_name_size;
     private Map<String, Object> transient_properties;
     private DataSet feature = null;
+    private boolean customizable = true;
     public boolean customise = false;
     private int summaryThreshold;
     private boolean separable = true;
@@ -884,6 +885,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             setReverseMaxDepth(as.getReverseMaxDepth());
         }
 
+        if (g instanceof TrackStyle) {
+            TrackStyle as = (TrackStyle) g;
+            customizable = as.getCustomizable();
+        }
         getTransientPropertyMap().putAll(g.getTransientPropertyMap());
     }
 
@@ -1099,4 +1104,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setShadeBasedOnQualityScore((Boolean) value);
         }
     }
+
+    public boolean getCustomizable() {
+        return customizable;
+    }
+
 }

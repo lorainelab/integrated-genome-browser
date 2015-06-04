@@ -22,9 +22,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -203,8 +205,15 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
             currentStyles.addAll(styles);
         }
 
+        Set<TrackStyle> customizables = new HashSet<>(currentStyles.size());
+        for (TrackStyle the_style : currentStyles) {
+            if (the_style.getCustomizable()) {
+                customizables.add(the_style);
+            }
+        }
+
         if (!isContained || ((TierPrefsTableModel) model).getStyles().size() > currentStyles.size()) {
-            ((TierPrefsTableModel) model).setStyles(currentStyles);
+            ((TierPrefsTableModel) model).setStyles(customizables);
             model.fireTableDataChanged();
         }
     }

@@ -38,6 +38,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DIRECTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.END;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.FEATURE_TYPE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.FILE_NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.LENGTH;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATCH;
@@ -1594,8 +1595,8 @@ public class SeqMapView extends JPanel
                 } else {
                     tier_used_in_selection_info = tierglyphs.get(0);
                     Map<String, Object> props = TierLabelManager.getTierProperties(tier_used_in_selection_info);
-                    if (props != null && !props.isEmpty() && props.containsKey("File Name")) {
-                        id = props.get("File Name").toString();
+                    if (props != null && !props.isEmpty() && props.containsKey(FILE_NAME)) {
+                        id = props.get(FILE_NAME).toString();
                         sym_used_for_title = (SeqSymmetry) tierglyphs.get(0).getInfo();
                     }
                 }

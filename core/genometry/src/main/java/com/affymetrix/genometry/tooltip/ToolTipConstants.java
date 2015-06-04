@@ -42,7 +42,7 @@ public class ToolTipConstants {
     public static final String XS = "XS";
     public static final String NM = "NM";
 
-    public static final String DESCRIPTION = "description";
+    public static final String DESCRIPTION = "Description";
     public static final String CDS_START = "cds start";
     public static final String CDS_END = "cds end";
 
@@ -72,7 +72,7 @@ public class ToolTipConstants {
     public static final String DIRECTION = "direction";
     public static final String REVERSE_DIRECTION = "reverse";
     
-    public static final String FILE_NAME = "file name";
+    public static final String FILE_NAME = "File name";
     public static final String URL = "url";
     public static final String SERVER = "Server";
     public static final String MIN_SCORE = "min score";

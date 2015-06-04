@@ -1,6 +1,7 @@
 package com.gene.igbscript;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
@@ -523,6 +524,11 @@ public class IGBScriptEngine implements ScriptEngine {
             uri = f.toURI();
         }
         GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
+        if (IS_WINDOWS && !fileName.startsWith(HTTP_PROTOCOL_SCHEME)) {
+            fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1);
+        } else {
+            fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        }
         igbService.openURI(uri, fileName, genomeVersion, genomeVersion.getSpeciesName(), false);
     }
 

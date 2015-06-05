@@ -1030,29 +1030,30 @@ public final class GeneralLoadUtils {
         GeneralLoadView.getLoadView().refreshDataManagementView();
     }
 
-    private static void addChromosomesForUnknownGroup(final DataSet gFeature) {
-        if (((QuickLoadSymLoader) gFeature.getSymL()).getSymLoader() instanceof SymLoaderInstNC) {
-            loadAllSymmetriesThread(gFeature);
-            // force a refresh of this server. This forces creation of 'genome' sequence.
+    private static void addChromosomesForUnknownGroup(final DataSet dataSet) {
+        if (dataSet.getSymL() instanceof QuickLoadSymLoader) {
+            if (((QuickLoadSymLoader) dataSet.getSymL()).getSymLoader() instanceof SymLoaderInstNC) {
+                loadAllSymmetriesThread(dataSet);
+                // force a refresh of this server. This forces creation of 'genome' sequence.
 //            DataProviderManager.getInstance().fireServerInitEvent(DataProviderManager.getInstance().getLocalFilesServer(), ResourceStatus.Initialized, true);
-            return;
+                return;
+            }
         }
-
-        final GenomeVersion loadGroup = gFeature.getDataContainer().getGenomeVersion();
-        final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), gFeature.getDataSetName());
+        final GenomeVersion loadGroup = dataSet.getDataContainer().getGenomeVersion();
+        final String message = MessageFormat.format(IGBConstants.BUNDLE.getString("retrieveChr"), dataSet.getDataSetName());
         final CThreadWorker<Boolean, Object> worker = new CThreadWorker<Boolean, Object>(message) {
             boolean featureRemoved = false;
 
             @Override
             protected Boolean runInBackground() {
                 try {
-                    for (BioSeq seq : gFeature.getSymL().getChromosomeList()) {
-                        loadGroup.addSeq(seq.getId(), seq.getLength(), gFeature.getSymL().uri.toString());
+                    for (BioSeq seq : dataSet.getSymL().getChromosomeList()) {
+                        loadGroup.addSeq(seq.getId(), seq.getLength(), dataSet.getSymL().uri.toString());
                     }
                     return true;
                 } catch (Exception ex) {
-                    ((QuickLoadSymLoader) gFeature.getSymL()).logException(ex);
-                    featureRemoved = removeFeatureAndRefresh(gFeature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    ((QuickLoadSymLoader) dataSet.getSymL()).logException(ex);
+                    featureRemoved = removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                     return featureRemoved;
                 }
 
@@ -1060,12 +1061,12 @@ public final class GeneralLoadUtils {
 
             @Override
             protected boolean showCancelConfirmation() {
-                return removeFeature("Cancel chromosome retrieval and remove " + gFeature.getDataSetName() + "?");
+                return removeFeature("Cancel chromosome retrieval and remove " + dataSet.getDataSetName() + "?");
             }
 
             private boolean removeFeature(String msg) {
                 if (ModalUtils.confirmPanel(msg)) {
-                    if (gFeature.getDataContainer().removeDataSet(gFeature)) {
+                    if (dataSet.getDataContainer().removeDataSet(dataSet)) {
                         SeqGroupView.getInstance().refreshTable();
                     }
                     return true;
@@ -1086,7 +1087,7 @@ public final class GeneralLoadUtils {
                     logger.error(null, ex);
                 }
                 if (result) {
-                    GeneralLoadView.addFeatureTier(gFeature);
+                    GeneralLoadView.addFeatureTier(dataSet);
                     SeqGroupView.getInstance().refreshTable();
                     if (loadGroup.getSeqCount() > 0 && gmodel.getSelectedSeq().orElse(null) == null) {
                         // select a chromosomes
@@ -1096,8 +1097,8 @@ public final class GeneralLoadUtils {
                     gmodel.setSelectedSeq(gmodel.getSelectedSeq().orElse(null));
                 }
 //                DataProviderManager.getInstance().fireServerInitEvent(DataProviderManager.getInstance().getLocalFilesServer(), ResourceStatus.Initialized, true);
-                if (gFeature.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved) {
-                    if (gFeature.isReferenceSequence()) {
+                if (dataSet.getLoadStrategy() == LoadStrategy.VISIBLE && !featureRemoved) {
+                    if (dataSet.isReferenceSequence()) {
                         JLabel label = new JLabel(DataSet.REFERENCE_SEQUENCE_LOAD_MESSAGE);
                         ModalUtils.infoPanel(label);
                     } else {
@@ -1107,7 +1108,7 @@ public final class GeneralLoadUtils {
                 }
             }
         };
-        CThreadHolder.getInstance().execute(gFeature, worker);
+        CThreadHolder.getInstance().execute(dataSet, worker);
     }
 
     private static boolean removeFeatureAndRefresh(DataSet gFeature, String msg) {

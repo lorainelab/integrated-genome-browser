@@ -52,7 +52,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -630,12 +629,8 @@ public final class GeneralLoadView {
                 if (dataContainer.getDataProvider() instanceof LocalDataProvider) {
                     if (dataContainer.removeDataSet(feature)) {
                         SeqGroupView.getInstance().refreshTable();
-                        final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
-                        if (gmodel.getSelectedGenomeVersion().getSeqCount() > 0
-                                && selectedSeq.isPresent() && !gmodel.getSelectedGenomeVersion().getSeqList().contains(selectedSeq.get())) {
+                        if (gmodel.getSelectedGenomeVersion().getSeqList() != null) {
                             gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
-                        } else {
-                            gmodel.setSelectedSeq(null);
                         }
                     }
                 }

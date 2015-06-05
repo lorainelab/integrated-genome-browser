@@ -22,9 +22,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -65,7 +67,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
     public List<TierLabelGlyph> selectedTiers;
     public int selectedRow;
     public List<TierGlyph> currentTiers;
-    public List<TrackStyle> currentStyles;
+    public Set<TrackStyle> currentStyles;
     public JRPTextField displayNameTextField;
     public JButton applyDisplayNameButton;
     public ButtonGroup showStrandButtonGroup;
@@ -177,7 +179,7 @@ public class TierPrefsView extends TrackPreferences implements ListSelectionList
 
     public void refreshList() {
         if (currentStyles == null) {
-            currentStyles = new ArrayList<>();
+            currentStyles = new HashSet<>();
         }
 
         boolean isContained = true; // If add a new track, its style will not contain...

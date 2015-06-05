@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
 import com.lorainelab.quickload.util.QuickloadUtils;
+import static com.lorainelab.quickload.util.QuickloadUtils.getContextRootKey;
 import static com.lorainelab.quickload.util.QuickloadUtils.getGenomeVersionBaseUrl;
 import static com.lorainelab.quickload.util.QuickloadUtils.loadGenomeVersionSynonyms;
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSpeciesInfo;
@@ -110,6 +111,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Optional<String> getGenomeVersionDescription(String genomeVersionName) {
+        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet()).orElse(genomeVersionName);
         if (supportedGenomeVersionInfo.containsKey(genomeVersionName)) {
             return supportedGenomeVersionInfo.get(genomeVersionName);
         }
@@ -135,7 +137,8 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     @Override
     public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         final GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
-        final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersion.getName(), supportedGenomeVersionInfo);
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet()).orElse(genomeVersion.getName());
+        final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersionName, supportedGenomeVersionInfo);
         if (genomeVersionData.isPresent()) {
             Set<QuickloadFile> versionFiles = genomeVersionData.get();
             LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
@@ -143,7 +146,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
                 try {
                     URI uri;
                     if (!file.getName().startsWith("http")) {
-                        uri = new URI(getUrl() + genomeVersion.getName() + "/" + file.getName());
+                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
                     } else {
                         uri = new URI(file.getName());
                     }
@@ -161,24 +164,26 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet()).orElse(genomeVersion.getName());
         try {
-            final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersion.getName());
+            final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersionName);
             if (assemblyInfo.isPresent()) {
                 return assemblyInfo.get();
             }
         } catch (URISyntaxException ex) {
-            logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersion.getName(), getUrl());
-            supportedGenomeVersionInfo.remove(genomeVersion.getName());
+            logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, getUrl());
+            supportedGenomeVersionInfo.remove(genomeVersionName);
         } catch (IOException ex) {
-            logger.error("Coulld not read required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersion.getName(), getUrl());
-            supportedGenomeVersionInfo.remove(genomeVersion.getName());
+            logger.error("Coulld not read required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, getUrl());
+            supportedGenomeVersionInfo.remove(genomeVersionName);
         }
         return Maps.newTreeMap();
     }
 
     @Override
     public Optional<URI> getSequenceFileUri(GenomeVersion genomeVersion) {
-        final String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersion.getName()) + genomeVersion.getName() + ".2bit";
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet()).orElse(genomeVersion.getName());
+        final String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
         URI uri = null;
         try {
             uri = new URI(sequenceFileLocation);

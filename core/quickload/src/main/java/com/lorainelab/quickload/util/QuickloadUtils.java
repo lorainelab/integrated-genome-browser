@@ -1,6 +1,7 @@
 package com.lorainelab.quickload.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
+import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -116,6 +117,7 @@ public class QuickloadUtils {
     }
 
     public static Optional<Set<QuickloadFile>> getGenomeVersionData(String quickloadUrl, String genomeVersionName, Map<String, Optional<String>> supportedGenomeVersionInfo) {
+        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet()).orElse(genomeVersionName);
         String genomeVersionBaseUrl = getGenomeVersionBaseUrl(quickloadUrl, genomeVersionName);
         String annotsXmlUrl = genomeVersionBaseUrl + QuickloadConstants.ANNOTS_XML;
         try {
@@ -148,6 +150,19 @@ public class QuickloadUtils {
         }
         if (!assemblyInfo.isEmpty()) {
             return Optional.of(assemblyInfo);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> supportedGenomeVersionNames) {
+        if (supportedGenomeVersionNames.contains(genomeVersionName)) {
+            return Optional.of(genomeVersionName);
+        } else {
+            Set<String> genomeVersionSynonyms = SynonymLookup.getDefaultLookup().getSynonyms(genomeVersionName);
+            Optional<String> matchingSynonym = genomeVersionSynonyms.stream().filter(syn -> supportedGenomeVersionNames.contains(syn)).findFirst();
+            if (matchingSynonym.isPresent()) {
+                return Optional.of(matchingSynonym.get());
+            }
         }
         return Optional.empty();
     }

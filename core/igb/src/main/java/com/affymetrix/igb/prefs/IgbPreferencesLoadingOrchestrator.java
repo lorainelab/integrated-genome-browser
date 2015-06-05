@@ -6,7 +6,6 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
-import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.EventService;
@@ -68,9 +67,9 @@ public class IgbPreferencesLoadingOrchestrator {
     }
 
     public void loadIGBPrefs() {
-        migrateOldDataProviders();
         loadDefaultPrefs();
         //Filter deprecated servers from preferences
+        migrateOldDataProviders();
         filterRetiredServersFromPrefs();
         //Load from persistence api
         loadFromPersistenceStorage();
@@ -147,16 +146,18 @@ public class IgbPreferencesLoadingOrchestrator {
             logger.info("Loading old data providers from preferences");
             for (String nodeName : PreferenceUtils.getOldServersNode().childrenNames()) {
                 Preferences node = PreferenceUtils.getOldServersNode().node(nodeName);
-                String url = GeneralUtils.URLDecode(node.get("url", ""));
+                String url = addTrailingSlash(GeneralUtils.URLDecode(node.get("url", "")));
                 boolean nodeRemoved = false;
                 for (DataProvider dataProvider : loadedDataProviders) {
-                    if (dataProvider.getUrl().equals(url)) {
+                    String dataProviderUrl = addTrailingSlash(dataProvider.getUrl());
+                    
+                    if (dataProviderUrl.equals(url)) {
                         node.removeNode();
                         nodeRemoved = true;
                         break;
                     }
                 }
-                if (!nodeRemoved && LocalUrlCacher.isValidURL(url) && !URL_IGNORE_LIST.contains(URLDecoder.decode(url, "UTF-8"))) {
+                if (!nodeRemoved && !URL_IGNORE_LIST.contains(URLDecoder.decode(url, "UTF-8"))) {
                     Preferences newDataProviderNode = PreferenceUtils.getDataProviderNode(url);
                     newDataProviderNode.put("factoryName", node.get("type", ""));
                     newDataProviderNode.put("loadPriority", node.get("order", "1"));
@@ -170,8 +171,10 @@ public class IgbPreferencesLoadingOrchestrator {
                 node.removeNode();
             }
         } catch (BackingStoreException | UnsupportedEncodingException ex) {
-            logger.error("", ex);
         }
     }
-
+    
+    private String addTrailingSlash(String url) {
+        return url + (url.endsWith("/") ? "" : "/");
+    }
 }

@@ -68,8 +68,8 @@ public class IgbPreferencesLoadingOrchestrator {
 
     public void loadIGBPrefs() {
         loadDefaultPrefs();
-        //Filter deprecated servers from preferences
         migrateOldDataProviders();
+        //Filter deprecated servers from preferences
         filterRetiredServersFromPrefs();
         //Load from persistence api
         loadFromPersistenceStorage();

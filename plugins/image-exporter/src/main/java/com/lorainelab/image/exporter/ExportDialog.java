@@ -48,7 +48,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
 
     public static final String COMPONENT_NAME = "ExportDialog";
     private static final Logger logger = LoggerFactory.getLogger(ExportDialog.class);
-    private static final double SPINNER_MIN = 1;
+    private static final double SPINNER_MIN = 0;
     private static final double SPINNER_MAX = 10_000;
     private static final int DEFAULT_SPINNER_HEIGHT = 800;
     private static final int DEFAULT_SPINNER_WIDTH = 600;
@@ -239,7 +239,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     private boolean isValidSpinnerValue(double value) {
-        return SPINNER_MIN <= value && value <= SPINNER_MAX;
+        return SPINNER_MIN < value && value <= SPINNER_MAX;
     }
 
     /**

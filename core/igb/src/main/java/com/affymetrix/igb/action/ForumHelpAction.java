@@ -1,9 +1,9 @@
 package com.affymetrix.igb.action;
 
+import static com.affymetrix.common.CommonUtils.APP_NAME;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.GeneralUtils;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

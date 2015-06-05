@@ -10,6 +10,8 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.APP_NAME;
+import static com.affymetrix.common.CommonUtils.APP_VERSION;
 import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
@@ -35,8 +37,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.genometry.util.SynonymLookup;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
-import static com.affymetrix.igb.IGBConstants.APP_VERSION;
+import static com.affymetrix.igb.IGBConstants.GOOGLE_ANALYTICS_ID;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuBar;
@@ -260,7 +261,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         if (title.length() > 0) {
             title.append(" - ");
         }
-        title.append(IGBConstants.APP_NAME).append(" ").append(IGBConstants.APP_VERSION);
+        title.append(APP_NAME).append(" ").append(APP_VERSION);
         return title.toString();
     }
 
@@ -400,7 +401,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     private void notifyCounter() {
         if (!isDevelopmentMode()) {
             JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
-                    IGBConstants.APP_NAME, IGBConstants.APP_VERSION, IGBConstants.GOOGLE_ANALYTICS_ID);
+                    APP_NAME, APP_VERSION, GOOGLE_ANALYTICS_ID);
             LoggingAdapter loggingAdapter = new LoggingAdapter() {
 
                 @Override
@@ -420,9 +421,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     private void openQuickStart() {
-        String version = PreferenceUtils.getStringParam(IGBConstants.APP_NAME, null);
-        if (version == null || !version.equals(IGBConstants.APP_VERSION)) {
-            PreferenceUtils.getTopNode().put(IGBConstants.APP_NAME, IGBConstants.APP_VERSION);
+        String version = PreferenceUtils.getStringParam(APP_NAME, null);
+        if (version == null || !version.equals(APP_VERSION)) {
+            PreferenceUtils.getTopNode().put(APP_NAME, APP_VERSION);
             GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
         }
     }

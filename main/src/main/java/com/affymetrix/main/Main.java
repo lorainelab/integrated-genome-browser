@@ -1,5 +1,6 @@
 package com.affymetrix.main;
 
+import com.affymetrix.common.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public final class Main {
     public static void main(String... args) {
         log.info("Starting OSGI container");
         try {
+            System.setProperty("http.agent", CommonUtils.getInstance().getUserAgent());
             OSGiHandler osgiHandler = new OSGiHandler(args);
             osgiHandler.startOSGi();
         } catch (Throwable t) {

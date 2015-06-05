@@ -7,6 +7,8 @@ import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javax.imageio.ImageIO;
@@ -26,9 +28,9 @@ public class CommonUtils {
     private static final CommonUtils instance = new CommonUtils();
     private String igbDataHome;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
-    private static final String APP_NAME = BUNDLE.getString("appName");
-    private static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
-    private static final String APP_VERSION = BUNDLE.getString("appVersion");
+    public static final String APP_NAME = BUNDLE.getString("appName");
+    public static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
+    public static final String APP_VERSION = BUNDLE.getString("appVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
     final public static boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
@@ -44,12 +46,15 @@ public class CommonUtils {
         return instance;
     }
 
-    public String getAppName() {
-        return APP_NAME;
-    }
-
-    public String getAppNameShort() {
-        return APP_NAME_SHORT;
+    public String getUserAgent() {
+        return MessageFormat.format(
+                "{0}/{1}; {2}/{3} ({4}); {5};",
+                APP_NAME_SHORT,
+                APP_VERSION,
+                System.getProperty("os.name"),
+                System.getProperty("os.version"),
+                System.getProperty("os.arch"),
+                Locale.getDefault().toString());
     }
 
     /**

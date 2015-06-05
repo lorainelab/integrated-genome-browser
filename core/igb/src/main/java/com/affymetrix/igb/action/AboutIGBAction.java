@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.APP_NAME;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import static com.affymetrix.igb.IGBConstants.APP_NAME;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -21,7 +21,6 @@ import java.text.MessageFormat;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.event.HyperlinkEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +122,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
         replace(VERSION_COMMENT, CommonUtils.getInstance().getAppVersion(), sb);
         return sb.toString();
     }
-    
+
     private void replace(String origStr, String newStr, StringBuilder sb) {
         int index = sb.indexOf(origStr);
         sb.replace(index, index + origStr.length(), newStr);

@@ -18,7 +18,6 @@ import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import java.awt.event.ActionEvent;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +115,7 @@ public class IgbPreferencesLoadingOrchestrator {
         timer.setRepeats(false);
         timer.start();
     }
-    
+
     private void migrateOldDataProviders() {
         Set<DataProvider> loadedDataProviders = DataProviderManager.getAllServers();
         List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn", "http://bioviz.org/cached/");
@@ -128,7 +127,7 @@ public class IgbPreferencesLoadingOrchestrator {
                 boolean nodeRemoved = false;
                 for (DataProvider dataProvider : loadedDataProviders) {
                     String dataProviderUrl = addTrailingSlash(dataProvider.getUrl());
-                    
+
                     if (dataProviderUrl.equals(url)) {
                         node.removeNode();
                         nodeRemoved = true;
@@ -141,17 +140,17 @@ public class IgbPreferencesLoadingOrchestrator {
                     newDataProviderNode.put("loadPriority", node.get("order", "1"));
                     newDataProviderNode.put("name", node.get("name", "unknown"));
                     String enabled = node.get("enabled", "true");
-                    if(!Boolean.valueOf(enabled)) {
+                    if (!Boolean.valueOf(enabled)) {
                         newDataProviderNode.put("status", "Disabled");
                     }
                     newDataProviderNode.put("url", url);
+                    node.removeNode();
                 }
-                node.removeNode();
             }
-        } catch (BackingStoreException | UnsupportedEncodingException ex) {
+        } catch (Exception ex) {
         }
     }
-    
+
     private String addTrailingSlash(String url) {
         return url + (url.endsWith("/") ? "" : "/");
     }

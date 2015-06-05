@@ -269,22 +269,24 @@ public final class GeneralLoadUtils {
     }
 
     private static boolean loadGeneomeVersionAssemblyInfo(DataContainer dataContainer) {
-        DataProvider dataProvider = dataContainer.getDataProvider();
-        if (dataProvider instanceof AssemblyProvider) {
-            AssemblyProvider assemblyProvider = (AssemblyProvider) dataProvider;
-            assemblyProvider.getChromosomeSynonyms(dataContainer).ifPresent(chromosomeSynonyms -> {
-                SynonymLookup chromosomeLookup = SynonymLookup.getChromosomeLookup();
-                chromosomeSynonyms.keySet().stream().forEach(key -> {
-                    chromosomeLookup.getPreferredNames().add(key);
-                    chromosomeLookup.addSynonyms(Sets.newConcurrentHashSet(chromosomeSynonyms.get(key)));
+        if (dataContainer.getGenomeVersion().getSeqList().isEmpty()) {
+            DataProvider dataProvider = dataContainer.getDataProvider();
+            if (dataProvider instanceof AssemblyProvider) {
+                AssemblyProvider assemblyProvider = (AssemblyProvider) dataProvider;
+                assemblyProvider.getChromosomeSynonyms(dataContainer).ifPresent(chromosomeSynonyms -> {
+                    SynonymLookup chromosomeLookup = SynonymLookup.getChromosomeLookup();
+                    chromosomeSynonyms.keySet().stream().forEach(key -> {
+                        chromosomeLookup.getPreferredNames().add(key);
+                        chromosomeLookup.addSynonyms(Sets.newConcurrentHashSet(chromosomeSynonyms.get(key)));
+                    });
                 });
-            });
-            Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
-            GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
-            assemblyInfo.entrySet().stream().forEach(entry -> {
-                genomeVersion.addSeq(entry.getKey(), entry.getValue());
-            });
-            return !assemblyInfo.isEmpty();
+                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
+                GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
+                assemblyInfo.entrySet().stream().forEach(entry -> {
+                    genomeVersion.addSeq(entry.getKey(), entry.getValue());
+                });
+                return !assemblyInfo.isEmpty();
+            }
         }
         return false;
     }

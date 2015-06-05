@@ -69,8 +69,6 @@ public class IgbPreferencesLoadingOrchestrator {
     public void loadIGBPrefs() {
         loadDefaultPrefs();
         migrateOldDataProviders();
-        //Filter deprecated servers from preferences
-        filterRetiredServersFromPrefs();
         //Load from persistence api
         loadFromPersistenceStorage();
         notifyUserOfNotRespondingServers();
@@ -91,24 +89,6 @@ public class IgbPreferencesLoadingOrchestrator {
     private void processDataProviders(List<DataProviderConfig> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
         dataProviders.stream().distinct().forEach(dataProviderManager::initializeDataProvider);
-    }
-
-    private void filterRetiredServersFromPrefs() {
-        try {
-            Arrays.stream(PreferenceUtils.getServersNode().childrenNames())
-                    .map(nodeName -> PreferenceUtils.getServersNode().node(nodeName))
-                    .filter(node -> retiredServers.contains(GeneralUtils.URLDecode(node.get("url", ""))))
-                    .forEach(node -> {
-                        try {
-                            node.removeNode();
-                        } catch (BackingStoreException ex) {
-                            logger.error(ex.getMessage(), ex);
-                        }
-                    });
-
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     private void loadFromPersistenceStorage() {

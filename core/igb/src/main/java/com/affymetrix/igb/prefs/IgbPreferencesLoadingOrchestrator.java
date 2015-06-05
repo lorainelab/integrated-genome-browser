@@ -3,6 +3,7 @@ package com.affymetrix.igb.prefs;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -11,29 +12,31 @@ import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
 import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(name = IgbPreferencesLoadingOrchestrator.COMPONENT_NAME, immediate = true)
 public class IgbPreferencesLoadingOrchestrator {
 
     public static final String COMPONENT_NAME = "PrefsLoader";
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IgbPreferencesLoadingOrchestrator.class);
-    private static final Set<String> retiredServers = ImmutableSet.<String>of("http://bioviz.org/cached/");
-
+    private static final Logger logger = LoggerFactory.getLogger(IgbPreferencesLoadingOrchestrator.class);
     private IgbPreferencesService igbPreferencesService;
     private DataProviderManager dataProviderManager;
     private EventService eventService;
@@ -63,8 +66,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     public void loadIGBPrefs() {
         loadDefaultPrefs();
-        //Filter deprecated servers from preferences
-        filterRetiredServersFromPrefs();
+        migrateOldDataProviders();
         //Load from persistence api
         loadFromPersistenceStorage();
         notifyUserOfNotRespondingServers();
@@ -85,24 +87,6 @@ public class IgbPreferencesLoadingOrchestrator {
     private void processDataProviders(List<DataProviderConfig> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
         dataProviders.stream().distinct().forEach(dataProviderManager::initializeDataProvider);
-    }
-
-    private void filterRetiredServersFromPrefs() {
-        try {
-            Arrays.stream(PreferenceUtils.getServersNode().childrenNames())
-                    .map(nodeName -> PreferenceUtils.getServersNode().node(nodeName))
-                    .filter(node -> retiredServers.contains(GeneralUtils.URLDecode(node.get("url", ""))))
-                    .forEach(node -> {
-                        try {
-                            node.removeNode();
-                        } catch (BackingStoreException ex) {
-                            logger.error(ex.getMessage(), ex);
-                        }
-                    });
-
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
     }
 
     private void loadFromPersistenceStorage() {
@@ -132,5 +116,43 @@ public class IgbPreferencesLoadingOrchestrator {
         timer.setRepeats(false);
         timer.start();
     }
-
+    
+    private void migrateOldDataProviders() {
+        Set<DataProvider> loadedDataProviders = DataProviderManager.getAllServers();
+        List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn", "http://bioviz.org/cached/");
+        try {
+            logger.info("Loading old data providers from preferences");
+            for (String nodeName : PreferenceUtils.getOldServersNode().childrenNames()) {
+                Preferences node = PreferenceUtils.getOldServersNode().node(nodeName);
+                String url = addTrailingSlash(GeneralUtils.URLDecode(node.get("url", "")));
+                boolean nodeRemoved = false;
+                for (DataProvider dataProvider : loadedDataProviders) {
+                    String dataProviderUrl = addTrailingSlash(dataProvider.getUrl());
+                    
+                    if (dataProviderUrl.equals(url)) {
+                        node.removeNode();
+                        nodeRemoved = true;
+                        break;
+                    }
+                }
+                if (!nodeRemoved && !URL_IGNORE_LIST.contains(URLDecoder.decode(url, "UTF-8"))) {
+                    Preferences newDataProviderNode = PreferenceUtils.getDataProviderNode(url);
+                    newDataProviderNode.put("factoryName", node.get("type", ""));
+                    newDataProviderNode.put("loadPriority", node.get("order", "1"));
+                    newDataProviderNode.put("name", node.get("name", "unknown"));
+                    String enabled = node.get("enabled", "true");
+                    if(!Boolean.valueOf(enabled)) {
+                        newDataProviderNode.put("status", "Disabled");
+                    }
+                    newDataProviderNode.put("url", url);
+                }
+                node.removeNode();
+            }
+        } catch (BackingStoreException | UnsupportedEncodingException ex) {
+        }
+    }
+    
+    private String addTrailingSlash(String url) {
+        return url + (url.endsWith("/") ? "" : "/");
+    }
 }

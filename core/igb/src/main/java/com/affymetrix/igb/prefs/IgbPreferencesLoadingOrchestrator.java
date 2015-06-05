@@ -13,7 +13,6 @@ import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.DataProviderConfig;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class IgbPreferencesLoadingOrchestrator {
 
     public static final String COMPONENT_NAME = "PrefsLoader";
-    private static final Set<String> retiredServers = ImmutableSet.<String>of("http://bioviz.org/cached/");
     private static final Logger logger = LoggerFactory.getLogger(IgbPreferencesLoadingOrchestrator.class);
     private IgbPreferencesService igbPreferencesService;
     private DataProviderManager dataProviderManager;

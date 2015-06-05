@@ -50,10 +50,16 @@ public class OSGiHandler {
 
     public void startOSGi() {
         logger.info("Loading OSGi framework");
+        setUserAgent();
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
         loadBundles();
+    }
+
+    //This is important for metric gathering, do not modify without thinking about the implications
+    private void setUserAgent() {
+        System.setProperty("http.agent", CommonUtils.getInstance().getUserAgent());
     }
 
     private void loadBundles() {

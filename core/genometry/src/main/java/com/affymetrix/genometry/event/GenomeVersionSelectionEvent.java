@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
-public final class GroupSelectionEvent extends EventObject {
+public final class GenomeVersionSelectionEvent extends EventObject {
 
     private List<GenomeVersion> selected_groups;
     private GenomeVersion primary_selection = null;
@@ -18,7 +18,7 @@ public final class GroupSelectionEvent extends EventObject {
      * @param groups a List of GenomeVersion's that have been selected.
  (If null, will default to {@link Collections#EMPTY_LIST}.)
      */
-    public GroupSelectionEvent(Object src, List<GenomeVersion> groups) {
+    public GenomeVersionSelectionEvent(Object src, List<GenomeVersion> groups) {
         super(src);
         this.selected_groups = groups;
         this.primary_selection = null;

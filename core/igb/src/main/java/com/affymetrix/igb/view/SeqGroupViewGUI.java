@@ -94,14 +94,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         genomeVersionPanel = new javax.swing.JPanel();
         versionCB = seqGroupView.getVersionCB();
 
-        currentSequenceTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
+        currentSequenceTable.setModel(new SeqGroupTableModel(null));
         jScrollPane1.setViewportView(currentSequenceTable);
 
         speciesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Custom Border at Runtime"));

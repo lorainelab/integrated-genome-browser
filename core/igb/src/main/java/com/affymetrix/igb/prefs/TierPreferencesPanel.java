@@ -1,6 +1,6 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -54,7 +54,7 @@ public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlH
     }
 
     @Override
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         mapRefresh();
     }
 

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.IGB;
@@ -470,7 +470,7 @@ public class TierPrefsViewGUI extends JPanel implements WindowListener, SeqMapRe
         }
     }
 
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         mapRefresh();
     }
 

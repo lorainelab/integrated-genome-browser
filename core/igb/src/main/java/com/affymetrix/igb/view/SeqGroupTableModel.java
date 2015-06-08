@@ -11,21 +11,28 @@ import javax.swing.table.AbstractTableModel;
 final class SeqGroupTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
-    private final GenomeVersion genomeVersion;
+    private GenomeVersion genomeVersion;
     private static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
 
-    public SeqGroupTableModel(GenomeVersion seq_group) {
-        genomeVersion = seq_group;
+    public SeqGroupTableModel(GenomeVersion genomeVersion) {
+        this.genomeVersion = genomeVersion;
     }
 
+    public void setGenomeVersion(GenomeVersion genomeVersion) {
+        this.genomeVersion = genomeVersion;
+    }
+
+    @Override
     public int getRowCount() {
         return (genomeVersion == null ? 0 : genomeVersion.getSeqCount());
     }
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public Object getValueAt(int row, int col) {
         if (genomeVersion != null) {
             BioSeq seq = genomeVersion.getSeq(row);

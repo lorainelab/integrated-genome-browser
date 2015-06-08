@@ -117,7 +117,7 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
 
     @Override
     // implement GroupSelectionListener
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         if (evt.getSelectedGroup() == null) {
             table.setModel(new DefaultTableModel());
             propertyChanged(0);

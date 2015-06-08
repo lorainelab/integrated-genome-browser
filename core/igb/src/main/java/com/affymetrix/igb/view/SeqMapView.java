@@ -9,7 +9,7 @@ import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.PropertyHandler;
 import com.affymetrix.genometry.event.PropertyHolder;
@@ -1961,7 +1961,7 @@ public class SeqMapView extends JPanel
     }
 
     @Override
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         GenomeVersion current_group = null;
         GenomeVersion new_group = evt.getSelectedGroup();
         if (aseq != null) {

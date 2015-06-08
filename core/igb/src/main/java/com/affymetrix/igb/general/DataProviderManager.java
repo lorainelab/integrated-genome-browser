@@ -373,12 +373,11 @@ public class DataProviderManager {
         handleSinglePatternCausedRaceCondition();
         Set<DataContainer> allAssociatedDataContainers = Sets.newHashSet();
         //remove all data sets
-        allDataSets.stream()
+        Set<DataSet> dataSetsToRemove = allDataSets.stream()
                 .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
-                .forEach(ds -> {
-                    allAssociatedDataContainers.add(ds.getDataContainer());
-                    loadView.removeDataSet(ds, true);
-                });
+                .collect(Collectors.toSet());
+        dataSetsToRemove.forEach(ds -> allAssociatedDataContainers.add(ds.getDataContainer()));
+        loadView.removeAllDataSets(dataSetsToRemove);
         allAssociatedDataContainers.forEach(dc -> dc.setIsInitialized(false));
         dataProvider.setStatus(ResourceStatus.Disabled);
     }

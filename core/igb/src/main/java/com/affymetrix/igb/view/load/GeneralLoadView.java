@@ -554,20 +554,21 @@ public final class GeneralLoadView {
         CThreadHolder.getInstance().execute(feature, worker);
     }
 
-    public void removeAllDataSets(Collection<DataSet> features) {
-        features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
-            removeDataSet(feature, false);
-            removeTier(feature.getURI().toString());
-            if (!Strings.isNullOrEmpty(feature.getMethod())) {
-                removeTier(feature.getMethod());
+    public void removeAllDataSets(Collection<DataSet> dataSets) {
+        int i = 0;
+        for (DataSet dataSet : dataSets) {
+            if (i < dataSets.size() - 1) {
+                removeDataSet(dataSet, false);
+                removeTier(dataSet.getURI().toString());
+                if (!Strings.isNullOrEmpty(dataSet.getMethod())) {
+                    removeTier(dataSet.getMethod());
+                }
+                dataSet.clear();
+            } else {
+                removeDataSet(dataSet, true);
             }
-            feature.clear();
-        });
-        // Refresh
-        refreshTreeViewAndRestore();
-        refreshDataManagementView();
-        //gviewer.dataRemoved();
-        gviewer.getSeqMap().repackTheTiers(true, true, true);
+            i++;
+        }
     }
 
     public void removeDataSet(final DataSet feature, final boolean refresh) {

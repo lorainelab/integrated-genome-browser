@@ -373,6 +373,12 @@ public final class GeneralLoadView {
         disableButtonsIfNecessary();
         changeVisibleDataButtonIfNecessary(visibleFeatures);
     }
+    
+    public void refreshDataProviderManagerView() {
+        final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+        disableButtonsIfNecessary();
+        changeVisibleDataButtonIfNecessary(visibleFeatures);
+    }
 
     private void initDataManagementTable() {
         final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
@@ -435,7 +441,7 @@ public final class GeneralLoadView {
     /**
      * Don't allow buttons to be used if they're not valid.
      */
-    private void disableButtonsIfNecessary() {
+    public void disableButtonsIfNecessary() {
         // Don't allow buttons for a full genome sequence
         setAllButtons(getIsDisableNecessary());
     }
@@ -445,7 +451,7 @@ public final class GeneralLoadView {
     }
 
     private void setAllButtons(final boolean enabled) {
-        ThreadUtils.runOnEventQueue(() -> {
+            ThreadUtils.runOnEventQueue(() -> {
             partial_residuesB.setEnabled(enabled);
             refreshDataAction.setEnabled(enabled);
         });

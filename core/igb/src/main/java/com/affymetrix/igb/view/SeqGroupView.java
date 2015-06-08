@@ -37,10 +37,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -50,6 +52,8 @@ import java.util.logging.Level;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -120,6 +124,40 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         seqTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         seqTable.setCellSelectionEnabled(false);
         seqTable.setRowSelectionAllowed(true);
+
+        seqTable.getTableHeader().addMouseListener(new MouseAdapter() {
+
+            private int lastCol = 99;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int col = seqTable.columnAtPoint(e.getPoint());
+                if (col == lastCol) {
+                    return;
+                }
+                lastCol = col;
+                if (col == 0) {
+                    sorter = new TableRowSorter<SeqGroupTableModel>((SeqGroupTableModel) seqTable.getModel()) {
+
+                        @Override
+                        public Comparator<?> getComparator(int column) {
+                            return new BioSeqAlphanumComparator();
+                        }
+                    };
+                } else {
+                    sorter = new TableRowSorter<SeqGroupTableModel>((SeqGroupTableModel) seqTable.getModel()) {
+
+                        @Override
+                        public Comparator<?> getComparator(int column) {
+                            return new SeqLengthComparator();
+                        }
+                    };
+                }
+                seqTable.setRowSorter(sorter);
+                sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(col, SortOrder.ASCENDING)));
+            }
+
+        });
 
         lsm = seqTable.getSelectionModel();
         lsm.addListSelectionListener(this);
@@ -335,6 +373,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         previousGenomeVersion = genomeVersion;
         SeqGroupTableModel model = (SeqGroupTableModel) seqTable.getModel();
         model.setGenomeVersion(genomeVersion);
+
         refreshTable();
         versionNameChanged(evt);
     }

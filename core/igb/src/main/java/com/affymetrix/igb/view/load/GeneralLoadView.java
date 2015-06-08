@@ -435,7 +435,7 @@ public final class GeneralLoadView {
     /**
      * Don't allow buttons to be used if they're not valid.
      */
-    public void disableButtonsIfNecessary() {
+    private void disableButtonsIfNecessary() {
         // Don't allow buttons for a full genome sequence
         setAllButtons(getIsDisableNecessary());
     }

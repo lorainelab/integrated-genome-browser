@@ -556,8 +556,18 @@ public final class GeneralLoadView {
 
     public void removeAllDataSets(Collection<DataSet> features) {
         features.stream().filter(feature -> feature.isVisible()).forEach(feature -> {
-            removeDataSet(feature, true);
+            removeDataSet(feature, false);
+            removeTier(feature.getURI().toString());
+            if (!Strings.isNullOrEmpty(feature.getMethod())) {
+                removeTier(feature.getMethod());
+            }
+            feature.clear();
         });
+        // Refresh
+        refreshTreeViewAndRestore();
+        refreshDataManagementView();
+        //gviewer.dataRemoved();
+        gviewer.getSeqMap().repackTheTiers(true, true, true);
     }
 
     public void removeDataSet(final DataSet feature, final boolean refresh) {
@@ -652,27 +662,28 @@ public final class GeneralLoadView {
                 ((AffyLabelledTierMap) gviewer.getSeqMap()).fireTierOrderChanged();
             }
 
-            private void removeTier(String method) {
-                ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-                TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
-                if (tier != null) {
-                    gviewer.getSeqMap().removeTier(tier);
-                }
-                tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
-                if (tier != null) {
-                    gviewer.getSeqMap().removeTier(tier);
-                }
-
-                if (style.isGraphTier()) {
-                    DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
-                } else {
-                    DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
-                }
-            }
         };
 
         CThreadHolder.getInstance().execute(feature, delete);
 
+    }
+
+    private void removeTier(String method) {
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+        TierGlyph tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.FORWARD);
+        if (tier != null) {
+            gviewer.getSeqMap().removeTier(tier);
+        }
+        tier = TrackView.getInstance().getTier(style, StyledGlyph.Direction.REVERSE);
+        if (tier != null) {
+            gviewer.getSeqMap().removeTier(tier);
+        }
+
+        if (style.isGraphTier()) {
+            DefaultStateProvider.getGlobalStateProvider().removeGraphState(method);
+        } else {
+            DefaultStateProvider.getGlobalStateProvider().removeAnnotStyle(method);
+        }
     }
 
     public FeatureTreeView getFeatureTree() {

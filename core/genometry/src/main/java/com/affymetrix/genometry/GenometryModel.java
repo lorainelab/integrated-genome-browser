@@ -1,6 +1,6 @@
 package com.affymetrix.genometry;
 
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -156,7 +156,7 @@ public final class GenometryModel {
     }
 
     private void fireGroupSelectionEvent(Object src, List<GenomeVersion> glist) {
-        GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
+        GenomeVersionSelectionEvent evt = new GenomeVersionSelectionEvent(src, glist);
         for (GroupSelectionListener listener : group_selection_listeners) {
             listener.groupSelectionChanged(evt);
         }

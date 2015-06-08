@@ -6,7 +6,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.comparator.AlphanumComparator;
 import com.affymetrix.genometry.comparator.SeqSymIdComparator;
 import com.affymetrix.genometry.comparator.StringVersionDateComparator;
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -41,7 +41,6 @@ import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -51,15 +50,12 @@ import java.util.logging.Level;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,13 +74,11 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     public static final String SELECT_GENOME = IGBConstants.BUNDLE.getString("genomeVersionCap");
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     protected String[] columnToolTips = {null, BUNDLE.getString("sequenceHeaderLengthToolTip")};
-    private final JRPStyledTable seqtable;
+    private final JRPStyledTable seqTable;
     private final ListSelectionModel lsm;
     private BioSeq selected_seq = null;
-    private GenomeVersion previousGroup = null;
-    private int previousSeqCount = 0;
+    private GenomeVersion previousGenomeVersion = null;
     private TableRowSorter<SeqGroupTableModel> sorter;
-    private String most_recent_seq_id = null;
     private static SeqGroupView singleton;
     private JComboBoxToolTipRenderer versionCBRenderer;
     private JComboBoxToolTipRenderer speciesCBRenderer;
@@ -101,7 +95,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         this.igbService = igbService;
         gviewer = IGB.getInstance().getMapView();
         selectVersionPanel = new SelectVersionPanel();
-        seqtable = new JRPStyledTable("SeqGroupView_seqtable") {
+        seqTable = new JRPStyledTable("SeqGroupView_seqtable") {
 
             private static final long serialVersionUID = 1L;
             //Implement table header tool tips.
@@ -122,15 +116,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
                 };
             }
         };
-        seqtable.setToolTipText(BUNDLE.getString("chooseSeq"));
-        seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        seqtable.setCellSelectionEnabled(false);
-        seqtable.setRowSelectionAllowed(true);
+        seqTable.setToolTipText(BUNDLE.getString("chooseSeq"));
+        seqTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        seqTable.setCellSelectionEnabled(false);
+        seqTable.setRowSelectionAllowed(true);
 
-        SeqGroupTableModel model = new SeqGroupTableModel(null);
-        seqtable.setModel(model);	// Force immediate visibility of column headers (although there's no data).
-
-        lsm = seqtable.getSelectionModel();
+        lsm = seqTable.getSelectionModel();
         lsm.addListSelectionListener(this);
 
         speciesCB = new JRPComboBoxWithSingleListener("DataAccess_species");
@@ -170,27 +161,14 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
      * Refresh seqtable if more chromosomes are added, for example.
      */
     public void refreshTable() {
-        final AbstractTableModel model = ((AbstractTableModel) seqtable.getModel());
+        final AbstractTableModel model = ((AbstractTableModel) seqTable.getModel());
         model.fireTableDataChanged();
         ThreadUtils.runOnEventQueue(() -> {
-            if (seqtable.getTableHeader().getColumnModel().getColumnCount() > 0) {
-                seqtable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
-                seqtable.getTableHeader().repaint();
+            if (seqTable.getTableHeader().getColumnModel().getColumnCount() > 0) {
+                seqTable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue(model.getColumnName(0));
+                seqTable.getTableHeader().repaint();
             }
         });
-    }
-
-    private void warnAboutNewlyAddedChromosomes(int previousSeqCount, GenomeVersion genomeVersion) {
-        if (previousSeqCount > genomeVersion.getSeqCount()) {
-            System.out.println("WARNING: chromosomes have been added");
-            if (previousSeqCount < genomeVersion.getSeqCount()) {
-                System.out.print("New chromosomes:");
-                for (int i = previousSeqCount; i < genomeVersion.getSeqCount(); i++) {
-                    System.out.print(" " + genomeVersion.getSeq(i).getId());
-                }
-                System.out.println();
-            }
-        }
     }
 
     // Scroll the table such that the selected row is visible
@@ -266,11 +244,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     /**
-     * The species combo box changed. If the species changes to SELECT, the
-     * SelectedSeqGroup is set to null. If the species changes to a specific
-     * organism and there's only one choice for the genome versionName, the
-     * SelectedSeqGroup is set to that versionName. Otherwise, the
-     * SelectedSetGroup is set to null.
+     * The species combo box changed. If the species changes to SELECT, the SelectedSeqGroup is set to null. If the
+     * species changes to a specific organism and there's only one choice for the genome versionName, the
+     * SelectedSeqGroup is set to that versionName. Otherwise, the SelectedSetGroup is set to null.
      */
     private void speciesCBChanged() {
         String speciesName = (String) speciesCB.getSelectedItem();
@@ -288,9 +264,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     /**
-     * This method is used to toggle view in the gViewer when the user has only
-     * selected the species and yet to choose the version. The method considers
-     * that the gviewer has the seqmap as the last component added.
+     * This method is used to toggle view in the gViewer when the user has only selected the species and yet to choose
+     * the version. The method considers that the gviewer has the seqmap as the last component added.
      *
      * @param isVersionSelected
      */
@@ -303,9 +278,8 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     /**
-     * The versionName combo box changed. This changes the selected group
-     * (either to null, or to a valid group). It is assumed that at this point,
-     * the species is valid.
+     * The versionName combo box changed. This changes the selected group (either to null, or to a valid group). It is
+     * assumed that at this point, the species is valid.
      */
     private void versionCBChanged() {
         String versionName = (String) versionCB.getSelectedItem();
@@ -340,9 +314,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     public void valueChanged(ListSelectionEvent evt) {
         Object src = evt.getSource();
         if ((src == lsm) && (!evt.getValueIsAdjusting())) { // ignore extra messages
-            int srow = seqtable.getSelectedRow();
+            int srow = seqTable.getSelectedRow();
             if (srow >= 0) {
-                String seq_name = (String) seqtable.getValueAt(srow, 0);
+                String seq_name = (String) seqTable.getValueAt(srow, 0);
                 selected_seq = gmodel.getSelectedGenomeVersion().getSeq(seq_name);
                 if (selected_seq != gmodel.getSelectedSeq().orElse(null)) {
                     gmodel.setSelectedSeq(selected_seq);
@@ -352,68 +326,26 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     @Override
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         toogleView(true);
         GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
-        if (previousGroup == genomeVersion) {
-            if (genomeVersion == null) {
-                return;
-            }
-            warnAboutNewlyAddedChromosomes(previousSeqCount, genomeVersion);
-        } else {
-            defSort = true;
+        if (genomeVersion == null || genomeVersion.equals(previousGenomeVersion)) {
+            return;
         }
-
-        previousGroup = genomeVersion;
-        previousSeqCount = genomeVersion == null ? 0 : genomeVersion.getSeqCount();
-
-        SeqGroupTableModel mod = new SeqGroupTableModel(genomeVersion);
-
-        sorter = new TableRowSorter<SeqGroupTableModel>(mod) {
-
-            @Override
-            public Comparator<?> getComparator(int column) {
-                if (column == 0) {
-                    return new BioSeqAlphanumComparator();
-                }
-                return new SeqLengthComparator();
-            }
-        };
-
-        selected_seq = null;
-        seqtable.setModel(mod);
-        //Disabled for now
-        seqtable.setRowSorter(sorter);
-        if (defSort) {
-            defSort = false;
-        } else {
-            sorter.setSortKeys(Arrays.asList(new SortKey(0, SortOrder.ASCENDING)));
-        }
-
-        TableColumn c = seqtable.getColumnModel().getColumn(1);
-        c.setCellRenderer(new ColumnRenderer());
-
+        previousGenomeVersion = genomeVersion;
+        SeqGroupTableModel model = (SeqGroupTableModel) seqTable.getModel();
+        model.setGenomeVersion(genomeVersion);
         refreshTable();
-
-        if (genomeVersion != null && most_recent_seq_id != null) {
-            // When changing genomes, try to keep the same chromosome selected when possible
-            BioSeq aseq = genomeVersion.getSeq(most_recent_seq_id);
-            if (aseq != null) {
-                gmodel.setSelectedSeq(aseq);
-            }
-        }
-
         versionNameChanged(evt);
     }
 
     /**
-     * This gets called when the genome versionName is changed. This occurs via
-     * the combo boxes, or by an external event like bookmarks, or
-     * LoadFileAction
+     * This gets called when the genome versionName is changed. This occurs via the combo boxes, or by an external event
+     * like bookmarks, or LoadFileAction
      *
      * @param evt
      */
-    public void versionNameChanged(GroupSelectionEvent evt) {
+    public void versionNameChanged(GenomeVersionSelectionEvent evt) {
         GenomeVersion genomeVersion = evt.getSelectedGroup();
 
         if (genomeVersion == null) {
@@ -474,21 +406,20 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         if (SeqGroupView.DEBUG_EVENTS) {
             System.out.println("SeqGroupView received seqSelectionChanged() event: seq is " + evt.getSelectedSeq());
         }
-        synchronized (seqtable) {  // or should synchronize on lsm?
+        synchronized (seqTable) {  // or should synchronize on lsm?
             lsm.removeListSelectionListener(this);
             selected_seq = evt.getSelectedSeq();
             if (selected_seq == null) {
-                seqtable.clearSelection();
+                seqTable.clearSelection();
             } else {
-                most_recent_seq_id = selected_seq.getId();
 
-                int rowCount = seqtable.getRowCount();
+                int rowCount = seqTable.getRowCount();
                 for (int i = 0; i < rowCount; i++) {
                     // should be able to use == here instead of equals(), because table's model really returns seq.getName()
-                    if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
-                        if (seqtable.getSelectedRow() != i) {
-                            seqtable.setRowSelectionInterval(i, i);
-                            scrollTableLater(seqtable, i);
+                    if (selected_seq.getId() == seqTable.getValueAt(i, 0)) {
+                        if (seqTable.getSelectedRow() != i) {
+                            seqTable.setRowSelectionInterval(i, i);
+                            scrollTableLater(seqTable, i);
                         }
                         break;
                     }
@@ -548,7 +479,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     @Subscribe
     public void dataProviderInit(DataProviderServiceChangeEvent event) {
-        ((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
+        ((AbstractTableModel) seqTable.getModel()).fireTableDataChanged();
         GeneralLoadView.getLoadView().refreshTreeView();
         String speciesName = (String) this.speciesCB.getSelectedItem();
         synchronized (this) {
@@ -568,7 +499,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
                 if (AutoLoadFeatureAction.getActionCB().isSelected()) {
 //                        GeneralLoadView.loadWholeRangeFeatures(null);
                 }
-                ((AbstractTableModel) seqtable.getModel()).fireTableDataChanged();
+                ((AbstractTableModel) seqTable.getModel()).fireTableDataChanged();
             }
         }
     }
@@ -713,8 +644,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     /**
-     * Run initialization of version on thread, so we don't lock up the GUI.
-     * Merge with initVersion();
+     * Run initialization of version on thread, so we don't lock up the GUI. Merge with initVersion();
      */
     private class InitVersionWorker extends CThreadWorker<Void, Void> {
 
@@ -756,7 +686,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     }
 
     public JRPStyledTable getTable() {
-        return seqtable;
+        return seqTable;
     }
 
     public JComboBox getSpeciesCB() {

@@ -14,7 +14,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -392,7 +392,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     @Override
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         range_box.setText("");
         resetSearch();
     }

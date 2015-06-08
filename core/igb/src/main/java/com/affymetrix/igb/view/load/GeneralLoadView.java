@@ -445,7 +445,7 @@ public final class GeneralLoadView {
     }
 
     private void setAllButtons(final boolean enabled) {
-        ThreadUtils.runOnEventQueue(() -> {
+            ThreadUtils.runOnEventQueue(() -> {
             partial_residuesB.setEnabled(enabled);
             refreshDataAction.setEnabled(enabled);
         });

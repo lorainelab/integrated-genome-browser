@@ -20,7 +20,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.event.GroupSelectionEvent;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -466,7 +466,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     @Override
-    public void groupSelectionChanged(GroupSelectionEvent evt) {
+    public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         GenomeVersion selected_group = evt.getSelectedGroup();
         if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
             Persistence.saveSeqSelection(prev_selected_seq);

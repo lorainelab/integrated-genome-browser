@@ -1,6 +1,5 @@
 package com.affymetrix.igb.tiers;
 
-import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
@@ -139,7 +138,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
             if (!getShowFullFilePathInTrackMark()) {
                 if (track_name != null) {
-                    if(track_name.contains(File.separator)) {
+                    if (track_name.contains(File.separator)) {
                         track_name = track_name.substring(track_name.lastIndexOf(File.separator) + 1);
                     } else {
                         track_name = track_name.substring(track_name.lastIndexOf("/") + 1);

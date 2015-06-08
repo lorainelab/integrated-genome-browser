@@ -40,17 +40,20 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     private static final long serialVersionUID = 1L;
     static final double FUDGE_FACTOR = 0.2;
 
-    AffyTieredMap labelmap;
-    JSplitPane mapsplitter;
-    final List<TierLabelGlyph> label_glyphs = new ArrayList<>();
-    List<TierLabelGlyph> ordered_glyphs = null;
-    JPanel can_panel;
-    NeoCanvas ncan;
-    AffyLabelledTierMap.TierSelectionModel selectionModel = new AffyLabelledTierMap.TierSelectionModel();
-    protected EventListenerList listenerList = new EventListenerList();
+    private AffyTieredMap labelmap;
+    private JSplitPane mapsplitter;
+    private final List<TierLabelGlyph> labelGlyphs;
+    private List<TierLabelGlyph> orderedGlyphs;
+    private JPanel canPanel;
+    private NeoCanvas neoCanvas;
+    private final TierSelectionModel selectionModel;
+    protected EventListenerList listenerList;
 
     public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
         super(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL);
+        labelGlyphs = new ArrayList<>();
+        selectionModel = new AffyLabelledTierMap.TierSelectionModel();
+        listenerList = new EventListenerList();
     }
 
     /**
@@ -81,13 +84,13 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         mapsplitter.setDividerSize(8);
         mapsplitter.setDividerLocation(100);
-        ncan = this.getNeoCanvas();
+        neoCanvas = this.getNeoCanvas();
         mapsplitter.setLeftComponent(labelmap);
 
-        can_panel = new JPanel();
-        can_panel.setLayout(new BorderLayout());
-        can_panel.add("Center", ncan);
-        mapsplitter.setRightComponent(can_panel);
+        canPanel = new JPanel();
+        canPanel.setLayout(new BorderLayout());
+        canPanel.add("Center", neoCanvas);
+        mapsplitter.setRightComponent(canPanel);
 
         this.setLayout(new BorderLayout());
         add("Center", mapsplitter);
@@ -116,17 +119,17 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     public void clearWidget() {
         super.clearWidget();
         labelmap.clearWidget();
-        label_glyphs.clear();
-        ordered_glyphs = null;
+        labelGlyphs.clear();
+        orderedGlyphs = null;
     }
 
     public List<TierLabelGlyph> getTierLabels() {
-        return label_glyphs;
+        return labelGlyphs;
     }
 
     private List<TierLabelGlyph> getOrderedGlyphs() {
         List<TierLabelGlyph> orderedGlyphs = new ArrayList<>();
-        for (TierLabelGlyph tierLabelGlyph : label_glyphs) {
+        for (TierLabelGlyph tierLabelGlyph : labelGlyphs) {
             if (tierLabelGlyph.isVisible()) {
                 orderedGlyphs.add(tierLabelGlyph);
             }
@@ -152,10 +155,10 @@ public class AffyLabelledTierMap extends AffyTieredMap {
      * @return a list of tier labels in order from top to bottom.
      */
     public List<TierLabelGlyph> getOrderedTierLabels() {
-        if (ordered_glyphs == null) {
-            ordered_glyphs = getOrderedGlyphs();
+        if (orderedGlyphs == null) {
+            orderedGlyphs = getOrderedGlyphs();
         }
-        return ordered_glyphs;
+        return orderedGlyphs;
     }
 
     public AffyTieredMap getLabelMap() {
@@ -166,7 +169,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     public void packTiers(boolean full_repack, boolean stretch_map, boolean fire_tier_position_changed) {
         super.packTiers(full_repack, stretch_map, fire_tier_position_changed);
         Rectangle2D.Double lbox = labelmap.getCoordBounds();
-        for (TierLabelGlyph label_glyph : label_glyphs) {
+        for (TierLabelGlyph label_glyph : labelGlyphs) {
             TierGlyph tier_glyph = label_glyph.getReferenceTier();
             Rectangle2D.Double tbox = tier_glyph.getCoordBox();
             label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
@@ -174,7 +177,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         }
         labelmap.fixed_coord_height = fixed_coord_height;
         labelmap.fixed_pixel_height = fixed_pixel_height;
-        ordered_glyphs = null;
+        orderedGlyphs = null;
         if (fire_tier_position_changed) {
             fireTierOrderChanged();
         }
@@ -210,8 +213,8 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         // set info for string glyph to point to tier glyph
         //   (which also sets value returned by label_glyph.getInfo())
         labelmap.setDataModel(label_glyph, mtg);
-        label_glyphs.add(label_glyph);
-        ordered_glyphs = null;
+        labelGlyphs.add(label_glyph);
+        orderedGlyphs = null;
     }
 
     @Override
@@ -220,8 +223,8 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         TierLabelGlyph label_glyph = labelmap.<TierLabelGlyph>getItem(toRemove);
         if (label_glyph != null) {
             labelmap.removeItem(label_glyph);
-            label_glyphs.remove(label_glyph);
-            ordered_glyphs = null;
+            labelGlyphs.remove(label_glyph);
+            orderedGlyphs = null;
         }
     }
 
@@ -304,7 +307,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         if (print_labels) {
             cpp = new ComponentPagePrinter(mapsplitter);
         } else {
-            cpp = new ComponentPagePrinter(can_panel);
+            cpp = new ComponentPagePrinter(canPanel);
         }
         cpp.print();
         cpp = null; // for garbage collection

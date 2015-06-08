@@ -4,6 +4,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import static com.affymetrix.igb.tiers.AffyTieredMap.SHOW_PLUS;
 import java.awt.event.ActionEvent;
 
 public class ShowPlusStrandAction extends GenericAction {
@@ -21,13 +22,13 @@ public class ShowPlusStrandAction extends GenericAction {
 
     private ShowPlusStrandAction() {
         super("Show All (+) Tiers", "16x16/actions/blank_placeholder.png", null);
-        this.putValue(SELECTED_KEY, AffyTieredMap.isShowPlus());
+        this.putValue(SELECTED_KEY, SHOW_PLUS);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        AffyTieredMap.setShowPlus(!AffyTieredMap.isShowPlus());
+        SHOW_PLUS = !SHOW_PLUS;
         AffyTieredMap map = IGB.getInstance().getMapView().getSeqMap();
         map.repackTheTiers(false, true);
     }

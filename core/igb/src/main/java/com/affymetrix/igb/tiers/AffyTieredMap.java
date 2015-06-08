@@ -17,9 +17,6 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.action.ShowMinusStrandAction;
-import com.affymetrix.igb.action.ShowMixedStrandAction;
-import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
@@ -52,44 +49,13 @@ import javax.swing.JScrollBar;
 public class AffyTieredMap extends NeoMap {
 
     private static final long serialVersionUID = 1L;
+    private static final String SELECTED_KEY = Action.SELECTED_KEY;
 
-    private static boolean show_plus = true;
-    private static boolean show_minus = true;
-    private static boolean show_mixed = true;
-    /**
-     * Starting with Java 1.6, there is an Action property Action.SELECTED_KEY.
-     * By setting this property, JCheckBoxMenuItem's can update themselves
-     * automatically. This property doesn't exist in earlier versions of java,
-     * so I have to fake it.
-     */
-    public static final String SELECTED_KEY_ = "Selected (AffyTieredMap)";
-    // public static final String SELECTED_KEY = Action.SELECTED_KEY;
-
-    public static boolean isShowPlus() {
-        return show_plus;
-    }
-
-    public static void setShowPlus(boolean show_plus_) {
-        show_plus = show_plus_;
-    }
-
-    public static boolean isShowMinus() {
-        return show_minus;
-    }
-
-    public static void setShowMinus(boolean show_minus_) {
-        show_minus = show_minus_;
-    }
-
-    public static boolean isShowMixed() {
-        return show_mixed;
-    }
-
-    public static void setShowMixed(boolean show_mixed_) {
-        show_mixed = show_mixed_;
-    }
+    public static boolean SHOW_PLUS = true;
+    public static boolean SHOW_MINUS = true;
+    public static boolean SHOW_MIXED = true;
     private final List<TierGlyph> tiers = new CopyOnWriteArrayList<>();
-    private final List<GlyphI> match_glyphs = new ArrayList<>();
+    private final List<GlyphI> matchGlyphs = new ArrayList<>();
     // the total pixel height of visible fixed pixel tiers
     //    (recalculated with every packTiers() call)
     protected int fixed_pixel_height;
@@ -103,9 +69,6 @@ public class AffyTieredMap extends NeoMap {
         this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
         this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-        ShowPlusStrandAction.getAction().putValue(SELECTED_KEY_, show_plus);
-        ShowMinusStrandAction.getAction().putValue(SELECTED_KEY_, show_minus);
-        ShowMixedStrandAction.getAction().putValue(SELECTED_KEY_, show_mixed);
     }
 
     AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
@@ -185,11 +148,11 @@ public class AffyTieredMap extends NeoMap {
         for (TierGlyph mtg : tiersCopy) {
             if (mtg.getChildCount() == 0) {
                 mtg.setVisibility(false);
-            } else if ((!show_plus) && mtg.getDirection() == StyledGlyph.Direction.FORWARD) {
+            } else if ((!SHOW_PLUS) && mtg.getDirection() == StyledGlyph.Direction.FORWARD) {
                 mtg.setVisibility(false);
-            } else if ((!show_minus) && mtg.getDirection() == StyledGlyph.Direction.REVERSE) {
+            } else if ((!SHOW_MINUS) && mtg.getDirection() == StyledGlyph.Direction.REVERSE) {
                 mtg.setVisibility(false);
-            } else if ((!show_mixed) && (mtg.getDirection() == StyledGlyph.Direction.BOTH)) {
+            } else if ((!SHOW_MIXED) && (mtg.getDirection() == StyledGlyph.Direction.BOTH)) {
                 mtg.setVisibility(false);
             } else {
                 mtg.setVisibility(mtg.getAnnotStyle().getShow());
@@ -270,13 +233,13 @@ public class AffyTieredMap extends NeoMap {
     }
 
     public void clearEdgeMatches() {
-        removeItem(match_glyphs);
-        match_glyphs.clear();
+        removeItem(matchGlyphs);
+        matchGlyphs.clear();
     }
 
     public void addEdgeMatches(List<GlyphI> glyphs) {
         if (glyphs != null) {
-            match_glyphs.addAll(glyphs);
+            matchGlyphs.addAll(glyphs);
         }
     }
 
@@ -490,7 +453,7 @@ public class AffyTieredMap extends NeoMap {
         if (last_coord_displayed > coord_end) {
             first_coord_displayed = coord_end - visible_coords;
         }
-		// END only section that relies on scene coords
+        // END only section that relies on scene coords
 
         // recalculating offset transform after view vs. scene adjustment...
         coord_offset = -first_coord_displayed;
@@ -676,13 +639,13 @@ public class AffyTieredMap extends NeoMap {
 
         public ActionToggler(String id, Action action) {
             super(id, action);
-            this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY_)));
+            this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY)));
             action.addPropertyChangeListener(this);
         }
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (AffyTieredMap.SELECTED_KEY_.equals(evt.getPropertyName())) {
+            if (AffyTieredMap.SELECTED_KEY.equals(evt.getPropertyName())) {
                 Boolean b = (Boolean) evt.getNewValue();
                 this.setSelected(b);
             }

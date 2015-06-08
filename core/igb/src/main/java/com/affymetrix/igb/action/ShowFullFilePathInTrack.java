@@ -12,7 +12,7 @@ import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.google.common.base.Strings;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.net.URI;
 import static javax.swing.Action.SELECTED_KEY;

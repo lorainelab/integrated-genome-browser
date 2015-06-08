@@ -1,9 +1,9 @@
 package com.lorainelab.igb.genoviz.extensions;
 
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.util.Comparator;
 
 /**

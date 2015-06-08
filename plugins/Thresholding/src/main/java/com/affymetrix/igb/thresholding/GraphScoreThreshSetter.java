@@ -22,7 +22,7 @@ import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.JRPRadioButton;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.Dimension;

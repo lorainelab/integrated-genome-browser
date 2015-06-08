@@ -1,10 +1,10 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.affymetrix.genometry.event.ParameteredAction;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 
 /**
  *

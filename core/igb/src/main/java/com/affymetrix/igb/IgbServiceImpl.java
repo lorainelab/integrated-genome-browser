@@ -43,7 +43,7 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.ImmutableList;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;

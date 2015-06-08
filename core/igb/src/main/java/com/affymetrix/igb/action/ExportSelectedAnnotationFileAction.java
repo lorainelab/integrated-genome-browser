@@ -6,7 +6,7 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.util.List;

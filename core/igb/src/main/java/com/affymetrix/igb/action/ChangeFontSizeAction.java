@@ -5,7 +5,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.Selections;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TrackConstants;

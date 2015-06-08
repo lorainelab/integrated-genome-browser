@@ -15,6 +15,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class GlyphEdgeMatcher {
     // Result undefined if the glyph is not in a tier.
     static GlyphI getTier(GlyphI target) {
         GlyphI p = target;
-        while (p.getParent() != null && !(p instanceof com.lorainelab.igb.genoviz.extensions.TierGlyph)) {
+        while (p.getParent() != null && !(p instanceof TierGlyph)) {
             p = p.getParent();
         }
         return p;

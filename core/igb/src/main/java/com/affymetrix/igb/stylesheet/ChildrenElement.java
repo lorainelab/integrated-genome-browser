@@ -17,7 +17,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.view.layout.ExpandPacker;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

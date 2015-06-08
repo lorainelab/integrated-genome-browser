@@ -10,7 +10,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;

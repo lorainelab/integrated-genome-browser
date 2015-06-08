@@ -7,7 +7,7 @@ import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.util.ThresholdReader;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Graphics;

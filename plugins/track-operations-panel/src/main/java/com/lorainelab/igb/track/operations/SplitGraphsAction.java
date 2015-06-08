@@ -3,7 +3,7 @@ package com.lorainelab.igb.track.operations;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 
 import static com.affymetrix.igb.shared.Selections.*;
 

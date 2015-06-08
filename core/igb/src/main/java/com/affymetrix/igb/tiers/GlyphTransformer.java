@@ -2,8 +2,8 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.igb.IGB;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;

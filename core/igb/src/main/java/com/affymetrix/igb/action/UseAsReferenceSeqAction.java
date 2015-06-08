@@ -5,7 +5,7 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.SeqMapViewPopup;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;

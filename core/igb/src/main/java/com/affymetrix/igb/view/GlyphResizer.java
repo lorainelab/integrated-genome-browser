@@ -15,6 +15,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -162,12 +163,12 @@ public class GlyphResizer implements MouseListener, MouseMotionListener {
         boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 
         if (this.upperGl != null) {
-            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.upperGl.getReferenceTier();
+            TierGlyph gl = this.upperGl.getReferenceTier();
             gl.setPreferredHeight(this.upperGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
         }
 
         if (this.lowerGl != null) {
-            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.lowerGl.getReferenceTier();
+            TierGlyph gl = this.lowerGl.getReferenceTier();
             gl.setPreferredHeight(this.lowerGl.getCoordBox().getHeight(), this.gviewer.getSeqMap().getView());
         }
 

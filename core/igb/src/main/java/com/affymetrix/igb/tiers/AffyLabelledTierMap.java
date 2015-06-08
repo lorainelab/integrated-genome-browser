@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -44,7 +44,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     private JSplitPane mapsplitter;
     private final List<TierLabelGlyph> labelGlyphs;
     private List<TierLabelGlyph> orderedGlyphs;
-    private JPanel canPanel;
+    private JPanel neoCanvasPanel;
     private NeoCanvas neoCanvas;
     private final TierSelectionModel selectionModel;
     protected EventListenerList listenerList;
@@ -77,6 +77,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
                 selectionModel.actionPerformed(new ActionEvent(glyph, ActionEvent.ACTION_FIRST, "Deselect Tier"));
             }
         };
+
         labelmap.setRubberBandBehavior(false);
         this.setBackground(Color.blue);
         labelmap.setBackground(Color.lightGray);
@@ -85,16 +86,16 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         mapsplitter.setDividerSize(8);
         mapsplitter.setDividerLocation(100);
         neoCanvas = this.getNeoCanvas();
-        mapsplitter.setLeftComponent(labelmap);
 
-        canPanel = new JPanel();
-        canPanel.setLayout(new BorderLayout());
-        canPanel.add("Center", neoCanvas);
-        mapsplitter.setRightComponent(canPanel);
+        neoCanvasPanel = new JPanel();
+        neoCanvasPanel.setLayout(new BorderLayout());
+        neoCanvasPanel.add("Center", neoCanvas);
+
+        mapsplitter.setLeftComponent(labelmap);
+        mapsplitter.setRightComponent(neoCanvasPanel);
 
         this.setLayout(new BorderLayout());
         add("Center", mapsplitter);
-
         if (hscroll_show) {
             add(hscroll_loc, scroller[X]);
         }
@@ -307,7 +308,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         if (print_labels) {
             cpp = new ComponentPagePrinter(mapsplitter);
         } else {
-            cpp = new ComponentPagePrinter(canPanel);
+            cpp = new ComponentPagePrinter(neoCanvasPanel);
         }
         cpp.print();
         cpp = null; // for garbage collection

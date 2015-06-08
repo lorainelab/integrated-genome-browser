@@ -8,8 +8,8 @@ import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAllButOneLocked;
 import static com.affymetrix.igb.shared.Selections.isAnyLockable;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 /**
  *

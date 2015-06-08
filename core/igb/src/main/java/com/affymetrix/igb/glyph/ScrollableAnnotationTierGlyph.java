@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.view.layout.CollapsePacker;
 import com.affymetrix.igb.view.layout.FasterExpandPacker;
 import com.affymetrix.igb.view.layout.ScrollableFasterExpandPacker;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.services.search.ITransformableTierGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;

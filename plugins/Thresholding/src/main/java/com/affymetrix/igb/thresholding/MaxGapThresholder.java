@@ -12,7 +12,7 @@ package com.affymetrix.igb.thresholding;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;

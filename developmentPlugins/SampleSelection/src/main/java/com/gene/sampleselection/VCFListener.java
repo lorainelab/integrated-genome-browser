@@ -10,7 +10,7 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.affymetrix.genometry.symloader.VCF;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

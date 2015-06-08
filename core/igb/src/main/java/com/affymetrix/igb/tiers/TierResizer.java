@@ -6,6 +6,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -253,7 +254,7 @@ public class TierResizer extends MouseInputAdapter {
         boolean needRepacking = (this.upperGl != null && this.lowerGl != null);
 
         if (this.upperGl != null) {
-            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.upperGl.getReferenceTier();
+            TierGlyph gl = this.upperGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.upperGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()
@@ -261,7 +262,7 @@ public class TierResizer extends MouseInputAdapter {
         }
 
         if (this.lowerGl != null) {
-            com.lorainelab.igb.genoviz.extensions.TierGlyph gl = this.lowerGl.getReferenceTier();
+            TierGlyph gl = this.lowerGl.getReferenceTier();
             gl.setPreferredHeight(
                     this.lowerGl.getCoordBox().getHeight(),
                     this.gviewer.getSeqMap().getView()

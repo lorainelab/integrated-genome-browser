@@ -17,10 +17,9 @@ import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.FORWARD;
-import static com.lorainelab.igb.genoviz.extensions.StyledGlyph.Direction.REVERSE;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import static com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph.Direction.FORWARD;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.Action;
@@ -97,14 +96,14 @@ public class ZoomingRepackAction extends SeqMapViewActionA {
         // Full update doesn't seem to happen.
         // Or, rather, it happens when the user clicks on the map.
     }
-    
+
     @Override
     public boolean isToolbarDefault() {
-        return true; 
+        return true;
     }
 
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
+        return TOOLBAR_INDEX;
     }
 }

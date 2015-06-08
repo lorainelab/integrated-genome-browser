@@ -9,7 +9,7 @@ import com.affymetrix.igb.services.registry.MapTierTypeHolder;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.util.EventObject;
 import java.util.List;

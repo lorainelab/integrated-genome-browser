@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.event.ParameteredAction;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 /**
  *

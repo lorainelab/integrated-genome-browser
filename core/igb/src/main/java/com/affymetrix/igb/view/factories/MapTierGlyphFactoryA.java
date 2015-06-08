@@ -17,7 +17,7 @@ import com.affymetrix.igb.IGBConstants;
 import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;

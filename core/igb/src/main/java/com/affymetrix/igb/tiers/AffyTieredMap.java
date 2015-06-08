@@ -20,9 +20,9 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.swing.JRPCheckBoxMenuItem;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
-import com.lorainelab.igb.genoviz.extensions.AxisGlyphWithSelection;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -175,11 +175,6 @@ public class AffyTieredMap extends NeoMap {
             if (mtg instanceof TransformTierGlyph) {
                 if (mtg instanceof DefaultTierGlyph && !((DefaultTierGlyph) mtg).isHeightFixed()) {
                     fixed_coord_height += mtg.getCoordBox().height;
-                    //TODO: Glyph.getMinPixelHeight() can be used
-//					int pixel_height = mtg.getPixelBox(this.getView()).height;
-//					if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
-//						fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
-//					}
                 } else {
                     TransformTierGlyph transtier = (TransformTierGlyph) mtg;
                     transtier.fitToPixelHeight(this.getView());
@@ -187,10 +182,6 @@ public class AffyTieredMap extends NeoMap {
                 }
             } else {
                 fixed_coord_height += mtg.getCoordBox().height;
-//				int pixel_height = mtg.getPixelBox(this.getView()).height;
-//				if(TierGlyph.MINIMUM_TIER_HEIGHT > pixel_height){
-//					fixed_pixel_height += TierGlyph.MINIMUM_TIER_HEIGHT - pixel_height;
-//				}
             }
             height = mtg.getCoordBox().height;
             // need to call moveAbsolute to trigger recursive move of

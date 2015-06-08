@@ -12,6 +12,7 @@ package com.lorainelab.igb.genoviz.extensions;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.genoviz.swing.RangeSlider;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;

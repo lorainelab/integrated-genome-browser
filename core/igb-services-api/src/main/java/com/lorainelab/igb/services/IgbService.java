@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;

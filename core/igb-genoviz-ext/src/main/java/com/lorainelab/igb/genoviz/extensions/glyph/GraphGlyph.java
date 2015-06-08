@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions;
+package com.lorainelab.igb.genoviz.extensions.glyph;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;

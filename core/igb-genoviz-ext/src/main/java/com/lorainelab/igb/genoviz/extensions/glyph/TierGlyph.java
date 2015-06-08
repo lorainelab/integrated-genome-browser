@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions;
+package com.lorainelab.igb.genoviz.extensions.glyph;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface TierGlyph extends GlyphI, StyledGlyph {
 
-    public static int MINIMUM_TIER_HEIGHT = 45;
+    public static int MINIMUM_TIER_HEIGHT = 250;
 
     public static enum TierType {
 

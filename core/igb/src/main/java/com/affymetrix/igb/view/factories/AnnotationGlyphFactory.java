@@ -47,8 +47,8 @@ import static com.affymetrix.igb.view.factories.MapTierGlyphFactoryI.DEFAULT_CHI
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
 import java.awt.Color;
 import java.text.DecimalFormat;

@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.glyph.EfficientPaintRectGlyph;
 import com.affymetrix.genoviz.glyph.InvisibleBoxGlyph;
 import com.affymetrix.genoviz.glyph.RoundRectMaskGlyph;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;

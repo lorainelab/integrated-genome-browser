@@ -18,7 +18,7 @@ import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.jidesoft.combobox.ColorExComboBox;
-import com.lorainelab.igb.genoviz.extensions.TierGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;

@@ -45,7 +45,10 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Export-Package>com.lorainelab.igb.genoviz.extensions</Export-Package>
+                        <Export-Package>
+                            com.lorainelab.igb.genoviz.extensions,
+                            com.lorainelab.igb.genoviz.extensions.glyph
+                        </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

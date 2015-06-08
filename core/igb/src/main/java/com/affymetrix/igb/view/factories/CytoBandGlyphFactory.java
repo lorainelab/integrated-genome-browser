@@ -9,7 +9,7 @@ import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import java.util.Set;
 
 /**

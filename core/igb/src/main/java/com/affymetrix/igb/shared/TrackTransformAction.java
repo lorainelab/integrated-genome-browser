@@ -1,7 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.genometry.operator.Operator;
-import com.lorainelab.igb.genoviz.extensions.StyledGlyph;
+import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
 

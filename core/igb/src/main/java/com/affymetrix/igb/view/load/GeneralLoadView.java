@@ -373,12 +373,6 @@ public final class GeneralLoadView {
         disableButtonsIfNecessary();
         changeVisibleDataButtonIfNecessary(visibleFeatures);
     }
-    
-    public void refreshDataProviderManagerView() {
-        final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-        disableButtonsIfNecessary();
-        changeVisibleDataButtonIfNecessary(visibleFeatures);
-    }
 
     private void initDataManagementTable() {
         final List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();

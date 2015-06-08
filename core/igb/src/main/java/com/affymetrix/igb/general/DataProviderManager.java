@@ -395,7 +395,6 @@ public class DataProviderManager {
             }
             handleSinglePatternCausedRaceCondition();
             loadView.refreshTreeView();
-            loadView.refreshDataProviderManagerView();
         }
     }
 

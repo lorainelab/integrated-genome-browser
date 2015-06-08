@@ -54,8 +54,8 @@ public class AffyTieredMap extends NeoMap {
     public static boolean SHOW_PLUS = true;
     public static boolean SHOW_MINUS = true;
     public static boolean SHOW_MIXED = true;
-    private final List<TierGlyph> tiers = new CopyOnWriteArrayList<>();
-    private final List<GlyphI> matchGlyphs = new ArrayList<>();
+    private final List<TierGlyph> tiers;
+    private final List<GlyphI> matchGlyphs;
     // the total pixel height of visible fixed pixel tiers
     //    (recalculated with every packTiers() call)
     protected int fixed_pixel_height;
@@ -69,6 +69,8 @@ public class AffyTieredMap extends NeoMap {
         this.getView().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
         this.getView().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         this.getView().setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+        tiers = new CopyOnWriteArrayList<>();
+        matchGlyphs = new ArrayList<>();
     }
 
     AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {

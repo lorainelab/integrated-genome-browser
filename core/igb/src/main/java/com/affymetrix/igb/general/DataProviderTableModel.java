@@ -189,7 +189,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
         }
     }
 
-    public static boolean isDataProviderEditable(String url) {
+    private boolean isDataProviderEditable(String url) {
         boolean ret = PreferenceUtils.getDataProviderNode(url).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         return ret;
     }

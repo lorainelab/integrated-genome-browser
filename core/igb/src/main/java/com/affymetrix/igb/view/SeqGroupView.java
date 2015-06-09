@@ -368,6 +368,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         toogleView(true);
         GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
         if (genomeVersion == null || genomeVersion.equals(previousGenomeVersion)) {
+            previousGenomeVersion = null;
             return;
         }
         previousGenomeVersion = genomeVersion;

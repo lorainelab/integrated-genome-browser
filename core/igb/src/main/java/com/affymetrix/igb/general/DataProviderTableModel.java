@@ -15,6 +15,7 @@ import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTabl
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Name;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Refresh;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -186,6 +187,9 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if(aValue instanceof String && Strings.isNullOrEmpty((String)aValue)) {
+            aValue = getValueAt(rowIndex, columnIndex);
+        }
         DataProvider dataProvider = sortedDataProviders.get(rowIndex);
         setColumnValue(dataProvider, aValue, rowIndex, columnIndex);
     }

@@ -118,7 +118,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private void migrateOldDataProviders() {
         Set<DataProvider> loadedDataProviders = DataProviderManager.getAllServers();
-        List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn", "http://bioviz.org/cached/");
+        List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn/", "http://bioviz.org/cached/", "http://genome.cse.ucsc.edu/cgi-bin/das/dsn/");
         try {
             logger.info("Loading old data providers from preferences");
             for (String nodeName : PreferenceUtils.getOldServersNode().childrenNames()) {

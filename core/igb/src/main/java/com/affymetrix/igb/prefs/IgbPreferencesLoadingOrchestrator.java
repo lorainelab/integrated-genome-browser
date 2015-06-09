@@ -88,7 +88,6 @@ public class IgbPreferencesLoadingOrchestrator {
         //TODO ServerList implementation is suspect and should be replaced
         dataProviders.stream().distinct().forEach(dataProvider -> {
             dataProviderManager.initializeDataProvider(dataProvider);
-            PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).put(DataProviderPrefKeys.PRIMARY_URL, dataProvider.getUrl());
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());
         });
     }

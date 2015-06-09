@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -85,7 +86,11 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private void processDataProviders(List<DataProviderConfig> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
-        dataProviders.stream().distinct().forEach(dataProviderManager::initializeDataProvider);
+        dataProviders.stream().distinct().forEach(dataProvider -> {
+            dataProviderManager.initializeDataProvider(dataProvider);
+            PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).put(DataProviderPrefKeys.PRIMARY_URL, dataProvider.getUrl());
+            PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());
+        });
     }
 
     private void loadFromPersistenceStorage() {

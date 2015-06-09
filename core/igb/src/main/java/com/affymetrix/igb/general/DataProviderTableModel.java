@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
+import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
@@ -167,13 +168,17 @@ public final class DataProviderTableModel extends AbstractTableModel {
     public boolean isEditable(DataProvider dataProvider, int columnIndex) {
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled && isDataProviderEditable(dataProvider.getUrl())) {
                     return true;
+                } else {
+                    return false;
                 }
             }
             case Name: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding && isDataProviderEditable(dataProvider.getUrl())) {
                     return true;
+                } else {
+                    return false;
                 }
             }
             case Enabled: {
@@ -182,6 +187,11 @@ public final class DataProviderTableModel extends AbstractTableModel {
             default:
                 return false;
         }
+    }
+
+    public static boolean isDataProviderEditable(String url) {
+        boolean ret = PreferenceUtils.getDataProviderNode(url).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
+        return ret;
     }
 
     @Override

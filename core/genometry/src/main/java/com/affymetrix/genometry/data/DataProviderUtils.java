@@ -9,7 +9,7 @@ package com.affymetrix.genometry.data;
  *
  * @author Tarun
  */
-public class DataProviderUtil {
+public class DataProviderUtils {
     public static String toExternalForm(String urlString) {
         urlString = urlString.trim();
         if (!urlString.endsWith("/")) {

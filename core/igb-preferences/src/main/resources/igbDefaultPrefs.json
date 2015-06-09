@@ -36,7 +36,7 @@
             {
                 "factoryName": "das",
                 "name": "UCSC",
-                "url": "http://genome.cse.ucsc.edu/cgi-bin/das/",
+                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
                 "isEditable": "false"
             },

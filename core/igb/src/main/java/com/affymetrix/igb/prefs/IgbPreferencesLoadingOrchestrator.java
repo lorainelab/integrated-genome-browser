@@ -4,7 +4,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProvider;
-import com.affymetrix.genometry.data.DataProviderUtil;
+import com.affymetrix.genometry.data.DataProviderUtils;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
@@ -89,7 +89,7 @@ public class IgbPreferencesLoadingOrchestrator {
         //TODO ServerList implementation is suspect and should be replaced
         dataProviders.stream().distinct().forEach(dataProvider -> {
             dataProviderManager.initializeDataProvider(dataProvider);
-            String externalFormUrl = DataProviderUtil.toExternalForm(dataProvider.getUrl());
+            String externalFormUrl = DataProviderUtils.toExternalForm(dataProvider.getUrl());
             PreferenceUtils.getDataProviderNode(externalFormUrl).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());
         });
     }

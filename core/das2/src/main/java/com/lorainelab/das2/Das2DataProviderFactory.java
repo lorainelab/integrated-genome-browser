@@ -23,17 +23,17 @@ public class Das2DataProviderFactory implements DataProviderFactory {
     }
 
     @Override
-    public DataProvider createDataProvider(String url, String name, int loadPriority, boolean editable) {
+    public DataProvider createDataProvider(String url, String name, int loadPriority) {
         url = toExternalForm(url.trim());
-        Das2DataProvider dasDataProvider = new Das2DataProvider(url, name, loadPriority, editable);
+        Das2DataProvider dasDataProvider = new Das2DataProvider(url, name, loadPriority);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return dasDataProvider;
     }
 
     @Override
-    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority, boolean editable) {
+    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
         url = toExternalForm(url.trim());
-        Das2DataProvider dasDataProvider = new Das2DataProvider(url, name, mirrorUrl, loadPriority, editable);
+        Das2DataProvider dasDataProvider = new Das2DataProvider(url, name, mirrorUrl, loadPriority);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return dasDataProvider;
     }

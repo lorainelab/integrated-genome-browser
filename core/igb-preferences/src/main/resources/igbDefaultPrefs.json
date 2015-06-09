@@ -6,47 +6,41 @@
                 "name": "IGB Quickload",
                 "url": "http://igbquickload.org/quickload/",
                 "loadPriority": "0",
-                "mirror": "http://bioviz.org/quickload/",
-                "editable": "false"
+                "mirror": "http://bioviz.org/quickload/"
             },
             {
                 "factoryName": "quickload",
                 "name": "Pollen",
                 "url": "http://www.igbquickload.org/pollen",
                 "loadPriority": "1",
-                "mirror": "http://bioviz.org/pollen/",
-                "editable": "false"
+                "mirror": "http://bioviz.org/pollen/"
             },
             {
                 "factoryName": "quickload",
                 "name": "Cytokinin",
                 "url": "http://www.igbquickload.org/cyto",
                 "loadPriority": "2",
-                "mirror": "http://bioviz.org/cytopub/",
-                "editable": "false"
+                "mirror": "http://bioviz.org/cytopub/"
             },
             {
                 "factoryName": "quickload",
                 "name": "Blueberry",
                 "url": "http://www.igbquickload.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://bioviz.org/berrypub/",
-                "editable": "false"
+                "mirror": "http://bioviz.org/berrypub/"
             },
             {
                 "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
-                "loadPriority": "5",
-                "editable": "false"
+                "loadPriority": "5"
             },
             {
                 "factoryName": "das2",
                 "name": "UofUtahBioinfoCore",
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "6",
-                "enabled":"false",
-                "editable": "false"
+                "enabled":"false"
             }
         ],
         "repository": [

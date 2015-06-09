@@ -115,9 +115,5 @@ public interface DataProvider {
     public Optional<String> getPassword();
 
     public void setPassword(String password);
-    
-    public default boolean isEditable() {
-        return true;
-    }
 
 }

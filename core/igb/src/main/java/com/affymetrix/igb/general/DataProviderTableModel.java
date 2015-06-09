@@ -161,9 +161,6 @@ public final class DataProviderTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DataProvider dataProvider = sortedDataProviders.get(rowIndex);
-        if(!dataProvider.isEditable()) {
-            return false;
-        }
         return isEditable(dataProvider, columnIndex);
     }
 

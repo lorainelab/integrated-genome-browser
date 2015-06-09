@@ -39,18 +39,15 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     private static final Logger logger = LoggerFactory.getLogger(Das2DataProvider.class);
     public LinkedHashSet<String> availableGenomeVersionNames;
     private final Set<Version> versionInfo;
-    private boolean editable = true;
 
-    public Das2DataProvider(String dasUrl, String name, int loadPriority, boolean editable) {
+    public Das2DataProvider(String dasUrl, String name, int loadPriority) {
         super(dasUrl, name, loadPriority);
-        this.editable = editable;
         versionInfo = Sets.newLinkedHashSet();
         initialize();
     }
 
-    public Das2DataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, boolean editable) {
+    public Das2DataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority) {
         super(dasUrl, name, mirrorUrl, loadPriority);
-        this.editable = editable;
         versionInfo = Sets.newLinkedHashSet();
         initialize();
     }
@@ -149,11 +146,6 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     @Override
     public Optional<String> getFactoryName() {
         return Optional.of(Das2DataProviderFactory.FACTORY_NAME);
-    }
-
-    @Override
-    public boolean isEditable() {
-        return editable;
     }
 
 }

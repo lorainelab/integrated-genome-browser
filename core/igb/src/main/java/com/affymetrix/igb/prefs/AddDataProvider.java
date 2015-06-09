@@ -309,7 +309,7 @@ public class AddDataProvider extends JFrame {
                     if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
                         Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
                         if (factory.isPresent()) {
-                            DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1, true);
+                            DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
                             dataProviderManager.addDataProvider(createdDataProvider);
                             if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
                                 isUnavailable = true;

@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.data.DataProviderUtil;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
@@ -88,7 +89,8 @@ public class IgbPreferencesLoadingOrchestrator {
         //TODO ServerList implementation is suspect and should be replaced
         dataProviders.stream().distinct().forEach(dataProvider -> {
             dataProviderManager.initializeDataProvider(dataProvider);
-            PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());
+            String externalFormUrl = DataProviderUtil.toExternalForm(dataProvider.getUrl());
+            PreferenceUtils.getDataProviderNode(externalFormUrl).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());
         });
     }
 
@@ -122,7 +124,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private void migrateOldDataProviders() {
         Set<DataProvider> loadedDataProviders = DataProviderManager.getAllServers();
-        List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn", "http://bioviz.org/cached/");
+        List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn", "http://bioviz.org/cached/", "http://genome.cse.ucsc.edu/cgi-bin/das/dsn/");
         try {
             logger.info("Loading old data providers from preferences");
             for (String nodeName : PreferenceUtils.getOldServersNode().childrenNames()) {

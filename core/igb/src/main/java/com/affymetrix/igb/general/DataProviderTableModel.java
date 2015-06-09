@@ -166,16 +166,17 @@ public final class DataProviderTableModel extends AbstractTableModel {
     }
 
     public boolean isEditable(DataProvider dataProvider, int columnIndex) {
+        boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && isDataProviderEditable(dataProvider.getUrl())) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled && isEditable) {
                     return true;
                 } else {
                     return false;
                 }
             }
             case Name: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding && isDataProviderEditable(dataProvider.getUrl())) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding && isEditable) {
                     return true;
                 } else {
                     return false;
@@ -187,11 +188,6 @@ public final class DataProviderTableModel extends AbstractTableModel {
             default:
                 return false;
         }
-    }
-
-    private boolean isDataProviderEditable(String url) {
-        boolean ret = PreferenceUtils.getDataProviderNode(url).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
-        return ret;
     }
 
     @Override

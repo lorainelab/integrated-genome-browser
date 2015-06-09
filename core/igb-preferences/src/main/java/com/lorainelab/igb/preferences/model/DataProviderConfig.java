@@ -41,6 +41,9 @@ public class DataProviderConfig {
     @Expose
     @XmlAttribute(name = "enabled")
     protected String enabled;
+    @Expose
+    @XmlAttribute(name = "editable")
+    protected boolean editable;
 
     public String getValue() {
         return value;
@@ -106,6 +109,14 @@ public class DataProviderConfig {
         this.enabled = value;
     }
 
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -113,7 +124,7 @@ public class DataProviderConfig {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(name).append(url).append(loadPriority).append(_default).append(mirror).append(enabled).toHashCode();
+        return new HashCodeBuilder().append(name).append(url).append(loadPriority).append(_default).append(mirror).append(enabled).append(editable).toHashCode();
     }
 
     @Override
@@ -125,6 +136,6 @@ public class DataProviderConfig {
             return false;
         }
         DataProviderConfig rhs = ((DataProviderConfig) other);
-        return new EqualsBuilder().append(name, rhs.name).append(url, rhs.url).append(loadPriority, rhs.loadPriority).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).isEquals();
+        return new EqualsBuilder().append(name, rhs.name).append(url, rhs.url).append(loadPriority, rhs.loadPriority).append(_default, rhs._default).append(mirror, rhs.mirror).append(enabled, rhs.enabled).append(editable, rhs.editable).isEquals();
     }
 }

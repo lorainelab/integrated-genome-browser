@@ -264,7 +264,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         loadPriorityUpBtn.setEnabled(dataSourcesTable.getSelectedRow() > 0);
         loadPriorityDownBtn.setEnabled(dataSourcesTable.getSelectedRow() < dataSourcesTable.getRowCount() - 1);
         authBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
-        editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
+        editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 0));
         removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
     }
 

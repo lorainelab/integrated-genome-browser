@@ -36,9 +36,11 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
 
     private static final Logger logger = LoggerFactory.getLogger(DasDataProvider.class);
     private Map<String, String> genomeContextRootMap;
+    private boolean editable = true;
 
-    public DasDataProvider(String dasUrl, String name, int loadPriority) {
+    public DasDataProvider(String dasUrl, String name, int loadPriority, boolean editable) {
         super(dasUrl, name, loadPriority);
+        this.editable = editable;
         genomeContextRootMap = Maps.newLinkedHashMap();
         try {
             URL dasDsnUrl = new URL(url);
@@ -51,8 +53,9 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
         }
     }
 
-    public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority) {
+    public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, boolean editable) {
         super(dasUrl, name, mirrorUrl, loadPriority);
+        this.editable = editable;
         genomeContextRootMap = Maps.newHashMap();
         try {
             URL dasDsnUrl = new URL(dasUrl);
@@ -142,5 +145,12 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     public Optional<String> getFactoryName() {
         return Optional.of(DasDataProviderFactory.FACTORY_NAME);
     }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
+    }
+    
+    
 
 }

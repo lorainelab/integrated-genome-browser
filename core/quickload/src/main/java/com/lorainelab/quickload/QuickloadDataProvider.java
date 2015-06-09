@@ -46,17 +46,20 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private final SetMultimap<String, String> genomeVersionSynonyms;
     private final Map<String, Optional<String>> supportedGenomeVersionInfo;
     private final Map<String, Optional<Multimap<String, String>>> chromosomeSynonymReference;
+    private boolean editable = true;
 
-    public QuickloadDataProvider(String url, String name, int loadPriority) {
+    public QuickloadDataProvider(String url, String name, int loadPriority, boolean editable) {
         super(toExternalForm(url), name, loadPriority);
+        this.editable = editable;
         supportedGenomeVersionInfo = Maps.newHashMap();
         speciesInfo = Sets.newHashSet();
         genomeVersionSynonyms = HashMultimap.create();
         chromosomeSynonymReference = Maps.newHashMap();
     }
 
-    public QuickloadDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
+    public QuickloadDataProvider(String url, String name, String mirrorUrl, int loadPriority, boolean editable) {
         super(toExternalForm(url), name, toExternalForm(mirrorUrl), loadPriority);
+        this.editable = editable;
         supportedGenomeVersionInfo = Maps.newHashMap();
         speciesInfo = Sets.newHashSet();
         genomeVersionSynonyms = HashMultimap.create();
@@ -203,4 +206,9 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     }
     private static final String QUICKLOAD_FACTORY_NAME = "Quickload";
 
+    @Override
+    public boolean isEditable() {
+        return editable; //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

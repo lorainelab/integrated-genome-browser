@@ -20,7 +20,7 @@ public class DasDataProviderTest {
 
     @BeforeClass
     public static void setup() {
-        dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1);
+        dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1, true);
 
     }
 

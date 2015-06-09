@@ -11,10 +11,10 @@ public interface DataProviderFactory {
      */
     public String getFactoryName();
 
-    public DataProvider createDataProvider(String url, String name, int loadPriority);
+    public DataProvider createDataProvider(String url, String name, int loadPriority, boolean editable);
 
-    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority);
-
+    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority, boolean editable);
+    
     /**
      * @return if user's should be allowed to create local file system based instances of this type
      */

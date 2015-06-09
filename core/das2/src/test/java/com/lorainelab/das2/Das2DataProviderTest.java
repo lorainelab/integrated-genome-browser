@@ -20,7 +20,7 @@ public class Das2DataProviderTest {
 
     @Test
     public void typeRequestTest() {
-        DataProvider dataProvider = new Das2DataProvider(DAS2_URL, "HCI_UTAH", 1);
+        DataProvider dataProvider = new Das2DataProvider(DAS2_URL, "HCI_UTAH", 1, true);
         GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Feb_2009");
         DataContainer container = new DataContainer(genomeVersion, dataProvider);
         Set<DataSet> availableDataSets = dataProvider.getAvailableDataSets(container);

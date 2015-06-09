@@ -28,18 +28,18 @@ public class QuickloadFactory implements DataProviderFactory {
     }
 
     @Override
-    public DataProvider createDataProvider(String url, String name, int loadPriority) {
+    public DataProvider createDataProvider(String url, String name, int loadPriority, boolean editable) {
         url = toExternalForm(url);
-        QuickloadDataProvider quickloadDataProvider = new QuickloadDataProvider(url, name, loadPriority);
+        QuickloadDataProvider quickloadDataProvider = new QuickloadDataProvider(url, name, loadPriority, editable);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return quickloadDataProvider;
     }
 
     @Override
-    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
+    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority, boolean editable) {
         url = toExternalForm(url);
 
-        QuickloadDataProvider quickloadDataProvider = new QuickloadDataProvider(url, name, mirrorUrl, loadPriority);
+        QuickloadDataProvider quickloadDataProvider = new QuickloadDataProvider(url, name, mirrorUrl, loadPriority, editable);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return quickloadDataProvider;
     }

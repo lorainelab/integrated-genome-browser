@@ -20,4 +20,5 @@ public class DataProviderPrefKeys {
     public static final String LOAD_PRIORITY = "loadPriority";
     public static final String IS_DEFAULT_SERVER = "default";
     public static final String REMEMBER_CREDENTIALS = "rememberCredentials";
+    public static final String EDITABLE = "editable";
 }

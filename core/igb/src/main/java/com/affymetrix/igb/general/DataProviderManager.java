@@ -11,6 +11,7 @@ import com.affymetrix.genometry.data.DataProviderFactoryManager;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
 import com.affymetrix.genometry.general.DataContainer;
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.EDITABLE;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
@@ -172,6 +173,7 @@ public class DataProviderManager {
         String password = node.get(PASSWORD, null);
         String mirrorUrl = node.get(MIRROR_URL, null);
         String status = node.get(STATUS, null);
+        boolean editable = Boolean.valueOf(node.get(EDITABLE, "true"));
         int loadPriority = node.getInt(LOAD_PRIORITY, -1);
 
         if (isValidNonDuplicate(url, factoryName, name, mirrorUrl)) {
@@ -179,9 +181,9 @@ public class DataProviderManager {
             dataProviderFactory.ifPresent(factory -> {
                 DataProvider dataProvider;
                 if (Strings.isNullOrEmpty(mirrorUrl)) {
-                    dataProvider = factory.createDataProvider(url, name, loadPriority);
+                    dataProvider = factory.createDataProvider(url, name, loadPriority, editable);
                 } else {
-                    dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
+                    dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority, editable);
                 }
                 if (!Strings.isNullOrEmpty(login)) {
                     dataProvider.setLogin(login);
@@ -234,13 +236,14 @@ public class DataProviderManager {
 
     public void initializeDataProvider(DataProviderConfig config) {
         String factoryName = config.getFactoryName();
+        boolean editable = config.isEditable();
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
         dataProviderFactory.ifPresent(factory -> {
             DataProvider dataProvider;
             if (Strings.isNullOrEmpty(config.getMirror())) {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority());
+                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), editable);
             } else {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority());
+                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority(), editable);
             }
             ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());

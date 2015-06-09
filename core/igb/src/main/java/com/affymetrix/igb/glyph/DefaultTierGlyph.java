@@ -92,6 +92,8 @@ public class DefaultTierGlyph extends TransformTierGlyph {
 
     public DefaultTierGlyph(ITrackStyleExtended style) {
         super(style);
+        Rectangle2D.Double cbox = this.getCoordBox();
+        cbox.height = 200;
     }
 
     @Override
@@ -180,7 +182,6 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         super.pack(view);
         Rectangle2D.Double mbox = getScene().getCoordBox();
         Rectangle2D.Double cbox = this.getCoordBox();
-
         if (shouldDrawLabel()) {
 			// Add extra space to make room for the label.
 

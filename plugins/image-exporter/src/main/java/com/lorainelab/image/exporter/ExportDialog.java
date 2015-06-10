@@ -450,6 +450,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         String ext = GeneralUtils.getExtension(newPath);
         ExportFileType type = getType(getDescription(ext));
         exportDialogGui.getExtComboBox().setSelectedItem(type);
+        exportDialogGui.getFilePathTextField().setText(newPath);
         exportFile = file;
         headlessComponentExport(exportComponent, exportFile, selectedExt, false);
         exportNode.put(PREF_FILE, exportFile.getAbsolutePath());

@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometry.general.DataSetUtils;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
@@ -8,7 +9,6 @@ import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -138,11 +138,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
 
             if (!getShowFullFilePathInTrackMark()) {
                 if (track_name != null) {
-                    if (track_name.contains(File.separator)) {
-                        track_name = track_name.substring(track_name.lastIndexOf(File.separator) + 1);
-                    } else {
-                        track_name = track_name.substring(track_name.lastIndexOf("/") + 1);
-                    }
+                    track_name = DataSetUtils.extractNameFromPath(track_name);
                 }
             } else {
                 track_name = unique_name;

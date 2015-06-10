@@ -5,6 +5,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.general.DataSetUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -55,6 +56,7 @@ public class ShowFullFilePathInTrack extends SeqMapViewActionA {
                     }
                 } else {
                     String track_name = glyph.getAnnotStyle().getFeature().getDataSetName();
+                    track_name = DataSetUtils.extractNameFromPath(track_name);
                     if (!Strings.isNullOrEmpty(track_name)) {
                         ((TrackStyle) glyph.getAnnotStyle()).resetTrackName(track_name);
                     }

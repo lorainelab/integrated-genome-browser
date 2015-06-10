@@ -520,7 +520,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     public void resetTrackName(String track_name) {
-        track_name = (String) load(PREF_TRACK_NAME, track_name);
+        if (!IGBStateProvider.getShowFullFilePathInTrackMark()) {
+            track_name = (String) load(PREF_TRACK_NAME, track_name);
+        }
         this.track_name = track_name;
     }
 

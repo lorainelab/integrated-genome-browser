@@ -12,6 +12,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
+import static com.affymetrix.genometry.data.DataProviderUtils.toExternalForm;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
@@ -337,7 +338,6 @@ public class AddDataProvider extends JFrame {
                 if (isUnavailable) {
                     ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
                 }
-
             }
         };
 
@@ -383,11 +383,4 @@ public class AddDataProvider extends JFrame {
         return file;
     }
 
-    public static String toExternalForm(String urlString) {
-        urlString = urlString.trim();
-        if (!urlString.endsWith("/")) {
-            urlString += "/";
-        }
-        return urlString;
-    }
 }

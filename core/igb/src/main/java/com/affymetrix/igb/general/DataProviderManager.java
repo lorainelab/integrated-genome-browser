@@ -8,6 +8,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
+import static com.affymetrix.genometry.data.DataProviderUtils.toExternalForm;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
 import com.affymetrix.genometry.general.DataContainer;
@@ -130,7 +131,7 @@ public class DataProviderManager {
     }
 
     public Optional<DataProvider> getServerFromUrl(String url) {
-        return dataProviders.stream().filter(dp -> dp.getUrl().equals(url)).findFirst();
+        return dataProviders.stream().filter(dp -> toExternalForm(dp.getUrl()).equals(toExternalForm(url))).findFirst();
     }
 
     public static Set<DataProvider> getEnabledDataProviders() {

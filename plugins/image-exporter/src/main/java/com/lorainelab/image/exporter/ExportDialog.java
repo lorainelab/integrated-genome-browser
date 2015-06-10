@@ -311,7 +311,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         if (StringUtils.isNotBlank(exportFile.getAbsolutePath())) {
             fileName = exportFile.getAbsolutePath();
             try {
-                String tempDir = fileName.substring(0, fileName.lastIndexOf("/"));
+                String tempDir = fileName.substring(0, fileName.lastIndexOf(File.separator));
                 File f = new File(tempDir);
                 if (f.exists()) {
                     directory = f;
@@ -321,9 +321,9 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
-            if (fileName.contains("/")) {
-                if (fileName.length() > fileName.lastIndexOf("/")) {
-                    fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+            if (fileName.contains(File.separator)) {
+                if (fileName.length() > fileName.lastIndexOf(File.separator)) {
+                    fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1);
                 }
             }
         }

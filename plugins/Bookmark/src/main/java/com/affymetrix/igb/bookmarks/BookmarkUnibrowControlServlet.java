@@ -491,7 +491,7 @@ public final class BookmarkUnibrowControlServlet {
         final ImmutableList.Builder<DataProvider> builder = ImmutableList.<DataProvider>builder();
 
         for (String server_url : server_urls) {
-            builder.add(igbService.loadServer(server_url).get());
+            builder.add(igbService.loadServer(server_url).orElse(null));
         }
 
         return builder.build();
@@ -576,7 +576,7 @@ public final class BookmarkUnibrowControlServlet {
         } else {
             // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
-            if (!gmodel.getSelectedSeq().isPresent() || book_seq != gmodel.getSelectedSeq().get()) {
+            if (!gmodel.getSelectedSeq().isPresent() || book_seq != gmodel.getSelectedSeq().orElse(null)) {
                 gmodel.setSelectedSeq(book_seq);
             }
         }
@@ -589,7 +589,7 @@ public final class BookmarkUnibrowControlServlet {
         //   for group if not already populated
         BioSeq book_seq;
         if (StringUtils.isBlank(seqid) || "unknown".equals(seqid)) {
-            book_seq = gmodel.getSelectedSeq().get();
+            book_seq = gmodel.getSelectedSeq().orElse(null);
             if (book_seq == null && gmodel.getSelectedGenomeVersion() != null && gmodel.getSelectedGenomeVersion().getSeqCount() > 0) {
                 book_seq = gmodel.getSelectedGenomeVersion().getSeq(0);
             }

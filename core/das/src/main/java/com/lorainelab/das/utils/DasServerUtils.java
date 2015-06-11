@@ -125,7 +125,7 @@ public class DasServerUtils {
     }
 
     public static Map<String, Integer> retrieveAssemblyInfoByContextRoot(String contextRoot) {
-        Map assemblyInfo = Maps.newLinkedHashMap();
+        Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         Optional<DasEp> retrieveDasEpResponse = DasServerUtils.retrieveDasEpResponse(contextRoot);
         if (retrieveDasEpResponse.isPresent()) {
             DasEp entryPointInfo = retrieveDasEpResponse.get();

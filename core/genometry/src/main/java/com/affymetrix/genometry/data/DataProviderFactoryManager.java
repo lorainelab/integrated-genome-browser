@@ -23,7 +23,7 @@ public class DataProviderFactoryManager {
     public final Set<DataProviderFactory> factories;
 
     public DataProviderFactoryManager() {
-        factories = Sets.newTreeSet();
+        factories = Sets.newConcurrentHashSet();
     }
 
     @Reference(optional = false, multiple = true, unbind = "removeDataProviderFactory", dynamic = true)
@@ -51,7 +51,7 @@ public class DataProviderFactoryManager {
     }
 
     public Optional<DataProviderFactory> findFactoryByName(String factoryName) {
-        return factories.stream().filter(factory -> factory.getFactoryName().equalsIgnoreCase(factoryName)).findFirst();
+        return factories.stream().sorted().filter(factory -> factory.getFactoryName().equalsIgnoreCase(factoryName)).findFirst();
     }
 
     public Set<String> getAllAvailableFactoryTypeNames() {

@@ -15,6 +15,9 @@ public interface Weighted extends Comparable<Weighted> {
 
     @Override
     public default int compareTo(Weighted that) {
+        if (that.getWeight() == -1) {
+            return 1;
+        }
         return this.getWeight() - that.getWeight();
     }
 }

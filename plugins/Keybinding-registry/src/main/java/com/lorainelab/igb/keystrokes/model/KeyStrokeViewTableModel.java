@@ -180,7 +180,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
     }
 
     public void addAction(GenericAction action) {
-        if (actionKeys.add(action)) {
+        if (action != null && actionKeys.add(action)) {
             fireTableDataChanged();
             addShortcut(action);
         }
@@ -296,10 +296,9 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
     }
 
     /**
-     * Build the underlying data array. There is a fourth column, not shown in
-     * the table, but needed by the setValue() method. IconColumn = 0
-     * ToolbarColumn = 1 ActionColumn = 2 KeyStrokeColumn = 3 IdColumn = 4 ->
-     * not displayed in table ColumnCount = 4
+     * Build the underlying data array. There is a fourth column, not shown in the table, but needed by the setValue()
+     * method. IconColumn = 0 ToolbarColumn = 1 ActionColumn = 2 KeyStrokeColumn = 3 IdColumn = 4 -> not displayed in
+     * table ColumnCount = 4
      *
      * @param keystroke_node
      * @param toolbar_node

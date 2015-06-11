@@ -51,11 +51,11 @@ public class DataProviderFactoryManager {
     }
 
     public Optional<DataProviderFactory> findFactoryByName(String factoryName) {
-        return factories.stream().sorted().filter(factory -> factory.getFactoryName().equalsIgnoreCase(factoryName)).findFirst();
+        return factories.stream().filter(factory -> factory.getFactoryName().equalsIgnoreCase(factoryName)).findFirst();
     }
 
     public Set<String> getAllAvailableFactoryTypeNames() {
-        return factories.stream().map(factory -> factory.getFactoryName()).collect(Collectors.toCollection(LinkedHashSet::new));
+        return factories.stream().sorted().map(factory -> factory.getFactoryName()).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

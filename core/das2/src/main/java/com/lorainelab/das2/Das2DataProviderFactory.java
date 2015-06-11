@@ -16,6 +16,7 @@ public class Das2DataProviderFactory implements DataProviderFactory {
 
     public static final String COMPONENT_NAME = "Das2DataProviderFactory";
     public static final String FACTORY_NAME = "DAS2";
+    private static final int WEIGHT = -1;
 
     @Override
     public String getFactoryName() {
@@ -40,6 +41,6 @@ public class Das2DataProviderFactory implements DataProviderFactory {
 
     @Override
     public int getWeight() {
-        return 3;
+        return WEIGHT;
     }
 }

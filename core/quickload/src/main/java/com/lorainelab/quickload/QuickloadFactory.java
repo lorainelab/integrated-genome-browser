@@ -16,6 +16,7 @@ public class QuickloadFactory implements DataProviderFactory {
 
     public static final String COMPONENT_NAME = "QuickloadFactory";
     private static final String FACTORY_NAME = "Quickload";
+    private static final int WEIGHT = 1;
 
     @Override
     public String getFactoryName() {
@@ -24,7 +25,7 @@ public class QuickloadFactory implements DataProviderFactory {
 
     @Override
     public int getWeight() {
-        return 1;
+        return WEIGHT;
     }
 
     @Override

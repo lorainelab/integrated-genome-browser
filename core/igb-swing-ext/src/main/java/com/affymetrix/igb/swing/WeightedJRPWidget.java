@@ -9,13 +9,8 @@ package com.affymetrix.igb.swing;
  *
  * @author tarun
  */
-public interface WeightedJRPWidget extends JRPWidget, Comparable<WeightedJRPWidget> {
+public interface WeightedJRPWidget extends JRPWidget {
 
     public int getWeight();
 
-    @Override
-    public default int compareTo(WeightedJRPWidget o) {
-        return this.getWeight() - o.getWeight();
-    }
-    
 }

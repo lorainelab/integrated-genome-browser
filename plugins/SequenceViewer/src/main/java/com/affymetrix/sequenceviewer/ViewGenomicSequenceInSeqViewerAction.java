@@ -1,5 +1,6 @@
 package com.affymetrix.sequenceviewer;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenometryModel;
@@ -27,6 +28,10 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
     public ViewGenomicSequenceInSeqViewerAction() {
         super(AbstractSequenceViewer.BUNDLE.getString("ViewGenomicSequenceInSeqViewer"), null, "16x16/actions/Sequence_Viewer.png", "22x22/actions/Sequence_Viewer.png", KeyEvent.VK_UNDEFINED, null, false);
         setEnabled(false);
+    }
+
+    @Activate
+    public void activate() {
         GenometryModel.getInstance().addSymSelectionListener(this);
     }
 

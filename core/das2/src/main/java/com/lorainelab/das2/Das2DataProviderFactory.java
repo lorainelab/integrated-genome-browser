@@ -16,6 +16,7 @@ public class Das2DataProviderFactory implements DataProviderFactory {
 
     public static final String COMPONENT_NAME = "Das2DataProviderFactory";
     public static final String FACTORY_NAME = "DAS2";
+    private static final int WEIGHT = 3;
 
     @Override
     public String getFactoryName() {
@@ -36,5 +37,10 @@ public class Das2DataProviderFactory implements DataProviderFactory {
         Das2DataProvider dasDataProvider = new Das2DataProvider(url, name, mirrorUrl, loadPriority);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return dasDataProvider;
+    }
+
+    @Override
+    public int getWeight() {
+        return WEIGHT;
     }
 }

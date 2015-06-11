@@ -1,10 +1,12 @@
 package com.affymetrix.genometry.data;
 
+import com.affymetrix.genometry.util.Weighted;
+
 /**
  *
  * @author dcnorris
  */
-public interface DataProviderFactory {
+public interface DataProviderFactory extends Weighted {
 
     /**
      * @return A user friendly Name which will presented in the UI to user's when adding DataProviders

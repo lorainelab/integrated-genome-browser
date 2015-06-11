@@ -38,4 +38,9 @@ public class DasDataProviderFactory implements DataProviderFactory {
         return dasDataProvider;
     }
 
+    @Override
+    public int getWeight() {
+        return 2;
+    }
+
 }

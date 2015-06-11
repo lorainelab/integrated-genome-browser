@@ -3,6 +3,7 @@ package com.affymetrix.genometry.data;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class DataProviderFactoryManager {
     public final Set<DataProviderFactory> factories;
 
     public DataProviderFactoryManager() {
-        factories = Sets.newConcurrentHashSet();
+        factories = Sets.newTreeSet();
     }
 
     @Reference(optional = false, multiple = true, unbind = "removeDataProviderFactory", dynamic = true)
@@ -54,7 +55,7 @@ public class DataProviderFactoryManager {
     }
 
     public Set<String> getAllAvailableFactoryTypeNames() {
-        return factories.stream().map(factory -> factory.getFactoryName()).collect(Collectors.toSet());
+        return factories.stream().map(factory -> factory.getFactoryName()).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

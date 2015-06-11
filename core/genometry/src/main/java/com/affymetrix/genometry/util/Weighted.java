@@ -3,19 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.swing;
+package com.affymetrix.genometry.util;
 
 /**
  *
- * @author tarun
+ * @author Tarun
  */
-public interface WeightedJRPWidget extends JRPWidget, Comparable<WeightedJRPWidget> {
+public interface Weighted extends Comparable<Weighted> {
 
     public int getWeight();
 
     @Override
-    public default int compareTo(WeightedJRPWidget o) {
-        return this.getWeight() - o.getWeight();
+    public default int compareTo(Weighted that) {
+        return this.getWeight() - that.getWeight();
     }
-    
 }

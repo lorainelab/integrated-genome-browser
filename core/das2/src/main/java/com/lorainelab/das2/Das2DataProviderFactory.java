@@ -37,4 +37,9 @@ public class Das2DataProviderFactory implements DataProviderFactory {
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return dasDataProvider;
     }
+
+    @Override
+    public int getWeight() {
+        return 3;
+    }
 }

@@ -367,10 +367,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     public void groupSelectionChanged(GenomeVersionSelectionEvent evt) {
         toogleView(true);
         GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
-        if (genomeVersion == null || genomeVersion.equals(previousGenomeVersion)) {
-            previousGenomeVersion = null;
-            return;
-        }
         previousGenomeVersion = genomeVersion;
         SeqGroupTableModel model = (SeqGroupTableModel) seqTable.getModel();
         model.setGenomeVersion(genomeVersion);

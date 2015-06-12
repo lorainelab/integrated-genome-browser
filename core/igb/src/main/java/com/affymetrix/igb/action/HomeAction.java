@@ -3,6 +3,7 @@ package com.affymetrix.igb.action;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.igb.view.SeqGroupView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -27,6 +28,7 @@ public class HomeAction extends GenericAction {
         GenometryModel.getInstance().setSelectedSeq(null);
         SeqGroupView.getInstance().getSpeciesCB().setSelectedItem(SeqGroupView.SELECT_SPECIES);
         SeqGroupView.getInstance().getVersionCB().setSelectedItem(SeqGroupView.SELECT_GENOME);
+        SeqGroupView.getInstance().groupSelectionChanged(new GenomeVersionSelectionEvent(this, null));
     }
 
     @Override

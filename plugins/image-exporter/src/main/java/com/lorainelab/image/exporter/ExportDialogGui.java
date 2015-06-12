@@ -75,13 +75,13 @@ public class ExportDialogGui extends JPanel {
         saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             controller.saveButtonActionPerformed();
         });
-        exportDialogFrame.getRootPane().setDefaultButton(saveAsButton);
+        exportDialogFrame.getRootPane().setDefaultButton(saveButton);
         JPanel panel = new JPanel(new MigLayout("", "[grow][][]", "[]"));
         panel.add(filePathTextField, "growx");
-        panel.add(saveAsButton, "span 2,growx, wrap");
-        panel.add(extComboBox, "growx");
-        panel.add(cancelButton, "right");
         panel.add(saveButton);
+        panel.add(cancelButton, "right, wrap");
+        panel.add(extComboBox, "growx");
+        panel.add(saveAsButton, "span 2,growx, wrap");
         add(panel, "growx, wrap");
     }
 

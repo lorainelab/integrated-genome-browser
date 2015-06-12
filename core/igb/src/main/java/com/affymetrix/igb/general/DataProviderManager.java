@@ -51,6 +51,7 @@ import java.util.SortedMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -251,11 +252,14 @@ public class DataProviderManager {
 
     @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeDataProvider")
     public void addDataProvider(DataProvider dataProvider) {
-        dataProviders.add(dataProvider);
-        DataProviderManager.this.initializeDataProvider(dataProvider);
-        if (ALL_SOURCES_INITIALIZED) {
-            eventBus.post(new DataProviderServiceChangeEvent());
-        }
+        SwingUtilities.invokeLater(() -> {
+            dataProviders.add(dataProvider);
+            DataProviderManager.this.initializeDataProvider(dataProvider);
+            if (ALL_SOURCES_INITIALIZED) {
+                eventBus.post(new DataProviderServiceChangeEvent());
+            }
+        });
+
     }
 
     private void initializeDataProvider(DataProvider dataProvider) {

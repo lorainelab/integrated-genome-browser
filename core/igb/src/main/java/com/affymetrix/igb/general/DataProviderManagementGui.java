@@ -63,6 +63,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private static final Icon REFRESH_ICON = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
     private static final String SERVER_CREDENTIALS = BUNDLE.getString("serverCredentials");
     private final String EDIT_DATA_SOURCE = BUNDLE.getString("editDataSource");
+    private final String ADD_DATA_SOURCE = BUNDLE.getString("addDataSource");
     private DataProviderManager dataProviderManager;
     private final StyledJTable dataSourcesTable;
     private DataProviderTableModel dataProviderTableModel;
@@ -224,7 +225,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         addBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
             int row = dataSourcesTable.getSelectedRow();
-            addDataProvider.init(false, EDIT_DATA_SOURCE, null);
+            addDataProvider.init(false, ADD_DATA_SOURCE, null);
         });
     }
 

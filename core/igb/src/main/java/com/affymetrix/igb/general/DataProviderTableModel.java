@@ -170,7 +170,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
         boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && isEditable) {
+                if (dataProvider.getStatus() != ResourceStatus.Disabled) {
                     return true;
                 } else {
                     return false;

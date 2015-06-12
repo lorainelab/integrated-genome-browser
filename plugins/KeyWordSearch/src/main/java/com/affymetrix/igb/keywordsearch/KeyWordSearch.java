@@ -11,7 +11,7 @@ import com.lorainelab.igb.services.search.SearchModeRegistry;
 import com.lorainelab.igb.services.search.SearchResults;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -56,7 +56,7 @@ public class KeyWordSearch implements ISearchModeSym {
 
     @Override
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
-        Set<SeqSymmetry> results = new HashSet<>();
+        Set<SeqSymmetry> results = new LinkedHashSet<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
         for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {

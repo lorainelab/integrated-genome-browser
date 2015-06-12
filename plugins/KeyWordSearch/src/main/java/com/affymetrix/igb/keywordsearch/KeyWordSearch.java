@@ -11,8 +11,11 @@ import com.lorainelab.igb.services.search.SearchModeRegistry;
 import com.lorainelab.igb.services.search.SearchResults;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -53,7 +56,7 @@ public class KeyWordSearch implements ISearchModeSym {
 
     @Override
     public SearchResults<SeqSymmetry> search(String search_text, final BioSeq chrFilter, IStatus statusHolder, boolean option) {
-        List<SeqSymmetry> results = new ArrayList<>();
+        Set<SeqSymmetry> results = new HashSet<>();
         StringBuilder status = new StringBuilder();
         StatusHolder sh = new StatusHolder(statusHolder);
         for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
@@ -68,7 +71,7 @@ public class KeyWordSearch implements ISearchModeSym {
             }
         }
         statusHolder.setStatus(status.toString());
-        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", status.toString(), results);
+        return new SearchResults<>(getName(), search_text, chrFilter != null ? chrFilter.getId() : "genome", status.toString(), results.stream().collect(Collectors.toList()));
     }
 
     @Override

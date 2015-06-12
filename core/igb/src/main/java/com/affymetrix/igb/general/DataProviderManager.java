@@ -21,8 +21,6 @@ import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
 import com.affymetrix.genometry.general.DataSet;
-import com.affymetrix.genometry.thread.CThreadHolder;
-import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
@@ -168,74 +166,60 @@ public class DataProviderManager {
 
     //TODO this node parsing should be pushed up to factories to allow more flexibility and more isolation of responsibility
     public void initializeDataProvider(Preferences node) {
-        CThreadWorker<Void, Void> worker = new CThreadWorker<Void, Void>("Load data provider") {
+        String url = node.get(PRIMARY_URL, null);
+        String name = node.get(PROVIDER_NAME, null);
+        String factoryName = node.get(FACTORY_NAME, null);
+        String login = node.get(LOGIN, null);
+        String password = node.get(PASSWORD, null);
+        String mirrorUrl = node.get(MIRROR_URL, null);
+        String status = node.get(STATUS, null);
+        int loadPriority = node.getInt(LOAD_PRIORITY, -1);
 
-            @Override
-            protected Void runInBackground() {
-                String url = node.get(PRIMARY_URL, null);
-                String name = node.get(PROVIDER_NAME, null);
-                String factoryName = node.get(FACTORY_NAME, null);
-                String login = node.get(LOGIN, null);
-                String password = node.get(PASSWORD, null);
-                String mirrorUrl = node.get(MIRROR_URL, null);
-                String status = node.get(STATUS, null);
-                int loadPriority = node.getInt(LOAD_PRIORITY, -1);
-
-                if (isValidNonDuplicate(url, factoryName, name, mirrorUrl)) {
-                    Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
-                    dataProviderFactory.ifPresent(factory -> {
-                        DataProvider dataProvider;
-                        if (Strings.isNullOrEmpty(mirrorUrl)) {
-                            dataProvider = factory.createDataProvider(url, name, loadPriority);
-                        } else {
-                            dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
-                        }
-                        if (!Strings.isNullOrEmpty(login)) {
-                            dataProvider.setLogin(login);
-                        }
-                        if (!Strings.isNullOrEmpty(password)) {
-                            dataProvider.setPassword(encrypter.decrypt(password));
-                        }
-                        if (!Strings.isNullOrEmpty(status)) {
-                            dataProvider.setStatus(ResourceStatus.fromName(status).get());
-                        }
-                        if (loadPriority != -1) {
-                            dataProvider.setLoadPriority(loadPriority);
-                        }
-                        ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
-                        dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
-                    });
+        if (isValidNonDuplicate(url, factoryName, name, mirrorUrl)) {
+            Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
+            dataProviderFactory.ifPresent(factory -> {
+                DataProvider dataProvider;
+                if (Strings.isNullOrEmpty(mirrorUrl)) {
+                    dataProvider = factory.createDataProvider(url, name, loadPriority);
                 } else {
-                    if (!Strings.isNullOrEmpty(status)) {
-                        DataProvider dataProvider = null;
-                        if (Strings.isNullOrEmpty(mirrorUrl)) {
-                            if (dataProviderServiceReferences.containsKey(url)) {
-                                dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
-                            }
-                        } else {
-                            if (!dataProviderServiceReferences.containsKey(url)) {
-                                if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
-                                    dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
-                                }
-                            }
-                        }
-                        if (dataProvider != null) {
-                            dataProvider.setStatus(ResourceStatus.fromName(status).get());
+                    dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
+                }
+                if (!Strings.isNullOrEmpty(login)) {
+                    dataProvider.setLogin(login);
+                }
+                if (!Strings.isNullOrEmpty(password)) {
+                    dataProvider.setPassword(encrypter.decrypt(password));
+                }
+                if (!Strings.isNullOrEmpty(status)) {
+                    dataProvider.setStatus(ResourceStatus.fromName(status).get());
+                }
+                if (loadPriority != -1) {
+                    dataProvider.setLoadPriority(loadPriority);
+                }
+                ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
+                dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
+            });
+        } else {
+            if (!Strings.isNullOrEmpty(status)) {
+                DataProvider dataProvider = null;
+                if (Strings.isNullOrEmpty(mirrorUrl)) {
+                    if (dataProviderServiceReferences.containsKey(url)) {
+                        dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
+                    }
+                } else {
+                    if (!dataProviderServiceReferences.containsKey(url)) {
+                        if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
+                            dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
                         }
                     }
                 }
-
-                eventBus.post(new DataProviderServiceChangeEvent());
-                return null;
+                if (dataProvider != null) {
+                    dataProvider.setStatus(ResourceStatus.fromName(status).get());
+                }
             }
+        }
 
-            @Override
-            protected void finished() {
-                return;
-            }
-        };
-
-        CThreadHolder.getInstance().execute(this, worker);
+        eventBus.post(new DataProviderServiceChangeEvent());
     }
 
     private boolean isValidNonDuplicate(String url, String factoryName, String name, String mirrorUrl) {

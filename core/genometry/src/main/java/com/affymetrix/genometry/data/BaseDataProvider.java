@@ -15,7 +15,6 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public abstract class BaseDataProvider implements DataProvider {
         Optional.ofNullable(preferencesNode.get(LOGIN, null)).ifPresent(preferenceValue -> login = preferenceValue);
         Optional.ofNullable(preferencesNode.get(PASSWORD, null)).ifPresent(preferenceValue -> password = encrypter.decrypt(preferenceValue));
         Optional.ofNullable(preferencesNode.get(STATUS, null)).ifPresent(preferenceValue -> {
-            getMatchingResourceStatus(preferenceValue).ifPresent(matchingStatus -> status = matchingStatus);
+            ResourceStatus.fromName(preferenceValue).ifPresent(matchingStatus -> status = matchingStatus);
             if (status == Initialized) {
                 status = NotInitialized;
             }
@@ -82,7 +81,7 @@ public abstract class BaseDataProvider implements DataProvider {
             preferencesNode.put(MIRROR_URL, mirrorUrl);
         }
     }
-
+    
     protected abstract void disable();
 
     @Override
@@ -178,11 +177,4 @@ public abstract class BaseDataProvider implements DataProvider {
             disable();
         }
     }
-
-    private Optional<ResourceStatus> getMatchingResourceStatus(String preferenceValue) {
-        return Arrays.asList(ResourceStatus.values()).stream()
-                .filter(resourceStatus -> resourceStatus.toString().equals(preferenceValue))
-                .findFirst();
-    }
-
 }

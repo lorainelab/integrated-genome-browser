@@ -6,6 +6,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
 import com.github.kevinsawicki.http.HttpRequest;
@@ -54,6 +55,9 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
 
     @Override
     public void initialize() {
+        if (status == ResourceStatus.Disabled) {
+            return;
+        }
         try {
             Optional<Sources> sourcesResponse = Das2ServerUtils.retrieveSourcesResponse(url);
             if (sourcesResponse.isPresent()) {
@@ -75,7 +79,9 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     @Override
     protected void disable() {
         versionInfo.clear();
-        availableGenomeVersionNames.clear();
+        if (availableGenomeVersionNames != null) {
+            availableGenomeVersionNames.clear();
+        }
     }
 
     @Override

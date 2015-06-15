@@ -279,7 +279,8 @@ public class TierResizer extends MouseInputAdapter {
             com.affymetrix.igb.tiers.AffyTieredMap m = this.gviewer.getSeqMap();
             com.affymetrix.igb.tiers.AffyLabelledTierMap lm
                     = (com.affymetrix.igb.tiers.AffyLabelledTierMap) m;
-            boolean full_repack = true, stretch_vertically = true;
+            boolean full_repack = true;
+            boolean stretch_vertically = false;
             lm.repackTheTiers(full_repack, stretch_vertically);
             //lm.repackTiersToLabels();
             // The above repack (either one I think)

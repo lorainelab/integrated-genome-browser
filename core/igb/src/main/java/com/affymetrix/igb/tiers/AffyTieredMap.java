@@ -119,7 +119,7 @@ public class AffyTieredMap extends NeoMap {
         // currently _ONLY_ tiers and glyphs placed in tiers will be repacked --
         // anything added directly to map other than tiers will need to
         // be dealt with manually
-        packTiers(true, true, false);
+        packTiers(true, false, false);
     }
 
     /**

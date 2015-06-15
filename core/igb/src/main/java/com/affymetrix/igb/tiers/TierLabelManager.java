@@ -163,7 +163,7 @@ public final class TierLabelManager implements PropertyHolder {
 
                 updatePositions();
                 // then repack of course (tiermap repack also redoes labelmap glyph coords...)
-                tiermap.packTiers(false, true, true);
+                tiermap.packTiers(false, false, true);
                 tiermap.updateWidget();
             }
         }
@@ -603,7 +603,7 @@ public final class TierLabelManager implements PropertyHolder {
         });
 
         // then repack of course (tiermap repack also redoes labelmap glyph coords...)
-        tiermap.packTiers(false, true, false);
+        tiermap.packTiers(false, false, false);
         tiermap.updateWidget();
     }
 

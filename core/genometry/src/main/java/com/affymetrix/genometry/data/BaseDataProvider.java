@@ -15,7 +15,6 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
@@ -178,11 +177,4 @@ public abstract class BaseDataProvider implements DataProvider {
             disable();
         }
     }
-
-    private Optional<ResourceStatus> getMatchingResourceStatus(String preferenceValue) {
-        return Arrays.asList(ResourceStatus.values()).stream()
-                .filter(resourceStatus -> resourceStatus.toString().equalsIgnoreCase(preferenceValue))
-                .findFirst();
-    }
-
 }

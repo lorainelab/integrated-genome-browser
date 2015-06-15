@@ -45,7 +45,6 @@
                 "name": "UofUtahBioinfoCore",
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "6",
-                "enabled": "false",
                 "status": "disabled",
                 "isEditable": "false"
             }

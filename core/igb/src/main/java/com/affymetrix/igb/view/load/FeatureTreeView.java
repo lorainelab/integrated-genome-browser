@@ -444,19 +444,19 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     /**
      * Find hyperlink for the feature name.
      *
-     * @param gFeature
+     * @param dataSet
      * @param bounds
      * @param x
      * @param y
      * @return hyerlink for the feature name
      */
-    private static Optional<String> featureFriendlyURL(DataSet gFeature, Rectangle bounds, int x, int y) {
-        if (!Strings.isNullOrEmpty(gFeature.getDataContainer().getDataProvider().getUrl())) {
+    private static Optional<String> featureFriendlyURL(DataSet dataSet, Rectangle bounds, int x, int y) {
+        if (dataSet.getDataContainer().getDataProvider().getDataSetLinkoutUrl(dataSet).isPresent()) {
             int iconWidth = 10 + 2 * 4;
             bounds.x += bounds.width - iconWidth;
             bounds.width = iconWidth;
             if (bounds.contains(x, y)) {
-                return Optional.ofNullable(gFeature.getDataContainer().getDataProvider().getUrl());
+                return dataSet.getDataContainer().getDataProvider().getDataSetLinkoutUrl(dataSet);
             }
         }
         return Optional.empty();
@@ -465,20 +465,20 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     /**
      * Find hyperlink for the server name.
      *
-     * @param gServer
+     * @param dataProvider
      * @param thetree
      * @param bounds
      * @param x
      * @param y
      * @return hyperlink of the server name
      */
-    private static Optional<String> serverFriendlyURL(DataProvider gServer, JTree thetree, Rectangle bounds, int x, int y) {
-        String friendlyURL = gServer.getUrl();
+    private static Optional<String> serverFriendlyURL(DataProvider dataProvider, JTree thetree, Rectangle bounds, int x, int y) {
+        String friendlyURL = dataProvider.getPrimaryLinkoutUrl(dataProvider).orElse(null);
 
         if (friendlyURL != null) {
-            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.getName(), thetree.getGraphics());
+            Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(dataProvider.getName(), thetree.getGraphics());
             bounds.width = (int) linkBound.getWidth();
-            final Optional<ImageIcon> serverFavicon = getServerFavicon(gServer);
+            final Optional<ImageIcon> serverFavicon = getServerFavicon(dataProvider);
             if (serverFavicon.isPresent()) {
                 bounds.x += serverFavicon.get().getIconWidth() + 1;
             } else {

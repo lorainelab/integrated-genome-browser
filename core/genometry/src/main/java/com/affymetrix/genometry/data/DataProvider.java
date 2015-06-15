@@ -115,5 +115,13 @@ public interface DataProvider {
     public Optional<String> getPassword();
 
     public void setPassword(String password);
+    
+    public default Optional<String> getPrimaryLinkoutUrl(DataProvider dataProvider) {
+        return Optional.empty();
+    }
+    
+    public default Optional<String> getDataSetLinkoutUrl(DataSet dataSet) {
+        return Optional.empty();
+    }
 
 }

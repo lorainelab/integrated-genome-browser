@@ -67,7 +67,7 @@ public abstract class BaseDataProvider implements DataProvider {
         Optional.ofNullable(preferencesNode.get(LOGIN, null)).ifPresent(preferenceValue -> login = preferenceValue);
         Optional.ofNullable(preferencesNode.get(PASSWORD, null)).ifPresent(preferenceValue -> password = encrypter.decrypt(preferenceValue));
         Optional.ofNullable(preferencesNode.get(STATUS, null)).ifPresent(preferenceValue -> {
-            getMatchingResourceStatus(preferenceValue).ifPresent(matchingStatus -> status = matchingStatus);
+            ResourceStatus.fromName(preferenceValue).ifPresent(matchingStatus -> status = matchingStatus);
             if (status == Initialized) {
                 status = NotInitialized;
             }

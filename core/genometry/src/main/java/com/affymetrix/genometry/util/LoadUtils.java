@@ -61,7 +61,7 @@ public final class LoadUtils {
         }
 
         public static Optional<ResourceStatus> fromName(String name) {
-            return Arrays.asList(values()).stream().filter(status -> status.getName().equals(name)).findFirst();
+            return Arrays.asList(values()).stream().filter(status -> status.getName().equalsIgnoreCase(name)).findFirst();
         }
 
         @Override

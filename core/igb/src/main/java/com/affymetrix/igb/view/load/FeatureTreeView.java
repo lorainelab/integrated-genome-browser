@@ -473,7 +473,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
      * @return hyperlink of the server name
      */
     private static Optional<String> serverFriendlyURL(DataProvider dataProvider, JTree thetree, Rectangle bounds, int x, int y) {
-        String friendlyURL = dataProvider.getPrimaryLinkoutUrl(dataProvider).orElse(null);
+        String friendlyURL = dataProvider.getPrimaryLinkoutUrl().orElse(null);
 
         if (friendlyURL != null) {
             Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(dataProvider.getName(), thetree.getGraphics());

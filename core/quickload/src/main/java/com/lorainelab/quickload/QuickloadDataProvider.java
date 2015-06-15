@@ -10,6 +10,7 @@ import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.UriUtils.isValidRequest;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -194,6 +195,26 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             //do nothing
         }
 
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getPrimaryLinkoutUrl() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getDataSetLinkoutUrl(DataSet dataSet) {
+        if (dataSet.getProperties() != null && dataSet.getProperties().containsKey("url")) {
+            String linkoutUrl = dataSet.getProperties().get("url");
+            if (!Strings.isNullOrEmpty(linkoutUrl)) {
+                if (linkoutUrl.startsWith("http")) {
+                    return Optional.<String>of(linkoutUrl);
+                } else {
+                    return Optional.<String>of(toExternalForm(url) + linkoutUrl);
+                }
+            }
+        }
         return Optional.empty();
     }
 

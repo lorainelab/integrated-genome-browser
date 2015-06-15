@@ -8,6 +8,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
+import com.affymetrix.genometry.data.DataProviderUtils;
 import static com.affymetrix.genometry.data.DataProviderUtils.toExternalForm;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
@@ -176,6 +177,10 @@ public class DataProviderManager {
         String status = node.get(STATUS, null);
         int loadPriority = node.getInt(LOAD_PRIORITY, -1);
 
+        if (url == null) {
+            return;
+        }
+
         if (isValidNonDuplicate(url, factoryName, name, mirrorUrl)) {
             Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
             dataProviderFactory.ifPresent(factory -> {
@@ -237,6 +242,10 @@ public class DataProviderManager {
     public void initializeDataProvider(DataProviderConfig config) {
         String factoryName = config.getFactoryName();
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
+        Preferences preferencesNode = PreferenceUtils.getDataProviderNode(DataProviderUtils.toExternalForm(config.getUrl()));
+        if (config.getStatus() != null && preferencesNode.get(STATUS, null) == null) {
+            preferencesNode.put(STATUS, ResourceStatus.Disabled.toString());
+        }
         dataProviderFactory.ifPresent(factory -> {
             DataProvider dataProvider;
             if (Strings.isNullOrEmpty(config.getMirror())) {

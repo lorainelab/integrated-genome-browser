@@ -82,7 +82,7 @@ public abstract class BaseDataProvider implements DataProvider {
             preferencesNode.put(MIRROR_URL, mirrorUrl);
         }
     }
-
+    
     protected abstract void disable();
 
     @Override
@@ -181,7 +181,7 @@ public abstract class BaseDataProvider implements DataProvider {
 
     private Optional<ResourceStatus> getMatchingResourceStatus(String preferenceValue) {
         return Arrays.asList(ResourceStatus.values()).stream()
-                .filter(resourceStatus -> resourceStatus.toString().equals(preferenceValue))
+                .filter(resourceStatus -> resourceStatus.toString().equalsIgnoreCase(preferenceValue))
                 .findFirst();
     }
 

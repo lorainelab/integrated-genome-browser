@@ -44,6 +44,17 @@ public class DataProviderConfig {
     @Expose
     @XmlAttribute(name = "isEditable")
     protected boolean editable;
+    @Expose
+    @XmlAttribute(name = "status")
+    protected String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getValue() {
         return value;

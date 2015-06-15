@@ -7,6 +7,7 @@ import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
@@ -67,6 +68,9 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
 
     @Override
     public void initialize() {
+        if (status == ResourceStatus.Disabled) {
+            return;
+        }
         try {
             Optional<DasDsn> dsnResponse = DasServerUtils.retrieveDsnResponse(url);
             dsnResponse.ifPresent(ds -> {

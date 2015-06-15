@@ -93,7 +93,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     public DefaultTierGlyph(ITrackStyleExtended style) {
         super(style);
         Rectangle2D.Double cbox = this.getCoordBox();
-        cbox.height = 200;
+        cbox.height = DEFAULT_TIER_GLYPH_HEIGHT;
     }
 
     @Override

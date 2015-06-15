@@ -56,6 +56,7 @@ import javax.swing.SwingWorker;
  */
 public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph {
 
+    public static final int DEFAULT_TIER_GLYPH_HEIGHT = 200;
     private static final Map<String, Class<?>> NONE_PREFERENCES = new HashMap<>();
     SwingWorker previousWorker, worker;
     protected ITrackStyleExtended style;
@@ -144,7 +145,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     public void initUnloaded() {
         addMiddleGlyphs(GenometryModel.getInstance().getSelectedSeq().orElse(null));
         Glyph glyph = new FillRectGlyph();
-        glyph.setCoords(0, 0, 0, getChildHeight());
+        glyph.setCoords(0, 0, 0, DEFAULT_TIER_GLYPH_HEIGHT);
         addChild(glyph);
     }
 

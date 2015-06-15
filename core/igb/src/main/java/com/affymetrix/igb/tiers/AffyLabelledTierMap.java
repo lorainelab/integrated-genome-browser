@@ -30,6 +30,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wraps a AffyTieredMap and another map that has tier labels which track
@@ -38,6 +40,7 @@ import javax.swing.event.TableModelListener;
 public class AffyLabelledTierMap extends AffyTieredMap {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(AffyLabelledTierMap.class);
     static final double FUDGE_FACTOR = 0.2;
 
     private AffyTieredMap labelmap;
@@ -167,8 +170,8 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     }
 
     @Override
-    public void packTiers(boolean full_repack, boolean stretch_map, boolean fire_tier_position_changed) {
-        super.packTiers(full_repack, stretch_map, fire_tier_position_changed);
+    public void packTiers(boolean full_repack, boolean stretch_map, boolean fireTierPositionChanged) {
+        super.packTiers(full_repack, stretch_map, fireTierPositionChanged);
         Rectangle2D.Double lbox = labelmap.getCoordBounds();
         for (TierLabelGlyph label_glyph : labelGlyphs) {
             TierGlyph tier_glyph = label_glyph.getReferenceTier();
@@ -179,7 +182,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
         labelmap.fixed_coord_height = fixed_coord_height;
         labelmap.fixed_pixel_height = fixed_pixel_height;
         orderedGlyphs = null;
-        if (fire_tier_position_changed) {
+        if (fireTierPositionChanged) {
             fireTierOrderChanged();
         }
     }

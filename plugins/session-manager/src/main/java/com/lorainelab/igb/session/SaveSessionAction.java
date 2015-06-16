@@ -150,11 +150,6 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     }
     
     @Override
-    public boolean isToolbarDefault() {
-        return true; 
-    }
-
-    @Override
     public int getToolbarIndex() {
         return TOOLBAR_INDEX; 
     }

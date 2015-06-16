@@ -8,6 +8,7 @@ package com.affymetrix.cache.disk;
 import com.affymetrix.cache.api.RemoteFileService;
 import com.google.common.base.Strings;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,11 +16,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -36,40 +44,56 @@ public class RemoteFileCacheService implements RemoteFileService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileCacheService.class);
 
     //TODO: Move to properties
-    public static final String DATA_DIR = "/tmp/igb/cache/";
+    public static final String DATA_DIR = "/home/jeckstei/tmp/igb/cache/";
     public static final int FILENAME_SIZE = 100;
+    public static final String FILENAME_EXT = "dat";
     public static final String FILENAME = "data";
+    public static final long FILESIZE_MIN_BYTES = 4096L;
+    public static final BigInteger MAX_CACHE_SIZE_MB = new BigInteger("100");
+    public static final BigInteger CACHE_EXPIRE_MINUTES = new BigInteger("1440");
 
     @Override
     public Optional<InputStream> getFilebyUrl(URL url) {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
         HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
+        if(httpHeader.getSize() < FILESIZE_MIN_BYTES) {
+            try {
+                return Optional.ofNullable(url.openStream());
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                return Optional.empty();
+            }
+        }
         CacheStatus cacheStatus = getCacheStatus(path);
         if (isCacheValid(cacheStatus, httpHeader)) {
             try {
                 return Optional.ofNullable(new FileInputStream(cacheStatus.getData()));
             } catch (FileNotFoundException ex) {
                 LOG.error(ex.getMessage(), ex);
+                return Optional.empty();
             }
         }
         cleanupCache(path);
-        if(tryDownload(url, path, FILENAME)) {
+        if (tryDownload(url, path)) {
             try {
-                return Optional.ofNullable(new FileInputStream(new File(path + FILENAME)));
+                return Optional.ofNullable(new FileInputStream(new File(path + FILENAME + "." + FILENAME_EXT)));
             } catch (FileNotFoundException ex) {
                 LOG.error(ex.getMessage(), ex);
+                return Optional.empty();
             }
         }
         return Optional.empty();
     }
 
-    private boolean tryDownload(URL url, String path, String dataFileName) {
-        String pathToDataFile = path + dataFileName;
-        File tmpFile = new File(pathToDataFile + ".tmp");
-        File md5File = new File(pathToDataFile + ".md5");
-        File lastModifiedFile = new File(pathToDataFile + ".lastModified");
-        File etagFile = new File(pathToDataFile + ".etag");
-        File urlFile = new File(pathToDataFile + ".url");
+    private boolean tryDownload(URL url, String path) {
+        String basePathToDataFile = path + FILENAME;
+        String pathToDataFile = basePathToDataFile + "." + FILENAME_EXT;
+        File tmpFile = new File(basePathToDataFile + ".tmp");
+        File md5File = new File(basePathToDataFile + ".md5");
+        File lastModifiedFile = new File(basePathToDataFile + ".lastModified");
+        File cacheLastUpdateFile = new File(basePathToDataFile + ".cacheLastUpdate");
+        File etagFile = new File(basePathToDataFile + ".etag");
+        File urlFile = new File(basePathToDataFile + ".url");
         try {
             FileUtils.forceMkdir(new File(path));
         } catch (IOException ex) {
@@ -78,23 +102,25 @@ public class RemoteFileCacheService implements RemoteFileService {
         }
         try (
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                InputStream is = url.openStream();) {
+                BufferedInputStream bis = new BufferedInputStream( url.openStream());) {
 
             String md5 = url.openConnection().getHeaderField("Content-MD5");
-            if(!Strings.isNullOrEmpty(md5)) {
+            if (!Strings.isNullOrEmpty(md5)) {
                 md5 = md5.replaceAll("\"", "");
             }
             long lastModified = url.openConnection().getLastModified();
             String etag = url.openConnection().getHeaderField("ETag");
-            if(!Strings.isNullOrEmpty(etag)) {
+            if (!Strings.isNullOrEmpty(etag)) {
                 etag = etag.replaceAll("\"", "");
             }
             FileUtils.writeStringToFile(md5File, md5);
             FileUtils.writeStringToFile(lastModifiedFile, Long.toString(lastModified));
+            Date now = new Date();
+            FileUtils.writeStringToFile(cacheLastUpdateFile, Long.toString(now.getTime()));
             FileUtils.writeStringToFile(etagFile, etag);
             FileUtils.writeStringToFile(urlFile, url.toString());
 
-            IOUtils.copy(is, bos);
+            IOUtils.copy(bis, bos);
             bos.flush();
 
             if (!Strings.isNullOrEmpty(md5) && verifyFile(md5, tmpFile)) {
@@ -167,6 +193,10 @@ public class RemoteFileCacheService implements RemoteFileService {
 
     private boolean isCacheValid(CacheStatus cacheStatus, HttpHeader httpHeader) {
         if (cacheStatus.isDataExists()) {
+            if (httpHeader.responseCode >= 400) {
+                //If remote file is unavailable
+                return true;
+            }
             if (!Strings.isNullOrEmpty(httpHeader.getMd5())
                     && !Strings.isNullOrEmpty(cacheStatus.getMd5())) {
                 if (cacheStatus.getMd5().equals(httpHeader.getMd5())) {
@@ -186,17 +216,20 @@ public class RemoteFileCacheService implements RemoteFileService {
 
     private CacheStatus getCacheStatus(String path) {
         CacheStatus cacheStatus = new CacheStatus();
-        File data = new File(path + "data");
-        File md5 = new File(path + "data.md5");
-        File lastModified = new File(path + "data.lastModified");
-        File etag = new File(path + "data.etag");
-        File url = new File(path + "data.url");
+        String pathToDataFile = path + FILENAME;
+        File data = new File(pathToDataFile + "." + FILENAME_EXT);
+        File md5 = new File(pathToDataFile + ".md5");
+        File lastModified = new File(pathToDataFile + ".lastModified");
+        File cacheLastUpdate = new File(pathToDataFile + ".cacheLastUpdate");
+        File etag = new File(pathToDataFile + ".etag");
+        File url = new File(pathToDataFile + ".url");
         if (data.exists() && (md5.exists() || lastModified.exists() || etag.exists())) {
             try {
-                cacheStatus.setMd5(FileUtils.readFileToString(md5));
-                cacheStatus.setLastModified(Long.parseLong(FileUtils.readFileToString(lastModified)));
-                cacheStatus.setEtag(FileUtils.readFileToString(etag));
-                cacheStatus.setUrl(FileUtils.readFileToString(url));
+                cacheStatus.setMd5(removeLineEndings(FileUtils.readFileToString(md5)));
+                cacheStatus.setLastModified(Long.parseLong(removeLineEndings(FileUtils.readFileToString(lastModified))));
+                cacheStatus.setCacheLastUpdate(Long.parseLong(removeLineEndings(FileUtils.readFileToString(cacheLastUpdate))));
+                cacheStatus.setEtag(removeLineEndings(FileUtils.readFileToString(etag)));
+                cacheStatus.setUrl(removeLineEndings(FileUtils.readFileToString(url)));
                 cacheStatus.setData(data);
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -209,6 +242,10 @@ public class RemoteFileCacheService implements RemoteFileService {
         cacheStatus.setDataExists(false);
         return cacheStatus;
     }
+    
+    private String removeLineEndings(String in) {
+        return in.replace("\n", "").replace("\r", "");
+    }
 
     private HttpHeader getHttpHeadersOnly(String url) {
         try {
@@ -220,9 +257,114 @@ public class RemoteFileCacheService implements RemoteFileService {
             httpHeader.setResponseCode(con.getResponseCode());
             httpHeader.seteTag(con.getHeaderField("ETag"));
             httpHeader.setMd5(con.getHeaderField("Content-MD5"));
+            httpHeader.setSize(con.getContentLengthLong());
             return httpHeader;
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             return new HttpHeader(500);
+        }
+    }
+
+    @Override
+    public void clearAllCaches() {
+        cleanupCache(DATA_DIR);
+        try {
+            FileUtils.forceMkdir(new File(DATA_DIR));
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void clearCacheByUrl(URL url) {
+        String path = getCacheFolderPath(generateKeyFromUrl(url));
+        cleanupCache(path);
+    }
+    
+    @Override
+    public boolean cacheExists(URL url) {
+        CacheStatus cacheStatus = getCacheStatus(getCacheFolderPath(generateKeyFromUrl(url)));
+        return cacheStatus.isDataExists();
+    }
+
+    @Override
+    public BigInteger getCacheSize() {
+        return FileUtils.sizeOfDirectoryAsBigInteger(new File(DATA_DIR));
+    }
+    
+    private String getCacheBaseDirFromDat(String datPath) {
+        return datPath.replaceAll(FILENAME + "." + FILENAME_EXT, "");
+    }
+
+    @Override
+    public void enforceCacheSize() {
+        BigInteger size = getCacheSize();
+        size = size.divide(new BigInteger("1000000"));
+        
+        if(size.compareTo(MAX_CACHE_SIZE_MB) > 0) {
+            BigInteger diff = size.subtract(MAX_CACHE_SIZE_MB);
+            Map<String, BigInteger> files = new LinkedHashMap<>();
+            Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
+            Iterator<File> it = listFiles.iterator();
+            while(it.hasNext()) {
+                File file = it.next();
+                files.put(file.getAbsolutePath(), FileUtils.sizeOfAsBigInteger(file).divide(new BigInteger("1000000")));
+            }
+            //TODO: Figure out diff in size, determine number of files to delete
+            files = sortByComparator(files);
+            for(Map.Entry<String, BigInteger> entry : files.entrySet()) {
+                String cacheBaseDir = getCacheBaseDirFromDat(entry.getKey());
+                cleanupCache(cacheBaseDir);
+                diff = diff.subtract(entry.getValue());
+                if(diff.compareTo(BigInteger.ZERO) <= 0) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
+     * http://www.mkyong.com/java/how-to-sort-a-map-in-java/
+     * @param unsortMap
+     * @return 
+     */
+    private static Map<String, BigInteger> sortByComparator(Map<String, BigInteger> unsortMap) {
+ 
+		// Convert Map to List
+		List<Map.Entry<String, BigInteger>> list = 
+			new LinkedList<>(unsortMap.entrySet());
+ 
+		// Sort list with comparator, to compare the Map values
+		Collections.sort(list, 
+                        (Map.Entry<String, BigInteger> o1,
+                                Map.Entry<String, BigInteger> o2) -> 
+                                (o1.getValue()).compareTo(o2.getValue()));
+                   
+		// Convert sorted map back to a Map
+		Map<String, BigInteger> sortedMap = new LinkedHashMap<>();
+		for (Iterator<Map.Entry<String, BigInteger>> it = list.iterator(); it.hasNext();) {
+			Map.Entry<String, BigInteger> entry = it.next();
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
+    }
+
+    @Override
+    public void enforceEvictionPolicies() {
+        enforceCacheExpireEvictionPolicy();
+    }
+    
+    public void enforceCacheExpireEvictionPolicy() {
+        Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
+        Iterator<File> it = listFiles.iterator();
+        while(it.hasNext()) {
+            File file = it.next();
+            String cacheBaseDir = getCacheBaseDirFromDat(file.getAbsolutePath());
+            CacheStatus cacheStatus = getCacheStatus(cacheBaseDir);
+            Date now = new Date();
+            if(now.getTime() > (cacheStatus.getCacheLastUpdate() + CACHE_EXPIRE_MINUTES.longValue()*60000)) {
+                cleanupCache(cacheBaseDir);
+            }
         }
     }
 
@@ -230,11 +372,20 @@ public class RemoteFileCacheService implements RemoteFileService {
 
         private String md5;
         private long lastModified;
+        private long cacheLastUpdate;
         private String etag;
         private boolean dataExists;
         private String url;
         private File data;
 
+        public long getCacheLastUpdate() {
+            return cacheLastUpdate;
+        }
+
+        public void setCacheLastUpdate(long cacheLastUpdate) {
+            this.cacheLastUpdate = cacheLastUpdate;
+        }
+        
         public File getData() {
             return data;
         }
@@ -291,6 +442,7 @@ public class RemoteFileCacheService implements RemoteFileService {
         private int responseCode;
         private String eTag;
         private String md5;
+        private long size;
 
         public HttpHeader() {
 
@@ -300,6 +452,14 @@ public class RemoteFileCacheService implements RemoteFileService {
             this.responseCode = responseCode;
         }
 
+        public long getSize() {
+            return size;
+        }
+
+        public void setSize(long size) {
+            this.size = size;
+        }
+        
         public long getLastModified() {
             return lastModified;
         }

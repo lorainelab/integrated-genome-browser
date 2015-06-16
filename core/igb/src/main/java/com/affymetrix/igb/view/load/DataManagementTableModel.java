@@ -351,7 +351,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         if (col == BACKGROUND_COLUMN || col == TRACK_NAME_COLUMN) {
             smv.getSeqMap().updateWidget();
         } else if (col == HIDE_FEATURE_COLUMN) {
-            smv.getSeqMap().repackTheTiers(false, true, true);
+            smv.getSeqMap().repackTheTiers(false, false, true);
         } else if (col == FOREGROUND_COLUMN) {
             smv.updatePanel();
         }

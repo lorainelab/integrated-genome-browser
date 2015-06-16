@@ -632,7 +632,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         }
 
         private Component renderServer(DataProvider dataProvider, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, DefaultMutableTreeNode node) {
-            String serverNameString = "<html><b>" + dataProvider.getName() + "</b>";
+            String serverNameString;
+            if (dataProvider.getPrimaryLinkoutUrl().isPresent()) {
+                serverNameString = "<html><b><u><font color=#0000FF>" + dataProvider.getName() + "</font></u></b>";
+            } else {
+                serverNameString = "<html><b>" + dataProvider.getName() + "</b>";
+            }
             if (dataProvider.getFactoryName().isPresent()) {
                 serverNameString = serverNameString + " <i>(" + dataProvider.getFactoryName().get() + ")</i>";
             }

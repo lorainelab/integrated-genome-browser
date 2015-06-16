@@ -543,11 +543,7 @@ public final class GeneralLoadView {
                     public void actionPerformed(ActionEvent e) {
                         refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
                         //custom repack/stretch
-                        ((AffyLabelledTierMap) gviewer.getSeqMap()).packTiers(false, false, true);
-//                        gviewer.getSeqMap().stretchToFit(false, true);
                         NewTrackStrechAction.getAction().actionPerformed(null);
-                        ((AffyLabelledTierMap) gviewer.getSeqMap()).repackTheTiers(true, false);
-                        gviewer.getSeqMap().updateWidget();
                         TierPrefsView.getSingleton().refreshList();
                     }
                 };

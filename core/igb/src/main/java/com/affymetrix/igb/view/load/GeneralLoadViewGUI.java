@@ -17,6 +17,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Cursor;
+import java.awt.Frame;
 import java.awt.Rectangle;
 
 /**
@@ -142,6 +143,8 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
             pp.setTab(DataProviderManagementGui.class);
             javax.swing.JFrame f = pp.getFrame();
             f.setVisible(true);
+            f.setState(Frame.NORMAL);
+            f.toFront();
         }
 	}//GEN-LAST:event_jPanel1MouseClicked
 

@@ -144,6 +144,7 @@ public final class GeneralLoadViewGUI extends IgbTabPanel {
             javax.swing.JFrame f = pp.getFrame();
             f.setVisible(true);
             f.setState(Frame.NORMAL);
+            f.toFront();
         }
 	}//GEN-LAST:event_jPanel1MouseClicked
 

@@ -97,9 +97,6 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
         labelColorComboBox = tdv.labelColorComboBox;
         labelColorLabel = new javax.swing.JLabel();
         applyButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        annotationLabelSizeCombobox = tdv.getAnnotationLabelSizeComboBox();
-        annotationLabelAutoResizeCheckbox = tdv.getannotationLabelAutoSizeCheckBox();
 
         jButton2.setText("jButton2");
 
@@ -345,21 +342,6 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
             }
         });
 
-        jLabel1.setText("Annotation Label Font:");
-
-        annotationLabelSizeCombobox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                annotationLabelSizeComboboxActionPerformed(evt);
-            }
-        });
-
-        annotationLabelAutoResizeCheckbox.setText("AutoSize");
-        annotationLabelAutoResizeCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                annotationLabelAutoResizeCheckboxActionPerformed(evt);
-            }
-        });
-
         org.jdesktop.layout.GroupLayout propertiesPanelLayout = new org.jdesktop.layout.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
@@ -391,16 +373,10 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
                             .add(propertiesPanelLayout.createSequentialGroup()
                                 .add(37, 37, 37)
                                 .add(nameSizeLabel))
-                            .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                .add(jLabel1)
-                                .add(FieldLabel)))
+                            .add(FieldLabel))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 110, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(propertiesPanelLayout.createSequentialGroup()
-                                .add(annotationLabelSizeCombobox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(annotationLabelAutoResizeCheckbox))
                             .add(nameSizeComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 90, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -428,11 +404,6 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
                 .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
                     .add(FieldLabel)
                     .add(labelFieldComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(propertiesPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.CENTER)
-                    .add(jLabel1)
-                    .add(annotationLabelSizeCombobox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(annotationLabelAutoResizeCheckbox))
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -456,11 +427,11 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
                 .add(tablePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(5, 5, 5)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(layout.createSequentialGroup()
                         .add(showStrandPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 60, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(propertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(11, 11, 11))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -531,18 +502,8 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
         }
 	}//GEN-LAST:event_applyButtonActionPerformed
 
-    private void annotationLabelAutoResizeCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationLabelAutoResizeCheckboxActionPerformed
-        tdv.annotationLabelAutoSizeCheckBoxActionPerformed();
-    }//GEN-LAST:event_annotationLabelAutoResizeCheckboxActionPerformed
-
-    private void annotationLabelSizeComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationLabelSizeComboboxActionPerformed
-        tdv.annotationLabelSizeComboBoxActionPerformed();
-    }//GEN-LAST:event_annotationLabelSizeComboboxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel FieldLabel;
-    private javax.swing.JCheckBox annotationLabelAutoResizeCheckbox;
-    private javax.swing.JComboBox annotationLabelSizeCombobox;
     private javax.swing.JButton applyButton;
     private javax.swing.JCheckBox arrowCheckBox;
     protected javax.swing.JCheckBox autoRefreshCheckBox;
@@ -555,7 +516,6 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
     private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;

@@ -4,11 +4,9 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
@@ -18,7 +16,6 @@ import com.jidesoft.combobox.ColorComboBox;
 import com.jidesoft.combobox.ColorExComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -55,8 +52,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
     public JRPButton applyButton;
     public JRPCheckBox collapsedCheckBox;
     public JComboBox trackNameSizeComboBox;
-    protected JComboBox annotationLabelSizeComboBox;
-    protected JCheckBox annotationLabelAutoSizeCheckBox;
     public ColorComboBox possitiveColorComboBox;
     public ColorComboBox negativeColorComboBox;
     public JRPCheckBox colorCheckBox;
@@ -127,9 +122,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
         arrowCheckBox = new JRPCheckBox(this.getClass().getCanonicalName() + "_arrowCheckBox");
         bgColorComboBox = new ColorComboBox();
         trackNameSizeComboBox = new JComboBox();
-        annotationLabelSizeComboBox = new AnnotationLabelCombobox();
-        annotationLabelAutoSizeCheckBox = new JCheckBox();
-        annotationLabelAutoSizeCheckBox.setSelected(EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
         fgColorComboBox = new ColorComboBox();
         labelColorComboBox = new ColorComboBox();
         labelFieldComboBox = new JComboBox();
@@ -162,8 +154,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
         bgColorComboBox.setStretchToFit(true);
 
         trackNameSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-        annotationLabelSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-        annotationLabelSizeComboBox.setEnabled(EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
 
         fgColorComboBox.setBackground(new Color(255, 255, 255));
         fgColorComboBox.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
@@ -217,14 +207,6 @@ public abstract class TrackPreferences implements ListSelectionListener {
 
     public JComboBox getTrackNameSizeComboBox() {
         return trackNameSizeComboBox;
-    }
-
-    public JComboBox getAnnotationLabelSizeComboBox() {
-        return annotationLabelSizeComboBox;
-    }
-
-    public JCheckBox getannotationLabelAutoSizeCheckBox() {
-        return annotationLabelAutoSizeCheckBox;
     }
 
     public ColorComboBox getFgColorComboBox() {
@@ -356,29 +338,4 @@ public abstract class TrackPreferences implements ListSelectionListener {
         }
     }
 
-    public void annotationLabelAutoSizeCheckBoxActionPerformed() {
-        EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = !EfficientLabelledLineGlyph.AUTO_SIZE_LABELS;
-        annotationLabelSizeComboBox.setEnabled(!EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
-        IGB.getInstance().getMapView().getSeqMap().updateWidget();
-    }
-
-    public void annotationLabelSizeComboBoxActionPerformed() {
-        float annotationLabelSize = Float.parseFloat(annotationLabelSizeComboBox.getSelectedItem().toString());
-        EfficientLabelledLineGlyph.OVERRIDE_FONT = new Font(Font.MONOSPACED, Font.PLAIN, Math.round(annotationLabelSize));
-        IGB.getInstance().getMapView().getSeqMap().updateWidget();
-    }
-
-    class AnnotationLabelCombobox extends JComboBox {
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            if (enabled) {
-                if (!EfficientLabelledLineGlyph.AUTO_SIZE_LABELS) {
-                    super.setEnabled(enabled);
-                }
-            } else {
-                super.setEnabled(enabled);
-            }
-        }
-    }
 }

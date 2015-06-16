@@ -200,7 +200,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Optional<String> getPrimaryLinkoutUrl() {
-        return Optional.empty();
+        return Optional.of(url);
     }
 
     @Override

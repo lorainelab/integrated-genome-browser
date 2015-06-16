@@ -34,6 +34,8 @@ import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -81,7 +83,10 @@ public final class TierLabelManager implements PropertyHolder {
         Map<String, Object> props = new HashMap<>();
         props.put(ToolTipConstants.FILE_NAME, feature.getDataSetName());
         props.put(ToolTipConstants.DESCRIPTION, feature.description());
-        props.put(ToolTipConstants.URL, feature.getURI());
+        try {
+            props.put(ToolTipConstants.URL, URLDecoder.decode(feature.getURI().toString(),"UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+        }
         String server = feature.getDataContainer().getDataProvider().getName() + " (" + feature.getDataContainer().getDataProvider().getName() + ")";
         props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
 

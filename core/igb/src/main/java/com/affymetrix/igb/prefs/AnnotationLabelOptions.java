@@ -6,7 +6,6 @@ import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.google.common.base.Optional;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -109,34 +108,16 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     }
 
     public void initializeComponentState() {
-        Optional<String> previouslySelectedBtn = Optional.fromNullable(annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, null));
-
-        if (previouslySelectedBtn.isPresent()) {
-            switch (previouslySelectedBtn.get()) {
-                case "fixedSizeBtn":
-                    fixedSizeBtn.setSelected(true);
-                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
-                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
-                    annotationLabelSizeComboBox.setEnabled(true);
-                    break;
-                case "variableSizeBtn":
-                    variableSizeBtn.setSelected(true);
-                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = true;
-                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
-                    annotationLabelSizeComboBox.setEnabled(false);
-                    break;
-                default:
-                    autoSizeBtn.setSelected(true);
-                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
-                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
-                    annotationLabelSizeComboBox.setEnabled(false);
-                    break;
-            }
-        } else {
-            autoSizeBtn.setSelected(true);
-            EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
-            EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
-            annotationLabelSizeComboBox.setEnabled(false);
+        switch (annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn")) {
+            case "fixedSizeBtn":
+                fixedSizeBtn.doClick();
+                break;
+            case "variableSizeBtn":
+                variableSizeBtn.doClick();
+                break;
+            default:
+                autoSizeBtn.doClick();
+                break;
         }
     }
 

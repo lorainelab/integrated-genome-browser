@@ -1,19 +1,23 @@
 package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Component;
+import static com.affymetrix.genometry.util.PreferenceUtils.getAnnotationLabelPrefsNode;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.google.common.base.Optional;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -21,18 +25,39 @@ import net.miginfocom.swing.MigLayout;
  * @author dcnorris
  */
 @Component(name = AnnotationLabelOptions.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
-public class AnnotationLabelOptions extends JRPJPanel implements PreferencesPanelProvider {
+public final class AnnotationLabelOptions extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "AnnotationLabelOptions";
     private static final int TAB_POSITION = 6;
+
+    private enum PREF_KEYS {
+
+        SELECTED_BTN("selectedBtn"),
+        SELECTED_LABEL_SIZE("labelSize");
+
+        private final String keyValue;
+
+        private PREF_KEYS(final String keyValue) {
+            this.keyValue = keyValue;
+        }
+
+    }
+
+    private final int defaultFixedFontSize;
+    private final Preferences annotationLabelPrefsNode;
     private JComboBox annotationLabelSizeComboBox;
-    private JCheckBox annotationLabelAutoSizeCheckBox;
-    private JLabel annotaionSizeLabel;
-    private JLabel autoSizeLabel;
+    private JLabel fixedAnnotaionSizeLabel;
+    private ButtonGroup labelOptionBtnGroup;
+    private JRadioButton fixedSizeBtn;
+    private JRadioButton autoSizeBtn;
+    private JRadioButton variableSizeBtn;
 
     public AnnotationLabelOptions() {
         super(COMPONENT_NAME);
+        defaultFixedFontSize = 12;
+        annotationLabelPrefsNode = getAnnotationLabelPrefsNode();
         initComponents();
+        initializeComponentState();
         initializeLayout();
     }
 
@@ -42,29 +67,88 @@ public class AnnotationLabelOptions extends JRPJPanel implements PreferencesPane
     }
 
     private void initComponents() {
-        annotationLabelAutoSizeCheckBox = new JCheckBox();
-        annotationLabelAutoSizeCheckBox.setSelected(EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
-        annotationLabelAutoSizeCheckBox.addActionListener((ActionEvent e) -> {
-            annotationLabelAutoSizeCheckBoxActionPerformed();
-        });
-        annotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
-        autoSizeLabel = new JLabel("Auto Size");
+        fixedAnnotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
         annotationLabelSizeComboBox = new AnnotationLabelCombobox();
+        float previouslySelectedLabelSize = annotationLabelPrefsNode.getFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, defaultFixedFontSize);
         annotationLabelSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
-        annotationLabelSizeComboBox.setEnabled(!EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
+        annotationLabelSizeComboBox.setSelectedItem(previouslySelectedLabelSize);
         annotationLabelSizeComboBox.addActionListener((ActionEvent e) -> {
             annotationLabelSizeComboBoxActionPerformed();
         });
+        labelOptionBtnGroup = new ButtonGroup();
+        autoSizeBtn = new JRadioButton("Auto Sized Labels");
+        autoSizeBtn.setToolTipText("All labels will use the same dynamically choosen font size based on available space.");
+        autoSizeBtn.addActionListener((ActionEvent e) -> {
+            EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
+            EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
+            annotationLabelSizeComboBox.setEnabled(false);
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn");
+            IGB.getInstance().getMapView().getSeqMap().updateWidget();
+        });
+        fixedSizeBtn = new JRadioButton("Fixed Sized Labels");
+        fixedSizeBtn.setToolTipText("All labels will use a configurable fixed font size which does not change based on the available space.");
+        fixedSizeBtn.addActionListener((ActionEvent e) -> {
+            EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
+            EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
+            annotationLabelSizeComboBox.setEnabled(true);
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "fixedSizeBtn");
+            IGB.getInstance().getMapView().getSeqMap().updateWidget();
+        });
+        variableSizeBtn = new JRadioButton("Variably Sized Labels (IGB Classic)");
+        variableSizeBtn.setToolTipText("Label font size will be derrived from the relative size of the annotation.");
+        variableSizeBtn.addActionListener((ActionEvent e) -> {
+            EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = true;
+            EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
+            annotationLabelSizeComboBox.setEnabled(false);
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "variableSizeBtn");
+            IGB.getInstance().getMapView().getSeqMap().updateWidget();
+        });
+        labelOptionBtnGroup.add(autoSizeBtn);
+        labelOptionBtnGroup.add(fixedSizeBtn);
+        labelOptionBtnGroup.add(variableSizeBtn);
     }
 
-    public void initializeLayout() {
+    public void initializeComponentState() {
+        Optional<String> previouslySelectedBtn = Optional.fromNullable(annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, null));
+
+        if (previouslySelectedBtn.isPresent()) {
+            switch (previouslySelectedBtn.get()) {
+                case "fixedSizeBtn":
+                    fixedSizeBtn.setSelected(true);
+                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
+                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
+                    annotationLabelSizeComboBox.setEnabled(true);
+                    break;
+                case "variableSizeBtn":
+                    variableSizeBtn.setSelected(true);
+                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = true;
+                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
+                    annotationLabelSizeComboBox.setEnabled(false);
+                    break;
+                default:
+                    autoSizeBtn.setSelected(true);
+                    EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
+                    EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
+                    annotationLabelSizeComboBox.setEnabled(false);
+                    break;
+            }
+        } else {
+            autoSizeBtn.setSelected(true);
+            EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
+            EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
+            annotationLabelSizeComboBox.setEnabled(false);
+        }
+    }
+
+    private void initializeLayout() {
         setLayout(new MigLayout("fillx"));
-        JPanel panel = new JPanel(new MigLayout());
+        JPanel panel = new JPanel(new MigLayout("", "[]rel[]", "[][][]"));
         panel.setBorder(BorderFactory.createTitledBorder("Global Annotation Font Settings"));
-        panel.add(annotaionSizeLabel, "gap rel");
-        panel.add(annotationLabelSizeComboBox, "gap rel");
-        panel.add(annotationLabelAutoSizeCheckBox, "gap rel");
-        panel.add(autoSizeLabel, "");
+        panel.add(autoSizeBtn, "wrap");
+        panel.add(fixedSizeBtn, "");
+        panel.add(fixedAnnotaionSizeLabel, "gap rel");
+        panel.add(annotationLabelSizeComboBox, "wrap");
+        panel.add(variableSizeBtn, "");
         add(panel, "growx");
     }
 
@@ -82,15 +166,10 @@ public class AnnotationLabelOptions extends JRPJPanel implements PreferencesPane
         return TAB_POSITION;
     }
 
-    private void annotationLabelAutoSizeCheckBoxActionPerformed() {
-        EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = !EfficientLabelledLineGlyph.AUTO_SIZE_LABELS;
-        annotationLabelSizeComboBox.setEnabled(!EfficientLabelledLineGlyph.AUTO_SIZE_LABELS);
-        IGB.getInstance().getMapView().getSeqMap().updateWidget();
-    }
-
     private void annotationLabelSizeComboBoxActionPerformed() {
         float annotationLabelSize = Float.parseFloat(annotationLabelSizeComboBox.getSelectedItem().toString());
         EfficientLabelledLineGlyph.OVERRIDE_FONT = new Font(Font.MONOSPACED, Font.PLAIN, Math.round(annotationLabelSize));
+        annotationLabelPrefsNode.putFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, annotationLabelSize);
         IGB.getInstance().getMapView().getSeqMap().updateWidget();
     }
 

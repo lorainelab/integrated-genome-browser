@@ -161,6 +161,10 @@ public abstract class PreferenceUtils {
         return PreferenceUtils.getTopNode().node("certificate");
     }
 
+    public static Preferences getAnnotationLabelPrefsNode() {
+        return PreferenceUtils.getTopNode().node("annotLabelPrefs");
+    }
+
     public static void saveIntParam(String param_name, int param) {
         try {
             getTopNode().putInt(param_name, param);

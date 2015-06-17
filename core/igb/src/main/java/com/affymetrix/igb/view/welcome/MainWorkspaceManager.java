@@ -9,6 +9,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import static com.affymetrix.igb.general.DataProviderManager.ALL_SOURCES_INITIALIZED;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
@@ -79,38 +80,40 @@ public class MainWorkspaceManager extends JRPJPanel implements ItemListener {
         panel.addListener(new ShapeListener() {
             @Override
             public void shapeClicked(ShapeEvent e) {
-                MouseEvent me = e.getMouseEvent();
-                if (!me.isConsumed() && me.getButton() == MouseEvent.BUTTON1
-                        && me.getClickCount() == 1) {
-                    //JOptionPane.showMessageDialog(panel,
-                    //		"You clicked on " + e.getShape() + ".",
-                    //		"Event Test", JOptionPane.INFORMATION_MESSAGE);
-                    CargoPicture pic = (CargoPicture) e.getShape();
-                    Object obj = pic.getCargo();
+                if (ALL_SOURCES_INITIALIZED) {
+                    MouseEvent me = e.getMouseEvent();
+                    if (!me.isConsumed() && me.getButton() == MouseEvent.BUTTON1
+                            && me.getClickCount() == 1) {
+                        //JOptionPane.showMessageDialog(panel,
+                        //		"You clicked on " + e.getShape() + ".",
+                        //		"Event Test", JOptionPane.INFORMATION_MESSAGE);
+                        CargoPicture pic = (CargoPicture) e.getShape();
+                        Object obj = pic.getCargo();
 
-                    if (obj == null) {
-                        return;
+                        if (obj == null) {
+                            return;
+                        }
+
+                        String speciesName = (String) obj;
+                        final List<String> versionNames = SeqGroupView.getInstance().getAllVersions(speciesName);
+                        if (versionNames.isEmpty()) {
+                            IGB.getInstance().setStatus(speciesName + " Not Available", true);
+                            ErrorHandler.errorPanel("NOTICE", speciesName + " not available at this time. "
+                                    + "Please check that the appropriate data source is available.", Level.WARNING);
+                            return;
+                        }
+                        String versionName = versionNames.get(0);
+                        GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
+
+                        if (genomeVersion == null || genomeVersion.getAvailableDataContainers().isEmpty()) {
+                            IGB.getInstance().setStatus(versionName + " Not Available", true);
+                            ErrorHandler.errorPanel("NOTICE", versionName + " not available at this time. "
+                                    + "Please check that the appropriate data source is available.", Level.WARNING);
+                            return;
+                        }
+
+                        SeqGroupView.getInstance().setSelectedGenomeVersion(genomeVersion);
                     }
-
-                    String speciesName = (String) obj;
-                    final List<String> versionNames = SeqGroupView.getInstance().getAllVersions(speciesName);
-                    if (versionNames.isEmpty()) {
-                        IGB.getInstance().setStatus(speciesName + " Not Available", true);
-                        ErrorHandler.errorPanel("NOTICE", speciesName + " not available at this time. "
-                                + "Please check that the appropriate data source is available.", Level.WARNING);
-                        return;
-                    }
-                    String versionName = versionNames.get(0);
-                    GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-
-                    if (genomeVersion == null || genomeVersion.getAvailableDataContainers().isEmpty()) {
-                        IGB.getInstance().setStatus(versionName + " Not Available", true);
-                        ErrorHandler.errorPanel("NOTICE", versionName + " not available at this time. "
-                                + "Please check that the appropriate data source is available.", Level.WARNING);
-                        return;
-                    }
-
-                    SeqGroupView.getInstance().setSelectedGenomeVersion(genomeVersion);
                 }
             }
 

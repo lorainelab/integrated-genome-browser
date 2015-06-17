@@ -107,7 +107,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
         labelOptionBtnGroup.add(variableSizeBtn);
     }
 
-    public void initializeComponentState() {
+    private void initializeComponentState() {
         switch (annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn")) {
             case "fixedSizeBtn":
                 fixedSizeBtn.doClick();

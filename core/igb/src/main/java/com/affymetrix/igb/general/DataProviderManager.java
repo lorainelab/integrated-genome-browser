@@ -224,8 +224,6 @@ public class DataProviderManager {
                 }
             }
         }
-
-        eventBus.post(new DataProviderServiceChangeEvent());
     }
 
     private boolean isValidNonDuplicate(String url, String factoryName, String name, String mirrorUrl) {
@@ -256,7 +254,6 @@ public class DataProviderManager {
             ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
         });
-        eventBus.post(new DataProviderServiceChangeEvent());
     }
 
     @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeDataProvider")

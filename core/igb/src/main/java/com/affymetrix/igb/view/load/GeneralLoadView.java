@@ -657,7 +657,7 @@ public final class GeneralLoadView {
                     refreshTreeViewAndRestore();
                     refreshDataManagementView();
                     //gviewer.dataRemoved();
-                    gviewer.getSeqMap().repackTheTiers(true, false, true);
+                    NewTrackStrechAction.getAction().actionPerformed(null);
                 }
 
                 ((AffyLabelledTierMap) gviewer.getSeqMap()).fireTierOrderChanged();

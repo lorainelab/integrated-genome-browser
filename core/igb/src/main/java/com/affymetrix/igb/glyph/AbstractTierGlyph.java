@@ -56,7 +56,7 @@ import javax.swing.SwingWorker;
  */
 public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph {
 
-    public static final int DEFAULT_TIER_GLYPH_HEIGHT = 32;
+    public static final int DEFAULT_TIER_GLYPH_HEIGHT = 20;
     private static final Map<String, Class<?>> NONE_PREFERENCES = new HashMap<>();
     SwingWorker previousWorker, worker;
     protected ITrackStyleExtended style;

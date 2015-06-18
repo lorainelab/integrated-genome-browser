@@ -123,7 +123,7 @@ public class IGBToolBar extends JToolBar {
         super.validate();
 
         setSelectionText(null, null, null);
-        RefreshSelectionListener refreshSelectionListener = new RefreshSelectionListener() {
+        refreshSelectionListener = new RefreshSelectionListener() {
             @Override
             public void selectionRefreshed() {
                 for (Component c : toolbarItemPanel.getComponents()) {
@@ -135,6 +135,11 @@ public class IGBToolBar extends JToolBar {
             }
         };
 
+    }
+    private RefreshSelectionListener refreshSelectionListener;
+
+    //prevent static block in Selections calling IGB.getInstance() before IGB constructor has returned leading to two instances of what should be a singleton
+    public void initHack() {
         Selections.addRefreshSelectionListener(refreshSelectionListener);
     }
 

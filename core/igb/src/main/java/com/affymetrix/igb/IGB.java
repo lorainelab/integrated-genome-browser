@@ -669,6 +669,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     public static IGB getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new IGB();
+            INSTANCE.toolbar.initHack();
         }
         return INSTANCE;
     }

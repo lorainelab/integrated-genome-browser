@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final int TAB_POSITION = 4;
+    private static final int TAB_POSITION = 2;
     String default_label_format = CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA;
     String[] label_format_options = new String[]{CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_FULL,
         CoordinateStyle.VALUE_COORDINATE_LABEL_FORMAT_COMMA,
@@ -59,7 +59,7 @@ public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvi
 
     @Override
     public String getHelpHtml() {
-        
+
         String htmlText = null;
         try {
             htmlText = Resources.toString(OtherOptionsView.class.getResource("/help/com.affymetrix.igb.prefs.OtherOptionsView.html"), Charsets.UTF_8);
@@ -451,31 +451,31 @@ public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvi
     }// </editor-fold>//GEN-END:initComponents
 
 	private void AColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AColorComboBoxActionPerformed
-            TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+        TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_AColorComboBoxActionPerformed
 
 	private void TColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TColorComboBoxActionPerformed
-            TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+        TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_TColorComboBoxActionPerformed
 
 	private void GColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GColorComboBoxActionPerformed
-            TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+        TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_GColorComboBoxActionPerformed
 
 	private void CColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CColorComboBoxActionPerformed
-            TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+        TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_CColorComboBoxActionPerformed
 
 	private void OtherColorComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OtherColorComboBoxActionPerformed
-            TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
+        TierPrefsView.getSingleton().refreshSeqMapViewAndSlicedView();
 	}//GEN-LAST:event_OtherColorComboBoxActionPerformed
 
 	private void displayOptionStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_displayOptionStateChanged
-            if (displayOption.isSelected()) {
-                com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getInstance().getStatusBar());
-            } else {
-                com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);
-            }
+        if (displayOption.isSelected()) {
+            com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(IGB.getInstance().getStatusBar());
+        } else {
+            com.affymetrix.genometry.util.ErrorHandler.setDisplayHandler(null);
+        }
 	}//GEN-LAST:event_displayOptionStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

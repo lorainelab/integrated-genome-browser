@@ -59,7 +59,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private static final Logger logger = LoggerFactory.getLogger(DataProviderManagementGui.class);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     public static final String TAB_NAME = BUNDLE.getString("dataSourceTabName");
-    private static final int TAB_POSITION = 7;
+    private static final int TAB_POSITION = 4;
     private static final Icon REFRESH_ICON = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
     private static final String SERVER_CREDENTIALS = BUNDLE.getString("serverCredentials");
     private final String EDIT_DATA_SOURCE = BUNDLE.getString("editDataSource");

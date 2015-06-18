@@ -69,6 +69,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
         fixedAnnotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
         annotationLabelSizeComboBox = new AnnotationLabelCombobox();
         float previouslySelectedLabelSize = annotationLabelPrefsNode.getFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, defaultFixedFontSize);
+        EfficientLabelledLineGlyph.OVERRIDE_FONT = new Font(Font.MONOSPACED, Font.PLAIN, Math.round(previouslySelectedLabelSize));
         annotationLabelSizeComboBox.setModel(new DefaultComboBoxModel(TrackConstants.SUPPORTED_SIZE));
         annotationLabelSizeComboBox.setSelectedItem(previouslySelectedLabelSize);
         annotationLabelSizeComboBox.addActionListener((ActionEvent e) -> {

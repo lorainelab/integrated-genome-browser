@@ -30,7 +30,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     private static final String PANEL_TITLE = "Annotation Label Font";
     private static final String INNER_PANEL_TITLE = "Font Settings";
 
-    private static final int TAB_POSITION = 6;
+    private static final int TAB_POSITION = 1;
 
     private enum PREF_KEYS {
 

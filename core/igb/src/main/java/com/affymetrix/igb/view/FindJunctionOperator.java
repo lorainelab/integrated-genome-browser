@@ -36,6 +36,8 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
     public static final String COMPONENT_NAME = "FindJunctionOperator";
     public static final String THRESHOLD = "threshold";
+    public static final String TWOTRACKS = "twoTracks";
+    public static final String UNIQUENESS = "uniqueness";
     /**
      * TopHat style flanking makes the junction flanks as long as the largest
      * length of extrons from each side of a qualified intron.
@@ -118,6 +120,17 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
         return container;
     }
+    
+    public void subOperate(BioSeq bioseq, List<SeqSymmetry> list, HashMap<String, SeqSymmetry> map) {
+        boolean uniqueness = true;
+
+        for (SeqSymmetry sym : list) {
+            if (noIntronFilter.filterSymmetry(bioseq, sym) && ((!uniqueness) || (uniqueness && uniqueLocationFilter.filterSymmetry(bioseq, sym)))) {
+                updateIntronHashMap(sym, bioseq, map);
+            }
+        }
+    }
+
 
     /*
      * This is specifically used to apply the filters on the given list of symmetries and updates the resultant hash map

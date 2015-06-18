@@ -160,6 +160,10 @@ public abstract class PreferenceUtils {
     public static Preferences getCertificatePrefsNode() {
         return PreferenceUtils.getTopNode().node("certificate");
     }
+    
+    public static Preferences getCachePrefsNode() {
+        return PreferenceUtils.getTopNode().node("cache");
+    }
 
     public static Preferences getAnnotationLabelPrefsNode() {
         return PreferenceUtils.getTopNode().node("annotLabelPrefs");

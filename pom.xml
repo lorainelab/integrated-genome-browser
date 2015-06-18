@@ -117,7 +117,7 @@
         <module>plugins/image-exporter</module>
         <module>plugins/session-manager</module>               
         <module>plugins/Keybinding-registry</module>
-        <module>cache</module>
+        <module>plugins/cache</module>
     </modules>
 
     <profiles>

@@ -127,3 +127,4 @@ extbundles/
 /core/das2/target/
 /developmentPlugins/SearchModeLucene/target/
 /cache/target/
+/plugins/cache/target/

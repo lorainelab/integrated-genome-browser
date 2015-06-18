@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2001-2006 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -69,9 +68,8 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
     }
 
     /**
-     * Creates an instance of PreferencesView. It will contain tabs for setting
-     * various types of preferences. You can put this view in any JComponent you
-     * wish, but probably the best idea is to use {@link #getFrame()}.
+     * Creates an instance of PreferencesView. It will contain tabs for setting various types of preferences. You can
+     * put this view in any JComponent you wish, but probably the best idea is to use {@link #getFrame()}.
      */
     public static PreferencesPanel getSingleton() {
         if (singleton != null) {
@@ -96,9 +94,9 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
      * Set the tab pane to the given index.
      */
     public void setTab(Class<? extends PreferencesPanelProvider> cls) {
-        for(int i = 0; i<tabbedPane.getComponentCount(); i++) {
+        for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
             Component comp = tabbedPane.getComponentAt(i);
-            if(cls.isInstance(comp)) {
+            if (cls.isInstance(comp)) {
                 tabbedPane.setSelectedIndex(i);
                 PreferencesPanelProvider p = (PreferencesPanelProvider) comp;
                 p.refresh();
@@ -141,19 +139,20 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
         });
     }
 
-    private void addPanelToTab(PreferencesPanelProvider panelProvider) {
-        boolean panelAdded = false;
-        for (int i = tabbedPane.getTabCount(); i > 0; i--) {
-            JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i - 1);
-            if (panelProvider.getWeight() > panel.getWeight() && panel.getWeight() != -1) {
-                tabbedPane.add(panelProvider.getPanel(), i);
-                panelAdded = true;
-                break;
+    private void addPanelToTab(PreferencesPanelProvider panelToAdd) {
+        if (panelToAdd.getWeight() == -1) {
+            tabbedPane.add(panelToAdd.getPanel());
+            return;
+        }
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i);
+            if (panelToAdd.getWeight() < panel.getWeight()) {
+                tabbedPane.add(panelToAdd.getPanel(), i);
+                return;
             }
         }
-        if (!panelAdded) {
-            tabbedPane.add(panelProvider.getPanel());
-        }
+
+        tabbedPane.add(panelToAdd.getPanel());
     }
 
     public void removePrefEditorComponent(PreferencesPanelProvider panelProvider) {

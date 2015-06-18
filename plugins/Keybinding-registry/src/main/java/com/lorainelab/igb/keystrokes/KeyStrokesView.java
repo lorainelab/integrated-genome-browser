@@ -108,7 +108,14 @@ public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpP
 
     public KeyStrokesView() {
         table = new KeyStrokeViewTable("KeyStrokesView");
-        keyStrokePanel = new JRPJPanel(KeyStrokesView.class.getName(), new MigLayout("fill"));
+        keyStrokePanel = new JRPJPanel(KeyStrokesView.class.getName(), new MigLayout("fill")) {
+
+            @Override
+            public int getWeight() {
+                return TAB_POSITION;
+            }
+            
+        };
         JScrollPane scrollPane = new javax.swing.JScrollPane();
         scrollPane.setViewportView(table);
         keyStrokePanel.setName("Toolbar");

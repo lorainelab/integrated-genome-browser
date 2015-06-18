@@ -27,7 +27,10 @@ import net.miginfocom.swing.MigLayout;
 public final class AnnotationLabelOptions extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "AnnotationLabelOptions";
-    private static final int TAB_POSITION = 6;
+    private static final String PANEL_TITLE = "Annotation Label Font";
+    private static final String INNER_PANEL_TITLE = "Font Settings";
+
+    private static final int TAB_POSITION = 1;
 
     private enum PREF_KEYS {
 
@@ -45,6 +48,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     private final int defaultFixedFontSize;
     private final Preferences annotationLabelPrefsNode;
     private JComboBox annotationLabelSizeComboBox;
+    private JLabel titleLabel;
     private JLabel fixedAnnotaionSizeLabel;
     private ButtonGroup labelOptionBtnGroup;
     private JRadioButton fixedSizeBtn;
@@ -62,10 +66,11 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
 
     @Override
     public String getName() {
-        return "Annotation Label Options";
+        return PANEL_TITLE;
     }
 
     private void initComponents() {
+        titleLabel = new JLabel(HEADER_TEXT);
         fixedAnnotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
         annotationLabelSizeComboBox = new AnnotationLabelCombobox();
         float previouslySelectedLabelSize = annotationLabelPrefsNode.getFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, defaultFixedFontSize);
@@ -107,6 +112,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
         labelOptionBtnGroup.add(fixedSizeBtn);
         labelOptionBtnGroup.add(variableSizeBtn);
     }
+    private static final String HEADER_TEXT = "Settings apply to all annotation tracks.";
 
     private void initializeComponentState() {
         switch (annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn")) {
@@ -125,7 +131,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     private void initializeLayout() {
         setLayout(new MigLayout("fillx"));
         JPanel panel = new JPanel(new MigLayout("", "[]rel[]", "[][][]"));
-        panel.setBorder(BorderFactory.createTitledBorder("Global Annotation Font Settings"));
+        panel.setBorder(BorderFactory.createTitledBorder(INNER_PANEL_TITLE));
         panel.add(autoSizeBtn, "wrap");
         panel.add(fixedSizeBtn, "");
         panel.add(fixedAnnotaionSizeLabel, "gap rel");

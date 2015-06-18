@@ -605,7 +605,14 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
             if (DEFAULT_BUNDLES.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
-                filteredBundles.add(bundle);
+                Resource resource = ((ResourceWrapper) bundle).getResource();
+                Resolver resolver = repoAdmin.resolver();
+                resolver.add(resource);
+                if (resolver.resolve()) {
+                    filteredBundles.add(bundle);
+                } else {
+                    logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
+                }
             }
         }
         Collections.sort(

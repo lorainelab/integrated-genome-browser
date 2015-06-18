@@ -40,7 +40,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "Plugin Repositories";
-    private static final int TAB_POSITION = 5;
+    private static final int TAB_POSITION = 7;
     private BundleRepositoryTableModel tableModel;
     private PluginRepositoryListProvider pluginRepositoryListProvider;
     private final Icon refresh_icon;
@@ -53,7 +53,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         super(BundleRepositoryPrefsView.class.getName());
         refresh_icon = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
     }
-    
+
     @Activate
     public void activate() {
         tableModel = pluginRepositoryListProvider.getBundleRepositoryTableModel();
@@ -157,11 +157,11 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         try {
             htmlText = Resources.toString(BundleRepositoryPrefsView.class.getResource("/help/bundleRepositoryPrefsView.html"), Charsets.UTF_8);
         } catch (IOException ex) {
-            logger.error("Help file not found " , ex);
+            logger.error("Help file not found ", ex);
         }
         return htmlText;
     }
-    
+
     /**
      * This method is called from within the constructor to
      * initialize the form.

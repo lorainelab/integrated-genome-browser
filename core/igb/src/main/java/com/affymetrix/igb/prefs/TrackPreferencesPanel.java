@@ -22,6 +22,7 @@ import java.awt.event.WindowListener;
 public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapRefreshed, WindowListener, GroupSelectionListener, PreferencesPanelProvider {
 
     private static final long serialVersionUID = 1L;
+    private static final int TAB_POSITION = 5;
     /**
      * This is the panel which is used for both Preferences-> Tracks tab and
      * Preferences->Track Defaults Tab
@@ -593,4 +594,10 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
             stopEditing();
         }
     }
+
+    @Override
+    public int getWeight() {
+        return TAB_POSITION;
+    }
+
 }

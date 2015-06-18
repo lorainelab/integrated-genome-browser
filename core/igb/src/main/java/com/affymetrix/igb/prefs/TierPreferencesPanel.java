@@ -19,7 +19,7 @@ public class TierPreferencesPanel extends TrackPreferencesPanel implements HtmlH
 
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(TierPreferencesPanel.class);
-    public static final int TAB_POSITION = 1;
+    public static final int TAB_POSITION = 5;
 
     /**
      * Creates new form TierPreferencesPanel

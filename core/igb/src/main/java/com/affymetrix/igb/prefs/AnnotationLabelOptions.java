@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -49,6 +50,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     private final Preferences annotationLabelPrefsNode;
     private JComboBox annotationLabelSizeComboBox;
     private JLabel titleLabel;
+    private JLabel bottomPanelMessage;
     private JLabel fixedAnnotaionSizeLabel;
     private ButtonGroup labelOptionBtnGroup;
     private JRadioButton fixedSizeBtn;
@@ -71,6 +73,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
 
     private void initComponents() {
         titleLabel = new JLabel(HEADER_TEXT);
+        bottomPanelMessage = new JLabel("Changes take effect immediately.");
         fixedAnnotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
         annotationLabelSizeComboBox = new AnnotationLabelCombobox();
         float previouslySelectedLabelSize = annotationLabelPrefsNode.getFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, defaultFixedFontSize);
@@ -81,8 +84,8 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
             annotationLabelSizeComboBoxActionPerformed();
         });
         labelOptionBtnGroup = new ButtonGroup();
-        autoSizeBtn = new JRadioButton("Auto Sized Labels");
-        autoSizeBtn.setToolTipText("All labels will use the same dynamically choosen font size based on available space.");
+        autoSizeBtn = new JRadioButton("Dynamically Sized labels");
+        autoSizeBtn.setToolTipText("Labels will use a font size optimized for a tracks available height.");
         autoSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
@@ -91,7 +94,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
             IGB.getInstance().getMapView().getSeqMap().updateWidget();
         });
         fixedSizeBtn = new JRadioButton("Fixed Sized Labels");
-        fixedSizeBtn.setToolTipText("All labels will use a configurable fixed font size which does not change based on the available space.");
+        fixedSizeBtn.setToolTipText("You set the font size for all labels in all tracks. Partial labels with … (ellipses) sometimes appear.");
         fixedSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
@@ -100,7 +103,7 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
             IGB.getInstance().getMapView().getSeqMap().updateWidget();
         });
         variableSizeBtn = new JRadioButton("Variably Sized Labels (IGB Classic)");
-        variableSizeBtn.setToolTipText("Label font size will be derrived from the relative size of the annotation.");
+        variableSizeBtn.setToolTipText("Labels will use a font size optimized for the size of the annotation.");
         variableSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = true;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
@@ -129,14 +132,16 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     }
 
     private void initializeLayout() {
-        setLayout(new MigLayout("fillx"));
-        JPanel panel = new JPanel(new MigLayout("", "[]rel[]", "[][][]"));
+        setLayout(new MigLayout("left"));
+        JPanel panel = new JPanel(new MigLayout());
         panel.setBorder(BorderFactory.createTitledBorder(INNER_PANEL_TITLE));
+        panel.add(titleLabel, "span 3, center, wrap");
         panel.add(autoSizeBtn, "wrap");
-        panel.add(fixedSizeBtn, "");
-        panel.add(fixedAnnotaionSizeLabel, "gap rel");
-        panel.add(annotationLabelSizeComboBox, "wrap");
-        panel.add(variableSizeBtn, "");
+        panel.add(fixedSizeBtn, new CC());
+        panel.add(fixedAnnotaionSizeLabel, new CC().gap("rel"));
+        panel.add(annotationLabelSizeComboBox, new CC().wrap());
+        panel.add(variableSizeBtn, "wrap");
+        panel.add(bottomPanelMessage, "span 3, center");
         add(panel, "growx");
     }
 

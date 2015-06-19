@@ -85,7 +85,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 import javax.swing.JLabel;
 import org.slf4j.Logger;
@@ -315,19 +314,14 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        TreeSet<DataContainer> uninitializedDataContainers = genomeVersion.getAvailableDataContainers().stream()
+        genomeVersion.getAvailableDataContainers().stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
-                .collect(Collectors.toCollection(DATA_CONTAINER_SORTED_SUPPLIER));
-        for (DataContainer gv : uninitializedDataContainers) {
-            if (loadGeneomeVersionAssemblyInfo(gv)) {
-                break;
-            }
-        }
-        uninitializedDataContainers.forEach(dataContainer -> {
-            initializeDataContainer(dataContainer);
-            dataContainer.setInitialized();
-        });
+                .forEach(dataContainer -> {
+                    loadGeneomeVersionAssemblyInfo(dataContainer);
+                    initializeDataContainer(dataContainer);
+                    dataContainer.setInitialized();
+                });
 
         if (genomeVersion.getSeqCount() == 0) {
             loadChromInfo(genomeVersion);

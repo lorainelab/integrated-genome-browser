@@ -113,7 +113,7 @@
                         <Import-Package>*</Import-Package>
                         <Export-Package/>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>23andMe Snp Converter</Bundle-Description>
+                        <Bundle-Description>Install this to re-format 23andMe reports to BED-detail format for viewing in IGB.</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

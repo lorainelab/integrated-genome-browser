@@ -13,7 +13,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>tutorial-helper</name>
+    <name>Tutorial Helper</name>
 
     <dependencies>        
         <dependency>
@@ -80,7 +80,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
-                        <Bundle-Description>A plugin to allow the user to see widget ids to help develop tutorials</Bundle-Description>
+                        <Bundle-Description>Install this if you are developing tutorials for the Help menu.</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

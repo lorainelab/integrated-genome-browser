@@ -5,7 +5,7 @@
  */
 package com.lorainelab.cache.disk;
 
-import com.lorainelab.cache.disk.RemoteFileDiskCacheService;
+import com.lorainelab.cache.disk.RemoteFileDiskCacheService.CacheStatus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,13 +41,27 @@ public class RemoteFileCacheServiceTest {
     public void before() {
         try {
             remoteFileService = new RemoteFileDiskCacheService();
-            RemoteFileDiskCacheService.DATA_DIR = "/home/dcnorris/.igb/fileCache/";
+            RemoteFileDiskCacheService.DATA_DIR = "/home/jeckstei/.igb/fileCache/";
             FileUtils.forceMkdir(new File(RemoteFileDiskCacheService.DATA_DIR));
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
     }
 
+    @Test
+    public void testGetCacheStatus() {
+        try {
+            URL url = new URL("http://bioviz.org/quickload/A_thaliana_Jan_2004/chr2.bnib");
+            remoteFileService.clearAllCaches();
+            remoteFileService.getFilebyUrl(url);
+            CacheStatus cacheStatus = remoteFileService.getCacheStatus(url);
+            Assert.assertTrue(cacheStatus.isDataExists());
+        } catch (MalformedURLException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        
+    }
+    
     @Ignore
     @Test
     public void testEnforceEvictionPolicies() throws MalformedURLException {
@@ -75,6 +89,7 @@ public class RemoteFileCacheServiceTest {
         Assert.assertTrue(size.compareTo(RemoteFileDiskCacheService.DEFAULT_MAX_CACHE_SIZE_MB) <= 0);
     }
 
+    @Ignore
     @Test
     public void testGetFilebyUrl() throws MalformedURLException {
         Optional<InputStream> is = remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"));

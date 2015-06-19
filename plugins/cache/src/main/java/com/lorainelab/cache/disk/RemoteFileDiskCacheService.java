@@ -7,11 +7,11 @@ package com.lorainelab.cache.disk;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -454,6 +454,13 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
         return cacheStatuses;
     }
+
+    @Override
+    public CacheStatus getCacheStatus(URL url) {
+        String path = getCacheFolderPath(generateKeyFromUrl(url));
+        return getCacheStatus(path);
+    }
+    
 
     public class CacheStatus {
 

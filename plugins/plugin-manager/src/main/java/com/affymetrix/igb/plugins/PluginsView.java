@@ -605,13 +605,22 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
             if (DEFAULT_BUNDLES.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
-                Resource resource = ((ResourceWrapper) bundle).getResource();
-                Resolver resolver = repoAdmin.resolver();
-                resolver.add(resource);
-                if (resolver.resolve()) {
-                    filteredBundles.add(bundle);
-                } else {
-                    logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
+                try {
+                    Resource[] resources = repoAdmin.discoverResources("(symbolicname=" + bundle.getSymbolicName() + ")");
+                    Resolver resolver = repoAdmin.resolver();
+                    if (resources.length > 0) {
+                        resolver.add(resources[0]);
+                        if (resolver.resolve()) {
+                            filteredBundles.add(bundle);
+                        } else {
+                            logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
+                        }
+                    } else {
+                        //add anyway
+                        filteredBundles.add(bundle);
+                    }
+                } catch (InvalidSyntaxException ex) {
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         }

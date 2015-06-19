@@ -105,10 +105,11 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                 final DataProvider selectedDataProvider = dataProviderTableModel.getElementAt(row);
                 if (selectedDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
                     jc.setToolTipText(BUNDLE.getString("siteNotResponding"));
-                    c.setBackground(Color.RED);
+                    c.setBackground(new Color(204, 102, 119));
+                    c.setForeground(Color.WHITE);
                 } else if (selectedDataProvider.useMirrorUrl()) {
                     jc.setToolTipText(BUNDLE.getString("mirrorUrlMessage"));
-                    c.setBackground(Color.YELLOW);
+                    c.setBackground(new Color(237,227,85));
                 } else {
                     jc.setToolTipText("");
                 }

@@ -109,7 +109,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                     c.setForeground(Color.WHITE);
                 } else if (selectedDataProvider.useMirrorUrl()) {
                     jc.setToolTipText(BUNDLE.getString("mirrorUrlMessage"));
-                    //c.setBackground(new Color(227,201,89));
                     c.setBackground(new Color(237,227,85));
                 } else {
                     jc.setToolTipText("");

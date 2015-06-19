@@ -104,7 +104,6 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cachePanel = initilizeCacheSettingsPanel();
         cacheDataTable = getStyledJTable();
         cacheDataPanel = initilizeCacheDataPanel();
-        initializeTable();
         initilizeLayout();
 
     }
@@ -164,12 +163,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         panel.add(btnPanel, "right");
         return panel;
     }
-    
-//        public JTextField maxCacheSize;
-//    public JTextField minFileSize;
-//    public JTextField cacheExpire;
-//    private JButton cacheSettingsApply;
-//    
+        
     private void initMaxCacheSize() {
         maxCacheSize = new JTextField();
         initMaxCacheSizeValue();
@@ -326,54 +320,6 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         return table;
     }
 
-    private void initializeTable() {
-        //JTableHeader header = dataSourcesTable.getTableHeader();
-        //header.setDefaultRenderer(new HeaderRenderer(dataSourcesTable));
-        //initializeDefaultCellRenderer();
-//        Collections.list(dataSourcesTable.getColumnModel().getColumns()).forEach(column -> {
-//            DataProviderTableColumn current = DataProviderTableColumn.valueOf((String) column.getHeaderValue());
-//            switch (current) {
-//                case Refresh:
-//                    column.setMaxWidth(20);
-//                    column.setCellRenderer(getRefreshRenderer());
-//                    column.setCellEditor(new ButtonTableCellEditor(REFRESH_ICON));
-//                    break;
-//                case Name:
-//                    column.setPreferredWidth(100);
-//                    break;
-//                case URL:
-//                    column.setPreferredWidth(310);
-//                    break;
-//                case Enabled:
-//                    column.setPreferredWidth(25);
-//                    break;
-//                case Type:
-//                    column.setPreferredWidth(40);
-//                    break;
-//            }
-//        });
-        //dataSourcesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        //dataSourcesTable.setCellSelectionEnabled(false);
-        //dataSourcesTable.setRowSelectionAllowed(true);
-        //dataSourcesTable.getSelectionModel().addListSelectionListener(this::processListSelectionEvent);
-    }
-
-//    private void initializeDefaultCellRenderer() {
-//        TableCellRenderer renderer = new DefaultTableCellRenderer() {
-//
-//            private static final long serialVersionUID = 1L;
-//
-//            @Override
-//            public Component getTableCellRendererComponent(JTable table, Object value,
-//                    boolean isSelected, boolean hasFocus, int row, int col) {
-//                int modelRow = table.convertRowIndexToModel(row);
-//                //int enabledColumnIndex = dataProviderTableModel.getColumnIndex(DataProviderTableModel.DataProviderTableColumn.Enabled);
-//                //this.setEnabled((Boolean) dataProviderTableModel.getValueAt(modelRow, enabledColumnIndex));
-//                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-//            }
-//        };
-//        dataSourcesTable.setDefaultRenderer(String.class, renderer);
-//    }
     @Reference
     public void setRemoteFileCacheService(RemoteFileCacheService remoteFileCacheService) {
         this.remoteFileCacheService = remoteFileCacheService;

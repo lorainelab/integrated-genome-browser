@@ -19,9 +19,9 @@
 
     <!-- Specify plugin repositories here with name, and url -->
 
-    <repository name="Bioviz" url="http://bioviz.org/igbserver" enabled="true" default="true"/>
+    <repository name="BioViz" url="http://bioviz.org/igbserver" enabled="true" default="true"/>
 
-    <repository name="Bioviz development" url="http://eos.transvar.org/igb_plugins" enabled="false" default="true"/>
+    <repository name="BioViz development" url="http://eos.transvar.org/igb_plugins" enabled="false" default="true"/>
 
     <!-- <annotation_url> associates a track title or "id" regular expression with a URL.
            parameters:

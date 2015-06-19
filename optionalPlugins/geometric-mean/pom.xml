@@ -103,7 +103,7 @@
                         <Export-Package/>
                         <Bundle-Activator>com.gene.geometricmean.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>operation to compute Geometric Mean on selected graph tracks</Bundle-Description>
+                        <Bundle-Description>Compute geometric mean of selected graph tracks.</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>            

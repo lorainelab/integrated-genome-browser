@@ -51,13 +51,13 @@
         ],
         "repository": [
             {
-                "name": "Bioviz",
+                "name": "BioViz",
                 "url": "http://bioviz.org/igbserver",
                 "enabled": "true",
                 "default": "true"
             },
             {
-                "name": "Bioviz development",
+                "name": "BioViz development",
                 "url": "http://eos.transvar.org/igb_plugins",
                 "enabled": "false",
                 "default": "true"

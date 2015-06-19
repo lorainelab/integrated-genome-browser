@@ -112,7 +112,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>                        
-                        <Bundle-Description>A simple search panel that uses all search modes</Bundle-Description>
+                        <Bundle-Description>Install this to try a simpler, experimental search tabbed panel.</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

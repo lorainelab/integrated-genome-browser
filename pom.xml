@@ -433,6 +433,11 @@
                 <artifactId>keybinding-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!--End of plugin module dependencies-->
             
             <!-- Start of development plugins -->

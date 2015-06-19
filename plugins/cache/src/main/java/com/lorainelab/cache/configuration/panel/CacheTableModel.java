@@ -3,22 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.cache.configuration.panel;
+package com.lorainelab.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.cache.api.RemoteFileCacheService;
-import com.affymetrix.cache.disk.RemoteFileDiskCacheService;
-import com.affymetrix.cache.disk.RemoteFileDiskCacheService.CacheStatus;
-import java.math.BigInteger;
+import com.lorainelab.cache.api.RemoteFileCacheService;
+import com.lorainelab.cache.disk.RemoteFileDiskCacheService;
+import com.lorainelab.cache.disk.RemoteFileDiskCacheService.CacheStatus;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 import org.slf4j.LoggerFactory;
 
@@ -26,26 +23,24 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeckstei
  */
-
 @Component(provide = CacheTableModel.class)
 public class CacheTableModel extends AbstractTableModel {
-    
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(CacheTableModel.class);
-    
+
     private RemoteFileCacheService remoteFileCacheService;
-    
+
     List<RemoteFileDiskCacheService.CacheStatus> cacheEntries;
-    
+
     String[] columnNames = {"Source",
-                        "Last Modified",
-                        "Cached On",
-                        "Size (MB)"};
-    
+        "Last Modified",
+        "Cached On",
+        "Size (MB)"};
+
     @Activate
     public void activate() {
         refresh();
     }
-    
 
     public void refresh() {
         cacheEntries = remoteFileCacheService.getCacheEntries();
@@ -65,7 +60,7 @@ public class CacheTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         CacheStatus cacheStatus = cacheEntries.get(rowIndex);
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-        switch(columnIndex) {
+        switch (columnIndex) {
             case 0:
                 return cacheStatus.getUrl();
             case 1:
@@ -80,22 +75,22 @@ public class CacheTableModel extends AbstractTableModel {
                 return "";
         }
     }
-    
+
     @Reference
     public void setRemoteFileCacheService(RemoteFileCacheService remoteFileCacheService) {
         this.remoteFileCacheService = remoteFileCacheService;
     }
-    
+
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
     }
-    
+
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
-    
+
     public void removeRow(int row) {
         CacheStatus cacheStatus = cacheEntries.get(row);
         try {

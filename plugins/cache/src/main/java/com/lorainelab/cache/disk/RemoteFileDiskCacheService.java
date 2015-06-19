@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.cache.disk;
+package com.lorainelab.cache.disk;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.cache.api.RemoteFileCacheService;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.google.common.base.Strings;
@@ -55,7 +55,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public static final int FILENAME_SIZE = 100;
     public static final String FILENAME_EXT = "dat";
     public static final String FILENAME = "data";
-    public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES =  new BigInteger("4096");
+    public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES = new BigInteger("4096");
     public static final BigInteger DEFAULT_MAX_CACHE_SIZE_MB = new BigInteger("100");
     public static final BigInteger DEFAULT_CACHE_EXPIRE_MINUTES = new BigInteger("1440");
     private final Preferences cachePrefsNode;
@@ -63,7 +63,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public RemoteFileDiskCacheService() {
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
     }
-    
+
     @Activate
     public void activate() {
         DATA_DIR = CommonUtils.getInstance().getAppDataDirectory() + "fileCache/";
@@ -73,34 +73,34 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             LOG.error(ex.getMessage(), ex);
         }
     }
-    
+
     private enum CacheConfig {
+
         MAX_CACHE_SIZE_MB("max.cache.size.mb"),
         FILESIZE_MIN_BYTES("min.filesize.bytes"),
         CACHE_EXPIRE_MINUTES("cache.expire.min");
-        
+
         private String key;
 
         private CacheConfig(String key) {
             this.key = key;
         }
-        
-        
+
     }
-    
+
     @Override
     public BigInteger getMaxCacheSizeMB() {
-        return new BigInteger( cachePrefsNode.get(CacheConfig.MAX_CACHE_SIZE_MB.key, DEFAULT_MAX_CACHE_SIZE_MB.toString()) );
+        return new BigInteger(cachePrefsNode.get(CacheConfig.MAX_CACHE_SIZE_MB.key, DEFAULT_MAX_CACHE_SIZE_MB.toString()));
     }
-    
+
     @Override
     public BigInteger getMinFileSizeBytes() {
-        return new BigInteger( cachePrefsNode.get(CacheConfig.FILESIZE_MIN_BYTES.key, DEFAULT_FILESIZE_MIN_BYTES.toString()) );
+        return new BigInteger(cachePrefsNode.get(CacheConfig.FILESIZE_MIN_BYTES.key, DEFAULT_FILESIZE_MIN_BYTES.toString()));
     }
-    
+
     @Override
     public BigInteger getCacheExpireMin() {
-        return new BigInteger( cachePrefsNode.get(CacheConfig.CACHE_EXPIRE_MINUTES.key, DEFAULT_CACHE_EXPIRE_MINUTES.toString()) );
+        return new BigInteger(cachePrefsNode.get(CacheConfig.CACHE_EXPIRE_MINUTES.key, DEFAULT_CACHE_EXPIRE_MINUTES.toString()));
     }
 
     @Override
@@ -117,13 +117,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public void setCacheExpireMin(BigInteger value) {
         cachePrefsNode.put(CacheConfig.CACHE_EXPIRE_MINUTES.key, value.toString());
     }
-    
 
     @Override
     public Optional<InputStream> getFilebyUrl(URL url) {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
         HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
-        if(httpHeader.getSize() < getMinFileSizeBytes().longValue()) {
+        if (httpHeader.getSize() < getMinFileSizeBytes().longValue()) {
             try {
                 return Optional.ofNullable(url.openStream());
             } catch (IOException ex) {
@@ -169,7 +168,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
         try (
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                BufferedInputStream bis = new BufferedInputStream( url.openStream());) {
+                BufferedInputStream bis = new BufferedInputStream(url.openStream());) {
 
             String md5 = url.openConnection().getHeaderField("Content-MD5");
             if (!Strings.isNullOrEmpty(md5)) {
@@ -290,7 +289,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         File cacheLastUpdate = new File(pathToDataFile + ".cacheLastUpdate");
         File etag = new File(pathToDataFile + ".etag");
         File url = new File(pathToDataFile + ".url");
-        
+
         if (data.exists() && (md5.exists() || lastModified.exists() || etag.exists())) {
             try {
                 cacheStatus.setMd5(removeLineEndings(FileUtils.readFileToString(md5)));
@@ -311,7 +310,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         cacheStatus.setDataExists(false);
         return cacheStatus;
     }
-    
+
     private String removeLineEndings(String in) {
         return in.replace("\n", "").replace("\r", "");
     }
@@ -349,7 +348,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
         cleanupCache(path);
     }
-    
+
     @Override
     public boolean cacheExists(URL url) {
         CacheStatus cacheStatus = getCacheStatus(getCacheFolderPath(generateKeyFromUrl(url)));
@@ -360,11 +359,11 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public BigInteger getCacheSize() {
         return FileUtils.sizeOfDirectoryAsBigInteger(new File(DATA_DIR));
     }
-    
+
     private String getCacheBaseDirFromDat(String datPath) {
         return datPath.replaceAll(FILENAME + "." + FILENAME_EXT, "");
     }
-    
+
     private BigInteger getCacheEntrySize(File file) {
         return FileUtils.sizeOfAsBigInteger(file).divide(new BigInteger("1000000"));
     }
@@ -373,69 +372,70 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public void enforceCacheSize() {
         BigInteger size = getCacheSize();
         size = size.divide(new BigInteger("1000000"));
-        
-        if(size.compareTo(getMaxCacheSizeMB()) > 0) {
+
+        if (size.compareTo(getMaxCacheSizeMB()) > 0) {
             BigInteger diff = size.subtract(getMaxCacheSizeMB());
             Map<String, BigInteger> files = new LinkedHashMap<>();
             Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
             Iterator<File> it = listFiles.iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 File file = it.next();
                 files.put(file.getAbsolutePath(), getCacheEntrySize(file));
             }
             //TODO: Figure out diff in size, determine number of files to delete
             files = sortByComparator(files);
-            for(Map.Entry<String, BigInteger> entry : files.entrySet()) {
+            for (Map.Entry<String, BigInteger> entry : files.entrySet()) {
                 String cacheBaseDir = getCacheBaseDirFromDat(entry.getKey());
                 cleanupCache(cacheBaseDir);
                 diff = diff.subtract(entry.getValue());
-                if(diff.compareTo(BigInteger.ZERO) <= 0) {
+                if (diff.compareTo(BigInteger.ZERO) <= 0) {
                     break;
                 }
             }
         }
     }
-    
+
     /**
      * http://www.mkyong.com/java/how-to-sort-a-map-in-java/
+     *
      * @param unsortMap
-     * @return 
+     * @return
      */
     private static Map<String, BigInteger> sortByComparator(Map<String, BigInteger> unsortMap) {
- 
-		// Convert Map to List
-		List<Map.Entry<String, BigInteger>> list = 
-			new LinkedList<>(unsortMap.entrySet());
- 
-		// Sort list with comparator, to compare the Map values
-		Collections.sort(list, 
-                        (Map.Entry<String, BigInteger> o1,
-                                Map.Entry<String, BigInteger> o2) -> 
-                                (o1.getValue()).compareTo(o2.getValue()));
-                   
-		// Convert sorted map back to a Map
-		Map<String, BigInteger> sortedMap = new LinkedHashMap<>();
-		for (Iterator<Map.Entry<String, BigInteger>> it = list.iterator(); it.hasNext();) {
-			Map.Entry<String, BigInteger> entry = it.next();
-			sortedMap.put(entry.getKey(), entry.getValue());
-		}
-		return sortedMap;
+
+        // Convert Map to List
+        List<Map.Entry<String, BigInteger>> list
+                = new LinkedList<>(unsortMap.entrySet());
+
+        // Sort list with comparator, to compare the Map values
+        Collections.sort(list,
+                (Map.Entry<String, BigInteger> o1,
+                        Map.Entry<String, BigInteger> o2)
+                -> (o1.getValue()).compareTo(o2.getValue()));
+
+        // Convert sorted map back to a Map
+        Map<String, BigInteger> sortedMap = new LinkedHashMap<>();
+        for (Iterator<Map.Entry<String, BigInteger>> it = list.iterator(); it.hasNext();) {
+            Map.Entry<String, BigInteger> entry = it.next();
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedMap;
     }
 
     @Override
     public void enforceEvictionPolicies() {
         enforceCacheExpireEvictionPolicy();
     }
-    
+
     public void enforceCacheExpireEvictionPolicy() {
         Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
         Iterator<File> it = listFiles.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             File file = it.next();
             String cacheBaseDir = getCacheBaseDirFromDat(file.getAbsolutePath());
             CacheStatus cacheStatus = getCacheStatus(cacheBaseDir);
             Date now = new Date();
-            if(now.getTime() > (cacheStatus.getCacheLastUpdate() + getCacheExpireMin().longValue()*60000)) {
+            if (now.getTime() > (cacheStatus.getCacheLastUpdate() + getCacheExpireMin().longValue() * 60000)) {
                 cleanupCache(cacheBaseDir);
             }
         }
@@ -446,7 +446,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         List<CacheStatus> cacheStatuses = Lists.newArrayList();
         Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
         Iterator<File> it = listFiles.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             File file = it.next();
             String cacheBaseDir = getCacheBaseDirFromDat(file.getAbsolutePath());
             CacheStatus cacheStatus = getCacheStatus(cacheBaseDir);
@@ -472,7 +472,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
         public void setSize(BigInteger size) {
             this.size = size;
-        }    
+        }
 
         public long getCacheLastUpdate() {
             return cacheLastUpdate;
@@ -481,7 +481,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         public void setCacheLastUpdate(long cacheLastUpdate) {
             this.cacheLastUpdate = cacheLastUpdate;
         }
-        
+
         public File getData() {
             return data;
         }
@@ -555,7 +555,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         public void setSize(long size) {
             this.size = size;
         }
-        
+
         public long getLastModified() {
             return lastModified;
         }

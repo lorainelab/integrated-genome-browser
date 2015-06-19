@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.cache.configuration.panel;
+package com.lorainelab.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.cache.api.RemoteFileCacheService;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
@@ -121,24 +121,24 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         initMaxCacheSize();
         initMinFileSize();
         //TODO:Add buttons to panel
-        JPanel cacheExpirePanel = new JPanel(new MigLayout()); 
+        JPanel cacheExpirePanel = new JPanel(new MigLayout());
         cacheExpirePanel.add(cacheExpireLabel, "width :125:");
         cacheExpirePanel.add(cacheExpire, "width :75:");
         cacheExpirePanel.add(cacheExpireUnits, "width :100:");
-        
+
         JPanel maxCacheSizePanel = new JPanel(new MigLayout());
         maxCacheSizePanel.add(maxCacheSizeLabel, "width :125:");
         maxCacheSizePanel.add(maxCacheSize, "width :75:");
         maxCacheSizePanel.add(maxCacheSizeUnits, "width :100:");
-        
+
         JPanel minFileSizePanel = new JPanel(new MigLayout());
         minFileSizePanel.add(minFileSizeLabel, "width :125:");
         minFileSizePanel.add(minFileSize, "width :75:");
         minFileSizePanel.add(minFileSizeUnits, "width :100:");
-              
+
         JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout());
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
-        
+
         panel.add(cacheExpirePanel, "wrap");
         panel.add(maxCacheSizePanel, "wrap");
         panel.add(minFileSizePanel, "wrap");
@@ -163,7 +163,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         panel.add(btnPanel, "right");
         return panel;
     }
-        
+
     private void initMaxCacheSize() {
         maxCacheSize = new JTextField();
         initMaxCacheSizeValue();
@@ -176,7 +176,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
                     BigInteger value = new BigInteger(tf.getText());
                     tf.setBackground(Color.WHITE);
                     return true;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     tf.setBackground(Color.red);
                     return false;
                 }
@@ -184,14 +184,14 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         });
         maxCacheSizeLabel = new JLabel("Max Cache Size:");
         maxCacheSizeUnits = new JLabel("MB");
-        
+
     }
-    
+
     private void initMaxCacheSizeValue() {
         maxCacheSize.setText(remoteFileCacheService.getMaxCacheSizeMB().toString());
         maxCacheSize.setBackground(Color.WHITE);
     }
-    
+
     private void initMinFileSize() {
         minFileSize = new JTextField();
         initMinFileSizeValue();
@@ -204,7 +204,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
                     BigInteger value = new BigInteger(tf.getText());
                     tf.setBackground(Color.WHITE);
                     return true;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     tf.setBackground(Color.red);
                     return false;
                 }
@@ -213,12 +213,12 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         minFileSizeLabel = new JLabel("Min File Size:");
         minFileSizeUnits = new JLabel("MB");
     }
-    
+
     private void initMinFileSizeValue() {
         minFileSize.setText(remoteFileCacheService.getMinFileSizeBytes().divide(new BigInteger("1000")).toString());
         minFileSize.setBackground(Color.WHITE);
     }
-    
+
     private void initCacheExpire() {
         cacheExpire = new JTextField();
         initCacheExpireValue();
@@ -231,7 +231,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
                     BigInteger value = new BigInteger(tf.getText());
                     tf.setBackground(Color.WHITE);
                     return true;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     tf.setBackground(Color.red);
                     return false;
                 }
@@ -240,31 +240,31 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cacheExpireLabel = new JLabel("Cache Expire:");
         cacheExpireUnits = new JLabel("minutes");
     }
-    
+
     private void initCacheExpireValue() {
         cacheExpire.setText(remoteFileCacheService.getCacheExpireMin().toString());
         cacheExpire.setBackground(Color.WHITE);
     }
-    
+
     private void initCacheSettingsApply() {
         cacheSettingsApply = new JButton("Apply");
         cacheSettingsApply.addActionListener((ActionEvent e) -> {
             try {
                 BigInteger maxCacheSizeValue = new BigInteger(maxCacheSize.getText());
                 remoteFileCacheService.setMaxCacheSizeMB(maxCacheSizeValue);
-            } catch(Exception ex) {
-               //TODO: Add warning
+            } catch (Exception ex) {
+                //TODO: Add warning
             }
             try {
                 BigInteger minFileSizeValue = new BigInteger(minFileSize.getText());
                 remoteFileCacheService.setMinFileSizeBytes(minFileSizeValue.multiply(new BigInteger("1000")));
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 //TODO: Add warning
             }
             try {
                 BigInteger cacheExpireValue = new BigInteger(cacheExpire.getText());
                 remoteFileCacheService.setCacheExpireMin(cacheExpireValue);
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 //TODO: Add warning
             }
             initMaxCacheSizeValue();
@@ -272,26 +272,26 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             initCacheExpireValue();
         });
     }
-    
+
     private void initRefreshBtn() {
         refreshBtn = new JButton("Refresh");
-        refreshBtn.addActionListener((ActionEvent e) -> {        
+        refreshBtn.addActionListener((ActionEvent e) -> {
             refresh();
         });
     }
 
     private void initRemoveBtn() {
         removeBtn = new JButton("Remove");
-        removeBtn.addActionListener((ActionEvent e) -> {        
-            cacheTableModel.removeRow( cacheDataTable.getSelectedRow() );
+        removeBtn.addActionListener((ActionEvent e) -> {
+            cacheTableModel.removeRow(cacheDataTable.getSelectedRow());
             refresh();
         });
         removeBtn.setEnabled(false);
     }
-    
+
     private void initClearAllBtn() {
         clearAllBtn = new JButton("Clear All");
-        clearAllBtn.addActionListener((ActionEvent e) -> {        
+        clearAllBtn.addActionListener((ActionEvent e) -> {
             remoteFileCacheService.clearAllCaches();
             refresh();
         });

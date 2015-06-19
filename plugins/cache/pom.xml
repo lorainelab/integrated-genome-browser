@@ -79,7 +79,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>*</Import-Package>
-                        <Export-Package/>
+                        <Export-Package>${project.groupId}.${project.artifactId}.api</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

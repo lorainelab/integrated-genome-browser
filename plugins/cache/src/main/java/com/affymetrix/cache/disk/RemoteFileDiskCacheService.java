@@ -5,8 +5,10 @@
  */
 package com.affymetrix.cache.disk;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.cache.api.RemoteFileCacheService;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -49,7 +51,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileDiskCacheService.class);
 
     //TODO: Move to properties
-    public static final String DATA_DIR = "/home/jeckstei/igb/cache/";
+    public static String DATA_DIR;
     public static final int FILENAME_SIZE = 100;
     public static final String FILENAME_EXT = "dat";
     public static final String FILENAME = "data";
@@ -60,6 +62,16 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     public RemoteFileDiskCacheService() {
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
+    }
+    
+    @Activate
+    public void activate() {
+        DATA_DIR = CommonUtils.getInstance().getAppDataDirectory() + "fileCache/";
+        try {
+            FileUtils.forceMkdir(new File(DATA_DIR));
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
     
     private enum CacheConfig {

@@ -11,7 +11,7 @@
     <artifactId>igb-command-socket</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Command Socket</name>
+    <name>igb-command-socket</name>
 
     <dependencies>
         <dependency>
@@ -92,6 +92,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-Name>Command Socket</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>

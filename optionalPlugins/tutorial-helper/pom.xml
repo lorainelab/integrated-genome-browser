@@ -13,7 +13,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>Tutorial Helper</name>
+    <name>tutorial-helper</name>
 
     <dependencies>        
         <dependency>
@@ -78,6 +78,7 @@
                 <extensions>true</extensions>
                 <configuration>                   
                     <instructions>
+                        <Bundle-Name>Tutorial Helper</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Description>Install this if you are developing tutorials for the Help menu.</Bundle-Description>

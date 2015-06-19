@@ -13,7 +13,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>Combine Annotation Operator</name>
+    <name>Merge Annotation Operator</name>
 
     <dependencies>       
         <dependency>
@@ -79,6 +79,7 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
                     <instructions>
+                        <Bundle-Name>Combine Annotation Operator</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.mergeannotationoperator.Activator</Bundle-Activator>

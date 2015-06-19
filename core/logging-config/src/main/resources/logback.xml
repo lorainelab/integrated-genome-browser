@@ -13,7 +13,7 @@
     <!--    <logger name="com.affymetrix.genometry.quickload" level="DEBUG" />-->
     <!--        <logger name="com.affymetrix.igb.plugins" level="DEBUG" />-->
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>

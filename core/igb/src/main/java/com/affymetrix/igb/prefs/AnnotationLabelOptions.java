@@ -30,6 +30,17 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     public static final String COMPONENT_NAME = "AnnotationLabelOptions";
     private static final String PANEL_TITLE = "Annotation Label Font";
     private static final String INNER_PANEL_TITLE = "Font Settings";
+    private static final String VARIABLE_SIZE_BTN_PREF = "variableSizeBtn";
+    private static final String VARIABLY_SIZED_LABELS_BTN_TEXT = " Dynamic labels 2 (IGB Classic)";
+    private static final String VARIABLY_SIZED_LABELS_BTN_TOOLTIP = "Annotation size automatically sets the font size. Different annotations may have different size fonts.";
+    private static final String FIXED_SIZE_BTN_PREF = "fixedSizeBtn";
+    private static final String FIXED_SIZED_LABELS_BTN_TOOLTIP = "You set the font size for all labels in all tracks. Partial labels with … (ellipses) sometimes appear.";
+    private static final String FIXED_SIZED_LABELS_BTN_TEXT = "Static labels (New with IGB 8.4)";
+    private static final String AUTO_SIZE_BTN_PREF = "autoSizeBtn";
+    private static final String AUTO_SIZED_LABELS_BTN_TEXT = "Dynamic labels 1 (New with IGB 8.4)";
+    private static final String AUTO_SIZED_BTN_TOOLTIP = "Track height automatically sets the font size. Partial labels with … (ellipses) sometimes appear.";
+    private static final String HEADER_TEXT = "Settings apply to all annotation tracks.";
+    private static final String BOTTOM_PANEL_MESSAGE = "Changes take effect immediately.";
 
     private static final int TAB_POSITION = 1;
 
@@ -37,13 +48,11 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
 
         SELECTED_BTN("selectedBtn"),
         SELECTED_LABEL_SIZE("labelSize");
-
         private final String keyValue;
 
         private PREF_KEYS(final String keyValue) {
             this.keyValue = keyValue;
         }
-
     }
 
     private final int defaultFixedFontSize;
@@ -73,8 +82,8 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
 
     private void initComponents() {
         titleLabel = new JLabel(HEADER_TEXT);
-        bottomPanelMessage = new JLabel("Changes take effect immediately.");
-        fixedAnnotaionSizeLabel = new JLabel("Fixed Annotation Label Size");
+        bottomPanelMessage = new JLabel(BOTTOM_PANEL_MESSAGE);
+        fixedAnnotaionSizeLabel = new JLabel("Font Size");
         annotationLabelSizeComboBox = new AnnotationLabelCombobox();
         float previouslySelectedLabelSize = annotationLabelPrefsNode.getFloat(PREF_KEYS.SELECTED_LABEL_SIZE.keyValue, defaultFixedFontSize);
         EfficientLabelledLineGlyph.OVERRIDE_FONT = new Font(Font.MONOSPACED, Font.PLAIN, Math.round(previouslySelectedLabelSize));
@@ -84,45 +93,44 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
             annotationLabelSizeComboBoxActionPerformed();
         });
         labelOptionBtnGroup = new ButtonGroup();
-        autoSizeBtn = new JRadioButton("Dynamically Sized labels");
-        autoSizeBtn.setToolTipText("Labels will use a font size optimized for a tracks available height.");
+        autoSizeBtn = new JRadioButton(AUTO_SIZED_LABELS_BTN_TEXT);
+        autoSizeBtn.setToolTipText(AUTO_SIZED_BTN_TOOLTIP);
         autoSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = true;
             annotationLabelSizeComboBox.setEnabled(false);
-            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn");
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, AUTO_SIZE_BTN_PREF);
             IGB.getInstance().getMapView().getSeqMap().updateWidget();
         });
-        fixedSizeBtn = new JRadioButton("Fixed Sized Labels");
-        fixedSizeBtn.setToolTipText("You set the font size for all labels in all tracks. Partial labels with … (ellipses) sometimes appear.");
+        fixedSizeBtn = new JRadioButton(FIXED_SIZED_LABELS_BTN_TEXT);
+        fixedSizeBtn.setToolTipText(FIXED_SIZED_LABELS_BTN_TOOLTIP);
         fixedSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = false;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
             annotationLabelSizeComboBox.setEnabled(true);
-            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "fixedSizeBtn");
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, FIXED_SIZE_BTN_PREF);
             IGB.getInstance().getMapView().getSeqMap().updateWidget();
         });
-        variableSizeBtn = new JRadioButton("Variably Sized Labels (IGB Classic)");
-        variableSizeBtn.setToolTipText("Labels will use a font size optimized for the size of the annotation.");
+        variableSizeBtn = new JRadioButton(VARIABLY_SIZED_LABELS_BTN_TEXT);
+        variableSizeBtn.setToolTipText(VARIABLY_SIZED_LABELS_BTN_TOOLTIP);
         variableSizeBtn.addActionListener((ActionEvent e) -> {
             EfficientLabelledLineGlyph.DYNAMICALLY_SIZE_LABELS = true;
             EfficientLabelledLineGlyph.AUTO_SIZE_LABELS = false;
             annotationLabelSizeComboBox.setEnabled(false);
-            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, "variableSizeBtn");
+            annotationLabelPrefsNode.put(PREF_KEYS.SELECTED_BTN.keyValue, VARIABLE_SIZE_BTN_PREF);
             IGB.getInstance().getMapView().getSeqMap().updateWidget();
         });
         labelOptionBtnGroup.add(autoSizeBtn);
         labelOptionBtnGroup.add(fixedSizeBtn);
         labelOptionBtnGroup.add(variableSizeBtn);
     }
-    private static final String HEADER_TEXT = "Settings apply to all annotation tracks.";
 
     private void initializeComponentState() {
-        switch (annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, "autoSizeBtn")) {
-            case "fixedSizeBtn":
+        switch (annotationLabelPrefsNode.get(PREF_KEYS.SELECTED_BTN.keyValue, AUTO_SIZE_BTN_PREF)) {
+            case FIXED_SIZE_BTN_PREF:
                 fixedSizeBtn.doClick();
                 break;
-            case "variableSizeBtn":
+            case VARIABLE_SIZE_BTN_PREF:
                 variableSizeBtn.doClick();
                 break;
             default:

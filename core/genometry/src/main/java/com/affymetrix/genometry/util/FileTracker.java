@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.common.PreferenceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.event;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

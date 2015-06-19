@@ -43,6 +43,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 import net.sf.samtools.seekablestream.SeekableStream;
@@ -58,6 +59,7 @@ public final class GeneralUtils {
     public static final String UTF8 = "UTF-8";
     private static final Pattern CLEAN = Pattern.compile("[/\\s+]");
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###.###");
+    private static JFileChooser static_chooser = null;
 
     /**
      * Safely close a Closeable object. If it doesn't exist, return.
@@ -658,5 +660,17 @@ public final class GeneralUtils {
 
     public static String applyCommaFormatting(String input) {
         return COMMA_FORMAT.format(input);
+    }
+
+    /**
+     * Gets a static re-usable file chooser that prefers XML files.
+     */
+    public static JFileChooser getJFileChooser() {
+        if (static_chooser == null) {
+            static_chooser = new UniFileChooser("XML File", "xml");
+        }
+        static_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        static_chooser.rescanCurrentDirectory();
+        return static_chooser;
     }
 }

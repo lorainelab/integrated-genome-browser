@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import com.affymetrix.igb.tiers.TierLabelGlyph;

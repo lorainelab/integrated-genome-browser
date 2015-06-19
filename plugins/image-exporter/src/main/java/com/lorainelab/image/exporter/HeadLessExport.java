@@ -1,6 +1,6 @@
 package com.lorainelab.image.exporter;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import static com.lorainelab.image.exporter.ExportImageInfo.DEFAULT_RESOLUTION;
 import java.awt.Component;
 import java.awt.Graphics;

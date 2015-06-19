@@ -9,7 +9,7 @@ import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;

@@ -8,7 +8,7 @@ package com.lorainelab.cache.configuration.panel;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.cache.api.RemoteFileCacheService;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Color;

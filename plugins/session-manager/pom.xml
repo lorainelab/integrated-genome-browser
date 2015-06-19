@@ -67,6 +67,11 @@
             <artifactId>bookmark</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>affymetrix-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

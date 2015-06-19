@@ -86,6 +86,11 @@
             <artifactId>sam-ext</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>cache</artifactId>
+            <scope></scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -4,7 +4,7 @@ import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import static com.lorainelab.das2.utils.Das2ServerUtils.toExternalForm;
 
 /**

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import java.awt.Color;
 
 public final class CoordinateStyle {

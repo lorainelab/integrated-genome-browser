@@ -3,7 +3,7 @@ package com.lorainelab.igb.preferences.weblink;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.AnnotationUrl;
 import com.lorainelab.igb.preferences.model.IgbPreferences;

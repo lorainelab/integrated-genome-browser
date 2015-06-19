@@ -1,7 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import aQute.bnd.annotation.component.Component;
-import static com.affymetrix.genometry.util.PreferenceUtils.getAnnotationLabelPrefsNode;
+import static com.affymetrix.common.PreferenceUtils.getAnnotationLabelPrefsNode;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPJPanel;

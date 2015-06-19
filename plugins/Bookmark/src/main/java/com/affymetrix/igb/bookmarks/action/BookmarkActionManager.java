@@ -11,7 +11,7 @@ package com.affymetrix.igb.bookmarks.action;
 
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;

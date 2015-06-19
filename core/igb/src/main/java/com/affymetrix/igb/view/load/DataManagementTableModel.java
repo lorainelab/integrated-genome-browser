@@ -4,7 +4,7 @@ import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;

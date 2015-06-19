@@ -5,7 +5,7 @@ import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;

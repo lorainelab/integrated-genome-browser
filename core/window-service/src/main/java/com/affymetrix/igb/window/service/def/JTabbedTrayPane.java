@@ -1,8 +1,8 @@
 package com.affymetrix.igb.window.service.def;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.EventUtils;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;

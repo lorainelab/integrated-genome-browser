@@ -51,7 +51,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
 import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;

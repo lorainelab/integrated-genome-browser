@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.UnibrowHairline;
 import java.awt.event.KeyEvent;

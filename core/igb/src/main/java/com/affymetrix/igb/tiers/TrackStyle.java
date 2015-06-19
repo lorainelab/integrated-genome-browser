@@ -7,7 +7,7 @@ import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.style.PropertyConstants;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;

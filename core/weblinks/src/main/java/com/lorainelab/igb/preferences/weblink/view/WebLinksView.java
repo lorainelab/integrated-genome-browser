@@ -4,7 +4,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.jidesoft.grid.JideTable;

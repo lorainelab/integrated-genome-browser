@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.common.CommonUtils;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;

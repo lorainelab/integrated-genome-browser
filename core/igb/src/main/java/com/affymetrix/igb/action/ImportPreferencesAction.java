@@ -1,8 +1,9 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
@@ -36,7 +37,7 @@ public class ImportPreferencesAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         super.actionPerformed(ae);
-        JFileChooser chooser = PreferenceUtils.getJFileChooser();
+        JFileChooser chooser = GeneralUtils.getJFileChooser();
         int option = chooser.showOpenDialog(PreferencesPanel.getSingleton());
         if (option == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();

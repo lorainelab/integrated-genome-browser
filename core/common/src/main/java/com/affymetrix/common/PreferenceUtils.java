@@ -7,9 +7,8 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.genometry.util;
+package com.affymetrix.common;
 
-import com.affymetrix.common.CommonUtils;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -46,7 +45,6 @@ import java.util.prefs.Preferences;
 import javax.swing.Action;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -95,7 +93,6 @@ public abstract class PreferenceUtils {
     private static String prefs_mode = DEFAULT_PREFS_MODE;
     public static final String PREFS_THRESHOLD = "Threshold Value";
     public static final String PREFS_AUTOLOAD = "Enable Auto load";
-    private static JFileChooser static_chooser = null;
     private static final SortedSet<String> keystroke_node_names = Collections.synchronizedSortedSet(new TreeSet<>());
 
     /**
@@ -160,7 +157,7 @@ public abstract class PreferenceUtils {
     public static Preferences getCertificatePrefsNode() {
         return PreferenceUtils.getTopNode().node("certificate");
     }
-    
+
     public static Preferences getCachePrefsNode() {
         return PreferenceUtils.getTopNode().node("cache");
     }
@@ -333,19 +330,6 @@ public abstract class PreferenceUtils {
     }
 
     /**
-     * Gets a static re-usable file chooser that prefers XML files.
-     */
-    public static JFileChooser getJFileChooser() {
-        if (static_chooser == null) {
-            static_chooser = new UniFileChooser("XML File", "xml");
-        }
-        static_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        //static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        static_chooser.rescanCurrentDirectory();
-        return static_chooser;
-    }
-
-    /**
      * Exports the preferences subtree to a file. Calls
      * {@link Preferences#exportSubtree(OutputStream)}.
      *
@@ -356,12 +340,8 @@ public abstract class PreferenceUtils {
      */
     public static void exportPreferences(Preferences prefs, File f)
             throws IOException, BackingStoreException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(f);
+        try (FileOutputStream fos = new FileOutputStream(f);) {
             prefs.exportSubtree(fos);
-        } finally {
-            GeneralUtils.safeClose(fos);
         }
     }
 
@@ -378,12 +358,8 @@ public abstract class PreferenceUtils {
      */
     public static void importPreferences(File f)
             throws IOException, InvalidPreferencesFormatException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(f);
+        try (FileInputStream fis = new FileInputStream(f);) {
             Preferences.importPreferences(fis);
-        } finally {
-            GeneralUtils.safeClose(fis);
         }
     }
 
@@ -399,13 +375,9 @@ public abstract class PreferenceUtils {
      */
     public static void importPreferences(URL url)
             throws IOException, InvalidPreferencesFormatException {
-        InputStream is = null;
-        try {
-            URLConnection uc = url.openConnection();
-            is = uc.getInputStream();
+        URLConnection uc = url.openConnection();
+        try (InputStream is = uc.getInputStream();) {
             Preferences.importPreferences(is);
-        } finally {
-            GeneralUtils.safeClose(is);
         }
     }
 

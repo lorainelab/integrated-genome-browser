@@ -4,7 +4,7 @@ import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.APP_NAME;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;

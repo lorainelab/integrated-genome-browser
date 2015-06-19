@@ -8,7 +8,7 @@
  */
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.action.ClearPreferencesAction;

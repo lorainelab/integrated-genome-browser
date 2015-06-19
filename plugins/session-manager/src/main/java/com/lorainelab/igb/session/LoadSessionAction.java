@@ -2,8 +2,9 @@ package com.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
@@ -68,7 +69,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
             }
 
         } else {
-            JFileChooser chooser = PreferenceUtils.getJFileChooser();
+            JFileChooser chooser = GeneralUtils.getJFileChooser();
             int option = chooser.showOpenDialog(igbService.getApplicationFrame().getContentPane());
             if (option == JFileChooser.APPROVE_OPTION) {
                 try {
@@ -130,6 +131,6 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
+        return TOOLBAR_INDEX;
     }
 }

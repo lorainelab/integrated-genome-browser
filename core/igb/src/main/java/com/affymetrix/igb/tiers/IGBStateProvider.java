@@ -8,7 +8,7 @@ import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

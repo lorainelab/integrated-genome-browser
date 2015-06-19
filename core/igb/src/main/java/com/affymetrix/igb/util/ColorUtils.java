@@ -1,6 +1,6 @@
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Dimension;

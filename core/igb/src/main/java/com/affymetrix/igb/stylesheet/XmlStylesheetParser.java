@@ -10,7 +10,7 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.XMLUtils;
 import java.io.File;
 import java.io.FileInputStream;

@@ -3,7 +3,7 @@ package com.affymetrix.igb.survey;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import static com.affymetrix.igb.survey.ShowSurvey.showSurvey;
 import com.affymetrix.igb.swing.JRPMenu;

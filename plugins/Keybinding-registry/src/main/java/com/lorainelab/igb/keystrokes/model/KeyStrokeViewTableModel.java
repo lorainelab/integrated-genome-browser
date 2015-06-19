@@ -15,7 +15,7 @@ import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.google.common.collect.Sets;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;

@@ -9,7 +9,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import java.io.BufferedInputStream;

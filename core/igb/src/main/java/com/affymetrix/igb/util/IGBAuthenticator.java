@@ -4,7 +4,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.REMEMBER_CREDENTIALS;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SCHEME;
 import com.affymetrix.igb.general.DataProviderManager;

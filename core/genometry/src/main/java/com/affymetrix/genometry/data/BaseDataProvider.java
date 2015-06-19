@@ -11,7 +11,7 @@ import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotInitialized;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;

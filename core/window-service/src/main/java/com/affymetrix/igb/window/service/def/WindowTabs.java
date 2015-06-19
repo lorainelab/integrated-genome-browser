@@ -1,6 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import com.lorainelab.igb.services.window.tabs.TabHolder;

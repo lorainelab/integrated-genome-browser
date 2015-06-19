@@ -2,8 +2,9 @@ package com.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
@@ -75,7 +76,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     private void showJFileChooser(String defaultFileName) {
-        JFileChooser chooser = PreferenceUtils.getJFileChooser();
+        JFileChooser chooser = GeneralUtils.getJFileChooser();
         File sessionFile = new File(System.getProperty("user.home") + "/" + defaultFileName);
         chooser.setSelectedFile(sessionFile);
         int option = chooser.showSaveDialog(igbService.getApplicationFrame().getContentPane());
@@ -148,9 +149,9 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     public int getMenuItemWeight() {
         return 8;
     }
-    
+
     @Override
     public int getToolbarIndex() {
-        return TOOLBAR_INDEX; 
+        return TOOLBAR_INDEX;
     }
 }

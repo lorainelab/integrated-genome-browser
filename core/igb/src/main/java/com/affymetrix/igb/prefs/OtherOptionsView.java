@@ -1,7 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.glyph.CodonGlyph;

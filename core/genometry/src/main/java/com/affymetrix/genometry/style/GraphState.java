@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometry.style;
 
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import java.awt.Color;
 import java.util.Map;
 

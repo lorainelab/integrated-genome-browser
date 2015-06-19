@@ -12,7 +12,7 @@ package com.affymetrix.igb.thresholding;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.util.DisplayUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;

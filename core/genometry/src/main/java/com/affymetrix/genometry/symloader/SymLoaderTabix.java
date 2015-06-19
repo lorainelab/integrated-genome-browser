@@ -15,7 +15,9 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +26,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.util.BlockCompressedInputStream;
@@ -33,6 +36,10 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.broad.tribble.readers.LineReader;
 import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This SymLoader is intended to be used for data sources that are indexed with
@@ -45,6 +52,7 @@ public class SymLoaderTabix extends SymLoader {
     private final LineProcessor lineProcessor;
     private final GenericObjectPool<TabixReader> pool;
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
+    private static RemoteFileCacheService remoteFileCacheService;
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -73,7 +81,10 @@ public class SymLoaderTabix extends SymLoader {
         this.pool.setTestOnBorrow(true);
         this.pool.setTestOnReturn(true);
         this.pool.setTestWhileIdle(true);
+        bundleContext = FrameworkUtil.getBundle(SymLoaderTabix.class).getBundleContext();
+        initCacheServiceTracker();
     }
+    private final BundleContext bundleContext;
 
     @Override
     public List<LoadStrategy> getLoadChoices() {
@@ -208,7 +219,17 @@ public class SymLoaderTabix extends SymLoader {
             if (path.startsWith(FTP_PROTOCOL)) {
                 return false; // ftp not supported by BlockCompressedInputStream
             } else if (path.startsWith(HTTP_PROTOCOL) || path.startsWith(HTTPS_PROTOCOL)) {
-                is = new BlockCompressedInputStream(LocalUrlCacher.getInputStream(new URL(path + ".tbi")));
+                final URL url = new URL(path + ".tbi");
+                if (remoteFileCacheService != null) {
+                    Optional<InputStream> inputStream = remoteFileCacheService.getFilebyUrl(url);
+                    if (inputStream.isPresent()) {
+                        is = new BlockCompressedInputStream(inputStream.get());
+                    } else {
+                        is = new BlockCompressedInputStream(LocalUrlCacher.getInputStream(url));
+                    }
+                } else {
+                    is = new BlockCompressedInputStream(LocalUrlCacher.getInputStream(url));
+                }
             } else {
                 is = new BlockCompressedInputStream(new File(URLDecoder.decode(path, GeneralUtils.UTF8) + ".tbi"));
             }
@@ -245,6 +266,17 @@ public class SymLoaderTabix extends SymLoader {
         return lineProcessor.isMultiThreadOK();
     }
 
+    private void initCacheServiceTracker() {
+        ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
+                remoteFileCacheService = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+    }
+
     private class TabixReaderPoolableObjectFactory extends BasePoolableObjectFactory<TabixReader> {
 
         @Override
@@ -253,6 +285,7 @@ public class SymLoaderTabix extends SymLoader {
             if (uriString.startsWith(FILE_PROTOCOL)) {
                 uriString = uri.getPath();
             }
+            //cache check
             return new TabixReader(uriString);
         }
 

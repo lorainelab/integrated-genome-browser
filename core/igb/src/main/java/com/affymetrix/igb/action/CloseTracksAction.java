@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.PreferenceUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGBConstants;
 import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;

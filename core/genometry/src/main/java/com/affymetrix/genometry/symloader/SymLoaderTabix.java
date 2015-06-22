@@ -92,7 +92,7 @@ public class SymLoaderTabix extends SymLoader {
         
     }
     
-    public class TabixReaderCached extends TabixReader {
+    public final class TabixReaderCached extends TabixReader {
         
         private String indexFile;
 

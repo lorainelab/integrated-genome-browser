@@ -11,6 +11,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

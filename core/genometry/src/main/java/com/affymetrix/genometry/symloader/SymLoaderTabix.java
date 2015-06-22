@@ -13,10 +13,13 @@ import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -29,6 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.samtools.seekablestream.SeekableStream;
+import net.sf.samtools.seekablestream.SeekableStreamFactory;
 import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
@@ -50,9 +55,10 @@ public class SymLoaderTabix extends SymLoader {
     private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
     protected final Map<BioSeq, String> seqs = Maps.newConcurrentMap();
     private final LineProcessor lineProcessor;
-    private final GenericObjectPool<TabixReader> pool;
+    private final GenericObjectPool<TabixReaderCached> pool;
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
     private static RemoteFileCacheService remoteFileCacheService;
+    private final BundleContext bundleContext;
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -64,8 +70,10 @@ public class SymLoaderTabix extends SymLoader {
 
     public SymLoaderTabix(final URI uri, String featureName, GenomeVersion genomeVersion, LineProcessor lineProcessor) throws Exception {
         super(uri, featureName, genomeVersion);
+        bundleContext = FrameworkUtil.getBundle(SymLoaderTabix.class).getBundleContext();
+        initCacheServiceTracker();
         this.lineProcessor = lineProcessor;
-        PoolableObjectFactory<TabixReader> poolFactory = new TabixReaderPoolableObjectFactory();
+        PoolableObjectFactory<TabixReaderCached> poolFactory = new TabixReaderPoolableObjectFactory();
         this.pool = new GenericObjectPool<>(poolFactory);
         // Always have minimum one reader in pool
         this.pool.setMinIdle(1);
@@ -81,10 +89,40 @@ public class SymLoaderTabix extends SymLoader {
         this.pool.setTestOnBorrow(true);
         this.pool.setTestOnReturn(true);
         this.pool.setTestWhileIdle(true);
-        bundleContext = FrameworkUtil.getBundle(SymLoaderTabix.class).getBundleContext();
-        initCacheServiceTracker();
+        
     }
-    private final BundleContext bundleContext;
+    
+    public class TabixReaderCached extends TabixReader {
+        
+        private String indexFile;
+
+        
+        public TabixReaderCached(String fn, String indexFile) throws IOException {
+            super(fn);
+            this.indexFile = indexFile;
+            readIndex();
+        }
+
+        public TabixReaderCached(String fn) throws IOException {
+            super(fn);
+        }
+        
+        public TabixReaderCached(String fn, String idxFn, SeekableStream stream) throws IOException {
+            super(fn, idxFn, stream);
+        }
+
+        @Override
+        public void readIndex() throws IOException {
+            if(!Strings.isNullOrEmpty(indexFile)) {
+                readIndex(SeekableStreamFactory.getInstance().getStreamFor(indexFile));
+            }
+        }
+
+        
+
+        
+        
+    }
 
     @Override
     public List<LoadStrategy> getLoadChoices() {
@@ -98,7 +136,7 @@ public class SymLoaderTabix extends SymLoader {
         }
 
         lineProcessor.init(uri);
-        TabixReader tabixReader = pool.borrowObject();
+        TabixReaderCached tabixReader = pool.borrowObject();
         try {
             for (String seqID : tabixReader.mChr2tid.keySet()) {
                 BioSeq seq = genomeVersion.getSeq(seqID);
@@ -155,7 +193,7 @@ public class SymLoaderTabix extends SymLoader {
     public List<? extends SeqSymmetry> getRegion(SeqSpan overlapSpan) throws Exception {
         init();
         String seqID = seqs.get(overlapSpan.getBioSeq());
-        TabixReader tabixReader = pool.borrowObject();
+        TabixReaderCached tabixReader = pool.borrowObject();
         try {
             if (!tabixReader.mChr2tid.containsKey(seqID)) {
                 return new ArrayList<>();
@@ -268,6 +306,7 @@ public class SymLoaderTabix extends SymLoader {
 
     private void initCacheServiceTracker() {
         ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
+        
         dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
             @Override
             public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
@@ -275,22 +314,32 @@ public class SymLoaderTabix extends SymLoader {
                 return super.addingService(serviceReference);
             }
         };
+        dependencyTracker.open();
     }
 
-    private class TabixReaderPoolableObjectFactory extends BasePoolableObjectFactory<TabixReader> {
+    private class TabixReaderPoolableObjectFactory extends BasePoolableObjectFactory<TabixReaderCached> {
 
         @Override
-        public TabixReader makeObject() throws Exception {
+        public TabixReaderCached makeObject() throws Exception {
             String uriString = uri.toString();
             if (uriString.startsWith(FILE_PROTOCOL)) {
                 uriString = uri.getPath();
             }
-            //cache check
-            return new TabixReader(uriString);
+            Optional<InputStream> filebyUrl = remoteFileCacheService.getFilebyUrl(uri.toURL());
+            URL indexUrl = new URL(uri.toURL().toString() + ".tbi");
+            Optional<InputStream> indexFilebyUrl = remoteFileCacheService.getFilebyUrl(indexUrl);
+            if (filebyUrl.isPresent() && indexFilebyUrl.isPresent()) {
+                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(uri.toURL());
+                CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
+                if (cacheStatus.isDataExists()) {
+                    return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+                }
+            }
+            return new TabixReaderCached(uriString);
         }
 
         @Override
-        public boolean validateObject(TabixReader tabixReader) {
+        public boolean validateObject(TabixReaderCached tabixReader) {
             return tabixReader != null;
         }
     }

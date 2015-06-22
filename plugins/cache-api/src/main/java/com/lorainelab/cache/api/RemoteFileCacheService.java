@@ -35,8 +35,6 @@ public interface RemoteFileCacheService {
     
     public CacheStatus getCacheStatus(URL url);
 
-    public CacheStatus getCacheStatus(URL url);
-
     public BigInteger getMaxCacheSizeMB();
 
     public BigInteger getMinFileSizeBytes();

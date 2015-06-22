@@ -324,15 +324,19 @@ public class SymLoaderTabix extends SymLoader {
             String uriString = uri.toString();
             if (uriString.startsWith(FILE_PROTOCOL)) {
                 uriString = uri.getPath();
-            }
-            Optional<InputStream> filebyUrl = remoteFileCacheService.getFilebyUrl(uri.toURL());
-            URL indexUrl = new URL(uri.toURL().toString() + ".tbi");
-            Optional<InputStream> indexFilebyUrl = remoteFileCacheService.getFilebyUrl(indexUrl);
-            if (filebyUrl.isPresent() && indexFilebyUrl.isPresent()) {
-                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(uri.toURL());
-                CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
-                if (cacheStatus.isDataExists()) {
-                    return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+            } else {
+                URL fileUrl = uri.toURL();
+                if(fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) {
+                    Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                    URL indexUrl = new URL(fileUrl.toString() + ".tbi");
+                    Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl);
+                    if (fileIs.isPresent() && indexFileIs.isPresent()) {
+                        CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                        CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
+                        if (cacheStatus.isDataExists()) {
+                            return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+                        }
+                    }
                 }
             }
             return new TabixReaderCached(uriString);

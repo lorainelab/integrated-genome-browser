@@ -129,3 +129,12 @@ extbundles/
 /cache/target/
 /plugins/cache/target/
 /plugins/cache-api/target/
+/plugins/plugins_page/target/
+/core/LoggingConfig/target
+/core/igb_service/target
+/plugins/SearchModeLucene/target
+/core/genometryImpl/target
+/plugins/window_service_def/target
+/core/window_service/target
+/core/igbGenovizExtensionsApi/target
+/developmentPlugins/TutorialHelper/target

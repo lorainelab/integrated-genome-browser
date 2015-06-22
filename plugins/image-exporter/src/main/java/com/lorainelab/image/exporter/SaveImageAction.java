@@ -26,6 +26,7 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private ExportDialog exportDialog;
     private final int TOOLBAR_INDEX = 4;
+    private static final int MENU_POSITION = 5;
 
     public SaveImageAction() {
         super(BUNDLE.getString("saveImage"), BUNDLE.getString("saveImageTooltip"),
@@ -62,7 +63,7 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
 
     @Override
     public int getMenuItemWeight() {
-        return 5;
+        return MENU_POSITION;
     }
 
     @Override

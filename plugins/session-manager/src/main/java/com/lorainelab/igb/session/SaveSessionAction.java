@@ -37,6 +37,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     private final int TOOLBAR_INDEX = 1;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
+    private static final int MENU_POSITION = 12;
 
     FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
@@ -146,7 +147,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public int getMenuItemWeight() {
-        return 12;
+        return MENU_POSITION;
     }
     
     @Override

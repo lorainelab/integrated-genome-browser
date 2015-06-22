@@ -21,42 +21,10 @@
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${project.parent.basedir}/bundles/dynamic</directory>
-                            <includes>
-                                <include>${project.build.finalName}.jar</include>
-                            </includes>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.parent.basedir}/bundles/dynamic</outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>  
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -66,6 +34,7 @@
                     <instructions>
                         <Import-Package>*</Import-Package>
                         <Service-Component>*</Service-Component>
+                        <Export-Package>${project.groupId}.cache.api</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>         

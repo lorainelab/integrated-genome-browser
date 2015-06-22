@@ -32,7 +32,7 @@ public interface RemoteFileCacheService {
     public void enforceEvictionPolicies();
 
     public List<CacheStatus> getCacheEntries();
-
+    
     public CacheStatus getCacheStatus(URL url);
 
     public BigInteger getMaxCacheSizeMB();

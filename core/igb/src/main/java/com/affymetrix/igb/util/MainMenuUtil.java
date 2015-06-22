@@ -114,15 +114,21 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void fileMenu() {
-        int menuItemCounter = 0;
+        int menuItemCounter = 1;
         JRPMenu fileMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "fileMenu", BUNDLE.getString("fileMenu"), 0);
         fileMenu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), menuItemCounter++));
+        menuItemCounter++; //leaving space for NewGenomeAction
+        fileMenu.addSeparator(menuItemCounter++);
+        menuItemCounter++; // leaving space for SaveImageAction
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
         fileMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), menuItemCounter++));
+        fileMenu.addSeparator(menuItemCounter++);
+        menuItemCounter++; // leaving space for LoadSessionAction
+        menuItemCounter++; // leaving space for SaveSessionAction
         fileMenu.addSeparator(menuItemCounter++);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), menuItemCounter++));
     }

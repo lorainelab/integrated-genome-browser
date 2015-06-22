@@ -141,7 +141,7 @@ public abstract class MenuUtil {
         if (action != null) {
             addAccelerator(item, action.getClass().getName());
         } // duplicates GenericAction.getId()
-        return menu.insert(item, position);
+        return menu.add(item);
     }
 
     public static void removeFromMenu(JMenu menu, JMenuItem item) {

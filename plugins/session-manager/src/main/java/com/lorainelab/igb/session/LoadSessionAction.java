@@ -25,7 +25,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     public static final String COMPONENT_NAME = "LoadSessionAction";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    private static final int MENU_POSITION = 8;
+    private static final int MENU_POSITION = 11;
     private static final long serialVersionUID = 1L;
     private IgbService igbService;
     private BookmarkService bookmarkService;
@@ -120,7 +120,7 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Bookmark_loadSession", this);
+        return new JRPMenuItem("Bookmark_loadSession", this, getMenuItemWeight());
     }
 
     @Override

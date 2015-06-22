@@ -141,12 +141,12 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
 
     @Override
     public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Bookmark_saveSession", this);
+        return new JRPMenuItem("Bookmark_saveSession", this, getMenuItemWeight());
     }
 
     @Override
     public int getMenuItemWeight() {
-        return 8;
+        return 12;
     }
     
     @Override

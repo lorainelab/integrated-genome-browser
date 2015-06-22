@@ -5,7 +5,6 @@
  */
 package com.lorainelab.cache.api;
 
-import com.lorainelab.cache.disk.RemoteFileDiskCacheService.CacheStatus;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
@@ -33,7 +32,7 @@ public interface RemoteFileCacheService {
     public void enforceEvictionPolicies();
 
     public List<CacheStatus> getCacheEntries();
-    
+
     public CacheStatus getCacheStatus(URL url);
 
     public BigInteger getMaxCacheSizeMB();

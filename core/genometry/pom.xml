@@ -121,7 +121,7 @@
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
-            <artifactId>cache</artifactId>
+            <artifactId>cache-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

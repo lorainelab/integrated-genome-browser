@@ -128,3 +128,4 @@ extbundles/
 /developmentPlugins/SearchModeLucene/target/
 /cache/target/
 /plugins/cache/target/
+/plugins/cache-api/target/

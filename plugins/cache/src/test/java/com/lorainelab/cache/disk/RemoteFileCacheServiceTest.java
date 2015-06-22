@@ -5,7 +5,7 @@
  */
 package com.lorainelab.cache.disk;
 
-import com.lorainelab.cache.disk.RemoteFileDiskCacheService.CacheStatus;
+import com.lorainelab.cache.api.CacheStatus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,9 +59,9 @@ public class RemoteFileCacheServiceTest {
         } catch (MalformedURLException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        
+
     }
-    
+
     @Ignore
     @Test
     public void testEnforceEvictionPolicies() throws MalformedURLException {

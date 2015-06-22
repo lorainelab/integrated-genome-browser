@@ -8,9 +8,8 @@ package com.lorainelab.cache.configuration.panel;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
-import com.lorainelab.cache.disk.RemoteFileDiskCacheService;
-import com.lorainelab.cache.disk.RemoteFileDiskCacheService.CacheStatus;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -30,7 +29,7 @@ public class CacheTableModel extends AbstractTableModel {
 
     private RemoteFileCacheService remoteFileCacheService;
 
-    List<RemoteFileDiskCacheService.CacheStatus> cacheEntries;
+    List<CacheStatus> cacheEntries;
 
     String[] columnNames = {"Source",
         "Last Modified",

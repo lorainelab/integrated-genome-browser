@@ -118,6 +118,7 @@
         <module>plugins/session-manager</module>               
         <module>plugins/Keybinding-registry</module>
         <module>plugins/cache</module>
+        <module>plugins/cache-api</module>
     </modules>
 
     <profiles>
@@ -436,6 +437,11 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>cache-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

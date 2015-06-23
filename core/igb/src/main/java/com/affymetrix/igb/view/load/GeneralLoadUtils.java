@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
@@ -40,7 +41,6 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.genometry.util.SpeciesLookup;
@@ -341,8 +341,10 @@ public final class GeneralLoadUtils {
             if (dataContainer.getDataProvider() instanceof AssemblyProvider) {
                 AssemblyProvider assemblyProvider = (AssemblyProvider) dataContainer.getDataProvider();
                 //TODO load chromosome info
-                assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
-
+                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
+                assemblyInfo.entrySet().stream().forEach(entry -> {
+                    genomeVersion.addSeq(entry.getKey(), entry.getValue());
+                });
             }
 
         }

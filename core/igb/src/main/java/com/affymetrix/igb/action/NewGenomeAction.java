@@ -93,18 +93,6 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         }
     }
 
-    private static String getFriendlyName(String urlStr) {
-        // strip off final "/" character, if it exists.
-        if (urlStr.endsWith("/")) {
-            urlStr = urlStr.substring(0, urlStr.length() - 1);
-        }
-
-        //strip off all earlier slashes.
-        urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-
-        return urlStr;
-    }
-
     @Override
     public boolean isToolbarDefault() {
         return true;

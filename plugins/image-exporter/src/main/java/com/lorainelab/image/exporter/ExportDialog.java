@@ -623,7 +623,9 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             mvRadioButtonActionPerformed();
         } else {
             exportDialogGui.getWfRadioButton().setEnabled(true);
+            exportDialogGui.getWfRadioButton().setSelected(true);
             exportDialogGui.getResolutionComboBox().setEnabled(true);
+            wfRadioButtonActionPerformed();
         }
     }
 

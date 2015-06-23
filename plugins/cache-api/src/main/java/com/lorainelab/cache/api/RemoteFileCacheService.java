@@ -46,5 +46,9 @@ public interface RemoteFileCacheService {
     public void setMinFileSizeBytes(BigInteger value);
 
     public void setCacheExpireMin(BigInteger value);
+    
+    public void cacheInBackground(URL url);
+    
+    public boolean isCachingInBackground(URL url);
 
 }

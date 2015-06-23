@@ -22,6 +22,7 @@ import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +59,8 @@ public abstract class SymLoader {
     protected final Map<BioSeq, Boolean> chrSort = new HashMap<>();
     protected final GenomeVersion genomeVersion;
     public final String featureName;
-    private static RemoteFileCacheService remoteFileCacheService;
-    private final BundleContext bundleContext;
+    protected static RemoteFileCacheService remoteFileCacheService;
+    protected final BundleContext bundleContext;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
@@ -89,10 +90,10 @@ public abstract class SymLoader {
     public String getFeatureName() {
         return featureName;
     }
-    
+
     private void initCacheServiceTracker() {
         ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
-        
+
         dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
             @Override
             public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
@@ -109,16 +110,30 @@ public abstract class SymLoader {
         Map<String, File> chrFiles = new HashMap<>();
 
         try {
-            //bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+
             URL fileUrl = uri.toURL();
-            if(fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) {
+            if (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) {
                 Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
-                if (fileIs.isPresent() ) {
-                    CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-                    if (cacheStatus.isDataExists()) {
-                        //TODO: create buffered unzipped stream
+
+                if (fileIs.isPresent()) {
+                    try {
+                        CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                        if (cacheStatus.isDataExists()) {
+                            StringBuffer stripped_name = new StringBuffer();
+                            InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
+                            if (is instanceof BufferedInputStream) {
+                                bis = (BufferedInputStream) is;
+                            } else {
+                                bis = new BufferedInputStream(is);
+                            }
+                        }
+                    } finally {
+                        fileIs.get().close();
                     }
                 }
+
+            } else {
+                bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
             }
             if (bis == null) {
                 throw new IOException("Input Stream NULL");
@@ -155,8 +170,7 @@ public abstract class SymLoader {
     }
 
     /**
-     * Get list of chromosomes used in the file/uri. Especially useful when
-     * loading a file into an "unknown" genome
+     * Get list of chromosomes used in the file/uri. Especially useful when loading a file into an "unknown" genome
      *
      * @return List of chromosomes
      */
@@ -265,8 +279,7 @@ public abstract class SymLoader {
     }
 
     /**
-     * Get residues in the region of the chromosome. This is generally only
-     * defined for some parsers
+     * Get residues in the region of the chromosome. This is generally only defined for some parsers
      *
      * @param span - span of chromosome
      * @return String of residues

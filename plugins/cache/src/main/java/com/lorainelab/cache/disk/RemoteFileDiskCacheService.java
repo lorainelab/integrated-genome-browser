@@ -9,6 +9,9 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.lorainelab.cache.api.CacheStatus;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -56,13 +60,15 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public static final int FILENAME_SIZE = 100;
     public static final String FILENAME_EXT = "dat";
     public static final String FILENAME = "data";
-    public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES = new BigInteger("4096");
+    public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES = BigInteger.ZERO;
     public static final BigInteger DEFAULT_MAX_CACHE_SIZE_MB = new BigInteger("100");
     public static final BigInteger DEFAULT_CACHE_EXPIRE_MINUTES = new BigInteger("1440");
     private final Preferences cachePrefsNode;
+    private Collection<String> backgroundCaching;
 
     public RemoteFileDiskCacheService() {
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
+        backgroundCaching = new HashSet<>();
     }
 
     @Activate
@@ -87,6 +93,38 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             this.key = key;
         }
 
+    }
+
+    @Override
+    public void cacheInBackground(URL url) {
+        boolean confirm = ModalUtils.confirmPanel("Do you want to cache this data in the background?", cachePrefsNode, PreferenceUtils.CONFIRM_BEFORE_CACHE_IN_BACKGROUND, false);
+        if(confirm && backgroundCaching.add(url.toString())) {
+            CThreadWorker< Void, Void> worker = new CThreadWorker< Void, Void>("caching sequence data file") {
+                @Override
+                protected Void runInBackground() {
+                    Optional<InputStream> fileIs = getFilebyUrl(url);
+                    if (fileIs.isPresent()) {
+                        try {
+                            fileIs.get().close();
+                        } catch (IOException ex) {
+                            LOG.error(ex.getMessage(), ex);
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void finished() {
+                    backgroundCaching.remove(url.toString());
+                }
+            };
+            CThreadHolder.getInstance().execute(this, worker);
+        }
+    }
+
+    @Override
+    public boolean isCachingInBackground(URL url) {
+        return backgroundCaching.contains(url.toString());
     }
 
     @Override

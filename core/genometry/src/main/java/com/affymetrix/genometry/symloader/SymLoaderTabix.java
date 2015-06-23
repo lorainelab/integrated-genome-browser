@@ -330,11 +330,20 @@ public class SymLoaderTabix extends SymLoader {
                     Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
                     URL indexUrl = new URL(fileUrl.toString() + ".tbi");
                     Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl);
-                    if (fileIs.isPresent() && indexFileIs.isPresent()) {
-                        CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-                        CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
-                        if (cacheStatus.isDataExists()) {
-                            return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+                    try {
+                        if (fileIs.isPresent() && indexFileIs.isPresent()) {
+                            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                            CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
+                            if (cacheStatus.isDataExists()) {
+                                return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+                            }
+                        }
+                    } finally {
+                        if(fileIs.isPresent()) {
+                            fileIs.get().close();
+                        }
+                        if(indexFileIs.isPresent()) {
+                            indexFileIs.get().close();
                         }
                     }
                 }

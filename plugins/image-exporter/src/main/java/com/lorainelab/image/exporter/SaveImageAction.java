@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author nick
  */
-@Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, provide = GenericAction.class)
+@Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
 public class SaveImageAction extends GenericAction implements IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "SaveImageAction";
@@ -26,6 +26,7 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private ExportDialog exportDialog;
     private final int TOOLBAR_INDEX = 4;
+    private static final int MENU_POSITION = 5;
 
     public SaveImageAction() {
         super(BUNDLE.getString("saveImage"), BUNDLE.getString("saveImageTooltip"),
@@ -57,12 +58,12 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
 
     @Override
     public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem(BUNDLE.getString("saveImage"), this);
+        return new JRPMenuItem(BUNDLE.getString("saveImage"), this, getMenuItemWeight());
     }
 
     @Override
     public int getMenuItemWeight() {
-        return 4;
+        return MENU_POSITION;
     }
 
     @Override

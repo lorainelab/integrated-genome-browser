@@ -72,6 +72,19 @@ public class MainMenuUtil implements MainMenuManager {
     private final List<AMenuItem> aMenuItemQueue;
     private boolean componentActivated;
     public static final int TOOLS_MENU_POSITION = 3;
+    
+    //Weights for File menu items.
+    private final int LOAD_FILE_WEIGHT = 1;
+    private final int LOAD_URL_WEIGHT = 2;
+    private final int EXPORT_FILE_WEIGHT = 5;
+    private static final int EXIT_ACTION_WEIGHT = 14;
+    private static final int FOURTH_FS_WEIGHT = 13;
+    private static final int THIRD_FS_WEIGHT = 10;
+    private static final int PREFERENCES_WEIGHT = 9;
+    private static final int SECOND_FS_WEIGHT = 8;
+    private static final int REMOVE_FEATURE_WEIGHT = 7;
+    private static final int FIRST_FS_WEIGHT = 4;
+
 
     public MainMenuUtil() {
         componentActivated = false;
@@ -112,25 +125,21 @@ public class MainMenuUtil implements MainMenuManager {
             Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
         }
     }
-
+    
     private void fileMenu() {
         int menuItemCounter = 1;
         JRPMenu fileMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "fileMenu", BUNDLE.getString("fileMenu"), 0);
         fileMenu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), menuItemCounter++));
-        menuItemCounter++; //leaving space for NewGenomeAction
-        fileMenu.addSeparator(menuItemCounter++);
-        menuItemCounter++; // leaving space for SaveImageAction
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), menuItemCounter++));
-        fileMenu.addSeparator(menuItemCounter++);
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), menuItemCounter++));
-        fileMenu.addSeparator(menuItemCounter++);
-        menuItemCounter++; // leaving space for LoadSessionAction
-        menuItemCounter++; // leaving space for SaveSessionAction
-        fileMenu.addSeparator(menuItemCounter++);
-        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), LOAD_FILE_WEIGHT));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), LOAD_URL_WEIGHT));
+        fileMenu.addSeparator(FIRST_FS_WEIGHT);
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), EXPORT_FILE_WEIGHT));
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), REMOVE_FEATURE_WEIGHT));
+        fileMenu.addSeparator(SECOND_FS_WEIGHT);
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), PREFERENCES_WEIGHT));
+        fileMenu.addSeparator(THIRD_FS_WEIGHT);
+        fileMenu.addSeparator(FOURTH_FS_WEIGHT);
+        MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), EXIT_ACTION_WEIGHT));
     }
 
     private void editMenu() {

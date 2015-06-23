@@ -57,6 +57,18 @@ public class OpenURIAction extends SeqMapViewActionA {
         return filters;
     }
 
+    protected static String getFriendlyName(String urlStr) {
+        // strip off final "/" character, if it exists.
+        if (urlStr.endsWith("/")) {
+            urlStr = urlStr.substring(0, urlStr.length() - 1);
+        }
+
+        //strip off all earlier slashes.
+        urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
+
+        return urlStr;
+    }
+
     public static GenomeVersion retrieveSeqGroup(String name) {
         return gmodel.addGenomeVersion(name);
     }
@@ -67,8 +79,8 @@ public class OpenURIAction extends SeqMapViewActionA {
         igbService = IgbServiceImpl.getInstance();
     }
 
-    public void openURI(URI uri, final String fileName, final boolean mergeSelected, final GenomeVersion genomeVersion, final String speciesName, boolean isReferenceSequence) {
-
+    public void openURI(URI uri, String fileName, final boolean mergeSelected, final GenomeVersion genomeVersion, final String speciesName, boolean isReferenceSequence) {
+        fileName = getFriendlyName(fileName);
         if (ScriptManager.getInstance().isScript(uri.toString())) {
             RunScriptAction.getAction().runScript(uri.toString());
             return;

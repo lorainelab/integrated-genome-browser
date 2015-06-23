@@ -341,8 +341,10 @@ public final class GeneralLoadUtils {
             if (dataContainer.getDataProvider() instanceof AssemblyProvider) {
                 AssemblyProvider assemblyProvider = (AssemblyProvider) dataContainer.getDataProvider();
                 //TODO load chromosome info
-                assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
-
+                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
+                assemblyInfo.entrySet().stream().forEach(entry -> {
+                    genomeVersion.addSeq(entry.getKey(), entry.getValue());
+                });
             }
 
         }

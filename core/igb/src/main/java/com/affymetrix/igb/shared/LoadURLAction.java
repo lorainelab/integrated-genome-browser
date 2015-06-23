@@ -41,18 +41,6 @@ public class LoadURLAction extends OpenURIAction {
         return ACTION;
     }
 
-    private static String getFriendlyName(String urlStr) {
-        // strip off final "/" character, if it exists.
-        if (urlStr.endsWith("/")) {
-            urlStr = urlStr.substring(0, urlStr.length() - 1);
-        }
-
-        //strip off all earlier slashes.
-        urlStr = urlStr.substring(urlStr.lastIndexOf('/') + 1);
-
-        return urlStr;
-    }
-
     private LoadURLAction() {
         super(BUNDLE.getString("openURL"), null,
                 "16x16/status/network-receive.png",

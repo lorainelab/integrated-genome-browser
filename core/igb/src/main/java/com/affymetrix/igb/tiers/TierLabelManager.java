@@ -84,7 +84,7 @@ public final class TierLabelManager implements PropertyHolder {
         props.put(ToolTipConstants.FILE_NAME, feature.getDataSetName());
         props.put(ToolTipConstants.DESCRIPTION, feature.description());
         try {
-            props.put(ToolTipConstants.URL, URLDecoder.decode(feature.getURI().toString(),"UTF-8"));
+            props.put(ToolTipConstants.URL, URLDecoder.decode(feature.getURI().toString(), "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
         }
         String server = feature.getDataContainer().getDataProvider().getName() + " (" + feature.getDataContainer().getDataProvider().getName() + ")";
@@ -608,7 +608,7 @@ public final class TierLabelManager implements PropertyHolder {
         });
 
         // then repack of course (tiermap repack also redoes labelmap glyph coords...)
-        tiermap.packTiers(false, false, false);
+        tiermap.packTiers(false, true, false);
         tiermap.updateWidget();
     }
 

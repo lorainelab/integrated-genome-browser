@@ -742,8 +742,7 @@ public final class GeneralLoadUtils {
                         BioSeq aseq = gmodel.getSelectedSeq().orElse(null);
 
                         if (aseq != null) {
-//                            gviewer.setAnnotatedSeq(aseq, true, true);
-                            gviewer.setAnnotatedSeq(aseq, true, true, true);
+                            gviewer.setAnnotatedSeq(aseq, true, true);
                         } else if (gmodel.getSelectedGenomeVersion() != null && gmodel.getSelectedGenomeVersion().getSeqCount() > 0) {
                             // This can happen when loading a brand-new genome
                             aseq = gmodel.getSelectedGenomeVersion().getSeq(0);

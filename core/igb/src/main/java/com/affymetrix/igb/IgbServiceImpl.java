@@ -284,7 +284,7 @@ public class IgbServiceImpl implements IgbService {
     @Override
     public void packMap(boolean fitx, boolean fity) {
         AffyTieredMap map = (AffyTieredMap) getSeqMap();
-        map.packTiers(false, false, false);
+        map.packTiers(false, true, false);
         map.stretchToFit(fitx, fity);
         map.updateWidget();
     }

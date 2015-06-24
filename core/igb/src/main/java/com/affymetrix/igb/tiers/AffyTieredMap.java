@@ -23,7 +23,6 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -119,7 +118,7 @@ public class AffyTieredMap extends NeoMap {
         // currently _ONLY_ tiers and glyphs placed in tiers will be repacked --
         // anything added directly to map other than tiers will need to
         // be dealt with manually
-        packTiers(true, false, false);
+        packTiers(true, true, false);
     }
 
     /**
@@ -211,15 +210,6 @@ public class AffyTieredMap extends NeoMap {
                 setFloatBounds(Y, newbox.y, newbox.y + newbox.height);
             }
         }
-    }
-
-    public void customInitPackStrectch() {
-        Adjustable adj = zoomer[1];
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
     }
 
     @Override

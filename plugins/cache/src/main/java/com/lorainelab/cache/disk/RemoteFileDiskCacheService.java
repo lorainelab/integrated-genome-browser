@@ -64,6 +64,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES = BigInteger.ZERO;
     public static final BigInteger DEFAULT_MAX_CACHE_SIZE_MB = new BigInteger("100");
     public static final BigInteger DEFAULT_CACHE_EXPIRE_MINUTES = new BigInteger("1440");
+    private BigInteger currentCacheSize;
     private final Preferences cachePrefsNode;
     private Collection<String> backgroundCaching;
 
@@ -80,7 +81,8 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        enforceEvictionPolicies();
+        setCurrentCacheSize(getCacheSizeInMB());
+        enforceEvictionPolicies();      
     }
 
     private enum CacheConfig {
@@ -100,7 +102,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     @Override
     public void cacheInBackground(URL url) {
         boolean confirm = ModalUtils.confirmPanel("Do you want to cache this data in the background?", cachePrefsNode, PreferenceUtils.CONFIRM_BEFORE_CACHE_IN_BACKGROUND, false);
-        if(confirm && backgroundCaching.add(url.toString())) {
+        if (confirm && backgroundCaching.add(url.toString())) {
             CThreadWorker< Void, Void> worker = new CThreadWorker< Void, Void>("caching sequence data file") {
                 @Override
                 protected Void runInBackground() {
@@ -181,12 +183,17 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             }
         }
         cleanupCache(path);
-        if (tryDownload(url, path)) {
-            try {
-                return Optional.ofNullable(new FileInputStream(new File(path + FILENAME + "." + FILENAME_EXT)));
-            } catch (FileNotFoundException ex) {
-                LOG.error(ex.getMessage(), ex);
-                return Optional.empty();
+        if (getCurrentCacheSize().compareTo(getMaxCacheSizeMB()) == 1) {
+            ModalUtils.infoPanel("Cache size exceeded");
+        } 
+        else {
+            if (tryDownload(url, path)) {
+                try {
+                    return Optional.ofNullable(new FileInputStream(new File(path + FILENAME + "." + FILENAME_EXT)));
+                } catch (FileNotFoundException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                    return Optional.empty();
+                }
             }
         }
         return Optional.empty();
@@ -233,10 +240,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             if (!Strings.isNullOrEmpty(md5) && verifyFile(md5, tmpFile)) {
                 File finalFile = new File(pathToDataFile);
                 FileUtils.moveFile(tmpFile, finalFile);
+                setCurrentCacheSize(getCurrentCacheSize().add(getCacheEntrySizeInMB(finalFile)));
                 return true;
-            } else {
+            } else if (Strings.isNullOrEmpty(md5)) {
                 File finalFile = new File(pathToDataFile);
                 FileUtils.moveFile(tmpFile, finalFile);
+                setCurrentCacheSize(getCurrentCacheSize().add(getCacheEntrySizeInMB(finalFile)));
                 return true;
             }
         } catch (Exception e) {
@@ -272,6 +281,10 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     private void cleanupCache(String path) {
+        CacheStatus cacheStatus = getCacheStatus(path);
+        if(cacheStatus.isDataExists()) {
+            setCurrentCacheSize(getCurrentCacheSize().subtract(getCacheEntrySizeInMB(cacheStatus.getData())));
+        }
         FileUtils.deleteQuietly(new File(path));
     }
 
@@ -339,7 +352,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 cacheStatus.setEtag(removeLineEndings(FileUtils.readFileToString(etag)));
                 cacheStatus.setUrl(removeLineEndings(FileUtils.readFileToString(url)));
                 cacheStatus.setData(data);
-                cacheStatus.setSize(getCacheEntrySize(data));
+                cacheStatus.setSize(getCacheEntrySizeInMB(data));
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cacheStatus.setDataExists(false);
@@ -382,6 +395,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
+        setCurrentCacheSize(BigInteger.ZERO);
     }
 
     @Override
@@ -397,18 +411,18 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     @Override
-    public BigInteger getCacheSize() {
-        return FileUtils.sizeOfDirectoryAsBigInteger(new File(DATA_DIR));
+    public BigInteger getCacheSizeInMB() {
+        return FileUtils.sizeOfDirectoryAsBigInteger(new File(DATA_DIR)).divide(new BigInteger("1000000"));
     }
 
     private String getCacheBaseDirFromDat(String datPath) {
         return datPath.replaceAll(FILENAME + "." + FILENAME_EXT, "");
     }
 
-    private BigInteger getCacheEntrySize(File file) {
+    private BigInteger getCacheEntrySizeInMB(File file) {
         return FileUtils.sizeOfAsBigInteger(file).divide(new BigInteger("1000000"));
     }
-    
+
     private void cleanUpTempFiles() {
         //TODO: remove temp files on startup
         Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_TEMP_EXT}, true);
@@ -420,8 +434,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     private void enforceCacheSize() {
-        BigInteger size = getCacheSize();
-        size = size.divide(new BigInteger("1000000"));
+        BigInteger size = getCacheSizeInMB();
 
         if (size.compareTo(getMaxCacheSizeMB()) > 0) {
             BigInteger diff = size.subtract(getMaxCacheSizeMB());
@@ -430,7 +443,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             Iterator<File> it = listFiles.iterator();
             while (it.hasNext()) {
                 File file = it.next();
-                files.put(file.getAbsolutePath(), getCacheEntrySize(file));
+                files.put(file.getAbsolutePath(), getCacheEntrySizeInMB(file));
             }
             //TODO: Figure out diff in size, determine number of files to delete
             files = sortByComparator(files);
@@ -511,6 +524,18 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public CacheStatus getCacheStatus(URL url) {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
         return getCacheStatus(path);
+    }
+
+    public void setCurrentCacheSize(BigInteger currentCacheSize) {
+        if(currentCacheSize.compareTo(BigInteger.ZERO) == 1) {
+            this.currentCacheSize = currentCacheSize;
+        } else {
+            this.currentCacheSize = BigInteger.ZERO;
+        }
+    }
+
+    public BigInteger getCurrentCacheSize() {
+        return currentCacheSize;
     }
 
     private class HttpHeader {

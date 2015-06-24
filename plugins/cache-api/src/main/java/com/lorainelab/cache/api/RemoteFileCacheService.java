@@ -25,7 +25,7 @@ public interface RemoteFileCacheService {
 
     public boolean cacheExists(URL url);
 
-    public BigInteger getCacheSize();
+    public BigInteger getCacheSizeInMB();
 
     public void enforceEvictionPolicies();
 

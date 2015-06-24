@@ -7,9 +7,9 @@ package com.lorainelab.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPJPanel;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,6 +19,7 @@ import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,6 +47,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private static final String TAB_NAME = "Cache";
     private static final int TAB_POSITION = 10;
     private JPanel cachePanel;
+    private JCheckBox cacheEnable;
     private JButton removeBtn;
     private JButton clearAllBtn;
     private JButton refreshBtn;
@@ -97,6 +99,10 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     public void refresh() {
         cacheTableModel.refresh();
         cacheTableModel.fireTableDataChanged();
+        initMaxCacheSizeValue();
+        initMinFileSizeValue();
+        initCacheExpireValue();
+        initCacheEnableValue();
     }
 
     @Activate
@@ -120,7 +126,11 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         initCacheSettingsApply();
         initMaxCacheSize();
         initMinFileSize();
-        //TODO:Add buttons to panel
+        initCacheEnable();
+        
+        JPanel cacheEnablePanel = new JPanel(new MigLayout());
+        cacheEnablePanel.add(cacheEnable);
+        
         JPanel cacheExpirePanel = new JPanel(new MigLayout());
         cacheExpirePanel.add(cacheExpireLabel, "width :125:");
         cacheExpirePanel.add(cacheExpire, "width :75:");
@@ -139,6 +149,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout());
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
 
+        panel.add(cacheEnablePanel, "wrap");
         panel.add(cacheExpirePanel, "wrap");
         panel.add(maxCacheSizePanel, "wrap");
         panel.add(minFileSizePanel, "wrap");
@@ -244,6 +255,44 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private void initCacheExpireValue() {
         cacheExpire.setText(remoteFileCacheService.getCacheExpireMin().toString());
         cacheExpire.setBackground(Color.WHITE);
+    }
+    
+    private void initCacheEnable() {
+        cacheEnable = new JCheckBox("Enable Cache");
+        initCacheEnableValue();
+        cacheEnable.addActionListener((ActionEvent e) -> {
+            remoteFileCacheService.setCacheEnabled(cacheEnable.isSelected());
+            if(cacheEnable.isSelected()) {
+                enableCacheSettings();
+            }
+            else {
+                disableCacheSettings();
+            }
+        });
+    }
+    
+    private void disableCacheSettings() {
+        cacheExpire.setEnabled(false);
+        maxCacheSize.setEnabled(false);
+        minFileSize.setEnabled(false);
+        cacheSettingsApply.setEnabled(false);
+    }
+    
+    private void enableCacheSettings() {
+        cacheExpire.setEnabled(true);
+        maxCacheSize.setEnabled(true);
+        minFileSize.setEnabled(true);
+        cacheSettingsApply.setEnabled(true);   
+    }
+    
+    private void initCacheEnableValue() {
+        boolean cacheEnabled = remoteFileCacheService.getCacheEnabled();
+        cacheEnable.setSelected(cacheEnabled);
+        if(cacheEnabled) {
+            enableCacheSettings();
+        } else {
+            disableCacheSettings();
+        }
     }
 
     private void initCacheSettingsApply() {

@@ -38,12 +38,16 @@ public interface RemoteFileCacheService {
     public BigInteger getMinFileSizeBytes();
 
     public BigInteger getCacheExpireMin();
+    
+    public boolean getCacheEnabled();
 
     public void setMaxCacheSizeMB(BigInteger value);
 
     public void setMinFileSizeBytes(BigInteger value);
 
     public void setCacheExpireMin(BigInteger value);
+    
+    public void setCacheEnabled(boolean value);
     
     public void cacheInBackground(URL url);
     

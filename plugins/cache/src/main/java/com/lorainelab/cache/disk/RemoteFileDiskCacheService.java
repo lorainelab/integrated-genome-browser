@@ -59,6 +59,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public static String DATA_DIR;
     public static final int FILENAME_SIZE = 100;
     public static final String FILENAME_EXT = "dat";
+    public static final String FILENAME_TEMP_EXT = "tmp";
     public static final String FILENAME = "data";
     public static final BigInteger DEFAULT_FILESIZE_MIN_BYTES = BigInteger.ZERO;
     public static final BigInteger DEFAULT_MAX_CACHE_SIZE_MB = new BigInteger("100");
@@ -79,6 +80,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
+        enforceEvictionPolicies();
     }
 
     private enum CacheConfig {
@@ -193,7 +195,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     private boolean tryDownload(URL url, String path) {
         String basePathToDataFile = path + FILENAME;
         String pathToDataFile = basePathToDataFile + "." + FILENAME_EXT;
-        File tmpFile = new File(basePathToDataFile + ".tmp");
+        File tmpFile = new File(basePathToDataFile + "." + FILENAME_TEMP_EXT);
         File md5File = new File(basePathToDataFile + ".md5");
         File lastModifiedFile = new File(basePathToDataFile + ".lastModified");
         File cacheLastUpdateFile = new File(basePathToDataFile + ".cacheLastUpdate");
@@ -406,9 +408,18 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     private BigInteger getCacheEntrySize(File file) {
         return FileUtils.sizeOfAsBigInteger(file).divide(new BigInteger("1000000"));
     }
+    
+    private void cleanUpTempFiles() {
+        //TODO: remove temp files on startup
+        Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_TEMP_EXT}, true);
+        Iterator<File> it = listFiles.iterator();
+        while (it.hasNext()) {
+            File file = it.next();
+            FileUtils.deleteQuietly(file);
+        }
+    }
 
-    @Override
-    public void enforceCacheSize() {
+    private void enforceCacheSize() {
         BigInteger size = getCacheSize();
         size = size.divide(new BigInteger("1000000"));
 
@@ -463,10 +474,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     @Override
     public void enforceEvictionPolicies() {
+        cleanUpTempFiles();
+        enforceCacheSize();
         enforceCacheExpireEvictionPolicy();
     }
 
-    public void enforceCacheExpireEvictionPolicy() {
+    private void enforceCacheExpireEvictionPolicy() {
         Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
         Iterator<File> it = listFiles.iterator();
         while (it.hasNext()) {

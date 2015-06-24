@@ -27,8 +27,6 @@ public interface RemoteFileCacheService {
 
     public BigInteger getCacheSize();
 
-    public void enforceCacheSize();
-
     public void enforceEvictionPolicies();
 
     public List<CacheStatus> getCacheEntries();

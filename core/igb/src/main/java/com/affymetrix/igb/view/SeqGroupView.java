@@ -433,7 +433,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         GeneralLoadView.getLoadView().refreshTreeView();	// Replacing clearFeaturesTable with refreshTreeView.
         // refreshTreeView should only be called if feature table
         // needs to be cleared.
-        GeneralLoadView.getLoadView().disableAllButtons();
+        GeneralLoadView.getLoadView().refreshDataManagementView();
         GeneralLoadView.loadGenomeLoadModeDataSets();
     }
 
@@ -480,7 +480,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 //			GeneralLoadView.getLoadView().refreshDataManagementView();
             // refreshTreeView should only be called if feature table
             // needs to be cleared.
-            GeneralLoadView.getLoadView().disableAllButtons();
+            GeneralLoadView.getLoadView().refreshDataManagementView();
             return;
         }
 

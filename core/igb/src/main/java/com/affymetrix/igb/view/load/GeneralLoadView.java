@@ -440,10 +440,6 @@ public final class GeneralLoadView {
         setAllButtons(getIsDisableNecessary());
     }
 
-    public void disableAllButtons() {
-        setAllButtons(false);
-    }
-
     private void setAllButtons(final boolean enabled) {
         ThreadUtils.runOnEventQueue(() -> {
             partial_residuesB.setEnabled(enabled);

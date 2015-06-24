@@ -52,7 +52,7 @@ public class ExportDialogGui extends JPanel {
     public ExportDialogGui(ExportDialog exportDialog) {
         this.controller = exportDialog;
         setLayout(new MigLayout("", "[grow]", "[][][grow]"));
-        exportDialogFrame = PreferenceUtils.createFrame(TITLE, new Dimension(600, 400));
+        exportDialogFrame = PreferenceUtils.createFrame(TITLE, new Dimension(600, 480));
         exportDialogFrame.add(this);
         addMainPanel();
         addImageOptionsPanel();

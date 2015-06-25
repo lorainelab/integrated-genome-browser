@@ -476,8 +476,6 @@ public class AffyTieredMap extends NeoMap {
         // pack them again!  This clears-up problems with the packing of the axis
         // tier and getting the labelmap lined-up with the main tier map.
         packTiers(false, true, tierChanged);
-        JScrollBar jScrollBar = getScroller(NeoMap.Y);
-        jScrollBar.setValue(0);
     }
 
     /**

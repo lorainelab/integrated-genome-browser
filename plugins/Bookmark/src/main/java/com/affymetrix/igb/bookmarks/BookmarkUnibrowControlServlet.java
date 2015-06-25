@@ -15,6 +15,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.general.DataSetUtils;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -590,13 +591,16 @@ public final class BookmarkUnibrowControlServlet {
 
     private void directlyLoadUrls(GenomeVersion genomeVersion, final ListMultimap<String, String> parameters) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-        query_urls.forEach(urlToLoad -> {
+        int i = 0;
+        for (String urlToLoad : query_urls) {
+            String fileName = DataSetUtils.extractNameFromPath(urlToLoad);
             try {
-                LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, genomeVersion, genomeVersion.getSpeciesName(), false);
+                LoadURLAction.getAction().openURI(new URI(urlToLoad), fileName, false, genomeVersion, genomeVersion.getSpeciesName(), false);
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
             }
-        });
+            i++;
+        }
 
     }
 

@@ -50,6 +50,8 @@ import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
+import static org.apache.felix.bundlerepository.Resource.SYMBOLIC_NAME;
+import static org.apache.felix.bundlerepository.Resource.VERSION;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -606,7 +608,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         for (Bundle bundle : unfilteredBundles) {
             if (DEFAULT_BUNDLES.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
                 try {
-                    Resource[] resources = repoAdmin.discoverResources("(symbolicname=" + bundle.getSymbolicName() + ")");
+                    Resource[] resources = repoAdmin.discoverResources("(&(" + SYMBOLIC_NAME + "=" + bundle.getSymbolicName() + ")(" + VERSION + "=" + bundle.getVersion() + "))");
                     Resolver resolver = repoAdmin.resolver();
                     if (resources.length > 0) {
                         resolver.add(resources[0]);
@@ -614,6 +616,11 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
                             filteredBundles.add(bundle);
                         } else {
                             logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
+                            if (logger.isDebugEnabled()) {
+                                for (Reason reason : resolver.getUnsatisfiedRequirements()) {
+                                    logger.debug(reason.getRequirement().getComment());
+                                }
+                            }
                         }
                     } else {
                         //add anyway

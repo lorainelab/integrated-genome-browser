@@ -15,6 +15,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
@@ -29,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -127,10 +130,10 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         initMaxCacheSize();
         initMinFileSize();
         initCacheEnable();
-        
+
         JPanel cacheEnablePanel = new JPanel(new MigLayout());
         cacheEnablePanel.add(cacheEnable);
-        
+
         JPanel cacheExpirePanel = new JPanel(new MigLayout());
         cacheExpirePanel.add(cacheExpireLabel, "width :125:");
         cacheExpirePanel.add(cacheExpire, "width :75:");
@@ -256,39 +259,38 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cacheExpire.setText(remoteFileCacheService.getCacheExpireMin().toString());
         cacheExpire.setBackground(Color.WHITE);
     }
-    
+
     private void initCacheEnable() {
         cacheEnable = new JCheckBox("Enable Cache");
         initCacheEnableValue();
         cacheEnable.addActionListener((ActionEvent e) -> {
             remoteFileCacheService.setCacheEnabled(cacheEnable.isSelected());
-            if(cacheEnable.isSelected()) {
+            if (cacheEnable.isSelected()) {
                 enableCacheSettings();
-            }
-            else {
+            } else {
                 disableCacheSettings();
             }
         });
     }
-    
+
     private void disableCacheSettings() {
         cacheExpire.setEnabled(false);
         maxCacheSize.setEnabled(false);
         minFileSize.setEnabled(false);
         cacheSettingsApply.setEnabled(false);
     }
-    
+
     private void enableCacheSettings() {
         cacheExpire.setEnabled(true);
         maxCacheSize.setEnabled(true);
         minFileSize.setEnabled(true);
-        cacheSettingsApply.setEnabled(true);   
+        cacheSettingsApply.setEnabled(true);
     }
-    
+
     private void initCacheEnableValue() {
         boolean cacheEnabled = remoteFileCacheService.getCacheEnabled();
         cacheEnable.setSelected(cacheEnabled);
-        if(cacheEnabled) {
+        if (cacheEnabled) {
             enableCacheSettings();
         } else {
             disableCacheSettings();
@@ -332,7 +334,10 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private void initRemoveBtn() {
         removeBtn = new JButton("Remove");
         removeBtn.addActionListener((ActionEvent e) -> {
-            cacheTableModel.removeRow(cacheDataTable.getSelectedRow());
+            int rows[] = cacheDataTable.getSelectedRows();
+            for (int i = 0; i < cacheDataTable.getSelectedRowCount(); i++) {
+                cacheTableModel.removeRow(cacheDataTable.convertRowIndexToModel(rows[i]));
+            }
             refresh();
         });
         removeBtn.setEnabled(false);
@@ -348,7 +353,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JTable getStyledJTable() {
-        JTable table = new JTable(cacheTableModel) {//data, columnNames){
+        JTable table = new JTable(cacheTableModel) {
 
             @Override
             public Component prepareRenderer(
@@ -360,12 +365,33 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             }
         };
         table.setRowSelectionAllowed(true);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 removeBtn.setEnabled(true);
             }
         });
+
+        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+
+            SimpleDateFormat f = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+
+            public Component getTableCellRendererComponent(JTable table,
+                    Object value, boolean isSelected, boolean hasFocus,
+                    int row, int column) {
+                if (value instanceof Date) {
+                    value = f.format(value);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected,
+                        hasFocus, row, column);
+            }
+        };
+
+        table.getColumnModel().getColumn(1).setCellRenderer(tableCellRenderer);
+        table.getColumnModel().getColumn(2).setCellRenderer(tableCellRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+
+        table.setAutoCreateRowSorter(true);
         return table;
     }
 

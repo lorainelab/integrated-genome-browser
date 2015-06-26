@@ -162,6 +162,10 @@ public abstract class PreferenceUtils {
     public static Preferences getCachePrefsNode() {
         return PreferenceUtils.getTopNode().node("cache");
     }
+    
+    public static Preferences getCacheRequestNode() {
+        return PreferenceUtils.getTopNode().node("cacheRequest");
+    }
 
     public static Preferences getAnnotationLabelPrefsNode() {
         return PreferenceUtils.getTopNode().node("annotLabelPrefs");
@@ -599,7 +603,7 @@ public abstract class PreferenceUtils {
         return combo_box;
     }
 
-    private static String shortNodeName(String s, boolean remove_slash) {
+    public static String shortNodeName(String s, boolean remove_slash) {
         String short_s;
         if (s.length() >= Preferences.MAX_NAME_LENGTH) {
             HashFunction hf = Hashing.md5();

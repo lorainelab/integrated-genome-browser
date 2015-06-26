@@ -8,6 +8,7 @@ package com.lorainelab.cache.api;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,5 +53,7 @@ public interface RemoteFileCacheService {
     public void cacheInBackground(URL url);
     
     public boolean isCachingInBackground(URL url);
+    
+    public Date getLastRequestDate(URL url);
 
 }

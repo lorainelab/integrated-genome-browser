@@ -5,6 +5,7 @@
  */
 package com.lorainelab.cache.disk;
 
+import com.google.common.collect.Sets;
 import com.lorainelab.cache.api.CacheStatus;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +14,9 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import junit.framework.Assert;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -46,6 +49,13 @@ public class RemoteFileCacheServiceTest {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
+    }
+    
+    @Test
+    public void testList() {
+        Collection<String> backgroundCaching = Sets.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        org.junit.Assert.assertTrue(backgroundCaching.add("http://igbquickload.org/quickload/A_thaliana_Jun_2009/TAIR10_mRNA.bed.gz"));
+        org.junit.Assert.assertFalse(backgroundCaching.add("http://igbquickload.org/quickload/A_thaliana_Jun_2009/TAIR10_mRNA.bed.gz"));
     }
 
     @Test

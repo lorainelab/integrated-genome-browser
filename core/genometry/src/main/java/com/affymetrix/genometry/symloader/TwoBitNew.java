@@ -86,7 +86,7 @@ public class TwoBitNew extends SymLoader {
                 }
             } else {
                 if(!remoteFileCacheService.isCachingInBackground(fileUrl)) {
-                    remoteFileCacheService.cacheInBackground(fileUrl);
+                    remoteFileCacheService.promptToCacheInBackground(fileUrl);
                 }
                 raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
             }

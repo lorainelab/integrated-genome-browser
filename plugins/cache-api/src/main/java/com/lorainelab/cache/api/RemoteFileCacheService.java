@@ -50,7 +50,7 @@ public interface RemoteFileCacheService {
     
     public void setCacheEnabled(boolean value);
     
-    public void cacheInBackground(URL url);
+    public void promptToCacheInBackground(URL url);
     
     public boolean isCachingInBackground(URL url);
     

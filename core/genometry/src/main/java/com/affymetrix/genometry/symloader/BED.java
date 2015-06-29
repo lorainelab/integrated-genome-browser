@@ -187,15 +187,12 @@ public class BED extends SymLoader implements LineProcessor {
     }
 
     private void processTrackLine(String line) {
+        String defaultName;
         trackLineParser.parseTrackLine(line);
         String trackLineName = trackLineParser.getCurrentTrackHash().get(TrackLineParser.NAME);
         if (StringUtils.isNotBlank(trackLineName)) {
-            if (trackName.contains(BED_FILE_EXTENSION)) {
-                trackName = trackName.substring(0, trackName.indexOf(BED_FILE_EXTENSION)) + " " + trackLineName;
-            } else {
-                trackName = trackName + "_" + trackLineName;
-            }
-            trackLineParser.getCurrentTrackHash().put(TrackLineParser.NAME, trackName);
+            defaultName = trackLineName;
+            trackLineParser.getCurrentTrackHash().put(TrackLineParser.NAME, defaultName);
         }
         bedFileType = trackLineParser.getCurrentTrackHash().get("type");
     }

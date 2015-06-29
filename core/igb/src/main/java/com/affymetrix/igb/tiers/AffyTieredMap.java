@@ -23,7 +23,6 @@ import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -162,12 +161,11 @@ public class AffyTieredMap extends NeoMap {
             }
         }
 
-        Rectangle2D.Double mbox = getCoordBounds();
         // assuming all tiers start anchored at 0 when being packed...
         //   if want to add anchor location stuff back in, refer to
         //   com.affymetrix.genoviz. widget. TieredNeoMap
         double offset = 0;
-        double height = mbox.height;
+        double height;
         for (TierGlyph mtg : tiersCopy) {
             // don't make room if tier isn't visible
             if (!mtg.isVisible()) {
@@ -211,15 +209,6 @@ public class AffyTieredMap extends NeoMap {
                 setFloatBounds(Y, newbox.y, newbox.y + newbox.height);
             }
         }
-    }
-
-    public void customInitPackStrectch() {
-        Adjustable adj = zoomer[1];
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
-        adj.setValue(adj.getValue() - (adj.getMaximum() - adj.getMinimum()) / 20);
     }
 
     @Override
@@ -647,5 +636,9 @@ public class AffyTieredMap extends NeoMap {
                 this.setSelected(b);
             }
         }
+    }
+
+    public double[] getPixelsPerCoord() {
+        return pixels_per_coord;
     }
 }

@@ -50,7 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
-import org.bioviz.protannot.generated.ProtannotParser;
+import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

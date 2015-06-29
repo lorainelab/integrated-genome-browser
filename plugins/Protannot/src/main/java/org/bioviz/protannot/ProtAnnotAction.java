@@ -86,7 +86,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.table.AbstractTableModel;
-import org.bioviz.protannot.generated.ProtannotParser;
+import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.LoggerFactory;
 
 /**

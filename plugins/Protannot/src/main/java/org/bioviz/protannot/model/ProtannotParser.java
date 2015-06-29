@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot.generated;
+package org.bioviz.protannot.model;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
@@ -30,7 +30,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.bioviz.protannot.NormalizeXmlStrand;
-import org.bioviz.protannot.generated.Dnaseq.Aaseq.Simsearch;
+import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;

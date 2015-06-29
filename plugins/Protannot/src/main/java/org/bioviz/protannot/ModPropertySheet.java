@@ -24,7 +24,7 @@ import javax.swing.JViewport;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import org.bioviz.protannot.generated.ProtannotParser;
+import org.bioviz.protannot.model.ProtannotParser;
 
 /**
  * Displays Properties (name, value pairs) associated with

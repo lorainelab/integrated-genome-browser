@@ -2,10 +2,10 @@ package org.bioviz.protannot;
 
 import com.affymetrix.genometry.util.DNAUtils;
 import java.math.BigInteger;
-import org.bioviz.protannot.generated.Dnaseq;
-import org.bioviz.protannot.generated.Dnaseq.MRNA;
-import org.bioviz.protannot.generated.Dnaseq.MRNA.Cds;
-import org.bioviz.protannot.generated.Dnaseq.MRNA.Exon;
+import org.bioviz.protannot.model.Dnaseq;
+import org.bioviz.protannot.model.Dnaseq.MRNA;
+import org.bioviz.protannot.model.Dnaseq.MRNA.Cds;
+import org.bioviz.protannot.model.Dnaseq.MRNA.Exon;
 import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;

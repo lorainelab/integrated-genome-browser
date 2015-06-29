@@ -11,7 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bioviz.protannot.generated.ProtannotParser;
+import org.bioviz.protannot.model.ProtannotParser;
 
 /**
  * This class opens a directory and then attempts to read every file in the

@@ -72,6 +72,7 @@ public abstract class PreferenceUtils {
     public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
     public static final String CONFIRM_BEFORE_REFRESH = "Confirm before refresh";
     public static final String CONFIRM_BEFORE_GROUP_CHANGE = "Confirm before switching to new group";
+    public static final String CONFIRM_BEFORE_CACHE_IN_BACKGROUND = "Confirm before caching 2bit";
     public static final String AUTO_LOAD = "Auto Load Data";
     public static final String COVERAGE_SUMMARY_HEATMAP = "Coverage Summary as HeatMap";
     public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
@@ -160,6 +161,14 @@ public abstract class PreferenceUtils {
 
     public static Preferences getCachePrefsNode() {
         return PreferenceUtils.getTopNode().node("cache");
+    }
+    
+    public static Preferences getCacheRequestNode() {
+        return PreferenceUtils.getTopNode().node("cacheRequest");
+    }
+    
+    public static String getCacheRequestKey(URL url) {
+        return PreferenceUtils.shortNodeName(url.toString(), false);
     }
 
     public static Preferences getAnnotationLabelPrefsNode() {

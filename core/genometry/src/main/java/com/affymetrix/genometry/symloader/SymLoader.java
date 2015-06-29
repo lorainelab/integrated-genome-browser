@@ -17,13 +17,17 @@ import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SortTabFile;
+import com.lorainelab.cache.api.CacheStatus;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,8 +35,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  *
@@ -50,6 +59,8 @@ public abstract class SymLoader {
     protected final Map<BioSeq, Boolean> chrSort = new HashMap<>();
     protected final GenomeVersion genomeVersion;
     public final String featureName;
+    protected static RemoteFileCacheService remoteFileCacheService;
+    protected final BundleContext bundleContext;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
@@ -60,6 +71,8 @@ public abstract class SymLoader {
     }
 
     public SymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+        bundleContext = FrameworkUtil.getBundle(SymLoaderTabix.class).getBundleContext();
+        initCacheServiceTracker();
         this.uri = uri;
         this.featureName = featureName;
         this.genomeVersion = genomeVersion;
@@ -78,13 +91,63 @@ public abstract class SymLoader {
         return featureName;
     }
 
+    private void initCacheServiceTracker() {
+        ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
+
+        dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
+                remoteFileCacheService = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+        dependencyTracker.open();
+    }
+
+    private boolean isBedFile(URL fileUrl) {
+        return fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed");
+    }
+
+    private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
+        BufferedInputStream bis = null;
+        Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+
+        if (fileIs.isPresent()) {
+            try {
+                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                if (cacheStatus.isDataExists()) {
+                    StringBuffer stripped_name = new StringBuffer();
+                    InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
+                    if (is instanceof BufferedInputStream) {
+                        bis = (BufferedInputStream) is;
+                    } else {
+                        bis = new BufferedInputStream(is);
+                    }
+                }
+            } finally {
+                fileIs.get().close();
+            }
+        }
+        return Optional.empty();
+    }
+
     protected boolean buildIndex() throws Exception {
         BufferedInputStream bis = null;
         Map<String, Integer> chrLength = new HashMap<>();
         Map<String, File> chrFiles = new HashMap<>();
 
         try {
-            bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+
+            URL fileUrl = uri.toURL();
+            if (isBedFile(fileUrl)) {
+                Optional<BufferedInputStream> cachedStream = checkRemoteFileCache(fileUrl);
+                if (cachedStream.isPresent()) {
+                    bis = cachedStream.get();
+                }
+
+            } else {
+                bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
+            }
             if (bis == null) {
                 throw new IOException("Input Stream NULL");
             }
@@ -120,8 +183,7 @@ public abstract class SymLoader {
     }
 
     /**
-     * Get list of chromosomes used in the file/uri. Especially useful when
-     * loading a file into an "unknown" genome
+     * Get list of chromosomes used in the file/uri. Especially useful when loading a file into an "unknown" genome
      *
      * @return List of chromosomes
      */
@@ -230,8 +292,7 @@ public abstract class SymLoader {
     }
 
     /**
-     * Get residues in the region of the chromosome. This is generally only
-     * defined for some parsers
+     * Get residues in the region of the chromosome. This is generally only defined for some parsers
      *
      * @param span - span of chromosome
      * @return String of residues

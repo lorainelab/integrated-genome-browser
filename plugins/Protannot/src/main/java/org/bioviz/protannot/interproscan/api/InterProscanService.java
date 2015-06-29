@@ -5,13 +5,15 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import java.util.Optional;
+
 /**
  *
  * @author jeckstei
  */
 public interface InterProscanService {
     public Status status(String jobId);
-    public String run(JobRequest jobRequest);
+    public Optional<String> run(JobRequest jobRequest);
     
     public static enum Status {
         RUNNING,FINISHED,ERROR,FAILURE,NOT_FOUND;

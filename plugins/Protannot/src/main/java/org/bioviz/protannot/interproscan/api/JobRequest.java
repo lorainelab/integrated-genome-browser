@@ -5,6 +5,7 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -14,37 +15,11 @@ import java.util.Set;
 public class JobRequest {
 
     private String email;
-    private String title;
-    private Set<SignatureMethods> signatureMethods;
-    private boolean goterms;
-    private boolean pathways;
-    private String sequence;
-
-    public boolean isGoterms() {
-        return goterms;
-    }
-
-    public void setGoterms(boolean goterms) {
-        this.goterms = goterms;
-    }
-
-    public boolean isPathways() {
-        return pathways;
-    }
-
-    public void setPathways(boolean pathways) {
-        this.pathways = pathways;
-    }
-
-    public String getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(String sequence) {
-        this.sequence = sequence;
-    }
-    
-    
+    private Optional<String> title;
+    private Optional<Set<SignatureMethods>> signatureMethods;
+    private Optional<Boolean> goterms;
+    private Optional<Boolean> pathways;
+    private Optional<String> sequence;
 
     public String getEmail() {
         return email;
@@ -54,25 +29,51 @@ public class JobRequest {
         this.email = email;
     }
 
-    public String getTitle() {
+    public Optional<String> getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(Optional<String> title) {
         this.title = title;
     }
 
-    public Set<SignatureMethods> getSignatureMethods() {
+    public Optional<Set<SignatureMethods>> getSignatureMethods() {
         return signatureMethods;
     }
 
-    public void setSignatureMethods(Set<SignatureMethods> signatureMethods) {
+    public void setSignatureMethods(Optional<Set<SignatureMethods>> signatureMethods) {
         this.signatureMethods = signatureMethods;
     }
+
+    public Optional<Boolean> getGoterms() {
+        return goterms;
+    }
+
+    public void setGoterms(Optional<Boolean> goterms) {
+        this.goterms = goterms;
+    }
+
+    public Optional<Boolean> getPathways() {
+        return pathways;
+    }
+
+    public void setPathways(Optional<Boolean> pathways) {
+        this.pathways = pathways;
+    }
+
+    public Optional<String> getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Optional<String> sequence) {
+        this.sequence = sequence;
+    }
+
+   
     
     
 
-    private enum SignatureMethods {
+    public enum SignatureMethods {
 
         BlastProDom("ProDom"), FPrintScan("PRINTS"),
         HMMPIR("PIRSF"), HMMPfam("PfamA"), HMMSmart("SMART"),

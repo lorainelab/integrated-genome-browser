@@ -38,6 +38,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -60,7 +61,7 @@ public abstract class SymLoader {
     protected final GenomeVersion genomeVersion;
     public final String featureName;
     protected static RemoteFileCacheService remoteFileCacheService;
-    protected final BundleContext bundleContext;
+    protected BundleContext bundleContext;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
@@ -71,8 +72,11 @@ public abstract class SymLoader {
     }
 
     public SymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        bundleContext = FrameworkUtil.getBundle(SymLoaderTabix.class).getBundleContext();
-        initCacheServiceTracker();
+        final Bundle bundle = FrameworkUtil.getBundle(SymLoaderTabix.class);
+        if (bundle != null) { // this could happen in unit tests
+            bundleContext = bundle.getBundleContext();
+            initCacheServiceTracker();
+        }
         this.uri = uri;
         this.featureName = featureName;
         this.genomeVersion = genomeVersion;
@@ -139,7 +143,7 @@ public abstract class SymLoader {
         try {
 
             URL fileUrl = uri.toURL();
-            if (isBedFile(fileUrl)) {
+            if (remoteFileCacheService != null && isBedFile(fileUrl)) {
                 Optional<BufferedInputStream> cachedStream = checkRemoteFileCache(fileUrl);
                 if (cachedStream.isPresent()) {
                     bis = cachedStream.get();

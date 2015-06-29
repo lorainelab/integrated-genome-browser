@@ -5,6 +5,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import java.util.Set;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class Das2DataProviderTest {
     public static String DAS2_URL = "http://bioserver.hci.utah.edu:8080/DAS2DB";
 
     @Test
+    @Ignore
     public void typeRequestTest() {
         DataProvider dataProvider = new Das2DataProvider(DAS2_URL, "HCI_UTAH", 1);
         GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Feb_2009");

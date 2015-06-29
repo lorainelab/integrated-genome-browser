@@ -195,37 +195,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     };
     private final Map<Arguments, String> ArgumentValues = new EnumMap<>(Arguments.class);
 
-//    public static void main(String[] args) {
-////        ConsoleView.init(APP_NAME);
-//
-//        System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
-//        System.out.println("UserAgent: " + USER_AGENT);
-//        System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-//        Runtime runtime = Runtime.getRuntime();
-//        System.out.println("Locale: " + Locale.getDefault());
-//        System.out.println("System memory: " + runtime.maxMemory() / 1024);
-//        if (args != null && args.length > 0) {
-//            System.out.print("arguments: ");
-//            for (String arg : args) {
-//                System.out.print(" " + arg);
-//            }
-//            System.out.println();
-//        } else {
-//            System.out.print("No startup arguments");
-//        }
-//
-//        System.out.println();
-//
-//        singleton.parseArguments(args);
-//        singleton.loadPrefs();
-//        singleton.start();
-//    }
-//    static ProtAnnotMain getInstance() {
-//        if (singleton == null) {
-//            singleton = new ProtAnnotMain();
-//        }
-//        return singleton;
-//    }
     /**
      * Returns the icon stored in the jar path. It is expected to be at com.affymetrix.igb.igb.gif.
      *

@@ -55,5 +55,9 @@ public interface RemoteFileCacheService {
     public boolean isCachingInBackground(URL url);
     
     public Date getLastRequestDate(URL url);
+    
+    public void registerEventListener(Object listener);
+    
+    public void unregisterEventListener(Object listener); 
 
 }

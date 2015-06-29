@@ -16,7 +16,9 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
 import com.lorainelab.cache.api.CacheStatus;
+import com.lorainelab.cache.api.ChangeEvent;
 import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.lorainelab.cache.configuration.panel.CacheConfigurationPanel;
 import com.lorainelab.igb.services.IgbService;
@@ -86,12 +88,24 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     private volatile boolean isPromptingUser;
     private volatile boolean delayPrompt;
     private volatile Date lastPrompt;
+    private EventBus eventBus;
 
     public RemoteFileDiskCacheService() {
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
         cacheRequestNode = PreferenceUtils.getCacheRequestNode();
         backgroundCaching = Sets.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         isPromptingUser = false;
+        eventBus = new EventBus();
+    }
+    
+    @Override
+    public void registerEventListener(Object listener) {
+        eventBus.register(listener);
+    }
+    
+    @Override
+    public void unregisterEventListener(Object listener) {
+        eventBus.unregister(listener);
     }
 
     @Activate
@@ -164,16 +178,19 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                     LOG.error(ex.getMessage(), ex);
                     setMaxCacheSizeMB(getMaxCacheSizeMB().add(incrementSizeInMB));
                 }
+                eventBus.post(new ChangeEvent());
                 return true;
             case 1:
                 return false;
             case 2:
                 setCacheEnabled(false);
+                eventBus.post(new ChangeEvent());
                 return false;
             case 3:
                 delayPrompt = true;
                 lastPrompt = new Date();
                 igbService.openPreferencesPanelTab(CacheConfigurationPanel.class);
+                eventBus.post(new ChangeEvent());
                 return false;
             default:
                 return false;

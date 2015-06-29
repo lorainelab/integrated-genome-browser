@@ -27,9 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import static org.bioviz.protannot.ProtAnnotMain.APP_NAME;
-import static org.bioviz.protannot.ProtAnnotMain.APP_VERSION_FULL;
-import static org.bioviz.protannot.ProtAnnotMain.BUNDLE;
+import static org.bioviz.protannot.ProtAnnotAction.APP_NAME;
+import static org.bioviz.protannot.ProtAnnotAction.APP_VERSION_FULL;
+import static org.bioviz.protannot.ProtAnnotAction.BUNDLE;
 
 /**
  *
@@ -43,7 +43,7 @@ class Actions {
                 BUNDLE.getString("openFile"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().doLoadFile();
+                        ProtAnnotAction.getInstance().doLoadFile();
                     }
                 };
         load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
@@ -57,7 +57,7 @@ class Actions {
                 BUNDLE.getString("addServer"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().addServer();
+                        ProtAnnotAction.getInstance().addServer();
                     }
                 };
         add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -71,7 +71,7 @@ class Actions {
                 BUNDLE.getString("serverLoad"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().loadFromServer();
+                        ProtAnnotAction.getInstance().loadFromServer();
                     }
                 };
         server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
@@ -86,7 +86,7 @@ class Actions {
                 BUNDLE.getString("print"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().print();
+                        ProtAnnotAction.getInstance().print();
                     }
                 };
         print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
@@ -100,7 +100,7 @@ class Actions {
                 BUNDLE.getString("export"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().export();
+                        ProtAnnotAction.getInstance().export();
                     }
                 };
         export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
@@ -114,7 +114,7 @@ class Actions {
                 BUNDLE.getString("preferences"))) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotMain.getInstance().colorChooser();
+                        ProtAnnotAction.getInstance().colorChooser();
                     }
                 };
         preference_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
@@ -129,7 +129,7 @@ class Actions {
             @Override
                     public void actionPerformed(ActionEvent e) {
                         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                                new WindowEvent(ProtAnnotMain.getInstance().getFrame(),
+                                new WindowEvent(ProtAnnotAction.getInstance().getFrame(),
                                         WindowEvent.WINDOW_CLOSING));
                     }
                 };
@@ -143,7 +143,7 @@ class Actions {
                 BUNDLE.getString("copy")) {
             @Override
                     public void actionPerformed(ActionEvent e) {
-                        Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
+                        Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
                         Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
                         StringSelection data = new StringSelection(props[0].getProperty("protein sequence"));
                         system.setContents(data, null);
@@ -157,7 +157,7 @@ class Actions {
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
+                Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
                 if (props != null && props.length == 1) {
                     copy_action.setEnabled(props[0].containsKey("protein sequence"));
                 } else {
@@ -165,7 +165,7 @@ class Actions {
                 }
             }
         };
-        ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
+        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
         copy_action.setEnabled(false);
 
         return copy_action;
@@ -204,7 +204,7 @@ class Actions {
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                Properties[] props = ProtAnnotMain.getInstance().getGenomeView().getProperties();
+                Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
                 if (props != null && props.length == 1) {
                     url.delete(0, url.length());
                     url.append(build_url(props[0]));
@@ -214,7 +214,7 @@ class Actions {
                 open_browser_action.setEnabled(url.length() > 0 ? true : false);
             }
         };
-        ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
+        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
 
         return open_browser_action;
     }
@@ -229,7 +229,7 @@ class Actions {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotMain.getInstance().getGenomeView().zoomToSelection();
+                ProtAnnotAction.getInstance().getGenomeView().zoomToSelection();
             }
         };
         zoom_to_feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_Z);
@@ -243,11 +243,11 @@ class Actions {
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                List<GlyphI> selected = ProtAnnotMain.getInstance().getGenomeView().getSelected();
+                List<GlyphI> selected = ProtAnnotAction.getInstance().getGenomeView().getSelected();
                 zoom_to_feature_action.setEnabled(selected != null && !selected.isEmpty());
             }
         };
-        ProtAnnotMain.getInstance().getGenomeView().addMapListener(ml);
+        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
 
         return zoom_to_feature_action;
     }
@@ -257,7 +257,7 @@ class Actions {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotMain.getInstance().getGenomeView().toggleHairline();
+                ProtAnnotAction.getInstance().getGenomeView().toggleHairline();
             }
         };
         toggle_hairline_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_H);
@@ -271,7 +271,7 @@ class Actions {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotMain.getInstance().getGenomeView().toggleHairlineLabel();
+                ProtAnnotAction.getInstance().getGenomeView().toggleHairlineLabel();
             }
         };
         toggle_label_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_L);
@@ -288,8 +288,8 @@ class Actions {
                 final AbstractAction action = this;
                 action.setEnabled(false);
 
-                final JPanel table_panel = ProtAnnotMain.getInstance().getGenomeView().getTablePanel();
-                final JSplitPane split_pane = ProtAnnotMain.getInstance().getGenomeView().getSplitPane();
+                final JPanel table_panel = ProtAnnotAction.getInstance().getGenomeView().getTablePanel();
+                final JSplitPane split_pane = ProtAnnotAction.getInstance().getGenomeView().getSplitPane();
                 split_pane.remove(table_panel);
 
                 final JFrame jframe = new JFrame();
@@ -313,7 +313,7 @@ class Actions {
 
     static AbstractAction getAboutAction() {
 
-        final JFrame frm = ProtAnnotMain.getInstance().getFrame();
+        final JFrame frm = ProtAnnotAction.getInstance().getFrame();
         AbstractAction about_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 MessageFormat.format(

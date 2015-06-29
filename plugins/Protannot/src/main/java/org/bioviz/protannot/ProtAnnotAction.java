@@ -80,8 +80,8 @@ import org.slf4j.LoggerFactory;
  * @see com.affymetrix.genometryImpl.BioSeq
  * @see com.affymetrix.genoviz.util.ComponentPagePrinter
  */
-@Component(name = ProtAnnotMain.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
-public class ProtAnnotMain extends GenericAction implements WindowListener, IgbMenuItemProvider {
+@Component(name = ProtAnnotAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
+public class ProtAnnotAction extends GenericAction implements WindowListener, IgbMenuItemProvider {
 
     public static final String COMPONENT_NAME = "ProtAnnotMain";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
@@ -127,10 +127,10 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
     private Dimension screen;
 
     //To enforce singleton pattern
-    private static ProtAnnotMain singleton;
+    private static ProtAnnotAction singleton;
 
     AbstractAction server_load_action = Actions.getLoadFromServerAction();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProtAnnotMain.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
 
     private final static boolean testmode = false;
     private static final boolean DEBUG = false;
@@ -234,7 +234,7 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
     private static Image getIcon() {
         Image icon = null;
         try {
-            URL url = ProtAnnotMain.class.getResource("protannot.gif");
+            URL url = ProtAnnotAction.class.getResource("protannot.gif");
             if (url != null) {
                 icon = Toolkit.getDefaultToolkit().getImage(url);
             }
@@ -245,7 +245,7 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
         return icon;
     }
 
-    public static ProtAnnotMain getInstance() {
+    public static ProtAnnotAction getInstance() {
         return singleton;
     }
 
@@ -267,7 +267,7 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
     private Map<String, Color> loadPrefs() {
         Map<String, Color> phash = new HashMap<>();
 
-        prefs = Preferences.userNodeForPackage(ProtAnnotMain.class);
+        prefs = Preferences.userNodeForPackage(ProtAnnotAction.class);
 
         try {
             for (Entry<String, Color> color_pref : GenomeView.COLORS.defaultColorList().entrySet()) {
@@ -275,14 +275,14 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
             }
             updatePrefs(phash);
         } catch (Exception ex) {
-            Logger.getLogger(ProtAnnotMain.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProtAnnotAction.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         prefs_hash = phash;
         return prefs_hash;
     }
 
-    public ProtAnnotMain() {
+    public ProtAnnotAction() {
         super("Protannot", null, null);
         frm = new JFrame(APP_NAME);
         singleton = this;
@@ -905,7 +905,7 @@ public class ProtAnnotMain extends GenericAction implements WindowListener, IgbM
      * @param hash Map containing color name and color value pairs.
      */
     private void updatePrefs(Map<String, Color> hash) {
-        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotMain.class);
+        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class);
 
         for (Entry<String, Color> entry : hash.entrySet()) {
             prefs.putInt(entry.getKey(), entry.getValue().getRGB());

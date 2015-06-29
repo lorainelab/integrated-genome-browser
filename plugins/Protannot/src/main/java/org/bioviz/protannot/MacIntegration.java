@@ -100,15 +100,15 @@ class ApplicationListenerProxy implements InvocationHandler {
         try {
             switch (method.getName()) {
                 case "handleAbout":
-                    Actions.getAboutAction().actionPerformed(null);
+                    ProtAnnotAction.getAboutAction().actionPerformed(null);
                     Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
                     setHandled.invoke(args[0], true);
                     break;
                 case "handleQuit":
-                    Actions.getExitAction().actionPerformed(null);
+                    ProtAnnotAction.getExitAction().actionPerformed(null);
                     break;
                 case "handlePreferences":
-                    Actions.getPreferencesAction().actionPerformed(null);
+                    ProtAnnotAction.getPreferencesAction().actionPerformed(null);
                     break;
                 default:
                     result = method.invoke(o, args);

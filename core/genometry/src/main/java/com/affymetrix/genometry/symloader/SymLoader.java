@@ -104,6 +104,33 @@ public abstract class SymLoader {
         dependencyTracker.open();
     }
 
+    private boolean isBedFile(URL fileUrl) {
+        return fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed");
+    }
+
+    private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
+        BufferedInputStream bis = null;
+        Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+
+        if (fileIs.isPresent()) {
+            try {
+                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                if (cacheStatus.isDataExists()) {
+                    StringBuffer stripped_name = new StringBuffer();
+                    InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
+                    if (is instanceof BufferedInputStream) {
+                        bis = (BufferedInputStream) is;
+                    } else {
+                        bis = new BufferedInputStream(is);
+                    }
+                }
+            } finally {
+                fileIs.get().close();
+            }
+        }
+        return Optional.empty();
+    }
+
     protected boolean buildIndex() throws Exception {
         BufferedInputStream bis = null;
         Map<String, Integer> chrLength = new HashMap<>();
@@ -112,24 +139,10 @@ public abstract class SymLoader {
         try {
 
             URL fileUrl = uri.toURL();
-            if (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) {
-                Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
-
-                if (fileIs.isPresent()) {
-                    try {
-                        CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-                        if (cacheStatus.isDataExists()) {
-                            StringBuffer stripped_name = new StringBuffer();
-                            InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
-                            if (is instanceof BufferedInputStream) {
-                                bis = (BufferedInputStream) is;
-                            } else {
-                                bis = new BufferedInputStream(is);
-                            }
-                        }
-                    } finally {
-                        fileIs.get().close();
-                    }
+            if (isBedFile(fileUrl)) {
+                Optional<BufferedInputStream> cachedStream = checkRemoteFileCache(fileUrl);
+                if (cachedStream.isPresent()) {
+                    bis = cachedStream.get();
                 }
 
             } else {

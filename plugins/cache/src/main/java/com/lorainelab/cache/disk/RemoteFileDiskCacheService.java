@@ -327,12 +327,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     private void updateLastRequestDate(URL url) {
-        cacheRequestNode.putLong(PreferenceUtils.shortNodeName(url.toString(), false), new Date().getTime());
+        cacheRequestNode.putLong(PreferenceUtils.getCacheRequestKey(url), new Date().getTime());
     }
 
     @Override
     public Date getLastRequestDate(URL url) {
-        return new Date(cacheRequestNode.getLong(PreferenceUtils.shortNodeName(url.toString(), false), new Date().getTime()));
+        return new Date(cacheRequestNode.getLong(PreferenceUtils.getCacheRequestKey(url), new Date().getTime()));
     }
 
     private boolean tryDownload(URL url, String path) {

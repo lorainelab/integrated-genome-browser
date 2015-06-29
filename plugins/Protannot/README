@@ -1,0 +1,14 @@
+
+ ____  ____    ___   ______   ____  ____   ____    ___   ______ 
+|    \|    \  /   \ |      T /    T|    \ |    \  /   \ |      T
+|  o  )  D  )Y     Y|      |Y  o  ||  _  Y|  _  YY     Y|      |
+|   _/|    / |  O  |l_j  l_j|     ||  |  ||  |  ||  O  |l_j  l_j
+|  |  |    \ |     |  |  |  |  _  ||  |  ||  |  ||     |  |  |  
+|  |  |  .  Yl     !  |  |  |  |  ||  |  ||  |  |l     !  |  |  
+l__j  l__j\_j \___/   l__j  l__j__jl__j__jl__j__j \___/   l__j   
+
+ProtAnnot is a protein annotation viewer implemented in Java that displays protein 
+annotations in the context of the genomic sequence, making it easy to see how alternative 
+mRNA structures affect the various protein products encoded at a locus. ProtAnnot is 
+developed in the Loraine Lab, part of the Bioinformatics and Genomics Department 
+at University of North Carolina at Charlotte.

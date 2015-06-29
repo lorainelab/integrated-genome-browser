@@ -3,7 +3,10 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -11,7 +14,10 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.lorainelab.image.exporter.ExportDialog;
+import com.affymetrix.igb.swing.JRPMenuItem;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -74,8 +80,10 @@ import org.slf4j.LoggerFactory;
  * @see com.affymetrix.genometryImpl.BioSeq
  * @see com.affymetrix.genoviz.util.ComponentPagePrinter
  */
-public class ProtAnnotMain implements WindowListener {
+@Component(name = ProtAnnotMain.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
+public class ProtAnnotMain extends GenericAction implements WindowListener, IgbMenuItemProvider {
 
+    public static final String COMPONENT_NAME = "ProtAnnotMain";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
     public static final String APP_NAME = BUNDLE.getString("appName");
     public static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
@@ -91,6 +99,7 @@ public class ProtAnnotMain implements WindowListener {
             System.getProperty("os.version"),
             System.getProperty("os.arch"),
             Locale.getDefault().toString());
+    private IgbService igbService;
 
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
@@ -141,6 +150,33 @@ public class ProtAnnotMain implements WindowListener {
         }
     };
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        super.actionPerformed(e);
+        loadPrefs();
+        start();
+    }
+
+    @Override
+    public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
+        return new JRPMenuItem("Protannot", this);
+    }
+
+    @Override
+    public int getMenuItemWeight() {
+        return -1;
+    }
+
+    @Override
+    public String getParentMenuName() {
+        return "tools";
+    }
+
+    @Reference
+    public void addIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
     private enum Arguments {
 
         SERVER,
@@ -159,40 +195,37 @@ public class ProtAnnotMain implements WindowListener {
     };
     private final Map<Arguments, String> ArgumentValues = new EnumMap<>(Arguments.class);
 
-    public static void main(String[] args) {
-        singleton = ProtAnnotMain.getInstance();
-//        ConsoleView.init(APP_NAME);
-
-        System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
-        System.out.println("UserAgent: " + USER_AGENT);
-        System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
-        Runtime runtime = Runtime.getRuntime();
-        System.out.println("Locale: " + Locale.getDefault());
-        System.out.println("System memory: " + runtime.maxMemory() / 1024);
-        if (args != null && args.length > 0) {
-            System.out.print("arguments: ");
-            for (String arg : args) {
-                System.out.print(" " + arg);
-            }
-            System.out.println();
-        } else {
-            System.out.print("No startup arguments");
-        }
-
-        System.out.println();
-
-        singleton.parseArguments(args);
-        singleton.loadPrefs();
-        singleton.start();
-    }
-
-    static ProtAnnotMain getInstance() {
-        if (singleton == null) {
-            singleton = new ProtAnnotMain();
-        }
-        return singleton;
-    }
-
+//    public static void main(String[] args) {
+////        ConsoleView.init(APP_NAME);
+//
+//        System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+//        System.out.println("UserAgent: " + USER_AGENT);
+//        System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
+//        Runtime runtime = Runtime.getRuntime();
+//        System.out.println("Locale: " + Locale.getDefault());
+//        System.out.println("System memory: " + runtime.maxMemory() / 1024);
+//        if (args != null && args.length > 0) {
+//            System.out.print("arguments: ");
+//            for (String arg : args) {
+//                System.out.print(" " + arg);
+//            }
+//            System.out.println();
+//        } else {
+//            System.out.print("No startup arguments");
+//        }
+//
+//        System.out.println();
+//
+//        singleton.parseArguments(args);
+//        singleton.loadPrefs();
+//        singleton.start();
+//    }
+//    static ProtAnnotMain getInstance() {
+//        if (singleton == null) {
+//            singleton = new ProtAnnotMain();
+//        }
+//        return singleton;
+//    }
     /**
      * Returns the icon stored in the jar path. It is expected to be at com.affymetrix.igb.igb.gif.
      *
@@ -210,6 +243,10 @@ public class ProtAnnotMain implements WindowListener {
             // It isn't a big deal if we can't find the icon, just return null
         }
         return icon;
+    }
+
+    public static ProtAnnotMain getInstance() {
+        return singleton;
     }
 
     /**
@@ -245,8 +282,10 @@ public class ProtAnnotMain implements WindowListener {
         return prefs_hash;
     }
 
-    private ProtAnnotMain() {
+    public ProtAnnotMain() {
+        super("Protannot", null, null);
         frm = new JFrame(APP_NAME);
+        singleton = this;
     }
 
     /**
@@ -479,15 +518,15 @@ public class ProtAnnotMain implements WindowListener {
         colorChooser.setVisible(true);
     }
 
-    void export() {
-        final ExportDialog export = new ExportDialog();
-//        export.setIcon(new ImageIcon(imageIcon));
-        try {
-//            export.showExportDialog(gview, "Export view as ...", gview, "export");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    ImageExportService exportService;
 
+    @Reference
+    public void addImageExportService(ImageExportService exportService) {
+        this.exportService = exportService;
+    }
+
+    void export() {
+        exportService.exportComponent(frm);
     }
 
     void print() {
@@ -709,11 +748,9 @@ public class ProtAnnotMain implements WindowListener {
      * @param message the message String to display to the user
      * @return true if the user confirms, else false.
      */
-    public static boolean confirmPanel(String message) {
-        ProtAnnotMain pa = getInstance();
-        JFrame frame = (pa == null) ? null : pa.getFrame();
+    public boolean confirmPanel(String message) {
         return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
-                frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
+                frm, message, "Confirm", JOptionPane.YES_NO_OPTION));
     }
 
     /**

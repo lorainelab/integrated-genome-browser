@@ -86,7 +86,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genometry</artifactId>
-            <version>8.5.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>

@@ -277,9 +277,6 @@ public class GenomeVersion {
                 id2seq.put(seqID.toLowerCase(), seq);
                 seq.setGenomeVersion(this);
             }
-        } else {
-            throw new IllegalStateException("ERROR! tried to add seq: " + seqID + " to AnnotatedSeqGroup: "
-                    + this.getName() + ", but seq with same id is already in group");
         }
     }
 
@@ -395,7 +392,5 @@ public class GenomeVersion {
         }
         return true;
     }
-    
-    
 
 }

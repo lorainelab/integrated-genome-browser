@@ -27,7 +27,7 @@ public class InterProscanTranslatorTest {
     @Test
     public void translateTest() {
         try {
-            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("diff_motifs/InterProtScan Response.xml");
+            InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("diff_motifs/InterProtScanResponse.xml");
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder newDocumentBuilder = builderFactory.newDocumentBuilder();
             Document document = newDocumentBuilder.parse(resourceAsStream);

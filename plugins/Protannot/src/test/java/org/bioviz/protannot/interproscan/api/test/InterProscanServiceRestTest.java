@@ -37,6 +37,7 @@ public class InterProscanServiceRestTest {
         Assert.assertEquals(status, InterProscanService.Status.FINISHED);
     }
 
+    @Ignore
     @Test
     public void testRun() {
         InterProscanService service = new InterProscanServiceRest();

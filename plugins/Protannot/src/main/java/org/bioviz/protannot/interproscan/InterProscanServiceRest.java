@@ -100,8 +100,8 @@ public class InterProscanServiceRest implements InterProscanService {
             request.append("&sequence=").append(jobRequest.getSequence().get());
         }
         if (jobRequest.getSignatureMethods().isPresent()) {
-            for (JobRequest.SignatureMethods sm : jobRequest.getSignatureMethods().get()) {
-                request.append("&appl=").append(sm.getValue());
+            for (String sm : jobRequest.getSignatureMethods().get()) {
+                request.append("&appl=").append(sm);
             }
         }
         HttpURLConnection con = null;

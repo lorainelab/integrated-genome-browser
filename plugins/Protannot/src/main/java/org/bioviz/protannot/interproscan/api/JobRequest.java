@@ -16,7 +16,7 @@ public class JobRequest {
 
     private String email;
     private Optional<String> title;
-    private Optional<Set<SignatureMethods>> signatureMethods;
+    private Optional<Set<String>> signatureMethods;
     private Optional<Boolean> goterms;
     private Optional<Boolean> pathways;
     private Optional<String> sequence;
@@ -37,11 +37,11 @@ public class JobRequest {
         this.title = title;
     }
 
-    public Optional<Set<SignatureMethods>> getSignatureMethods() {
+    public Optional<Set<String>> getSignatureMethods() {
         return signatureMethods;
     }
 
-    public void setSignatureMethods(Optional<Set<SignatureMethods>> signatureMethods) {
+    public void setSignatureMethods(Optional<Set<String>> signatureMethods) {
         this.signatureMethods = signatureMethods;
     }
 
@@ -69,28 +69,4 @@ public class JobRequest {
         this.sequence = sequence;
     }
 
-   
-    
-    
-
-    public enum SignatureMethods {
-
-        BlastProDom("ProDom"), FPrintScan("PRINTS"),
-        HMMPIR("PIRSF"), HMMPfam("PfamA"), HMMSmart("SMART"),
-        HMMTigr("TIGRFAM"), ProfileScan("PrositeProfiles"), HAMAP("HAMAP"),
-        Coils("Coils"), Phobius("Phobius"), Gene3D("Gene3d"),
-        HMMPanther("Panther"), TMHMM("TMHMM"), SignalPHMM("SignalP"),
-        SuperFamily("SuperFamily"), PatternScan("PrositePatterns");
-
-        private final String value;
-
-        private SignatureMethods(String value) {
-            this.value = value;
-        }
-        
-        public String getValue() {
-            return this.value;
-        }
-
-    }
 }

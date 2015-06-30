@@ -5,13 +5,16 @@
  */
 package org.bioviz.protannot.interproscan.api.test;
 
-import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import junit.framework.Assert;
 import org.bioviz.protannot.interproscan.InterProscanServiceRest;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.appl.model.ParameterType;
+import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,22 +37,19 @@ public class InterProscanServiceRestTest {
         Assert.assertEquals(status, InterProscanService.Status.FINISHED);
     }
 
-    @Ignore
     @Test
     public void testRun() {
         InterProscanService service = new InterProscanServiceRest();
         JobRequest request = new JobRequest();
         request.setEmail("tmall@uncc.edu");
+        ParameterType applParameters = service.getApplications();
+        List<ValueType> applValues = applParameters.getValues().getValue();
+        Set<String> inputApplSet = new HashSet<>();
+        for(ValueType valueType : applValues) {
+            inputApplSet.add(valueType.getValue());
+        }
         
-        Optional<Set<JobRequest.SignatureMethods>> set = Optional.of(Sets.newHashSet(JobRequest.SignatureMethods.BlastProDom, 
-                JobRequest.SignatureMethods.FPrintScan, JobRequest.SignatureMethods.HMMPIR, JobRequest.SignatureMethods.HMMPfam,
-                JobRequest.SignatureMethods.HMMSmart, JobRequest.SignatureMethods.HMMTigr, JobRequest.SignatureMethods.ProfileScan,
-                JobRequest.SignatureMethods.HAMAP, JobRequest.SignatureMethods.Coils, JobRequest.SignatureMethods.Phobius, 
-                JobRequest.SignatureMethods.Gene3D, JobRequest.SignatureMethods.HMMPanther, JobRequest.SignatureMethods.TMHMM, 
-                JobRequest.SignatureMethods.SignalPHMM, JobRequest.SignatureMethods.SuperFamily, JobRequest.SignatureMethods.PatternScan));
-
-        
-        request.setSignatureMethods(set);
+        request.setSignatureMethods(Optional.of(inputApplSet));
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
         request.setPathways(Optional.empty());
@@ -67,6 +67,7 @@ public class InterProscanServiceRestTest {
         Assert.assertNotNull(result);
     }
 
+    @Ignore
     @Test
     public void testGetApplications() {
         InterProscanService service = new InterProscanServiceRest();

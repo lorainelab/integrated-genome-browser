@@ -28,6 +28,7 @@ public class InterProscanTranslator {
         try {
             NodeList nodes = (NodeList) xPath.evaluate("/protein-matches/protein/sequence/matches",
                     document.getDocumentElement(), XPathConstants.NODESET);
+            
         } catch (XPathExpressionException ex) {
             LOG.error(ex.getMessage(), ex);
         }

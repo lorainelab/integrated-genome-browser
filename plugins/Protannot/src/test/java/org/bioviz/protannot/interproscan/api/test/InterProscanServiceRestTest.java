@@ -12,6 +12,7 @@ import junit.framework.Assert;
 import org.bioviz.protannot.interproscan.InterProscanServiceRest;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -61,9 +62,8 @@ public class InterProscanServiceRestTest {
     @Test
     public void testResultType() {
         InterProscanService service = new InterProscanServiceRest();
-        //List<ResultTypes> resultTypes = service.result("iprscan5-R20150629-154703-0868-18931209-oy");
-//        Assert.assertNotNull(resultTypes);
-//        Assert.assertTrue(resultTypes.size() > 0);
+        Optional<ProteinMatchesType> result = service.result("iprscan5-R20150629-154703-0868-18931209-oy");
+        Assert.assertNotNull(result);
     }
 
 }

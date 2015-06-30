@@ -1,9 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.bioviz.protannot.interproscan.api.test.InterProscanServiceRestTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 1, Skipped: 1, Time elapsed: 0.067 sec <<< FAILURE! - in org.bioviz.protannot.interproscan.api.test.InterProscanServiceRestTest
-testRun(org.bioviz.protannot.interproscan.api.test.InterProscanServiceRestTest)  Time elapsed: 0.066 sec  <<< ERROR!
-java.lang.NullPointerException: null
-	at org.bioviz.protannot.interproscan.InterProscanServiceRest.run(InterProscanServiceRest.java:57)
-	at org.bioviz.protannot.interproscan.api.test.InterProscanServiceRestTest.testRun(InterProscanServiceRestTest.java:51)
-

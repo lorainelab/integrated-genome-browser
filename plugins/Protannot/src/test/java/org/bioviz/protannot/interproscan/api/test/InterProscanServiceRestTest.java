@@ -37,15 +37,19 @@ public class InterProscanServiceRestTest {
         JobRequest request = new JobRequest();
         request.setEmail("tmall@uncc.edu");
         
-        Optional<Set<JobRequest.SignatureMethods>> set = Optional.of(Sets.newHashSet(JobRequest.SignatureMethods.BlastProDom, JobRequest.SignatureMethods.FPrintScan, JobRequest.SignatureMethods.HMMPIR, JobRequest.SignatureMethods.HMMPfam,
+        Optional<Set<JobRequest.SignatureMethods>> set = Optional.of(Sets.newHashSet(JobRequest.SignatureMethods.BlastProDom, 
+                JobRequest.SignatureMethods.FPrintScan, JobRequest.SignatureMethods.HMMPIR, JobRequest.SignatureMethods.HMMPfam,
                 JobRequest.SignatureMethods.HMMSmart, JobRequest.SignatureMethods.HMMTigr, JobRequest.SignatureMethods.ProfileScan,
-                JobRequest.SignatureMethods.HAMAP, JobRequest.SignatureMethods.Coils, JobRequest.SignatureMethods.Phobius, JobRequest.SignatureMethods.Gene3D,
-                JobRequest.SignatureMethods.HMMPanther, JobRequest.SignatureMethods.TMHMM, JobRequest.SignatureMethods.SignalPHMM, JobRequest.SignatureMethods.SuperFamily,
-                JobRequest.SignatureMethods.PatternScan));
+                JobRequest.SignatureMethods.HAMAP, JobRequest.SignatureMethods.Coils, JobRequest.SignatureMethods.Phobius, 
+                JobRequest.SignatureMethods.Gene3D, JobRequest.SignatureMethods.HMMPanther, JobRequest.SignatureMethods.TMHMM, 
+                JobRequest.SignatureMethods.SignalPHMM, JobRequest.SignatureMethods.SuperFamily, JobRequest.SignatureMethods.PatternScan));
 
         
         request.setSignatureMethods(set);
-        
+        request.setTitle(Optional.empty());
+        request.setGoterms(Optional.empty());
+        request.setPathways(Optional.empty());
+        request.setSequence(Optional.of("MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA"));
         Optional<String> id = service.run(request);
         Assert.assertTrue(id.isPresent());
         

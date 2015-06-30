@@ -7,6 +7,7 @@ package org.bioviz.protannot.interproscan;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
@@ -68,16 +69,19 @@ public class InterProscanServiceRest implements InterProscanService {
         }
         if (jobRequest.getSignatureMethods().isPresent()) {
             for (JobRequest.SignatureMethods sm : jobRequest.getSignatureMethods().get()) {
-                request.append("&appl=").append(sm.toString());
+                request.append("&appl=").append(sm.getValue());
             }
         }
+        HttpURLConnection con = null;
         try {
             url = new URL(request.toString());
-        } catch (MalformedURLException ex) {
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-
+        try (BufferedInputStream bis = new BufferedInputStream(con.getInputStream())) {
             String response = IOUtils.toString(bis, "UTF-8");
             try {
                 return Optional.ofNullable(response);

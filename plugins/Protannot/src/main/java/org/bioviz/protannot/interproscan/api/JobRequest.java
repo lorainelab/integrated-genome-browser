@@ -78,7 +78,7 @@ public class JobRequest {
         BlastProDom("ProDom"), FPrintScan("PRINTS"),
         HMMPIR("PIRSF"), HMMPfam("PfamA"), HMMSmart("SMART"),
         HMMTigr("TIGRFAM"), ProfileScan("PrositeProfiles"), HAMAP("HAMAP"),
-        Coils("Coils"), Phobius("Phobius"), Gene3D("Gene3D"),
+        Coils("Coils"), Phobius("Phobius"), Gene3D("Gene3d"),
         HMMPanther("Panther"), TMHMM("TMHMM"), SignalPHMM("SignalP"),
         SuperFamily("SuperFamily"), PatternScan("PrositePatterns");
 
@@ -86,6 +86,10 @@ public class JobRequest {
 
         private SignatureMethods(String value) {
             this.value = value;
+        }
+        
+        public String getValue() {
+            return this.value;
         }
 
     }

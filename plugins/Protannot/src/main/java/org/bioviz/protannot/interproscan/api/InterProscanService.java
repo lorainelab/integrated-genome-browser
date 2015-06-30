@@ -5,7 +5,9 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import java.util.List;
 import java.util.Optional;
+import org.bioviz.protannot.interproscan.resulttype.model.ResultTypes;
 
 /**
  *
@@ -14,6 +16,7 @@ import java.util.Optional;
 public interface InterProscanService {
     public Status status(String jobId);
     public Optional<String> run(JobRequest jobRequest);
+    public List<ResultTypes> resultTypes(String jobId);
     
     public static enum Status {
         RUNNING,FINISHED,ERROR,FAILURE,NOT_FOUND;

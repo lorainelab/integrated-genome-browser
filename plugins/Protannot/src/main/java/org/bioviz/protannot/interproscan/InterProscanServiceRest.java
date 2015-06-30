@@ -10,10 +10,20 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.IOUtils;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.resulttype.model.ResultTypes;
+import org.bioviz.protannot.interproscan.resulttype.model.TypeType;
+import org.bioviz.protannot.interproscan.resulttype.model.TypesType;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -94,6 +104,35 @@ public class InterProscanServiceRest implements InterProscanService {
         }
         return Optional.empty();
 
+    }
+    
+    public List<ResultTypes> resultTypes(String jobId) {
+        StringBuilder requestUrl = new StringBuilder(INTERPROSCAN_BASE_URL);
+        requestUrl.append("/resulttypes/")
+                .append(jobId);
+        URL url = null;
+        try {
+            url = new URL(requestUrl.toString());
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(InterProscanServiceRest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        TypesType resultTypesJaxb = null;
+        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+            JAXBContext jaxbContext = JAXBContext.newInstance(TypesType.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            resultTypesJaxb = (TypesType) jaxbUnmarshaller.unmarshal(bis);
+            
+        } catch (IOException ex) {
+            
+        } catch (JAXBException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        
+        List<ResultTypes> resultTypes = new ArrayList<>();
+        for(TypeType resultType : resultTypesJaxb.getType()) {
+            resultTypes.add(new ResultTypes(resultType.getDescription(), resultType.getIdentifier()));
+        }
+        return resultTypes;
     }
 
 }

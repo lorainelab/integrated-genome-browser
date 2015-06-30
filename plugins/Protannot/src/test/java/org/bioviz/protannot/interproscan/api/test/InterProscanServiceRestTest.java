@@ -6,12 +6,15 @@
 package org.bioviz.protannot.interproscan.api.test;
 
 import com.google.common.collect.Sets;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import junit.framework.Assert;
 import org.bioviz.protannot.interproscan.InterProscanServiceRest;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.resulttype.model.ResultTypes;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,7 @@ public class InterProscanServiceRestTest {
     
     private static final Logger logger = LoggerFactory.getLogger(InterProscanServiceRestTest.class);
 
+    @Ignore
     @Test
     public void testStatus() {
         InterProscanService service = new InterProscanServiceRest();
@@ -31,6 +35,7 @@ public class InterProscanServiceRestTest {
         Assert.assertEquals(status, InterProscanService.Status.FINISHED);
     }
 
+    @Ignore
     @Test
     public void testRun() {
         InterProscanService service = new InterProscanServiceRest();
@@ -53,6 +58,14 @@ public class InterProscanServiceRestTest {
         Optional<String> id = service.run(request);
         Assert.assertTrue(id.isPresent());
         
+    }
+    
+    @Test
+    public void testResultType() {
+        InterProscanService service = new InterProscanServiceRest();
+        List<ResultTypes> resultTypes = service.resultTypes("iprscan5-R20150629-154703-0868-18931209-oy");
+        Assert.assertNotNull(resultTypes);
+        Assert.assertTrue(resultTypes.size() > 0);
     }
 
 }

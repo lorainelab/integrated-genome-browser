@@ -11,12 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.IOUtils;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +33,30 @@ public class InterProscanServiceRest implements InterProscanService {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanServiceRest.class);
 
     private static final String INTERPROSCAN_BASE_URL = "http://www.ebi.ac.uk/Tools/services/rest/iprscan5";
+
+    @Override
+    public ParameterType getApplications() {
+        URL url = null;
+        
+        try {
+            url = new URL(INTERPROSCAN_BASE_URL + "/parameterdetails/appl");
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(InterProscanServiceRest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+            Object obj = ((JAXBElement<ParameterType>)JAXBContext.newInstance("org.bioviz.protannot.interproscan.appl.model")
+                    .createUnmarshaller().unmarshal(bis)).getValue();
+            
+            return (ParameterType) obj;
+        } catch (JAXBException ex) {
+            Logger.getLogger(InterProscanServiceRest.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(InterProscanServiceRest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
+    }
 
     @Override
     public Status status(String jobId) {

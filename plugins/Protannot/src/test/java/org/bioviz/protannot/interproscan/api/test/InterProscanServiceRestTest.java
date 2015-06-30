@@ -59,6 +59,7 @@ public class InterProscanServiceRestTest {
         
     }
     
+    @Ignore
     @Test
     public void testResultType() {
         InterProscanService service = new InterProscanServiceRest();
@@ -66,4 +67,10 @@ public class InterProscanServiceRestTest {
         Assert.assertNotNull(result);
     }
 
+    @Test
+    public void testGetApplications() {
+        InterProscanService service = new InterProscanServiceRest();
+        Assert.assertNotNull(service.getApplications());
+        Assert.assertFalse(service.getApplications().getValues().getValue().isEmpty());
+    }
 }

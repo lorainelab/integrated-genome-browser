@@ -15,18 +15,18 @@ import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.appl.model.ValueType;
-import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  *
  * @author Tarun
  */
 public class InterProscanServiceRestTest {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(InterProscanServiceRestTest.class);
 
     @Ignore
@@ -56,15 +56,16 @@ public class InterProscanServiceRestTest {
         request.setSequence(Optional.of("MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA"));
         Optional<String> id = service.run(request);
         Assert.assertTrue(id.isPresent());
-        
+
     }
     
     @Ignore
     @Test
-    public void testResultType() {
+    public void testResult() {
         InterProscanService service = new InterProscanServiceRest();
-        Optional<ProteinMatchesType> result = service.result("iprscan5-R20150629-154703-0868-18931209-oy");
-        Assert.assertNotNull(result);
+        Optional<Document> result = service.result("iprscan5-R20150629-154703-0868-18931209-oy");
+        Assert.assertTrue(result.isPresent());
+        Document document = result.get();
     }
 
     @Ignore

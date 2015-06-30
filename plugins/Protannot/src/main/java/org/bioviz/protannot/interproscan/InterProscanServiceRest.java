@@ -16,13 +16,16 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.JobRequest;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
-import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -129,7 +132,7 @@ public class InterProscanServiceRest implements InterProscanService {
     }
 
     @Override
-    public Optional<ProteinMatchesType> result(String jobId) {
+    public Optional<Document> result(String jobId) {
         StringBuilder requestUrl = new StringBuilder(INTERPROSCAN_BASE_URL);
         requestUrl.append("/result/")
                 .append(jobId).append("/xml");
@@ -139,16 +142,15 @@ public class InterProscanServiceRest implements InterProscanService {
         } catch (MalformedURLException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        ProteinMatchesType resultJaxb = null;
+        Document document = null;
         try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-            JAXBContext jaxbContext = JAXBContext.newInstance(ProteinMatchesType.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            resultJaxb = (ProteinMatchesType) jaxbUnmarshaller.unmarshal(bis);
-        } catch (JAXBException | IOException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-
-        return Optional.ofNullable(resultJaxb);
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            document = dBuilder.parse(bis);
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
+            LOG.error(ex.getMessage());
+        } 
+        return Optional.ofNullable(document);
     }
 
 }

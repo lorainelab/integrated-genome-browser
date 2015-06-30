@@ -7,7 +7,8 @@ package org.bioviz.protannot.interproscan.api;
 
 import java.util.Optional;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
-import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
+import org.w3c.dom.Document;
+
 
 /**
  *
@@ -16,8 +17,8 @@ import org.bioviz.protannot.interproscan.model.ProteinMatchesType;
 public interface InterProscanService {
     public Status status(String jobId);
     public Optional<String> run(JobRequest jobRequest);
-    public Optional<ProteinMatchesType> result(String jobId);
     public ParameterType getApplications();
+    public Optional<Document> result(String jobId);
     
     public static enum Status {
         RUNNING,FINISHED,ERROR,FAILURE,NOT_FOUND;

@@ -115,6 +115,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             System.getProperty("os.arch"),
             Locale.getDefault().toString());
     private IgbService igbService;
+    
+    private SequenceService sequenceService;
 
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
@@ -368,6 +370,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             load(cfil);
         }
     }
+    
+    public void doLoadInterProscan() {
+        sequenceService.asyncLoadSequence();
+    }
 
     /**
      * Component Listener implementation
@@ -470,6 +476,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 load(igbService.getSeqMapView());
             }
         }));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getAddServerAction()));
 
         if (getArgumentValue(Arguments.SERVER) == null) {
@@ -1138,6 +1145,20 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
         return load_action;
     }
+    
+    static AbstractAction getInterProscanAction() {
+        AbstractAction load_action = new AbstractAction(MessageFormat.format(
+                BUNDLE.getString("menuItemHasDialog"),
+                "Load InterProscan")) {
+            @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ProtAnnotAction.getInstance().doLoadInterProscan();
+                    }
+                };
+        load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
+        load_action.putValue(AbstractAction.SHORT_DESCRIPTION, "Load a custom sequence");
+        return load_action;
+    }
 
     static AbstractAction getAddServerAction() {
         AbstractAction add_server = new AbstractAction(MessageFormat.format(
@@ -1507,5 +1528,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             return null;
         }
     }
+
+    @Reference
+    public void setSequenceService(SequenceService sequenceService) {
+        this.sequenceService = sequenceService;
+    }
+
+    
 
 }

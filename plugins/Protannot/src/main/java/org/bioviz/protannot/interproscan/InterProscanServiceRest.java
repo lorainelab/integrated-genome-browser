@@ -5,6 +5,8 @@
  */
 package org.bioviz.protannot.interproscan;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -31,11 +33,20 @@ import org.xml.sax.SAXException;
  *
  * @author jeckstei
  */
+@Component
 public class InterProscanServiceRest implements InterProscanService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanServiceRest.class);
 
     private static final String INTERPROSCAN_BASE_URL = "http://www.ebi.ac.uk/Tools/services/rest/iprscan5";
+    
+    private JAXBContext jaxbc;
+    
+    @Activate
+    public void activate() throws JAXBException {
+        jaxbc = JAXBContext.newInstance("org.bioviz.protannot.interproscan.appl.model",this.getClass().getClassLoader());
+    }
+    
 
     @Override
     public ParameterType getApplications() {
@@ -48,8 +59,7 @@ public class InterProscanServiceRest implements InterProscanService {
         }
         
         try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-            Object obj = ((JAXBElement<ParameterType>)JAXBContext.newInstance("org.bioviz.protannot.interproscan.appl.model")
-                    .createUnmarshaller().unmarshal(bis)).getValue();
+            Object obj = ((JAXBElement<ParameterType>)jaxbc.createUnmarshaller().unmarshal(bis)).getValue();
             
             return (ParameterType) obj;
         } catch (JAXBException ex) {

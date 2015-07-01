@@ -5,6 +5,7 @@
  */
 package org.bioviz.protannot.interproscan;
 
+import aQute.bnd.annotation.component.Component;
 import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import org.w3c.dom.Node;
  *
  * @author jeckstei
  */
+@Component
 public class InterProscanTranslator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanTranslator.class);
@@ -67,6 +69,7 @@ public class InterProscanTranslator {
     }
 
     private void parseSignatureAttributesOnMatch(Node matchNode, Simhit simhit) {
+        XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
             NamedNodeMap attributes = signature.getAttributes();
@@ -80,6 +83,7 @@ public class InterProscanTranslator {
     }
 
     private void parseLibraryReleaseOnSignature(Node signatureNode, Simhit simhit) {
+        XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node libraryRelease = (Node) xPath.evaluate("signature-library-release", signatureNode, XPathConstants.NODE);
             if(libraryRelease == null) return;

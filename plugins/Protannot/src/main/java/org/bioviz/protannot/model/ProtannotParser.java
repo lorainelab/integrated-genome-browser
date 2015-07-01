@@ -8,6 +8,7 @@ package org.bioviz.protannot.model;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -19,7 +20,10 @@ import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.google.common.base.Strings;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import java.io.File;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +32,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.bioviz.protannot.NormalizeXmlStrand;
 import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch;
@@ -46,6 +51,7 @@ public class ProtannotParser {
     private static final Logger logger = LoggerFactory.getLogger(ProtannotParser.class);
     private JAXBContext jaxbContext;
     private Unmarshaller jaxbUnmarshaller;
+    private Marshaller jaxbMarshaller;
     private static final String end_codon = "Z";
     private Map<String, BioSeq> mrna_hash;
     private Map<String, BioSeq> prot_hash;
@@ -69,6 +75,7 @@ public class ProtannotParser {
         try {
             jaxbContext = JAXBContext.newInstance(Dnaseq.class);
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            jaxbMarshaller = jaxbContext.createMarshaller();
         } catch (JAXBException ex) {
             java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -84,6 +91,44 @@ public class ProtannotParser {
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
+    }
+    
+    public BioSeq parse(SeqMapViewI seqMapView) {
+        List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
+        BioSeq bioseq = seqMapView.getViewSeq();
+        Dnaseq dnaseq = new Dnaseq();
+        for(SeqSymmetry sym : selectedSyms) {
+            Dnaseq.MRNA mrna = new Dnaseq.MRNA();
+            int exonsCount = sym.getChildCount();
+            for(int i = 0;i<exonsCount;i++) {
+                SeqSymmetry exonSym = sym.getChild(i);
+                Dnaseq.MRNA.Exon exon = new Dnaseq.MRNA.Exon();
+                exon.setStart(new BigInteger(exonSym.getSpan(bioseq).getStart() + ""));
+                exon.setEnd(new BigInteger(exonSym.getSpan(bioseq).getEnd() + ""));
+                mrna.getExon().add(exon);
+            }
+            if(sym instanceof SupportsCdsSpan) {
+                SeqSpan cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
+                Dnaseq.MRNA.Cds cds = new Dnaseq.MRNA.Cds();
+                cds.setStart(new BigInteger(cdsSpan.getStart() + ""));
+                cds.setEnd(new BigInteger(cdsSpan.getEnd() + ""));
+                mrna.setCds(cds);
+            }
+            dnaseq.getMRNAAndAaseq().add(mrna);
+        }
+        dnaseq.setSeq(bioseq.getId());
+        dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
+        Dnaseq.Residues residue = new Dnaseq.Residues();
+        //residue.setValue();
+        residue.setStart(new BigInteger(seqMapView.getVisibleSpan().getStart()+""));
+        residue.setEnd(new BigInteger(seqMapView.getVisibleSpan().getEnd() + ""));
+        dnaseq.setResidues(residue);
+        try {
+            jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
+        } catch (JAXBException ex) {
+            java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return buildChromosome(dnaseq);
     }
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {

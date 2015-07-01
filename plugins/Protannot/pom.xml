@@ -92,6 +92,11 @@
             <version>2.4</version>
             <type>jar</type>
         </dependency>
+         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-genoviz-extensions</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

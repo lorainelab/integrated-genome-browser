@@ -7,6 +7,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -17,6 +18,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.swing.JRPMenuItem;
+import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.image.exporter.service.ImageExportService;
@@ -166,6 +168,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
+        List<SeqSymmetry> selectedSyms = igbService.getSeqMapView().getSelectedSyms();
+
         loadPrefs();
         start();
     }
@@ -458,6 +462,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void addFileActions(final JMenu file_menu) {
 
         MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(new AbstractAction("Load") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                load(igbService.getSeqMapView());
+            }
+        }));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getAddServerAction()));
 
         if (getArgumentValue(Arguments.SERVER) == null) {
@@ -685,6 +697,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         } catch (Exception e) {
             Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
         }
+    }
+
+    public void load(SeqMapViewI seqMapView) {
+        ProtannotParser parser = new ProtannotParser();
+        BioSeq genome_seq = parser.parse(seqMapView);
+        gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
+            gview.setBioSeq(genome_seq, true);
+            frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
     }
 
     public void load(InputStream fistr, String filename) {
@@ -1104,12 +1124,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         }
 
     };
-    
+
     static AbstractAction getLoadAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("openFile"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().doLoadFile();
                     }
@@ -1123,7 +1143,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction add_server = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("addServer"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().addServer();
                     }
@@ -1137,7 +1157,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("serverLoad"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().loadFromServer();
                     }
@@ -1152,7 +1172,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction print_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("print"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().print();
                     }
@@ -1166,7 +1186,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("export"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().export();
                     }
@@ -1180,7 +1200,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction preference_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("preferences"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().colorChooser();
                     }
@@ -1194,7 +1214,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction quit_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("exit"))) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
                                 new WindowEvent(ProtAnnotAction.getInstance().getFrame(),
@@ -1209,7 +1229,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     static AbstractAction getCopyAction() {
         final AbstractAction copy_action = new AbstractAction(
                 BUNDLE.getString("copy")) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
                         Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -1240,8 +1260,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to open a browser window showing info
-     * on the currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on the currently selected Glyph.
      */
     static AbstractAction getOpenInBrowserAction() {
 
@@ -1250,7 +1269,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         final AbstractAction open_browser_action = new AbstractAction(BUNDLE.getString("openBrowser"),
                 MenuUtil.getIcon("16x16/actions/search.png")) {
 
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         if (url.length() > 0) {
                             GeneralUtils.browse(url.toString());
@@ -1288,8 +1307,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to center on the location of the
-     * currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to center on the location of the currently selected Glyph.
      */
     static AbstractAction getZoomToFeatureAction() {
 
@@ -1388,7 +1406,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                         BUNDLE.getString("about"),
                         APP_NAME))) {
 
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         JPanel message_pane = new JPanel();
                         message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
@@ -1424,7 +1442,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("reportABug"))) {
 
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         String u = "https://sourceforge.net/tracker/?limit=25&group_id=129420&atid=714744&category=1343170&status=1&category=1343170";
                         GeneralUtils.browse(u);
@@ -1439,7 +1457,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("requestAFeature"))) {
 
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         String u = "https://sourceforge.net/tracker/?limit=25&func=&group_id=129420&atid=714747&status=1&category=1449149";
                         GeneralUtils.browse(u);
@@ -1454,7 +1472,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("showConsole"))) {
 
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
 //                        ConsoleView.showConsole(APP_NAME);
                     }
@@ -1489,6 +1507,5 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             return null;
         }
     }
-
 
 }

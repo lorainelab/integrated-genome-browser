@@ -148,8 +148,9 @@ public abstract class SymLoader {
                 Optional<BufferedInputStream> cachedStream = checkRemoteFileCache(fileUrl);
                 if (cachedStream.isPresent()) {
                     bis = cachedStream.get();
+                } else {
+                    bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
                 }
-
             } else {
                 bis = LocalUrlCacher.convertURIToBufferedUnzippedStream(uri);
             }

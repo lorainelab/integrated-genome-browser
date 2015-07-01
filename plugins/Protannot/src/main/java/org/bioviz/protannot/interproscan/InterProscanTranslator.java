@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 public class InterProscanTranslator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanTranslator.class);
-    XPath xPath = XPathFactory.newInstance().newXPath();
+    
 
     public Dnaseq translateFromResultDocumentToModel(Document document) {
         Dnaseq dnaseq = new Dnaseq();
@@ -136,7 +136,7 @@ public class InterProscanTranslator {
                                 simspan.setQueryEnd(new BigInteger(item.getValue()));
                             } else {
                                 Descriptor descriptor = new Descriptor();
-                                descriptor.setType(item.getName());
+                                descriptor.setType(matchNode.getNodeName() + "-" + item.getName());
                                 descriptor.setValue(item.getValue());
                                 simspan.getDescriptor().add(descriptor);
                             }

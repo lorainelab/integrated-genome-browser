@@ -33,6 +33,7 @@ public class InterProscanTranslatorTest {
             Document document = newDocumentBuilder.parse(resourceAsStream);
             InterProscanTranslator interProscanTranslator = new InterProscanTranslator();
             Dnaseq dnaseq = interProscanTranslator.translateFromResultDocumentToModel(document);
+            dnaseq.getVersion();
             
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             Logger.getLogger(InterProscanTranslatorTest.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,8 +5,6 @@
  */
 package org.bioviz.protannot.interproscan;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -46,31 +44,20 @@ public class InterProscanTranslator {
     }
 
     private void extractAttributesAsDescriptors(Node childNode, Dnaseq.Aaseq.Simsearch.Simhit simhit) throws XPathExpressionException {
-//        if(attributes == null) return;
-//        
-//        for(int i = 0; i<attributes.getLength(); i++) {
-//            Attr item = (Attr) attributes.item(i);
-//            LOG.info(item.getName() + "->" + item.getValue());
-//        }
         Node signature = (Node) xPath.evaluate("signature", childNode, XPathConstants.NODE);
         NamedNodeMap attributes = signature.getAttributes();
         if (attributes == null) {
             return;
         } else {
-            for(int i = 0; i<attributes.getLength();i++) {
+            for (int i = 0; i < attributes.getLength(); i++) {
                 Attr item = (Attr) attributes.item(i);
-                LOG.info(item.getName() + "->" + item.getValue());
+                Dnaseq.Descriptor desc = new Dnaseq.Descriptor();
+                desc.setType(item.getName());
+                desc.setValue(item.getValue());
+                simhit.getDescriptor().add(desc);
             }
         }
 
     }
-    
-    private Attr getAttributes(Node node, String xpath) {
-        try {
-            Node xpathNode = (Node) xPath.evaluate(xpath, node, XPathConstants.NODE);
-        } catch (XPathExpressionException ex) {
-            Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
+
 }

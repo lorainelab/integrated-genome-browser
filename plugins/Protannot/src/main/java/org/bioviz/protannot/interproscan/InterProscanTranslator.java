@@ -5,11 +5,18 @@
  */
 package org.bioviz.protannot.interproscan;
 
+import java.math.BigInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.bioviz.protannot.model.Dnaseq;
+import org.bioviz.protannot.model.Dnaseq.Aaseq;
+import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch;
+import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
+import org.bioviz.protannot.model.Dnaseq.Descriptor;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -27,13 +34,24 @@ public class InterProscanTranslator {
 
     public Dnaseq translateFromResultDocumentToModel(Document document) {
         Dnaseq dnaseq = new Dnaseq();
+        Aaseq aaseq = new Aaseq();
+        Simsearch simsearch = new Simsearch();
+        simsearch.setMethod("InterPro");
+        aaseq.getSimsearch().add(simsearch);
+        dnaseq.getMRNAAndAaseq().add(aaseq);
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
         try {
-            Node matchNode = (Node) xPath.evaluate("/protein-matches/protein/matches",
+            Node matchesNode = (Node) xPath.evaluate("/protein-matches/protein/matches",
                     document.getDocumentElement(), XPathConstants.NODE);
-            for (Node childNode = matchNode.getFirstChild();
-                    childNode != null; childNode = childNode.getNextSibling()) {
-                if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                    //extractAttributesAsDescriptors(childNode, dnaseq.getMRNAAndAaseq().get);
+            for (Node matchNode = matchesNode.getFirstChild();
+                    matchNode != null; matchNode = matchNode.getNextSibling()) {
+                if (matchNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Simhit simhit = new Simhit();
+                    simsearch.getSimhit().add(simhit);
+                    parseAttributesOnMatch(matchNode, simhit);
+                    parseSignatureAttributesOnMatch(matchNode, simhit);
+                    parseLocationsOnMatch(matchNode, simhit);
                 }
             }
         } catch (XPathExpressionException ex) {
@@ -43,21 +61,91 @@ public class InterProscanTranslator {
         return dnaseq;
     }
 
-    private void extractAttributesAsDescriptors(Node childNode, Dnaseq.Aaseq.Simsearch.Simhit simhit) throws XPathExpressionException {
-        Node signature = (Node) xPath.evaluate("signature", childNode, XPathConstants.NODE);
-        NamedNodeMap attributes = signature.getAttributes();
-        if (attributes == null) {
-            return;
-        } else {
-            for (int i = 0; i < attributes.getLength(); i++) {
-                Attr item = (Attr) attributes.item(i);
-                Dnaseq.Descriptor desc = new Dnaseq.Descriptor();
-                desc.setType(item.getName());
-                desc.setValue(item.getValue());
-                simhit.getDescriptor().add(desc);
-            }
+    private void parseAttributesOnMatch(Node matchNode, Simhit simhit) {
+        NamedNodeMap attributes = matchNode.getAttributes();
+        addAttributesToSimhit(attributes, simhit);
+    }
+
+    private void parseSignatureAttributesOnMatch(Node matchNode, Simhit simhit) {
+        try {
+            Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
+            NamedNodeMap attributes = signature.getAttributes();
+            addAttributesToSimhit(attributes, simhit);
+            parseEntryOnSignature(signature, simhit);
+            parseLibraryReleaseOnSignature(signature, simhit);
+        } catch (XPathExpressionException ex) {
+            LOG.error(ex.getMessage(), ex);
         }
 
     }
 
+    private void parseLibraryReleaseOnSignature(Node signatureNode, Simhit simhit) {
+        try {
+            Node libraryRelease = (Node) xPath.evaluate("signature-library-release", signatureNode, XPathConstants.NODE);
+            if(libraryRelease == null) return;
+            NamedNodeMap attributes = libraryRelease.getAttributes();
+            addAttributesToSimhit(attributes, simhit);
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void parseEntryOnSignature(Node signatureNode, Simhit simhit) {
+        try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            Node entry = (Node) xPath.evaluate("entry", signatureNode, XPathConstants.NODE);
+            if(entry == null) return;
+            NamedNodeMap attributes = entry.getAttributes();
+            addAttributesToSimhit(attributes, simhit);
+        } catch (XPathExpressionException ex) {
+            Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit) {
+        if (attributes == null) {
+            return;
+        }
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Attr item = (Attr) attributes.item(i);
+            Dnaseq.Descriptor desc = new Dnaseq.Descriptor();
+            desc.setType(item.getName());
+            desc.setValue(item.getValue());
+            simhit.getDescriptor().add(desc);
+        }
+    }
+
+    private void parseLocationsOnMatch(Node matchNode, Simhit simhit) {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        try {
+            Node locationsNode = (Node) xPath.evaluate("locations", matchNode, XPathConstants.NODE);
+            for (Node locationNode = locationsNode.getFirstChild();
+                    locationNode != null; locationNode = locationNode.getNextSibling()) {
+                if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
+                    NamedNodeMap attributes = locationNode.getAttributes();
+                    if (attributes != null) {
+                        Simhit.Simspan simspan = new Simhit.Simspan();
+                        simhit.getSimspan().add(simspan);
+                        for (int i = 0; i < attributes.getLength(); i++) {
+                            Attr item = (Attr) attributes.item(i);
+                            //LOG.info("location: "+item.getName() + "," + item.getValue());
+                            if (item.getName().equals("start")) {
+                                simspan.setQueryStart(new BigInteger(item.getValue()));
+                            } else if (item.getName().equals("end")) {
+                                simspan.setQueryEnd(new BigInteger(item.getValue()));
+                            } else {
+                                Descriptor descriptor = new Descriptor();
+                                descriptor.setType(item.getName());
+                                descriptor.setValue(item.getValue());
+                                simspan.getDescriptor().add(descriptor);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (XPathExpressionException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
 }

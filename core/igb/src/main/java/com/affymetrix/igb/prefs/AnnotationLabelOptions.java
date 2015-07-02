@@ -31,14 +31,14 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
     private static final String PANEL_TITLE = "Annotation Label Font";
     private static final String INNER_PANEL_TITLE = "Font Settings";
     private static final String VARIABLE_SIZE_BTN_PREF = "variableSizeBtn";
-    private static final String VARIABLY_SIZED_LABELS_BTN_TEXT = " Dynamic labels 2 (IGB Classic)";
-    private static final String VARIABLY_SIZED_LABELS_BTN_TOOLTIP = "Annotation size automatically sets the font size. Different annotations may have different size fonts.";
+    private static final String VARIABLY_SIZED_LABELS_BTN_TEXT = " Auto-size labels, variable (classic)";
+    private static final String VARIABLY_SIZED_LABELS_BTN_TOOLTIP = "Annotation size and track height set the label font size. Different annotations can have different font sizes.";
     private static final String FIXED_SIZE_BTN_PREF = "fixedSizeBtn";
-    private static final String FIXED_SIZED_LABELS_BTN_TOOLTIP = "You set the font size for all labels in all tracks. Partial labels with … (ellipses) sometimes appear.";
-    private static final String FIXED_SIZED_LABELS_BTN_TEXT = "Static labels (New with IGB 8.4)";
+    private static final String FIXED_SIZED_LABELS_BTN_TEXT = "Fixed size labels, uniform";
+    private static final String FIXED_SIZED_LABELS_BTN_TOOLTIP = "You set the label font size. All annotations in every track have the same font size. Partial labels with ... sometimes appear.";
     private static final String AUTO_SIZE_BTN_PREF = "autoSizeBtn";
-    private static final String AUTO_SIZED_LABELS_BTN_TEXT = "Dynamic labels 1 (New with IGB 8.4)";
-    private static final String AUTO_SIZED_BTN_TOOLTIP = "Track height automatically sets the font size. Partial labels with … (ellipses) sometimes appear.";
+    private static final String AUTO_SIZED_LABELS_BTN_TEXT = "Auto-size labels, uniform";
+    private static final String AUTO_SIZED_BTN_TOOLTIP = "Track height sets the label font size. All annotations in a track have the same font size. Partial labels with ... sometimes appear.";
     private static final String HEADER_TEXT = "Settings apply to all annotation tracks.";
     private static final String BOTTOM_PANEL_MESSAGE = "Changes take effect immediately.";
 

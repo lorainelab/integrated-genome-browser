@@ -59,6 +59,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
@@ -314,7 +315,11 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        genomeVersion.getAvailableDataContainers().stream()
+        List<DataContainer> availableDataContainers = Lists.newArrayList(genomeVersion.getAvailableDataContainers());
+        Collections.sort(availableDataContainers, (DataContainer o1, DataContainer o2) -> {
+            return new DataProviderComparator().compare(o1.getDataProvider(), o2.getDataProvider());
+        });
+        availableDataContainers.stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
                 .forEach(dataContainer -> {

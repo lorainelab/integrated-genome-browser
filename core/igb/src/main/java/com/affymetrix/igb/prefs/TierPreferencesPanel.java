@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is the subclass of TrackPreferencesPanel which is used to represent
- * Preferences->Tracks Tab.
+ * This is the subclass of TrackPreferencesPanel which is used to represent Preferences->Tracks Tab.
  *
  * @author Anuj
  */

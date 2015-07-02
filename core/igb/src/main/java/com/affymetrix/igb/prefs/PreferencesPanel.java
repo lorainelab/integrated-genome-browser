@@ -148,6 +148,9 @@ public final class PreferencesPanel extends JRPJPanel implements HtmlHelpProvide
             JRPJPanel panel = (JRPJPanel) tabbedPane.getComponentAt(i);
             if (panelToAdd.getWeight() < panel.getWeight()) {
                 tabbedPane.add(panelToAdd.getPanel(), i);
+                if (i == 0) {
+                    tabbedPane.setSelectedComponent(panelToAdd.getPanel());
+                }
                 return;
             }
         }

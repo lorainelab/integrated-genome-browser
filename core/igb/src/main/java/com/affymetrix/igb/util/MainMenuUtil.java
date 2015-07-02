@@ -76,14 +76,14 @@ public class MainMenuUtil implements MainMenuManager {
     //Weights for File menu items.
     private final int LOAD_FILE_WEIGHT = 1;
     private final int LOAD_URL_WEIGHT = 2;
-    private final int EXPORT_FILE_WEIGHT = 5;
-    private static final int EXIT_ACTION_WEIGHT = 14;
-    private static final int FOURTH_FS_WEIGHT = 13;
-    private static final int THIRD_FS_WEIGHT = 10;
-    private static final int PREFERENCES_WEIGHT = 9;
-    private static final int SECOND_FS_WEIGHT = 8;
-    private static final int REMOVE_FEATURE_WEIGHT = 7;
     private static final int FIRST_FS_WEIGHT = 4;
+    private final int EXPORT_FILE_WEIGHT = 6;
+    private static final int REMOVE_FEATURE_WEIGHT = 7;
+    private static final int SECOND_FS_WEIGHT = 8;
+    private static final int PREFERENCES_WEIGHT = 9;
+    private static final int THIRD_FS_WEIGHT = 10;
+    private static final int FOURTH_FS_WEIGHT = 13;
+    private static final int EXIT_ACTION_WEIGHT = 14;
 
 
     public MainMenuUtil() {

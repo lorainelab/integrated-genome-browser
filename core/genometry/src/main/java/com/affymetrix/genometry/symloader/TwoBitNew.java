@@ -3,34 +3,38 @@ package com.affymetrix.genometry.symloader;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import static com.affymetrix.genometry.symloader.SymLoader.remoteFileCacheService;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
 import com.affymetrix.genometry.util.Timer;
+import com.lorainelab.cache.api.CacheStatus;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.samtools.seekablestream.SeekableFileStream;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class is a parser of UCSC Genome Browser file format .2bit used to store
- * nucleotide sequence information. This class extends InputStream and can be
- * used as it after choosing one of names of containing sequences. This parser
- * can be used to do some work like UCSC tool named twoBitToFa. For it just run
- * this class with input file path as single parameter and set stdout stream
- * into output file. If you have any problems or ideas don't hesitate to contact
- * me through email: rsutormin[at]gmail.com.
+ * Class is a parser of UCSC Genome Browser file format .2bit used to store nucleotide sequence information. This class
+ * extends InputStream and can be used as it after choosing one of names of containing sequences. This parser can be
+ * used to do some work like UCSC tool named twoBitToFa. For it just run this class with input file path as single
+ * parameter and set stdout stream into output file. If you have any problems or ideas don't hesitate to contact me
+ * through email: rsutormin[at]gmail.com.
  *
  * Ref : storage.bioinf.fbb.msu.ru/~roman/TwoBitParser.java
  *
  * @author Roman Sutormin (storage.bioinf.fbb.msu.ru/~roman)
  */
 public class TwoBitNew extends SymLoader {
-
+    
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TwoBitNew.class);
     public int DEFAULT_BUFFER_SIZE = 10000;
     //
@@ -54,19 +58,42 @@ public class TwoBitNew extends SymLoader {
     private static final char[] bit_chars = {
         'T', 'C', 'A', 'G'
     };
-
+    
     private final Map<BioSeq, String> chrMap = new HashMap<>();
-
+    
     public TwoBitNew(URI uri, String featureName, GenomeVersion genomeVersion) {
         super(uri, featureName, genomeVersion);
     }
-
+    
     @Override
     public void init() throws Exception {
         if (this.isInitialized) {
             return;
         }
-        raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+        
+        if (uri.toString().startsWith("http")) {
+            URL fileUrl = uri.toURL();
+            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+            
+            if (cacheStatus.isDataExists()) {
+                Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                if (fileIs.isPresent()) {
+                    try {
+                        raf = new SeekableBufferedStream(new SeekableFileStream(cacheStatus.getData()));
+                    } finally {
+                        fileIs.get().close();
+                    }
+                }
+            } else {
+                if(!remoteFileCacheService.isCachingInBackground(fileUrl)) {
+                    remoteFileCacheService.promptToCacheInBackground(fileUrl);
+                }
+                raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+            }
+            
+        } else {
+            raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
+        }
         long sign = readFourBytes();
         if (sign == 0x1A412743) {
             if (logger.isDebugEnabled()) {
@@ -96,7 +123,7 @@ public class TwoBitNew extends SymLoader {
             if (seq == null) {
                 continue;
             }
-
+            
             chrMap.put(seq, seq_name);
             long pos = readFourBytes();
             seq2pos.put(seq_name, pos);
@@ -107,13 +134,13 @@ public class TwoBitNew extends SymLoader {
         }
         super.init();
     }
-
+    
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
         return new ArrayList<>(chrMap.keySet());
     }
-
+    
     @Override
     public String getRegionResidues(SeqSpan span) throws Exception {
         init();
@@ -122,11 +149,11 @@ public class TwoBitNew extends SymLoader {
             this.setCurrentSequence(chrMap.get(seq));
             return getResidueString(span.getMin(), span.getMax() - span.getMin());
         }
-
+        
         Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
         return "";
     }
-
+    
     private String getResidueString(int start, int len) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -135,7 +162,7 @@ public class TwoBitNew extends SymLoader {
 
         char[] residues = new char[len];
         int ch;
-
+        
         setCurrentSequencePosition(start);
         for (int qnt = 0; (qnt < residues.length); qnt++) {
             ch = read();
@@ -150,7 +177,7 @@ public class TwoBitNew extends SymLoader {
         }
         return new String(residues);
     }
-
+    
     private long readFourBytes() throws Exception {
         long ret = 0;
         if (!reverse) {
@@ -235,8 +262,7 @@ public class TwoBitNew extends SymLoader {
     }
 
     /**
-     * @return number (starting from 0) of next readable nucleotide in sequence
-     * stream.
+     * @return number (starting from 0) of next readable nucleotide in sequence stream.
      */
     private long getCurrentSequencePosition() {
         if (cur_seq_name == null) {
@@ -244,7 +270,7 @@ public class TwoBitNew extends SymLoader {
         }
         return cur_seq_pos;
     }
-
+    
     private void setCurrentSequencePosition(long pos) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -258,7 +284,7 @@ public class TwoBitNew extends SymLoader {
         }
         skip(pos - cur_seq_pos);
     }
-
+    
     private void loadBits() throws IOException {
         if ((buffer == null) || (buffer_pos < 0) || (file_pos < buffer_pos)
                 || (file_pos >= buffer_pos + buffer_size)) {
@@ -276,8 +302,7 @@ public class TwoBitNew extends SymLoader {
     }
 
     /**
-     * Method reads 1 nucleotide from sequence stream. You should set current
-     * sequence before use it.
+     * Method reads 1 nucleotide from sequence stream. You should set current sequence before use it.
      */
     private int read() throws IOException {
         if (cur_seq_name == null) {
@@ -327,8 +352,7 @@ public class TwoBitNew extends SymLoader {
     }
 
     /**
-     * Method skips n nucleotides in sequence stream. You should set current
-     * sequence before use it.
+     * Method skips n nucleotides in sequence stream. You should set current sequence before use it.
      */
     private synchronized long skip(long n) throws IOException {
         if (cur_seq_name == null) {
@@ -368,8 +392,7 @@ public class TwoBitNew extends SymLoader {
     }
 
     /**
-     * Method closes current sequence and it's necessary to invoke it before
-     * setting new current sequence.
+     * Method closes current sequence and it's necessary to invoke it before setting new current sequence.
      */
     private void close() throws IOException {
         cur_seq_name = null;
@@ -385,7 +408,7 @@ public class TwoBitNew extends SymLoader {
         file_pos = -1;
         start_file_pos = -1;
     }
-
+    
     private int available() throws IOException {
         if (cur_seq_name == null) {
             throw new IOException("Sequence is not set");
@@ -394,15 +417,14 @@ public class TwoBitNew extends SymLoader {
     }
 
     /**
-     * Method closes random access file descriptor. You can't use any reading
-     * methods after it.
+     * Method closes random access file descriptor. You can't use any reading methods after it.
      *
      * @throws Exception
      */
     private void closeParser() throws Exception {
         raf.close();
     }
-
+    
     private String loadFragment(long seq_pos, int len) throws IOException {
         if (cur_seq_name == null) {
             throw new IOException("Sequence is not set");
@@ -419,14 +441,14 @@ public class TwoBitNew extends SymLoader {
         }
         return new String(ret, 0, i);
     }
-
+    
     private void printFastaSequence() throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
         }
         printFastaSequence(cur_dna_size - cur_seq_pos);
     }
-
+    
     private void printFastaSequence(long len) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -453,7 +475,7 @@ public class TwoBitNew extends SymLoader {
             }
         }
     }
-
+    
     public static void main(String[] args) throws Exception {
 //        if (args.length == 0) {
 //            System.out.println("Usage: <program> <input.2bit> [<seq_name> [<start> [<length>]]]");
@@ -491,5 +513,5 @@ public class TwoBitNew extends SymLoader {
 //        }
         p.closeParser();
     }
-
+    
 }

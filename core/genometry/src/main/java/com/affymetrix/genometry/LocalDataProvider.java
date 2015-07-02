@@ -42,7 +42,7 @@ public class LocalDataProvider implements DataProvider {
 
     @Override
     public String getUrl() {
-        return null;
+        return "";
     }
 
     @Override

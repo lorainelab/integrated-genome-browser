@@ -7,18 +7,23 @@ package com.lorainelab.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPJPanel;
+import com.google.common.eventbus.Subscribe;
+import com.lorainelab.cache.api.ChangeEvent;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -46,6 +52,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private static final String TAB_NAME = "Cache";
     private static final int TAB_POSITION = 10;
     private JPanel cachePanel;
+    private JCheckBox cacheEnable;
     private JButton removeBtn;
     private JButton clearAllBtn;
     private JButton refreshBtn;
@@ -57,9 +64,6 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     public JTextField minFileSize;
     public JLabel minFileSizeLabel;
     public JLabel minFileSizeUnits;
-    public JTextField cacheExpire;
-    public JLabel cacheExpireLabel;
-    public JLabel cacheExpireUnits;
     private JButton cacheSettingsApply;
     private RemoteFileCacheService remoteFileCacheService;
     private CacheTableModel cacheTableModel;
@@ -76,6 +80,11 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         setLayout(new MigLayout("fill"));
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
 
+    }
+
+    @Subscribe
+    public void recordCustomerChange(ChangeEvent e) {
+        refresh();
     }
 
     @Override
@@ -97,6 +106,9 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     public void refresh() {
         cacheTableModel.refresh();
         cacheTableModel.fireTableDataChanged();
+        initMaxCacheSizeValue();
+        initMinFileSizeValue();
+        initCacheEnableValue();
     }
 
     @Activate
@@ -105,6 +117,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cacheDataTable = getStyledJTable();
         cacheDataPanel = initilizeCacheDataPanel();
         initilizeLayout();
+        remoteFileCacheService.registerEventListener(this);
 
     }
 
@@ -116,15 +129,13 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private JPanel initilizeCacheSettingsPanel() {
         JPanel panel = new JPanel(new MigLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Cache Settings"));
-        initCacheExpire();
         initCacheSettingsApply();
         initMaxCacheSize();
         initMinFileSize();
-        //TODO:Add buttons to panel
-        JPanel cacheExpirePanel = new JPanel(new MigLayout());
-        cacheExpirePanel.add(cacheExpireLabel, "width :125:");
-        cacheExpirePanel.add(cacheExpire, "width :75:");
-        cacheExpirePanel.add(cacheExpireUnits, "width :100:");
+        initCacheEnable();
+
+        JPanel cacheEnablePanel = new JPanel(new MigLayout());
+        cacheEnablePanel.add(cacheEnable);
 
         JPanel maxCacheSizePanel = new JPanel(new MigLayout());
         maxCacheSizePanel.add(maxCacheSizeLabel, "width :125:");
@@ -139,7 +150,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout());
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
 
-        panel.add(cacheExpirePanel, "wrap");
+        panel.add(cacheEnablePanel, "wrap");
         panel.add(maxCacheSizePanel, "wrap");
         panel.add(minFileSizePanel, "wrap");
         panel.add(cacheSettingsApplyPanel, "wrap");
@@ -219,31 +230,39 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         minFileSize.setBackground(Color.WHITE);
     }
 
-    private void initCacheExpire() {
-        cacheExpire = new JTextField();
-        initCacheExpireValue();
-        cacheExpire.setInputVerifier(new InputVerifier() {
-
-            @Override
-            public boolean verify(JComponent input) {
-                JTextField tf = (JTextField) input;
-                try {
-                    BigInteger value = new BigInteger(tf.getText());
-                    tf.setBackground(Color.WHITE);
-                    return true;
-                } catch (Exception e) {
-                    tf.setBackground(Color.red);
-                    return false;
-                }
+    private void initCacheEnable() {
+        cacheEnable = new JCheckBox("Enable Cache");
+        initCacheEnableValue();
+        cacheEnable.addActionListener((ActionEvent e) -> {
+            remoteFileCacheService.setCacheEnabled(cacheEnable.isSelected());
+            if (cacheEnable.isSelected()) {
+                enableCacheSettings();
+            } else {
+                disableCacheSettings();
             }
         });
-        cacheExpireLabel = new JLabel("Cache Expire:");
-        cacheExpireUnits = new JLabel("minutes");
     }
 
-    private void initCacheExpireValue() {
-        cacheExpire.setText(remoteFileCacheService.getCacheExpireMin().toString());
-        cacheExpire.setBackground(Color.WHITE);
+    private void disableCacheSettings() {
+        maxCacheSize.setEnabled(false);
+        minFileSize.setEnabled(false);
+        cacheSettingsApply.setEnabled(false);
+    }
+
+    private void enableCacheSettings() {
+        maxCacheSize.setEnabled(true);
+        minFileSize.setEnabled(true);
+        cacheSettingsApply.setEnabled(true);
+    }
+
+    private void initCacheEnableValue() {
+        boolean cacheEnabled = remoteFileCacheService.getCacheEnabled();
+        cacheEnable.setSelected(cacheEnabled);
+        if (cacheEnabled) {
+            enableCacheSettings();
+        } else {
+            disableCacheSettings();
+        }
     }
 
     private void initCacheSettingsApply() {
@@ -261,15 +280,8 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             } catch (Exception ex) {
                 //TODO: Add warning
             }
-            try {
-                BigInteger cacheExpireValue = new BigInteger(cacheExpire.getText());
-                remoteFileCacheService.setCacheExpireMin(cacheExpireValue);
-            } catch (Exception ex) {
-                //TODO: Add warning
-            }
             initMaxCacheSizeValue();
             initMinFileSizeValue();
-            initCacheExpireValue();
         });
     }
 
@@ -283,7 +295,10 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private void initRemoveBtn() {
         removeBtn = new JButton("Remove");
         removeBtn.addActionListener((ActionEvent e) -> {
-            cacheTableModel.removeRow(cacheDataTable.getSelectedRow());
+            int rows[] = cacheDataTable.getSelectedRows();
+            for (int i = 0; i < cacheDataTable.getSelectedRowCount(); i++) {
+                cacheTableModel.removeRow(cacheDataTable.convertRowIndexToModel(rows[i]));
+            }
             refresh();
         });
         removeBtn.setEnabled(false);
@@ -299,7 +314,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JTable getStyledJTable() {
-        JTable table = new JTable(cacheTableModel) {//data, columnNames){
+        JTable table = new JTable(cacheTableModel) {
 
             @Override
             public Component prepareRenderer(
@@ -311,12 +326,33 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             }
         };
         table.setRowSelectionAllowed(true);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 removeBtn.setEnabled(true);
             }
         });
+
+        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+
+            SimpleDateFormat f = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+
+            public Component getTableCellRendererComponent(JTable table,
+                    Object value, boolean isSelected, boolean hasFocus,
+                    int row, int column) {
+                if (value instanceof Date) {
+                    value = f.format(value);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected,
+                        hasFocus, row, column);
+            }
+        };
+
+        table.getColumnModel().getColumn(1).setCellRenderer(tableCellRenderer);
+        table.getColumnModel().getColumn(2).setCellRenderer(tableCellRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(tableCellRenderer);
+
+        table.setAutoCreateRowSorter(true);
         return table;
     }
 

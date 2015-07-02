@@ -8,6 +8,7 @@ package com.lorainelab.cache.api;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +26,7 @@ public interface RemoteFileCacheService {
 
     public boolean cacheExists(URL url);
 
-    public BigInteger getCacheSize();
-
-    public void enforceCacheSize();
+    public BigInteger getCacheSizeInMB();
 
     public void enforceEvictionPolicies();
 
@@ -40,11 +39,25 @@ public interface RemoteFileCacheService {
     public BigInteger getMinFileSizeBytes();
 
     public BigInteger getCacheExpireMin();
+    
+    public boolean getCacheEnabled();
 
     public void setMaxCacheSizeMB(BigInteger value);
 
     public void setMinFileSizeBytes(BigInteger value);
 
     public void setCacheExpireMin(BigInteger value);
+    
+    public void setCacheEnabled(boolean value);
+    
+    public void promptToCacheInBackground(URL url);
+    
+    public boolean isCachingInBackground(URL url);
+    
+    public Date getLastRequestDate(URL url);
+    
+    public void registerEventListener(Object listener);
+    
+    public void unregisterEventListener(Object listener); 
 
 }

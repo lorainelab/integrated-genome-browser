@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ public class CacheTableModel extends AbstractTableModel {
     String[] columnNames = {"Source",
         "Last Modified",
         "Cached On",
+        "Last Accessed",
         "Size (MB)"};
 
     @Activate
@@ -61,15 +63,40 @@ public class CacheTableModel extends AbstractTableModel {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
         switch (columnIndex) {
             case 0:
-                return cacheStatus.getUrl();
+                try {
+                    return cacheStatus.getUrl();
+                } catch (Exception ex) {
+                    return "";
+                }
             case 1:
-                Date lastModified = new Date(cacheStatus.getLastModified());
-                return sdf.format(lastModified);
+                try {
+                    Date lastModified = new Date(cacheStatus.getLastModified());
+                    return lastModified;
+                } catch (Exception ex) {
+                    return new Date();
+                }
             case 2:
-                Date cacheLastUpdate = new Date(cacheStatus.getCacheLastUpdate());
-                return sdf.format(cacheLastUpdate);
+                try {
+                    Date cacheLastUpdate = new Date(cacheStatus.getCacheLastUpdate());
+                    return cacheLastUpdate;
+                } catch (Exception ex) {
+                    return new Date();
+                }
             case 3:
-                return cacheStatus.getSize().toString();
+                Date lastAccessed;
+                try {
+                    lastAccessed = remoteFileCacheService.getLastRequestDate(new URL(cacheStatus.getUrl()));
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
+                    lastAccessed = new Date();
+                }
+                return lastAccessed;
+            case 4:
+                try {
+                    return cacheStatus.getSize();
+                } catch (Exception ex) {
+                    return 0;
+                }
             default:
                 return "";
         }
@@ -82,7 +109,20 @@ public class CacheTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return String.class;
+        switch (columnIndex) {
+            case 0:
+                return String.class;
+            case 1:
+                return Date.class;
+            case 2:
+                return Date.class;
+            case 3:
+                return Date.class;
+            case 4:
+                return BigInteger.class;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
@@ -98,4 +138,5 @@ public class CacheTableModel extends AbstractTableModel {
             LOG.error(ex.getMessage(), ex);
         }
     }
+
 }

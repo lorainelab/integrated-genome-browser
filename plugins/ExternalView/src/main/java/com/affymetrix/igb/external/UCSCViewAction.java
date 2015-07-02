@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
@@ -37,7 +38,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public static final String COMPONENT_NAME = "UCSCViewAction";
     private static final int VIEW_MENU_POS = 3;
     private static final long serialVersionUID = 1L;
-    private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
+    private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
@@ -93,11 +94,12 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private void initUCSCSources() {
         synchronized (UCSCSources) {
             if (UCSCSources.isEmpty()) {
-                // Get the sources from the UCSC server.  If the server has already been initialized, get from there.
-                // This is done to avoid additional slow DAS queries.
-//                DasServerInfo ucsc = new DasServerInfo(UCSC_DAS_URL);
+                Optional<DataProvider> dasDataProvider = igbService.getAllServersList().stream().filter(dataProvider -> dataProvider.getUrl().equals(UCSC_DAS_URL)).findFirst();
+                if (dasDataProvider.isPresent()) {
+                    Set<String> supportedGenomeVersionNames = dasDataProvider.get().getSupportedGenomeVersionNames();
+                    UCSCSources.addAll(supportedGenomeVersionNames);
+                }
 
-//                UCSCSources.addAll(ucsc.getDataSources().keySet());
             }
         }
     }
@@ -130,7 +132,11 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
      */
     private String getRegionString() {
         SeqSpan span = igbService.getSeqMapView().getVisibleSpan();
-        return span.getBioSeq() + ":" + span.getMin() + "-" + span.getMax();
+        String chromosomeName = span.getBioSeq().toString();
+        if (!chromosomeName.startsWith("chr")) {
+            chromosomeName = "chr" + chromosomeName;
+        }
+        return chromosomeName + ":" + span.getMin() + "-" + span.getMax();
     }
 
     @Override

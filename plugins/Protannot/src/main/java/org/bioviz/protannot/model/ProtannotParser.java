@@ -100,6 +100,7 @@ public class ProtannotParser {
         BioSeq bioseq = seqMapView.getViewSeq();
         Dnaseq dnaseq = new Dnaseq();
         int start = Integer.MAX_VALUE, end = 0;
+        int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
         StringBuilder residuesBuffer = new StringBuilder();
         for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
@@ -128,6 +129,7 @@ public class ProtannotParser {
             dnaseq.getMRNAAndAaseq().add(mrna);
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
+            mrna.setStrand("+");
         }
         dnaseq.setSeq(bioseq.getId());
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
@@ -299,7 +301,7 @@ public class ProtannotParser {
 
     /**
      *
-     * @param genomic
+     * @param chromosome
      * @param elem
      * @param m2gSym
      * @param mrnaChromosome
@@ -312,7 +314,7 @@ public class ProtannotParser {
      * @see com.affymetrix.genometryImpl.symmetry.TypeContainerAnnot
      * @see com.affymetrix.genometryImpl.util.SeqUtils
      */
-    private void processCDS(BioSeq genomic, Dnaseq.MRNA.Cds cds, SimpleSymWithProps m2gSym,
+    private void processCDS(BioSeq chromosome, Dnaseq.MRNA.Cds cds, SimpleSymWithProps m2gSym,
             BioSeq mrnaChromosome, String proteinId, String aminoAcid) {
 
         int start;
@@ -334,8 +336,8 @@ public class ProtannotParser {
 
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
-        SeqSpan gstart_point = new SimpleSeqSpan(start, start, genomic);
-        SeqSpan gend_point = new SimpleSeqSpan(end, end, genomic);
+        SeqSpan gstart_point = new SimpleSeqSpan(start, start, chromosome);
+        SeqSpan gend_point = new SimpleSeqSpan(end, end, chromosome);
         SimpleSymWithProps result = new SimpleSymWithProps();
         result.addSpan(gstart_point);
         SeqSymmetry[] m2gPath = new SeqSymmetry[]{m2gSym};
@@ -345,6 +347,7 @@ public class ProtannotParser {
         if (mstart_point == null) {
             throw new NullPointerException("Conflict with start and end in processCDS.");
         }
+        
 
         result = new SimpleSymWithProps();
 

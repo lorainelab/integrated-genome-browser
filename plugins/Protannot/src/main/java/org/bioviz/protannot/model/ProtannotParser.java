@@ -92,48 +92,64 @@ public class ProtannotParser {
         processDNASeq(chromosome, dnaseq);
         return chromosome;
     }
-    
+
     public BioSeq parse(SeqMapViewI seqMapView) {
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
         Dnaseq dnaseq = new Dnaseq();
-        for(SeqSymmetry sym : selectedSyms) {
+        int start = Integer.MAX_VALUE, end = 0;
+        StringBuilder residuesBuffer = new StringBuilder();
+        for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
             int exonsCount = sym.getChildCount();
-            for(int i = 0;i<exonsCount;i++) {
+            if (start > sym.getSpan(bioseq).getStart()) {
+                start = sym.getSpan(bioseq).getStart();
+            }
+            if (end < sym.getSpan(bioseq).getEnd()) {
+                end = sym.getSpan(bioseq).getEnd();
+            }
+            for (int i = 0; i < exonsCount; i++) {
                 SeqSymmetry exonSym = sym.getChild(i);
                 Dnaseq.MRNA.Exon exon = new Dnaseq.MRNA.Exon();
                 exon.setStart(new BigInteger(exonSym.getSpan(bioseq).getStart() + ""));
                 exon.setEnd(new BigInteger(exonSym.getSpan(bioseq).getEnd() + ""));
                 mrna.getExon().add(exon);
             }
-            if(sym instanceof SupportsCdsSpan) {
+            if (sym instanceof SupportsCdsSpan) {
                 SeqSpan cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
                 Dnaseq.MRNA.Cds cds = new Dnaseq.MRNA.Cds();
                 cds.setStart(new BigInteger(cdsSpan.getStart() + ""));
                 cds.setEnd(new BigInteger(cdsSpan.getEnd() + ""));
                 mrna.setCds(cds);
             }
+            residuesBuffer.append(SeqUtils.getResidues(sym, bioseq));
             dnaseq.getMRNAAndAaseq().add(mrna);
+            mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
+            mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
         }
         dnaseq.setSeq(bioseq.getId());
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
         Dnaseq.Residues residue = new Dnaseq.Residues();
-        //residue.setValue();
-        residue.setStart(new BigInteger(seqMapView.getVisibleSpan().getStart()+""));
-        residue.setEnd(new BigInteger(seqMapView.getVisibleSpan().getEnd() + ""));
+        residue.setValue(residuesBuffer.toString());
+        residue.setStart(new BigInteger(start + ""));
+        residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
         try {
             jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
         } catch (JAXBException ex) {
             java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return buildChromosome(dnaseq);
+        BioSeq chromosome = buildChromosome(dnaseq);
+        processDNASeq(chromosome, dnaseq);
+        return chromosome;
+
     }
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {
         String seq = dnaseq.getSeq();
-        String version = dnaseq.getVersion();
+        //String version = dnaseq.getVersion();
 
         BioSeq chromosome = null;
         if (dnaseq.getResidues() != null) {
@@ -147,7 +163,7 @@ public class ProtannotParser {
     private void processDNASeq(BioSeq chromosome, Dnaseq dnaseq) {
         List<Object> mrnaAndAaseq = dnaseq.getMRNAAndAaseq();
         for (Object obj : mrnaAndAaseq) {
-            if (obj instanceof Dnaseq.MRNA) {
+            if (obj != null && obj instanceof Dnaseq.MRNA) {
                 processMRNA(chromosome, (Dnaseq.MRNA) obj);
             } else if (obj instanceof Dnaseq.Aaseq) {
                 processProtein(prot_hash, (Dnaseq.Aaseq) obj);
@@ -270,11 +286,11 @@ public class ProtannotParser {
 
         BioSeq mrnaChromosome = addSpans(m2gSym, chromosome, exon_insert_list, start);
 
-        String protein_id = determineProteinID(mrna.getDescriptor());
+        String proteinId = determineProteinID(mrna.getDescriptor());
 
         String amino_acid = getAminoAcid(m2gSym);
 
-        processCDS(chromosome, mrna.getCds(), m2gSym, mrnaChromosome, protein_id, amino_acid);
+        processCDS(chromosome, mrna.getCds(), m2gSym, mrnaChromosome, proteinId, amino_acid);
 
         m2gSym.setID("");
         chromosome.addAnnotation(m2gSym);
@@ -286,8 +302,8 @@ public class ProtannotParser {
      * @param genomic
      * @param elem
      * @param m2gSym
-     * @param mrna
-     * @param protein_id
+     * @param mrnaChromosome
+     * @param proteinId
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.SimpleSymWithProps
      * @see com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
@@ -297,7 +313,7 @@ public class ProtannotParser {
      * @see com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void processCDS(BioSeq genomic, Dnaseq.MRNA.Cds cds, SimpleSymWithProps m2gSym,
-            BioSeq mrna, String protein_id, String amino_acid) {
+            BioSeq mrnaChromosome, String proteinId, String aminoAcid) {
 
         int start;
         if (cds.getTransstart() != null) {
@@ -324,7 +340,7 @@ public class ProtannotParser {
         result.addSpan(gstart_point);
         SeqSymmetry[] m2gPath = new SeqSymmetry[]{m2gSym};
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
-        SeqSpan mstart_point = result.getSpan(mrna);
+        SeqSpan mstart_point = result.getSpan(mrnaChromosome);
 
         if (mstart_point == null) {
             throw new NullPointerException("Conflict with start and end in processCDS.");
@@ -334,7 +350,7 @@ public class ProtannotParser {
 
         result.addSpan(gend_point);
         SeqUtils.transformSymmetry((MutableSeqSymmetry) result, m2gPath);
-        SeqSpan mend_point = result.getSpan(mrna);
+        SeqSpan mend_point = result.getSpan(mrnaChromosome);
 
         if (mend_point == null) {
             throw new NullPointerException("Conflict with start and end in processCDS.");
@@ -342,12 +358,12 @@ public class ProtannotParser {
         // because CDS has no method attribute in any example files.
         TypeContainerAnnot m2pSym = new TypeContainerAnnot("");
 
-        SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
-        BioSeq protein = new BioSeq(protein_id, mspan.getLength());
-        protein.setResidues(processAminoAcid(amino_acid));
+        SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrnaChromosome);
+        BioSeq protein = new BioSeq(proteinId, mspan.getLength());
+        protein.setResidues(processAminoAcid(aminoAcid));
         protein.setBounds(mspan.getMin(), mspan.getMin() + mspan.getLength());
 
-        prot_hash.put(protein_id, protein);
+        prot_hash.put(proteinId, protein);
         SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getMax(), protein);
         if (logger.isDebugEnabled()) {
             logger.debug("protein: length = " + pspan.getLength());
@@ -357,7 +373,7 @@ public class ProtannotParser {
 
         m2pSym.setID("");
         protein.addAnnotation(m2pSym);
-        mrna.addAnnotation(m2pSym);
+        mrnaChromosome.addAnnotation(m2pSym);
 
         // Use genometry manipulations to map cds start/end on genome to cds start/end on transcript
         //    (so that cds becomes mrna2protein symmetry on mrna (and on protein...)

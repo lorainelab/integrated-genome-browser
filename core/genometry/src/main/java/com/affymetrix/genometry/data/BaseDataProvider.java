@@ -16,6 +16,7 @@ import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import java.util.Optional;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseDataProvider implements DataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDataProvider.class);
-    private final Preferences preferencesNode;
+    private Preferences preferencesNode;
     protected String url;
     protected String mirrorUrl;
     protected String name;
@@ -81,7 +82,7 @@ public abstract class BaseDataProvider implements DataProvider {
             preferencesNode.put(MIRROR_URL, mirrorUrl);
         }
     }
-    
+
     protected abstract void disable();
 
     @Override
@@ -118,7 +119,19 @@ public abstract class BaseDataProvider implements DataProvider {
     @Override
     public void setUrl(String url) {
         this.url = url;
-        preferencesNode.put(PRIMARY_URL, url);
+        Preferences replacementNode = PreferenceUtils.getDataProviderNode(url);
+        replacementNode.put(PRIMARY_URL, url);
+        replacementNode.put(PROVIDER_NAME, name);
+        replacementNode.putInt(LOAD_PRIORITY, loadPriority);
+        if (!Strings.isNullOrEmpty(mirrorUrl)) {
+            replacementNode.put(MIRROR_URL, mirrorUrl);
+        }
+        try {
+            preferencesNode.removeNode();
+        } catch (BackingStoreException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        preferencesNode = replacementNode;
     }
 
     @Override

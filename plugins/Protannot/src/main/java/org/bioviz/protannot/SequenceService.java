@@ -28,11 +28,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.bioviz.protannot.interproscan.InterProscanTranslator;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
 import org.bioviz.protannot.interproscan.api.JobRequest;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
+import org.bioviz.protannot.model.Dnaseq;
+import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -44,18 +48,20 @@ public class SequenceService {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SequenceService.class);
 
     private InterProscanService interProscanService;
-
+    
+    private InterProscanTranslator interProscanTranslator;
+    
     private JLabel infoLabel;
     private JProgressBar progressBar;
     private JLabel showDetailLabel;
     private JTextArea detailText;
     private JScrollPane areaScrollPane;
     private Timer resultFetchTimer;
-    private Timer applicationFetchTimer;
     private JDialog dialog;
     private JPanel parentPanel;
     private final Set<String> inputAppl;
     private JPanel configParentPanel;
+    private ProtannotParser parser;
 
     public SequenceService() {
         inputAppl = Sets.newConcurrentHashSet();
@@ -240,12 +246,12 @@ public class SequenceService {
         return false;
     }
 
-    public void asyncLoadSequence() {
+    public void asyncLoadSequence(Callback callback) {
         if (showSetupModal()) {
             CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProscan") {
                 @Override
                 protected Void runInBackground() {
-                    loadSequence();
+                    loadSequence(callback);
                     return null;
                 }
 
@@ -258,7 +264,7 @@ public class SequenceService {
         }
     }
 
-    public void loadSequence() {
+    public void loadSequence(Callback callback) {
 
         //For testing
         JobRequest request = new JobRequest();
@@ -268,7 +274,7 @@ public class SequenceService {
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
         request.setPathways(Optional.empty());
-        request.setSequence(Optional.of("MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA"));
+        request.setSequence(Optional.of(parser.getDnaseq().getResidues().getValue()));
         Optional<String> jobId = interProscanService.run(request);
 
         LOG.info(jobId.get());
@@ -281,6 +287,14 @@ public class SequenceService {
                 Status status = interProscanService.status(jobId.get());
                 LOG.info(status.toString());
                 if (status.equals(Status.FINISHED)) {
+                    Optional<Document> doc = interProscanService.result(jobId.get());
+                    if(doc.isPresent()) {
+                        Dnaseq original = parser.getDnaseq();
+                        Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
+                        original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
+                        callback.execute(original);
+                        
+                    }
                     dialog.dispose();
                     resultFetchTimer.cancel();
                 }
@@ -309,4 +323,19 @@ public class SequenceService {
         this.interProscanService = interProscanService;
     }
 
+    @Reference
+    public void setParser(ProtannotParser parser) {
+        this.parser = parser;
+    }
+
+    @Reference
+    public void setInterProscanTranslator(InterProscanTranslator interProscanTranslator) {
+        this.interProscanTranslator = interProscanTranslator;
+    }
+    
+    public interface Callback {
+        public void execute(Dnaseq dnaseq);
+    }
+
+    
 }

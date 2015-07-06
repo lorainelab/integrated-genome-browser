@@ -5,6 +5,7 @@
  */
 package org.bioviz.protannot.model;
 
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
@@ -46,6 +47,7 @@ import org.w3c.dom.Node;
  *
  * @author Tarun
  */
+@Component(provide = ProtannotParser.class)
 public class ProtannotParser {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtannotParser.class);
@@ -70,8 +72,10 @@ public class ProtannotParser {
     public static final String AA_START = "aa_start";
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
+    public Dnaseq dnaseq;
 
     public ProtannotParser() {
+        dnaseq = new Dnaseq();
         try {
             jaxbContext = JAXBContext.newInstance(Dnaseq.class);
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -93,12 +97,22 @@ public class ProtannotParser {
         return chromosome;
     }
 
+    public BioSeq parse(Dnaseq dnaseq) {
+
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
+
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
+        BioSeq chromosome = buildChromosome(dnaseq);
+        processDNASeq(chromosome, dnaseq);
+        return chromosome;
+    }
+
     public BioSeq parse(SeqMapViewI seqMapView) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
-        Dnaseq dnaseq = new Dnaseq();
         int start = Integer.MAX_VALUE, end = 0;
         int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
         StringBuilder residuesBuffer = new StringBuilder();
@@ -609,6 +623,14 @@ public class ProtannotParser {
         if (test != null) {
             sym.setProperty(NAMESTR, test);
         }
+    }
+
+    public Dnaseq getDnaseq() {
+        return dnaseq;
+    }
+
+    public void setDnaseq(Dnaseq dnaseq) {
+        this.dnaseq = dnaseq;
     }
 
 }

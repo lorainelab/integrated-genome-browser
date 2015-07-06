@@ -88,6 +88,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.table.AbstractTableModel;
+import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +116,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             System.getProperty("os.arch"),
             Locale.getDefault().toString());
     private IgbService igbService;
+    
+    private ProtannotParser parser;
     
     private SequenceService sequenceService;
 
@@ -372,7 +375,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
     
     public void doLoadInterProscan() {
-        sequenceService.asyncLoadSequence();
+        sequenceService.asyncLoadSequence(new SequenceService.Callback() {
+
+            @Override
+            public void execute(Dnaseq dnaseq) {
+                BioSeq bioseq = parser.parse(dnaseq);
+                load(bioseq);
+            }
+        });
     }
 
     /**
@@ -707,10 +717,16 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     public void load(SeqMapViewI seqMapView) {
-        ProtannotParser parser = new ProtannotParser();
         BioSeq genome_seq = parser.parse(seqMapView);
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
             gview.setBioSeq(genome_seq, true);
+            frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+    }
+    
+    public void load(BioSeq genome_seq) {
+        gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
+            //gview.setBioSeq(genome_seq, false);
+        gview.repaint();
             frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
     }
 
@@ -719,7 +735,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         BioSeq genome_seq = null;
 
         try (BufferedInputStream bistr = new BufferedInputStream(GeneralUtils.unzipStream(fistr, filename, new StringBuffer()))) {
-            ProtannotParser parser = new ProtannotParser();
             genome_seq = parser.parse(fistr);
 //            Xml2GenometryParser parser = new Xml2GenometryParser();
 //            NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
@@ -1532,6 +1547,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     @Reference
     public void setSequenceService(SequenceService sequenceService) {
         this.sequenceService = sequenceService;
+    }
+
+    @Reference
+    public void setParser(ProtannotParser parser) {
+        this.parser = parser;
     }
 
     

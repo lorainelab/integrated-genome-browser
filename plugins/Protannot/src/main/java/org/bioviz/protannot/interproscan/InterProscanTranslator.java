@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
  *
  * @author jeckstei
  */
-@Component
+@Component(provide = InterProscanTranslator.class)
 public class InterProscanTranslator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanTranslator.class);

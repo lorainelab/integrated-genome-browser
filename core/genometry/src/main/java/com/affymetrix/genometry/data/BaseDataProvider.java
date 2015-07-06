@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.data;
 
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
@@ -125,6 +126,9 @@ public abstract class BaseDataProvider implements DataProvider {
         replacementNode.putInt(LOAD_PRIORITY, loadPriority);
         if (!Strings.isNullOrEmpty(mirrorUrl)) {
             replacementNode.put(MIRROR_URL, mirrorUrl);
+        }
+        if (getFactoryName().isPresent()) {
+            replacementNode.put(FACTORY_NAME, getFactoryName().get());
         }
         try {
             preferencesNode.removeNode();

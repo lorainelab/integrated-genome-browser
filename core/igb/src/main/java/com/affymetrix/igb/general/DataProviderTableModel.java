@@ -170,18 +170,10 @@ public final class DataProviderTableModel extends AbstractTableModel {
         boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return dataProvider.getStatus() != ResourceStatus.Disabled;
             }
             case Name: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding && isEditable) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return isEditable;
             }
             case Enabled: {
                 return true;
@@ -193,7 +185,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if(aValue instanceof String && Strings.isNullOrEmpty((String)aValue)) {
+        if (aValue instanceof String && Strings.isNullOrEmpty((String) aValue)) {
             aValue = getValueAt(rowIndex, columnIndex);
         }
         DataProvider dataProvider = sortedDataProviders.get(rowIndex);
@@ -230,8 +222,8 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:
+                dataProvider.setName((String) editedValue);
                 if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
-                    dataProvider.setName((String) editedValue);
                     loadView.refreshTreeViewAndRestore();
                 }
                 break;

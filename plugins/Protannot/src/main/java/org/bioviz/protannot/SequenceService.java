@@ -11,6 +11,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +50,9 @@ public class SequenceService {
     private JLabel showDetailLabel;
     private JTextArea detailText;
     private JScrollPane areaScrollPane;
-    Timer timer;
-    JDialog dialog;
-    JPanel parentPanel;
+    private Timer timer;
+    private JDialog dialog;
+    private JPanel parentPanel;
 
     private void initInfoLabel() {
         infoLabel = new JLabel("Loading InterProscan data, Please wait...");
@@ -152,8 +153,23 @@ public class SequenceService {
             timer.cancel();
         }
     }
+    
+    private void showSetupModal() {
+        JPanel configParentPanel = new JPanel(new MigLayout()); 
+        configParentPanel.add(new JLabel("Select the applications to run."), "wrap");
+        configParentPanel.add(progressBar, "align center, wrap");
+        final JComponent[] inputs = new JComponent[]{
+            configParentPanel
+        };
+        Object[] options = {"Run","Cancel"};
+        int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProscan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+    }
 
     public void asyncLoadSequence() {
+        showSetupModal();
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProscan") {
             @Override
             protected Void runInBackground() {
@@ -190,38 +206,13 @@ public class SequenceService {
 
         LOG.info(jobId.get());
 
-//        timer = new Timer(1000, (ActionEvent e) -> {
-//            Status status = interProscanService.status(jobId.get());
-//            LOG.debug(status.toString());
-//            if (status.equals(Status.FINISHED)) {
-//                dialog.dispose();
-//                timer.stop();
-//            }
-//            if (status.equals(Status.ERROR)) {
-//                dialog.dispose();
-//                timer.stop();
-//                //TODO: Notify user
-//            }
-//            if (status.equals(Status.FAILURE)) {
-//                dialog.dispose();
-//                timer.stop();
-//                //TODO: Notify user
-//            }
-//            if (status.equals(Status.NOT_FOUND)) {
-//                dialog.dispose();
-//                timer.stop();
-//                //TODO: Notify user
-//            }
-//        });
-//        timer.setDelay(1000);
-//        timer.start();
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
 
             @Override
             public void run() {
                 Status status = interProscanService.status(jobId.get());
-                LOG.debug(status.toString());
+                LOG.info(status.toString());
                 if (status.equals(Status.FINISHED)) {
                     dialog.dispose();
                     timer.cancel();
@@ -242,7 +233,7 @@ public class SequenceService {
                     //TODO: Notify user
                 }
             }
-        }, 1000);
+        }, new Date(), 1000);
 
     }
 

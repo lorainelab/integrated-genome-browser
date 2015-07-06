@@ -102,6 +102,8 @@ public class ProtannotParser {
         int start = Integer.MAX_VALUE, end = 0;
         int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
         StringBuilder residuesBuffer = new StringBuilder();
+        MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
+
         for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
             int exonsCount = sym.getChildCount();
@@ -131,10 +133,17 @@ public class ProtannotParser {
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
             mrna.setStrand("+");
         }
-        dnaseq.setSeq(bioseq.getId());
+        mutableSeqSymmetry.addSpan(new SimpleSeqSpan(start, end, bioseq));
+        String seqId = bioseq.getId();
+        if (!seqId.startsWith("chr")) {
+            seqId = "chr" + seqId;
+        }
+        dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
+        String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
         Dnaseq.Residues residue = new Dnaseq.Residues();
-        residue.setValue(residuesBuffer.toString());
+        residue.setValue(residuesStr.toLowerCase());
+
         residue.setStart(new BigInteger(start + ""));
         residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
@@ -143,6 +152,7 @@ public class ProtannotParser {
         } catch (JAXBException ex) {
             java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
         }
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
@@ -347,7 +357,6 @@ public class ProtannotParser {
         if (mstart_point == null) {
             throw new NullPointerException("Conflict with start and end in processCDS.");
         }
-        
 
         result = new SimpleSymWithProps();
 

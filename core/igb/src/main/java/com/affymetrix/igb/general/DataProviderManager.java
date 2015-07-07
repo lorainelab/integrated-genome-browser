@@ -45,6 +45,7 @@ import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -389,7 +390,11 @@ public class DataProviderManager {
                 .collect(Collectors.toSet());
         dataSetsToRemove.forEach(ds -> allAssociatedDataContainers.add(ds.getDataContainer()));
         loadView.removeAllDataSets(dataSetsToRemove);
-        allAssociatedDataContainers.forEach(dc -> dc.setIsInitialized(false));
+        Iterator<DataContainer> iter = allAssociatedDataContainers.iterator();
+        while (iter.hasNext()) {
+            DataContainer dc = iter.next();
+            dc.getGenomeVersion().removeDataContainer(dc);
+        }
         dataProvider.setStatus(ResourceStatus.Disabled);
     }
 

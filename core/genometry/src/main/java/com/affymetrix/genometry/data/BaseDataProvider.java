@@ -119,23 +119,26 @@ public abstract class BaseDataProvider implements DataProvider {
 
     @Override
     public void setUrl(String url) {
-        this.url = url;
-        Preferences replacementNode = PreferenceUtils.getDataProviderNode(url);
-        replacementNode.put(PRIMARY_URL, url);
-        replacementNode.put(PROVIDER_NAME, name);
-        replacementNode.putInt(LOAD_PRIORITY, loadPriority);
-        if (!Strings.isNullOrEmpty(mirrorUrl)) {
-            replacementNode.put(MIRROR_URL, mirrorUrl);
+        if (!url.equalsIgnoreCase(this.url)) {
+            this.url = url;
+            Preferences replacementNode = PreferenceUtils.getDataProviderNode(url);
+            replacementNode.put(PRIMARY_URL, url);
+            replacementNode.put(PROVIDER_NAME, name);
+            replacementNode.putInt(LOAD_PRIORITY, loadPriority);
+            if (!Strings.isNullOrEmpty(mirrorUrl)) {
+                replacementNode.put(MIRROR_URL, mirrorUrl);
+            }
+            if (getFactoryName().isPresent()) {
+                replacementNode.put(FACTORY_NAME, getFactoryName().get());
+            }
+            try {
+                preferencesNode.removeNode();
+            } catch (BackingStoreException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+            preferencesNode = replacementNode;
+            initialize();
         }
-        if (getFactoryName().isPresent()) {
-            replacementNode.put(FACTORY_NAME, getFactoryName().get());
-        }
-        try {
-            preferencesNode.removeNode();
-        } catch (BackingStoreException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-        preferencesNode = replacementNode;
     }
 
     @Override

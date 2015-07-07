@@ -309,6 +309,15 @@ public class DataProviderManager {
                         loadView.removeDataSet(ds, true);
                         ds.getDataContainer().getGenomeVersion().removeDataContainer(ds.getDataContainer());
                     });
+            for (GenomeVersion genomeVerion : GenometryModel.getInstance().getSeqGroups().values()) {
+                Iterator<DataContainer> iter = genomeVerion.getDataContainers().iterator();
+                while (iter.hasNext()) {
+                    DataContainer dataContainer = iter.next();
+                    if (dataContainer.getDataProvider() == dataProvider) {
+                        iter.remove();
+                    }
+                }
+            }
 
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
         } catch (BackingStoreException ex) {

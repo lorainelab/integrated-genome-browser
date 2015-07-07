@@ -113,7 +113,6 @@ import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
@@ -755,13 +754,13 @@ public class SeqMapView extends JPanel
             }
         }
 
-        // Synchronized to keep aseq from getting set to null
-        seqmap.getTiers().stream().forEach(tg -> {
-            tg.removeAllChildren();
-            tg.setScene(null);
-        });
-        List<TierGlyph> oldTierSelections = ImmutableList.copyOf(getTierManager().getSelectedTiers());
-        List<TierGlyph> previousTiers = seqmap.getTiers();
+        // Save selected tiers
+        List<TierGlyph> old_tier_selections = getTierManager().getSelectedTiers();
+        List<TierGlyph> cur_tiers = new ArrayList<>(seqmap.getTiers());
+        TierGlyph axisTierGlyph = (axis_tier == null) ? null : axis_tier;
+        int axis_index = Math.max(0, cur_tiers.indexOf(axisTierGlyph));	// if not found, set to 0
+        List<TierGlyph> temp_tiers = copyMapTierGlyphs(cur_tiers, axis_index);
+
         seqmap.clearWidget();
         seqmap.clearSelected(); // may already be done by map.clearWidget()
 
@@ -784,7 +783,7 @@ public class SeqMapView extends JPanel
         }
 
         seqmap.setMapRange(viewseq.getMin(), viewseq.getMax());
-        addGlyphs(previousTiers);
+        addGlyphs(temp_tiers, axis_index);
 
         seqmap.repack();
 
@@ -809,9 +808,9 @@ public class SeqMapView extends JPanel
         }
 
         // Restore selected tiers
-        if (oldTierSelections != null) {
+        if (old_tier_selections != null) {
             getTierManager().getAllTierLabels().stream().filter(tierLabelGlyph -> tierLabelGlyph.getReferenceTier().isVisible()
-                    && oldTierSelections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
+                    && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
                         ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
                     });
         }
@@ -920,7 +919,22 @@ public class SeqMapView extends JPanel
         }
     }
 
-    private void addGlyphs(List<TierGlyph> temp_tiers) {
+    // copying map tiers to separate list to avoid problems when removing tiers
+    //   (and thus modifying map.getTiers() list -- could probably deal with this
+    //    via iterators, but feels safer this way...)
+    private List<TierGlyph> copyMapTierGlyphs(List<TierGlyph> cur_tiers, int axis_index) {
+        List<TierGlyph> temp_tiers = new ArrayList<>();
+        for (TierGlyph tg : cur_tiers) {
+            temp_tiers.add(tg);
+            if (DEBUG_TIERS) {
+            }
+            tg.removeAllChildren();
+            tg.setScene(null);
+        }
+        return temp_tiers;
+    }
+
+    private void addGlyphs(List<TierGlyph> temp_tiers, int axis_index) {
         // The hairline needs to be among the first glyphs added,
         // to keep it from interfering with selection of other glyphs.
         if (hairline != null) {

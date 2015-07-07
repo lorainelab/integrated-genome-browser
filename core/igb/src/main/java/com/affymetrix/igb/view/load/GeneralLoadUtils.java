@@ -211,7 +211,7 @@ public final class GeneralLoadUtils {
         // There may be more than one server with the same versionName.  Merge all the version names.
         List<DataSet> featureList = new ArrayList<>();
         if (genomeVersion != null) {
-            Optional.ofNullable(genomeVersion.getAvailableDataContainers()).ifPresent(versions -> {
+            Optional.ofNullable(genomeVersion.getDataContainers()).ifPresent(versions -> {
                 versions.stream()
                         .flatMap(version -> version.getDataSets()
                                 .stream()).forEach(featureList::add);

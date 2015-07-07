@@ -109,7 +109,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                     c.setForeground(Color.WHITE);
                 } else if (selectedDataProvider.useMirrorUrl()) {
                     jc.setToolTipText(BUNDLE.getString("mirrorUrlMessage"));
-                    c.setBackground(new Color(237,227,85));
+                    c.setBackground(new Color(237, 227, 85));
                 } else {
                     jc.setToolTipText("");
                 }
@@ -267,7 +267,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         loadPriorityDownBtn.setEnabled(dataSourcesTable.getSelectedRow() < dataSourcesTable.getRowCount() - 1);
         authBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
         editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 1));
-        removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1);
+        removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 1));
     }
 
     private TableCellRenderer getRefreshRenderer() {

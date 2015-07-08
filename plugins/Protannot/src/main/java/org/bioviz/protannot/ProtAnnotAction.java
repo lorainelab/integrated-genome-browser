@@ -276,6 +276,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public ProtAnnotAction() {
         super("Protannot", null, null);
         frm = new JFrame(APP_NAME);
+        frm.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         singleton = this;
     }
 

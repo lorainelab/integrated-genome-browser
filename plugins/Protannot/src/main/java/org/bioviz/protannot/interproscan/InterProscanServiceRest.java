@@ -9,6 +9,8 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
@@ -75,25 +77,26 @@ public class InterProscanServiceRest implements InterProscanService {
 
     @Override
     public Status status(String jobId) {
-        URL url = null;
-        try {
-            url = new URL(INTERPROSCAN_BASE_URL + "/status/" + jobId);
-        } catch (MalformedURLException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-
-            String response = IOUtils.toString(bis, "UTF-8");
-            try {
-                return InterProscanService.Status.valueOf(response);
-            } catch (IllegalArgumentException ex) {
-                LOG.error(ex.getMessage(), ex);
-            }
-
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-        return InterProscanService.Status.ERROR;
+        return Status.FINISHED;
+//        URL url = null;
+//        try {
+//            url = new URL(INTERPROSCAN_BASE_URL + "/status/" + jobId);
+//        } catch (MalformedURLException ex) {
+//            LOG.error(ex.getMessage(), ex);
+//        }
+//        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+//
+//            String response = IOUtils.toString(bis, "UTF-8");
+//            try {
+//                return InterProscanService.Status.valueOf(response);
+//            } catch (IllegalArgumentException ex) {
+//                LOG.error(ex.getMessage(), ex);
+//            }
+//
+//        } catch (IOException ex) {
+//            LOG.error(ex.getMessage(), ex);
+//        }
+//        return InterProscanService.Status.ERROR;
     }
 
     @Override
@@ -153,24 +156,34 @@ public class InterProscanServiceRest implements InterProscanService {
 
     @Override
     public Optional<Document> result(String jobId) {
-        StringBuilder requestUrl = new StringBuilder(INTERPROSCAN_BASE_URL);
-        requestUrl.append("/result/")
-                .append(jobId).append("/xml");
-        URL url = null;
-        try {
-            url = new URL(requestUrl.toString());
-        } catch (MalformedURLException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
         Document document = null;
-        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File("/home/jeckstei/Projects/igb/code/integrated-genome-browser/many_sequences.xml")))) {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             document = dBuilder.parse(bis);
         } catch (IOException | SAXException | ParserConfigurationException ex) {
             LOG.error(ex.getMessage());
-        } 
+        }
         return Optional.ofNullable(document);
+        
+//        StringBuilder requestUrl = new StringBuilder(INTERPROSCAN_BASE_URL);
+//        requestUrl.append("/result/")
+//                .append(jobId).append("/xml");
+//        URL url = null;
+//        try {
+//            url = new URL(requestUrl.toString());
+//        } catch (MalformedURLException ex) {
+//            LOG.error(ex.getMessage(), ex);
+//        }
+//        Document document = null;
+//        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+//            document = dBuilder.parse(bis);
+//        } catch (IOException | SAXException | ParserConfigurationException ex) {
+//            LOG.error(ex.getMessage());
+//        } 
+//        return Optional.ofNullable(document);
     }
 
 }

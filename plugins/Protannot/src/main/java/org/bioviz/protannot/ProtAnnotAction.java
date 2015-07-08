@@ -309,16 +309,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
         frm.addWindowListener(this);
         frm.setVisible(true);
-        String file = getArgumentValue(Arguments.FILENAME);
-        if (file != null) {
-            if (isServer(file)) {
-                load(file);
-            } else if (getArgumentValue(Arguments.SERVER) != null) {
-                load(getArgumentValue(Arguments.SERVER) + file);
-            } else {
-                load(new File(file));
-            }
-        }
     }
 
     /**
@@ -469,18 +459,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      */
     private void addFileActions(final JMenu file_menu) {
 
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getAddServerAction()));
-
-        if (getArgumentValue(Arguments.SERVER) == null) {
-            server_load_action.setEnabled(false);
-        } else {
-            server_load_action.setEnabled(true);
-        }
-
-        MenuUtil.addToMenu(file_menu, new JMenuItem(server_load_action));
-
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPrintAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getExportAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPreferencesAction()));
@@ -1131,20 +1110,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     };
 
-    static AbstractAction getLoadAction() {
-        AbstractAction load_action = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("openFile"))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().doLoadFile();
-                    }
-                };
-        load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
-        load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
-        return load_action;
-    }
-    
     static AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
@@ -1157,20 +1122,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
         load_action.putValue(AbstractAction.SHORT_DESCRIPTION, "Load a custom sequence");
         return load_action;
-    }
-
-    static AbstractAction getAddServerAction() {
-        AbstractAction add_server = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("addServer"))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().addServer();
-                    }
-                };
-        add_server.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
-        add_server.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("addServerTip"));
-        return add_server;
     }
 
     static AbstractAction getLoadFromServerAction() {

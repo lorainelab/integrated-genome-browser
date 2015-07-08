@@ -75,7 +75,6 @@ public class ProtannotParser {
     public Dnaseq dnaseq;
 
     public ProtannotParser() {
-        dnaseq = new Dnaseq();
         try {
             jaxbContext = JAXBContext.newInstance(Dnaseq.class);
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -89,8 +88,8 @@ public class ProtannotParser {
 
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
-
-        Dnaseq dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
+        
+        dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
@@ -101,7 +100,7 @@ public class ProtannotParser {
 
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
-
+        this.dnaseq = dnaseq;
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
@@ -111,6 +110,7 @@ public class ProtannotParser {
     public BioSeq parse(SeqMapViewI seqMapView) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
+        dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
         int start = Integer.MAX_VALUE, end = 0;
@@ -375,9 +375,9 @@ public class ProtannotParser {
 
         if (mend_point == null) {
             int total = mstart_point.getStart();
-            for(int i = 0; i < m2gSym.getChildCount();i++) {
+            for (int i = 0; i < m2gSym.getChildCount(); i++) {
                 SeqSymmetry child = m2gSym.getChild(i);
-                int length = Integer.parseInt( ((SymWithProps)child).getProperty("length").toString() );
+                int length = Integer.parseInt(((SymWithProps) child).getProperty("length").toString());
                 total += length;
             }
             mend_point = new MutableDoubleSeqSpan(total, total, mrnaChromosome);

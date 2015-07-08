@@ -174,9 +174,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         List<SeqSymmetry> selectedSyms = igbService.getSeqMapView().getSelectedSyms();
-
         loadPrefs();
         start();
+        load(igbService.getSeqMapView());
     }
 
     @Override
@@ -276,7 +276,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public ProtAnnotAction() {
         super("Protannot", null, null);
         frm = new JFrame(APP_NAME);
-        frm.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         singleton = this;
     }
 
@@ -428,15 +428,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void windowClosing(WindowEvent evt) {
         if (evt.getSource() == frm) {
             updatePrefs(gview.getColorPrefs());
-
-            JFrame frame = (JFrame) evt.getComponent();
-
-            String message = "Do you really want to exit?";
-            if (confirmPanel(message)) {
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            } else {
-                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            }
         }
     }
 
@@ -479,14 +470,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void addFileActions(final JMenu file_menu) {
 
         MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(new AbstractAction("Load") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-                load(igbService.getSeqMapView());
-            }
-        }));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getAddServerAction()));
 

@@ -23,7 +23,6 @@ import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -162,11 +161,6 @@ public class ProtannotParser {
         residue.setStart(new BigInteger(start + ""));
         residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
-        try {
-            jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
-        } catch (JAXBException ex) {
-            java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);

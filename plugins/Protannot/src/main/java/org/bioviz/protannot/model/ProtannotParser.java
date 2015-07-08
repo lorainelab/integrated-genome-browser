@@ -11,6 +11,7 @@ import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.comparator.SeqSymStartComparator;
+import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
@@ -379,7 +380,14 @@ public class ProtannotParser {
         SeqSpan mend_point = result.getSpan(mrnaChromosome);
 
         if (mend_point == null) {
-            throw new NullPointerException("Conflict with start and end in processCDS.");
+            int total = mstart_point.getStart();
+            for(int i = 0; i < m2gSym.getChildCount();i++) {
+                SeqSymmetry child = m2gSym.getChild(i);
+                int length = Integer.parseInt( ((SymWithProps)child).getProperty("length").toString() );
+                total += length;
+            }
+            mend_point = new MutableDoubleSeqSpan(total, total, mrnaChromosome);
+            //throw new NullPointerException("Conflict with start and end in processCDS.");
         }
         // because CDS has no method attribute in any example files.
         TypeContainerAnnot m2pSym = new TypeContainerAnnot("");

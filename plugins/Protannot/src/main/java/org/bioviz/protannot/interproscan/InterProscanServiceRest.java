@@ -8,7 +8,9 @@ package org.bioviz.protannot.interproscan;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -98,6 +100,7 @@ public class InterProscanServiceRest implements InterProscanService {
     public Optional<String> run(JobRequest jobRequest) {
         URL url = null;
         StringBuilder request = new StringBuilder(INTERPROSCAN_BASE_URL);
+        StringBuilder body = new StringBuilder();
         request.append("/run?")
                 .append("email=").append(jobRequest.getEmail());
         if (jobRequest.getTitle().isPresent()) {
@@ -110,7 +113,7 @@ public class InterProscanServiceRest implements InterProscanService {
             request.append("&pathways=").append(jobRequest.getPathways().get());
         }
         if (jobRequest.getSequence().isPresent()) {
-            request.append("&sequence=").append(jobRequest.getSequence().get());
+            body.append("sequence=").append(jobRequest.getSequence().get());
         }
         if (jobRequest.getSignatureMethods().isPresent()) {
             for (String sm : jobRequest.getSignatureMethods().get()) {
@@ -119,10 +122,17 @@ public class InterProscanServiceRest implements InterProscanService {
         }
         HttpURLConnection con = null;
         try {
+            LOG.info(request.toString());
             url = new URL(request.toString());
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            con.setDoOutput(true);
+            try(BufferedOutputStream bos = new BufferedOutputStream(con.getOutputStream())) {
+                StringReader sr = new StringReader(body.toString());
+                
+                IOUtils.copy(sr,bos);
+            }
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }

@@ -6,6 +6,7 @@
 package org.bioviz.protannot.model;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
@@ -23,6 +24,7 @@ import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import com.lorainelab.igb.services.IgbService;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ public class ProtannotParser {
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
     public Dnaseq dnaseq;
+    IgbService igbService;
 
     public ProtannotParser() {
         try {
@@ -115,7 +118,6 @@ public class ProtannotParser {
         BioSeq bioseq = seqMapView.getViewSeq();
         int start = Integer.MAX_VALUE, end = 0;
         int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
-        StringBuilder residuesBuffer = new StringBuilder();
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
 
         for (SeqSymmetry sym : selectedSyms) {
@@ -141,7 +143,6 @@ public class ProtannotParser {
                 cds.setEnd(new BigInteger(cdsSpan.getEnd() + ""));
                 mrna.setCds(cds);
             }
-            residuesBuffer.append(SeqUtils.getResidues(sym, bioseq));
             dnaseq.getMRNAAndAaseq().add(mrna);
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
@@ -154,6 +155,7 @@ public class ProtannotParser {
         }
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
+        igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
         Dnaseq.Residues residue = new Dnaseq.Residues();
         residue.setValue(residuesStr.toLowerCase());
@@ -633,6 +635,11 @@ public class ProtannotParser {
 
     public void setDnaseq(Dnaseq dnaseq) {
         this.dnaseq = dnaseq;
+    }
+
+    @Reference
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
     }
 
 }

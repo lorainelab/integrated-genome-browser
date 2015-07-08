@@ -48,9 +48,9 @@ public class SequenceService {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SequenceService.class);
 
     private InterProscanService interProscanService;
-    
+
     private InterProscanTranslator interProscanTranslator;
-    
+
     private JLabel infoLabel;
     private JProgressBar progressBar;
     private JLabel showDetailLabel;
@@ -220,7 +220,7 @@ public class SequenceService {
         inputAppl.clear();
         configParentPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
         configParentPanel.add(new JLabel("Select the applications to run."), "wrap");
-        if(!showApplicationOptionsLoadingModal()) {
+        if (!showApplicationOptionsLoadingModal()) {
             return false;
         }
 
@@ -266,6 +266,23 @@ public class SequenceService {
 
     public void loadSequence(Callback callback) {
 
+        //Testing
+//        Dnaseq original = parser.getDnaseq();
+//        
+//        Document doc = null;
+//        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File("/home/jeckstei/Projects/igb/code/integrated-genome-browser/plugins/Protannot/src/test/resources/sample2.xml")))) {
+//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+//            doc = dBuilder.parse(bis);
+//        } catch (IOException | SAXException | ParserConfigurationException ex) {
+//            LOG.error(ex.getMessage());
+//        } 
+//        Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc);
+//        original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
+//        callback.execute(original);
+        
+        //end Testing
+
         //For testing
         JobRequest request = new JobRequest();
         request.setEmail("tmall@uncc.edu");
@@ -288,12 +305,12 @@ public class SequenceService {
                 LOG.info(status.toString());
                 if (status.equals(Status.FINISHED)) {
                     Optional<Document> doc = interProscanService.result(jobId.get());
-                    if(doc.isPresent()) {
+                    if (doc.isPresent()) {
                         Dnaseq original = parser.getDnaseq();
                         Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
                         original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
                         callback.execute(original);
-                        
+
                     }
                     dialog.dispose();
                     resultFetchTimer.cancel();
@@ -332,10 +349,10 @@ public class SequenceService {
     public void setInterProscanTranslator(InterProscanTranslator interProscanTranslator) {
         this.interProscanTranslator = interProscanTranslator;
     }
-    
+
     public interface Callback {
+
         public void execute(Dnaseq dnaseq);
     }
 
-    
 }

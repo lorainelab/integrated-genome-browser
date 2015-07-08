@@ -726,8 +726,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     
     public void load(BioSeq genome_seq) {
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
-            //gview.setBioSeq(genome_seq, false);
-        gview.repaint();
+        gview.setBioSeq(genome_seq, false);
+    
             frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
     }
 

@@ -350,7 +350,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker
      * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
      */
-    void setBioSeq(BioSeq gseq, boolean is_new) {
+   synchronized void setBioSeq(BioSeq gseq, boolean is_new) {
         this.gseq = gseq;
         seqmap.clearWidget();
         seqmap.setMapRange(gseq.getMin(), gseq.getMax());

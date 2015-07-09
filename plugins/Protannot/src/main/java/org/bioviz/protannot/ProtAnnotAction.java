@@ -459,6 +459,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      */
     private void addFileActions(final JMenu file_menu) {
 
+        MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPrintAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getExportAction()));
@@ -1110,6 +1111,20 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     };
 
+    static AbstractAction getLoadAction() {
+        AbstractAction load_action = new AbstractAction(MessageFormat.format(
+                BUNDLE.getString("menuItemHasDialog"),
+                BUNDLE.getString("openFile"))) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ProtAnnotAction.getInstance().doLoadFile();
+                    }
+                };
+        load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
+        load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
+        return load_action;
+    }
+    
     static AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),

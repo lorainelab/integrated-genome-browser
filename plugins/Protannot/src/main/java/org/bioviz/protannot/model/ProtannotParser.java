@@ -22,9 +22,11 @@ import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -91,7 +93,7 @@ public class ProtannotParser {
 
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
-        
+
         dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
@@ -147,6 +149,7 @@ public class ProtannotParser {
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
             mrna.setStrand("+");
+
         }
         mutableSeqSymmetry.addSpan(new SimpleSeqSpan(start, end, bioseq));
         String seqId = bioseq.getId();
@@ -163,10 +166,38 @@ public class ProtannotParser {
         residue.setStart(new BigInteger(start + ""));
         residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
+        addProteinSequenceToMrna(dnaseq, bioseq);
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
+
+        try {
+            jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
+        } catch (JAXBException ex) {
+            java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
+
+    }
+
+    public void addProteinSequenceToMrna(Dnaseq dnaseq, BioSeq bioseq) {
+        for (Object seq : dnaseq.getMRNAAndAaseq()) {
+            if (seq instanceof Dnaseq.MRNA) {
+                Dnaseq.MRNA mrna = (Dnaseq.MRNA) seq;
+                MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
+                mutableSeqSymmetry.addSpan(new SimpleSeqSpan(mrna.getStart().intValue(),mrna.getEnd().intValue() , bioseq));
+                String mrnaResidue = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
+                String mrnaProtein = DNAUtils.translate(mrnaResidue, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
+                Dnaseq.Descriptor proteinSequence = new Dnaseq.Descriptor();
+                proteinSequence.setType("protein sequence");
+                proteinSequence.setValue(mrnaProtein);
+                Dnaseq.Descriptor codingSequence = new Dnaseq.Descriptor();
+                codingSequence.setType("mRNA coding sequence");
+                codingSequence.setValue(mrnaResidue);
+                mrna.getDescriptor().add(proteinSequence);
+            }
+        }
 
     }
 

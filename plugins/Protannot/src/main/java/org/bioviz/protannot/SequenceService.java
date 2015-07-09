@@ -13,6 +13,8 @@ import com.google.common.collect.Sets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
@@ -36,7 +38,6 @@ import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 /**
  *
@@ -280,9 +281,7 @@ public class SequenceService {
 //        Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc);
 //        original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
 //        callback.execute(original);
-        
         //end Testing
-
         //For testing
         JobRequest request = new JobRequest();
         request.setEmail("tmall@uncc.edu");
@@ -291,44 +290,68 @@ public class SequenceService {
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
         request.setPathways(Optional.empty());
-        request.setSequence(Optional.of(parser.getDnaseq().getResidues().getValue()));
-        Optional<String> jobId = interProscanService.run(request);
+        for (Object obj : parser.getDnaseq().getMRNAAndAaseq()) {
+            if (obj instanceof Dnaseq.MRNA) {
+                String sequence = null;
+                for (Dnaseq.Descriptor d : ((Dnaseq.MRNA) obj).getDescriptor()) {
+                    if (d.getType().equals("protein sequence")) {
+                        sequence = d.getValue();
+                    }
+                }
+                request.getSequences().add(sequence);
+            }
+        }
+        final List<String> jobIds = interProscanService.run(request);
 
-        LOG.info(jobId.get());
+        for (String jobId : jobIds) {
+            LOG.info(jobId);
+        }
 
         resultFetchTimer = new Timer();
         resultFetchTimer.schedule(new TimerTask() {
 
             @Override
             public void run() {
-                Status status = interProscanService.status(jobId.get());
-                LOG.info(status.toString());
-                if (status.equals(Status.FINISHED)) {
-                    Optional<Document> doc = interProscanService.result(jobId.get());
-                    if (doc.isPresent()) {
-                        Dnaseq original = parser.getDnaseq();
-                        Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
-                        original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
-                        callback.execute(original);
-
+                Iterator<String> it = jobIds.iterator();
+                while (it.hasNext()) {
+                    String jobId = it.next();
+                    Status status = interProscanService.status(jobId);
+                    LOG.info(status.toString());
+                    if (status.equals(Status.FINISHED)) {
+//                        Optional<Document> doc = interProscanService.result(jobId);
+//                        if (doc.isPresent()) {
+//                            Dnaseq original = parser.getDnaseq();
+//                            Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
+//                            original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
+//                            callback.execute(original);
+//
+//                        }
+//                        dialog.dispose();
+                        //resultFetchTimer.cancel();
+                        it.remove();
                     }
-                    dialog.dispose();
-                    resultFetchTimer.cancel();
+                    if (status.equals(Status.ERROR)) {
+                        dialog.dispose();
+                        resultFetchTimer.cancel();
+                        //TODO: Notify user
+                        it.remove();
+                    }
+                    if (status.equals(Status.FAILURE)) {
+                        dialog.dispose();
+                        resultFetchTimer.cancel();
+                        //TODO: Notify user
+                        it.remove();
+                    }
+                    if (status.equals(Status.NOT_FOUND)) {
+                        dialog.dispose();
+                        resultFetchTimer.cancel();
+                        //TODO: Notify user
+                        it.remove();
+                    }
                 }
-                if (status.equals(Status.ERROR)) {
+                if(jobIds.isEmpty()) {
                     dialog.dispose();
                     resultFetchTimer.cancel();
-                    //TODO: Notify user
-                }
-                if (status.equals(Status.FAILURE)) {
-                    dialog.dispose();
-                    resultFetchTimer.cancel();
-                    //TODO: Notify user
-                }
-                if (status.equals(Status.NOT_FOUND)) {
-                    dialog.dispose();
-                    resultFetchTimer.cancel();
-                    //TODO: Notify user
                 }
             }
         }, new Date(), 1000);

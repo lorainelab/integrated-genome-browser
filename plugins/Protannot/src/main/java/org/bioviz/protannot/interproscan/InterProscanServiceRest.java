@@ -16,6 +16,8 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,72 +79,18 @@ public class InterProscanServiceRest implements InterProscanService {
 
     @Override
     public Status status(String jobId) {
-        return Status.FINISHED;
-//        URL url = null;
-//        try {
-//            url = new URL(INTERPROSCAN_BASE_URL + "/status/" + jobId);
-//        } catch (MalformedURLException ex) {
-//            LOG.error(ex.getMessage(), ex);
-//        }
-//        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-//
-//            String response = IOUtils.toString(bis, "UTF-8");
-//            try {
-//                return InterProscanService.Status.valueOf(response);
-//            } catch (IllegalArgumentException ex) {
-//                LOG.error(ex.getMessage(), ex);
-//            }
-//
-//        } catch (IOException ex) {
-//            LOG.error(ex.getMessage(), ex);
-//        }
-//        return InterProscanService.Status.ERROR;
-    }
-
-    @Override
-    public Optional<String> run(JobRequest jobRequest) {
+//        return Status.FINISHED;
         URL url = null;
-        StringBuilder request = new StringBuilder(INTERPROSCAN_BASE_URL);
-        StringBuilder body = new StringBuilder();
-        request.append("/run?")
-                .append("email=").append(jobRequest.getEmail());
-        if (jobRequest.getTitle().isPresent()) {
-            request.append("&title=").append(jobRequest.getTitle().get());
-        }
-        if (jobRequest.getGoterms().isPresent()) {
-            request.append("&goterms=").append(jobRequest.getGoterms().get());
-        }
-        if (jobRequest.getPathways().isPresent()) {
-            request.append("&pathways=").append(jobRequest.getPathways().get());
-        }
-        if (jobRequest.getSequence().isPresent()) {
-            body.append("sequence=").append(jobRequest.getSequence().get());
-        }
-        if (jobRequest.getSignatureMethods().isPresent()) {
-            for (String sm : jobRequest.getSignatureMethods().get()) {
-                request.append("&appl=").append(sm);
-            }
-        }
-        HttpURLConnection con = null;
         try {
-            LOG.info(request.toString());
-            url = new URL(request.toString());
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            con.setDoOutput(true);
-            try(BufferedOutputStream bos = new BufferedOutputStream(con.getOutputStream())) {
-                StringReader sr = new StringReader(body.toString());
-                
-                IOUtils.copy(sr,bos);
-            }
-        } catch (IOException ex) {
+            url = new URL(INTERPROSCAN_BASE_URL + "/status/" + jobId);
+        } catch (MalformedURLException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        try (BufferedInputStream bis = new BufferedInputStream(con.getInputStream())) {
+        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
+
             String response = IOUtils.toString(bis, "UTF-8");
             try {
-                return Optional.ofNullable(response);
+                return InterProscanService.Status.valueOf(response);
             } catch (IllegalArgumentException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
@@ -150,8 +98,63 @@ public class InterProscanServiceRest implements InterProscanService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        return Optional.empty();
+        return InterProscanService.Status.ERROR;
+    }
 
+    @Override
+    public List<String> run(JobRequest jobRequest) {
+        List<String> results = new ArrayList<>();
+        for(String sequence : jobRequest.getSequences()) {
+            URL url = null;
+            StringBuilder request = new StringBuilder(INTERPROSCAN_BASE_URL);
+            request.append("/run");
+            StringBuilder body = new StringBuilder();
+            
+            body.append("email=").append(jobRequest.getEmail());
+            if (jobRequest.getTitle().isPresent()) {
+                body.append("&title=").append(jobRequest.getTitle().get());
+            }
+            if (jobRequest.getGoterms().isPresent()) {
+                body.append("&goterms=").append(jobRequest.getGoterms().get());
+            }
+            if (jobRequest.getPathways().isPresent()) {
+                body.append("&pathways=").append(jobRequest.getPathways().get());
+            }
+            if (jobRequest.getSignatureMethods().isPresent()) {
+                for (String sm : jobRequest.getSignatureMethods().get()) {
+                    body.append("&appl=").append(sm);
+                }
+            }
+            body.append("&sequence=%3Eigb protannot%0A").append(sequence);
+            HttpURLConnection con = null;
+            try {
+                LOG.info(body.toString());
+                url = new URL(request.toString());
+                con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con.setDoOutput(true);
+                try(BufferedOutputStream bos = new BufferedOutputStream(con.getOutputStream())) {
+                    StringReader sr = new StringReader(body.toString());
+
+                    IOUtils.copy(sr,bos);
+                }
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+            try (BufferedInputStream bis = new BufferedInputStream(con.getInputStream())) {
+                String response = IOUtils.toString(bis, "UTF-8");
+                try {
+                    results.add(response);
+                } catch (IllegalArgumentException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+        }
+        return results;
     }
 
     @Override

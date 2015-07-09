@@ -5,16 +5,10 @@
  */
 package org.bioviz.protannot.interproscan.api.test;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import junit.framework.Assert;
 import org.bioviz.protannot.interproscan.InterProscanServiceRest;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
-import org.bioviz.protannot.interproscan.api.JobRequest;
-import org.bioviz.protannot.interproscan.appl.model.ParameterType;
-import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,27 +32,27 @@ public class InterProscanServiceRestTest {
     }
 
 
-    @Test
-    public void testRun() {
-        InterProscanService service = new InterProscanServiceRest();
-        JobRequest request = new JobRequest();
-        request.setEmail("tmall@uncc.edu");
-        ParameterType applParameters = service.getApplications();
-        List<ValueType> applValues = applParameters.getValues().getValue();
-        Set<String> inputApplSet = new HashSet<>();
-        for(ValueType valueType : applValues) {
-            inputApplSet.add(valueType.getValue());
-        }
-        
-        request.setSignatureMethods(Optional.of(inputApplSet));
-        request.setTitle(Optional.empty());
-        request.setGoterms(Optional.empty());
-        request.setPathways(Optional.empty());
-        request.setSequence(Optional.of("MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA"));
-        Optional<String> id = service.run(request);
-        Assert.assertTrue(id.isPresent());
-
-    }
+//    @Test
+//    public void testRun() {
+//        InterProscanService service = new InterProscanServiceRest();
+//        JobRequest request = new JobRequest();
+//        request.setEmail("tmall@uncc.edu");
+//        ParameterType applParameters = service.getApplications();
+//        List<ValueType> applValues = applParameters.getValues().getValue();
+//        Set<String> inputApplSet = new HashSet<>();
+//        for(ValueType valueType : applValues) {
+//            inputApplSet.add(valueType.getValue());
+//        }
+//        
+//        request.setSignatureMethods(Optional.of(inputApplSet));
+//        request.setTitle(Optional.empty());
+//        request.setGoterms(Optional.empty());
+//        request.setPathways(Optional.empty());
+//        request.setSequence(Optional.of("MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA"));
+//        Optional<String> id = service.run(request);
+//        Assert.assertTrue(id.isPresent());
+//
+//    }
     
     @Ignore
     @Test

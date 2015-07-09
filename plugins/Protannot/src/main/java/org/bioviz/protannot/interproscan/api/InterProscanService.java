@@ -5,22 +5,27 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import java.util.List;
 import java.util.Optional;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.w3c.dom.Document;
-
 
 /**
  *
  * @author jeckstei
  */
 public interface InterProscanService {
+
     public Status status(String jobId);
-    public Optional<String> run(JobRequest jobRequest);
+
+    public List<String> run(JobRequest jobRequest);
+
     public ParameterType getApplications();
+
     public Optional<Document> result(String jobId);
-    
+
     public static enum Status {
-        RUNNING,FINISHED,ERROR,FAILURE,NOT_FOUND;
+
+        RUNNING, FINISHED, ERROR, FAILURE, NOT_FOUND;
     }
 }

@@ -5,6 +5,8 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,7 +21,14 @@ public class JobRequest {
     private Optional<Set<String>> signatureMethods;
     private Optional<Boolean> goterms;
     private Optional<Boolean> pathways;
-    private Optional<String> sequence;
+    private List<String> sequences;
+
+    public JobRequest() {
+        sequences = new ArrayList<>();
+    
+    }
+    
+    
 
     public String getEmail() {
         return email;
@@ -61,12 +70,15 @@ public class JobRequest {
         this.pathways = pathways;
     }
 
-    public Optional<String> getSequence() {
-        return sequence;
+    public List<String> getSequences() {
+        return sequences;
     }
 
-    public void setSequence(Optional<String> sequence) {
-        this.sequence = sequence;
+    public void setSequences(List<String> sequences) {
+        this.sequences = sequences;
     }
+
+
+
 
 }

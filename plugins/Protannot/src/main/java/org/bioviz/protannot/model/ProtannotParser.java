@@ -185,17 +185,41 @@ public class ProtannotParser {
         for (Object seq : dnaseq.getMRNAAndAaseq()) {
             if (seq instanceof Dnaseq.MRNA) {
                 Dnaseq.MRNA mrna = (Dnaseq.MRNA) seq;
-                MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
-                mutableSeqSymmetry.addSpan(new SimpleSeqSpan(mrna.getStart().intValue(),mrna.getEnd().intValue() , bioseq));
-                String mrnaResidue = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
-                String mrnaProtein = DNAUtils.translate(mrnaResidue, DNAUtils.FRAME_ONE, DNAUtils.ONE_LETTER_CODE);
+                MutableSeqSymmetry mutableSeqSymmetry;
+                int cdsStart = mrna.getCds().getStart().intValue();
+                int cdsEnd = mrna.getCds().getEnd().intValue();
+
+                StringBuilder exonsResidue = new StringBuilder();
+                for (Dnaseq.MRNA.Exon exon : mrna.getExon()) {
+                    mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
+                    final int exonStart = exon.getStart().intValue();
+                    final int exonEnd = exon.getEnd().intValue();
+                    int spanStart = 0;
+                    int spanEnd = 0;
+                    if (exonStart < cdsStart && exonEnd > cdsStart) {
+                        spanStart = cdsStart;
+                    } else {
+                        spanStart = exonStart;
+                    }
+
+                    if (exonStart < cdsEnd && exonEnd > cdsEnd) {
+                        spanEnd = cdsEnd;
+                    } else {
+                        spanEnd = exonEnd;
+                    }
+                    mutableSeqSymmetry.addSpan(new SimpleSeqSpan(spanStart, spanEnd, bioseq));
+                    exonsResidue.append(SeqUtils.getResidues(mutableSeqSymmetry, bioseq));
+                }
+
+                String mrnaProtein = DNAUtils.translate(exonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);
                 Dnaseq.Descriptor proteinSequence = new Dnaseq.Descriptor();
                 proteinSequence.setType("protein sequence");
                 proteinSequence.setValue(mrnaProtein);
                 Dnaseq.Descriptor codingSequence = new Dnaseq.Descriptor();
                 codingSequence.setType("mRNA coding sequence");
-                codingSequence.setValue(mrnaResidue);
+                codingSequence.setValue(exonsResidue.toString());
                 mrna.getDescriptor().add(proteinSequence);
+                mrna.getDescriptor().add(codingSequence);
             }
         }
 

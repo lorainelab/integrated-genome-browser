@@ -15,7 +15,9 @@ import com.affymetrix.genometry.comparator.SeqSymStartComparator;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SupportsGeneName;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -149,11 +151,29 @@ public class ProtannotParser {
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
             mrna.setStrand("+"); // TODO: fix this
-            
+
             Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
             proteinProductId.setType("protein_product_id");
             proteinProductId.setValue(sym.getID());
             mrna.getDescriptor().add(proteinProductId);
+
+            if (sym instanceof SupportsGeneName) {
+                Dnaseq.Descriptor geneSymbol = new Dnaseq.Descriptor();
+                geneSymbol.setType("Gene symbol");
+                geneSymbol.setValue(((SupportsGeneName) sym).getGeneName());
+                mrna.getDescriptor().add(geneSymbol);
+            }
+
+            if (sym instanceof BasicSeqSymmetry) {
+                Dnaseq.Descriptor mrnaAccession = new Dnaseq.Descriptor();
+                mrnaAccession.setType("mRNA accession");
+                mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
+                mrna.getDescriptor().add(mrnaAccession);
+            }
+            
+            Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();
+            geneDescription.setType("Gene Description");
+            //geneDescription.setValue(sym);
 
         }
         mutableSeqSymmetry.addSpan(new SimpleSeqSpan(start, end, bioseq));

@@ -885,10 +885,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            popup.show(this, e.getX(), e.getY());
-            return;
-        }
+//        if (e.isPopupTrigger()) {
+//            popup.show(this, e.getX(), e.getY());
+//            return;
+//        }
 
         if (e.getClickCount() == 2) {
             zoomToSelection();

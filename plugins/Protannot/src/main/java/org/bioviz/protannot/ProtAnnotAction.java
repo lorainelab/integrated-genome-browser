@@ -116,9 +116,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             System.getProperty("os.arch"),
             Locale.getDefault().toString());
     private IgbService igbService;
-    
+
     private ProtannotParser parser;
-    
+
     private SequenceService sequenceService;
 
     // where the application is first invoked
@@ -317,7 +317,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setUpPanels() {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
-        gview = new GenomeView(prefs_hash);
+        if (gview == null) {
+            gview = new GenomeView(prefs_hash);
+        }
         cpane.add("Center", gview);
         print_panel = new ComponentPagePrinter(gview);
     }
@@ -364,7 +366,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             load(cfil);
         }
     }
-    
+
     public void doLoadInterProscan() {
         sequenceService.asyncLoadSequence(new SequenceService.Callback() {
 
@@ -684,15 +686,15 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void load(SeqMapViewI seqMapView) {
         BioSeq genome_seq = parser.parse(seqMapView);
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
-            gview.setBioSeq(genome_seq, true);
-            frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+        gview.setBioSeq(genome_seq, true);
+        frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
     }
-    
+
     public void load(BioSeq genome_seq) {
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, false);
-    
-            frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+
+        frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
     }
 
     public void load(InputStream fistr, String filename) {
@@ -1125,12 +1127,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         load_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("openFileTip"));
         return load_action;
     }
-    
+
     static AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 "Load InterProscan")) {
-            @Override
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().doLoadInterProscan();
                     }
@@ -1504,7 +1506,5 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void setParser(ProtannotParser parser) {
         this.parser = parser;
     }
-
-    
 
 }

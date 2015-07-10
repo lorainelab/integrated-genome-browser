@@ -78,8 +78,8 @@ public class ProtannotParser {
     public static final String AA_START = "aa_start";
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
-    public Dnaseq dnaseq;
-    IgbService igbService;
+    private Dnaseq dnaseq;
+    private IgbService igbService;
 
     public ProtannotParser() {
         try {

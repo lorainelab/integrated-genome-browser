@@ -132,7 +132,6 @@ public class InterProscanTranslator {
                         simhit.getSimspan().add(simspan);
                         for (int i = 0; i < attributes.getLength(); i++) {
                             Attr item = (Attr) attributes.item(i);
-                            //LOG.info("location: "+item.getName() + "," + item.getValue());
                             if (item.getName().equals("start")) {
                                 simspan.setQueryStart(new BigInteger(item.getValue()));
                             } else if (item.getName().equals("end")) {

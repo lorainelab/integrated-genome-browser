@@ -9,10 +9,10 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -31,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -66,6 +66,7 @@ public class SequenceService {
     private JProgressBar progressBar;
     private JLabel showDetailLabel;
     private JTextArea detailText;
+    private JTextField email;
     private JScrollPane areaScrollPane;
     private Timer resultFetchTimer;
     private JDialog dialog;
@@ -76,13 +77,18 @@ public class SequenceService {
     private final JAXBContext jaxbContext;
     private final Unmarshaller jaxbUnmarshaller;
     private final Marshaller jaxbMarshaller;
+    private final List<String> defaultApplications;
 
     public SequenceService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         jaxbContext = JAXBContext.newInstance(Dnaseq.class);
         jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         jaxbMarshaller = jaxbContext.createMarshaller();
+        defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
+    }
 
+    private void initEmail() {
+        email = new JTextField();
     }
 
     private void initInfoLabel(String text) {
@@ -149,6 +155,10 @@ public class SequenceService {
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     }
 
+    private boolean isDefaultApplication(String application) {
+        return defaultApplications.contains(application);
+    }
+
     private boolean showApplicationOptionsLoadingModal() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProscan Options") {
             @Override
@@ -157,7 +167,11 @@ public class SequenceService {
                 applications.getValues().getValue().forEach(vt -> {
                     JCheckBox applCheckBox = new JCheckBox(vt.getLabel());
                     applCheckBox.setName(vt.getValue());
-                    applCheckBox.setSelected(true);
+                    if (isDefaultApplication(vt.getValue())) {
+                        applCheckBox.setSelected(true);
+                    } else {
+                        applCheckBox.setSelected(false);
+                    }
                     configParentPanel.add(applCheckBox);
                 });
                 dialog.dispose();
@@ -238,6 +252,11 @@ public class SequenceService {
         inputAppl.clear();
         configParentPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
         configParentPanel.add(new JLabel("Select the applications to run."), "wrap");
+        initEmail();
+        JPanel emailPanel = new JPanel(new MigLayout());
+        emailPanel.add(new JLabel("Email:"));
+        emailPanel.add(email, "width :125:");
+        configParentPanel.add(emailPanel, "wrap");
         if (!showApplicationOptionsLoadingModal()) {
             return false;
         }
@@ -282,26 +301,9 @@ public class SequenceService {
         }
     }
 
-    public void loadSequence(Callback callback) {
-
-        //Testing
-//        Dnaseq original = parser.getDnaseq();
-//        
-//        Document doc = null;
-//        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File("/home/jeckstei/Projects/igb/code/integrated-genome-browser/plugins/Protannot/src/test/resources/sample2.xml")))) {
-//            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//            doc = dBuilder.parse(bis);
-//        } catch (IOException | SAXException | ParserConfigurationException ex) {
-//            LOG.error(ex.getMessage());
-//        } 
-//        Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc);
-//        original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
-//        callback.execute(original);
-        //end Testing
-        //For testing
+    private JobRequest createJobRequest() {
         JobRequest request = new JobRequest();
-        request.setEmail("tmall@uncc.edu");
+        request.setEmail(email.getText());
 
         request.setSignatureMethods(Optional.of(inputAppl));
         request.setTitle(Optional.empty());
@@ -315,23 +317,34 @@ public class SequenceService {
                     if (d.getType().equals("protein sequence")) {
                         proteinSequence = d.getValue();
                     }
-                    if(d.getType().equals("protein_product_id")) {
+                    if (d.getType().equals("protein_product_id")) {
                         sequenceName = d.getValue();
                     }
                 }
-                
+
                 request.getJobSequences().add(new JobSequence(sequenceName, proteinSequence));
             }
         }
-        final List<Job> jobs = interProscanService.run(request);
-        final List<Job> successfulJobs = new ArrayList<>();
+        return request;
+    }
 
-        for (Job job : jobs) {
-            LOG.info(job.getId());
+    private void processJobResults(final List<Job> successfulJobs, Callback callback) {
+        Dnaseq original = parser.getDnaseq();
+        for (Job job : successfulJobs) {
+            Optional<Document> doc = interProscanService.result(job.getId());
+            if (doc.isPresent()) {
+                Dnaseq.Aaseq aaseq = interProscanTranslator.translateFromResultDocumentToModel(job.getSequenceName(), doc.get());
+                original.getMRNAAndAaseq().add(aaseq);
+            }
         }
+        callback.execute(original);
+        dialog.dispose();
+        resultFetchTimer.cancel();
+    }
 
-        resultFetchTimer = new Timer();
-        resultFetchTimer.schedule(new TimerTask() {
+    private TimerTask buildTimerTask(final List<Job> jobs, Callback callback) {
+        final List<Job> successfulJobs = new ArrayList<>();
+        return new TimerTask() {
 
             @Override
             public void run() {
@@ -359,27 +372,22 @@ public class SequenceService {
                     }
                 }
                 if (jobs.isEmpty()) {
-                    Dnaseq original = parser.getDnaseq();
-                    for (Job job : successfulJobs) {
-                        Optional<Document> doc = interProscanService.result(job.getId());
-                        if (doc.isPresent()) {
-
-                            Dnaseq.Aaseq aaseq = interProscanTranslator.translateFromResultDocumentToModel(job.getSequenceName(), doc.get());
-                            original.getMRNAAndAaseq().add(aaseq);
-
-                        }
-                    }
-                    callback.execute(original);
-                    try {
-                        jaxbMarshaller.marshal(original, new File("sample_dnaseq_final.xml"));
-                    } catch (JAXBException ex) {
-                        java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    dialog.dispose();
-                    resultFetchTimer.cancel();
+                    processJobResults(successfulJobs, callback);
                 }
             }
-        }, new Date(), 1000);
+        };
+    }
+
+    public void loadSequence(Callback callback) {
+        JobRequest jobRequest = createJobRequest();
+        final List<Job> jobs = interProscanService.run(jobRequest);
+        if (LOG.isDebugEnabled()) {
+            jobs.stream().forEach((job) -> {
+                LOG.debug(job.getId());
+            });
+        }
+        resultFetchTimer = new Timer();
+        resultFetchTimer.schedule(buildTimerTask(jobs, callback), new Date(), 1000);
 
     }
 

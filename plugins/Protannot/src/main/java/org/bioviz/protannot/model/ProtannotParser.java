@@ -148,7 +148,12 @@ public class ProtannotParser {
             dnaseq.getMRNAAndAaseq().add(mrna);
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
-            mrna.setStrand("+");
+            mrna.setStrand("+"); // TODO: fix this
+            
+            Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
+            proteinProductId.setType("protein_product_id");
+            proteinProductId.setValue(sym.getID());
+            mrna.getDescriptor().add(proteinProductId);
 
         }
         mutableSeqSymmetry.addSpan(new SimpleSeqSpan(start, end, bioseq));

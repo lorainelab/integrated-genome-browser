@@ -151,11 +151,6 @@ public class InterProscanServiceRest implements InterProscanService {
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException ex) {
-                LOG.error(ex.getMessage(), ex);
-            }
         }
         return results;
     }

@@ -247,7 +247,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         frm.setTitle(" ProtAnnot");
         gview.setTitle("");
         gview.no_data();
-        showhairline.setEnabled(false);
+        //showhairline.setEnabled(false);
     }
 
     /**
@@ -676,6 +676,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         try (FileInputStream fistr = new FileInputStream(seqfile);) {
             load(fistr, seqfile.getName());
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Reporter.report("Couldn't read file: " + e.getMessage(), e, false, false, true);
         }
     }

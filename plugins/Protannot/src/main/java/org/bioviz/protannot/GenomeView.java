@@ -766,10 +766,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.setDataModel(aGlyph, annot2protein);
 
         SeqSpan aSpan = annot2genome.getSpan(vseq);
-        if(aSpan == null) {
-            SeqSpan span = annot2genome.getSpan(0);
-            aSpan = span;
-        }
+//        if(aSpan == null) {
+//            SeqSpan span = annot2genome.getSpan(0);
+//            aSpan = span;
+//        }
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         // will return a color from the prefs for the protein annotation
         // span -- or else the default - col_domain

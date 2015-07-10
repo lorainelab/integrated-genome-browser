@@ -73,6 +73,13 @@ public class JobRequest {
     public List<String> getSequences() {
         return sequences;
     }
+    
+    public void addSequence(String sequence) {
+        if(sequence.endsWith("*")) {
+            sequence = sequence.substring(0, sequence.length()-1);
+        }
+        getSequences().add(sequence);
+    }
 
     public void setSequences(List<String> sequences) {
         this.sequences = sequences;

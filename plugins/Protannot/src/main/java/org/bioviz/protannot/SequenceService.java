@@ -12,6 +12,8 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Sets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -28,6 +31,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
@@ -38,6 +45,7 @@ import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -63,9 +71,16 @@ public class SequenceService {
     private final Set<String> inputAppl;
     private JPanel configParentPanel;
     private ProtannotParser parser;
+    private final JAXBContext jaxbContext;
+    private final Unmarshaller jaxbUnmarshaller;
+    private final Marshaller jaxbMarshaller;
 
-    public SequenceService() {
+    public SequenceService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
+        jaxbContext = JAXBContext.newInstance(Dnaseq.class);
+        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        jaxbMarshaller = jaxbContext.createMarshaller();
+
     }
 
     private void initInfoLabel(String text) {
@@ -298,10 +313,11 @@ public class SequenceService {
                         sequence = d.getValue();
                     }
                 }
-                request.getSequences().add(sequence);
+                request.addSequence(sequence);
             }
         }
         final List<String> jobIds = interProscanService.run(request);
+        final List<String> successfulJobs = new ArrayList<>();
 
         for (String jobId : jobIds) {
             LOG.info(jobId);
@@ -312,44 +328,46 @@ public class SequenceService {
 
             @Override
             public void run() {
+
                 Iterator<String> it = jobIds.iterator();
                 while (it.hasNext()) {
                     String jobId = it.next();
                     Status status = interProscanService.status(jobId);
                     LOG.info(status.toString());
                     if (status.equals(Status.FINISHED)) {
-//                        Optional<Document> doc = interProscanService.result(jobId);
-//                        if (doc.isPresent()) {
-//                            Dnaseq original = parser.getDnaseq();
-//                            Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
-//                            original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
-//                            callback.execute(original);
-//
-//                        }
-//                        dialog.dispose();
-                        //resultFetchTimer.cancel();
+                        successfulJobs.add(jobId);
                         it.remove();
                     }
                     if (status.equals(Status.ERROR)) {
-                        dialog.dispose();
-                        resultFetchTimer.cancel();
                         //TODO: Notify user
                         it.remove();
                     }
                     if (status.equals(Status.FAILURE)) {
-                        dialog.dispose();
-                        resultFetchTimer.cancel();
                         //TODO: Notify user
                         it.remove();
                     }
                     if (status.equals(Status.NOT_FOUND)) {
-                        dialog.dispose();
-                        resultFetchTimer.cancel();
                         //TODO: Notify user
                         it.remove();
                     }
                 }
-                if(jobIds.isEmpty()) {
+                if (jobIds.isEmpty()) {
+                    Dnaseq original = parser.getDnaseq();
+                    for (String jobId : successfulJobs) {
+                        Optional<Document> doc = interProscanService.result(jobId);
+                        if (doc.isPresent()) {
+
+                            Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
+                            original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
+
+                        }
+                    }
+                    callback.execute(original);
+                    try {
+                        jaxbMarshaller.marshal(original, new File("sample_dnaseq_final.xml"));
+                    } catch (JAXBException ex) {
+                        java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     dialog.dispose();
                     resultFetchTimer.cancel();
                 }

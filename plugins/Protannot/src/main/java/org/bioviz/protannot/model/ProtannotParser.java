@@ -167,14 +167,13 @@ public class ProtannotParser {
         residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
         addProteinSequenceToMrna(dnaseq, bioseq);
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
 
         try {
             jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
         } catch (JAXBException ex) {
             java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
@@ -194,6 +193,9 @@ public class ProtannotParser {
                     mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
                     final int exonStart = exon.getStart().intValue();
                     final int exonEnd = exon.getEnd().intValue();
+                    if (exonEnd < cdsStart || exonStart > cdsEnd) {
+                        continue;
+                    }
                     int spanStart = 0;
                     int spanEnd = 0;
                     if (exonStart < cdsStart && exonEnd > cdsStart) {

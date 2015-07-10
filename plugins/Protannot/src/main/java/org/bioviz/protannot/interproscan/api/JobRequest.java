@@ -21,10 +21,10 @@ public class JobRequest {
     private Optional<Set<String>> signatureMethods;
     private Optional<Boolean> goterms;
     private Optional<Boolean> pathways;
-    private List<String> sequences;
+    private List<JobSequence> jobSequences;
 
     public JobRequest() {
-        sequences = new ArrayList<>();
+        jobSequences = new ArrayList<>();
     
     }
     
@@ -70,22 +70,12 @@ public class JobRequest {
         this.pathways = pathways;
     }
 
-    public List<String> getSequences() {
-        return sequences;
-    }
-    
-    public void addSequence(String sequence) {
-        if(sequence.endsWith("*")) {
-            sequence = sequence.substring(0, sequence.length()-1);
-        }
-        getSequences().add(sequence);
+    public List<JobSequence> getJobSequences() {
+        return jobSequences;
     }
 
-    public void setSequences(List<String> sequences) {
-        this.sequences = sequences;
+    public void setJobSequences(List<JobSequence> jobSequences) {
+        this.jobSequences = jobSequences;
     }
-
-
-
 
 }

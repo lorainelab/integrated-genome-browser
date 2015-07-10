@@ -18,7 +18,7 @@ public interface InterProscanService {
 
     public Status status(String jobId);
 
-    public List<String> run(JobRequest jobRequest);
+    public List<Job> run(JobRequest jobRequest);
 
     public ParameterType getApplications();
 

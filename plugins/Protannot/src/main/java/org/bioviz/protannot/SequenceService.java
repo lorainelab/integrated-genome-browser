@@ -40,7 +40,9 @@ import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
+import org.bioviz.protannot.interproscan.api.Job;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.api.JobSequence;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
@@ -307,20 +309,25 @@ public class SequenceService {
         request.setPathways(Optional.empty());
         for (Object obj : parser.getDnaseq().getMRNAAndAaseq()) {
             if (obj instanceof Dnaseq.MRNA) {
-                String sequence = null;
+                String proteinSequence = null;
+                String sequenceName = null;
                 for (Dnaseq.Descriptor d : ((Dnaseq.MRNA) obj).getDescriptor()) {
                     if (d.getType().equals("protein sequence")) {
-                        sequence = d.getValue();
+                        proteinSequence = d.getValue();
+                    }
+                    if(d.getType().equals("protein_product_id")) {
+                        sequenceName = d.getValue();
                     }
                 }
-                request.addSequence(sequence);
+                
+                request.getJobSequences().add(new JobSequence(sequenceName, proteinSequence));
             }
         }
-        final List<String> jobIds = interProscanService.run(request);
-        final List<String> successfulJobs = new ArrayList<>();
+        final List<Job> jobs = interProscanService.run(request);
+        final List<Job> successfulJobs = new ArrayList<>();
 
-        for (String jobId : jobIds) {
-            LOG.info(jobId);
+        for (Job job : jobs) {
+            LOG.info(job.getId());
         }
 
         resultFetchTimer = new Timer();
@@ -329,13 +336,13 @@ public class SequenceService {
             @Override
             public void run() {
 
-                Iterator<String> it = jobIds.iterator();
+                Iterator<Job> it = jobs.iterator();
                 while (it.hasNext()) {
-                    String jobId = it.next();
-                    Status status = interProscanService.status(jobId);
+                    Job job = it.next();
+                    Status status = interProscanService.status(job.getId());
                     LOG.info(status.toString());
                     if (status.equals(Status.FINISHED)) {
-                        successfulJobs.add(jobId);
+                        successfulJobs.add(job);
                         it.remove();
                     }
                     if (status.equals(Status.ERROR)) {
@@ -351,14 +358,14 @@ public class SequenceService {
                         it.remove();
                     }
                 }
-                if (jobIds.isEmpty()) {
+                if (jobs.isEmpty()) {
                     Dnaseq original = parser.getDnaseq();
-                    for (String jobId : successfulJobs) {
-                        Optional<Document> doc = interProscanService.result(jobId);
+                    for (Job job : successfulJobs) {
+                        Optional<Document> doc = interProscanService.result(job.getId());
                         if (doc.isPresent()) {
 
-                            Dnaseq dnaseqIPS = interProscanTranslator.translateFromResultDocumentToModel(doc.get());
-                            original.getMRNAAndAaseq().addAll(dnaseqIPS.getMRNAAndAaseq());
+                            Dnaseq.Aaseq aaseq = interProscanTranslator.translateFromResultDocumentToModel(job.getSequenceName(), doc.get());
+                            original.getMRNAAndAaseq().add(aaseq);
 
                         }
                     }

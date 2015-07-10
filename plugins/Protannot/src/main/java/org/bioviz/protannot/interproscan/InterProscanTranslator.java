@@ -34,13 +34,12 @@ public class InterProscanTranslator {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanTranslator.class);
     
 
-    public Dnaseq translateFromResultDocumentToModel(Document document) {
-        Dnaseq dnaseq = new Dnaseq();
+    public Aaseq translateFromResultDocumentToModel(String id, Document document) {
         Aaseq aaseq = new Aaseq();
+        aaseq.setId(id);
         Simsearch simsearch = new Simsearch();
         simsearch.setMethod("InterPro");
         aaseq.getSimsearch().add(simsearch);
-        dnaseq.getMRNAAndAaseq().add(aaseq);
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
@@ -60,7 +59,7 @@ public class InterProscanTranslator {
             LOG.error(ex.getMessage(), ex);
         }
 
-        return dnaseq;
+        return aaseq;
     }
 
     private void parseAttributesOnMatch(Node matchNode, Simhit simhit) {

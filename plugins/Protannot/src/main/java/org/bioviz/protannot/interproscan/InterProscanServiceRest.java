@@ -27,7 +27,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
+import org.bioviz.protannot.interproscan.api.Job;
 import org.bioviz.protannot.interproscan.api.JobRequest;
+import org.bioviz.protannot.interproscan.api.JobSequence;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -100,9 +102,9 @@ public class InterProscanServiceRest implements InterProscanService {
     }
 
     @Override
-    public List<String> run(JobRequest jobRequest) {
-        List<String> results = new ArrayList<>();
-        for(String sequence : jobRequest.getSequences()) {
+    public List<Job> run(JobRequest jobRequest) {
+        List<Job> results = new ArrayList<>();
+        for(JobSequence jobSequence : jobRequest.getJobSequences()) {
             URL url = null;
             StringBuilder request = new StringBuilder(INTERPROSCAN_BASE_URL);
             request.append("/run");
@@ -123,7 +125,7 @@ public class InterProscanServiceRest implements InterProscanService {
                     body.append("&appl=").append(sm);
                 }
             }
-            body.append("&sequence=%3Eigb protannot%0A").append(sequence);
+            body.append("&sequence=%3Eigb protannot%0A").append(jobSequence.getProteinSequence());
             HttpURLConnection con = null;
             try {
                 LOG.info(body.toString());
@@ -143,7 +145,7 @@ public class InterProscanServiceRest implements InterProscanService {
             try (BufferedInputStream bis = new BufferedInputStream(con.getInputStream())) {
                 String response = IOUtils.toString(bis, "UTF-8");
                 try {
-                    results.add(response);
+                    results.add(new Job(jobSequence.getSequenceName(), response));
                 } catch (IllegalArgumentException ex) {
                     LOG.error(ex.getMessage(), ex);
                 }

@@ -687,16 +687,16 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     public void load(SeqMapViewI seqMapView) {
         BioSeq genome_seq = parser.parse(seqMapView);
-        gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
+        gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, true);
-        frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+        frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
     }
 
     public void load(BioSeq genome_seq) {
-        gview.setTitle("genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
+        gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, false);
 
-        frm.setTitle("version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+        frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
     }
 
     public void load(InputStream fistr, String filename) {
@@ -708,9 +708,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 //            Xml2GenometryParser parser = new Xml2GenometryParser();
 //            NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
 //            genome_seq = parser.parse(nxs.doc);
-            gview.setTitle("viewing file: " + filename + "\t genome version: " + genome_seq.getGenomeVersion() + "\t sequence: " + genome_seq.getId());
+            gview.setTitle("viewing file: " + filename + "\t genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
             gview.setBioSeq(genome_seq, true);
-            frm.setTitle(" ProtAnnot: " + filename + "\t version: " + genome_seq.getGenomeVersion() + "\t id: " + genome_seq.getId());
+            frm.setTitle(" ProtAnnot: " + filename + "\t version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
         } catch (Exception ex) {
             Reporter.report("Couldn't read file: " + filename + "\n"
                     + "Error : " + ex.getMessage(),

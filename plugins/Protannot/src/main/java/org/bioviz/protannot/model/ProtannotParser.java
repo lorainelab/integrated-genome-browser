@@ -198,6 +198,7 @@ public class ProtannotParser {
         residue.setEnd(new BigInteger(end + ""));
         dnaseq.setResidues(residue);
         addProteinSequenceToMrna(dnaseq, bioseq);
+        dnaseq.setVersion(bioseq.getId());
 
         try {
             jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
@@ -206,6 +207,7 @@ public class ProtannotParser {
         }
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
+        chromosome.setGenomeVersion(bioseq.getGenomeVersion());
         processDNASeq(chromosome, dnaseq);
         return chromosome;
 
@@ -260,7 +262,6 @@ public class ProtannotParser {
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {
         String seq = dnaseq.getSeq();
-        //String version = dnaseq.getVersion();
 
         BioSeq chromosome = null;
         if (dnaseq.getResidues() != null) {

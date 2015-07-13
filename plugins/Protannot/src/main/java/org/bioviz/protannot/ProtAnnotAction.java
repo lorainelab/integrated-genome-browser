@@ -505,7 +505,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     void export() {
-        exportService.exportComponent(frm);
+        exportService.exportComponent(gview);
     }
 
     void print() {

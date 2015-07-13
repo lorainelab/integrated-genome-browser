@@ -155,6 +155,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private final static boolean testmode = false;
     private static final boolean DEBUG = false;
     private static final Image imageIcon = getIcon();
+
+    private static final int MENU_ITEM_WEIGHT = 8;
     private final TransferHandler fdh = new FileDropHandler() {
 
         @Override
@@ -181,12 +183,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     @Override
     public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Protannot", this);
+        return new JRPMenuItem("Protannot", this, getMenuItemWeight());
     }
 
     @Override
     public int getMenuItemWeight() {
-        return -1;
+        return MENU_ITEM_WEIGHT;
     }
 
     @Override

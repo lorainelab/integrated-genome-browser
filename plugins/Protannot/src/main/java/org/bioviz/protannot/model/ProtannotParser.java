@@ -150,7 +150,6 @@ public class ProtannotParser {
             dnaseq.getMRNAAndAaseq().add(mrna);
             mrna.setStart(new BigInteger(sym.getSpan(bioseq).getStart() + ""));
             mrna.setEnd(new BigInteger(sym.getSpan(bioseq).getEnd() + ""));
-            mrna.setStrand("+"); // TODO: fix this
 
             Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
             proteinProductId.setType("protein_product_id");
@@ -169,6 +168,13 @@ public class ProtannotParser {
                 mrnaAccession.setType("mRNA accession");
                 mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
                 mrna.getDescriptor().add(mrnaAccession);
+                
+                boolean isForward = ((BasicSeqSymmetry) sym).isForward();
+                if(isForward) {
+                    mrna.setStrand("+");
+                } else {
+                    mrna.setStrand("-");
+                }
             }
             
             Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();

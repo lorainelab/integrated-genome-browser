@@ -3,14 +3,18 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
@@ -175,10 +179,18 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        List<SeqSymmetry> selectedSyms = igbService.getSeqMapView().getSelectedSyms();
+
+        if (!validateSelection(igbService.getSeqMapView())) {
+            return;
+        }
         loadPrefs();
         start();
         load(igbService.getSeqMapView());
+    }
+
+    @Activate
+    public void activator() {
+        GenometryModel.getInstance().addSymSelectionListener(evt -> singleton.setEnabled(!igbService.getSeqMapView().getSelectedSyms().isEmpty()));
     }
 
     @Override
@@ -690,6 +702,30 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, true);
         frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
+    }
+
+    public boolean validateSelection(SeqMapViewI seqMapView) {
+        boolean anyPositiveStrand = false;
+        boolean anyNegativeStrand = false;
+        String errorMessage = null;
+
+        for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
+            if (sym instanceof BasicSeqSymmetry) {
+                BasicSeqSymmetry basicSym = (BasicSeqSymmetry) sym;
+                if (basicSym.isForward()) {
+                    anyPositiveStrand = true;
+                } else {
+                    anyNegativeStrand = true;
+                }
+                if (anyNegativeStrand && anyPositiveStrand) {
+                    errorMessage = "Both positive and negative strands cannot be selected";
+                    ModalUtils.infoPanel(errorMessage);
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void load(BioSeq genome_seq) {

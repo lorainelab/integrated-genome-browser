@@ -9,10 +9,9 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
-import com.google.common.base.Strings;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.InputVerifier;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -67,7 +65,7 @@ public class SequenceService {
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    private Pattern pattern;
+    private final Pattern pattern;
     private Matcher matcher;
 
     private JLabel infoLabel;
@@ -92,22 +90,6 @@ public class SequenceService {
 
     private void initEmail() {
         email = new JTextField();
-        email.setInputVerifier(new InputVerifier() {
-
-            @Override
-            public boolean verify(JComponent input) {
-                JTextField tf = (JTextField) input;
-                matcher = pattern.matcher(tf.getText());
-                if (matcher.matches()) {
-                    tf.setBackground(Color.WHITE);
-
-                    return true;
-                } else {
-                    tf.setBackground(Color.red);
-                    return false;
-                }
-            }
-        });
     }
 
     private String oldText;
@@ -219,7 +201,7 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
                 null,
                 options,
                 null);
@@ -252,7 +234,7 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
                 null,
                 options,
                 null);
@@ -292,6 +274,11 @@ public class SequenceService {
                 options,
                 options[0]);
         if (optionChosen == 0) {
+            matcher = pattern.matcher(email.getText());
+            if (!matcher.matches()) {
+                ModalUtils.infoPanel("Please enter a valid email address.");
+                return false;
+            }
             for (java.awt.Component c : configParentPanel.getComponents()) {
                 if (c instanceof JCheckBox) {
                     if (((JCheckBox) c).isSelected()) {

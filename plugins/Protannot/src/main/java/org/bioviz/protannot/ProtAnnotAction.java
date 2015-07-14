@@ -7,6 +7,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
@@ -387,6 +388,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             @Override
             public void execute(Dnaseq dnaseq) {
                 BioSeq bioseq = parser.parse(dnaseq);
+                GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+                bioseq.setGenomeVersion(gv);
                 load(bioseq);
             }
         });

@@ -9,6 +9,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.Color;
@@ -62,12 +63,12 @@ public class SequenceService {
     private InterProscanService interProscanService;
 
     private InterProscanTranslator interProscanTranslator;
-    
-    private static final String EMAIL_PATTERN = 
-		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final String EMAIL_PATTERN
+            = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private Pattern pattern;
-	private Matcher matcher;
+    private Matcher matcher;
 
     private JLabel infoLabel;
     private JProgressBar progressBar;
@@ -97,9 +98,9 @@ public class SequenceService {
             public boolean verify(JComponent input) {
                 JTextField tf = (JTextField) input;
                 matcher = pattern.matcher(tf.getText());
-                if(matcher.matches()) {
+                if (matcher.matches()) {
                     tf.setBackground(Color.WHITE);
-                    
+
                     return true;
                 } else {
                     tf.setBackground(Color.red);
@@ -109,7 +110,10 @@ public class SequenceService {
         });
     }
 
+    private String oldText;
+
     private void initInfoLabel(String text) {
+        oldText = text;
         infoLabel = new JLabel(text);
     }
 
@@ -367,6 +371,8 @@ public class SequenceService {
             @Override
             public void run() {
 
+                int failed = 0;
+
                 Iterator<Job> it = jobs.iterator();
                 while (it.hasNext()) {
                     Job job = it.next();
@@ -377,11 +383,11 @@ public class SequenceService {
                         it.remove();
                     }
                     if (status.equals(Status.ERROR)) {
-                        //TODO: Notify user
+                        failed++;
                         it.remove();
                     }
                     if (status.equals(Status.FAILURE)) {
-                        //TODO: Notify user
+                        failed++;
                         it.remove();
                     }
                     if (status.equals(Status.NOT_FOUND)) {
@@ -389,6 +395,12 @@ public class SequenceService {
                         it.remove();
                     }
                 }
+                if (Strings.isNullOrEmpty(oldText)) {
+                    infoLabel.setText(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                } else {
+                    infoLabel.setText("<html>" + oldText + "<br>" + jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed " + "</html>");
+                }
+                dialog.repaint();
                 if (jobs.isEmpty()) {
                     processJobResults(successfulJobs, callback);
                 }

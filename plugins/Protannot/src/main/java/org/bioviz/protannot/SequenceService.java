@@ -61,12 +61,12 @@ public class SequenceService {
     private InterProscanService interProscanService;
 
     private InterProscanTranslator interProscanTranslator;
-
-    private static final String EMAIL_PATTERN
-            = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    private final Pattern pattern;
-    private Matcher matcher;
+    
+    private static final String EMAIL_PATTERN = 
+		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private Pattern pattern;
+	private Matcher matcher;
 
     private JLabel infoLabel;
     private JProgressBar progressBar;
@@ -164,7 +164,7 @@ public class SequenceService {
     }
 
     private boolean showApplicationOptionsLoadingModal() {
-        CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProscan Options") {
+        CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
             protected Void runInBackground() {
                 ParameterType applications = interProscanService.getApplications();
@@ -190,7 +190,7 @@ public class SequenceService {
 
         parentPanel = new JPanel(new MigLayout());
 
-        initInfoLabel("Loading InterProscan Options. Please wait...");
+        initInfoLabel("Loading InterProScan Options. Please wait...");
         parentPanel.add(infoLabel, "wrap");
 
         initProgressBar();
@@ -201,14 +201,14 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, 
                 null,
                 options,
                 null);
 
         pane.setInitialValue(null);
 
-        dialog = pane.createDialog("Loading InterProscan Options");
+        dialog = pane.createDialog("Loading InterProScan Options");
 
         dialog.show();
         dialog.dispose();
@@ -223,7 +223,7 @@ public class SequenceService {
     private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
 
-        initInfoLabel("Loading InterProscan data, Please wait...");
+        initInfoLabel("Loading InterProScan data, Please wait...");
         parentPanel.add(infoLabel, "wrap");
 
         initProgressBar();
@@ -234,14 +234,14 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, 
                 null,
                 options,
                 null);
 
         pane.setInitialValue(null);
 
-        dialog = pane.createDialog("Loading InterProscan Data");
+        dialog = pane.createDialog("Loading InterProScan Data");
 
         dialog.show();
         dialog.dispose();
@@ -269,13 +269,13 @@ public class SequenceService {
             configParentPanel
         };
         Object[] options = {"Run", "Cancel"};
-        int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProscan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+        int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
                 options[0]);
         if (optionChosen == 0) {
             matcher = pattern.matcher(email.getText());
-            if (!matcher.matches()) {
+            if(!matcher.matches()) {
                 ModalUtils.infoPanel("Please enter a valid email address.");
                 return false;
             }
@@ -294,7 +294,7 @@ public class SequenceService {
 
     public void asyncLoadSequence(Callback callback) {
         if (showSetupModal()) {
-            CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProscan") {
+            CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override
                 protected Void runInBackground() {
                     loadSequence(callback);

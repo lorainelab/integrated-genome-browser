@@ -21,6 +21,8 @@ public interface InterProscanService {
     public List<Job> run(JobRequest jobRequest);
 
     public ParameterType getApplications();
+    
+    public Optional<String> getApplicationLabel(String key);
 
     public Optional<Document> result(String jobId);
 

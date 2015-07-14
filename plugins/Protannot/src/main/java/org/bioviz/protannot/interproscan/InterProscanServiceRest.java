@@ -50,11 +50,27 @@ public class InterProscanServiceRest implements InterProscanService {
     private static final String INTERPROSCAN_BASE_URL = "http://www.ebi.ac.uk/Tools/services/rest/iprscan5";
 
     private JAXBContext jaxbc;
+    
+    private ParameterType cachedParameterType;
 
     @Activate
     public void activate() throws JAXBException {
         jaxbc = JAXBContext.newInstance("org.bioviz.protannot.interproscan.appl.model", this.getClass().getClassLoader());
     }
+
+    @Override
+    public Optional<String> getApplicationLabel(String key) {
+        if(cachedParameterType == null) {
+            cachedParameterType = getApplications();
+        }
+        return cachedParameterType.getValues().getValue().stream()
+                .filter(vt -> vt.getValue().toLowerCase().contains(key.toLowerCase()))
+                .map(vt -> vt.getLabel())
+                .findFirst();
+
+    }
+    
+    
 
     @Override
     public ParameterType getApplications() {
@@ -68,7 +84,7 @@ public class InterProscanServiceRest implements InterProscanService {
 
         try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
             Object obj = ((JAXBElement<ParameterType>) jaxbc.createUnmarshaller().unmarshal(bis)).getValue();
-
+            cachedParameterType = (ParameterType) obj;
             return (ParameterType) obj;
         } catch (JAXBException | IOException ex) {
             LOG.error(ex.getMessage(), ex);
@@ -148,6 +164,7 @@ public class InterProscanServiceRest implements InterProscanService {
     private void readResponseFromPost(HttpURLConnection con, List<Job> results, JobSequence jobSequence) throws IOException {
         try (BufferedInputStream bis = new BufferedInputStream(con.getInputStream())) {
             String response = IOUtils.toString(bis, STRING_ENCODING);
+            LOG.info(response);
             results.add(new Job(jobSequence.getSequenceName(), response));
         }
     }

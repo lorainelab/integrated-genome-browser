@@ -6,13 +6,16 @@
 package org.bioviz.protannot.interproscan;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import java.math.BigInteger;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.Dnaseq.Aaseq;
 import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch;
@@ -32,7 +35,8 @@ import org.w3c.dom.Node;
 public class InterProscanTranslator {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InterProscanTranslator.class);
-    
+
+    private InterProscanService interProscanService;
 
     public Aaseq translateFromResultDocumentToModel(String id, Document document) {
         Aaseq aaseq = new Aaseq();
@@ -64,15 +68,13 @@ public class InterProscanTranslator {
 
     private void parseAttributesOnMatch(Node matchNode, Simhit simhit) {
         NamedNodeMap attributes = matchNode.getAttributes();
-        addAttributesToSimhit(attributes, simhit);
+        addAttributesToSimhit(attributes, simhit, matchNode.getNodeName());
     }
 
     private void parseSignatureAttributesOnMatch(Node matchNode, Simhit simhit) {
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
-            NamedNodeMap attributes = signature.getAttributes();
-            addAttributesToSimhit(attributes, simhit);
             parseEntryOnSignature(signature, simhit);
             parseLibraryReleaseOnSignature(signature, simhit);
         } catch (XPathExpressionException ex) {
@@ -85,9 +87,11 @@ public class InterProscanTranslator {
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node libraryRelease = (Node) xPath.evaluate("signature-library-release", signatureNode, XPathConstants.NODE);
-            if(libraryRelease == null) return;
+            if (libraryRelease == null) {
+                return;
+            }
             NamedNodeMap attributes = libraryRelease.getAttributes();
-            addAttributesToSimhit(attributes, simhit);
+            addAttributesToSimhit(attributes, simhit, null);
         } catch (XPathExpressionException ex) {
             Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,25 +101,71 @@ public class InterProscanTranslator {
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             Node entry = (Node) xPath.evaluate("entry", signatureNode, XPathConstants.NODE);
-            if(entry == null) return;
+            if (entry == null) {
+                return;
+            }
             NamedNodeMap attributes = entry.getAttributes();
-            addAttributesToSimhit(attributes, simhit);
+            addAttributesToSimhit(attributes, simhit, signatureNode.getNodeName() + "-");
         } catch (XPathExpressionException ex) {
             Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit) {
+    private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit, String prefix) {
+        if(prefix == null) {
+            prefix = "";
+        }
         if (attributes == null) {
             return;
         }
         for (int i = 0; i < attributes.getLength(); i++) {
             Attr item = (Attr) attributes.item(i);
-            Dnaseq.Descriptor desc = new Dnaseq.Descriptor();
-            desc.setType(item.getName());
-            desc.setValue(item.getValue());
-            simhit.getDescriptor().add(desc);
+            switch (item.getName()) {
+                case "library":
+                    Dnaseq.Descriptor matchDatabase = new Dnaseq.Descriptor();
+                    matchDatabase.setType(item.getName());
+                    matchDatabase.setValue(item.getValue());
+                    simhit.getDescriptor().add(matchDatabase);
+
+                    Optional<String> applicationLabel = interProscanService.getApplicationLabel(item.getValue());
+                    if (applicationLabel.isPresent()) {
+                        Dnaseq.Descriptor evidence = new Dnaseq.Descriptor();
+                        evidence.setType("application");
+                        evidence.setValue(applicationLabel.get());
+                        simhit.getDescriptor().add(evidence);
+                    }
+                    continue;
+                case "ac":
+                    Dnaseq.Descriptor ac = new Dnaseq.Descriptor();
+                    ac.setType("InterPro accession");
+                    ac.setValue(item.getValue());
+                    simhit.getDescriptor().add(ac);
+
+                    Dnaseq.Descriptor url = new Dnaseq.Descriptor();
+                    url.setType("URL");
+                    url.setValue("http://www.ebi.ac.uk/interpro/IEntry?ac=" + item.getValue());
+                    simhit.getDescriptor().add(url);
+                    continue;
+                case "desc":
+                    Dnaseq.Descriptor desc = new Dnaseq.Descriptor();
+                    desc.setType("InterPro description");
+                    desc.setValue(item.getValue());
+                    simhit.getDescriptor().add(desc);
+                    continue;
+                case "name":
+                    Dnaseq.Descriptor name = new Dnaseq.Descriptor();
+                    name.setType("InterPro name");
+                    name.setValue(item.getValue());
+                    simhit.getDescriptor().add(name);
+                    continue;
+                default:
+                    Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
+                    descriptor.setType(prefix + item.getName());
+                    descriptor.setValue(item.getValue());
+                    simhit.getDescriptor().add(descriptor);
+            }
+
         }
     }
 
@@ -138,7 +188,7 @@ public class InterProscanTranslator {
                                 simspan.setQueryEnd(new BigInteger(item.getValue()));
                             } else {
                                 Descriptor descriptor = new Descriptor();
-                                descriptor.setType(matchNode.getNodeName() + "-" + item.getName());
+                                descriptor.setType(matchNode.getNodeName() + "-location-" + item.getName());
                                 descriptor.setValue(item.getValue());
                                 simspan.getDescriptor().add(descriptor);
                             }
@@ -150,4 +200,14 @@ public class InterProscanTranslator {
             LOG.error(ex.getMessage(), ex);
         }
     }
+
+    public InterProscanService getInterProscanService() {
+        return interProscanService;
+    }
+
+    @Reference
+    public void setInterProscanService(InterProscanService interProscanService) {
+        this.interProscanService = interProscanService;
+    }
+
 }

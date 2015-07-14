@@ -262,7 +262,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         frm.setTitle(" ProtAnnot");
         gview.setTitle("");
         gview.no_data();
-        showhairline.setEnabled(false);
+        //showhairline.setEnabled(false);
     }
 
     /**
@@ -477,6 +477,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      * @param file_menu Menu name to which submenus should be added.
      */
     private void addFileActions(final JMenu file_menu) {
+        MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPrintAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getExportAction()));

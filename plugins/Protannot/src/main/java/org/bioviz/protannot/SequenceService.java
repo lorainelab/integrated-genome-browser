@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ModalUtils;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.event.MouseEvent;
@@ -65,8 +66,8 @@ public class SequenceService {
     private static final String EMAIL_PATTERN = 
 		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    private Pattern pattern;
-	private Matcher matcher;
+    private final Pattern pattern;
+    private Matcher matcher;
 
     private JLabel infoLabel;
     private JProgressBar progressBar;

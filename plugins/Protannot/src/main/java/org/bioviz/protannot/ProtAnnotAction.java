@@ -707,6 +707,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public boolean validateSelection(SeqMapViewI seqMapView) {
         boolean anyPositiveStrand = false;
         boolean anyNegativeStrand = false;
+        boolean isGeneModelSelected = false;
         String errorMessage = null;
 
         for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
@@ -722,7 +723,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                     ModalUtils.infoPanel(errorMessage);
                     return false;
                 }
+                isGeneModelSelected = true;
             }
+        }
+        
+        if(!isGeneModelSelected) {
+            ModalUtils.infoPanel("Please select gene model");
+            return false;
         }
 
         return true;

@@ -123,7 +123,7 @@ public class ProtannotParser {
         int start = Integer.MAX_VALUE, end = 0;
         int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
-
+        boolean isForward = true;
         for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
             int exonsCount = sym.getChildCount();
@@ -169,7 +169,7 @@ public class ProtannotParser {
                 mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
                 mrna.getDescriptor().add(mrnaAccession);
 
-                boolean isForward = ((BasicSeqSymmetry) sym).isForward();
+                isForward = ((BasicSeqSymmetry) sym).isForward();
                 if (isForward) {
                     mrna.setStrand("+");
                 } else {
@@ -194,8 +194,13 @@ public class ProtannotParser {
         Dnaseq.Residues residue = new Dnaseq.Residues();
         residue.setValue(residuesStr.toLowerCase());
 
-        residue.setStart(new BigInteger(start + ""));
-        residue.setEnd(new BigInteger(end + ""));
+        if (isForward) {
+            residue.setStart(new BigInteger(start + ""));
+            residue.setEnd(new BigInteger(end + ""));
+        } else {
+            residue.setStart(new BigInteger(end + ""));
+            residue.setEnd(new BigInteger(start + ""));
+        }
         dnaseq.setResidues(residue);
         addProteinSequenceToMrna(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
@@ -214,7 +219,8 @@ public class ProtannotParser {
     }
 
     public void addProteinSequenceToMrna(Dnaseq dnaseq, BioSeq bioseq) {
-        for (Object seq : dnaseq.getMRNAAndAaseq()) {
+        for (int i = 0; i < dnaseq.getMRNAAndAaseq().size(); i++) {
+            Object seq = dnaseq.getMRNAAndAaseq().get(i);
             if (seq instanceof Dnaseq.MRNA) {
                 Dnaseq.MRNA mrna = (Dnaseq.MRNA) seq;
                 MutableSeqSymmetry mutableSeqSymmetry;
@@ -226,10 +232,13 @@ public class ProtannotParser {
                     int temp = cdsStart;
                     cdsStart = cdsEnd;
                     cdsEnd = temp;
+                    mrna.getCds().setStart(BigInteger.valueOf(cdsStart));
+                    mrna.getCds().setEnd(BigInteger.valueOf(cdsEnd));
                 }
 
                 StringBuilder exonsResidue = new StringBuilder();
-                for (Dnaseq.MRNA.Exon exon : mrna.getExon()) {
+                for (int j = 0; j < mrna.getExon().size(); j++) {
+                    Dnaseq.MRNA.Exon exon = mrna.getExon().get(j);
                     mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
                     int exonStart = exon.getStart().intValue();
                     int exonEnd = exon.getEnd().intValue();
@@ -238,6 +247,8 @@ public class ProtannotParser {
                         int temp = exonStart;
                         exonStart = exonEnd;
                         exonEnd = temp;
+                        exon.setStart(BigInteger.valueOf(exonStart));
+                        exon.setEnd(BigInteger.valueOf(exonEnd));
                     }
                     if (exonEnd < cdsStart || exonStart > cdsEnd) {
                         continue;
@@ -259,7 +270,7 @@ public class ProtannotParser {
                     exonsResidue.append(SeqUtils.getResidues(mutableSeqSymmetry, bioseq));
                 }
 
-                if(!isForward) {
+                if (!isForward) {
                     exonsResidue = new StringBuilder(DNAUtils.getReverseComplement(exonsResidue));
                 }
                 String mrnaProtein = DNAUtils.translate(exonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);

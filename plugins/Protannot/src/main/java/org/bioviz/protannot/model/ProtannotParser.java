@@ -471,7 +471,8 @@ public class ProtannotParser {
         SeqSpan mstart_point = result.getSpan(mrnaChromosome);
 
         if (mstart_point == null) {
-            throw new NullPointerException("Conflict with start and end in processCDS.");
+            mstart_point = new MutableDoubleSeqSpan(start, start, mrnaChromosome);
+            //throw new NullPointerException("Conflict with start and end in processCDS.");
         }
 
         result = new SimpleSymWithProps();

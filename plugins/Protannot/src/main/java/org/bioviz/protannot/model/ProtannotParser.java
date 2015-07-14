@@ -157,10 +157,10 @@ public class ProtannotParser {
             mrna.getDescriptor().add(proteinProductId);
 
             if (sym instanceof SupportsGeneName) {
-                Dnaseq.Descriptor geneSymbol = new Dnaseq.Descriptor();
-                geneSymbol.setType("Gene symbol");
-                geneSymbol.setValue(((SupportsGeneName) sym).getGeneName());
-                mrna.getDescriptor().add(geneSymbol);
+                Dnaseq.Descriptor title = new Dnaseq.Descriptor();
+                title.setType("title");
+                title.setValue(((SupportsGeneName) sym).getGeneName());
+                mrna.getDescriptor().add(title);
             }
 
             if (sym instanceof BasicSeqSymmetry) {
@@ -175,10 +175,15 @@ public class ProtannotParser {
                 } else {
                     mrna.setStrand("-");
                 }
+                
+                Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
+                urlDescriptor.setType("URL");
+                urlDescriptor.setValue("www.google.com/search?q=" + mrnaAccession.getValue());
+                mrna.getDescriptor().add(urlDescriptor);
             }
 
             Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();
-            geneDescription.setType("Gene Description");
+            geneDescription.setType("description");
             //geneDescription.setValue(sym);
 
         }

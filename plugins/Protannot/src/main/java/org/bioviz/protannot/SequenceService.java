@@ -11,6 +11,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.InputVerifier;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -31,10 +35,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
@@ -61,6 +62,12 @@ public class SequenceService {
     private InterProscanService interProscanService;
 
     private InterProscanTranslator interProscanTranslator;
+    
+    private static final String EMAIL_PATTERN = 
+		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private Pattern pattern;
+	private Matcher matcher;
 
     private JLabel infoLabel;
     private JProgressBar progressBar;
@@ -74,21 +81,32 @@ public class SequenceService {
     private final Set<String> inputAppl;
     private JPanel configParentPanel;
     private ProtannotParser parser;
-    private final JAXBContext jaxbContext;
-    private final Unmarshaller jaxbUnmarshaller;
-    private final Marshaller jaxbMarshaller;
     private final List<String> defaultApplications;
 
     public SequenceService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
-        jaxbContext = JAXBContext.newInstance(Dnaseq.class);
-        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        jaxbMarshaller = jaxbContext.createMarshaller();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
+        pattern = Pattern.compile(EMAIL_PATTERN);
     }
 
     private void initEmail() {
         email = new JTextField();
+        email.setInputVerifier(new InputVerifier() {
+
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField tf = (JTextField) input;
+                matcher = pattern.matcher(tf.getText());
+                if(matcher.matches()) {
+                    tf.setBackground(Color.WHITE);
+                    
+                    return true;
+                } else {
+                    tf.setBackground(Color.red);
+                    return false;
+                }
+            }
+        });
     }
 
     private void initInfoLabel(String text) {

@@ -495,9 +495,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      */
     private void addHelpActions(final JMenu help_menu) {
         MenuUtil.addToMenu(help_menu, new JMenuItem(getAboutAction()));
-        MenuUtil.addToMenu(help_menu, new JMenuItem(getReportBugAction()));
-        MenuUtil.addToMenu(help_menu, new JMenuItem(getFeatureAction()));
-        MenuUtil.addToMenu(help_menu, new JMenuItem(getShowConsoleAction()));
     }
 
     void colorChooser() {
@@ -1174,14 +1171,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     static AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
-                "Load InterProscan")) {
+                "Load InterProScan")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().doLoadInterProscan();
                     }
                 };
-        load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
-        load_action.putValue(AbstractAction.SHORT_DESCRIPTION, "Load a custom sequence");
+        load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_I);
+        load_action.putValue(AbstractAction.SHORT_DESCRIPTION, "Load InterProScan Data");
         return load_action;
     }
 

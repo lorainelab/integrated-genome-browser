@@ -574,7 +574,7 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commonsLangVersion}</version>
                 <scope>provided</scope>
-            </dependency>        
+            </dependency>
             <dependency>
                 <groupId>com.github.kevinsawicki</groupId>
                 <artifactId>http-request</artifactId>

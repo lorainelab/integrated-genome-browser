@@ -93,7 +93,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>shared-lib-wrapper</artifactId>
-            <version>8.5.0</version>
             <type>jar</type>
         </dependency>
          <dependency>

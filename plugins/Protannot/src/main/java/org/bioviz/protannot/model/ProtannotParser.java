@@ -241,7 +241,7 @@ public class ProtannotParser {
                     mrna.getCds().setEnd(BigInteger.valueOf(cdsEnd));
                 }
 
-                StringBuilder exonsResidue = new StringBuilder();
+                StringBuilder allExonsResidue = new StringBuilder();
                 for (int j = 0; j < mrna.getExon().size(); j++) {
                     Dnaseq.MRNA.Exon exon = mrna.getExon().get(j);
                     mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
@@ -272,19 +272,24 @@ public class ProtannotParser {
                         spanEnd = exonEnd;
                     }
                     mutableSeqSymmetry.addSpan(new SimpleSeqSpan(spanStart, spanEnd, bioseq));
-                    exonsResidue.append(SeqUtils.getResidues(mutableSeqSymmetry, bioseq));
+                    final String exonResidue = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
+                    allExonsResidue.append(exonResidue);
+                    Dnaseq.Descriptor residueDescriptor = new Dnaseq.Descriptor();
+                    residueDescriptor.setType("genomic sequence");
+                    residueDescriptor.setValue(exonResidue);
+                    exon.getDescriptor().add(residueDescriptor);
                 }
 
                 if (!isForward) {
-                    exonsResidue = new StringBuilder(DNAUtils.getReverseComplement(exonsResidue));
+                    allExonsResidue = new StringBuilder(DNAUtils.getReverseComplement(allExonsResidue));
                 }
-                String mrnaProtein = DNAUtils.translate(exonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);
+                String mrnaProtein = DNAUtils.translate(allExonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);
                 Dnaseq.Descriptor proteinSequence = new Dnaseq.Descriptor();
                 proteinSequence.setType("protein sequence");
                 proteinSequence.setValue(mrnaProtein);
                 Dnaseq.Descriptor codingSequence = new Dnaseq.Descriptor();
                 codingSequence.setType("mRNA coding sequence");
-                codingSequence.setValue(exonsResidue.toString());
+                codingSequence.setValue(allExonsResidue.toString());
                 mrna.getDescriptor().add(proteinSequence);
                 mrna.getDescriptor().add(codingSequence);
             }

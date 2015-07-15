@@ -14,8 +14,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,8 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -76,10 +73,7 @@ public class SequenceService {
 
     private JLabel infoLabel;
     private JProgressBar progressBar;
-    private JLabel showDetailLabel;
-    private JTextArea detailText;
     private JTextField email;
-    private JScrollPane areaScrollPane;
     private Timer resultFetchTimer;
     private JDialog dialog;
     private JPanel parentPanel;
@@ -110,66 +104,50 @@ public class SequenceService {
         progressBar.setIndeterminate(true);
     }
 
-    private void initShowDetailLabel() {
-        showDetailLabel = new JLabel("+ show detail");
-        showDetailLabel.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                if (areaScrollPane.isVisible()) {
-//                    showDetailLabel.setText("+ show detail");
-//                    parentPanel.remove(areaScrollPane);
-//                    areaScrollPane.setVisible(false);
-                } else {
-//                    showDetailLabel.setText("- hide detail");
-//                    parentPanel.add(areaScrollPane, "grow, height 200");
-//                    areaScrollPane.setVisible(true);
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                //
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                //
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                //
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                //
-            }
-        });
-    }
-
-    private void initDetailText() {
-        detailText = new JTextArea();
-        detailText.setEditable(false);
-        detailText.setLineWrap(true);
-
-    }
-
-    private void initAreaScrollPane() {
-        initDetailText();
-        areaScrollPane = new JScrollPane(detailText);
-        areaScrollPane.setVisible(false);
-        areaScrollPane.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    }
-
     private boolean isDefaultApplication(String application) {
         return defaultApplications.contains(application);
     }
 
     private boolean showApplicationOptionsLoadingModal() {
+        createLoadApplicationsThread();
+
+        parentPanel = new JPanel(new MigLayout());
+        initInfoLabel("Loading InterProScan Options. Please wait...");
+        parentPanel.add(infoLabel, "wrap");
+
+        initProgressBar();
+        parentPanel.add(progressBar, "align center, wrap");
+
+        final JComponent[] inputs = new JComponent[]{
+            parentPanel
+        };
+        Object[] options = {"Cancel"};
+
+        Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Options");
+        return processApplicationLoadingSelection(selectedValue, options);
+    }
+
+    private Object showOptionPane(final JComponent[] inputs, Object[] options, String message) throws HeadlessException {
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
+                null,
+                options,
+                null);
+        pane.setInitialValue(null);
+        dialog = pane.createDialog(message);
+        dialog.show();
+        dialog.dispose();
+        return pane.getValue();
+    }
+
+    private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options) {
+        if (selectedValue != null && selectedValue.equals(options[0])) {
+            LOG.debug("cancelling request");
+            return false;
+        }
+        return true;
+    }
+
+    private void createLoadApplicationsThread() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
             protected Void runInBackground() {
@@ -187,43 +165,12 @@ public class SequenceService {
                 dialog.dispose();
                 return null;
             }
-
+            
             @Override
             protected void finished() {
             }
         };
         CThreadHolder.getInstance().execute(this, worker);
-
-        parentPanel = new JPanel(new MigLayout());
-
-        initInfoLabel("Loading InterProScan Options. Please wait...");
-        parentPanel.add(infoLabel, "wrap");
-
-        initProgressBar();
-        parentPanel.add(progressBar, "align center, wrap");
-
-        final JComponent[] inputs = new JComponent[]{
-            parentPanel
-        };
-        Object[] options = {"Cancel"};
-
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
-                null,
-                options,
-                null);
-
-        pane.setInitialValue(null);
-
-        dialog = pane.createDialog("Loading InterProScan Options");
-
-        dialog.show();
-        dialog.dispose();
-        Object selectedValue = pane.getValue();
-        if (selectedValue != null && selectedValue.equals(options[0])) {
-            LOG.debug("cancelling request");
-            return false;
-        }
-        return true;
     }
 
     private void showResultLoadingModal() {
@@ -240,18 +187,7 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
-                null,
-                options,
-                null);
-
-        pane.setInitialValue(null);
-
-        dialog = pane.createDialog("Loading InterProScan Data");
-
-        dialog.show();
-        dialog.dispose();
-        Object selectedValue = pane.getValue();
+        Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[0])) {
             LOG.debug("cancelling request");
             resultFetchTimer.cancel();
@@ -279,6 +215,10 @@ public class SequenceService {
                 null,
                 options,
                 options[0]);
+        return processSetupOption(optionChosen);
+    }
+
+    private boolean processSetupOption(int optionChosen) {
         if (optionChosen == 0) {
             matcher = pattern.matcher(email.getText());
             if (!matcher.matches()) {

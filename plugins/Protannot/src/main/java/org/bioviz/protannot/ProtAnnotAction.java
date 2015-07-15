@@ -107,6 +107,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public static final String APP_NAME = BUNDLE.getString("appName");
     public static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
     public static final String APP_VERSION = BUNDLE.getString("appVersion");
+    public static final String CONFIRM_BEFORE_OPEN_XML = "confirm_before_open_xml";
+    public static final boolean DEFAULT_CONFIRM_BEFORE_OPEN_XML = true;
     public static final String APP_VERSION_FULL = MessageFormat.format(
             BUNDLE.getString("appVersionFull"),
             APP_VERSION);
@@ -160,6 +162,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private static final Image imageIcon = getIcon();
 
     private static final int MENU_ITEM_WEIGHT = 8;
+    private boolean loadFileOnStart;
     private final TransferHandler fdh = new FileDropHandler() {
 
         @Override
@@ -178,13 +181,17 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-
+        loadFileOnStart = false;
         if (!validateSelection(igbService.getSeqMapView())) {
             return;
         }
         loadPrefs();
         start();
-        load(igbService.getSeqMapView());
+        if(!loadFileOnStart) {
+            load(igbService.getSeqMapView());
+        } else {
+            doLoadFile();
+        }
     }
 
     
@@ -240,7 +247,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 icon = Toolkit.getDefaultToolkit().getImage(url);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             // It isn't a big deal if we can't find the icon, just return null
         }
         return icon;
@@ -288,6 +295,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         frm = new JFrame(APP_NAME);
         frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         singleton = this;
+        loadFileOnStart = false;
     }
 
     /**
@@ -727,7 +735,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         }
         
         if(!isGeneModelSelected) {
-            ModalUtils.infoPanel("Please select gene model");
+            boolean confirmed = ModalUtils.confirmPanel("You have not selected any gene models.  Would you like to load from file?", 
+                    CONFIRM_BEFORE_OPEN_XML, DEFAULT_CONFIRM_BEFORE_OPEN_XML);
+            
+            if(confirmed) {
+                loadFileOnStart = true;
+                return true;
+            }
             return false;
         }
 

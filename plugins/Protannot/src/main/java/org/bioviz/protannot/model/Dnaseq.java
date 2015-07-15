@@ -55,7 +55,7 @@ public class Dnaseq {
      *
      *
      * <p>
-     * Objects of the following type(s) are allowed in the list null     {@link Dnaseq.MRNA }
+     * Objects of the following type(s) are allowed in the list null null     {@link Dnaseq.MRNA }
      * {@link Dnaseq.Aaseq }
      *
      *
@@ -460,6 +460,13 @@ public class Dnaseq {
             return this.descriptor;
         }
 
+        public void addDescriptor(String type, String value) {
+            Descriptor desc = new Descriptor();
+            desc.setType(type);
+            desc.setValue(value);
+            getDescriptor().add(desc);
+        }
+
         /**
          * Gets the value of the exon property.
          *
@@ -765,6 +772,13 @@ public class Dnaseq {
                     descriptor = new ArrayList<Dnaseq.Descriptor>();
                 }
                 return this.descriptor;
+            }
+
+            public void addDescriptor(String type, String value) {
+                Descriptor desc = new Descriptor();
+                desc.setType(type);
+                desc.setValue(value);
+                getDescriptor().add(desc);
             }
 
             /**

@@ -24,6 +24,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
@@ -210,22 +211,12 @@ public class ProtannotParser {
         mrna.getDescriptor().add(proteinProductId);
 
         if (sym instanceof SupportsGeneName) {
-            Dnaseq.Descriptor title = new Dnaseq.Descriptor();
-            title.setType("title");
-            title.setValue(((SupportsGeneName) sym).getGeneName());
-            mrna.getDescriptor().add(title);
+            mrna.addDescriptor("title", ((SupportsGeneName) sym).getGeneName());
         }
 
         if (sym instanceof BasicSeqSymmetry) {
-            Dnaseq.Descriptor mrnaAccession = new Dnaseq.Descriptor();
-            mrnaAccession.setType("mRNA accession");
-            mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
-            mrna.getDescriptor().add(mrnaAccession);
-
-            Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
-            urlDescriptor.setType("URL");
-            urlDescriptor.setValue("www.google.com/search?q=" + mrnaAccession.getValue());
-            mrna.getDescriptor().add(urlDescriptor);
+            mrna.addDescriptor("mRNA accession", ((BasicSeqSymmetry) sym).getID());
+            mrna.addDescriptor("URL", "www.google.com/search?q=" + ((BasicSeqSymmetry) sym).getID());
 
             if (checkForward(sym)) {
                 mrna.setStrand("+");
@@ -234,9 +225,9 @@ public class ProtannotParser {
             }
         }
 
-        Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();
-        geneDescription.setType("description");
-        //geneDescription.setValue(sym);
+        if (sym instanceof UcscBedDetailSym) {
+            mrna.addDescriptor("description", ((UcscBedDetailSym) sym).getDescription());
+        }
     }
 
     private boolean checkForward(SeqSymmetry sym) {
@@ -253,79 +244,89 @@ public class ProtannotParser {
         SeqSymmetry sym = selectedSyms.get(0);
         return checkForward(sym);
     }
-    
+
+    private boolean checkForward(Dnaseq.MRNA mrna) {
+        return "+".equals(mrna.getStrand());
+    }
+
+    private void transformCdsForNegativeStrand(Dnaseq.MRNA.Cds cds) {
+        int start = cds.getStart().intValue();
+        int end = cds.getEnd().intValue();
+        cds.setStart(BigInteger.valueOf(end));
+        cds.setEnd(BigInteger.valueOf(start));
+    }
+
+    private void transformExonForNegativeStrand(Dnaseq.MRNA.Exon exon) {
+        int start = exon.getStart().intValue();
+        int end = exon.getEnd().intValue();
+        exon.setStart(BigInteger.valueOf(end));
+        exon.setEnd(BigInteger.valueOf(start));
+    }
+
     public void addProteinSequenceToMrnas(Dnaseq dnaseq, BioSeq bioseq) {
         for (int i = 0; i < dnaseq.getMRNAAndAaseq().size(); i++) {
             Object seq = dnaseq.getMRNAAndAaseq().get(i);
             if (seq instanceof Dnaseq.MRNA) {
                 Dnaseq.MRNA mrna = (Dnaseq.MRNA) seq;
                 MutableSeqSymmetry mutableSeqSymmetry;
+                if (checkForward(mrna)) {
+                    transformCdsForNegativeStrand(mrna.getCds());
+                }
                 int cdsStart = mrna.getCds().getStart().intValue();
                 int cdsEnd = mrna.getCds().getEnd().intValue();
-                final boolean isForward = mrna.getStrand().equals("+");
-                if (!isForward) {
-                    //swap cdsStart and cdsEnd
-                    int temp = cdsStart;
-                    cdsStart = cdsEnd;
-                    cdsEnd = temp;
-                    mrna.getCds().setStart(BigInteger.valueOf(cdsStart));
-                    mrna.getCds().setEnd(BigInteger.valueOf(cdsEnd));
-                }
 
                 StringBuilder allExonsResidue = new StringBuilder();
                 for (int j = 0; j < mrna.getExon().size(); j++) {
                     Dnaseq.MRNA.Exon exon = mrna.getExon().get(j);
                     mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
+                    if (checkForward(mrna)) {
+                        transformExonForNegativeStrand(exon);
+                    }
                     int exonStart = exon.getStart().intValue();
                     int exonEnd = exon.getEnd().intValue();
-                    if (!isForward) {
-                        //swap exonStart and exonEnd
-                        int temp = exonStart;
-                        exonStart = exonEnd;
-                        exonEnd = temp;
-                        exon.setStart(BigInteger.valueOf(exonStart));
-                        exon.setEnd(BigInteger.valueOf(exonEnd));
-                    }
                     if (exonEnd < cdsStart || exonStart > cdsEnd) {
                         continue;
                     }
-                    int spanStart = 0;
-                    int spanEnd = 0;
-                    if (exonStart < cdsStart && exonEnd > cdsStart) {
-                        spanStart = cdsStart;
-                    } else {
-                        spanStart = exonStart;
-                    }
+                    int translationSpanStart = 0;
+                    int translationSpanEnd = 0;
+                    translationSpanStart = getTranslationStartPoint(exonStart, cdsStart, exonEnd);
+                    translationSpanEnd = getTranslationEndPoint(exonStart, cdsEnd, exonEnd);
 
-                    if (exonStart < cdsEnd && exonEnd > cdsEnd) {
-                        spanEnd = cdsEnd;
-                    } else {
-                        spanEnd = exonEnd;
-                    }
-                    mutableSeqSymmetry.addSpan(new SimpleSeqSpan(spanStart, spanEnd, bioseq));
+                    mutableSeqSymmetry.addSpan(new SimpleSeqSpan(translationSpanStart, translationSpanEnd, bioseq));
                     final String exonResidue = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
                     allExonsResidue.append(exonResidue);
-                    Dnaseq.Descriptor residueDescriptor = new Dnaseq.Descriptor();
-                    residueDescriptor.setType("genomic sequence");
-                    residueDescriptor.setValue(exonResidue);
-                    exon.getDescriptor().add(residueDescriptor);
+                    exon.addDescriptor("genomic sequence", exonResidue);
                 }
 
-                if (!isForward) {
+                if (checkForward(mrna)) {
                     allExonsResidue = new StringBuilder(DNAUtils.getReverseComplement(allExonsResidue));
                 }
                 String mrnaProtein = DNAUtils.translate(allExonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);
-                Dnaseq.Descriptor proteinSequence = new Dnaseq.Descriptor();
-                proteinSequence.setType("protein sequence");
-                proteinSequence.setValue(mrnaProtein);
-                Dnaseq.Descriptor codingSequence = new Dnaseq.Descriptor();
-                codingSequence.setType("mRNA coding sequence");
-                codingSequence.setValue(allExonsResidue.toString());
-                mrna.getDescriptor().add(proteinSequence);
-                mrna.getDescriptor().add(codingSequence);
+                mrna.addDescriptor("protein sequence", mrnaProtein);
+                mrna.addDescriptor("mRNA coding sequence", allExonsResidue.toString());
             }
         }
 
+    }
+
+    private int getTranslationEndPoint(int exonStart, int cdsEnd, int exonEnd) {
+        int spanEnd;
+        if (exonStart < cdsEnd && exonEnd > cdsEnd) {
+            spanEnd = cdsEnd;
+        } else {
+            spanEnd = exonEnd;
+        }
+        return spanEnd;
+    }
+
+    private int getTranslationStartPoint(int exonStart, int cdsStart, int exonEnd) {
+        int spanStart;
+        if (exonStart < cdsStart && exonEnd > cdsStart) {
+            spanStart = cdsStart;
+        } else {
+            spanStart = exonStart;
+        }
+        return spanStart;
     }
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {

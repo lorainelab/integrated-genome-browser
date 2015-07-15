@@ -5,16 +5,18 @@
  */
 package org.bioviz.protannot;
 
-import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ModalUtils;
+import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +30,7 @@ import java.util.regex.Pattern;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -35,7 +38,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
@@ -54,7 +59,7 @@ import org.w3c.dom.Document;
  *
  * @author jeckstei
  */
-@Component(provide = SequenceService.class)
+@aQute.bnd.annotation.component.Component(provide = SequenceService.class)
 public class SequenceService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SequenceService.class);
@@ -62,10 +67,10 @@ public class SequenceService {
     private InterProscanService interProscanService;
 
     private InterProscanTranslator interProscanTranslator;
-    
-    private static final String EMAIL_PATTERN = 
-		"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final String EMAIL_PATTERN
+            = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final Pattern pattern;
     private Matcher matcher;
 
@@ -202,7 +207,7 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, 
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
                 null,
                 options,
                 null);
@@ -235,7 +240,7 @@ public class SequenceService {
         };
         Object[] options = {"Cancel"};
 
-        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, 
+        JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
                 null,
                 options,
                 null);
@@ -276,7 +281,7 @@ public class SequenceService {
                 options[0]);
         if (optionChosen == 0) {
             matcher = pattern.matcher(email.getText());
-            if(!matcher.matches()) {
+            if (!matcher.matches()) {
                 ModalUtils.infoPanel("Please enter a valid email address.");
                 return false;
             }
@@ -407,6 +412,27 @@ public class SequenceService {
         resultFetchTimer = new Timer();
         resultFetchTimer.schedule(buildTimerTask(jobs, callback), new Date(), 1000);
 
+    }
+
+    public void exportAsXml(Component component) {
+        JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.rescanCurrentDirectory();
+        int option = chooser.showSaveDialog(component);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File exportFile = chooser.getSelectedFile();
+            Dnaseq dnaseq = parser.getDnaseq();
+            JAXBContext jaxbContext;
+            try {
+                jaxbContext = JAXBContext.newInstance(Dnaseq.class);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+                jaxbMarshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+                jaxbMarshaller.marshal(dnaseq, exportFile);
+            } catch (JAXBException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+            
+        }
     }
 
     @Reference

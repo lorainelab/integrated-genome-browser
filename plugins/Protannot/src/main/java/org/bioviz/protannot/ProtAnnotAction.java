@@ -3,12 +3,10 @@
  */
 package org.bioviz.protannot;
 
-import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
-import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -189,10 +187,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         load(igbService.getSeqMapView());
     }
 
-    @Activate
-    public void activator() {
-        GenometryModel.getInstance().addSymSelectionListener(evt -> singleton.setEnabled(!igbService.getSeqMapView().getSelectedSyms().isEmpty()));
-    }
+    
 
     @Override
     public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
@@ -481,6 +476,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPrintAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getExportAction()));
+        MenuUtil.addToMenu(file_menu, new JMenuItem(getSaveImageAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getPreferencesAction()));
         MenuUtil.addToMenu(file_menu, new JMenuItem(getExitAction()));
 
@@ -514,8 +510,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void addImageExportService(ImageExportService exportService) {
         this.exportService = exportService;
     }
+    
+    private void export() {
+        sequenceService.exportAsXml(gview);
+    }
 
-    void export() {
+    void saveImage() {
         exportService.exportComponent(gview);
     }
 
@@ -1214,7 +1214,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         print_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("printTip"));
         return print_action;
     }
-
+    
     static AbstractAction getExportAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
@@ -1224,8 +1224,22 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                         ProtAnnotAction.getInstance().export();
                     }
                 };
-        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
+        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
         export_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exportTip"));
+        return export_action;
+    }
+
+    static AbstractAction getSaveImageAction() {
+        AbstractAction export_action = new AbstractAction(MessageFormat.format(
+                BUNDLE.getString("menuItemHasDialog"),
+                "Save Image")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ProtAnnotAction.getInstance().saveImage();
+                    }
+                };
+        export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
+        export_action.putValue(AbstractAction.SHORT_DESCRIPTION, "Export Image");
         return export_action;
     }
 

@@ -338,6 +338,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         if (gview == null) {
             gview = new GenomeView(prefs_hash);
         }
+        gview.clearPropertiesTable();
         cpane.add("Center", gview);
         print_panel = new ComponentPagePrinter(gview);
     }

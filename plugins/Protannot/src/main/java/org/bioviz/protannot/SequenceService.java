@@ -10,7 +10,6 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.Component;
@@ -72,6 +71,7 @@ public class SequenceService {
     private Matcher matcher;
 
     private JLabel infoLabel;
+    private JLabel statusLabel;
     private JProgressBar progressBar;
     private JTextField email;
     private Timer resultFetchTimer;
@@ -92,11 +92,21 @@ public class SequenceService {
         email = new JTextField();
     }
 
-    private String oldText;
-
     private void initInfoLabel(String text) {
-        oldText = text;
-        infoLabel = new JLabel(text);
+        if (infoLabel == null) {
+            infoLabel = new JLabel(text);
+        } else {
+            infoLabel.setText(text);
+        }
+        
+    }
+    
+    private void initStatusLabel(String text) {
+        if(statusLabel == null) {
+            statusLabel = new JLabel(text);
+        } else {
+            statusLabel.setText(text);
+        }
     }
 
     private void initProgressBar() {
@@ -176,8 +186,10 @@ public class SequenceService {
     private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
 
-        initInfoLabel("Loading InterProScan data, Please wait...");
+        initInfoLabel(LOADING_IPS_DATA);
+        initStatusLabel( "Initializing ...");
         parentPanel.add(infoLabel, "wrap");
+        parentPanel.add(statusLabel, "wrap");
 
         initProgressBar();
         parentPanel.add(progressBar, "align center, wrap");
@@ -193,6 +205,7 @@ public class SequenceService {
             resultFetchTimer.cancel();
         }
     }
+    private static final String LOADING_IPS_DATA = "Loading InterProScan data, Please wait...";
 
     private boolean showSetupModal() {
         inputAppl.clear();
@@ -328,11 +341,8 @@ public class SequenceService {
                         it.remove();
                     }
                 }
-                if (Strings.isNullOrEmpty(oldText)) {
-                    infoLabel.setText(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
-                } else {
-                    infoLabel.setText("<html>" + oldText + "<br>" + jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed " + "</html>");
-                }
+                initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                dialog.pack();
                 dialog.repaint();
                 if (jobs.isEmpty()) {
                     processJobResults(successfulJobs, callback);
@@ -366,12 +376,12 @@ public class SequenceService {
             try {
                 jaxbContext = JAXBContext.newInstance(Dnaseq.class);
                 Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-                jaxbMarshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 jaxbMarshaller.marshal(dnaseq, exportFile);
             } catch (JAXBException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-            
+
         }
     }
 

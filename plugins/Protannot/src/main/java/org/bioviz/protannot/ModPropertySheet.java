@@ -27,8 +27,7 @@ import javax.swing.table.TableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 
 /**
- * Displays Properties (name, value pairs) associated with
- * whatever Glyph objects the user has selected.
+ * Displays Properties (name, value pairs) associated with whatever Glyph objects the user has selected.
  */
 class ModPropertySheet extends JPanel {
 
@@ -113,13 +112,10 @@ class ModPropertySheet extends JPanel {
     }
 
     /**
-     * Build and return rows for the table to be shown in
-     * this PropertySheet.
-     * If there are no Properties to be shown, then returns
-     * default rows.
+     * Build and return rows for the table to be shown in this PropertySheet. If there are no Properties to be shown,
+     * then returns default rows.
      *
-     * @param name_values - a List containing name-values for a
-     * one or more Properties
+     * @param name_values - a List containing name-values for a one or more Properties
      * @param props - the list of Properties
      * @return String[]
      */
@@ -143,8 +139,7 @@ class ModPropertySheet extends JPanel {
     }
 
     /**
-     * Show data associated with the given properties.
-     * Uses buildRows() to retrieve ordered name-value pairs.
+     * Show data associated with the given properties. Uses buildRows() to retrieve ordered name-value pairs.
      *
      * @param props - the given Properties
      * @see java.util.Properties

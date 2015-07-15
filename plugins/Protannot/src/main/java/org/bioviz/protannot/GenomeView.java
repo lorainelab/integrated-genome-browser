@@ -1016,6 +1016,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         Properties[] prop_array = propvec.toArray(new Properties[propvec.size()]);
         table_view.showProperties(prop_array);
     }
+    
+    public void clearPropertiesTable() {
+        table_view.showProperties(new Properties[0]);
+    }
 
     private void addParentInfo(Object candidate, SymWithProps info) {
         if (candidate instanceof SymWithProps) {

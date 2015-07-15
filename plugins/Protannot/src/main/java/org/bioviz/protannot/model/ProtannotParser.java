@@ -189,7 +189,7 @@ public class ProtannotParser {
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
 
-        if (logger.isDebugEnabled()) {
+        if (true) {
             try {
                 jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
             } catch (JAXBException ex) {
@@ -269,7 +269,7 @@ public class ProtannotParser {
             if (seq instanceof Dnaseq.MRNA) {
                 Dnaseq.MRNA mrna = (Dnaseq.MRNA) seq;
                 MutableSeqSymmetry mutableSeqSymmetry;
-                if (checkForward(mrna)) {
+                if (!checkForward(mrna)) {
                     transformCdsForNegativeStrand(mrna.getCds());
                 }
                 int cdsStart = mrna.getCds().getStart().intValue();
@@ -279,7 +279,7 @@ public class ProtannotParser {
                 for (int j = 0; j < mrna.getExon().size(); j++) {
                     Dnaseq.MRNA.Exon exon = mrna.getExon().get(j);
                     mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
-                    if (checkForward(mrna)) {
+                    if (!checkForward(mrna)) {
                         transformExonForNegativeStrand(exon);
                     }
                     int exonStart = exon.getStart().intValue();
@@ -298,7 +298,7 @@ public class ProtannotParser {
                     exon.addDescriptor("genomic sequence", exonResidue);
                 }
 
-                if (checkForward(mrna)) {
+                if (!checkForward(mrna)) {
                     allExonsResidue = new StringBuilder(DNAUtils.getReverseComplement(allExonsResidue));
                 }
                 String mrnaProtein = DNAUtils.translate(allExonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);

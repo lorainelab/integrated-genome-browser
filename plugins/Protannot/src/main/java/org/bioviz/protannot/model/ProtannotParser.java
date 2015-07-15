@@ -8,6 +8,7 @@ package org.bioviz.protannot.model;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -99,6 +100,8 @@ public class ProtannotParser {
         dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
+        GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+        chromosome.setGenomeVersion(gv);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
     }

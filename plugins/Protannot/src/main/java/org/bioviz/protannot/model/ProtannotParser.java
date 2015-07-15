@@ -121,12 +121,12 @@ public class ProtannotParser {
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
-        boolean isForward = true;
         int spanStart, spanEnd;
         for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
-            int exonsCount = sym.getChildCount();
-            for (int i = 0; i < exonsCount; i++) {
+
+            //populating exons to mrna
+            for (int i = 0; i < sym.getChildCount(); i++) {
                 SeqSymmetry exonSym = sym.getChild(i);
                 Dnaseq.MRNA.Exon exon = new Dnaseq.MRNA.Exon();
                 exon.setStart(BigInteger.valueOf(exonSym.getSpan(bioseq).getStart()));
@@ -140,47 +140,19 @@ public class ProtannotParser {
                 cds.setEnd(BigInteger.valueOf(cdsSpan.getEnd()));
                 mrna.setCds(cds);
             }
-            mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
-            mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
+            if (checkForward(sym)) {
+                mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
+                mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
+            } else {
+                mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
+                mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
+            }
             dnaseq.getMRNAAndAaseq().add(mrna);
 
-            Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
-            proteinProductId.setType("protein_product_id");
-            proteinProductId.setValue(sym.getID());
-            mrna.getDescriptor().add(proteinProductId);
-
-            if (sym instanceof SupportsGeneName) {
-                Dnaseq.Descriptor title = new Dnaseq.Descriptor();
-                title.setType("title");
-                title.setValue(((SupportsGeneName) sym).getGeneName());
-                mrna.getDescriptor().add(title);
-            }
-
-            if (sym instanceof BasicSeqSymmetry) {
-                Dnaseq.Descriptor mrnaAccession = new Dnaseq.Descriptor();
-                mrnaAccession.setType("mRNA accession");
-                mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
-                mrna.getDescriptor().add(mrnaAccession);
-
-                Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
-                urlDescriptor.setType("URL");
-                urlDescriptor.setValue("www.google.com/search?q=" + mrnaAccession.getValue());
-                mrna.getDescriptor().add(urlDescriptor);
-
-                isForward = ((BasicSeqSymmetry) sym).isForward();
-                if (isForward) {
-                    mrna.setStrand("+");
-                } else {
-                    mrna.setStrand("-");
-                }
-            }
-
-            Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();
-            geneDescription.setType("description");
-            //geneDescription.setValue(sym);
+            addDescriptorsToMrna(sym, mrna);
 
         }
-        if (isForward) {
+        if (checkForward(selectedSyms)) {
             spanStart = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getStart()).min().orElse(0);
             spanEnd = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getEnd()).max().orElse(0);
         } else {
@@ -194,12 +166,14 @@ public class ProtannotParser {
         }
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
+
         igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
+
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
         Dnaseq.Residues residue = new Dnaseq.Residues();
         residue.setValue(residuesStr.toLowerCase());
 
-        if (isForward) {
+        if (checkForward(selectedSyms)) {
             residue.setStart(new BigInteger(spanStart + ""));
             residue.setEnd(new BigInteger(spanEnd + ""));
         } else {
@@ -207,13 +181,16 @@ public class ProtannotParser {
             residue.setEnd(new BigInteger(spanStart + ""));
         }
         dnaseq.setResidues(residue);
-        addProteinSequenceToMrna(dnaseq, bioseq);
+
+        addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
 
-        try {
-            jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
-        } catch (JAXBException ex) {
-            java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+        if (logger.isDebugEnabled()) {
+            try {
+                jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
+            } catch (JAXBException ex) {
+                java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
@@ -222,8 +199,59 @@ public class ProtannotParser {
         return chromosome;
 
     }
+
+    private void addDescriptorsToMrna(SeqSymmetry sym, Dnaseq.MRNA mrna) {
+        Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
+        proteinProductId.setType("protein_product_id");
+        proteinProductId.setValue(sym.getID());
+        mrna.getDescriptor().add(proteinProductId);
+
+        if (sym instanceof SupportsGeneName) {
+            Dnaseq.Descriptor title = new Dnaseq.Descriptor();
+            title.setType("title");
+            title.setValue(((SupportsGeneName) sym).getGeneName());
+            mrna.getDescriptor().add(title);
+        }
+
+        if (sym instanceof BasicSeqSymmetry) {
+            Dnaseq.Descriptor mrnaAccession = new Dnaseq.Descriptor();
+            mrnaAccession.setType("mRNA accession");
+            mrnaAccession.setValue(((BasicSeqSymmetry) sym).getID());
+            mrna.getDescriptor().add(mrnaAccession);
+
+            Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
+            urlDescriptor.setType("URL");
+            urlDescriptor.setValue("www.google.com/search?q=" + mrnaAccession.getValue());
+            mrna.getDescriptor().add(urlDescriptor);
+
+            if (checkForward(sym)) {
+                mrna.setStrand("+");
+            } else {
+                mrna.setStrand("-");
+            }
+        }
+
+        Dnaseq.Descriptor geneDescription = new Dnaseq.Descriptor();
+        geneDescription.setType("description");
+        //geneDescription.setValue(sym);
+    }
+
+    private boolean checkForward(SeqSymmetry sym) {
+        if (sym instanceof BasicSeqSymmetry) {
+            return ((BasicSeqSymmetry) sym).isForward();
+        }
+        return false;
+    }
+
+    private boolean checkForward(List<SeqSymmetry> selectedSyms) {
+        if (selectedSyms.isEmpty()) {
+            return false;
+        }
+        SeqSymmetry sym = selectedSyms.get(0);
+        return checkForward(sym);
+    }
     
-    public void addProteinSequenceToMrna(Dnaseq dnaseq, BioSeq bioseq) {
+    public void addProteinSequenceToMrnas(Dnaseq dnaseq, BioSeq bioseq) {
         for (int i = 0; i < dnaseq.getMRNAAndAaseq().size(); i++) {
             Object seq = dnaseq.getMRNAAndAaseq().get(i);
             if (seq instanceof Dnaseq.MRNA) {
@@ -239,14 +267,6 @@ public class ProtannotParser {
                     cdsEnd = temp;
                     mrna.getCds().setStart(BigInteger.valueOf(cdsStart));
                     mrna.getCds().setEnd(BigInteger.valueOf(cdsEnd));
-
-                    int mrnaStart = mrna.getStart().intValue();
-                    int mrnaEnd = mrna.getEnd().intValue();
-                    temp = mrnaStart;
-                    mrnaStart = mrnaEnd;
-                    mrnaEnd = temp;
-                    mrna.setStart(BigInteger.valueOf(mrnaStart));
-                    mrna.setEnd(BigInteger.valueOf(mrnaEnd));
                 }
 
                 StringBuilder allExonsResidue = new StringBuilder();

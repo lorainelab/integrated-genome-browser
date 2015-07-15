@@ -120,19 +120,17 @@ public class ProtannotParser {
         dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
-        int start = Integer.MAX_VALUE, end = 0;
+//        int start = Integer.MAX_VALUE, end = 0;
         int cdsStart = Integer.MAX_VALUE, cdsEnd = 0;
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
         boolean isForward = true;
+
+        int start;
+        int end;
+
         for (SeqSymmetry sym : selectedSyms) {
             Dnaseq.MRNA mrna = new Dnaseq.MRNA();
             int exonsCount = sym.getChildCount();
-            if (start > sym.getSpan(bioseq).getStart()) {
-                start = sym.getSpan(bioseq).getStart();
-            }
-            if (end < sym.getSpan(bioseq).getEnd()) {
-                end = sym.getSpan(bioseq).getEnd();
-            }
             for (int i = 0; i < exonsCount; i++) {
                 SeqSymmetry exonSym = sym.getChild(i);
                 Dnaseq.MRNA.Exon exon = new Dnaseq.MRNA.Exon();
@@ -175,7 +173,7 @@ public class ProtannotParser {
                 } else {
                     mrna.setStrand("-");
                 }
-                
+
                 Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
                 urlDescriptor.setType("URL");
                 urlDescriptor.setValue("www.google.com/search?q=" + mrnaAccession.getValue());
@@ -186,6 +184,13 @@ public class ProtannotParser {
             geneDescription.setType("description");
             //geneDescription.setValue(sym);
 
+        }
+        if (isForward) {
+            start = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getStart()).min().orElse(0);
+            end = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getEnd()).max().orElse(0);
+        } else {
+            start = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getStart()).max().orElse(0);
+            end = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getEnd()).min().orElse(0);
         }
         mutableSeqSymmetry.addSpan(new SimpleSeqSpan(start, end, bioseq));
         String seqId = bioseq.getId();
@@ -239,6 +244,14 @@ public class ProtannotParser {
                     cdsEnd = temp;
                     mrna.getCds().setStart(BigInteger.valueOf(cdsStart));
                     mrna.getCds().setEnd(BigInteger.valueOf(cdsEnd));
+
+                    int mrnaStart = mrna.getStart().intValue();
+                    int mrnaEnd = mrna.getEnd().intValue();
+                    temp = mrnaStart;
+                    mrnaStart = mrnaEnd;
+                    mrnaEnd = temp;
+                    mrna.setStart(BigInteger.valueOf(mrnaStart));
+                    mrna.setEnd(BigInteger.valueOf(mrnaEnd));
                 }
 
                 StringBuilder allExonsResidue = new StringBuilder();

@@ -697,6 +697,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     public void mvRadioButtonActionPerformed() {
+        //TODO: This is will not work when external plugins are using this service
         exportComponent = mainView;
         refreshPreview();
     }

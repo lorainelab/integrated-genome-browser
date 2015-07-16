@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <protein>
+        <sequence md5="2c4058fc0a2131bcfa66992e677069ca">ACTTCCCTCTTTCTCTCTTTCACTTTGCTCTGTTCACTCAGAGCATCAAATAAACAAAAGAGAGAAACCAAAACCACACAAGACTAACGATGTTGCTAGGGAAGAGACAGAGACCACCAATAAAGAGAACCACGAGTCTATCTGAGATTAAGTTCGATTTGAATCAACCTAGCGAACAAGAACCATCCGATCATCAGATTCAGCTTGTGAACGTTGATGAACATCGTCAAGTTCATCAAAGATTGTTAGATCAACGGCTTTTAGCGATGGTCTCACCAAGAGGTACACAGAGAAGACACTCAAGTGATTATTCTGAAGATTTTCTAAGATCTTGCTCTCTTTGTAAACGTCTTCTTGTTCATGGCCGTGACATCTATATGTATAGGTATGAGTTTAGGACCTAAAGATTAATCTCATGGTTTTGGTTTGATTAGATATGTAATTAACGATTTGGTTTTGGTTGTTAAATTATGAGCAGAGGAGATAGAGCGTTTTGTAGTTTAGAGTGCAGGCAACAACAAATTACAGTGGACGAGAGGAAGGAGAAGAAGAAAGGTTCGGTGAGGTCCACCATCGTCGTCGCCACCGGAACCACCACAGGAGAGAGAGTTTCCGCCGCCGTGTAGGTCTCTTTTACATATGTTATATATTATCGGTAATGATTGTATTATATGGTTCTTGTTTTATGTATAAAAAGCATTGAGCACTATTGACTGTGATTAACCATGTTAATCATCCTTTAAACCTTGCTTTTGATCTTAAGAATTATTGTATTATGCATATTAATTAGATTTGTGTTCTACTGATTATTCTACTTCTAACT</sequence>
+        <xref id="EMBOSS_001"/>
+        <matches>
+            <signalp-match>
+                <signature name="SignalP-noTM" ac="SignalP-noTM">
+                    <models>
+                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
+                    </models>
+                    <signature-library-release version="4.0" library="SIGNALP_GRAM_NEGATIVE"/>
+                </signature>
+                <locations>
+                    <signalp-location score="0.655" end="22" start="1"/>
+                </locations>
+            </signalp-match>
+            <signalp-match>
+                <signature name="SignalP-noTM" ac="SignalP-noTM">
+                    <models>
+                        <model name="SignalP-noTM" ac="SignalP-noTM"/>
+                    </models>
+                    <signature-library-release version="4.0" library="SIGNALP_EUK"/>
+                </signature>
+                <locations>
+                    <signalp-location score="0.523" end="21" start="1"/>
+                </locations>
+            </signalp-match>
+            <signalp-match>
+                <signature name="SignalP-TM" ac="SignalP-TM">
+                    <models>
+                        <model name="SignalP-TM" ac="SignalP-TM"/>
+                    </models>
+                    <signature-library-release version="4.0" library="SIGNALP_GRAM_POSITIVE"/>
+                </signature>
+                <locations>
+                    <signalp-location score="0.763" end="22" start="1"/>
+                </locations>
+            </signalp-match>
+        </matches>
+    </protein>
+</protein-matches>

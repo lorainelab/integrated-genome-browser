@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.swing.JMenuItem;
 
 @Component(name = ThresholdingAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class}, properties = "name=" + ThresholdingAction.COMPONENT_NAME)
 public class ThresholdingAction extends GenericAction implements IgbMenuItemProvider {
@@ -27,6 +26,7 @@ public class ThresholdingAction extends GenericAction implements IgbMenuItemProv
     private GraphScoreThreshSetter score_thresh_adjuster;
     private JRPMenuItem thresholdingMenuItem;
     private SelectionListener selectionListener;
+    private static final int MENU_ITEM_WEIGHT = 6;
 
     public ThresholdingAction() {
         super(BUNDLE.getString("thresholding"), null, "16x16/actions/blank_placeholder.png", null, KeyEvent.VK_UNDEFINED, null, true);
@@ -37,7 +37,7 @@ public class ThresholdingAction extends GenericAction implements IgbMenuItemProv
     @Activate
     public void activate() {
         score_thresh_adjuster = new GraphScoreThreshSetter(igbService);
-        thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", this);
+        thresholdingMenuItem = new JRPMenuItem("Thresholding_thresholding", this, getMenuItemWeight());
         thresholdingMenuItem.setEnabled(false);
         selectionListener = new SelectionListener(thresholdingMenuItem);
         Selections.addRefreshSelectionListener(selectionListener);
@@ -75,7 +75,7 @@ public class ThresholdingAction extends GenericAction implements IgbMenuItemProv
 
     @Override
     public int getMenuItemWeight() {
-        return -1;
+        return MENU_ITEM_WEIGHT;
     }
 
 }

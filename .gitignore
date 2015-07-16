@@ -1,3 +1,4 @@
+main/sample_dnaseq.xml
 ./igb_exe.jar
 .metadata
 .project
@@ -138,3 +139,4 @@ extbundles/
 /core/window_service/target
 /core/igbGenovizExtensionsApi/target
 /developmentPlugins/TutorialHelper/target
+/plugins/Protannot/target/

@@ -9,7 +9,6 @@ import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.swing.Action;
-import javax.swing.JMenuItem;
 
 /**
  * A panel for viewing and editing weblinks.
@@ -21,13 +20,14 @@ public class WebLinksAction extends GenericAction implements IgbMenuItemProvider
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private WebLinkDisplayProvider webLinkDisplayProvider;
     private JRPMenuItem webLinksMenuEntry;
+    private static final int MENU_ITEM_WEIGHT = 7;
 
     public WebLinksAction() {
         super(BUNDLE.getString("configureWebLinks"),
                 "16x16/categories/applications-internet.png",
                 "22x22/categories/applications-internet.png");
         putValue(Action.SHORT_DESCRIPTION, "Manage Web Links");
-        webLinksMenuEntry = new JRPMenuItem("IGB_PLUGIN" + COMPONENT_NAME, this);
+        webLinksMenuEntry = new JRPMenuItem("IGB_PLUGIN" + COMPONENT_NAME, this, getMenuItemWeight());
     }
 
     @Reference(optional = false)
@@ -53,7 +53,8 @@ public class WebLinksAction extends GenericAction implements IgbMenuItemProvider
 
     @Override
     public int getMenuItemWeight() {
-        return -1;
+        return MENU_ITEM_WEIGHT;
     }
+    
 
 }

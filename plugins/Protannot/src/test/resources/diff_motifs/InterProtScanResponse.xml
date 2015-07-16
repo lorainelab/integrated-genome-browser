@@ -1,0 +1,303 @@
+<protein-matches xmlns="http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5">
+    <protein>
+        <sequence md5="be06c3f3daff8c76cd6b839c77dd1411">MSKLPRELTRDLERSLPAVASLGSSLSHSQSLSSHLLPPPEKRRAISDVRRTFCLFVTFDLLFISLLWIIELNTNTGIRKNLEQEIIQYNFKTSFFDIFVLAFFRFSGLLLGYAVLRLRHWWVIALLSKGAFGYLLPIVSFVLAWLETWFLDFKVLPQEAEEERWYLAAQVAVARGPLLFSGALSEGQFYSPPESFAGSDNESDEEVAGKKSFSAQEREYIRQGKEATAVVDQILAQEENWKFEKNNEYGDTVYTIEVPFHGKTFILKTFLPCPAELVYQEVILQPERMVLWNKTVTACQILQRVEDNTLISYDVSAGAAGGVVSPRDFVNVRRIERRRDRYLSSGIATSHSAKPPTHKYVRGENGPGGFIVLKSASNPRVCTFVWILNTDLKGRLPRYLIHQSLAATMFEFAFHLRQRISELGARA</sequence>
+        <xref id="EMBOSS_001"/>
+        <matches>
+            <fingerprints-match graphscan="..IiIi.II" evalue="3.05E-20">
+                <signature name="STARPROTEIN" desc="Steroidogenic acute regulatory protein signature" ac="PR00978">
+                    <entry type="FAMILY" name="StAR-like" desc="Steroidogenic acute regulatory protein-like" ac="IPR000799">
+                        <go-xref category="MOLECULAR_FUNCTION" name="lipid binding" id="GO:0008289" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="STARPROTEIN" desc="Steroidogenic acute regulatory protein signature" ac="PR00978"/>
+                    </models>
+                    <signature-library-release version="42.0" library="PRINTS"/>
+                </signature>
+                <locations>
+                    <fingerprints-location score="9.23E-4" pvalue="0.0" motifNumber="6" end="297" start="278"/>
+                    <fingerprints-location score="1.34E-8" pvalue="0.0" motifNumber="8" end="334" start="314"/>
+                    <fingerprints-location score="5.46E-5" pvalue="0.0" motifNumber="3" end="427" start="406"/>
+                    <fingerprints-location score="4.25E-7" pvalue="0.0" motifNumber="4" end="405" start="386"/>
+                    <fingerprints-location score="0.00304" pvalue="0.0" motifNumber="9" end="314" start="297"/>
+                    <fingerprints-location score="0.0503" pvalue="0.0" motifNumber="5" end="354" start="336"/>
+                </locations>
+            </fingerprints-match>
+            <hmmer2-match score="223.4" evalue="0.0">
+                <signature name="START" desc="in StAR and phosphatidylcholine transfer protein" ac="SM00234">
+                    <entry type="DOMAIN" name="START_lipid-bd_dom" desc="START domain" ac="IPR002913">
+                        <go-xref category="MOLECULAR_FUNCTION" name="lipid binding" id="GO:0008289" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="START" desc="in StAR and phosphatidylcholine transfer protein" ac="SM00234"/>
+                    </models>
+                    <signature-library-release version="6.2" library="SMART"/>
+                </signature>
+                <locations>
+                    <hmmer2-location hmm-length="0" hmm-end="248" hmm-start="1" evalue="2.0E-62" score="223.4" end="426" start="221"/>
+                </locations>
+            </hmmer2-match>
+            <hmmer3-match score="194.8" evalue="0.0">
+                <signature name="MENTAL" desc="Cholesterol-capturing domain" ac="PF10457">
+                    <entry type="DOMAIN" name="MENTAL" desc="MENTAL domain" ac="IPR019498"/>
+                    <models>
+                        <model name="MENTAL" desc="Cholesterol-capturing domain" ac="PF10457"/>
+                    </models>
+                    <signature-library-release version="27.0" library="PFAM"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="47" env-end="126" hmm-length="0" hmm-end="81" hmm-start="1" evalue="2.2E-33" score="115.1" end="126" start="47"/>
+                    <hmmer3-location env-start="127" env-end="196" hmm-length="0" hmm-end="171" hmm-start="101" evalue="1.1E-22" score="80.3" end="196" start="127"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="277.6" evalue="0.0">
+                <signature ac="G3DSA:3.30.530.20">
+                    <entry type="DOMAIN" name="START-like_dom" desc="START-like domain" ac="IPR023393"/>
+                    <models>
+                        <model ac="2qimA00"/>
+                        <model ac="1em2A00"/>
+                        <model ac="2r55A00"/>
+                        <model ac="1vjhA00"/>
+                        <model ac="2ns9A01"/>
+                        <model ac="2wqlA00"/>
+                        <model ac="2kewA00"/>
+                        <model ac="2nn5A00"/>
+                        <model ac="2pcsA00"/>
+                        <model ac="3f08A00"/>
+                        <model ac="3ie5B00"/>
+                        <model ac="1jssA00"/>
+                        <model ac="1t17A00"/>
+                        <model ac="2ffsA00"/>
+                        <model ac="2il5A00"/>
+                        <model ac="1kcmA00"/>
+                        <model ac="1ln1A00"/>
+                        <model ac="2qpvA00"/>
+                        <model ac="2i9yA00"/>
+                    </models>
+                    <signature-library-release version="3.5.0" library="GENE3D"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="188" env-end="424" hmm-length="0" hmm-end="227" hmm-start="2" evalue="5.6E-83" score="277.3" end="424" start="188"/>
+                </locations>
+            </hmmer3-match>
+            <hmmer3-match score="159.8" evalue="0.0">
+                <signature name="START" desc="START domain" ac="PF01852">
+                    <entry type="DOMAIN" name="START_lipid-bd_dom" desc="START domain" ac="IPR002913">
+                        <go-xref category="MOLECULAR_FUNCTION" name="lipid binding" id="GO:0008289" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="START" desc="START domain" ac="PF01852"/>
+                    </models>
+                    <signature-library-release version="27.0" library="PFAM"/>
+                </signature>
+                <locations>
+                    <hmmer3-location env-start="223" env-end="424" hmm-length="0" hmm-end="204" hmm-start="3" evalue="6.3E-47" score="159.4" end="424" start="223"/>
+                </locations>
+            </hmmer3-match>
+            <panther-match score="1143.1" familyName="Not available" evalue="0.0">
+                <signature name="STEROIDOGENIC ACUTE REGULATORY PROTEIN (STAR)" ac="PTHR12136">
+                    <models>
+                        <model name="STEROIDOGENIC ACUTE REGULATORY PROTEIN (STAR)" ac="PTHR12136"/>
+                    </models>
+                    <signature-library-release version="9.0" library="PANTHER"/>
+                </signature>
+                <locations>
+                    <panther-location end="427" start="1"/>
+                </locations>
+            </panther-match>
+            <panther-match score="1143.1" familyName="Not available" evalue="0.0">
+                <signature name="STAR-RELATED LIPID TRANSFER PROTEIN 3" ac="PTHR12136:SF51">
+                    <entry type="FAMILY" name="STARD3_MLN64" desc="StAR-related lipid transfer protein 3" ac="IPR029867">
+                        <go-xref category="MOLECULAR_FUNCTION" name="cholesterol binding" id="GO:0015485" db="GO"/>
+                        <go-xref category="MOLECULAR_FUNCTION" name="cholesterol transporter activity" id="GO:0017127" db="GO"/>
+                        <go-xref category="CELLULAR_COMPONENT" name="late endosome" id="GO:0005770" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="STAR-RELATED LIPID TRANSFER PROTEIN 3" ac="PTHR12136:SF51"/>
+                    </models>
+                    <signature-library-release version="9.0" library="PANTHER"/>
+                </signature>
+                <locations>
+                    <panther-location end="427" start="1"/>
+                </locations>
+            </panther-match>
+            <phobius-match>
+                <signature name="Transmembrane region" desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TRANSMEMBRANE">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="145" start="123"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the cytoplasm." ac="CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="122" start="117"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the cytoplasm." ac="CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="427" start="185"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Transmembrane region" desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TRANSMEMBRANE">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="184" start="165"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Transmembrane region" desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TRANSMEMBRANE">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="70" start="52"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Non cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the extracellular region." ac="NON_CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="164" start="146"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Non cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the extracellular region." ac="NON_CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="97" start="71"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Transmembrane region" desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TRANSMEMBRANE">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="116" start="98"/>
+                </locations>
+            </phobius-match>
+            <phobius-match>
+                <signature name="Cytoplasmic domain" desc="Region of a membrane-bound protein predicted to be outside the membrane, in the cytoplasm." ac="CYTOPLASMIC_DOMAIN">
+                    <signature-library-release version="1.01" library="PHOBIUS"/>
+                </signature>
+                <locations>
+                    <phobius-location end="51" start="1"/>
+                </locations>
+            </phobius-match>
+            <profilescan-match>
+                <signature name="START" desc="START domain profile." ac="PS50848">
+                    <entry type="DOMAIN" name="START_lipid-bd_dom" desc="START domain" ac="IPR002913">
+                        <go-xref category="MOLECULAR_FUNCTION" name="lipid binding" id="GO:0008289" db="GO"/>
+                    </entry>
+                    <models>
+                        <model name="START" desc="START domain profile." ac="PS50848"/>
+                    </models>
+                    <signature-library-release version="20.113" library="PROSITE_PROFILES"/>
+                </signature>
+                <locations>
+                    <profilescan-location score="32.297" end="425" start="230">
+                        <alignment>Not available</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <profilescan-match>
+                <signature name="MENTAL" desc="MENTAL domain profile." ac="PS51439">
+                    <entry type="DOMAIN" name="MENTAL" desc="MENTAL domain" ac="IPR019498"/>
+                    <models>
+                        <model name="MENTAL" desc="MENTAL domain profile." ac="PS51439"/>
+                    </models>
+                    <signature-library-release version="20.113" library="PROSITE_PROFILES"/>
+                </signature>
+                <locations>
+                    <profilescan-location score="78.207" end="199" start="46">
+                        <alignment>Not available</alignment>
+                    </profilescan-location>
+                </locations>
+            </profilescan-match>
+            <superfamilyhmmer3-match evalue="0.0">
+                <signature name="Bet v1-like" ac="SSF55961">
+                    <models>
+                        <model name="Bet v1-like" ac="0054256"/>
+                        <model name="Bet v1-like" ac="0046017"/>
+                        <model name="Bet v1-like" ac="0054620"/>
+                        <model name="Bet v1-like" ac="0050926"/>
+                        <model name="Bet v1-like" ac="0051031"/>
+                        <model name="Bet v1-like" ac="0049937"/>
+                        <model name="Bet v1-like" ac="0051529"/>
+                        <model name="Bet v1-like" ac="0046549"/>
+                        <model name="Bet v1-like" ac="0050686"/>
+                        <model name="Bet v1-like" ac="0054900"/>
+                        <model name="Bet v1-like" ac="0047354"/>
+                        <model name="Bet v1-like" ac="0050208"/>
+                        <model name="Bet v1-like" ac="0051685"/>
+                        <model name="Bet v1-like" ac="0051990"/>
+                        <model name="Bet v1-like" ac="0050822"/>
+                        <model name="Bet v1-like" ac="0051454"/>
+                        <model name="Bet v1-like" ac="0052007"/>
+                        <model name="Bet v1-like" ac="0053606"/>
+                        <model name="Bet v1-like" ac="0049515"/>
+                        <model name="Bet v1-like" ac="0054545"/>
+                        <model name="Bet v1-like" ac="0051879"/>
+                        <model name="Bet v1-like" ac="0047345"/>
+                        <model name="Bet v1-like" ac="0054143"/>
+                        <model name="Bet v1-like" ac="0051115"/>
+                        <model name="Bet v1-like" ac="0054669"/>
+                        <model name="Bet v1-like" ac="0046586"/>
+                        <model name="Bet v1-like" ac="0050953"/>
+                        <model name="Bet v1-like" ac="0047675"/>
+                        <model name="Bet v1-like" ac="0054263"/>
+                        <model name="Bet v1-like" ac="0046430"/>
+                        <model name="Bet v1-like" ac="0054296"/>
+                        <model name="Bet v1-like" ac="0052424"/>
+                        <model name="Bet v1-like" ac="0048001"/>
+                        <model name="Bet v1-like" ac="0052379"/>
+                        <model name="Bet v1-like" ac="0054964"/>
+                        <model name="Bet v1-like" ac="0052677"/>
+                        <model name="Bet v1-like" ac="0053731"/>
+                        <model name="Bet v1-like" ac="0054496"/>
+                        <model name="Bet v1-like" ac="0049728"/>
+                        <model name="Bet v1-like" ac="0046811"/>
+                        <model name="Bet v1-like" ac="0051032"/>
+                        <model name="Bet v1-like" ac="0052916"/>
+                    </models>
+                    <signature-library-release version="1.75" library="SUPERFAMILY"/>
+                </signature>
+                <locations>
+                    <superfamilyhmmer3-location end="423" start="213"/>
+                </locations>
+            </superfamilyhmmer3-match>
+            <tmhmm-match>
+                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
+                    <signature-library-release version="2.0" library="TMHMM"/>
+                </signature>
+                <locations>
+                    <tmhmm-location end="116" start="94"/>
+                </locations>
+            </tmhmm-match>
+            <tmhmm-match>
+                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
+                    <signature-library-release version="2.0" library="TMHMM"/>
+                </signature>
+                <locations>
+                    <tmhmm-location end="74" start="52"/>
+                </locations>
+            </tmhmm-match>
+            <tmhmm-match>
+                <signature desc="Region of a membrane-bound protein predicted to be embedded in the membrane." ac="TMhelix">
+                    <signature-library-release version="2.0" library="TMHMM"/>
+                </signature>
+                <locations>
+                    <tmhmm-location end="145" start="123"/>
+                </locations>
+            </tmhmm-match>
+        </matches>
+    </protein>
+</protein-matches>

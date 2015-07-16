@@ -72,19 +72,26 @@ public class MainMenuUtil implements MainMenuManager {
     private final List<AMenuItem> aMenuItemQueue;
     private boolean componentActivated;
     public static final int TOOLS_MENU_POSITION = 3;
-    
+
     //Weights for File menu items.
     private final int LOAD_FILE_WEIGHT = 1;
     private final int LOAD_URL_WEIGHT = 2;
     private final int EXPORT_FILE_WEIGHT = 5;
     private static final int EXIT_ACTION_WEIGHT = 14;
-    private static final int FOURTH_FS_WEIGHT = 13;
-    private static final int THIRD_FS_WEIGHT = 10;
+    private static final int FOURTH_FILE_FS_WEIGHT = 13;
+    private static final int THIRD_FILE_FS_WEIGHT = 10;
     private static final int PREFERENCES_WEIGHT = 9;
-    private static final int SECOND_FS_WEIGHT = 8;
+    private static final int SECOND_FILE_FS_WEIGHT = 8;
     private static final int REMOVE_FEATURE_WEIGHT = 7;
-    private static final int FIRST_FS_WEIGHT = 4;
+    private static final int FIRST_FILE_FS_WEIGHT = 4;
 
+    //Weights for Tools menu items.
+    private static final int SECOND_TOOL_FS_WEIGHT = 5;
+    private static final int FIRST_TOOL_FS_WEIGHT = 3;
+    private static final int SCRIPTS_MENU_WEIGHT = 4;
+    private static final int CONFIGURE_SCROLL_WEIGHT = 2;
+    private static final int STOP_SCROLL_WEIGHT = 1;
+    private static final int START_SCROLL_WEIGHT = 0;
 
     public MainMenuUtil() {
         componentActivated = false;
@@ -125,20 +132,19 @@ public class MainMenuUtil implements MainMenuManager {
             Logger.getLogger(MainMenuUtil.class.getName()).log(Level.SEVERE, "error loading menu preferences", x);
         }
     }
-    
+
     private void fileMenu() {
-        int menuItemCounter = 1;
         JRPMenu fileMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "fileMenu", BUNDLE.getString("fileMenu"), 0);
         fileMenu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadFile", LoadFileAction.getAction(), LOAD_FILE_WEIGHT));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_loadURL", LoadURLAction.getAction(), LOAD_URL_WEIGHT));
-        fileMenu.addSeparator(FIRST_FS_WEIGHT);
+        fileMenu.addSeparator(FIRST_FILE_FS_WEIGHT);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exportFile", ExportFileAction.getAction(), EXPORT_FILE_WEIGHT));
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_closeTracks", RemoveFeatureAction.getAction(), REMOVE_FEATURE_WEIGHT));
-        fileMenu.addSeparator(SECOND_FS_WEIGHT);
+        fileMenu.addSeparator(SECOND_FILE_FS_WEIGHT);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_preferences", PreferencesAction.getAction(), PREFERENCES_WEIGHT));
-        fileMenu.addSeparator(THIRD_FS_WEIGHT);
-        fileMenu.addSeparator(FOURTH_FS_WEIGHT);
+        fileMenu.addSeparator(THIRD_FILE_FS_WEIGHT);
+        fileMenu.addSeparator(FOURTH_FILE_FS_WEIGHT);
         MenuUtil.addToMenu(fileMenu, new JRPMenuItem(ID_PREFIX + "fileMenu_exit", ExitAction.getAction(), EXIT_ACTION_WEIGHT));
     }
 
@@ -155,7 +161,7 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void viewMenu() {
-        int menuItemCounter = 0;
+        int menuItemCounter = 1;
         JRPMenu viewMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "viewMenu", BUNDLE.getString("viewMenu"), 2);
         viewMenu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(viewMenu, new JRPMenuItem(ID_PREFIX + "viewMenu_setThreshold", AutoLoadThresholdAction.getAction(), menuItemCounter++));
@@ -177,20 +183,19 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     private void toolMenu() {
-        int menuItemCounter = 0;
         JRPMenu toolsMenu;
         toolsMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "toolsMenu", BUNDLE.getString("toolsMenu"), 3);
         toolsMenu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction(), menuItemCounter++));
-        toolsMenu.addSeparator(menuItemCounter++);
-        JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), menuItemCounter++);
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_start_autoscroll", StartAutoScrollAction.getAction(), START_SCROLL_WEIGHT));
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_stop_autoscroll", StopAutoScrollAction.getAction(), STOP_SCROLL_WEIGHT));
+        MenuUtil.addToMenu(toolsMenu, new JRPMenuItem(ID_PREFIX + "toolsMenu_configure_autoscroll", ConfigureScrollAction.getAction(), CONFIGURE_SCROLL_WEIGHT));
+        toolsMenu.addSeparator(FIRST_TOOL_FS_WEIGHT);
+        JMenu scripts_menu = new JRPMenu(ID_PREFIX + "toolsMenu_scripts", BUNDLE.getString("scripts"), SCRIPTS_MENU_WEIGHT);
         scripts_menu.setIcon(MenuUtil.getIcon("16x16/actions/blank_placeholder.png"));
-        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction(), menuItemCounter++));
+        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_runScript", RunScriptAction.getAction()));
+        MenuUtil.addToMenu(scripts_menu, new JRPMenuItem(ID_PREFIX + "toolsMenu_scripts_cancelScript", CancelScriptAction.getAction()));
         toolsMenu.add(scripts_menu);
-        toolsMenu.addSeparator(menuItemCounter++);
+        toolsMenu.addSeparator(SECOND_TOOL_FS_WEIGHT);
     }
 
     private void helpMenu() {

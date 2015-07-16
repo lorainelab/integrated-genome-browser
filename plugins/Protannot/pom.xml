@@ -89,11 +89,12 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>shared-lib-wrapper</artifactId>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
          <dependency>
             <groupId>com.lorainelab</groupId>
@@ -117,7 +118,7 @@
                 <configuration>
                     <instructions>    
                         <Import-Package>
-                            !org.bioviz.protannot.interproscan.appl.model,
+                            !org.bioviz.protannot*,
                             *
                         </Import-Package>
                         <Export-Package/>                        

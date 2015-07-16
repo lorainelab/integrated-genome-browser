@@ -62,8 +62,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,6 +91,7 @@ import javax.swing.TransferHandler;
 import javax.swing.table.AbstractTableModel;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -101,6 +100,8 @@ import org.slf4j.LoggerFactory;
  */
 @Component(name = ProtAnnotAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
 public class ProtAnnotAction extends GenericAction implements WindowListener, IgbMenuItemProvider {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
 
     public static final String COMPONENT_NAME = "ProtAnnotMain";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
@@ -155,7 +156,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private static ProtAnnotAction singleton;
 
     AbstractAction server_load_action = getLoadFromServerAction();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
 
     private final static boolean testmode = false;
     private static final boolean DEBUG = false;
@@ -283,7 +283,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             }
             updatePrefs(phash);
         } catch (Exception ex) {
-            Logger.getLogger(ProtAnnotAction.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         prefs_hash = phash;
@@ -532,7 +532,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         try {
             print_panel.print();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -772,10 +772,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
             Reporter.report("Couldn't read file: " + filename + "\n"
                     + "Error : " + ex.getMessage(),
                     ex, false, false, true);
-            logger.debug(null, ex);
+            logger.error(ex.getMessage(), ex);
             no_data();
         }
-        logger.debug("Breakpoint");
     }
 
     /**
@@ -938,13 +937,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                     }
                 }
             } catch (IOException e) {
-                System.out.println("Error -- " + e.toString());
+                logger.error(e.getMessage(), e);
             } finally {
                 GeneralUtils.safeClose(buff);
             }
             return output.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
             return "";
         }
     }

@@ -6,6 +6,8 @@ import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.Dnaseq.MRNA;
 import org.bioviz.protannot.model.Dnaseq.MRNA.Cds;
 import org.bioviz.protannot.model.Dnaseq.MRNA.Exon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -17,6 +19,8 @@ import org.xml.sax.SAXParseException;
  * @author jnicol
  */
 public class NormalizeXmlStrand {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizeXmlStrand.class);
     
     private static boolean isNegativeStrand = false;
     private static boolean isStrandSet = false;
@@ -68,7 +72,7 @@ public class NormalizeXmlStrand {
                 mrna.setStrand("+"); // Normalizing to positive strand
             }
         } catch (Exception e) {
-            System.out.println("No strand attribute found");
+            LOG.error(e.getMessage(), e);
         }
         mrna.setStart(new BigInteger(start + ""));
         mrna.setEnd(new BigInteger(end + ""));
@@ -111,17 +115,17 @@ public class NormalizeXmlStrand {
         
         @Override
         public void warning(SAXParseException e) throws SAXException {
-            System.out.println("Line " + e.getLineNumber() + ": " + e.getMessage());
+            LOG.warn("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
         
         @Override
         public void error(SAXParseException e) throws SAXException {
-            System.err.println("Line " + e.getLineNumber() + ": " + e.getMessage());
+            LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
         
         @Override
         public void fatalError(SAXParseException e) throws SAXException {
-            System.err.println("Line " + e.getLineNumber() + ": " + e.getMessage());
+            LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
     }
     

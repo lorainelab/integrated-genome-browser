@@ -31,7 +31,7 @@ public class InterProscanTranslatorTest {
 //            dnaseq.getVersion();
 //            printDescriptors(dnaseq);
 //        } catch (ParserConfigurationException | SAXException | IOException ex) {
-//            Logger.getLogger(InterProscanTranslatorTest.class.getName()).log(Level.SEVERE, null, ex);
+//
 //        }
 //    }
 

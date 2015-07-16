@@ -4,8 +4,7 @@ import java.awt.Image;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to handle Integration so it will behave more mac-like on OS X.
@@ -17,6 +16,7 @@ import java.util.logging.Logger;
  */
 class MacIntegration {
 
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MacIntegration.class);
     /**
      * private instance of MacIntegration for singleton pattern
      */
@@ -45,7 +45,7 @@ class MacIntegration {
             addApplicationListener.invoke(application, proxy);
 
         } catch (Exception ex) {
-            Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -74,12 +74,14 @@ class MacIntegration {
             Method setDockIconImage = applicationClass.getDeclaredMethod("setDockIconImage", Image.class);
             setDockIconImage.invoke(application, image);
         } catch (Exception ex) {
-            Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
     }
 }
 
 class ApplicationListenerProxy implements InvocationHandler {
+    
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ApplicationListenerProxy.class);
 
     private final Object o;
 
@@ -115,7 +117,7 @@ class ApplicationListenerProxy implements InvocationHandler {
                     break;
             }
         } catch (Exception ex) {
-            Logger.getLogger(MacIntegration.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
         return result;
     }

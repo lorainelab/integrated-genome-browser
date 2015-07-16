@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -89,7 +88,7 @@ public class ProtannotParser {
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             jaxbMarshaller = jaxbContext.createMarshaller();
         } catch (JAXBException ex) {
-            java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -193,7 +192,7 @@ public class ProtannotParser {
             try {
                 jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
             } catch (JAXBException ex) {
-                java.util.logging.Logger.getLogger(ProtannotParser.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
@@ -362,7 +361,7 @@ public class ProtannotParser {
         String pid = aaseq.getId();
         BioSeq protein = prot_hash.get(pid);
         if (protein == null) {
-            System.err.println("Error: no bioseq matching id: " + pid
+            logger.error("Error: no bioseq matching id: " + pid
                     + ". Skipping it.");
             return;
         }
@@ -605,7 +604,7 @@ public class ProtannotParser {
         }
 
         if (length % 3 != 0) {
-            System.out.println("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
+            logger.warn("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
         }
     }
 
@@ -685,7 +684,7 @@ public class ProtannotParser {
                 // need to add children to this exon symmetry to indicate an insertion
                 //   (or possibly deletion?) of bases in the transcript relative to the genomic
                 //	    processExonInsert(esym, istart, ilength);
-                System.err.println("insert: insertion_start = " + istart + ", length = " + ilength);
+                logger.error("insert: insertion_start = " + istart + ", length = " + ilength);
                 // remove this exon_insert from list to consider in future passes
                 //    need to also decrement the insert_index to make sure removal doesn't cause
                 //    next exon_insert to not be considered...

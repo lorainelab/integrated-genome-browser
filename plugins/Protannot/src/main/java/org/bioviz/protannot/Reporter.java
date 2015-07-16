@@ -1,8 +1,13 @@
 package org.bioviz.protannot;
 
 import javax.swing.JOptionPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Reporter {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(Reporter.class);
+    
 
     /**
      * Report message to the user, optionally showing a JOptionPane
@@ -20,10 +25,10 @@ public class Reporter {
             boolean print_stack_trace,
             boolean show_dialog) {
         if (print_to_stderr) {
-            System.err.println(message);
+            LOG.info(message);
         }
         if (print_stack_trace && ex != null) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
         if (show_dialog) {
             JOptionPane.showMessageDialog(null, message, "ProtAnnot Alert",

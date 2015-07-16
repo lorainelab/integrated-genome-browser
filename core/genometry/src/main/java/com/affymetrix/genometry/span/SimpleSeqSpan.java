@@ -24,10 +24,6 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
         this.seq = seq;
     }
 
-    public SimpleSeqSpan(int intValue, int intValue0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

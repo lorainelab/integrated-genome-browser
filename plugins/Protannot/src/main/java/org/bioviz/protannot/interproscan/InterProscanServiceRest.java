@@ -18,8 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -79,7 +77,7 @@ public class InterProscanServiceRest implements InterProscanService {
         try {
             url = new URL(INTERPROSCAN_BASE_URL + "/parameterdetails/appl");
         } catch (MalformedURLException ex) {
-            Logger.getLogger(InterProscanServiceRest.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
 
         try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
@@ -202,7 +200,7 @@ public class InterProscanServiceRest implements InterProscanService {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             document = dBuilder.parse(bis);
         } catch (IOException | SAXException | ParserConfigurationException ex) {
-            LOG.error(ex.getMessage());
+            LOG.error(ex.getMessage(), ex);
         }
         return Optional.ofNullable(document);
     }

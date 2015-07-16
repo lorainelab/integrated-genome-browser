@@ -60,6 +60,8 @@ import org.slf4j.LoggerFactory;
  * that shows how the transcript structures vary.
  */
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
+    
+     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
 
     // We allow users to change the colors of transcripts, protein
     // annotations, etc
@@ -553,7 +555,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             BioSeq mrna, SeqSymmetry[] path2view, SeqSymmetry mrna2genome, MapTierGlyph tier, GlyphI tGlyph) {
         if (mrna != null) {
             if (DEBUG_TRANSCRIPT_ANNOTS) {
-                System.out.println(mrna.getId() + ",  " + mrna);
+                LOG.info(mrna.getId() + ",  " + mrna);
             }
             SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
             System.arraycopy(path2view, 0, new_path2view, 1, path2view.length);
@@ -575,7 +577,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             BioSeq protein, SeqSymmetry[] path2view, SeqSymmetry annot2mrna, MapTierGlyph tier) {
         if (protein != null) {
             if (DEBUG_PROTEIN_ANNOTS) {
-                System.out.println(protein.getId() + ",  " + protein);
+                LOG.info(protein.getId() + ",  " + protein);
             }
             //   new path info is added to _beginning_ of path
             SeqSymmetry[] new_path2view = new SeqSymmetry[path2view.length + 1];
@@ -629,7 +631,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         try {
             amino_acid = protein.getResidues(0, protein.getLength());
         } catch (Exception ex) {
-            System.out.println("*** Warning: No amino acid found ");
+            LOG.error(ex.getMessage(), ex);
         }
 
         GlyphI aGlyph = new LineContainerGlyph();

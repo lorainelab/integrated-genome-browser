@@ -9,8 +9,6 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import java.math.BigInteger;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -93,7 +91,7 @@ public class InterProscanTranslator {
             NamedNodeMap attributes = libraryRelease.getAttributes();
             addAttributesToSimhit(attributes, simhit, null);
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -107,7 +105,7 @@ public class InterProscanTranslator {
             NamedNodeMap attributes = entry.getAttributes();
             addAttributesToSimhit(attributes, simhit, signatureNode.getNodeName() + "-");
         } catch (XPathExpressionException ex) {
-            Logger.getLogger(InterProscanTranslator.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error(ex.getMessage(), ex);
         }
 
     }

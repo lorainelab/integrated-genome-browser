@@ -72,7 +72,8 @@ public class NormalizeXmlStrand {
                 mrna.setStrand("+"); // Normalizing to positive strand
             }
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            //TODO:Fix logic
+            //LOG.error(e.getMessage(), e);
         }
         mrna.setStart(new BigInteger(start + ""));
         mrna.setEnd(new BigInteger(end + ""));

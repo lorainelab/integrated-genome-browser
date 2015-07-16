@@ -12,8 +12,10 @@ package com.affymetrix.igb.bookmarks;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.LocalDataProvider;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.general.DataSetUtils;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
@@ -30,7 +32,6 @@ import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.model.Bookmark.SYM;
-import com.affymetrix.igb.shared.LoadURLAction;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -201,14 +202,14 @@ public final class BookmarkUnibrowControlServlet {
                     if (server_urls.isEmpty() || query_urls.isEmpty() || server_urls.size() != query_urls.size()) {
                         loaddata = false;
                     } else {
-                        dataProivders = loadServers(igbService, server_urls);
+                        dataProivders = loadServers(igbService, server_urls, version);
                     }
 
                     final BioSeq seq = goToBookmark(igbService, seqid, version, start, end).orNull();
 
                     if (seq == null) {
                         if (isGalaxyBookmark) {
-                            loadUnknownData(parameters);
+                            loadUnknownData(parameters, igbService);
                             return null;
                         }
                         return null;
@@ -223,7 +224,7 @@ public final class BookmarkUnibrowControlServlet {
                         if (dataProivders != null && dataProivders.isEmpty()) {
                             String preferredVersionName = LOOKUP.getPreferredName(version);
                             GenomeVersion genomeVersion = gmodel.getSeqGroup(preferredVersionName);
-                            directlyLoadUrls(genomeVersion, parameters);
+                            directlyLoadUrls(genomeVersion, parameters, igbService);
                             return null;
                         }
                         List<DataSet> gFeatures = loadData(igbService, gmodel.getSelectedGenomeVersion(), dataProivders, query_urls, start, end);
@@ -309,68 +310,6 @@ public final class BookmarkUnibrowControlServlet {
         return graph_paths;
     }
 
-    private void loadOldBookmarks(final IgbService igbService, List<DataProvider> dataProivders, List<String> das2_query_urls, int start, int end) {
-        List<String> opaque_requests = new ArrayList<>();
-        int i = 0;
-        for (String url : das2_query_urls) {
-            String das2_query_url = GeneralUtils.URLDecode(url);
-            String seg_uri = null;
-            String type_uri = null;
-            String overstr = null;
-            String format = null;
-            boolean use_optimizer = true;
-            int qindex = das2_query_url.indexOf('?');
-            if (qindex > -1) {
-                String query = das2_query_url.substring(qindex + 1);
-                String[] query_array = query_splitter.split(query);
-                for (String tagval : query_array) {
-                    int eqindex = tagval.indexOf('=');
-                    String tag = tagval.substring(0, eqindex);
-                    String val = tagval.substring(eqindex + 1);
-                    if (tag.equals("format") && (format == null)) {
-                        format = val;
-                    } else if (tag.equals("type") && (type_uri == null)) {
-                        type_uri = val;
-                    } else if (tag.equals("segment") && (seg_uri == null)) {
-                        seg_uri = val;
-                    } else if (tag.equals("overlaps") && (overstr == null)) {
-                        overstr = val;
-                    } else {
-                        use_optimizer = false;
-                        break;
-                    }
-                }
-                if (type_uri == null || seg_uri == null || overstr == null) {
-                    use_optimizer = false;
-                }
-            } else {
-                use_optimizer = false;
-            }
-            //
-            // only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
-            // otherwise treat like any other opaque data url via loadDataFromURLs call
-            //
-            if (!use_optimizer) {
-                opaque_requests.add(das2_query_url);
-                continue;
-            }
-
-            DataSet feature = getFeature(igbService, gmodel.getSelectedGenomeVersion(), dataProivders.get(i), type_uri);
-            if (feature != null) {
-                loadFeature(igbService, feature, start, end);
-            }
-            i++;
-        }
-
-        if (!opaque_requests.isEmpty()) {
-            String[] data_urls = new String[opaque_requests.size()];
-            for (int r = 0; r < opaque_requests.size(); r++) {
-                data_urls[r] = opaque_requests.get(r);
-            }
-            loadDataFromURLs(igbService, data_urls, null, null);
-        }
-    }
-
     private List<DataSet> loadData(final IgbService igbService, final GenomeVersion genomeVersion, final List<DataProvider> dataProivders, final List<String> query_urls, int start, int end) {
         List<DataSet> gFeatures = new ArrayList<>();
         int i = 0;
@@ -432,23 +371,28 @@ public final class BookmarkUnibrowControlServlet {
         return gFeatures;
     }
 
-    private DataSet getFeature(final IgbService igbService, final GenomeVersion genomeVersion, final DataProvider gServer, final String query_url) {
-
-        if (gServer == null) {
+    private DataSet getFeature(final IgbService igbService, final GenomeVersion genomeVersion, final DataProvider dataProvider, final String queryUrl) {
+        if (dataProvider == null) {
             return null;
         }
-
-        // If server requires authentication then.
-        // If it cannot be authenticated then don't add the feature.
-        // This method of authentication does not work for Das2
-        //if (!LocalUrlCacher.isValidURL(query_url)) {
-        //	return null;
-        //}
-        java.util.Optional<DataSet> dataSet = igbService.getDataSet(genomeVersion, gServer, query_url, false);
-
+        java.util.Optional<DataSet> dataSet = java.util.Optional.empty();
+        if (dataProvider instanceof LocalDataProvider) {
+            directlyLoadFile(queryUrl, igbService, genomeVersion);
+            java.util.Optional<DataContainer> dataContainer = genomeVersion.getAvailableDataContainers()
+                    .stream()
+                    .filter(dc -> dc.getDataProvider() instanceof LocalDataProvider)
+                    .findFirst();
+            if (dataContainer.isPresent()) {
+                dataSet = dataContainer.get().getDataSets().stream()
+                        .filter(ds -> ds.getURI().toString().equals(queryUrl))
+                        .findFirst();
+            }
+        } else {
+            dataSet = igbService.getDataSet(genomeVersion, dataProvider, queryUrl, false);
+        }
         if (!dataSet.isPresent()) {
             Logger.getLogger(GeneralUtils.class.getName()).log(
-                    Level.SEVERE, "Couldn''t find feature for bookmark url {}", query_url);
+                    Level.SEVERE, "Couldn''t find feature for bookmark url {}", queryUrl);
             return null;
         }
 
@@ -473,9 +417,16 @@ public final class BookmarkUnibrowControlServlet {
         }
     }
 
-    private List<DataProvider> loadServers(IgbService igbService, List<String> server_urls) {
-        return server_urls.stream().map((server_url) -> igbService.loadServer(server_url))
-                .filter((dataProvider) -> (dataProvider.isPresent()))
+    private List<DataProvider> loadServers(IgbService igbService, List<String> server_urls, String version) {
+        return server_urls.stream().map((String server_url) -> {
+            if (server_url.isEmpty()) {
+                String preferredVersionName = LOOKUP.getPreferredName(version);
+                GenomeVersion genomeVersion = gmodel.getSeqGroup(preferredVersionName);
+                return java.util.Optional.<DataProvider>of((DataProvider) genomeVersion.getLocalDataSetProvider());
+            } else {
+                return igbService.loadServer(server_url);
+            }
+        }).filter(dataProvider -> dataProvider.isPresent())
                 .map((dataProvider) -> dataProvider.get()).collect(Collectors.toList());
     }
 
@@ -589,29 +540,31 @@ public final class BookmarkUnibrowControlServlet {
         return multimap.get(key).get(0);
     }
 
-    private void directlyLoadUrls(GenomeVersion genomeVersion, final ListMultimap<String, String> parameters) {
+    private void directlyLoadUrls(GenomeVersion genomeVersion, final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-        int i = 0;
-        for (String urlToLoad : query_urls) {
-            String fileName = DataSetUtils.extractNameFromPath(urlToLoad);
-            try {
-                LoadURLAction.getAction().openURI(new URI(urlToLoad), fileName, false, genomeVersion, genomeVersion.getSpeciesName(), false);
-            } catch (URISyntaxException ex) {
-                logger.error("Invalid bookmark syntax.", ex);
-            }
-            i++;
-        }
+        query_urls.stream().forEach((urlToLoad) -> {
+            directlyLoadFile(urlToLoad, igbService, genomeVersion);
+        });
 
     }
 
-    private void loadUnknownData(final ListMultimap<String, String> parameters) {
+    private void directlyLoadFile(String urlToLoad, IgbService igbService, GenomeVersion genomeVersion) {
+        String fileName = DataSetUtils.extractNameFromPath(urlToLoad);
+        try {
+            igbService.openURI(new URI(urlToLoad), fileName, genomeVersion, genomeVersion.getSpeciesName(), false);
+        } catch (URISyntaxException ex) {
+            logger.error("Invalid bookmark syntax.", ex);
+        }
+    }
+
+    private void loadUnknownData(final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
         //These bookmarks should only contain one url
         if (!query_urls.isEmpty()) {
             try {
                 String urlToLoad = query_urls.get(0);
                 GenomeVersion loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                LoadURLAction.getAction().openURI(new URI(urlToLoad), urlToLoad, false, loadGroup, "Custom Species", false);
+                igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, "Custom Genome", false);
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
             }

@@ -10,12 +10,16 @@ import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_SPECIES_PREFIX;
 import com.affymetrix.igb.swing.JRPFileChooser;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.HierarchyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.prompt.PromptSupport;
 import org.slf4j.LoggerFactory;
@@ -51,7 +55,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         versionTextField = new javax.swing.JTextField();
         refSeqLabel = new javax.swing.JLabel("Reference Sequence");
         refSeqTextField = new javax.swing.JTextField();
-        refSeqBrowseButton = new javax.swing.JButton("...");
+        refSeqBrowseButton = new javax.swing.JButton("Choose File\u2026");
         refSeqBrowseButton.addActionListener(this::refSeqBrowseButtonActionPerformed);
     }
 
@@ -64,11 +68,21 @@ public class CustomGenomeDialogPanel extends JPanel {
         add(versionTextField, "growx, wrap");
         add(speciesLabel, "");
         add(speciesTextField, "growx");
+
+        this.addHierarchyListener((HierarchyEvent e) -> {
+            Window window = SwingUtilities.getWindowAncestor(CustomGenomeDialogPanel.this);
+            if (window instanceof Dialog) {
+                Dialog dialog = (Dialog) window;
+                if (!dialog.isResizable()) {
+                    dialog.setResizable(true);
+                }
+            }
+        });
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(375, 125);
+        return new Dimension(575, 175);
     }
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {

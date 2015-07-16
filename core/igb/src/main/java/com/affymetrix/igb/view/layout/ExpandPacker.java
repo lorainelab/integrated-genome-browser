@@ -83,6 +83,9 @@ public class ExpandPacker extends ExpandedTierPacker {
         long min = Long.MIN_VALUE;
         long max = Long.MAX_VALUE;
         List<GlyphI> sibs = parent.getChildren();
+        if (sibs.isEmpty()) {
+            return;
+        }
         Rectangle2D.Double pbox = parent.getCoordBox();
         Rectangle2D.Double newbox = new Rectangle2D.Double();
         Rectangle2D.Double tempbox = new Rectangle2D.Double();

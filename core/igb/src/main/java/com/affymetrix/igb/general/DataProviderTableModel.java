@@ -3,13 +3,13 @@ package com.affymetrix.igb.general;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
 import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Enabled;
@@ -170,18 +170,10 @@ public final class DataProviderTableModel extends AbstractTableModel {
         boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return dataProvider.getStatus() != ResourceStatus.Disabled;
             }
             case Name: {
-                if (dataProvider.getStatus() != ResourceStatus.Disabled && dataProvider.getStatus() != ResourceStatus.NotResponding && isEditable) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return isEditable;
             }
             case Enabled: {
                 return true;
@@ -193,7 +185,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if(aValue instanceof String && Strings.isNullOrEmpty((String)aValue)) {
+        if (aValue instanceof String && Strings.isNullOrEmpty((String) aValue)) {
             aValue = getValueAt(rowIndex, columnIndex);
         }
         DataProvider dataProvider = sortedDataProviders.get(rowIndex);
@@ -230,8 +222,8 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                 break;
             case Name:
+                dataProvider.setName((String) editedValue);
                 if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
-                    dataProvider.setName((String) editedValue);
                     loadView.refreshTreeViewAndRestore();
                 }
                 break;

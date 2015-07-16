@@ -1,5 +1,7 @@
 package com.affymetrix.genometry.data;
 
+import com.affymetrix.common.PreferenceUtils;
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
@@ -11,11 +13,11 @@ import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotInitialized;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import java.util.Optional;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseDataProvider implements DataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDataProvider.class);
-    private final Preferences preferencesNode;
+    private Preferences preferencesNode;
     protected String url;
     protected String mirrorUrl;
     protected String name;
@@ -81,7 +83,7 @@ public abstract class BaseDataProvider implements DataProvider {
             preferencesNode.put(MIRROR_URL, mirrorUrl);
         }
     }
-    
+
     protected abstract void disable();
 
     @Override
@@ -117,8 +119,26 @@ public abstract class BaseDataProvider implements DataProvider {
 
     @Override
     public void setUrl(String url) {
-        this.url = url;
-        preferencesNode.put(PRIMARY_URL, url);
+        if (!url.equalsIgnoreCase(this.url)) {
+            this.url = url;
+            Preferences replacementNode = PreferenceUtils.getDataProviderNode(url);
+            replacementNode.put(PRIMARY_URL, url);
+            replacementNode.put(PROVIDER_NAME, name);
+            replacementNode.putInt(LOAD_PRIORITY, loadPriority);
+            if (!Strings.isNullOrEmpty(mirrorUrl)) {
+                replacementNode.put(MIRROR_URL, mirrorUrl);
+            }
+            if (getFactoryName().isPresent()) {
+                replacementNode.put(FACTORY_NAME, getFactoryName().get());
+            }
+            try {
+                preferencesNode.removeNode();
+            } catch (BackingStoreException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+            preferencesNode = replacementNode;
+            initialize();
+        }
     }
 
     @Override

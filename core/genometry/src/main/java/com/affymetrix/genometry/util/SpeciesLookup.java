@@ -68,7 +68,7 @@ public final class SpeciesLookup {
     public static void load(SpeciesInfo speciesInfo) {
         speciesLookup.preferredNames.add(speciesInfo.getName());
         Set<String> row = Sets.newTreeSet();
-        row.add(speciesInfo.getCommonName());
+        row.add(speciesInfo.getName());
         row.add(speciesInfo.getGenomeVersionNamePrefix());
         speciesLookup.addSynonyms(row);
     }

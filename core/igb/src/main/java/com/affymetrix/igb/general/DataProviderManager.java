@@ -3,6 +3,7 @@ package com.affymetrix.igb.general;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
@@ -27,7 +28,6 @@ import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SCHEME;
@@ -45,6 +45,7 @@ import com.lorainelab.igb.preferences.model.DataProviderConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -308,6 +309,15 @@ public class DataProviderManager {
                         loadView.removeDataSet(ds, true);
                         ds.getDataContainer().getGenomeVersion().removeDataContainer(ds.getDataContainer());
                     });
+            for (GenomeVersion genomeVerion : GenometryModel.getInstance().getSeqGroups().values()) {
+                Iterator<DataContainer> iter = genomeVerion.getDataContainers().iterator();
+                while (iter.hasNext()) {
+                    DataContainer dataContainer = iter.next();
+                    if (dataContainer.getDataProvider() == dataProvider) {
+                        iter.remove();
+                    }
+                }
+            }
 
             PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).removeNode();
         } catch (BackingStoreException ex) {
@@ -389,7 +399,11 @@ public class DataProviderManager {
                 .collect(Collectors.toSet());
         dataSetsToRemove.forEach(ds -> allAssociatedDataContainers.add(ds.getDataContainer()));
         loadView.removeAllDataSets(dataSetsToRemove);
-        allAssociatedDataContainers.forEach(dc -> dc.setIsInitialized(false));
+        Iterator<DataContainer> iter = allAssociatedDataContainers.iterator();
+        while (iter.hasNext()) {
+            DataContainer dc = iter.next();
+            dc.getGenomeVersion().removeDataContainer(dc);
+        }
         dataProvider.setStatus(ResourceStatus.Disabled);
     }
 

@@ -13,8 +13,14 @@ import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.HeadlessException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -64,6 +70,9 @@ public class SequenceService {
 
     private InterProscanTranslator interProscanTranslator;
 
+    private static final String SELECT_ALL = "Select all";
+    private static final String UNSELECT_ALL = "Unselect all";
+
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -81,15 +90,20 @@ public class SequenceService {
     private JPanel configParentPanel;
     private ProtannotParser parser;
     private final List<String> defaultApplications;
+    private JLabel selectAllLabel;
+    private String cachedEmail;
+    private JPanel applicationsPanel;
 
     public SequenceService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
+        cachedEmail = "";
     }
 
     private void initEmail() {
         email = new JTextField();
+        email.setText(cachedEmail);
     }
 
     private void initInfoLabel(String text) {
@@ -98,11 +112,11 @@ public class SequenceService {
         } else {
             infoLabel.setText(text);
         }
-        
+
     }
-    
+
     private void initStatusLabel(String text) {
-        if(statusLabel == null) {
+        if (statusLabel == null) {
             statusLabel = new JLabel(text);
         } else {
             statusLabel.setText(text);
@@ -116,6 +130,10 @@ public class SequenceService {
 
     private boolean isDefaultApplication(String application) {
         return defaultApplications.contains(application);
+    }
+
+    private boolean isPreviousSelectedApplication(String application) {
+        return inputAppl.contains(application);
     }
 
     private boolean showApplicationOptionsLoadingModal() {
@@ -157,25 +175,54 @@ public class SequenceService {
         return true;
     }
 
+    private boolean isAllApplicationsSelected() {
+        if (applicationsPanel == null) {
+            return false;
+        }
+        boolean isAllSelected = true;
+        for (java.awt.Component c : applicationsPanel.getComponents()) {
+            if (c instanceof JCheckBox) {
+                if (!((JCheckBox) c).isSelected()) {
+                    isAllSelected = false;
+                    break;
+                }
+            }
+        }
+        return isAllSelected;
+    }
+
     private void createLoadApplicationsThread() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
             protected Void runInBackground() {
                 ParameterType applications = interProscanService.getApplications();
+                applicationsPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
                 applications.getValues().getValue().forEach(vt -> {
                     JCheckBox applCheckBox = new JCheckBox(vt.getLabel());
                     applCheckBox.setName(vt.getValue());
-                    if (isDefaultApplication(vt.getValue())) {
+                    if (vt.getProperties() != null 
+                            && vt.getProperties().getProperty() != null 
+                            && vt.getProperties().getProperty().getKey() != null
+                            && vt.getProperties().getProperty().getKey().equals("description")) {
+                        applCheckBox.setToolTipText(vt.getProperties().getProperty().getValue());
+                    }
+                    if (inputAppl.isEmpty() && isDefaultApplication(vt.getValue())) {
+                        applCheckBox.setSelected(true);
+                    } else if (!inputAppl.isEmpty() && isPreviousSelectedApplication(vt.getValue())) {
                         applCheckBox.setSelected(true);
                     } else {
                         applCheckBox.setSelected(false);
                     }
-                    configParentPanel.add(applCheckBox);
+                    applicationsPanel.add(applCheckBox);
                 });
+                configParentPanel.add(applicationsPanel, "wrap");
+                if (isAllApplicationsSelected()) {
+                    setSelectAllText(UNSELECT_ALL);
+                }
                 dialog.dispose();
                 return null;
             }
-            
+
             @Override
             protected void finished() {
             }
@@ -186,8 +233,8 @@ public class SequenceService {
     private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
 
-        initInfoLabel(LOADING_IPS_DATA);
-        initStatusLabel( "Initializing ...");
+        initInfoLabel("Loading InterProScan data, Please wait...");
+        initStatusLabel("Initializing ...");
         parentPanel.add(infoLabel, "wrap");
         parentPanel.add(statusLabel, "wrap");
 
@@ -205,21 +252,108 @@ public class SequenceService {
             resultFetchTimer.cancel();
         }
     }
-    private static final String LOADING_IPS_DATA = "Loading InterProScan data, Please wait...";
+
+    private void setSelectAllText(String text) {
+        selectAllLabel.setText("<html><font color='blue'>" + text + "</font></html>");
+    }
+
+    private void initSelectAll() {
+        selectAllLabel = new JLabel();
+        setSelectAllText("Select all");
+        selectAllLabel.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                boolean isAllSelected = isAllApplicationsSelected();
+                if (isAllSelected) {
+                    setSelectAllText(SELECT_ALL);
+                } else {
+                    setSelectAllText(UNSELECT_ALL);
+                }
+
+                for (java.awt.Component c : applicationsPanel.getComponents()) {
+                    if (c instanceof JCheckBox) {
+                        if (isAllSelected) {
+                            ((JCheckBox) c).setSelected(false);
+                        } else {
+                            ((JCheckBox) c).setSelected(true);
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+    }
 
     private boolean showSetupModal() {
-        inputAppl.clear();
-        configParentPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
+
+        configParentPanel = new JPanel(new MigLayout());
         configParentPanel.add(new JLabel("Select the applications to run."), "wrap");
         initEmail();
         JPanel emailPanel = new JPanel(new MigLayout());
         emailPanel.add(new JLabel("Email:"));
-        emailPanel.add(email, "width :125:");
+        emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
+        configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
+        initSelectAll();
+        configParentPanel.add(selectAllLabel, "wrap");
         if (!showApplicationOptionsLoadingModal()) {
             return false;
         }
+        JPanel linkPanel = new JPanel(new MigLayout());
+        linkPanel.add(new JLabel("For more information,"), "left");
+        JLabel hyperlink = new JLabel("<html><a href='#'>visit the InterPro Web page at EBI</a>.</html>");
+        hyperlink.addMouseListener(new MouseListener() {
 
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(new URI("http://www.ebi.ac.uk/interpro"));
+                    } catch (IOException | URISyntaxException ex) {
+                        LOG.error("Error navigating to hyperlink in about IGB window", ex);
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+        linkPanel.add(hyperlink, "left");
+        configParentPanel.add(linkPanel);
         final JComponent[] inputs = new JComponent[]{
             configParentPanel
         };
@@ -235,10 +369,12 @@ public class SequenceService {
         if (optionChosen == 0) {
             matcher = pattern.matcher(email.getText());
             if (!matcher.matches()) {
-                ModalUtils.infoPanel("Please enter a valid email address.");
+                ModalUtils.infoPanel("To run a search, enter an email address.");
                 return false;
             }
-            for (java.awt.Component c : configParentPanel.getComponents()) {
+            cachedEmail = email.getText();
+            inputAppl.clear();
+            for (java.awt.Component c : applicationsPanel.getComponents()) {
                 if (c instanceof JCheckBox) {
                     if (((JCheckBox) c).isSelected()) {
                         String value = ((JCheckBox) c).getName();
@@ -298,6 +434,14 @@ public class SequenceService {
 
     private void processJobResults(final List<Job> successfulJobs, Callback callback) {
         Dnaseq original = parser.getDnaseq();
+        Iterator it = original.getMRNAAndAaseq().iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if (obj instanceof Dnaseq.Aaseq) {
+                it.remove();
+            }
+        }
+
         for (Job job : successfulJobs) {
             Optional<Document> doc = interProscanService.result(job.getId());
             if (doc.isPresent()) {

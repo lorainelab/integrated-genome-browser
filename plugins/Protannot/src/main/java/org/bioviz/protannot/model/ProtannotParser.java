@@ -614,7 +614,7 @@ public class ProtannotParser {
         if (residue == null) {
             return "";
         } else {
-            residue += end_codon;
+            //residue += end_codon;
         }
 
         return residue;

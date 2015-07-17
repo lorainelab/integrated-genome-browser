@@ -38,6 +38,18 @@ public class Dnaseq {
     protected String version;
     @XmlAttribute(name = "seq", required = true)
     protected String seq;
+    
+    private boolean normalized;
+
+    public boolean isNormalized() {
+        return normalized;
+    }
+
+    public void setNormalized(boolean normalized) {
+        this.normalized = normalized;
+    }
+    
+    
 
     /**
      * Gets the value of the mrnaAndAaseq property.

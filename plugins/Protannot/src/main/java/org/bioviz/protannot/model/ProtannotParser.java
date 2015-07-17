@@ -227,6 +227,8 @@ public class ProtannotParser {
         if (sym instanceof UcscBedDetailSym) {
             mrna.addDescriptor("description", ((UcscBedDetailSym) sym).getDescription());
         }
+
+        mrna.addDescriptor("genome name", igbService.getSeqMapView().getViewSeq().getGenomeVersion().getName());
     }
 
     private boolean checkForward(SeqSymmetry sym) {

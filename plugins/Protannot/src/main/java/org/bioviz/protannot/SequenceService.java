@@ -98,11 +98,11 @@ public class SequenceService {
         } else {
             infoLabel.setText(text);
         }
-        
+
     }
-    
+
     private void initStatusLabel(String text) {
-        if(statusLabel == null) {
+        if (statusLabel == null) {
             statusLabel = new JLabel(text);
         } else {
             statusLabel.setText(text);
@@ -175,7 +175,7 @@ public class SequenceService {
                 dialog.dispose();
                 return null;
             }
-            
+
             @Override
             protected void finished() {
             }
@@ -187,7 +187,7 @@ public class SequenceService {
         parentPanel = new JPanel(new MigLayout());
 
         initInfoLabel(LOADING_IPS_DATA);
-        initStatusLabel( "Initializing ...");
+        initStatusLabel("Initializing ...");
         parentPanel.add(infoLabel, "wrap");
         parentPanel.add(statusLabel, "wrap");
 
@@ -341,9 +341,11 @@ public class SequenceService {
                         it.remove();
                     }
                 }
-                initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
-                dialog.pack();
-                dialog.repaint();
+                if (jobs != null && !jobs.isEmpty()) {
+                    initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                } else {
+                    initStatusLabel("Fetching results from InterProscan");
+                }
                 if (jobs.isEmpty()) {
                     processJobResults(successfulJobs, callback);
                 }

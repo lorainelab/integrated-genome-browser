@@ -38,6 +38,8 @@ public class Dnaseq {
     protected String version;
     @XmlAttribute(name = "seq", required = true)
     protected String seq;
+    
+    
 
     /**
      * Gets the value of the mrnaAndAaseq property.

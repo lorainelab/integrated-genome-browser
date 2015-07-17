@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
@@ -441,25 +442,28 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      * @param protannotMenu Menu name to which submenus should be added.
      */
     private void addProtAnnotActionsMenu(final JMenu protannotMenu) {
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getLoadAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getInterProscanAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getLoadAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPrintAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExportAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getSaveImageAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPreferencesAction()));
         AbstractAction copyAction = getCopyAction();
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(copyAction));
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getAboutAction()));
-        AbstractAction browserAction = getOpenInBrowserAction();
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(browserAction));
-        AbstractAction zoomAction = getZoomToFeatureAction();
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(zoomAction));
-        AbstractAction hairLineAction = getToggleHairlineAction();
-        MenuUtil.addToMenu(protannotMenu, new JCheckBoxMenuItem(hairLineAction));
-        AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
-        MenuUtil.addToMenu(protannotMenu, new JCheckBoxMenuItem(hairLineLabelAction));
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getOpenInNewWindow()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExitAction()));
+        JMenu viewMenu = new JRPMenu("View");
+        viewMenu.setText("View");
+        MenuUtil.addToMenu(protannotMenu, viewMenu);
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutAction()));
+        AbstractAction browserAction = getOpenInBrowserAction();
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
+        AbstractAction zoomAction = getZoomToFeatureAction();
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(zoomAction));
+        AbstractAction hairLineAction = getToggleHairlineAction();
+        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
+        AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
+        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(getOpenInNewWindow()));
         
         gview.popup.add(copyAction);
         gview.popup.add(browserAction);
@@ -1208,7 +1212,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     static AbstractAction getSaveImageAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
-                "Save Image")) {
+                BUNDLE.getString("saveImage"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().saveImage();

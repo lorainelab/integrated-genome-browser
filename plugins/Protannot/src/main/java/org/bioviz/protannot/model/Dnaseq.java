@@ -39,16 +39,6 @@ public class Dnaseq {
     @XmlAttribute(name = "seq", required = true)
     protected String seq;
     
-    private boolean normalized;
-
-    public boolean isNormalized() {
-        return normalized;
-    }
-
-    public void setNormalized(boolean normalized) {
-        this.normalized = normalized;
-    }
-    
     
 
     /**

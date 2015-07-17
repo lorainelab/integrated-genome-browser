@@ -30,7 +30,6 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -188,13 +187,13 @@ public class ProtannotParser {
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
 
-        if (true) {
-            try {
-                jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
-            } catch (JAXBException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
-        }
+//        if (true) {
+//            try {
+//                jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
+//            } catch (JAXBException ex) {
+//                logger.error(ex.getMessage(), ex);
+//            }
+//        }
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         chromosome.setGenomeVersion(bioseq.getGenomeVersion());

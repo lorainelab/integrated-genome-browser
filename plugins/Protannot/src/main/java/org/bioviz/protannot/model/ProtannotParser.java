@@ -100,6 +100,7 @@ public class ProtannotParser {
         dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
+        String seqId = bioseq.getId();
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
         int spanStart, spanEnd;
         for (SeqSymmetry sym : selectedSyms) {
@@ -127,6 +128,8 @@ public class ProtannotParser {
                 mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
                 mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
             }
+
+            mrna.setLocation(seqId + ":" + mrna.getStart().intValue() + "-" + mrna.getEnd().intValue());
             dnaseq.getMRNAAndAaseq().add(mrna);
 
             addDescriptorsToMrna(sym, mrna);
@@ -140,13 +143,11 @@ public class ProtannotParser {
             spanEnd = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getEnd()).min().orElse(0);
         }
         mutableSeqSymmetry.addSpan(new SimpleSeqSpan(spanStart, spanEnd, bioseq));
-        String seqId = bioseq.getId();
         if (!seqId.startsWith("chr")) {
             seqId = "chr" + seqId;
         }
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
-
         igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
 
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
@@ -161,6 +162,7 @@ public class ProtannotParser {
             residue.setEnd(new BigInteger(spanStart + ""));
         }
         dnaseq.setResidues(residue);
+        dnaseq.setLocation(seqId + ":" + spanStart + "-" + spanEnd);
 
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());

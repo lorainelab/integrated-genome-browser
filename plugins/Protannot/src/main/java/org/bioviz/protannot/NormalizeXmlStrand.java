@@ -63,19 +63,11 @@ public class NormalizeXmlStrand {
             String strand = mrna.getStrand();
             isNegativeStrand = "-".equals(strand);
             if (isNegativeStrand) {
-                int newEnd = residues.length() - start;
-                start = residues.length() - end;
-                end = newEnd;
-                if (!isStrandSet) {
-                    residues = DNAUtils.reverseComplement(residues);
-                    residuesChildNode.setNodeValue(residues);
-                    isStrandSet = true;
-                }
+                residues = DNAUtils.reverseComplement(residues);
+                isStrandSet = true;
                 mrna.setStrand("+"); // Normalizing to positive strand
             }
         } catch (Exception e) {
-            isStrandSet = true;
-            mrna.setStrand("+");
 //            LOG.error(e.getMessage(), e);
         }
         mrna.setStart(new BigInteger(start + ""));
@@ -92,11 +84,6 @@ public class NormalizeXmlStrand {
         int end = exon.getEnd().intValue();
         start = start - residuesStart + PADDING;
         end = end - residuesStart + PADDING;
-        if (isNegativeStrand) {
-            int newEnd = residues.length() - start;
-            start = residues.length() - end;
-            end = newEnd;
-        }
         exon.setStart(new BigInteger(start + ""));
         exon.setEnd(new BigInteger(end + ""));
     }
@@ -106,11 +93,6 @@ public class NormalizeXmlStrand {
         int end = cds.getEnd().intValue();
         start = start - residuesStart + PADDING;
         end = end - residuesStart + PADDING;
-        if (isNegativeStrand) {
-            int newEnd = residues.length() - start;
-            start = residues.length() - end;
-            end = newEnd;
-        }
         cds.setStart(new BigInteger(start + ""));
         cds.setEnd(new BigInteger(end + ""));
     }

@@ -240,7 +240,7 @@ public class SequenceService {
         CThreadHolder.getInstance().execute(this, worker);
     }
 
-    private void showResultLoadingModal() {
+    private void showResultLoadingModal(CThreadWorker worker) {
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
@@ -257,8 +257,8 @@ public class SequenceService {
 
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[0])) {
-            LOG.debug("cancelling request");
-            resultFetchTimer.cancel();
+            LOG.info("cancelling request");
+            worker.cancel(true);
         }
     }
 
@@ -413,7 +413,7 @@ public class SequenceService {
                 }
             };
             CThreadHolder.getInstance().execute(this, worker);
-            showResultLoadingModal();
+            showResultLoadingModal(worker);
         }
     }
 

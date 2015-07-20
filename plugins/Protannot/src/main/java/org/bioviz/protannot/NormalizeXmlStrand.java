@@ -24,8 +24,8 @@ public class NormalizeXmlStrand {
 
     private static boolean isNegativeStrand = false;
     private static boolean isStrandSet = false;
-    private static final int PADDING = 150;
-    public static final int TOTAL_PADDING = 2 * PADDING;
+    private static int PADDING = 150;
+    private static int TOTAL_PADDING;
 
     /**
      * Transforms sequence coordinates. Normalizes all coordinates respective to the sequence's start coordinates. If
@@ -35,8 +35,10 @@ public class NormalizeXmlStrand {
      * @return Returns BioSeq of given document object.
      * @see com.affymetrix.genometryImpl.BioSeq
      */
-    public static void normalizeDnaseq(Dnaseq dnaseq) {
+    public static void normalizeDnaseq(Dnaseq dnaseq, int paddingFactor) {
         // get residues and normalize their attributes
+        PADDING = paddingFactor * 150;
+        TOTAL_PADDING = PADDING * 2;
         final int residuesStart;
         final String residues;
         Node residuesChildNode = null;

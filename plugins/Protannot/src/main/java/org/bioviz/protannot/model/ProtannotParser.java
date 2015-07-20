@@ -92,33 +92,11 @@ public class ProtannotParser {
     }
 
     public BioSeq parse(InputStream inputStream) throws JAXBException {
-
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
-
         dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
-        BioSeq chromosome = buildChromosome(dnaseq);
-        GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
-        chromosome.setGenomeVersion(gv);
-        processDNASeq(chromosome, dnaseq);
-        return chromosome;
-    }
-
-    public BioSeq parse(Dnaseq dnaseq) {
-
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
-        this.dnaseq = dnaseq;
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
-        BioSeq chromosome = buildChromosome(dnaseq);
-        processDNASeq(chromosome, dnaseq);
-        return chromosome;
+        return parse(dnaseq);
     }
 
     public BioSeq parse(SeqMapViewI seqMapView) {
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
         dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
@@ -187,19 +165,30 @@ public class ProtannotParser {
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
 
-//        if (true) {
-//            try {
-//                jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
-//            } catch (JAXBException ex) {
-//                logger.error(ex.getMessage(), ex);
-//            }
-//        }
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
+        return parse(dnaseq);
+
+    }
+
+    public BioSeq parse(Dnaseq dnaseq) {
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
+
+        this.dnaseq = dnaseq;
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq, computePaddingFactor(dnaseq.getResidues().getValue().length()));
         BioSeq chromosome = buildChromosome(dnaseq);
-        chromosome.setGenomeVersion(bioseq.getGenomeVersion());
+        GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+        chromosome.setGenomeVersion(gv);
         processDNASeq(chromosome, dnaseq);
         return chromosome;
+    }
 
+    private int computePaddingFactor(int residueLength) {
+        int paddingFactor = residueLength / 5000;
+        if (paddingFactor > 0) {
+            return paddingFactor;
+        } else {
+            return 1;
+        }
     }
 
     private void addDescriptorsToMrna(SeqSymmetry sym, Dnaseq.MRNA mrna) {
@@ -335,7 +324,7 @@ public class ProtannotParser {
         BioSeq chromosome = null;
         if (dnaseq.getResidues() != null) {
             String residue = dnaseq.getResidues().getValue();
-            chromosome = new BioSeq(seq, residue.length() + NormalizeXmlStrand.TOTAL_PADDING);
+            chromosome = new BioSeq(seq, residue.length() + computePaddingFactor(dnaseq.getResidues().getValue().length()) * 150 * 2);
             chromosome.setResidues(residue);
         }
         return chromosome;

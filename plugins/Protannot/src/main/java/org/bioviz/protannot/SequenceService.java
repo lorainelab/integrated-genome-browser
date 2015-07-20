@@ -309,7 +309,10 @@ public class SequenceService {
     private boolean showSetupModal() {
 
         configParentPanel = new JPanel(new MigLayout());
-        configParentPanel.add(new JLabel("Select the applications to run."), "wrap");
+        configParentPanel.add(new JLabel("<html>ProtAnnot uses the free InterProScan Web service hosted<br />"
+                + "at the European Bioinformatics Institute (EBI) to search for<br />"
+                + "domains and motifs in your protein sequences.<br />"
+                + "To get started, select InterProScan resources to search:<html>"), "wrap");
         initEmail();
         JPanel emailPanel = new JPanel(new MigLayout());
         emailPanel.add(new JLabel("Email:"));

@@ -18,6 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
+            <artifactId>affymetrix-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -96,7 +101,7 @@
             <artifactId>shared-lib-wrapper</artifactId>
             <scope>provided</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>

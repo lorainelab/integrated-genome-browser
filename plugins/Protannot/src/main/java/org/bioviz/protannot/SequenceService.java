@@ -6,6 +6,7 @@
 package org.bioviz.protannot;
 
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -30,6 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JCheckBox;
@@ -94,19 +96,19 @@ public class SequenceService {
     private ProtannotParser parser;
     private final List<String> defaultApplications;
     private JLabel selectAllLabel;
-    private String cachedEmail;
     private JPanel applicationsPanel;
+    private final Preferences protAnnotPreferencesNode;
 
     public SequenceService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
-        cachedEmail = "";
+        protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
     }
 
     private void initEmail() {
         email = new JTextField();
-        email.setText(cachedEmail);
+        email.setText(protAnnotPreferencesNode.get(PreferenceUtils.PROTANNOT_IPS_EMAIL, ""));
     }
 
     private void initInfoLabel(String text) {
@@ -257,8 +259,9 @@ public class SequenceService {
 
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[0])) {
-            LOG.info("cancelling request");
-            worker.cancel(true);
+            LOG.info("cancelling result request");
+            worker.cancelThread(true);
+            
         }
     }
 
@@ -384,7 +387,7 @@ public class SequenceService {
                 ModalUtils.infoPanel("To run a search, enter an email address.");
                 return false;
             }
-            cachedEmail = email.getText();
+            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             inputAppl.clear();
             for (java.awt.Component c : applicationsPanel.getComponents()) {
                 if (c instanceof JCheckBox) {
@@ -401,12 +404,25 @@ public class SequenceService {
 
     public void asyncLoadSequence(Callback callback) {
         if (showSetupModal()) {
+            resultFetchTimer = new Timer();
             CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override
                 protected Void runInBackground() {
                     loadSequence(callback);
                     return null;
                 }
+
+                @Override
+                public boolean cancelThread(boolean b) {
+                    LOG.debug("Cancelling thread");
+                    if(resultFetchTimer != null) {
+                        LOG.debug("Cancelling timer");
+                        resultFetchTimer.cancel();
+                    }
+                    return true;
+                }
+                
+                
 
                 @Override
                 protected void finished() {
@@ -517,7 +533,7 @@ public class SequenceService {
                 LOG.debug(job.getId());
             });
         }
-        resultFetchTimer = new Timer();
+        
         resultFetchTimer.schedule(buildTimerTask(jobs, callback), new Date(), 1000);
 
     }

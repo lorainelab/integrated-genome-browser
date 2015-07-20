@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
@@ -100,7 +101,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component(name = ProtAnnotAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
 public class ProtAnnotAction extends GenericAction implements WindowListener, IgbMenuItemProvider {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
 
     public static final String COMPONENT_NAME = "ProtAnnotMain";
@@ -187,14 +188,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         }
         loadPrefs();
         start();
-        if(!loadFileOnStart) {
+        if (!loadFileOnStart) {
             load(igbService.getSeqMapView());
         } else {
             doLoadFile();
         }
     }
-
-    
 
     @Override
     public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
@@ -349,21 +348,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setUpMenus() {
 //      JMenuBar mbar = MenuUtil.getMainMenuBar();
         JMenuBar mbar = new JMenuBar();
-        JMenu menu = MenuUtil.getMenu(mbar, BUNDLE.getString("fileMenu"));
+        JMenu menu = MenuUtil.getMenu(mbar, BUNDLE.getString("protannotMenu"));
         menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
-        addFileActions(menu);
-
-        menu = MenuUtil.getMenu(mbar, BUNDLE.getString("editMenu"));
-        menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
-        addEditActions(menu);
-
-        menu = MenuUtil.getMenu(mbar, BUNDLE.getString("viewMenu"));
-        menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-        addViewActions(menu);
-
-        menu = MenuUtil.getMenu(mbar, BUNDLE.getString("helpMenu"));
-        menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
-        addHelpActions(menu);
+        addProtAnnotActionsMenu(menu);
 
         frm.setJMenuBar(mbar);
 
@@ -450,60 +437,39 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     /**
-     * Adds view_menu item to View view_menu..
-     *
-     * @param view_menu Menu name to which submenus should be added.
-     */
-    private void addViewActions(JMenu view_menu) {
-
-        AbstractAction b_action = getOpenInBrowserAction();
-        MenuUtil.addToMenu(view_menu, new JMenuItem(b_action));
-        gview.popup.add(b_action);
-
-        AbstractAction z_action = getZoomToFeatureAction();
-        MenuUtil.addToMenu(view_menu, new JMenuItem(z_action));
-        gview.popup.add(z_action);
-
-        AbstractAction h_action = getToggleHairlineAction();
-        MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(h_action));
-        gview.popup.add(new JCheckBoxMenuItem(h_action));
-
-        AbstractAction hl_action = getToggleHairlineLabelAction();
-        MenuUtil.addToMenu(view_menu, new JCheckBoxMenuItem(hl_action));
-        gview.popup.add(new JCheckBoxMenuItem(hl_action));
-
-        MenuUtil.addToMenu(view_menu, new JMenuItem(getOpenInNewWindow()));
-    }
-
-    /**
      * Adds menu item to File menu. Adds Load,print and quit to it.
      *
-     * @param file_menu Menu name to which submenus should be added.
+     * @param protannotMenu Menu name to which submenus should be added.
      */
-    private void addFileActions(final JMenu file_menu) {
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getLoadAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getInterProscanAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getPrintAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getExportAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getSaveImageAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getPreferencesAction()));
-        MenuUtil.addToMenu(file_menu, new JMenuItem(getExitAction()));
-
-    }
-
-    private void addEditActions(final JMenu edit_menu) {
-        AbstractAction c_action = getCopyAction();
-        MenuUtil.addToMenu(edit_menu, new JMenuItem(c_action));
-        gview.popup.add(c_action);
-    }
-
-    /**
-     * Adds help menu item to Help help_menu.
-     *
-     * @param help_menu Menu name to which submenus should be added.
-     */
-    private void addHelpActions(final JMenu help_menu) {
-        MenuUtil.addToMenu(help_menu, new JMenuItem(getAboutAction()));
+    private void addProtAnnotActionsMenu(final JMenu protannotMenu) {
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getInterProscanAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getLoadAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPrintAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExportAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getSaveImageAction()));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPreferencesAction()));
+        AbstractAction copyAction = getCopyAction();
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(copyAction));
+        MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExitAction()));
+        JMenu viewMenu = new JRPMenu("View");
+        viewMenu.setText("View");
+        MenuUtil.addToMenu(protannotMenu, viewMenu);
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutAction()));
+        AbstractAction browserAction = getOpenInBrowserAction();
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
+        AbstractAction zoomAction = getZoomToFeatureAction();
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(zoomAction));
+        AbstractAction hairLineAction = getToggleHairlineAction();
+        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
+        AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
+        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(getOpenInNewWindow()));
+        
+        gview.popup.add(copyAction);
+        gview.popup.add(browserAction);
+        gview.popup.add(zoomAction);
+        gview.popup.add(new JCheckBoxMenuItem(hairLineAction));
+        gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
     }
 
     void colorChooser() {
@@ -519,7 +485,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void addImageExportService(ImageExportService exportService) {
         this.exportService = exportService;
     }
-    
+
     private void export() {
         sequenceService.exportAsXml(gview);
     }
@@ -734,12 +700,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 isGeneModelSelected = true;
             }
         }
-        
-        if(!isGeneModelSelected) {
-            boolean confirmed = ModalUtils.confirmPanel("You have not selected any gene models.  Would you like to load from file?", 
+
+        if (!isGeneModelSelected) {
+            boolean confirmed = ModalUtils.confirmPanel("You have not selected any gene models.  Would you like to load from file?",
                     CONFIRM_BEFORE_OPEN_XML, DEFAULT_CONFIRM_BEFORE_OPEN_XML);
-            
-            if(confirmed) {
+
+            if (confirmed) {
                 loadFileOnStart = true;
                 return true;
             }
@@ -1228,7 +1194,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         print_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("printTip"));
         return print_action;
     }
-    
+
     static AbstractAction getExportAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
@@ -1246,7 +1212,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     static AbstractAction getSaveImageAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
-                "Save Image")) {
+                BUNDLE.getString("saveImage"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         ProtAnnotAction.getInstance().saveImage();

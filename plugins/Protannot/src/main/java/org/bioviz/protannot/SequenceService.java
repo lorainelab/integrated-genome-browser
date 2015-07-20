@@ -72,6 +72,8 @@ public class SequenceService {
 
     private static final String SELECT_ALL = "Select all";
     private static final String UNSELECT_ALL = "Unselect all";
+    
+    private static final String LOADING_IPS_DATA = "Loading InterProScan data, Please wait...";
 
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -232,8 +234,7 @@ public class SequenceService {
 
     private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
-
-        initInfoLabel("Loading InterProScan data, Please wait...");
+        initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
         parentPanel.add(infoLabel, "wrap");
         parentPanel.add(statusLabel, "wrap");
@@ -485,9 +486,11 @@ public class SequenceService {
                         it.remove();
                     }
                 }
-                initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
-                dialog.pack();
-                dialog.repaint();
+                if (jobs != null && !jobs.isEmpty()) {
+                    initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                } else {
+                    initStatusLabel("Fetching results from InterProscan");
+                }
                 if (jobs.isEmpty()) {
                     processJobResults(successfulJobs, callback);
                 }

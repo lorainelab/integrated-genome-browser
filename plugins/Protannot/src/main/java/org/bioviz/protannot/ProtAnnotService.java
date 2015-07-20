@@ -65,10 +65,10 @@ import org.w3c.dom.Document;
  *
  * @author jeckstei
  */
-@aQute.bnd.annotation.component.Component(provide = SequenceService.class)
-public class SequenceService {
+@aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class)
+public class ProtAnnotService {
     
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SequenceService.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotService.class);
     
     private InterProscanService interProscanService;
     
@@ -100,7 +100,7 @@ public class SequenceService {
     private JPanel applicationsPanel;
     private final Preferences protAnnotPreferencesNode;
     
-    public SequenceService() throws JAXBException {
+    public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);

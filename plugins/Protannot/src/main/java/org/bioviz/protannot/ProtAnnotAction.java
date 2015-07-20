@@ -126,7 +126,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     private ProtannotParser parser;
 
-    private SequenceService sequenceService;
+    private ProtAnnotService protAnnotService;
 
     // where the application is first invoked
     private static String user_dir = System.getProperty("user.dir");
@@ -374,7 +374,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     public void doLoadInterProscan() {
-        sequenceService.asyncLoadSequence(new SequenceService.Callback() {
+        protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
             @Override
             public void execute(Dnaseq dnaseq) {
@@ -455,6 +455,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         viewMenu.setText("View");
         MenuUtil.addToMenu(protannotMenu, viewMenu);
         MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutAction()));
+        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutRegionAction()));
         AbstractAction browserAction = getOpenInBrowserAction();
         MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
         AbstractAction zoomAction = getZoomToFeatureAction();
@@ -487,7 +488,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     private void export() {
-        sequenceService.exportAsXml(gview);
+        protAnnotService.exportAsXml(gview);
     }
 
     void saveImage() {
@@ -1463,6 +1464,39 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_U);
         return about_action;
     }
+    
+        private AbstractAction getAboutRegionAction() {
+
+        final JFrame frm = ProtAnnotAction.getInstance().getFrame();
+        AbstractAction about_action = new AbstractAction(MessageFormat.format(
+                BUNDLE.getString("menuItemHasDialog"),
+                MessageFormat.format(
+                        BUNDLE.getString("aboutRegion"),
+                        APP_NAME))) {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JPanel message_pane = new JPanel();
+                        message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+                        JTextArea about_text = new JTextArea();
+                        about_text.setEditable(false);
+                        Dnaseq dnaseq = parser.getDnaseq();
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Version: ").append(dnaseq.getVersion()).append("\n");
+                        sb.append("Sequence: ").append(dnaseq.getSeq()).append("\n");
+                        sb.append("Location: ").append(dnaseq.getLocation()).append("\n");
+                        about_text.append(sb.toString());
+                        message_pane.add(new JScrollPane(about_text));
+
+                        final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+                                JOptionPane.DEFAULT_OPTION);
+                        final JDialog dialog = pane.createDialog(frm, MessageFormat.format(BUNDLE.getString("aboutRegion"), APP_NAME));
+                        dialog.setVisible(true);
+                    }
+                };
+        about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_U);
+        return about_action;
+    }
 
     static AbstractAction getReportBugAction() {
         AbstractAction report_bug_action = new AbstractAction(MessageFormat.format(
@@ -1536,8 +1570,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     @Reference
-    public void setSequenceService(SequenceService sequenceService) {
-        this.sequenceService = sequenceService;
+    public void setProtAnnotService(ProtAnnotService protAnnotService) {
+        this.protAnnotService = protAnnotService;
     }
 
     @Reference

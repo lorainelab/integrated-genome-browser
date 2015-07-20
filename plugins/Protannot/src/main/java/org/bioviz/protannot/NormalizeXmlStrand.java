@@ -19,11 +19,13 @@ import org.xml.sax.SAXParseException;
  * @author jnicol
  */
 public class NormalizeXmlStrand {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(NormalizeXmlStrand.class);
-    
+
     private static boolean isNegativeStrand = false;
     private static boolean isStrandSet = false;
+    private static final int PADDING = 150;
+    public static final int TOTAL_PADDING = 2 * PADDING;
 
     /**
      * Transforms sequence coordinates. Normalizes all coordinates respective to the sequence's start coordinates. If
@@ -42,21 +44,21 @@ public class NormalizeXmlStrand {
         residues = residues1.getValue();
         residuesStart = residues1.getStart().intValue();
         //residuesNode.setAttribute(ProtannotParser.STARTSTR, Integer.toString(0)); // normalize start of residues to 0
-        residues1.setStart(BigInteger.ZERO);
+        residues1.setStart(BigInteger.valueOf(PADDING));
         int residuesEnd = residues1.getEnd().intValue();
-        residues1.setEnd(new BigInteger((residuesEnd - residuesStart) + ""));
+        residues1.setEnd(new BigInteger((residuesEnd - residuesStart + TOTAL_PADDING) + ""));
         // normalize end of residues, if end exists
 
         dnaseq.getMRNAAndAaseq().stream().filter(obj -> obj instanceof MRNA).forEach(obj -> normalizemRNA((MRNA) obj, residuesStart, residues, residuesChildNode));
     }
-    
+
     private static void normalizemRNA(MRNA mrna, int residuesStart, String residues, Node residuesChildNode) {
         // Get strand of mRNA.  Normalize attributes
         int start = mrna.getStart().intValue();
         int end = mrna.getEnd().intValue();
-        start -= residuesStart;
-        end -= residuesStart;
-        
+        start = start - residuesStart + PADDING;
+        end = end - residuesStart + TOTAL_PADDING;
+
         try {
             String strand = mrna.getStrand();
             isNegativeStrand = "-".equals(strand);
@@ -72,24 +74,24 @@ public class NormalizeXmlStrand {
                 mrna.setStrand("+"); // Normalizing to positive strand
             }
         } catch (Exception e) {
-              isStrandSet = true;
-              mrna.setStrand("+");
+            isStrandSet = true;
+            mrna.setStrand("+");
 //            LOG.error(e.getMessage(), e);
         }
         mrna.setStart(new BigInteger(start + ""));
         mrna.setEnd(new BigInteger(end + ""));
-        
+
         for (Exon exon : mrna.getExon()) {
             normalizeExonNodes(exon, residuesStart, residues);
         }
         normalizeCdsNodes(mrna.getCds(), residuesStart, residues);
     }
-    
+
     private static void normalizeExonNodes(Exon exon, int residuesStart, String residues) {
         int start = exon.getStart().intValue();
         int end = exon.getEnd().intValue();
-        start -= residuesStart;
-        end -= residuesStart;
+        start = start - residuesStart + PADDING;
+        end = end - residuesStart + PADDING;
         if (isNegativeStrand) {
             int newEnd = residues.length() - start;
             start = residues.length() - end;
@@ -98,12 +100,12 @@ public class NormalizeXmlStrand {
         exon.setStart(new BigInteger(start + ""));
         exon.setEnd(new BigInteger(end + ""));
     }
-    
+
     private static void normalizeCdsNodes(Cds cds, int residuesStart, String residues) {
         int start = cds.getStart().intValue();
         int end = cds.getEnd().intValue();
-        start -= residuesStart;
-        end -= residuesStart;
+        start = start - residuesStart + PADDING;
+        end = end - residuesStart + PADDING;
         if (isNegativeStrand) {
             int newEnd = residues.length() - start;
             start = residues.length() - end;
@@ -112,23 +114,23 @@ public class NormalizeXmlStrand {
         cds.setStart(new BigInteger(start + ""));
         cds.setEnd(new BigInteger(end + ""));
     }
-    
+
     private static class SimpleErrorHandler implements ErrorHandler {
-        
+
         @Override
         public void warning(SAXParseException e) throws SAXException {
             LOG.warn("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
-        
+
         @Override
         public void error(SAXParseException e) throws SAXException {
             LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
-        
+
         @Override
         public void fatalError(SAXParseException e) throws SAXException {
             LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
     }
-    
+
 }

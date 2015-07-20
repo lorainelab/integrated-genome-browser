@@ -335,7 +335,7 @@ public class ProtannotParser {
         BioSeq chromosome = null;
         if (dnaseq.getResidues() != null) {
             String residue = dnaseq.getResidues().getValue();
-            chromosome = new BioSeq(seq, residue.length());
+            chromosome = new BioSeq(seq, residue.length() + NormalizeXmlStrand.TOTAL_PADDING);
             chromosome.setResidues(residue);
         }
         return chromosome;

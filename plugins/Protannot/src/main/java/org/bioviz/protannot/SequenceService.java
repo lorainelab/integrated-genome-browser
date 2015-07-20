@@ -15,6 +15,7 @@ import com.google.common.collect.Sets;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -200,7 +201,14 @@ public class SequenceService {
                 ParameterType applications = interProscanService.getApplications();
                 applicationsPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
                 applications.getValues().getValue().forEach(vt -> {
-                    JCheckBox applCheckBox = new JCheckBox(vt.getLabel());
+                    JCheckBox applCheckBox = new JCheckBox(vt.getLabel()); 
+                    applCheckBox.addActionListener((ActionEvent e) -> {
+                        if(isAllApplicationsSelected()) {
+                            setSelectAllText(UNSELECT_ALL);
+                        } else {
+                            setSelectAllText(SELECT_ALL);
+                        }
+                    });
                     applCheckBox.setName(vt.getValue());
                     if (vt.getProperties() != null 
                             && vt.getProperties().getProperty() != null 

@@ -408,12 +408,14 @@ public class SequenceService {
             CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override
                 protected Void runInBackground() {
+                    //TODO: Add try catch
                     loadSequence(callback);
                     return null;
                 }
 
                 @Override
                 public boolean cancelThread(boolean b) {
+                    //TODO: Add try catch
                     LOG.debug("Cancelling thread");
                     if(resultFetchTimer != null) {
                         LOG.debug("Cancelling timer");

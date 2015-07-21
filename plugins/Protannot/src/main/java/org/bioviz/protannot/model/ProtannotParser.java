@@ -168,8 +168,14 @@ public class ProtannotParser {
         SimpleSeqSpan residueSpan;
         computPadding(spanStart - spanEnd);
         if (checkForward(selectedSyms)) {
+            if (padding > spanStart) {
+                spanStart = padding;
+            }
             residueSpan = new SimpleSeqSpan(spanStart - padding, spanEnd + padding, bioseq);
         } else {
+            if (padding > spanEnd) {
+                spanEnd = padding;
+            }
             residueSpan = new SimpleSeqSpan(spanStart + padding, spanEnd - padding, bioseq);
         }
         mutableSeqSymmetry.addSpan(residueSpan);
@@ -331,16 +337,6 @@ public class ProtannotParser {
 
     }
 
-    private int getTranslationEndPoint(int exonStart, int cdsEnd, int exonEnd) {
-        int spanEnd;
-        if (exonStart < cdsEnd && exonEnd > cdsEnd) {
-            spanEnd = cdsEnd;
-        } else {
-            spanEnd = exonEnd;
-        }
-        return spanEnd;
-    }
-
     private int getTranslationStartPoint(int exonStart, int cdsStart, int exonEnd) {
         int spanStart;
         if (exonStart < cdsStart && exonEnd > cdsStart) {
@@ -349,6 +345,16 @@ public class ProtannotParser {
             spanStart = exonStart;
         }
         return spanStart;
+    }
+
+    private int getTranslationEndPoint(int exonStart, int cdsEnd, int exonEnd) {
+        int spanEnd;
+        if (exonStart < cdsEnd && exonEnd > cdsEnd) {
+            spanEnd = cdsEnd;
+        } else {
+            spanEnd = exonEnd;
+        }
+        return spanEnd;
     }
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {
@@ -609,6 +615,9 @@ public class ProtannotParser {
         int cdsStart = mrna.getCds().getStart().intValue();
         int cdsEnd = mrna.getCds().getEnd().intValue();
         for (Dnaseq.MRNA.Exon exon : mrna.getExon()) {
+            if (exon.getEnd().intValue() < cdsStart || exon.getStart().intValue() > cdsEnd) {
+                continue;
+            }
             int translationStart = getTranslationStartPoint(exon.getStart().intValue(), cdsStart, exon.getEnd().intValue());
             int translationEnd = getTranslationEndPoint(exon.getStart().intValue(), cdsEnd, exon.getEnd().intValue());
             length += Math.abs(translationEnd - translationStart);

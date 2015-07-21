@@ -77,6 +77,7 @@ public abstract class PreferenceUtils {
     public static final String COVERAGE_SUMMARY_HEATMAP = "Coverage Summary as HeatMap";
     public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
     public static final String SHOW_EDGEMATCH_OPTION = "Show Edge Matching Option";
+    public static final String PROTANNOT_IPS_EMAIL = "protannot ips email";
 
     public static final boolean default_display_errors = false;
     public static final boolean default_ask_before_exiting = true;
@@ -165,6 +166,10 @@ public abstract class PreferenceUtils {
     
     public static Preferences getCacheRequestNode() {
         return PreferenceUtils.getTopNode().node("cacheRequest");
+    }
+    
+    public static Preferences getProtAnnotNode() {
+        return PreferenceUtils.getTopNode().node("protAnnot");
     }
     
     public static String getCacheRequestKey(URL url) {

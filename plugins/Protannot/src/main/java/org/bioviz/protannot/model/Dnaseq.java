@@ -38,8 +38,8 @@ public class Dnaseq {
     protected String version;
     @XmlAttribute(name = "seq", required = true)
     protected String seq;
-    
-    
+    @XmlAttribute(name = "location", required = true)
+    protected String location;
 
     /**
      * Gets the value of the mrnaAndAaseq property.
@@ -57,7 +57,7 @@ public class Dnaseq {
      *
      *
      * <p>
-     * Objects of the following type(s) are allowed in the list null null     {@link Dnaseq.MRNA }
+     * Objects of the following type(s) are allowed in the list null null null     {@link Dnaseq.MRNA }
      * {@link Dnaseq.Aaseq }
      *
      *
@@ -127,6 +127,14 @@ public class Dnaseq {
      */
     public void setSeq(String value) {
         this.seq = value;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -434,6 +442,8 @@ public class Dnaseq {
         protected BigInteger end;
         @XmlAttribute(name = "strand", required = true)
         protected String strand;
+        @XmlAttribute(name = "location", required = true)
+        protected String location;
 
         /**
          * Gets the value of the descriptor property.
@@ -576,6 +586,14 @@ public class Dnaseq {
             this.strand = value;
         }
 
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+        
         /**
          * Represents the region bounded by the start codon (typically an ATG) and the termination codon (typically TAA,
          * TAG, or TGA) inclusive. Thus, for a plus strand feature, the CDS stop indicates the end of the termination

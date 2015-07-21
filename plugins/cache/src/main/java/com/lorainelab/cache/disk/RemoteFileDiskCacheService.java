@@ -244,7 +244,8 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     @Override
     public void promptToCacheInBackground(URL url) {
-        if (getCacheEnabled()) {
+        boolean isCacheSequenceEnabled = cachePrefsNode.getBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, PreferenceUtils.default_confirm_before_cache_sequence_in_background);
+        if (getCacheEnabled() && isCacheSequenceEnabled) {
             JPanel parentPanel = new JPanel(new MigLayout());
             parentPanel.add(new JLabel("Would you like to download a local copy of this genome sequence for faster access in the future?"));
             final JComponent[] inputs = new JComponent[]{
@@ -261,6 +262,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
             switch (optionChosen) {
                 case 0:
+                    cachePrefsNode.putBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, false);
                     return;
                 case 1:
                     return;
@@ -269,7 +271,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                     cacheInBackground(url, path);
                     return;
                 default:
-                    
+                    return;
             }
 //            if (confirm) {
 //                String path = getCacheFolderPath(generateKeyFromUrl(url));

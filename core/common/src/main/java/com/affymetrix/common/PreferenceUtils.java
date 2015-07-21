@@ -72,7 +72,7 @@ public abstract class PreferenceUtils {
     public static final String CONFIRM_BEFORE_LOAD = "Confirm before load";
     public static final String CONFIRM_BEFORE_REFRESH = "Confirm before refresh";
     public static final String CONFIRM_BEFORE_GROUP_CHANGE = "Confirm before switching to new group";
-    public static final String CONFIRM_BEFORE_CACHE_IN_BACKGROUND = "Confirm before caching 2bit";
+    public static final String CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND = "Confirm before caching 2bit";
     public static final String AUTO_LOAD = "Auto Load Data";
     public static final String COVERAGE_SUMMARY_HEATMAP = "Coverage Summary as HeatMap";
     public static final String DISPLAY_ERRORS_STATUS_BAR = "Display Errors on Status Bar";
@@ -88,7 +88,7 @@ public abstract class PreferenceUtils {
     public static final boolean default_auto_load = true;
     public static final boolean default_coverage_summary_heatmap = true;
     public static final boolean default_show_edge_match = true;
-    public static final boolean default_confirm_before_cache_in_background = true;
+    public static final boolean default_confirm_before_cache_sequence_in_background = true;
 
     private static final String DEFAULT_PREFS_MODE = "igb";
     private static final String SLASH_STANDIN = "%";

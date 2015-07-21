@@ -80,6 +80,8 @@ public class ProtannotParser {
     public static final String AA_LENGTH = "aa_length";
     private Dnaseq dnaseq;
     private IgbService igbService;
+    private int padding;
+    private final int MIN_PADDING = 150;
 
     public ProtannotParser() {
         try {
@@ -92,15 +94,36 @@ public class ProtannotParser {
     }
 
     public BioSeq parse(InputStream inputStream) throws JAXBException {
+
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
+
         dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
-        return parse(dnaseq);
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
+        BioSeq chromosome = buildChromosome(dnaseq);
+        GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+        chromosome.setGenomeVersion(gv);
+        processDNASeq(chromosome, dnaseq);
+        return chromosome;
+    }
+
+    public BioSeq parse(Dnaseq dnaseq) {
+
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
+        this.dnaseq = dnaseq;
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
+        BioSeq chromosome = buildChromosome(dnaseq);
+        processDNASeq(chromosome, dnaseq);
+        return chromosome;
     }
 
     public BioSeq parse(SeqMapViewI seqMapView) {
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
         dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
-        String seqId = bioseq.getId();
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
         int spanStart, spanEnd;
         for (SeqSymmetry sym : selectedSyms) {
@@ -128,8 +151,6 @@ public class ProtannotParser {
                 mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
                 mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
             }
-
-            mrna.setLocation(seqId + ":" + mrna.getStart().intValue() + "-" + mrna.getEnd().intValue());
             dnaseq.getMRNAAndAaseq().add(mrna);
 
             addDescriptorsToMrna(sym, mrna);
@@ -142,12 +163,22 @@ public class ProtannotParser {
             spanStart = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getStart()).max().orElse(0);
             spanEnd = selectedSyms.stream().mapToInt(sym -> sym.getSpan(bioseq).getEnd()).min().orElse(0);
         }
-        mutableSeqSymmetry.addSpan(new SimpleSeqSpan(spanStart, spanEnd, bioseq));
+
+        SimpleSeqSpan residueSpan;
+        computPadding(spanStart - spanEnd);
+        if (checkForward(selectedSyms)) {
+            residueSpan = new SimpleSeqSpan(spanStart - padding, spanEnd + padding, bioseq);
+        } else {
+            residueSpan = new SimpleSeqSpan(spanStart + padding, spanEnd - padding, bioseq);
+        }
+        mutableSeqSymmetry.addSpan(residueSpan);
+        String seqId = bioseq.getId();
         if (!seqId.startsWith("chr")) {
             seqId = "chr" + seqId;
         }
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
+
         igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
 
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
@@ -155,42 +186,41 @@ public class ProtannotParser {
         residue.setValue(residuesStr.toLowerCase());
 
         if (checkForward(selectedSyms)) {
-            residue.setStart(new BigInteger(spanStart + ""));
-            residue.setEnd(new BigInteger(spanEnd + ""));
+            residue.setStart(BigInteger.valueOf(residueSpan.getStart()));
+            residue.setEnd(BigInteger.valueOf(residueSpan.getEnd()));
         } else {
-            residue.setStart(new BigInteger(spanEnd + ""));
-            residue.setEnd(new BigInteger(spanStart + ""));
+            residue.setStart(BigInteger.valueOf(residueSpan.getEnd()));
+            residue.setEnd(BigInteger.valueOf(residueSpan.getStart()));
         }
         dnaseq.setResidues(residue);
-        dnaseq.setLocation(seqId + ":" + spanStart + "-" + spanEnd);
 
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
 
-        return parse(dnaseq);
-
-    }
-
-    public BioSeq parse(Dnaseq dnaseq) {
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
-
-        this.dnaseq = dnaseq;
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq, computePaddingFactor(dnaseq.getResidues().getValue().length()));
+//        if (true) {
+//            try {
+//                jaxbMarshaller.marshal(dnaseq, new File("sample_dnaseq.xml"));
+//            } catch (JAXBException ex) {
+//                logger.error(ex.getMessage(), ex);
+//            }
+//        }
+        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
-        GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
-        chromosome.setGenomeVersion(gv);
+        chromosome.setGenomeVersion(bioseq.getGenomeVersion());
         processDNASeq(chromosome, dnaseq);
         return chromosome;
+
     }
 
-    private int computePaddingFactor(int residueLength) {
-        int paddingFactor = residueLength / 5000;
-        if (paddingFactor > 0) {
-            return paddingFactor;
-        } else {
-            return 1;
+    private void computPadding(int residueLength) {
+        if (residueLength < 0) {
+            residueLength *= -1;
         }
+        int paddingFactor = residueLength / 5000;
+        if (paddingFactor <= 0) {
+            paddingFactor = 1;
+        }
+        padding = paddingFactor * MIN_PADDING;
     }
 
     private void addDescriptorsToMrna(SeqSymmetry sym, Dnaseq.MRNA mrna) {
@@ -326,7 +356,7 @@ public class ProtannotParser {
         BioSeq chromosome = null;
         if (dnaseq.getResidues() != null) {
             String residue = dnaseq.getResidues().getValue();
-            chromosome = new BioSeq(seq, residue.length() + computePaddingFactor(dnaseq.getResidues().getValue().length()) * 150 * 2);
+            chromosome = new BioSeq(seq, residue.length());
             chromosome.setResidues(residue);
         }
         return chromosome;

@@ -8,6 +8,7 @@ import org.bioviz.protannot.model.Dnaseq.MRNA.Cds;
 import org.bioviz.protannot.model.Dnaseq.MRNA.Exon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -18,13 +19,11 @@ import org.xml.sax.SAXParseException;
  * @author jnicol
  */
 public class NormalizeXmlStrand {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(NormalizeXmlStrand.class);
-
+    
     private static boolean isNegativeStrand = false;
     private static boolean isStrandSet = false;
-    private static int PADDING = 150;
-    private static int TOTAL_PADDING;
 
     /**
      * Transforms sequence coordinates. Normalizes all coordinates respective to the sequence's start coordinates. If
@@ -34,85 +33,102 @@ public class NormalizeXmlStrand {
      * @return Returns BioSeq of given document object.
      * @see com.affymetrix.genometryImpl.BioSeq
      */
-    public static void normalizeDnaseq(Dnaseq dnaseq, int paddingFactor) {
+    public static void normalizeDnaseq(Dnaseq dnaseq) {
         // get residues and normalize their attributes
-        PADDING = paddingFactor * 150;
-        TOTAL_PADDING = PADDING * 2;
         final int residuesStart;
         final String residues;
+        Node residuesChildNode = null;
         Dnaseq.Residues residues1 = dnaseq.getResidues();
         residues = residues1.getValue();
         residuesStart = residues1.getStart().intValue();
         //residuesNode.setAttribute(ProtannotParser.STARTSTR, Integer.toString(0)); // normalize start of residues to 0
-        residues1.setStart(BigInteger.valueOf(PADDING));
+        residues1.setStart(BigInteger.ZERO);
         int residuesEnd = residues1.getEnd().intValue();
-        residues1.setEnd(new BigInteger((residuesEnd - residuesStart + TOTAL_PADDING) + ""));
+        residues1.setEnd(new BigInteger((residuesEnd - residuesStart) + ""));
         // normalize end of residues, if end exists
 
-        dnaseq.getMRNAAndAaseq().stream().filter(obj -> obj instanceof MRNA).forEach(obj -> normalizemRNA((MRNA) obj, residuesStart, residues));
+        dnaseq.getMRNAAndAaseq().stream().filter(obj -> obj instanceof MRNA).forEach(obj -> normalizemRNA((MRNA) obj, residuesStart, residues, residuesChildNode));
     }
-
-    private static void normalizemRNA(MRNA mrna, int residuesStart, String residues) {
+    
+    private static void normalizemRNA(MRNA mrna, int residuesStart, String residues, Node residuesChildNode) {
         // Get strand of mRNA.  Normalize attributes
         int start = mrna.getStart().intValue();
         int end = mrna.getEnd().intValue();
-        start = start - residuesStart + PADDING;
-        end = end - residuesStart + TOTAL_PADDING;
-
+        start -= residuesStart;
+        end -= residuesStart;
+        
         try {
             String strand = mrna.getStrand();
             isNegativeStrand = "-".equals(strand);
             if (isNegativeStrand) {
-                residues = DNAUtils.reverseComplement(residues);
-                isStrandSet = true;
+                int newEnd = residues.length() - start;
+                start = residues.length() - end;
+                end = newEnd;
+                if (!isStrandSet) {
+                    residues = DNAUtils.reverseComplement(residues);
+                    residuesChildNode.setNodeValue(residues);
+                    isStrandSet = true;
+                }
                 mrna.setStrand("+"); // Normalizing to positive strand
             }
         } catch (Exception e) {
+              isStrandSet = true;
+              mrna.setStrand("+");
 //            LOG.error(e.getMessage(), e);
         }
         mrna.setStart(new BigInteger(start + ""));
         mrna.setEnd(new BigInteger(end + ""));
-
+        
         for (Exon exon : mrna.getExon()) {
             normalizeExonNodes(exon, residuesStart, residues);
         }
         normalizeCdsNodes(mrna.getCds(), residuesStart, residues);
     }
-
+    
     private static void normalizeExonNodes(Exon exon, int residuesStart, String residues) {
         int start = exon.getStart().intValue();
         int end = exon.getEnd().intValue();
-        start = start - residuesStart + PADDING;
-        end = end - residuesStart + PADDING;
+        start -= residuesStart;
+        end -= residuesStart;
+        if (isNegativeStrand) {
+            int newEnd = residues.length() - start;
+            start = residues.length() - end;
+            end = newEnd;
+        }
         exon.setStart(new BigInteger(start + ""));
         exon.setEnd(new BigInteger(end + ""));
     }
-
+    
     private static void normalizeCdsNodes(Cds cds, int residuesStart, String residues) {
         int start = cds.getStart().intValue();
         int end = cds.getEnd().intValue();
-        start = start - residuesStart + PADDING;
-        end = end - residuesStart + PADDING;
+        start -= residuesStart;
+        end -= residuesStart;
+        if (isNegativeStrand) {
+            int newEnd = residues.length() - start;
+            start = residues.length() - end;
+            end = newEnd;
+        }
         cds.setStart(new BigInteger(start + ""));
         cds.setEnd(new BigInteger(end + ""));
     }
-
+    
     private static class SimpleErrorHandler implements ErrorHandler {
-
+        
         @Override
         public void warning(SAXParseException e) throws SAXException {
             LOG.warn("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
-
+        
         @Override
         public void error(SAXParseException e) throws SAXException {
             LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
-
+        
         @Override
         public void fatalError(SAXParseException e) throws SAXException {
             LOG.error("Line " + e.getLineNumber() + ": " + e.getMessage());
         }
     }
-
+    
 }

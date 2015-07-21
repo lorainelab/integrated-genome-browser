@@ -151,6 +151,7 @@ public class ProtannotParser {
                 mrna.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getEnd()));
                 mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
             }
+            checkTranslationLength(mrna);
             dnaseq.getMRNAAndAaseq().add(mrna);
 
             addDescriptorsToMrna(sym, mrna);
@@ -167,8 +168,14 @@ public class ProtannotParser {
         SimpleSeqSpan residueSpan;
         computPadding(spanStart - spanEnd);
         if (checkForward(selectedSyms)) {
+            if (padding > spanStart) {
+                spanStart = padding;
+            }
             residueSpan = new SimpleSeqSpan(spanStart - padding, spanEnd + padding, bioseq);
         } else {
+            if (padding > spanEnd) {
+                spanEnd = padding;
+            }
             residueSpan = new SimpleSeqSpan(spanStart + padding, spanEnd - padding, bioseq);
         }
         mutableSeqSymmetry.addSpan(residueSpan);
@@ -330,16 +337,6 @@ public class ProtannotParser {
 
     }
 
-    private int getTranslationEndPoint(int exonStart, int cdsEnd, int exonEnd) {
-        int spanEnd;
-        if (exonStart < cdsEnd && exonEnd > cdsEnd) {
-            spanEnd = cdsEnd;
-        } else {
-            spanEnd = exonEnd;
-        }
-        return spanEnd;
-    }
-
     private int getTranslationStartPoint(int exonStart, int cdsStart, int exonEnd) {
         int spanStart;
         if (exonStart < cdsStart && exonEnd > cdsStart) {
@@ -348,6 +345,16 @@ public class ProtannotParser {
             spanStart = exonStart;
         }
         return spanStart;
+    }
+
+    private int getTranslationEndPoint(int exonStart, int cdsEnd, int exonEnd) {
+        int spanEnd;
+        if (exonStart < cdsEnd && exonEnd > cdsEnd) {
+            spanEnd = cdsEnd;
+        } else {
+            spanEnd = exonEnd;
+        }
+        return spanEnd;
     }
 
     private BioSeq buildChromosome(Dnaseq dnaseq) {
@@ -532,8 +539,6 @@ public class ProtannotParser {
             end = cds.getEnd().intValue();
         }
 
-        checkTranslationLength(transCheckExons, start, end);
-
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
         SeqSpan gstart_point = new SimpleSeqSpan(start, start, chromosome);
@@ -605,29 +610,23 @@ public class ProtannotParser {
         return String.valueOf(amino_acid);
     }
 
-    private static void checkTranslationLength(List<int[]> transCheckExons, int start, int end) {
-
+    private void checkTranslationLength(Dnaseq.MRNA mrna) {
         int length = 0;
-        for (int[] exon : transCheckExons) {
-            int exon_start = exon[0];
-            int exon_end = exon[1];
-
-            //int old_length = length;
-            if (exon_start >= start && exon_end <= end) {
-                // exon completely in translated region
-                length += exon_end - exon_start;
-            } else if (exon_start <= start && exon_end >= start) {
-                // translation start is past beginning of exon
-                length += exon_end - start;
-            } else if (exon_start <= end && exon_end >= end) {
-                // translation end is before ending of exon
-                length += end - exon_start;
+        int cdsStart = mrna.getCds().getStart().intValue();
+        int cdsEnd = mrna.getCds().getEnd().intValue();
+        for (Dnaseq.MRNA.Exon exon : mrna.getExon()) {
+            if (exon.getEnd().intValue() < cdsStart || exon.getStart().intValue() > cdsEnd) {
+                continue;
             }
+            int translationStart = getTranslationStartPoint(exon.getStart().intValue(), cdsStart, exon.getEnd().intValue());
+            int translationEnd = getTranslationEndPoint(exon.getStart().intValue(), cdsEnd, exon.getEnd().intValue());
+            length += Math.abs(translationEnd - translationStart);
         }
 
         if (length % 3 != 0) {
             logger.warn("WARNING:  Translation length is " + length + " and remainder modulo 3 is " + length % 3);
         }
+
     }
 
     private static String getAminoAcid(TypeContainerAnnot m2gSym) {

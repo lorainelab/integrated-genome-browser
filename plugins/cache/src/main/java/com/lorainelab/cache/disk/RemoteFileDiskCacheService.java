@@ -245,10 +245,10 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     @Override
     public void promptToCacheInBackground(URL url) {
         CacheStatus cacheStatus = getCacheStatus(url);
-        boolean hasMetMinimum = false;
+        boolean exceedsMaxSize = false;
         if(cacheStatus.getSize() != null 
                 && cacheStatus.getSize().compareTo(new BigInteger("250")) >= 0) {
-            
+            exceedsMaxSize = true;
         }
         
         boolean isCacheSequenceEnabled = cachePrefsNode.getBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, PreferenceUtils.default_confirm_before_cache_sequence_in_background);
@@ -261,11 +261,16 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             Object[] options = {"Don't ask me again",
                 "Not right now",
                 "Yes"};
+            
+            Object defaultOption = options[2];
+            if(exceedsMaxSize) {
+               defaultOption = options[1]; 
+            }
 
             int optionChosen = JOptionPane.showOptionDialog(null, inputs, "Sequence Cache", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
-                    options[2]);
+                    defaultOption);
 
             switch (optionChosen) {
                 case 0:

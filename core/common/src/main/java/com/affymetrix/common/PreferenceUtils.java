@@ -88,6 +88,7 @@ public abstract class PreferenceUtils {
     public static final boolean default_auto_load = true;
     public static final boolean default_coverage_summary_heatmap = true;
     public static final boolean default_show_edge_match = true;
+    public static final boolean default_confirm_before_cache_in_background = true;
 
     private static final String DEFAULT_PREFS_MODE = "igb";
     private static final String SLASH_STANDIN = "%";

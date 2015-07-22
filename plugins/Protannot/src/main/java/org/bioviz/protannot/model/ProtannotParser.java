@@ -524,25 +524,25 @@ public class ProtannotParser {
     private void processCDS(BioSeq chromosome, Dnaseq.MRNA.Cds cds, SimpleSymWithProps m2gSym,
             BioSeq mrnaChromosome, String proteinId, String aminoAcid) {
 
-        int start;
+        int cdsStart;
         if (cds.getTransstart() != null) {
-            start = cds.getTransstart().intValue();
+            cdsStart = cds.getTransstart().intValue();
         } else {
-            start = cds.getStart().intValue();
+            cdsStart = cds.getStart().intValue();
         }
 
         // transstop indicates last base of actual translation
-        int end;
+        int cdsEnd;
         if (cds.getTransstop() != null) {
-            end = cds.getTransstop().intValue();
+            cdsEnd = cds.getTransstop().intValue();
         } else {
-            end = cds.getEnd().intValue();
+            cdsEnd = cds.getEnd().intValue();
         }
 
         // could just do this as a single seq span (start, end, seq), but then would end up recreating
         //   the cds segments, which will get ignored afterwards...
-        SeqSpan gstart_point = new SimpleSeqSpan(start, start, chromosome);
-        SeqSpan gend_point = new SimpleSeqSpan(end, end, chromosome);
+        SeqSpan gstart_point = new SimpleSeqSpan(cdsStart, cdsStart, chromosome);
+        SeqSpan gend_point = new SimpleSeqSpan(cdsEnd, cdsEnd, chromosome);
         SimpleSymWithProps result = new SimpleSymWithProps();
         result.addSpan(gstart_point);
         SeqSymmetry[] m2gPath = new SeqSymmetry[]{m2gSym};
@@ -550,7 +550,7 @@ public class ProtannotParser {
         SeqSpan mstart_point = result.getSpan(mrnaChromosome);
 
         if (mstart_point == null) {
-            mstart_point = new MutableDoubleSeqSpan(start, start, mrnaChromosome);
+            mstart_point = new MutableDoubleSeqSpan(cdsStart, cdsStart, mrnaChromosome);
             //throw new NullPointerException("Conflict with start and end in processCDS.");
         }
 
@@ -564,7 +564,14 @@ public class ProtannotParser {
             int total = mstart_point.getStart();
             for (int i = 0; i < m2gSym.getChildCount(); i++) {
                 SeqSymmetry child = m2gSym.getChild(i);
-                int length = Integer.parseInt(((SymWithProps) child).getProperty("length").toString());
+                int exonStart = child.getSpan(chromosome).getStart();
+                int exonEnd = child.getSpan(chromosome).getEnd();
+                if (exonStart > cdsEnd || exonEnd < cdsStart) {
+                    continue;
+                }
+                int translationStart = getTranslationStartPoint(exonStart, cdsStart, exonEnd);
+                int translationEnd = getTranslationEndPoint(exonStart, cdsEnd, exonEnd);
+                int length = translationEnd - translationStart;
                 total += length;
             }
             mend_point = new MutableDoubleSeqSpan(total, total, mrnaChromosome);

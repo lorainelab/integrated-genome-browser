@@ -55,13 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class displays the main view of transcripts, the conserved
- * motifs (protein annotations) they encode, and an exon summary
- * that shows how the transcript structures vary.
+ * This class displays the main view of transcripts, the conserved motifs (protein annotations) they encode, and an exon
+ * summary that shows how the transcript structures vary.
  */
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
-    
-     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
 
     // We allow users to change the colors of transcripts, protein
     // annotations, etc
@@ -174,8 +173,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Sets up the layout for the maps and the other elements that are
-     * part of the application.
+     * Sets up the layout for the maps and the other elements that are part of the application.
      *
      * @param phash Color perferences stored in hashtable to setup the layout.
      */
@@ -227,13 +225,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel map_panel = new JPanel();
 
         map_panel.setLayout(new BorderLayout());
-        map_panel.add("North", axismap);
+        map_panel.add("South", axismap);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(col_bg);
         map_panel.add("Center", seqmap);
         JPanel right = new JPanel();
         right.setLayout(new GridLayout(1, 2));
-        right.add(y_scroller);
+//        right.add(y_scroller);
         right.add(yzoomer);
         int maps_height = axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space + lower_white_space
@@ -243,9 +241,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.addComponentListener(this);
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
+        p.add("East", y_scroller);
         p.add("Center", map_panel);
-        p.add("East", right);
-        map_panel.add("South", xzoomer);
+        p.add("West", right);
+        map_panel.add("North", xzoomer);
         table_view = new ModPropertySheet();
         table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
 
@@ -323,8 +322,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Add mouse listener to maps so that the application can detect
-     * user interactions with the display.
+     * Add mouse listener to maps so that the application can detect user interactions with the display.
      *
      * @param listener Listener that is to be added to maps.
      */
@@ -332,22 +330,19 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
-    
+
     void clearGenomeView() {
         seqmap.clearWidget();
         axismap.clearWidget();
     }
 
     /**
-     * Set the data model - the BioSeq object - that the application
-     * will display.
+     * Set the data model - the BioSeq object - that the application will display.
      *
-     * @param gseq the data model representing the transcripts, their
-     * annotations, and their meta-data properties, such as their ids
-     * in external databases.
-     * @param is_new whether or not this BioSeq object has not been displayed
-     * previously. This allows ProtAnnot to redraw the Glyphs using a new
-     * color scheme without changing the zoom level.
+     * @param gseq the data model representing the transcripts, their annotations, and their meta-data properties, such
+     * as their ids in external databases.
+     * @param is_new whether or not this BioSeq object has not been displayed previously. This allows ProtAnnot to
+     * redraw the Glyphs using a new color scheme without changing the zoom level.
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
@@ -357,7 +352,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker
      * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
      */
-   synchronized void setBioSeq(BioSeq gseq, boolean is_new) {
+    synchronized void setBioSeq(BioSeq gseq, boolean is_new) {
         this.gseq = gseq;
         seqmap.clearWidget();
         seqmap.setMapRange(gseq.getMin(), gseq.getMax());
@@ -710,8 +705,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * Colors by exon frame relative to genomic coordinates
      *
      * @param gl
-     * @param protSpan	represents a protein annotation, an annotation on the
-     * transcript's translated sequence
+     * @param protSpan	represents a protein annotation, an annotation on the transcript's translated sequence
      * @param genSpan
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genometryImpl.SeqSpan
@@ -773,7 +767,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.setDataModel(aGlyph, annot2protein);
 
         SeqSpan aSpan = annot2genome.getSpan(vseq);
-        if(aSpan == null) {
+        if (aSpan == null) {
             SeqSpan span = annot2genome.getSpan(0);
             aSpan = span;
         }
@@ -903,8 +897,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Sets zoom focus and selects any Glyph underlying the location of the
-     * click.
+     * Sets zoom focus and selects any Glyph underlying the location of the click.
      *
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genoviz.event.NeoMouseEvent
@@ -980,8 +973,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Shows properties (meta-data about selected items) in the property table
-     * at the bottom of the display.
+     * Shows properties (meta-data about selected items) in the property table at the bottom of the display.
      *
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see com.affymetrix.genometryImpl.symmetry.SymWithProps
@@ -1023,7 +1015,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         Properties[] prop_array = propvec.toArray(new Properties[propvec.size()]);
         table_view.showProperties(prop_array);
     }
-    
+
     public void clearPropertiesTable() {
         table_view.showProperties(new Properties[0]);
     }
@@ -1206,12 +1198,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.adjustScroller(NeoAbstractWidget.X);
         seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
-    
+
     private static final Logger logger = LoggerFactory.getLogger(GenomeView.class);
 
     /**
-     * Copies a SeqSymmetry.
-     * Note that this clears all previous data from the MutableSeqSymmetry.
+     * Copies a SeqSymmetry. Note that this clears all previous data from the MutableSeqSymmetry.
      *
      * @param sym Source parameter to copy from.
      * @param mut Target parameter to copy to.

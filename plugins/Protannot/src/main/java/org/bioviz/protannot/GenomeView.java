@@ -225,7 +225,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel map_panel = new JPanel();
 
         map_panel.setLayout(new BorderLayout());
-        map_panel.add("South", axismap);
+        JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());
+        top.addComponentListener(this);
+        top.add("North", xzoomer);
+        top.add("South", axismap);
+        map_panel.add("North", top);
+//        map_panel.add("South", axismap);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(col_bg);
         map_panel.add("Center", seqmap);
@@ -244,7 +250,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("East", y_scroller);
         p.add("Center", map_panel);
         p.add("West", right);
-        map_panel.add("North", xzoomer);
+//        map_panel.add("North", xzoomer);
         table_view = new ModPropertySheet();
         table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
 

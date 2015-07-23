@@ -84,7 +84,7 @@ public class TestSamples {
 
                 BioSeq seq = parser.parse(bistr);
                 if (seq != null) {
-                    GenomeView gview = new GenomeView(GenomeView.COLORS.defaultColorList());
+                    GenomeView gview = new GenomeView();
                     gview.setBioSeq(seq, true);
                     return true;
                 }

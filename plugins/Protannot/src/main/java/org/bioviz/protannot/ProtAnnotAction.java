@@ -334,9 +334,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setUpPanels() {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
-        if (gview == null) {
-            gview = new GenomeView(prefs_hash);
-        }
+//        if (gview == null) {
+//            gview = new GenomeView(prefs_hash);
+//        }
         gview.clearPropertiesTable();
         cpane.add("Center", gview);
         print_panel = new ComponentPagePrinter(gview);
@@ -1577,6 +1577,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     @Reference
     public void setParser(ProtannotParser parser) {
         this.parser = parser;
+    }
+    
+    @Reference
+    public void setGenomeView(GenomeView genomeView) {
+        this.gview = genomeView;
     }
 
 }

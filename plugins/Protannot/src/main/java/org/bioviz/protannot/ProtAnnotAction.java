@@ -89,6 +89,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
@@ -323,7 +324,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         if (getArgumentValue(Arguments.SERVER) != null) {
             setupSamplesFromServer();
         }
-
+        gview.clearGenomeView();
         frm.addWindowListener(this);
         frm.setVisible(true);
     }
@@ -365,6 +366,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     void doLoadFile() {
         if (this.chooser == null) {
             this.chooser = new JFileChooser(user_dir);
+            this.chooser.setDialogTitle("Open paxml");
+            FileNameExtensionFilter paxmlFilter = new FileNameExtensionFilter("paxml files", "paxml");
+            this.chooser.setFileFilter(paxmlFilter);
         }
         int option = this.chooser.showOpenDialog(frm);
         if (option == JFileChooser.APPROVE_OPTION) {
@@ -465,7 +469,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
         MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
         MenuUtil.addToMenu(viewMenu, new JMenuItem(getOpenInNewWindow()));
-        
+
         gview.popup.add(copyAction);
         gview.popup.add(browserAction);
         gview.popup.add(zoomAction);
@@ -1464,8 +1468,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         about_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_U);
         return about_action;
     }
-    
-        private AbstractAction getAboutRegionAction() {
+
+    private AbstractAction getAboutRegionAction() {
 
         final JFrame frm = ProtAnnotAction.getInstance().getFrame();
         AbstractAction about_action = new AbstractAction(MessageFormat.format(

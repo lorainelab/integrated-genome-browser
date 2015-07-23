@@ -67,24 +67,24 @@ import org.w3c.dom.Document;
  */
 @aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class)
 public class ProtAnnotService {
-    
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotService.class);
-    
+
     private InterProscanService interProscanService;
-    
+
     private InterProscanTranslator interProscanTranslator;
-    
+
     private static final String SELECT_ALL = "Select all";
     private static final String UNSELECT_ALL = "Unselect all";
-    
+
     private static final String LOADING_IPS_DATA = "Loading InterProScan data, Please wait...";
-    
+
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final Pattern pattern;
     private Matcher matcher;
-    
+
     private JLabel infoLabel;
     private JLabel statusLabel;
     private JProgressBar progressBar;
@@ -99,28 +99,28 @@ public class ProtAnnotService {
     private JLabel selectAllLabel;
     private JPanel applicationsPanel;
     private final Preferences protAnnotPreferencesNode;
-    
+
     public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
     }
-    
+
     private void initEmail() {
         email = new JTextField();
         email.setText(protAnnotPreferencesNode.get(PreferenceUtils.PROTANNOT_IPS_EMAIL, ""));
     }
-    
+
     private void initInfoLabel(String text) {
         if (infoLabel == null) {
             infoLabel = new JLabel(text);
         } else {
             infoLabel.setText(text);
         }
-        
+
     }
-    
+
     private void initStatusLabel(String text) {
         if (statusLabel == null) {
             statusLabel = new JLabel(text);
@@ -128,39 +128,39 @@ public class ProtAnnotService {
             statusLabel.setText(text);
         }
     }
-    
+
     private void initProgressBar() {
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
     }
-    
+
     private boolean isDefaultApplication(String application) {
         return defaultApplications.contains(application);
     }
-    
+
     private boolean isPreviousSelectedApplication(String application) {
         return inputAppl.contains(application);
     }
-    
+
     private boolean showApplicationOptionsLoadingModal() {
         CThreadWorker worker = createLoadApplicationsThread();
-        
+
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel("Loading InterProScan Options. Please wait...");
         parentPanel.add(infoLabel, "wrap");
-        
+
         initProgressBar();
         parentPanel.add(progressBar, "align center, wrap");
-        
+
         final JComponent[] inputs = new JComponent[]{
             parentPanel
         };
         Object[] options = {"Cancel"};
-        
+
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Options");
         return processApplicationLoadingSelection(selectedValue, options, worker);
     }
-    
+
     private Object showOptionPane(final JComponent[] inputs, Object[] options, String message) throws HeadlessException {
         JOptionPane pane = new JOptionPane(inputs, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION,
                 null,
@@ -172,7 +172,7 @@ public class ProtAnnotService {
         dialog.dispose();
         return pane.getValue();
     }
-    
+
     private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options, CThreadWorker worker) {
         if (selectedValue != null && selectedValue.equals(options[0])) {
             worker.cancelThread(true);
@@ -180,7 +180,7 @@ public class ProtAnnotService {
         }
         return true;
     }
-    
+
     private boolean isAllApplicationsSelected() {
         if (applicationsPanel == null) {
             return false;
@@ -196,7 +196,7 @@ public class ProtAnnotService {
         }
         return isAllSelected;
     }
-    
+
     private void initApplicationListener(JCheckBox applCheckBox) {
         applCheckBox.addActionListener((ActionEvent e) -> {
             if (isAllApplicationsSelected()) {
@@ -206,7 +206,7 @@ public class ProtAnnotService {
             }
         });
     }
-    
+
     private void initApplicationCheckboxValues(JCheckBox applCheckBox, ValueType vt) {
         applCheckBox.setName(vt.getValue());
         if (vt.getProperties() != null
@@ -216,7 +216,7 @@ public class ProtAnnotService {
             applCheckBox.setToolTipText(vt.getProperties().getProperty().getValue());
         }
     }
-    
+
     private void initApplicationCheckboxSelection(JCheckBox applCheckBox, ValueType vt) {
         if (inputAppl.isEmpty() && isDefaultApplication(vt.getValue())) {
             applCheckBox.setSelected(true);
@@ -226,7 +226,7 @@ public class ProtAnnotService {
             applCheckBox.setSelected(false);
         }
     }
-    
+
     private void buildInterProscanApplications() {
         ParameterType applications = interProscanService.getApplications();
         applicationsPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
@@ -242,11 +242,11 @@ public class ProtAnnotService {
             setSelectAllText(UNSELECT_ALL);
         }
     }
-    
+
     private CThreadWorker createLoadApplicationsThread() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
-            protected Void runInBackground() { 
+            protected Void runInBackground() {
                 try {
                     buildInterProscanApplications();
                 } catch (Exception e) {
@@ -261,7 +261,7 @@ public class ProtAnnotService {
             public boolean cancelThread(boolean b) {
                 return this.cancel(b);
             }
-            
+
             @Override
             protected void finished() {
             }
@@ -270,39 +270,38 @@ public class ProtAnnotService {
                 .execute(this, worker);
         return worker;
     }
-    
+
     private void showResultLoadingModal(CThreadWorker worker) {
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
         parentPanel.add(infoLabel, "wrap");
         parentPanel.add(statusLabel, "wrap");
-        
+
         initProgressBar();
         parentPanel.add(progressBar, "align center, wrap");
-        
+
         final JComponent[] inputs = new JComponent[]{
             parentPanel
         };
-        Object[] options = {"Cancel"};
-        
+        Object[] options = {"Run in background", "Cancel"};
+
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
-        if (selectedValue != null && selectedValue.equals(options[0])) {
+        if (selectedValue != null && selectedValue.equals(options[1])) {
             LOG.info("cancelling result request");
             worker.cancelThread(true);
-            
         }
     }
-    
+
     private void setSelectAllText(String text) {
         selectAllLabel.setText("<html><font color='blue'>" + text + "</font></html>");
     }
-    
+
     private void initSelectAll() {
         selectAllLabel = new JLabel();
         setSelectAllText("Select all");
         selectAllLabel.addMouseListener(new MouseListener() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 boolean isAllSelected = isAllApplicationsSelected();
@@ -311,7 +310,7 @@ public class ProtAnnotService {
                 } else {
                     setSelectAllText(UNSELECT_ALL);
                 }
-                
+
                 for (java.awt.Component c : applicationsPanel.getComponents()) {
                     if (c instanceof JCheckBox) {
                         if (isAllSelected) {
@@ -321,33 +320,33 @@ public class ProtAnnotService {
                         }
                     }
                 }
-                
+
             }
-            
+
             @Override
             public void mousePressed(MouseEvent e) {
-                
+
             }
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
-                
+
             }
-            
+
             @Override
             public void mouseEntered(MouseEvent e) {
-                
+
             }
-            
+
             @Override
             public void mouseExited(MouseEvent e) {
-                
+
             }
         });
     }
-    
+
     private boolean showSetupModal() {
-        
+
         configParentPanel = new JPanel(new MigLayout());
         configParentPanel.add(new JLabel("<html>ProtAnnot uses the free InterProScan Web service hosted<br />"
                 + "at the European Bioinformatics Institute (EBI) to search for<br />"
@@ -368,7 +367,7 @@ public class ProtAnnotService {
         linkPanel.add(new JLabel("For more information,"), "left");
         JLabel hyperlink = new JLabel("<html><a href='#'>visit the InterPro Web page at EBI</a>.</html>");
         hyperlink.addMouseListener(new MouseListener() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (Desktop.isDesktopSupported()) {
@@ -379,19 +378,19 @@ public class ProtAnnotService {
                     }
                 }
             }
-            
+
             @Override
             public void mousePressed(MouseEvent e) {
             }
-            
+
             @Override
             public void mouseReleased(MouseEvent e) {
             }
-            
+
             @Override
             public void mouseEntered(MouseEvent e) {
             }
-            
+
             @Override
             public void mouseExited(MouseEvent e) {
             }
@@ -408,15 +407,9 @@ public class ProtAnnotService {
                 options[0]);
         return processSetupOption(optionChosen);
     }
-    
+
     private boolean processSetupOption(int optionChosen) {
         if (optionChosen == 0) {
-            matcher = pattern.matcher(email.getText());
-            if (!matcher.matches()) {
-                ModalUtils.infoPanel("To run a search, enter an email address.");
-                return false;
-            }
-            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             inputAppl.clear();
             for (java.awt.Component c : applicationsPanel.getComponents()) {
                 if (c instanceof JCheckBox) {
@@ -426,11 +419,17 @@ public class ProtAnnotService {
                     }
                 }
             }
+            matcher = pattern.matcher(email.getText());
+            if (!matcher.matches()) {
+                ModalUtils.infoPanel("To run a search, enter an email address.");
+                return false;
+            }
+            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             return true;
         }
         return false;
     }
-    
+
     public void asyncLoadSequence(Callback callback) {
         if (showSetupModal()) {
             resultFetchTimer = new Timer();
@@ -444,7 +443,7 @@ public class ProtAnnotService {
                     }
                     return null;
                 }
-                
+
                 @Override
                 public boolean cancelThread(boolean b) {
                     try {
@@ -456,7 +455,7 @@ public class ProtAnnotService {
                     }
                     return true;
                 }
-                
+
                 @Override
                 protected void finished() {
                 }
@@ -465,11 +464,11 @@ public class ProtAnnotService {
             showResultLoadingModal(worker);
         }
     }
-    
+
     private JobRequest createJobRequest() {
         JobRequest request = new JobRequest();
         request.setEmail(email.getText());
-        
+
         request.setSignatureMethods(Optional.of(inputAppl));
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
@@ -486,13 +485,13 @@ public class ProtAnnotService {
                         sequenceName = d.getValue();
                     }
                 }
-                
+
                 request.getJobSequences().add(new JobSequence(sequenceName, proteinSequence));
             }
         }
         return request;
     }
-    
+
     private void processJobResults(final List<Job> successfulJobs, Callback callback) {
         Dnaseq original = parser.getDnaseq();
         Iterator it = original.getMRNAAndAaseq().iterator();
@@ -502,7 +501,7 @@ public class ProtAnnotService {
                 it.remove();
             }
         }
-        
+
         for (Job job : successfulJobs) {
             Optional<Document> doc = interProscanService.result(job.getId());
             if (doc.isPresent()) {
@@ -514,16 +513,16 @@ public class ProtAnnotService {
         dialog.dispose();
         resultFetchTimer.cancel();
     }
-    
+
     private TimerTask buildTimerTask(final List<Job> jobs, Callback callback) {
         final List<Job> successfulJobs = new ArrayList<>();
         return new TimerTask() {
-            
+
             @Override
             public void run() {
-                
+
                 int failed = 0;
-                
+
                 Iterator<Job> it = jobs.iterator();
                 while (it.hasNext()) {
                     Job job = it.next();
@@ -557,7 +556,7 @@ public class ProtAnnotService {
             }
         };
     }
-    
+
     public void loadSequence(Callback callback) {
         JobRequest jobRequest = createJobRequest();
         final List<Job> jobs = interProscanService.run(jobRequest);
@@ -566,11 +565,11 @@ public class ProtAnnotService {
                 LOG.debug(job.getId());
             });
         }
-        
+
         resultFetchTimer.schedule(buildTimerTask(jobs, callback), new Date(), 1000);
-        
+
     }
-    
+
     public void exportAsXml(Component component) {
         JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -588,28 +587,28 @@ public class ProtAnnotService {
             } catch (JAXBException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-            
+
         }
     }
-    
+
     @Reference
     public void setInterProscanService(InterProscanService interProscanService) {
         this.interProscanService = interProscanService;
     }
-    
+
     @Reference
     public void setParser(ProtannotParser parser) {
         this.parser = parser;
     }
-    
+
     @Reference
     public void setInterProscanTranslator(InterProscanTranslator interProscanTranslator) {
         this.interProscanTranslator = interProscanTranslator;
     }
-    
+
     public interface Callback {
-        
+
         public void execute(Dnaseq dnaseq);
     }
-    
+
 }

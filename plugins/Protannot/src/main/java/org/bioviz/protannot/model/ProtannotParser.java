@@ -242,7 +242,7 @@ public class ProtannotParser {
 
         if (sym instanceof BasicSeqSymmetry) {
             mrna.addDescriptor("mRNA accession", ((BasicSeqSymmetry) sym).getID());
-            mrna.addDescriptor("URL", "www.google.com/search?q=" + ((BasicSeqSymmetry) sym).getID());
+            mrna.addDescriptor("URL", "http://www.google.com/search?q=" + ((BasicSeqSymmetry) sym).getID());
 
             if (checkForward(sym)) {
                 mrna.setStrand("+");

@@ -332,6 +332,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
+    
+    void clearGenomeView() {
+        seqmap.clearWidget();
+        axismap.clearWidget();
+    }
 
     /**
      * Set the data model - the BioSeq object - that the application

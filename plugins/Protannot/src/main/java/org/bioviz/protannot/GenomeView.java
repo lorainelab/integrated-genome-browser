@@ -173,6 +173,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Preferences prefs;
 
     private ComponentFactory propertiesTabPanelFactory;
+    
+    private ComponentFactory interProScanTabPanelFactory;
 
     @Activate
     public void activate() {
@@ -213,7 +215,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         table_view = (ModPropertySheet) tb.getComponent();
         
         tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
-        tabbedPane.add("Properties", table_view);
+        tabbedPane.add(tb.getName(), table_view);
 
         split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
         this.add("Center", split_pane);
@@ -240,6 +242,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         hairline.setUseXOR(true);
         hairline.setLabeled(showhairlineLabel);
+        
+        final Properties ipsProps = new Properties();
+        TabPanelComponent ipsTab = (TabPanelComponent)interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
+        tabbedPane.add(ipsTab.getName(), ipsTab.getComponent());
     }
 
     @Reference(target = "(component.factory=properties.tab.factory.provider)")
@@ -247,6 +253,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.propertiesTabPanelFactory = propertiesTabPanelFactory;
     }
 
+    @Reference(target = "(component.factory=interproscan.tab.factory.provider)")
+    public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
+        this.interProScanTabPanelFactory = interProScanTabPanelFactory;
+    }
+    
     /**
      * Removes currently loaded data by clearing maps.
      */

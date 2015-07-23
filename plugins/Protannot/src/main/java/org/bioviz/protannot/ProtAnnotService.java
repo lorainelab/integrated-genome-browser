@@ -410,12 +410,6 @@ public class ProtAnnotService {
 
     private boolean processSetupOption(int optionChosen) {
         if (optionChosen == 0) {
-            matcher = pattern.matcher(email.getText());
-            if (!matcher.matches()) {
-                ModalUtils.infoPanel("To run a search, enter an email address.");
-                return false;
-            }
-            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             inputAppl.clear();
             for (java.awt.Component c : applicationsPanel.getComponents()) {
                 if (c instanceof JCheckBox) {
@@ -425,6 +419,12 @@ public class ProtAnnotService {
                     }
                 }
             }
+            matcher = pattern.matcher(email.getText());
+            if (!matcher.matches()) {
+                ModalUtils.infoPanel("To run a search, enter an email address.");
+                return false;
+            }
+            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             return true;
         }
         return false;

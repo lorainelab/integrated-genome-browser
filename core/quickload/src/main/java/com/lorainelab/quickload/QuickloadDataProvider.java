@@ -143,7 +143,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         if (genomeVersionData.isPresent()) {
             Set<QuickloadFile> versionFiles = genomeVersionData.get();
             LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
-            versionFiles.stream().forEach((file) -> {
+            versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
                 try {
                     URI uri;
                     if (!file.getName().startsWith("http")) {

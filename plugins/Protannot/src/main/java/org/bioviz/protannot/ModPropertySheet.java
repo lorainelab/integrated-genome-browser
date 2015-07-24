@@ -29,7 +29,7 @@ import org.bioviz.protannot.model.ProtannotParser;
 /**
  * Displays Properties (name, value pairs) associated with whatever Glyph objects the user has selected.
  */
-class ModPropertySheet extends JPanel {
+public class ModPropertySheet extends JPanel {
 
     private final JLabel title;
     private final JScrollPane scroll_pane;
@@ -42,7 +42,7 @@ class ModPropertySheet extends JPanel {
     /**
      * Create a new PropertySheet containing no data.
      */
-    ModPropertySheet() {
+    public ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
         helper = new PropertySheetHelper();

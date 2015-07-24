@@ -12,7 +12,6 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
-import com.affymetrix.genometry.util.ModalUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -97,12 +96,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         isPromptingUser = false;
         eventBus = new EventBus();
     }
-    
+
     @Override
     public void registerEventListener(Object listener) {
         eventBus.register(listener);
     }
-    
+
     @Override
     public void unregisterEventListener(Object listener) {
         eventBus.unregister(listener);
@@ -245,13 +244,51 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     @Override
     public void promptToCacheInBackground(URL url) {
-        if (getCacheEnabled()) {
-            boolean confirm = ModalUtils.confirmPanel("Would you like to cache this sequence data file for this "
-                    + "genome version for faster access in future requests?");
-            if (confirm) {
-                String path = getCacheFolderPath(generateKeyFromUrl(url));
-                cacheInBackground(url, path);
+        CacheStatus cacheStatus = getCacheStatus(url);
+        boolean exceedsMaxSize = false;
+        if(cacheStatus.getSize() != null 
+                && cacheStatus.getSize().compareTo(new BigInteger("250")) >= 0) {
+            exceedsMaxSize = true;
+        }
+        
+        boolean isCacheSequenceEnabled = cachePrefsNode.getBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, PreferenceUtils.default_confirm_before_cache_sequence_in_background);
+        if (getCacheEnabled() && isCacheSequenceEnabled ) {
+            JPanel parentPanel = new JPanel(new MigLayout());
+            parentPanel.add(new JLabel("Would you like to download a local copy of this genome sequence for faster access in the future?"));
+            final JComponent[] inputs = new JComponent[]{
+                parentPanel
+            };
+            Object[] options = {"Don't ask me again",
+                "Not right now",
+                "Yes"};
+            
+            Object defaultOption = options[2];
+            if(exceedsMaxSize) {
+               defaultOption = options[1]; 
             }
+
+            int optionChosen = JOptionPane.showOptionDialog(null, inputs, "Sequence Cache", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    defaultOption);
+
+            switch (optionChosen) {
+                case 0:
+                    cachePrefsNode.putBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, false);
+                    return;
+                case 1:
+                    return;
+                case 2:
+                    String path = getCacheFolderPath(generateKeyFromUrl(url));
+                    cacheInBackground(url, path);
+                    return;
+                default:
+                    return;
+            }
+//            if (confirm) {
+//                String path = getCacheFolderPath(generateKeyFromUrl(url));
+//                cacheInBackground(url, path);
+//            }
         }
     }
 
@@ -541,6 +578,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             cacheStatus.setDataExists(true);
             return cacheStatus;
         }
+        
         cacheStatus.setDataExists(false);
         return cacheStatus;
     }
@@ -702,7 +740,14 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     @Override
     public CacheStatus getCacheStatus(URL url) {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
-        return getCacheStatus(path);
+        CacheStatus cacheStatus = getCacheStatus(path);
+        if(!cacheStatus.isDataExists()) {
+            HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
+            if(httpHeader.getSize() > 0) {
+                cacheStatus.setSize(BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000")));
+            }
+        }
+        return cacheStatus;
     }
 
     @Reference

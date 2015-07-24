@@ -10,5 +10,16 @@ package org.bioviz.protannot;
  * @author Tarun
  */
 public class StatusClearEvent {
+    private String id;
+
+    public StatusClearEvent(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+    
+    
     
 }

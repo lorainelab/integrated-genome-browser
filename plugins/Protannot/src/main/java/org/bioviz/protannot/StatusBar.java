@@ -23,23 +23,23 @@ import javax.swing.border.BevelBorder;
  * @author Tarun
  */
 public class StatusBar extends JPanel {
-
+    
     private final JProgressBar progressBar;
     private final JLabel statusMessage;
     private final JLabel messageIcon;
-    private static StatusBar statusBar;
     EventBus eventBus;
-
+    private String id;
+    
     public enum ICONS {
-
+        
         ERROR("16x16/actions/stop_hex.gif"), WARNING("16x16/actions/warning.png"), INFO("16x16/actions/info.png"), NO_ICON("");
-
+        
         private ImageIcon icon;
-
+        
         public ImageIcon getIcon() {
             return icon;
         }
-
+        
         ICONS(String iconLocation) {
             if (!Strings.isNullOrEmpty(iconLocation)) {
                 icon = CommonUtils.getInstance().getIcon(iconLocation);
@@ -47,61 +47,65 @@ public class StatusBar extends JPanel {
                 icon = null;
             }
         }
-
+        
     }
-
-    public StatusBar() {
+    
+    public StatusBar(String id) {
+        this.id = id;
         statusMessage = new JLabel();
         statusMessage.setHorizontalAlignment(SwingConstants.LEFT);
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setMaximumSize(new Dimension(150, 16));
         messageIcon = new JLabel();
-        statusBar = this;
         setBorder(new BevelBorder(BevelBorder.LOWERED));
         setPreferredSize(new Dimension(Integer.MAX_VALUE, 16));
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        statusBar.add(messageIcon);
-        statusBar.add(progressBar);
-        statusBar.add(statusMessage);
-
+        
+        add(messageIcon);
+        add(progressBar);
+        add(statusMessage);
+        
         disableAllComponents();
         eventBus = ProtAnnotEventService.getModuleEventBus();
         eventBus.register(this);
     }
-
+    
     @Subscribe
     public void setStatusEventHandler(StatusSetEvent e) {
-        statusMessage.setText(e.getStatusMessage());
-        messageIcon.setIcon(e.getMessageIcon().getIcon());
-        if (e.isProgressBarRequired()) {
-            enableAllComponents();
-        } else {
-            enableMessageComponents();
+        if (id.equals(e.getId())) {
+            statusMessage.setText(e.getStatusMessage());
+            messageIcon.setIcon(e.getMessageIcon().getIcon());
+            if (e.isProgressBarRequired()) {
+                enableAllComponents();
+            } else {
+                enableMessageComponents();
+            }
         }
     }
-
+    
     @Subscribe
     public void clearStatusEventHandler(StatusClearEvent e) {
-        disableAllComponents();
+        if (id.equals(e.getId())) {
+            disableAllComponents();
+        }
     }
-
+    
     private void disableAllComponents() {
         messageIcon.setVisible(false);
         statusMessage.setVisible(false);
         progressBar.setVisible(false);
     }
-
+    
     private void enableAllComponents() {
         messageIcon.setVisible(true);
         statusMessage.setVisible(true);
         progressBar.setVisible(true);
     }
-
+    
     private void enableMessageComponents() {
         enableAllComponents();
         progressBar.setVisible(false);
     }
-
+    
 }

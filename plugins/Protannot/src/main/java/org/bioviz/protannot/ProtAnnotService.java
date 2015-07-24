@@ -109,16 +109,11 @@ public class ProtAnnotService {
     private EventBus eventBus;
     private ProtAnnotEventService eventService;
     private boolean interProScanRunning;
+    private String id;
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
         this.eventService = eventService;
-    }
-
-    @Activate
-    public void activator() {
-        eventBus = eventService.getEventBus();
-        eventBus.register(this);
     }
 
     public ProtAnnotService() throws JAXBException {
@@ -163,6 +158,9 @@ public class ProtAnnotService {
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+        id = (String) properties.get("id");
     }
 
     private void initEmail() {
@@ -185,7 +183,7 @@ public class ProtAnnotService {
         } else {
             statusLabel.setText(text);
         }
-        eventBus.post(new StatusSetEvent(text, StatusBar.ICONS.INFO, true));
+        eventBus.post(new StatusSetEvent(text, StatusBar.ICONS.INFO, true, id));
     }
 
     private void initProgressBar() {

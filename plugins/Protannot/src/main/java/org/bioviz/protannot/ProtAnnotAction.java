@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -157,11 +158,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     // width of the user's screen
     private Dimension screen;
 
-    //To enforce singleton pattern
-    //private static ProtAnnotAction singleton;
-
-    private StatusBar statusBar;
-
     private EventBus eventBus;
 
     private ProtAnnotEventService eventService;
@@ -171,21 +167,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         this.eventService = eventService;
     }
 
-    @Activate
-    public void activator() {
-        eventBus = eventService.getEventBus();
-        eventBus.register(this);
-    }
-
-    public StatusBar getStatusBar() {
-        return statusBar;
-    }
-
-//    @Reference
-//    public void setStatusBar(StatusBar statusBar) {
-//        this.statusBar = statusBar;
-//    }
-
     AbstractAction server_load_action = getLoadFromServerAction();
 
     private final static boolean testmode = false;
@@ -194,37 +175,34 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private static final int MENU_ITEM_WEIGHT = 8;
     private boolean loadFileOnStart;
-    
+
     private Map<String, Object> properties;
-    
+    private String id;
+
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
-        
+
         final Properties serviceProps = new Properties();
+        serviceProps.put("id", id);
         protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
-        
+
         final Properties genomeViewProps = new Properties();
         gview = (GenomeView) genomeViewFactory.newInstance(genomeViewProps).getInstance();
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
     }
 
     @Reference(target = "(component.factory=protannot.service.factory.provider)")
     public void setProtannotServiceFactory(ComponentFactory protannotServiceFactory) {
         this.protannotServiceFactory = protannotServiceFactory;
     }
-    
+
     @Reference(target = "(component.factory=genome.view.factory.provider)")
     public void setGenomeViewFactory(ComponentFactory genomeViewFactory) {
         this.genomeViewFactory = genomeViewFactory;
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
     private final TransferHandler fdh = new FileDropHandler() {
 
         @Override
@@ -255,8 +233,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             doLoadFile();
         }
     }
-
-
 
     @Reference
     public void addIgbService(IgbService igbService) {
@@ -303,7 +279,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 //    public static ProtAnnotAction getInstance() {
 //        return singleton;
 //    }
-
     /**
      * Unloads everything from GnomeView if unable to read the selected path.
      */
@@ -343,6 +318,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //        singleton = this;
         loadFileOnStart = false;
+        id = UUID.randomUUID().toString();
     }
 
     /**
@@ -384,7 +360,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         cpane.setLayout(new BorderLayout());
         gview.clearPropertiesTable();
         cpane.add("Center", gview);
-//        cpane.add("South", statusBar);
+        cpane.add("South", new StatusBar(id));
         print_panel = new ComponentPagePrinter(gview);
     }
 
@@ -423,7 +399,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     public void doLoadInterProscan() {
-        if(!protAnnotService.isInterProScanRunning()) {
+        if (!protAnnotService.isInterProScanRunning()) {
             protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
                 @Override
@@ -432,7 +408,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                     GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
                     bioseq.setGenomeVersion(gv);
                     load(bioseq);
-                    eventBus.post(new StatusClearEvent());
+                    eventBus.post(new StatusClearEvent(id));
                 }
             });
         } else {
@@ -1631,6 +1607,5 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void setParser(ProtannotParser parser) {
         this.parser = parser;
     }
-
 
 }

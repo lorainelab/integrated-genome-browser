@@ -11,14 +11,16 @@ package org.bioviz.protannot;
  */
 public class StatusSetEvent {
     
+    private String id;
     private String statusMessage;
     private StatusBar.ICONS messageIcon;
     private boolean isProgressBarRequired;
 
-    public StatusSetEvent(String statusMessage, StatusBar.ICONS messageIcon, boolean isProgressBarRequired) {
+    public StatusSetEvent(String statusMessage, StatusBar.ICONS messageIcon, boolean isProgressBarRequired, String id) {
         this.statusMessage = statusMessage;
         this.messageIcon = messageIcon;
         this.isProgressBarRequired = isProgressBarRequired;
+        this.id = id;
     }
 
     public String getStatusMessage() {
@@ -31,6 +33,10 @@ public class StatusSetEvent {
 
     public boolean isProgressBarRequired() {
         return isProgressBarRequired;
+    }
+
+    public String getId() {
+        return id;
     }
     
     

@@ -108,6 +108,7 @@ public class ProtAnnotService {
     private CThreadWorker<Void, Void> loadResultsWorker;
     private EventBus eventBus;
     private ProtAnnotEventService eventService;
+    private boolean interProScanRunning;
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -126,9 +127,15 @@ public class ProtAnnotService {
         pattern = Pattern.compile(EMAIL_PATTERN);
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
         dnaseq = new Dnaseq();
+        interProScanRunning = false;
+    }
+
+    public boolean isInterProScanRunning() {
+        return interProScanRunning;
     }
 
     public void cancelBackgroundTasks() {
+        interProScanRunning = false;
         if (applicationLoadingWorker != null) {
             try {
                 applicationLoadingWorker.cancelThread(true);
@@ -227,7 +234,8 @@ public class ProtAnnotService {
 
     private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options) {
         if (selectedValue != null && selectedValue.equals(options[0])) {
-            applicationLoadingWorker.cancelThread(true);
+            //applicationLoadingWorker.cancelThread(true);
+            cancelBackgroundTasks();
             return false;
         }
         return true;
@@ -341,7 +349,8 @@ public class ProtAnnotService {
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[1])) {
             LOG.info("cancelling result request");
-            loadResultsWorker.cancelThread(true);
+            //loadResultsWorker.cancelThread(true);
+            cancelBackgroundTasks();
         }
     }
 
@@ -483,6 +492,7 @@ public class ProtAnnotService {
     }
 
     public void asyncLoadSequence(Callback callback) {
+        interProScanRunning = true;
         if (showSetupModal()) {
             resultFetchTimer = new Timer();
             loadResultsWorker = new CThreadWorker<Void, Void>("Loading InterProScan") {
@@ -510,6 +520,7 @@ public class ProtAnnotService {
 
                 @Override
                 protected void finished() {
+                    interProScanRunning = false;
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);

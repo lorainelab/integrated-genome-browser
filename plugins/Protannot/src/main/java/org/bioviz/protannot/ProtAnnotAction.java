@@ -423,17 +423,21 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     public void doLoadInterProscan() {
-        protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
+        if(!protAnnotService.isInterProScanRunning()) {
+            protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
-            @Override
-            public void execute(Dnaseq dnaseq) {
-                BioSeq bioseq = parser.parse(dnaseq);
-                GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
-                bioseq.setGenomeVersion(gv);
-                load(bioseq);
-                eventBus.post(new StatusClearEvent());
-            }
-        });
+                @Override
+                public void execute(Dnaseq dnaseq) {
+                    BioSeq bioseq = parser.parse(dnaseq);
+                    GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+                    bioseq.setGenomeVersion(gv);
+                    load(bioseq);
+                    eventBus.post(new StatusClearEvent());
+                }
+            });
+        } else {
+            ModalUtils.infoPanel("InterProScan is already running.");
+        }
     }
 
     /**

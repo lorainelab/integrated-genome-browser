@@ -7,6 +7,8 @@ package org.bioviz.protannot;
 
 import com.affymetrix.common.CommonUtils;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -26,6 +28,7 @@ public class StatusBar extends JPanel {
     private final JLabel statusMessage;
     private final JLabel messageIcon;
     private static StatusBar statusBar;
+    EventBus eventBus;
 
     public enum ICONS {
 
@@ -64,26 +67,24 @@ public class StatusBar extends JPanel {
         statusBar.add(statusMessage);
 
         disableAllComponents();
+        eventBus = ProtAnnotEventService.getModuleEventBus();
+        eventBus.register(this);
     }
 
-    public void setProgressStatus(ICONS icon, String message) {
-        statusMessage.setText(message);
-        messageIcon.setIcon(icon.getIcon());
-        enableAllComponents();
+    @Subscribe
+    public void setStatusEventHandler(StatusSetEvent e) {
+        statusMessage.setText(e.getStatusMessage());
+        messageIcon.setIcon(e.getMessageIcon().getIcon());
+        if (e.isProgressBarRequired()) {
+            enableAllComponents();
+        } else {
+            enableMessageComponents();
+        }
     }
 
-    public void clearStatusBar() {
+    @Subscribe
+    public void clearStatusEventHandler(StatusClearEvent e) {
         disableAllComponents();
-    }
-
-    public void setMessage(String message) {
-        setMessage(ICONS.NO_ICON, message);
-    }
-
-    public void setMessage(ICONS icon, String message) {
-        messageIcon.setIcon(icon.getIcon());
-        statusMessage.setText(message);
-        enableMessageComponents();
     }
 
     private void disableAllComponents() {

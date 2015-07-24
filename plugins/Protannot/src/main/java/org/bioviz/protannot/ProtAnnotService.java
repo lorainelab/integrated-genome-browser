@@ -14,6 +14,7 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.HeadlessException;
@@ -105,6 +106,19 @@ public class ProtAnnotService {
     private Dnaseq dnaseq;
     private CThreadWorker< Void, Void> applicationLoadingWorker;
     private CThreadWorker<Void, Void> loadResultsWorker;
+    private EventBus eventBus;
+    private ProtAnnotEventService eventService;
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
+
+    @Activate
+    public void activator() {
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
 
     public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
@@ -164,7 +178,7 @@ public class ProtAnnotService {
         } else {
             statusLabel.setText(text);
         }
-        //getStatusBar().setProgressStatus(StatusBar.ICONS.INFO, text);
+        eventBus.post(new StatusSetEvent(text, StatusBar.ICONS.INFO, true));
     }
 
     private void initProgressBar() {

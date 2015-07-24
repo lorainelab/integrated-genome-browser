@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.swing.JRPMenu;
+import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
@@ -160,6 +161,21 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     //private static ProtAnnotAction singleton;
 
     private StatusBar statusBar;
+
+    private EventBus eventBus;
+
+    private ProtAnnotEventService eventService;
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
+
+    @Activate
+    public void activator() {
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
 
     public StatusBar getStatusBar() {
         return statusBar;
@@ -415,7 +431,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
                 bioseq.setGenomeVersion(gv);
                 load(bioseq);
-                //statusBar.clearStatusBar();
+                eventBus.post(new StatusClearEvent());
             }
         });
     }

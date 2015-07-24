@@ -157,6 +157,17 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     //To enforce singleton pattern
     private static ProtAnnotAction singleton;
 
+    private StatusBar statusBar;
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    @Reference
+    public void setStatusBar(StatusBar statusBar) {
+        this.statusBar = statusBar;
+    }
+
     AbstractAction server_load_action = getLoadFromServerAction();
 
     private final static boolean testmode = false;
@@ -335,11 +346,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setUpPanels() {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
-//        if (gview == null) {
-//            gview = new GenomeView(prefs_hash);
-//        }
         gview.clearPropertiesTable();
         cpane.add("Center", gview);
+        cpane.add("South", statusBar);
         print_panel = new ComponentPagePrinter(gview);
     }
 
@@ -386,6 +395,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
                 bioseq.setGenomeVersion(gv);
                 load(bioseq);
+                statusBar.clearStatusBar();
             }
         });
     }
@@ -1582,7 +1592,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void setParser(ProtannotParser parser) {
         this.parser = parser;
     }
-    
+
     @Reference
     public void setGenomeView(GenomeView genomeView) {
         this.gview = genomeView;

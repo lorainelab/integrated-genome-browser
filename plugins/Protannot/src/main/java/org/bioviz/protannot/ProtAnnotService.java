@@ -127,6 +127,7 @@ public class ProtAnnotService {
         } else {
             statusLabel.setText(text);
         }
+        ProtAnnotAction.getInstance().getStatusBar().setProgressStatus(StatusBar.ICONS.INFO, text);
     }
 
     private void initProgressBar() {

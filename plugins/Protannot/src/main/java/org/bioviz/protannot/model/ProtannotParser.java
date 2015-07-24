@@ -78,7 +78,7 @@ public class ProtannotParser {
     public static final String AA_START = "aa_start";
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
-    private Dnaseq dnaseq;
+   // private Dnaseq dnaseq;
     private IgbService igbService;
     private int padding;
     private final int MIN_PADDING = 150;
@@ -93,12 +93,19 @@ public class ProtannotParser {
         }
     }
 
-    public BioSeq parse(InputStream inputStream) throws JAXBException {
+    public Dnaseq parse(InputStream inputStream) throws JAXBException {
 
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
 
-        dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
+        Dnaseq dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
+        return dnaseq;
+    }
+
+    public BioSeq parse(Dnaseq dnaseq) {
+
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
@@ -107,21 +114,9 @@ public class ProtannotParser {
         return chromosome;
     }
 
-    public BioSeq parse(Dnaseq dnaseq) {
-
+    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
-        this.dnaseq = dnaseq;
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
-        BioSeq chromosome = buildChromosome(dnaseq);
-        processDNASeq(chromosome, dnaseq);
-        return chromosome;
-    }
-
-    public BioSeq parse(SeqMapViewI seqMapView) {
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
-        dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
@@ -815,13 +810,7 @@ public class ProtannotParser {
         }
     }
 
-    public Dnaseq getDnaseq() {
-        return dnaseq;
-    }
 
-    public void setDnaseq(Dnaseq dnaseq) {
-        this.dnaseq = dnaseq;
-    }
 
     @Reference
     public void setIgbService(IgbService igbService) {

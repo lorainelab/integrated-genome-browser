@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * This class displays the main view of transcripts, the conserved motifs (protein annotations) they encode, and an exon
  * summary that shows how the transcript structures vary.
  */
-@Component(provide = GenomeView.class)
+@Component(provide = GenomeView.class, factory = "genome.view.factory.provider")
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
@@ -175,9 +175,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private ComponentFactory propertiesTabPanelFactory;
 
     private ComponentFactory interProScanTabPanelFactory;
+    private Map<String, Object> properties;
 
     @Activate
-    public void activate() {
+    public void activate(Map<String, Object> properties) {
+        this.properties = properties;
         JPanel p = initPanel();
         initPropertiesTab();
         initInterProScanTab();

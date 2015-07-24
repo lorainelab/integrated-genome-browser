@@ -5,6 +5,7 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
@@ -65,7 +67,7 @@ import org.w3c.dom.Document;
  *
  * @author jeckstei
  */
-@aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class)
+@aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class, factory = "protannot.service.factory.provider")
 public class ProtAnnotService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotService.class);
@@ -99,12 +101,30 @@ public class ProtAnnotService {
     private JLabel selectAllLabel;
     private JPanel applicationsPanel;
     private final Preferences protAnnotPreferencesNode;
+    private Map<String, Object> properties;
+    private Dnaseq dnaseq;
 
     public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
+        dnaseq = new Dnaseq();
+    }
+
+    public Dnaseq getDnaseq() {
+        return dnaseq;
+    }
+
+    public void setDnaseq(Dnaseq dnaseq) {
+        this.dnaseq = dnaseq;
+    }
+
+    
+    
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     private void initEmail() {
@@ -473,7 +493,7 @@ public class ProtAnnotService {
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
         request.setPathways(Optional.empty());
-        for (Object obj : parser.getDnaseq().getMRNAAndAaseq()) {
+        for (Object obj : getDnaseq().getMRNAAndAaseq()) {
             if (obj instanceof Dnaseq.MRNA) {
                 String proteinSequence = null;
                 String sequenceName = null;
@@ -493,7 +513,7 @@ public class ProtAnnotService {
     }
 
     private void processJobResults(final List<Job> successfulJobs, Callback callback) {
-        Dnaseq original = parser.getDnaseq();
+        Dnaseq original = getDnaseq();
         Iterator it = original.getMRNAAndAaseq().iterator();
         while (it.hasNext()) {
             Object obj = it.next();
@@ -577,7 +597,7 @@ public class ProtAnnotService {
         int option = chooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = chooser.getSelectedFile();
-            Dnaseq dnaseq = parser.getDnaseq();
+            Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {
                 jaxbContext = JAXBContext.newInstance(Dnaseq.class);

@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
 
 /**
@@ -81,8 +82,8 @@ public class TestSamples {
                 //NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
                 //NormalizeXmlStrand.outputXMLToScreen(nxs.doc);
                 ProtannotParser parser = new ProtannotParser();
-
-                BioSeq seq = parser.parse(bistr);
+                Dnaseq dnaseq = parser.parse(bistr);
+                BioSeq seq = parser.parse(dnaseq);
                 if (seq != null) {
                     GenomeView gview = new GenomeView();
                     gview.setBioSeq(seq, true);

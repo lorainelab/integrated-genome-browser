@@ -173,60 +173,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Preferences prefs;
 
     private ComponentFactory propertiesTabPanelFactory;
-    
+
     private ComponentFactory interProScanTabPanelFactory;
 
     @Activate
     public void activate() {
-        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
-        seqmap.setOffsetScroller(y_scroller);
-        
-        JPanel map_panel = new JPanel();
+        JPanel p = initPanel();
+        initPropertiesTab();
+        initInterProScanTab();
+        //initSplitPane(p);
+        initListerners();
 
-        map_panel.setLayout(new BorderLayout());
-        map_panel.add("North", axismap);
-        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
-        seqmap.setBackground(col_bg);
-        map_panel.add("Center", seqmap);
-        JPanel right = new JPanel();
-        right.setLayout(new GridLayout(1, 2));
-        right.add(y_scroller);
-        right.add(yzoomer);
-        int maps_height = axis_pixel_height + seq_pixel_height
-                + upper_white_space + middle_white_space + lower_white_space
-                + divider_size + seqmap_pixel_height;
+    }
 
-         JPanel p = new JPanel();
-        p.addComponentListener(this);
-        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
-        p.setLayout(new BorderLayout());
-        p.add("Center", map_panel);
-        p.add("East", right);
-        map_panel.add("South", xzoomer);
-        
-        
-        
-        
-        final Properties props = new Properties();
-        props.setProperty("seqmap.width", seqmap.getWidth() + "");
-        props.setProperty("table.height", table_height + "");
-        ComponentInstance instance = propertiesTabPanelFactory.newInstance(props);
-        TabPanelComponent tb = (TabPanelComponent)instance.getInstance();
-        table_view = (ModPropertySheet) tb.getComponent();
-        
-        tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
-        tabbedPane.add(tb.getName(), table_view);
-
-        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
-        this.add("Center", split_pane);
-        //this.add("Center", p);
-        //this.add("South", table_view);
-        seqmap.addMouseListener(this);
-        seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
-
-        seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
-        axismap.addMouseListener(this);
-        axismap.setSelectionEvent(NeoMap.NO_SELECTION);
+    public void initAxis() {
         axismap.setSize(seqmap.getSize().width, upper_white_space
                 + middle_white_space + lower_white_space
                 + axis_pixel_height + seq_pixel_height);
@@ -242,10 +202,68 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         hairline.setUseXOR(true);
         hairline.setLabeled(showhairlineLabel);
-        
+    }
+
+    public void initSplitPane(JPanel p) {
+        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
+        this.add("Center", split_pane);
+    }
+
+    public JPanel initPanel() {
+        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
+        seqmap.setOffsetScroller(y_scroller);
+
+        JPanel map_panel = new JPanel();
+
+        map_panel.setLayout(new BorderLayout());
+        map_panel.add("North", axismap);
+        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
+        seqmap.setBackground(col_bg);
+        map_panel.add("Center", seqmap);
+        JPanel right = new JPanel();
+        right.setLayout(new GridLayout(1, 2));
+        right.add(y_scroller);
+        right.add(yzoomer);
+        int maps_height = axis_pixel_height + seq_pixel_height
+                + upper_white_space + middle_white_space + lower_white_space
+                + divider_size + seqmap_pixel_height;
+
+        JPanel p = new JPanel();
+        p.addComponentListener(this);
+        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
+        p.setLayout(new BorderLayout());
+        p.add("Center", map_panel);
+        p.add("East", right);
+        map_panel.add("South", xzoomer);
+        tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
+        initSplitPane(p);
+        initAxis();
+        return p;
+    }
+
+    public void initListerners() {
+        seqmap.addMouseListener(this);
+        seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
+
+        seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
+        axismap.addMouseListener(this);
+        axismap.setSelectionEvent(NeoMap.NO_SELECTION);
+    }
+
+    public void initInterProScanTab() {
         final Properties ipsProps = new Properties();
-        TabPanelComponent ipsTab = (TabPanelComponent)interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
+        TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
         tabbedPane.add(ipsTab.getName(), ipsTab.getComponent());
+    }
+
+    public void initPropertiesTab() {
+        final Properties props = new Properties();
+        props.setProperty("seqmap.width", seqmap.getWidth() + "");
+        props.setProperty("table.height", table_height + "");
+        ComponentInstance instance = propertiesTabPanelFactory.newInstance(props);
+        TabPanelComponent tb = (TabPanelComponent) instance.getInstance();
+        table_view = (ModPropertySheet) tb.getComponent();
+        tabbedPane.add(tb.getName(), table_view);
     }
 
     @Reference(target = "(component.factory=properties.tab.factory.provider)")
@@ -257,7 +275,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
         this.interProScanTabPanelFactory = interProScanTabPanelFactory;
     }
-    
+
     /**
      * Removes currently loaded data by clearing maps.
      */
@@ -314,7 +332,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
-        
 
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
@@ -344,14 +361,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         this.setLayout(new BorderLayout());
 
-        
-       
 //        table_view = new ModPropertySheet();
 //        table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
-        
-        
-
-        
     }
 
     /**

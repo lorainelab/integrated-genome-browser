@@ -30,6 +30,7 @@ import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -55,6 +56,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import org.bioviz.protannot.model.InterProScanTable;
+import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.bioviz.protannot.view.TabPanelComponent;
 import org.osgi.service.component.ComponentFactory;
@@ -177,6 +180,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private ComponentFactory interProScanTabPanelFactory;
     private Map<String, Object> properties;
 
+    private JRPStyledTable ipsTable;
+    private InterProScanTableModel ipsTableModel;
+
+    @Reference
+    public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
+        this.ipsTableModel = ipsTableModel;
+    }
+
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
@@ -254,6 +265,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void initInterProScanTab() {
         final Properties ipsProps = new Properties();
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
+        ipsTable = new InterProScanTable("InterProScanTable");
+        ipsTable.setModel(ipsTableModel);
         tabbedPane.add(ipsTab.getName(), ipsTab.getComponent());
     }
 

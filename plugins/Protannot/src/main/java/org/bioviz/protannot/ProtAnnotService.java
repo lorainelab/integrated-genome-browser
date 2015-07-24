@@ -103,6 +103,8 @@ public class ProtAnnotService {
     private final Preferences protAnnotPreferencesNode;
     private Map<String, Object> properties;
     private Dnaseq dnaseq;
+    private CThreadWorker< Void, Void> applicationLoadingWorker;
+    private CThreadWorker<Void, Void> loadResultsWorker;
 
     public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
@@ -110,6 +112,23 @@ public class ProtAnnotService {
         pattern = Pattern.compile(EMAIL_PATTERN);
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
         dnaseq = new Dnaseq();
+    }
+
+    public void cancelBackgroundTasks() {
+        if (applicationLoadingWorker != null) {
+            try {
+                applicationLoadingWorker.cancelThread(true);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        if (loadResultsWorker != null) {
+            try {
+                loadResultsWorker.cancelThread(true);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
     }
 
     public Dnaseq getDnaseq() {
@@ -120,8 +139,6 @@ public class ProtAnnotService {
         this.dnaseq = dnaseq;
     }
 
-    
-    
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
@@ -164,7 +181,7 @@ public class ProtAnnotService {
     }
 
     private boolean showApplicationOptionsLoadingModal() {
-        CThreadWorker worker = createLoadApplicationsThread();
+        applicationLoadingWorker = createLoadApplicationsThread();
 
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel("Loading InterProScan Options. Please wait...");
@@ -179,7 +196,7 @@ public class ProtAnnotService {
         Object[] options = {"Cancel"};
 
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Options");
-        return processApplicationLoadingSelection(selectedValue, options, worker);
+        return processApplicationLoadingSelection(selectedValue, options);
     }
 
     private Object showOptionPane(final JComponent[] inputs, Object[] options, String message) throws HeadlessException {
@@ -194,9 +211,9 @@ public class ProtAnnotService {
         return pane.getValue();
     }
 
-    private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options, CThreadWorker worker) {
+    private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options) {
         if (selectedValue != null && selectedValue.equals(options[0])) {
-            worker.cancelThread(true);
+            applicationLoadingWorker.cancelThread(true);
             return false;
         }
         return true;
@@ -264,7 +281,7 @@ public class ProtAnnotService {
         }
     }
 
-    private CThreadWorker createLoadApplicationsThread() {
+    private CThreadWorker< Void, Void> createLoadApplicationsThread() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
             protected Void runInBackground() {
@@ -292,7 +309,7 @@ public class ProtAnnotService {
         return worker;
     }
 
-    private void showResultLoadingModal(CThreadWorker worker) {
+    private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
@@ -310,7 +327,7 @@ public class ProtAnnotService {
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[1])) {
             LOG.info("cancelling result request");
-            worker.cancelThread(true);
+            loadResultsWorker.cancelThread(true);
         }
     }
 
@@ -454,7 +471,7 @@ public class ProtAnnotService {
     public void asyncLoadSequence(Callback callback) {
         if (showSetupModal()) {
             resultFetchTimer = new Timer();
-            CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan") {
+            loadResultsWorker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override
                 protected Void runInBackground() {
                     try {
@@ -481,8 +498,8 @@ public class ProtAnnotService {
                 protected void finished() {
                 }
             };
-            CThreadHolder.getInstance().execute(this, worker);
-            showResultLoadingModal(worker);
+            CThreadHolder.getInstance().execute(this, loadResultsWorker);
+            showResultLoadingModal();
         }
     }
 

@@ -165,10 +165,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         return statusBar;
     }
 
-    @Reference
-    public void setStatusBar(StatusBar statusBar) {
-        this.statusBar = statusBar;
-    }
+//    @Reference
+//    public void setStatusBar(StatusBar statusBar) {
+//        this.statusBar = statusBar;
+//    }
 
     AbstractAction server_load_action = getLoadFromServerAction();
 
@@ -368,7 +368,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         cpane.setLayout(new BorderLayout());
         gview.clearPropertiesTable();
         cpane.add("Center", gview);
-        cpane.add("South", statusBar);
+//        cpane.add("South", statusBar);
         print_panel = new ComponentPagePrinter(gview);
     }
 
@@ -415,7 +415,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
                 bioseq.setGenomeVersion(gv);
                 load(bioseq);
-                statusBar.clearStatusBar();
+                //statusBar.clearStatusBar();
             }
         });
     }
@@ -462,6 +462,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void windowClosing(WindowEvent evt) {
         if (evt.getSource() == frm) {
             updatePrefs(gview.getColorPrefs());
+            protAnnotService.cancelBackgroundTasks();
         }
     }
 

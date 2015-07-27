@@ -109,8 +109,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>4.3.1</version>
-            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>

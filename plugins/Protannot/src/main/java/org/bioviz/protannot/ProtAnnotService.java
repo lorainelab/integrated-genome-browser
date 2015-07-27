@@ -394,7 +394,6 @@ public class ProtAnnotService {
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[1])) {
             LOG.info("cancelling result request");
-            //loadResultsWorker.cancelThread(true);
             cancelBackgroundTasks();
         } else {
             eventBus.post(new InterProScanModelUpdateEvent());

@@ -7,6 +7,7 @@ package org.bioviz.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
@@ -37,6 +38,7 @@ import java.util.TimerTask;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -77,6 +79,8 @@ import org.w3c.dom.Document;
 public class ProtAnnotService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotService.class);
+
+    private static final Icon INFO_ICON = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 
     private InterProscanService interProscanService;
 
@@ -278,14 +282,38 @@ public class ProtAnnotService {
         });
     }
 
-    private void initApplicationCheckboxValues(JCheckBox applCheckBox, ValueType vt) {
-        applCheckBox.setName(vt.getValue());
+    private void initApplicationToolTip(JPanel container, JCheckBox applCheckBox, ValueType vt) {
         if (vt.getProperties() != null
                 && vt.getProperties().getProperty() != null
                 && vt.getProperties().getProperty().getKey() != null
                 && vt.getProperties().getProperty().getKey().equals("description")) {
-            applCheckBox.setToolTipText(vt.getProperties().getProperty().getValue());
+            JLabel icon = new JLabel();
+            icon.setIcon(INFO_ICON);
+            String originalToolTip = vt.getProperties().getProperty().getValue();
+            StringBuilder sb = new StringBuilder("<html>");
+            for(int i=0;i < originalToolTip.length();i+=50) {
+                if((originalToolTip.length()-i) < 50) {
+                    sb.append(originalToolTip.substring(i));
+                } else {
+                    sb.append(originalToolTip.substring(i, i+50));
+//                    if(originalToolTip.length() > (i + 51 - 1) 
+//                            && originalToolTip.charAt(i+50) != ' ' 
+//                            && originalToolTip.charAt(i+51) != ' ') {
+//                        sb.append("-");
+//                    }
+                    sb.append("<br />");
+                }
+                
+            }
+            sb.append("</html>");
+            icon.setToolTipText(sb.toString());
+            container.add(icon, "left");
         }
+    }
+
+    private void initApplicationCheckboxValues(JPanel container, JCheckBox applCheckBox, ValueType vt) {
+        applCheckBox.setName(vt.getValue());
+        container.add(applCheckBox, "left");
     }
 
     private void initApplicationCheckboxSelection(JCheckBox applCheckBox, ValueType vt) {
@@ -302,11 +330,13 @@ public class ProtAnnotService {
         ParameterType applications = interProscanService.getApplications();
         applicationsPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
         applications.getValues().getValue().forEach(vt -> {
+            JPanel container = new JPanel(new MigLayout());
             JCheckBox applCheckBox = new JCheckBox(vt.getLabel());
             initApplicationListener(applCheckBox);
-            initApplicationCheckboxValues(applCheckBox, vt);
-            initApplicationCheckboxSelection(applCheckBox, vt);
-            applicationsPanel.add(applCheckBox);
+            initApplicationCheckboxValues(container, applCheckBox, vt);
+            initApplicationToolTip(container, applCheckBox, vt);
+            initApplicationCheckboxSelection(applCheckBox, vt);      
+            applicationsPanel.add(container);
         });
         configParentPanel.add(applicationsPanel, "wrap");
         if (isAllApplicationsSelected()) {

@@ -72,9 +72,9 @@ public class InterProScanTableModel extends AbstractTableModel {
         return results.size();
     }
 
-    private static final int PROTEIN_PRODUCT_ID_COLUMN = 0;
-    private static final int URL_COLUMN = 1;
-    private static final int STATUS_COLUMN = 2;
+    public static final int PROTEIN_PRODUCT_ID_COLUMN = 0;
+    public static final int URL_COLUMN = 1;
+    public static final int STATUS_COLUMN = 2;
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {

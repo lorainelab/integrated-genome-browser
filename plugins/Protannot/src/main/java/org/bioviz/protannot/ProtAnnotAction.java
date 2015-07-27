@@ -504,7 +504,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
     }
 
-    void colorChooser() {
+    private void colorChooser() {
         if (colorChooser == null) {
             setupColorChooser();
         }
@@ -976,7 +976,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private void setupColorChooser() {
         colorChooser = new JFrame("Color Preference");
         colorChooser.setIconImage(new ImageIcon(imageIcon).getImage());
-        colorChooser.setSize(375, 175);
+        colorChooser.setSize(375, 200);
         colorChooser.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
         colorChooser.setLayout(new BorderLayout());
 
@@ -987,6 +987,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
         table.setDefaultEditor(Color.class, new ColorTableCellEditor());
         table.setFillsViewportHeight(true);
+        table.setAutoCreateRowSorter(true);
+        table.getRowSorter().toggleSortOrder(0);
 
         JPanel buttonpanel = new JPanel();
         buttonpanel.setLayout(new GridLayout(1, 4));
@@ -1075,7 +1077,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         /**
          * Initialized data with default color values
          */
-        ColorTableModel() {
+        public ColorTableModel() {
             setValues(gview.getColorPrefs());
         }
 

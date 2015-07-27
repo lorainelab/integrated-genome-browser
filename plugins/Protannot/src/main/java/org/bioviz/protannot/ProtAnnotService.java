@@ -261,11 +261,15 @@ public class ProtAnnotService {
             return false;
         }
         boolean isAllSelected = true;
-        for (java.awt.Component c : applicationsPanel.getComponents()) {
-            if (c instanceof JCheckBox) {
-                if (!((JCheckBox) c).isSelected()) {
-                    isAllSelected = false;
-                    break;
+        for (java.awt.Component parent : applicationsPanel.getComponents()) {
+            if (parent instanceof JPanel) {
+                for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                    if (child instanceof JCheckBox) {
+                        if (!((JCheckBox) child).isSelected()) {
+                            isAllSelected = false;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -291,11 +295,11 @@ public class ProtAnnotService {
             icon.setIcon(INFO_ICON);
             String originalToolTip = vt.getProperties().getProperty().getValue();
             StringBuilder sb = new StringBuilder("<html>");
-            for(int i=0;i < originalToolTip.length();i+=50) {
-                if((originalToolTip.length()-i) < 50) {
+            for (int i = 0; i < originalToolTip.length(); i += 50) {
+                if ((originalToolTip.length() - i) < 50) {
                     sb.append(originalToolTip.substring(i));
                 } else {
-                    sb.append(originalToolTip.substring(i, i+50));
+                    sb.append(originalToolTip.substring(i, i + 50));
 //                    if(originalToolTip.length() > (i + 51 - 1) 
 //                            && originalToolTip.charAt(i+50) != ' ' 
 //                            && originalToolTip.charAt(i+51) != ' ') {
@@ -303,7 +307,7 @@ public class ProtAnnotService {
 //                    }
                     sb.append("<br />");
                 }
-                
+
             }
             sb.append("</html>");
             icon.setToolTipText(sb.toString());
@@ -335,7 +339,7 @@ public class ProtAnnotService {
             initApplicationListener(applCheckBox);
             initApplicationCheckboxValues(container, applCheckBox, vt);
             initApplicationToolTip(container, applCheckBox, vt);
-            initApplicationCheckboxSelection(applCheckBox, vt);      
+            initApplicationCheckboxSelection(applCheckBox, vt);
             applicationsPanel.add(container);
         });
         configParentPanel.add(applicationsPanel, "wrap");
@@ -415,16 +419,20 @@ public class ProtAnnotService {
                     setSelectAllText(UNSELECT_ALL);
                 }
 
-                for (java.awt.Component c : applicationsPanel.getComponents()) {
-                    if (c instanceof JCheckBox) {
-                        if (isAllSelected) {
-                            ((JCheckBox) c).setSelected(false);
-                        } else {
-                            ((JCheckBox) c).setSelected(true);
+                for (java.awt.Component parent : applicationsPanel.getComponents()) {
+                    if (parent instanceof JPanel) {
+                        for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                            if (child instanceof JCheckBox) {
+                                if (isAllSelected) {
+                                    ((JCheckBox) child).setSelected(false);
+                                } else {
+                                    ((JCheckBox) child).setSelected(true);
+                                }
+                            }
                         }
                     }
-                }
 
+                }
             }
 
             @Override
@@ -517,11 +525,15 @@ public class ProtAnnotService {
     private boolean processSetupOption(int optionChosen) {
         if (optionChosen == 0) {
             inputAppl.clear();
-            for (java.awt.Component c : applicationsPanel.getComponents()) {
-                if (c instanceof JCheckBox) {
-                    if (((JCheckBox) c).isSelected()) {
-                        String value = ((JCheckBox) c).getName();
-                        inputAppl.add(value);
+            for (java.awt.Component parent : applicationsPanel.getComponents()) {
+                if (parent instanceof JPanel) {
+                    for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                        if (child instanceof JCheckBox) {
+                            if (((JCheckBox) child).isSelected()) {
+                                String value = ((JCheckBox) child).getName();
+                                inputAppl.add(value);
+                            }
+                        }
                     }
                 }
             }
@@ -667,6 +679,8 @@ public class ProtAnnotService {
                 model.updateModel(jobs);
                 if (!anyJobRunning(jobs)) {
                     processJobResults(jobs, callback);
+                    interProScanRunning = false;
+                    eventBus.post(new StatusTerminateEvent(id));
                 }
             }
         };

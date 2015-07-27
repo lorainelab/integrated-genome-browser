@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -431,13 +432,14 @@ public class ProtAnnotService {
         JPanel linkPanel = new JPanel(new MigLayout());
         linkPanel.add(new JLabel("For more information,"), "left");
         JLabel hyperlink = new JLabel("<html><a href='#'>visit the InterPro Web page at EBI</a>.</html>");
+        hyperlink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         hyperlink.addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (Desktop.isDesktopSupported()) {
                     try {
-                        Desktop.getDesktop().browse(new URI("http://www.ebi.ac.uk/interpro"));
+                        Desktop.getDesktop().browse(new URI("http://www.ebi.ac.uk/interpro/about.html"));
                     } catch (IOException | URISyntaxException ex) {
                         LOG.error("Error navigating to hyperlink in about IGB window", ex);
                     }
@@ -454,6 +456,7 @@ public class ProtAnnotService {
 
             @Override
             public void mouseEntered(MouseEvent e) {
+                
             }
 
             @Override

@@ -5,17 +5,22 @@
  */
 package org.bioviz.protannot.interproscan.api;
 
+import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
+
 /**
  *
  * @author jeckstei
  */
 public final class Job {
+
     private String sequenceName;
     private String id;
-    
+    private Status status;
+
     public Job(String sequenceName, String id) {
         this.sequenceName = sequenceName;
         this.id = id;
+        this.status = Status.RUNNING; // default status will be running
     }
 
     public String getSequenceName() {
@@ -33,6 +38,13 @@ public final class Job {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
 }

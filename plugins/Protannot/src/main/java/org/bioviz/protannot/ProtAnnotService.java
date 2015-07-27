@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +63,7 @@ import org.bioviz.protannot.interproscan.api.JobSequence;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.bioviz.protannot.model.Dnaseq;
+import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.bioviz.protannot.view.StatusBar;
 import org.slf4j.LoggerFactory;
@@ -115,6 +115,12 @@ public class ProtAnnotService {
     private ProtAnnotEventService eventService;
     private volatile boolean interProScanRunning;
     private volatile String id;
+    private InterProScanTableModel model;
+
+    @Reference
+    public void setModel(InterProScanTableModel model) {
+        this.model = model;
+    }
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -151,7 +157,7 @@ public class ProtAnnotService {
                 LOG.error(e.getMessage(), e);
             }
         }
-        
+
     }
 
     public Dnaseq getDnaseq() {
@@ -456,7 +462,7 @@ public class ProtAnnotService {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                
+
             }
 
             @Override
@@ -528,7 +534,7 @@ public class ProtAnnotService {
 
                 @Override
                 protected void finished() {
-                   
+
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
@@ -566,7 +572,7 @@ public class ProtAnnotService {
         return request;
     }
 
-    private void processJobResults(final List<Job> successfulJobs, Callback callback) {
+    private void processJobResults(final List<Job> jobs, Callback callback) {
         Dnaseq original = getDnaseq();
         Iterator it = original.getMRNAAndAaseq().iterator();
         while (it.hasNext()) {
@@ -576,61 +582,71 @@ public class ProtAnnotService {
             }
         }
 
-        for (Job job : successfulJobs) {
+        jobs.stream().filter(job -> job.getStatus().equals(Status.FINISHED)).forEach(job -> {
             Optional<Document> doc = interProscanService.result(job.getId());
             if (doc.isPresent()) {
                 Dnaseq.Aaseq aaseq = interProscanTranslator.translateFromResultDocumentToModel(job.getSequenceName(), doc.get());
                 original.getMRNAAndAaseq().add(aaseq);
             }
-        }
+        });
         callback.execute(original);
         dialog.dispose();
         resultFetchTimer.cancel();
     }
 
     private TimerTask buildTimerTask(final List<Job> jobs, Callback callback) {
-        final List<Job> successfulJobs = new ArrayList<>();
+
         return new TimerTask() {
 
             @Override
             public void run() {
 
-                int failed = 0;
+                int failed = (int) jobs.stream().filter(job -> (!job.getStatus().equals(Status.RUNNING)
+                        && !job.getStatus().equals(Status.FINISHED))).count();;
+                int successful = (int) jobs.stream().filter(job -> job.getStatus().equals(Status.FINISHED)).count();;
+                int running = (int) jobs.stream().filter(job -> job.getStatus().equals(Status.RUNNING)).count();
+                for (int i = 0; i < jobs.size(); i++) {
+                    Job job = jobs.get(i);
+                    Status status = job.getStatus();
+                    if (!status.equals(Status.RUNNING)) {
+                        continue;
+                    }
+                    status = interProscanService.status(job.getId());
+                    job.setStatus(status);
+                    LOG.info(job.getId() + " " + status.toString());
 
-                Iterator<Job> it = jobs.iterator();
-                while (it.hasNext()) {
-                    Job job = it.next();
-                    Status status = interProscanService.status(job.getId());
-                    LOG.info(status.toString());
-                    if (status.equals(Status.FINISHED)) {
-                        successfulJobs.add(job);
-                        it.remove();
-                    }
-                    if (status.equals(Status.ERROR)) {
+                    if (status.equals(Status.RUNNING)) {
+                        //running++;
+                    } else if (status.equals(Status.FINISHED)) {
+                        running--;
+                        successful++;
+                    } else {
+                        running--;
                         failed++;
-                        it.remove();
                     }
-                    if (status.equals(Status.FAILURE)) {
-                        failed++;
-                        it.remove();
-                    }
-                    if (status.equals(Status.NOT_FOUND)) {
-                        //TODO: Notify user
-                        it.remove();
-                    }
+                    initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
+                    model.updateModel(jobs);
                 }
-                if (jobs != null && !jobs.isEmpty()) {
-                    initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                if (anyJobRunning(jobs)) {
+                    initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
                 } else {
                     initStatusLabel("Fetching results from InterProscan");
                 }
-                if (jobs.isEmpty()) {
-                    processJobResults(successfulJobs, callback);
-                    interProScanRunning = false;
-                    eventBus.post(new StatusTerminateEvent(id));
+                model.updateModel(jobs);
+                if (!anyJobRunning(jobs)) {
+                    processJobResults(jobs, callback);
                 }
             }
         };
+    }
+
+    private boolean anyJobRunning(final List<Job> jobs) {
+        for (Job job : jobs) {
+            if (job.getStatus().equals(Status.RUNNING)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void loadSequence(Callback callback) {

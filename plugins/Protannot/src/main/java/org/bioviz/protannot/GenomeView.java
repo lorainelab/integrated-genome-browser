@@ -30,6 +30,8 @@ import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -180,6 +182,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     private InterProScanResultSheet ipsTable;
     private InterProScanTableModel ipsTableModel;
+    private ProtAnnotEventService eventService;
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
 
     @Reference
     public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
@@ -194,6 +202,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         initInterProScanTab();
         initListerners();
 
+        EventBus eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
+
+    @Subscribe
+    public synchronized void updateInterProScanTableModel(InterProScanModelUpdateEvent e) {
+        ipsTable.showTableData(ipsTableModel);
+        ipsTableModel.fireTableDataChanged();
+        tabbedPane.setSelectedIndex(1);
     }
 
     public void initAxis() {
@@ -245,8 +262,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("Center", map_panel);
         p.add("East", right);
         map_panel.add("South", xzoomer);
-        tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
+        tabbedPane
+                = new JRPTabbedPane(GenomeView.class
+                        .getName());
         initSplitPane(p);
+
         initAxis();
         return p;
     }
@@ -264,6 +284,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         final Properties ipsProps = new Properties();
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
         ipsTable = (InterProScanResultSheet) ipsTab.getComponent();
+        ipsTable.showTableData(ipsTableModel);
         tabbedPane.add(ipsTable.getTitle(), ipsTable);
     }
 
@@ -301,7 +322,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Map<String, Color> loadPrefs() {
         Map<String, Color> phash = new HashMap<>();
 
-        prefs = Preferences.userNodeForPackage(ProtAnnotAction.class);
+        prefs
+                = Preferences.userNodeForPackage(ProtAnnotAction.class
+                );
 
         try {
             for (Entry<String, Color> color_pref : GenomeView.COLORS.defaultColorList().entrySet()) {
@@ -316,10 +339,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         return prefs_hash;
     }
 
-    private void updatePrefs(Map<String, Color> hash) {
-        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class);
+    private
+            void updatePrefs(Map<String, Color> hash) {
+        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class
+        );
 
-        for (Entry<String, Color> entry : hash.entrySet()) {
+        for (Entry<String, Color> entry
+                : hash.entrySet()) {
             prefs.putInt(entry.getKey(), entry.getValue().getRGB());
         }
     }
@@ -1298,7 +1324,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(GenomeView.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenomeView.class
+    );
 
     /**
      * Copies a SeqSymmetry. Note that this clears all previous data from the MutableSeqSymmetry.

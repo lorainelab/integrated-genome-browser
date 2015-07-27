@@ -78,7 +78,7 @@ public class ProtannotParser {
     public static final String AA_START = "aa_start";
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
-   // private Dnaseq dnaseq;
+    // private Dnaseq dnaseq;
     private IgbService igbService;
     private int padding;
     private final int MIN_PADDING = 150;
@@ -228,10 +228,7 @@ public class ProtannotParser {
     }
 
     private void addDescriptorsToMrna(SeqSymmetry sym, Dnaseq.MRNA mrna) {
-        Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
-        proteinProductId.setType("protein_product_id");
-        proteinProductId.setValue(sym.getID());
-        mrna.getDescriptor().add(proteinProductId);
+        mrna.addDescriptor("protein_product_id", sym.getID());
 
         if (sym instanceof SupportsGeneName) {
             mrna.addDescriptor("title", ((SupportsGeneName) sym).getGeneName());
@@ -811,8 +808,6 @@ public class ProtannotParser {
             sym.setProperty(NAMESTR, test);
         }
     }
-
-
 
     @Reference
     public void setIgbService(IgbService igbService) {

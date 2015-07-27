@@ -5,10 +5,16 @@
  */
 package org.bioviz.protannot.model;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.bioviz.protannot.InterProScanModelUpdateEvent;
+import org.bioviz.protannot.ProtAnnotEventService;
+import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
+import org.bioviz.protannot.interproscan.api.Job;
 
 /**
  *
@@ -20,33 +26,36 @@ public class InterProScanTableModel extends AbstractTableModel {
     public static final String COMPONENT_NAME = "InterProScanTableModel";
     List<InterProScanTableData> results;
 
-    List<InterProScanTableModelListener> listeners;
+    ProtAnnotEventService eventService;
 
     public InterProScanTableModel() {
         this.results = new ArrayList<>();
-        this.listeners = new ArrayList<>();
-        this.addData("Something 1", "jobid");
-        this.addData("Something 1", "jobid");
-        this.addData("Something 1", "jobid");
-        this.addData("Something 1", "jobid");
     }
 
-    public void addListener(InterProScanTableModelListener listener) {
-        listeners.add(listener);
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
     }
 
-    public void removeListener(InterProScanTableModelListener listener) {
-        listeners.remove(listener);
+    @Activate
+    public void activate() {
+        eventService.getEventBus().register(this);
     }
 
-    private void notifyListeners() {
-        for (InterProScanTableModelListener listener : listeners) {
-            listener.tableDataChanged();
+    public void addData(String proteinProductId, String jobId) {
+        results.add(new InterProScanTableData(proteinProductId, jobId));
+    }
+
+    public void addData(String proteinProductId, String jobId, Status status) {
+        results.add(new InterProScanTableData(proteinProductId, jobId, status));
+    }
+
+    public void updateModel(List<Job> jobs) {
+        results.clear();
+        for (Job job : jobs) {
+            addData(job.getSequenceName(), job.getId(), job.getStatus());
         }
-    }
-
-    public void addData(String geneModelCoordinate, String jobId) {
-        results.add(new InterProScanTableData(geneModelCoordinate, jobId, jobId));
+        eventService.getEventBus().post(new InterProScanModelUpdateEvent());
     }
 
     public List<InterProScanTableData> getResults() {
@@ -55,7 +64,7 @@ public class InterProScanTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -63,49 +72,60 @@ public class InterProScanTableModel extends AbstractTableModel {
         return results.size();
     }
 
+    private static final int PROTEIN_PRODUCT_ID_COLUMN = 0;
     private static final int URL_COLUMN = 1;
-    private static final int GENE_MODEL_COORDINATES_COLUMN = 0;
+    private static final int STATUS_COLUMN = 2;
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (columnIndex == GENE_MODEL_COORDINATES_COLUMN) {
-            return results.get(rowIndex).geneModelCoordinate;
+        if (columnIndex == PROTEIN_PRODUCT_ID_COLUMN) {
+            return results.get(rowIndex).proteinProductId;
         } else if (columnIndex == URL_COLUMN) {
             return results.get(rowIndex).url;
+        } else if (columnIndex == STATUS_COLUMN) {
+            return results.get(rowIndex).status.toString();
         } else {
             return null;
         }
     }
 
-    public interface InterProScanTableModelListener {
-
-        public void tableDataChanged();
+    @Override
+    public String getColumnName(int columnIndex) {
+        if (columnIndex == PROTEIN_PRODUCT_ID_COLUMN) {
+            return "Protein Product ID";
+        } else if (columnIndex == URL_COLUMN) {
+            return "Result";
+        } else if (columnIndex == STATUS_COLUMN) {
+            return "Status";
+        } else {
+            return null;
+        }
     }
 
     public class InterProScanTableData {
 
-        private String geneModelCoordinate;
+        private String proteinProductId;
         private String url;
-        private String resultsInJob;
+        private Status status;
 
-        public InterProScanTableData(String geneModelCoordinate, String jobId, String resultsInJob) {
-            this.geneModelCoordinate = geneModelCoordinate;
+        public InterProScanTableData(String proteinProductId, String jobId, Status status) {
+            this.proteinProductId = proteinProductId;
             this.url = BASE_URL + jobId + "/xml";
-            this.resultsInJob = resultsInJob;
+            this.status = status;
         }
         private static final String BASE_URL = "http://www.ebi.ac.uk/Tools/services/rest/iprscan5/result/";
 
-        public InterProScanTableData(String geneModelCoordinate, String jobId) {
-            this.geneModelCoordinate = geneModelCoordinate;
+        public InterProScanTableData(String proteinProductId, String jobId) {
+            this.proteinProductId = proteinProductId;
             this.url = BASE_URL + jobId + "/xml";;
         }
 
-        public String getGeneModelCoordinate() {
-            return geneModelCoordinate;
+        public String getProteinProductId() {
+            return proteinProductId;
         }
 
-        public void setGeneModelCoordinate(String geneModelCoordinate) {
-            this.geneModelCoordinate = geneModelCoordinate;
+        public void setProteinProductId(String proteinProductId) {
+            this.proteinProductId = proteinProductId;
         }
 
         public String getUrl() {
@@ -116,13 +136,14 @@ public class InterProScanTableModel extends AbstractTableModel {
             this.url = url;
         }
 
-        public String getResultsInJob() {
-            return resultsInJob;
+        public Status getStatus() {
+            return status;
         }
 
-        public void setResultsInJob(String resultsInJob) {
-            this.resultsInJob = resultsInJob;
+        public void setStatus(Status status) {
+            this.status = status;
         }
+
     }
 
 }

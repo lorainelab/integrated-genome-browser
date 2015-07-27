@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot;
+package org.bioviz.protannot.view;
 
 import com.affymetrix.common.CommonUtils;
 import com.google.common.base.Strings;
@@ -17,6 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
+import org.bioviz.protannot.ProtAnnotEventService;
+import org.bioviz.protannot.event.StatusSetEvent;
+import org.bioviz.protannot.event.StatusStartEvent;
+import org.bioviz.protannot.event.StatusTerminateEvent;
 
 /**
  *
@@ -29,6 +33,7 @@ public class StatusBar extends JPanel {
     private final JLabel messageIcon;
     EventBus eventBus;
     private String id;
+    private boolean enabled;
     
     public enum ICONS {
         
@@ -51,6 +56,7 @@ public class StatusBar extends JPanel {
     }
     
     public StatusBar(String id) {
+        enabled = false;
         this.id = id;
         statusMessage = new JLabel();
         statusMessage.setHorizontalAlignment(SwingConstants.LEFT);
@@ -73,7 +79,7 @@ public class StatusBar extends JPanel {
     
     @Subscribe
     public void setStatusEventHandler(StatusSetEvent e) {
-        if (id.equals(e.getId())) {
+        if (id.equals(e.getId()) && enabled) {
             statusMessage.setText(e.getStatusMessage());
             messageIcon.setIcon(e.getMessageIcon().getIcon());
             if (e.isProgressBarRequired()) {
@@ -85,9 +91,17 @@ public class StatusBar extends JPanel {
     }
     
     @Subscribe
-    public void clearStatusEventHandler(StatusClearEvent e) {
+    public void terminateStatusEventHandler(StatusTerminateEvent e) {
         if (id.equals(e.getId())) {
             disableAllComponents();
+            enabled = false;
+        }
+    }
+    
+    @Subscribe
+    public void startStatusEventHandler(StatusStartEvent e) {
+        if (id.equals(e.getId())) {
+            enabled = true;
         }
     }
     

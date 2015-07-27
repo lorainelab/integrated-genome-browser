@@ -51,6 +51,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.bioviz.protannot.event.StatusSetEvent;
+import org.bioviz.protannot.event.StatusStartEvent;
+import org.bioviz.protannot.event.StatusTerminateEvent;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
@@ -61,6 +64,7 @@ import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.bioviz.protannot.view.StatusBar;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
@@ -108,8 +112,8 @@ public class ProtAnnotService {
     private CThreadWorker<Void, Void> loadResultsWorker;
     private EventBus eventBus;
     private ProtAnnotEventService eventService;
-    private boolean interProScanRunning;
-    private String id;
+    private volatile boolean interProScanRunning;
+    private volatile String id;
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -130,6 +134,7 @@ public class ProtAnnotService {
     }
 
     public void cancelBackgroundTasks() {
+        eventBus.post(new StatusTerminateEvent(id));
         interProScanRunning = false;
         if (applicationLoadingWorker != null) {
             try {
@@ -145,6 +150,7 @@ public class ProtAnnotService {
                 LOG.error(e.getMessage(), e);
             }
         }
+        
     }
 
     public Dnaseq getDnaseq() {
@@ -491,6 +497,7 @@ public class ProtAnnotService {
 
     public void asyncLoadSequence(Callback callback) {
         interProScanRunning = true;
+        eventBus.post(new StatusStartEvent(id));
         if (showSetupModal()) {
             resultFetchTimer = new Timer();
             loadResultsWorker = new CThreadWorker<Void, Void>("Loading InterProScan") {
@@ -518,11 +525,14 @@ public class ProtAnnotService {
 
                 @Override
                 protected void finished() {
-                    interProScanRunning = false;
+                   
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
             showResultLoadingModal();
+        } else {
+            interProScanRunning = false;
+            eventBus.post(new StatusTerminateEvent(id));
         }
     }
 
@@ -613,6 +623,8 @@ public class ProtAnnotService {
                 }
                 if (jobs.isEmpty()) {
                     processJobResults(successfulJobs, callback);
+                    interProScanRunning = false;
+                    eventBus.post(new StatusTerminateEvent(id));
                 }
             }
         };

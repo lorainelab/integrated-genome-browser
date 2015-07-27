@@ -3,6 +3,8 @@
  */
 package org.bioviz.protannot;
 
+import org.bioviz.protannot.event.StatusTerminateEvent;
+import org.bioviz.protannot.view.StatusBar;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
@@ -73,6 +75,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -92,6 +95,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
+import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.osgi.service.component.ComponentFactory;
@@ -408,11 +412,32 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                     GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
                     bioseq.setGenomeVersion(gv);
                     load(bioseq);
-                    eventBus.post(new StatusClearEvent(id));
+                    eventBus.post(new StatusTerminateEvent(id));
                 }
             });
         } else {
-            ModalUtils.infoPanel("InterProScan is already running.");
+            JPanel iPSIsRunningPanel = new JPanel(new MigLayout());
+            iPSIsRunningPanel.add(new JLabel("InterProScan is already running in the background."), "wrap");
+            final JComponent[] inputs = new JComponent[]{
+                iPSIsRunningPanel
+            };
+            Object[] options = {"Cancel all jobs", "OK"};
+            int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan is Running", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            processIPSRunningOptionChosen(optionChosen);
+        }
+    }
+    
+    private void processIPSRunningOptionChosen(int optionChosen) {
+        switch(optionChosen) {
+            case 0:
+                protAnnotService.cancelBackgroundTasks();
+                return;
+            case 1:
+                //Do nothing
+                return;
         }
     }
 

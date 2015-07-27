@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot;
+package org.bioviz.protannot.event;
+
+import org.bioviz.protannot.view.StatusBar;
 
 /**
  *

@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot;
+package org.bioviz.protannot.event;
 
 /**
  *
  * @author Tarun
  */
-public class StatusClearEvent {
+public class StatusStartEvent {
     private String id;
 
-    public StatusClearEvent(String id) {
+    public StatusStartEvent(String id) {
         this.id = id;
     }
 

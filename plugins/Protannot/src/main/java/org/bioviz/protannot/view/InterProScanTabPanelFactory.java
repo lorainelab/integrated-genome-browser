@@ -8,8 +8,7 @@ package org.bioviz.protannot.view;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import java.util.Map;
-import javax.swing.JPanel;
-import net.miginfocom.swing.MigLayout;
+import org.bioviz.protannot.InterProScanResultSheet;
 
 /**
  *
@@ -28,8 +27,8 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
 
     @Override
     public java.awt.Component getComponent() {
-        
-        return new JPanel(new MigLayout());
+        InterProScanResultSheet tableView = new InterProScanResultSheet();
+        return tableView;
     }
 
     @Override

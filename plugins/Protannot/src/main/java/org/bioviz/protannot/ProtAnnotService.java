@@ -362,6 +362,8 @@ public class ProtAnnotService {
             LOG.info("cancelling result request");
             //loadResultsWorker.cancelThread(true);
             cancelBackgroundTasks();
+        } else {
+            eventBus.post(new InterProScanModelUpdateEvent());
         }
     }
 

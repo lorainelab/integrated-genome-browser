@@ -5,7 +5,11 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Reference;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,6 +31,14 @@ public class InterProScanResultSheet extends JPanel {
     private InterProScanTableModel tableData;
     private final JTable table;
     private final PropertySheetHelper helper;
+    private final JButton cancelAllJobs;
+    
+    ProtAnnotService protAnnotService;
+
+    @Reference
+    public void setProtAnnotService(ProtAnnotService protAnnotService) {
+        this.protAnnotService = protAnnotService;
+    }
 
     public InterProScanResultSheet() {
         super();
@@ -35,16 +47,26 @@ public class InterProScanResultSheet extends JPanel {
         this.helper = new PropertySheetHelper(table);
         this.jvp = new JViewport();
         this.scrollPane = new JScrollPane(table);
-
+        cancelAllJobs = new JButton("Cancel All Jobs");
         setUpPanel();
     }
+    
+    public void activate() {
+        cancelAllJobs.setAction(new AbstractAction() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                protAnnotService.cancelBackgroundTasks();
+            }
+        });
+    }
+    
     private void setUpPanel() {
         jvp.setView(title);
         scrollPane.setColumnHeader(jvp);
 
         setLayout(new BorderLayout());
-        add(title, BorderLayout.NORTH);
+        add(cancelAllJobs, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         table.addMouseListener(helper);

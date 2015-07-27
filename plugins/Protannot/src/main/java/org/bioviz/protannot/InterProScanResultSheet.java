@@ -6,7 +6,6 @@
 package org.bioviz.protannot;
 
 import aQute.bnd.annotation.component.Reference;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -15,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import net.miginfocom.layout.LC;
+import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.PropertySheetHelper;
 import org.bioviz.protannot.model.InterProScanTableModel;
 
@@ -32,7 +33,7 @@ public class InterProScanResultSheet extends JPanel {
     private final JTable table;
     private final PropertySheetHelper helper;
     private final JButton cancelAllJobs;
-    
+
     ProtAnnotService protAnnotService;
 
     @Reference
@@ -50,7 +51,7 @@ public class InterProScanResultSheet extends JPanel {
         cancelAllJobs = new JButton("Cancel All Jobs");
         setUpPanel();
     }
-    
+
     public void activate() {
         cancelAllJobs.setAction(new AbstractAction() {
 
@@ -60,14 +61,14 @@ public class InterProScanResultSheet extends JPanel {
             }
         });
     }
-    
+
     private void setUpPanel() {
         jvp.setView(title);
         scrollPane.setColumnHeader(jvp);
-
-        setLayout(new BorderLayout());
-        add(cancelAllJobs, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        LC lc = new LC();
+        setLayout(new MigLayout("fill"));
+        add(cancelAllJobs, "wrap");
+        add(scrollPane, "grow, push, span");
 
         table.addMouseListener(helper);
         table.addMouseMotionListener(helper);
@@ -76,15 +77,15 @@ public class InterProScanResultSheet extends JPanel {
         table.setAutoCreateRowSorter(true);
         table.setEnabled(true);
     }
-    
+
     public void setTitle(String title) {
         this.title.setText(title);
     }
-    
+
     public String getTitle() {
         return title.getText();
     }
-    
+
     public void showTableData(InterProScanTableModel tableData) {
         this.tableData = tableData;
         table.setModel(tableData);

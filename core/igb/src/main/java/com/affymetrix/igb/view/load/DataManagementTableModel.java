@@ -1,10 +1,10 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -17,6 +17,8 @@ import com.google.common.collect.Maps;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -177,7 +179,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
                 if (feature.getDataSetName().equals(CytobandParser.CYTOBAND_TIER_NAME)
                         || feature.getDataSetName().equalsIgnoreCase(CytobandParser.CYTOBAND)
                         || feature.getDataSetName().equalsIgnoreCase(CytobandParser.CYTOBANDS)) {
-                    return feature.getDataSetName();
+                    try {
+                        return URLDecoder.decode(feature.getDataSetName(), "UTF-8");
+                    } catch (UnsupportedEncodingException ex) {
+                        return feature.getDataSetName();
+                    }
                 } else if (style == null) {
                     return feature.getDataSetName();
                 }

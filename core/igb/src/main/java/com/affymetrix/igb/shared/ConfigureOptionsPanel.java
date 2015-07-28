@@ -188,7 +188,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                                     }
                                 }
                             } else {
-                                ConfigureOptionsPanel.this.setParameter(cp, label, tf.getText());
+                                ConfigureOptionsPanel.this.setParameter(cp, label, tf.getText().trim());
                             }
                         }
                     });

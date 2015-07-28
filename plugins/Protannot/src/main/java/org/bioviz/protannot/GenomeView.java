@@ -210,7 +210,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         ipsTable.showTableData(ipsTableModel);
         ipsTableModel.fireTableDataChanged();
     }
-    
+
     public void initAxis() {
         axismap.setSize(seqmap.getSize().width, upper_white_space
                 + middle_white_space + lower_white_space
@@ -241,7 +241,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel map_panel = new JPanel();
 
         map_panel.setLayout(new BorderLayout());
-        map_panel.add("North", axismap);
+        JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());
+        top.addComponentListener(this);
+        top.add("North", xzoomer);
+        top.add("South", axismap);
+        map_panel.add("North", top);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(col_bg);
         map_panel.add("Center", seqmap);
@@ -257,9 +262,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.addComponentListener(this);
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
+        p.add("East", y_scroller);
         p.add("Center", map_panel);
-        p.add("East", right);
-        map_panel.add("South", xzoomer);
+        p.add("West", right);
         tabbedPane
                 = new JRPTabbedPane(GenomeView.class
                         .getName());

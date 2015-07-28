@@ -191,8 +191,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         serviceProps.put("id", id);
         protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
 
-        final Properties genomeViewProps = new Properties();
-        gview = (GenomeView) genomeViewFactory.newInstance(genomeViewProps).getInstance();
+        gview = (GenomeView) genomeViewFactory.newInstance(serviceProps).getInstance();
         eventBus = eventService.getEventBus();
         eventBus.register(this);
     }
@@ -429,9 +428,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             processIPSRunningOptionChosen(optionChosen);
         }
     }
-    
+
     private void processIPSRunningOptionChosen(int optionChosen) {
-        switch(optionChosen) {
+        switch (optionChosen) {
             case 0:
                 protAnnotService.cancelBackgroundTasks();
                 return;

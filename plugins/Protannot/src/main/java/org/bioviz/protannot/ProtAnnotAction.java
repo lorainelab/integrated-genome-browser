@@ -191,6 +191,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         serviceProps.put("id", id);
         protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
 
+        serviceProps.put("protannotService", protAnnotService);
         gview = (GenomeView) genomeViewFactory.newInstance(serviceProps).getInstance();
         eventBus = eventService.getEventBus();
         eventBus.register(this);

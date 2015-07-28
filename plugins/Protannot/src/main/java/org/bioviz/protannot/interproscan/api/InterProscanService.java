@@ -28,6 +28,6 @@ public interface InterProscanService {
 
     public static enum Status {
 
-        RUNNING, FINISHED, ERROR, FAILURE, NOT_FOUND;
+        RUNNING, FINISHED, ERROR, FAILURE, NOT_FOUND, CANCELLED;
     }
 }

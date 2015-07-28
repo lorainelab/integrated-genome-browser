@@ -53,6 +53,13 @@ public class InterProScanTableModel extends AbstractTableModel {
         }
         eventService.getEventBus().post(new InterProScanModelUpdateEvent());
     }
+    
+    public void cancelAllJobs() {
+        for(InterProScanTableData result : results) {
+            result.status = Status.CANCELLED;
+        }
+        eventService.getEventBus().post(new InterProScanModelUpdateEvent());
+    }
 
     public List<InterProScanTableData> getResults() {
         return results;

@@ -41,7 +41,9 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
     public java.awt.Component getComponent() {
         InterProScanResultSheet tableView = new InterProScanResultSheet();
         tableView.getCancelAllJobs().addActionListener((ActionEvent e) -> {
-            ((ProtAnnotService) protannotServiceFactory.newInstance(new Properties()).getInstance()).cancelBackgroundTasks();
+            Properties props = new Properties();
+            props.put("id", properties.get("id"));
+            ((ProtAnnotService) protannotServiceFactory.newInstance(props).getInstance()).cancelBackgroundTasks();
         });
 
         return tableView;

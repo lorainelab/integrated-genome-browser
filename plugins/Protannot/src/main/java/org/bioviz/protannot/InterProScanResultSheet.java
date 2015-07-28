@@ -5,9 +5,10 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,8 +24,10 @@ import org.bioviz.protannot.model.InterProScanTableModel;
  *
  * @author Tarun
  */
+@Component
 public class InterProScanResultSheet extends JPanel {
 
+    public static final String COMPONENT_NAME = "InterProScanResultSheet";
     private final JLabel title;
     private final JScrollPane scrollPane;
     private final JViewport jvp;
@@ -34,7 +37,7 @@ public class InterProScanResultSheet extends JPanel {
     private final PropertySheetHelper helper;
     private final JButton cancelAllJobs;
 
-    ProtAnnotService protAnnotService;
+    private ProtAnnotService protAnnotService;
 
     @Reference
     public void setProtAnnotService(ProtAnnotService protAnnotService) {
@@ -52,13 +55,10 @@ public class InterProScanResultSheet extends JPanel {
         setUpPanel();
     }
 
+    @Activate
     public void activate() {
-        cancelAllJobs.setAction(new AbstractAction() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                protAnnotService.cancelBackgroundTasks();
-            }
+        cancelAllJobs.addActionListener((ActionEvent e) -> {
+            protAnnotService.cancelBackgroundTasks();
         });
     }
 

@@ -8,7 +8,6 @@ import org.bioviz.protannot.model.Dnaseq.MRNA.Cds;
 import org.bioviz.protannot.model.Dnaseq.MRNA.Exon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -37,7 +36,6 @@ public class NormalizeXmlStrand {
         // get residues and normalize their attributes
         final int residuesStart;
         final String residues;
-        Node residuesChildNode = null;
         Dnaseq.Residues residues1 = dnaseq.getResidues();
         residues = residues1.getValue();
         residuesStart = residues1.getStart().intValue();
@@ -47,10 +45,10 @@ public class NormalizeXmlStrand {
         residues1.setEnd(new BigInteger((residuesEnd - residuesStart) + ""));
         // normalize end of residues, if end exists
 
-        dnaseq.getMRNAAndAaseq().stream().filter(obj -> obj instanceof MRNA).forEach(obj -> normalizemRNA((MRNA) obj, residuesStart, residues, residuesChildNode));
+        dnaseq.getMRNAAndAaseq().stream().filter(obj -> obj instanceof MRNA).forEach(obj -> normalizemRNA((MRNA) obj, residuesStart, residues));
     }
-    
-    private static void normalizemRNA(MRNA mrna, int residuesStart, String residues, Node residuesChildNode) {
+
+    private static void normalizemRNA(MRNA mrna, int residuesStart, String residues) {
         // Get strand of mRNA.  Normalize attributes
         int start = mrna.getStart().intValue();
         int end = mrna.getEnd().intValue();
@@ -66,7 +64,6 @@ public class NormalizeXmlStrand {
                 end = newEnd;
                 if (!isStrandSet) {
                     residues = DNAUtils.reverseComplement(residues);
-                    residuesChildNode.setNodeValue(residues);
                     isStrandSet = true;
                 }
                 mrna.setStrand("+"); // Normalizing to positive strand

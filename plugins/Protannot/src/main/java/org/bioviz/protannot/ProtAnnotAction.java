@@ -3,6 +3,9 @@
  */
 package org.bioviz.protannot;
 
+import org.bioviz.protannot.event.StatusTerminateEvent;
+import org.bioviz.protannot.view.StatusBar;
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
@@ -21,10 +24,9 @@ import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.swing.JRPMenuItem;
+import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -63,6 +65,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,6 +75,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -91,8 +95,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
+import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +106,8 @@ import org.slf4j.LoggerFactory;
  * @see com.affymetrix.genometryImpl.BioSeq
  * @see com.affymetrix.genoviz.util.ComponentPagePrinter
  */
-@Component(name = ProtAnnotAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
-public class ProtAnnotAction extends GenericAction implements WindowListener, IgbMenuItemProvider {
+@Component(provide = {ProtAnnotAction.class}, factory = "protannot.factory.provider")
+public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
 
@@ -127,6 +133,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     private ProtannotParser parser;
 
+    private ComponentFactory protannotServiceFactory;
     private ProtAnnotService protAnnotService;
 
     // where the application is first invoked
@@ -146,6 +153,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     // for show/hide hairline.
     private JCheckBox showhairline;
     // has NeoMaps and PropertySheet (JTable)
+    private ComponentFactory genomeViewFactory;
     private GenomeView gview;
     // is populated from prefs_file
     private Map<String, Color> prefs_hash;
@@ -154,8 +162,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     // width of the user's screen
     private Dimension screen;
 
-    //To enforce singleton pattern
-    private static ProtAnnotAction singleton;
+    private EventBus eventBus;
+
+    private ProtAnnotEventService eventService;
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
 
     AbstractAction server_load_action = getLoadFromServerAction();
 
@@ -165,6 +179,34 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     private static final int MENU_ITEM_WEIGHT = 8;
     private boolean loadFileOnStart;
+
+    private Map<String, Object> properties;
+    private String id;
+
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        this.properties = properties;
+
+        final Properties serviceProps = new Properties();
+        serviceProps.put("id", id);
+        protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
+
+        final Properties genomeViewProps = new Properties();
+        gview = (GenomeView) genomeViewFactory.newInstance(genomeViewProps).getInstance();
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
+
+    @Reference(target = "(component.factory=protannot.service.factory.provider)")
+    public void setProtannotServiceFactory(ComponentFactory protannotServiceFactory) {
+        this.protannotServiceFactory = protannotServiceFactory;
+    }
+
+    @Reference(target = "(component.factory=genome.view.factory.provider)")
+    public void setGenomeViewFactory(ComponentFactory genomeViewFactory) {
+        this.genomeViewFactory = genomeViewFactory;
+    }
+
     private final TransferHandler fdh = new FileDropHandler() {
 
         @Override
@@ -194,21 +236,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         } else {
             doLoadFile();
         }
-    }
-
-    @Override
-    public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Protannot", this, getMenuItemWeight());
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_ITEM_WEIGHT;
-    }
-
-    @Override
-    public String getParentMenuName() {
-        return "tools";
     }
 
     @Reference
@@ -253,10 +280,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return icon;
     }
 
-    public static ProtAnnotAction getInstance() {
-        return singleton;
-    }
-
+//    public static ProtAnnotAction getInstance() {
+//        return singleton;
+//    }
     /**
      * Unloads everything from GnomeView if unable to read the selected path.
      */
@@ -294,8 +320,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         super("Start ProtAnnot", null, null);
         frm = new JFrame(APP_NAME);
         frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        singleton = this;
+//        singleton = this;
         loadFileOnStart = false;
+        id = UUID.randomUUID().toString();
     }
 
     /**
@@ -305,10 +332,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
      */
     private void start() {
         if ("Mac OS X".equals(System.getProperty("os.name"))) {
-            MacIntegration mi = MacIntegration.getInstance();
-            if (imageIcon != null) {
-                mi.setDockIconImage(imageIcon);
-            }
+//            MacIntegration mi = MacIntegration.getInstance();
+//            if (imageIcon != null) {
+//                mi.setDockIconImage(imageIcon);
+//            }
         }
         frm.setTransferHandler(fdh);
         frm.setIconImage(imageIcon);
@@ -335,11 +362,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setUpPanels() {
         Container cpane = frm.getContentPane();
         cpane.setLayout(new BorderLayout());
-        if (gview == null) {
-            gview = new GenomeView(prefs_hash);
-        }
         gview.clearPropertiesTable();
         cpane.add("Center", gview);
+        cpane.add("South", new StatusBar(id));
         print_panel = new ComponentPagePrinter(gview);
     }
 
@@ -378,16 +403,42 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     public void doLoadInterProscan() {
-        protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
+        if (!protAnnotService.isInterProScanRunning()) {
+            protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
-            @Override
-            public void execute(Dnaseq dnaseq) {
-                BioSeq bioseq = parser.parse(dnaseq);
-                GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
-                bioseq.setGenomeVersion(gv);
-                load(bioseq);
-            }
-        });
+                @Override
+                public void execute(Dnaseq dnaseq) {
+                    BioSeq bioseq = parser.parse(dnaseq);
+                    GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
+                    bioseq.setGenomeVersion(gv);
+                    load(bioseq);
+                    eventBus.post(new StatusTerminateEvent(id));
+                }
+            });
+        } else {
+            JPanel iPSIsRunningPanel = new JPanel(new MigLayout());
+            iPSIsRunningPanel.add(new JLabel("InterProScan is already running in the background."), "wrap");
+            final JComponent[] inputs = new JComponent[]{
+                iPSIsRunningPanel
+            };
+            Object[] options = {"Cancel all jobs", "OK"};
+            int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan is Running", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            processIPSRunningOptionChosen(optionChosen);
+        }
+    }
+    
+    private void processIPSRunningOptionChosen(int optionChosen) {
+        switch(optionChosen) {
+            case 0:
+                protAnnotService.cancelBackgroundTasks();
+                return;
+            case 1:
+                //Do nothing
+                return;
+        }
     }
 
     /**
@@ -432,6 +483,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     public void windowClosing(WindowEvent evt) {
         if (evt.getSource() == frm) {
             updatePrefs(gview.getColorPrefs());
+            protAnnotService.cancelBackgroundTasks();
         }
     }
 
@@ -477,7 +529,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
     }
 
-    void colorChooser() {
+    private void colorChooser() {
         if (colorChooser == null) {
             setupColorChooser();
         }
@@ -677,7 +729,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     }
 
     public void load(SeqMapViewI seqMapView) {
-        BioSeq genome_seq = parser.parse(seqMapView);
+        Dnaseq dnaseq = protAnnotService.getDnaseq();
+        BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, true);
         frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
@@ -732,7 +785,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         BioSeq genome_seq = null;
 
         try (BufferedInputStream bistr = new BufferedInputStream(GeneralUtils.unzipStream(fistr, filename, new StringBuffer()))) {
-            genome_seq = parser.parse(fistr);
+            Dnaseq dnaseq = parser.parse(fistr);
+            protAnnotService.setDnaseq(dnaseq);
+            genome_seq = parser.parse(dnaseq);
 //            Xml2GenometryParser parser = new Xml2GenometryParser();
 //            NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
 //            genome_seq = parser.parse(nxs.doc);
@@ -946,7 +1001,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     private void setupColorChooser() {
         colorChooser = new JFrame("Color Preference");
         colorChooser.setIconImage(new ImageIcon(imageIcon).getImage());
-        colorChooser.setSize(375, 175);
+        colorChooser.setSize(375, 200);
         colorChooser.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
         colorChooser.setLayout(new BorderLayout());
 
@@ -957,6 +1012,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         table.setDefaultRenderer(Color.class, new ColorTableCellRenderer());
         table.setDefaultEditor(Color.class, new ColorTableCellEditor());
         table.setFillsViewportHeight(true);
+        table.setAutoCreateRowSorter(true);
+        table.getRowSorter().toggleSortOrder(0);
 
         JPanel buttonpanel = new JPanel();
         buttonpanel.setLayout(new GridLayout(1, 4));
@@ -1045,7 +1102,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         /**
          * Initialized data with default color values
          */
-        ColorTableModel() {
+        public ColorTableModel() {
             setValues(gview.getColorPrefs());
         }
 
@@ -1143,13 +1200,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     };
 
-    static AbstractAction getLoadAction() {
+    private AbstractAction getLoadAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("openFile"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().doLoadFile();
+                        doLoadFile();
                     }
                 };
         load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_O);
@@ -1157,13 +1214,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return load_action;
     }
 
-    static AbstractAction getInterProscanAction() {
+    private AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 "Load InterProScan")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().doLoadInterProscan();
+                        doLoadInterProscan();
                     }
                 };
         load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_I);
@@ -1171,13 +1228,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return load_action;
     }
 
-    static AbstractAction getLoadFromServerAction() {
+    private AbstractAction getLoadFromServerAction() {
         final AbstractAction server_load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("serverLoad"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().loadFromServer();
+                        loadFromServer();
                     }
                 };
         server_load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_S);
@@ -1186,13 +1243,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return server_load_action;
     }
 
-    static AbstractAction getPrintAction() {
+    private AbstractAction getPrintAction() {
         AbstractAction print_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("print"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().print();
+                        print();
                     }
                 };
         print_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_P);
@@ -1200,13 +1257,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return print_action;
     }
 
-    static AbstractAction getExportAction() {
+    private AbstractAction getExportAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("export"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().export();
+                        export();
                     }
                 };
         export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -1214,13 +1271,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return export_action;
     }
 
-    static AbstractAction getSaveImageAction() {
+    private AbstractAction getSaveImageAction() {
         AbstractAction export_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("saveImage"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().saveImage();
+                        saveImage();
                     }
                 };
         export_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_T);
@@ -1228,13 +1285,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return export_action;
     }
 
-    static AbstractAction getPreferencesAction() {
+    private AbstractAction getPreferencesAction() {
         AbstractAction preference_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("preferences"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ProtAnnotAction.getInstance().colorChooser();
+                        colorChooser();
                     }
                 };
         preference_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_E);
@@ -1242,14 +1299,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return preference_action;
     }
 
-    static AbstractAction getExitAction() {
+    private AbstractAction getExitAction() {
         AbstractAction quit_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 BUNDLE.getString("exit"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                                new WindowEvent(ProtAnnotAction.getInstance().getFrame(),
+                                new WindowEvent(getFrame(),
                                         WindowEvent.WINDOW_CLOSING));
                     }
                 };
@@ -1258,12 +1315,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return quit_action;
     }
 
-    static AbstractAction getCopyAction() {
+    private AbstractAction getCopyAction() {
         final AbstractAction copy_action = new AbstractAction(
                 BUNDLE.getString("copy")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
+                        Properties[] props = getGenomeView().getProperties();
                         Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
                         StringSelection data = new StringSelection(props[0].getProperty("protein sequence"));
                         system.setContents(data, null);
@@ -1277,7 +1334,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
+                Properties[] props = getGenomeView().getProperties();
                 if (props != null && props.length == 1) {
                     copy_action.setEnabled(props[0].containsKey("protein sequence"));
                 } else {
@@ -1285,7 +1342,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 }
             }
         };
-        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
+        getGenomeView().addMapListener(ml);
         copy_action.setEnabled(false);
 
         return copy_action;
@@ -1294,7 +1351,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     /**
      * Asks ProtAnnotMain.getInstance() to open a browser window showing info on the currently selected Glyph.
      */
-    static AbstractAction getOpenInBrowserAction() {
+    private AbstractAction getOpenInBrowserAction() {
 
         final StringBuilder url = new StringBuilder();
 
@@ -1323,7 +1380,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                Properties[] props = ProtAnnotAction.getInstance().getGenomeView().getProperties();
+                Properties[] props = getGenomeView().getProperties();
                 if (props != null && props.length == 1) {
                     url.delete(0, url.length());
                     url.append(build_url(props[0]));
@@ -1333,7 +1390,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 open_browser_action.setEnabled(url.length() > 0 ? true : false);
             }
         };
-        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
+        getGenomeView().addMapListener(ml);
 
         return open_browser_action;
     }
@@ -1341,13 +1398,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
     /**
      * Asks ProtAnnotMain.getInstance() to center on the location of the currently selected Glyph.
      */
-    static AbstractAction getZoomToFeatureAction() {
+    private AbstractAction getZoomToFeatureAction() {
 
         final AbstractAction zoom_to_feature_action = new AbstractAction(BUNDLE.getString("zoomToFeature")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotAction.getInstance().getGenomeView().zoomToSelection();
+                getGenomeView().zoomToSelection();
             }
         };
         zoom_to_feature_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_Z);
@@ -1361,21 +1418,21 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 if (!(e instanceof NeoMouseEvent)) {
                     return;
                 }
-                List<GlyphI> selected = ProtAnnotAction.getInstance().getGenomeView().getSelected();
+                List<GlyphI> selected = getGenomeView().getSelected();
                 zoom_to_feature_action.setEnabled(selected != null && !selected.isEmpty());
             }
         };
-        ProtAnnotAction.getInstance().getGenomeView().addMapListener(ml);
+        getGenomeView().addMapListener(ml);
 
         return zoom_to_feature_action;
     }
 
-    static AbstractAction getToggleHairlineAction() {
+    private AbstractAction getToggleHairlineAction() {
         AbstractAction toggle_hairline_action = new AbstractAction(BUNDLE.getString("toggleHairline")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotAction.getInstance().getGenomeView().toggleHairline();
+                getGenomeView().toggleHairline();
             }
         };
         toggle_hairline_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_H);
@@ -1384,12 +1441,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return toggle_hairline_action;
     }
 
-    static AbstractAction getToggleHairlineLabelAction() {
+    private AbstractAction getToggleHairlineLabelAction() {
         AbstractAction toggle_label_action = new AbstractAction(BUNDLE.getString("toggleHairlineLabel")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ProtAnnotAction.getInstance().getGenomeView().toggleHairlineLabel();
+                getGenomeView().toggleHairlineLabel();
             }
         };
         toggle_label_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_L);
@@ -1398,7 +1455,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return toggle_label_action;
     }
 
-    static AbstractAction getOpenInNewWindow() {
+    private AbstractAction getOpenInNewWindow() {
         final AbstractAction newwin_action = new AbstractAction("Open table in new window") {
 
             @Override
@@ -1406,8 +1463,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                 final AbstractAction action = this;
                 action.setEnabled(false);
 
-                final JPanel table_panel = ProtAnnotAction.getInstance().getGenomeView().getTablePanel();
-                final JSplitPane split_pane = ProtAnnotAction.getInstance().getGenomeView().getSplitPane();
+                final JPanel table_panel = getGenomeView().getTablePanel();
+                final JSplitPane split_pane = getGenomeView().getSplitPane();
                 split_pane.remove(table_panel);
 
                 final JFrame jframe = new JFrame();
@@ -1429,9 +1486,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         return newwin_action;
     }
 
-    static AbstractAction getAboutAction() {
+    private AbstractAction getAboutAction() {
 
-        final JFrame frm = ProtAnnotAction.getInstance().getFrame();
+        final JFrame frm = getFrame();
         AbstractAction about_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 MessageFormat.format(
@@ -1471,7 +1528,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
 
     private AbstractAction getAboutRegionAction() {
 
-        final JFrame frm = ProtAnnotAction.getInstance().getFrame();
+        final JFrame frm = getFrame();
         AbstractAction about_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
                 MessageFormat.format(
@@ -1484,7 +1541,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
                         message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
                         JTextArea about_text = new JTextArea();
                         about_text.setEditable(false);
-                        Dnaseq dnaseq = parser.getDnaseq();
+                        Dnaseq dnaseq = protAnnotService.getDnaseq();
                         StringBuilder sb = new StringBuilder();
                         sb.append("Version: ").append(dnaseq.getVersion()).append("\n");
                         sb.append("Sequence: ").append(dnaseq.getSeq()).append("\n");
@@ -1571,11 +1628,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener, Ig
         } else {
             return null;
         }
-    }
-
-    @Reference
-    public void setProtAnnotService(ProtAnnotService protAnnotService) {
-        this.protAnnotService = protAnnotService;
     }
 
     @Reference

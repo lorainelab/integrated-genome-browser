@@ -78,7 +78,7 @@ public class ProtannotParser {
     public static final String AA_START = "aa_start";
     public static final String AA_END = "aa_end";
     public static final String AA_LENGTH = "aa_length";
-    private Dnaseq dnaseq;
+    // private Dnaseq dnaseq;
     private IgbService igbService;
     private int padding;
     private final int MIN_PADDING = 150;
@@ -93,12 +93,19 @@ public class ProtannotParser {
         }
     }
 
-    public BioSeq parse(InputStream inputStream) throws JAXBException {
+    public Dnaseq parse(InputStream inputStream) throws JAXBException {
 
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
 
-        dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
+        Dnaseq dnaseq = (Dnaseq) jaxbUnmarshaller.unmarshal(inputStream);
+        return dnaseq;
+    }
+
+    public BioSeq parse(Dnaseq dnaseq) {
+
+        mrna_hash = new HashMap<>();
+        prot_hash = new HashMap<>();
         NormalizeXmlStrand.normalizeDnaseq(dnaseq);
         BioSeq chromosome = buildChromosome(dnaseq);
         GenomeVersion gv = new GenomeVersion(dnaseq.getVersion());
@@ -107,23 +114,15 @@ public class ProtannotParser {
         return chromosome;
     }
 
-    public BioSeq parse(Dnaseq dnaseq) {
-
+    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
-        this.dnaseq = dnaseq;
-        NormalizeXmlStrand.normalizeDnaseq(dnaseq);
-        BioSeq chromosome = buildChromosome(dnaseq);
-        processDNASeq(chromosome, dnaseq);
-        return chromosome;
-    }
-
-    public BioSeq parse(SeqMapViewI seqMapView) {
-        mrna_hash = new HashMap<>();
-        prot_hash = new HashMap<>();
-        dnaseq = new Dnaseq();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
+        String seqId = bioseq.getId();
+        if (!seqId.startsWith("chr")) {
+            seqId = "chr" + seqId;
+        }
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
         int spanStart, spanEnd;
         for (SeqSymmetry sym : selectedSyms) {
@@ -152,6 +151,8 @@ public class ProtannotParser {
                 mrna.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
             }
             checkTranslationLength(mrna);
+
+            mrna.setLocation(seqId + ":" + mrna.getStart().intValue() + "-" + mrna.getEnd().intValue());
             dnaseq.getMRNAAndAaseq().add(mrna);
 
             addDescriptorsToMrna(sym, mrna);
@@ -179,13 +180,8 @@ public class ProtannotParser {
             residueSpan = new SimpleSeqSpan(spanStart + padding, spanEnd - padding, bioseq);
         }
         mutableSeqSymmetry.addSpan(residueSpan);
-        String seqId = bioseq.getId();
-        if (!seqId.startsWith("chr")) {
-            seqId = "chr" + seqId;
-        }
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
-
         igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
 
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
@@ -200,6 +196,7 @@ public class ProtannotParser {
             residue.setEnd(BigInteger.valueOf(residueSpan.getStart()));
         }
         dnaseq.setResidues(residue);
+        dnaseq.setLocation(seqId + ":" + spanStart + "-" + spanEnd);
 
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
@@ -231,10 +228,7 @@ public class ProtannotParser {
     }
 
     private void addDescriptorsToMrna(SeqSymmetry sym, Dnaseq.MRNA mrna) {
-        Dnaseq.Descriptor proteinProductId = new Dnaseq.Descriptor();
-        proteinProductId.setType("protein_product_id");
-        proteinProductId.setValue(sym.getID());
-        mrna.getDescriptor().add(proteinProductId);
+        mrna.addDescriptor("protein_product_id", sym.getID());
 
         if (sym instanceof SupportsGeneName) {
             mrna.addDescriptor("title", ((SupportsGeneName) sym).getGeneName());
@@ -813,14 +807,6 @@ public class ProtannotParser {
         if (test != null) {
             sym.setProperty(NAMESTR, test);
         }
-    }
-
-    public Dnaseq getDnaseq() {
-        return dnaseq;
-    }
-
-    public void setDnaseq(Dnaseq dnaseq) {
-        this.dnaseq = dnaseq;
     }
 
     @Reference

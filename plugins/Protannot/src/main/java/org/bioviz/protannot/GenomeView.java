@@ -1,5 +1,8 @@
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
@@ -26,6 +29,9 @@ import com.affymetrix.genoviz.widget.TieredNeoMap;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
+import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,11 +52,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.prefs.Preferences;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.bioviz.protannot.view.TabPanelComponent;
+import org.osgi.service.component.ComponentFactory;
+import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +69,7 @@ import org.slf4j.LoggerFactory;
  * This class displays the main view of transcripts, the conserved motifs (protein annotations) they encode, and an exon
  * summary that shows how the transcript structures vary.
  */
+@Component(provide = GenomeView.class, factory = "genome.view.factory.provider")
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
@@ -120,8 +132,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private final TieredNeoMap seqmap;
     // the map that shows the sequence and axis
     private final NeoMap axismap;
-    private final NeoMap[] maps;
-    private final ModPropertySheet table_view;
+    private NeoMap[] maps;
+    private ModPropertySheet table_view;
     private final AdjustableJSlider xzoomer;
     private final AdjustableJSlider yzoomer;
     private BioSeq gseq;
@@ -132,7 +144,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private boolean showhairline = true;
     private boolean showhairlineLabel = true;
     private Shadow hairline, axishairline;
-    private final JSplitPane split_pane;
+    private JSplitPane split_pane;
 
     private static Color col_bg = COLORS.BACKGROUND.defaultColor();
     private static Color col_frame0 = COLORS.FRAME0.defaultColor();
@@ -160,6 +172,141 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final int table_height = 100;
     private static final int seqmap_pixel_height = 500;
     private static final double zoomRatio = 30.0;
+    private JRPTabbedPane tabbedPane;
+    private Preferences prefs;
+
+    private ComponentFactory propertiesTabPanelFactory;
+
+    private ComponentFactory interProScanTabPanelFactory;
+    private Map<String, Object> properties;
+
+    private InterProScanResultSheet ipsTable;
+    private InterProScanTableModel ipsTableModel;
+    private ProtAnnotEventService eventService;
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
+
+    @Reference
+    public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
+        this.ipsTableModel = ipsTableModel;
+    }
+
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        this.properties = properties;
+        JPanel p = initPanel();
+        initPropertiesTab();
+        initInterProScanTab();
+        initListerners();
+
+        EventBus eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
+
+    @Subscribe
+    public synchronized void updateInterProScanTableModel(InterProScanModelUpdateEvent e) {
+        ipsTable.showTableData(ipsTableModel);
+        ipsTableModel.fireTableDataChanged();
+        tabbedPane.setSelectedIndex(1);
+    }
+
+    public void initAxis() {
+        axismap.setSize(seqmap.getSize().width, upper_white_space
+                + middle_white_space + lower_white_space
+                + axis_pixel_height + seq_pixel_height);
+        maps = new NeoMap[2];
+        maps[0] = seqmap;
+        maps[1] = axismap;
+
+        zoomPoint = new VisibleRange();
+        hairline = new Shadow(this.seqmap);
+        axishairline = new Shadow(this.axismap);
+        zoomPoint.addListener(hairline);
+        zoomPoint.removeListener(axishairline);
+
+        hairline.setUseXOR(true);
+        hairline.setLabeled(showhairlineLabel);
+    }
+
+    public void initSplitPane(JPanel p) {
+        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
+        this.add("Center", split_pane);
+    }
+
+    public JPanel initPanel() {
+        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
+        seqmap.setOffsetScroller(y_scroller);
+
+        JPanel map_panel = new JPanel();
+
+        map_panel.setLayout(new BorderLayout());
+        map_panel.add("North", axismap);
+        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
+        seqmap.setBackground(col_bg);
+        map_panel.add("Center", seqmap);
+        JPanel right = new JPanel();
+        right.setLayout(new GridLayout(1, 2));
+        right.add(y_scroller);
+        right.add(yzoomer);
+        int maps_height = axis_pixel_height + seq_pixel_height
+                + upper_white_space + middle_white_space + lower_white_space
+                + divider_size + seqmap_pixel_height;
+
+        JPanel p = new JPanel();
+        p.addComponentListener(this);
+        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
+        p.setLayout(new BorderLayout());
+        p.add("Center", map_panel);
+        p.add("East", right);
+        map_panel.add("South", xzoomer);
+        tabbedPane
+                = new JRPTabbedPane(GenomeView.class
+                        .getName());
+        initSplitPane(p);
+
+        initAxis();
+        return p;
+    }
+
+    public void initListerners() {
+        seqmap.addMouseListener(this);
+        seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
+
+        seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
+        axismap.addMouseListener(this);
+        axismap.setSelectionEvent(NeoMap.NO_SELECTION);
+    }
+
+    public void initInterProScanTab() {
+        final Properties ipsProps = new Properties();
+        TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
+        ipsTable = (InterProScanResultSheet) ipsTab.getComponent();
+        ipsTable.showTableData(ipsTableModel);
+        tabbedPane.add(ipsTable.getTitle(), ipsTable);
+    }
+
+    public void initPropertiesTab() {
+        final Properties props = new Properties();
+        props.setProperty("seqmap.width", seqmap.getWidth() + "");
+        props.setProperty("table.height", table_height + "");
+        ComponentInstance instance = propertiesTabPanelFactory.newInstance(props);
+        TabPanelComponent tb = (TabPanelComponent) instance.getInstance();
+        table_view = (ModPropertySheet) tb.getComponent();
+        tabbedPane.add(tb.getName(), table_view);
+    }
+
+    @Reference(target = "(component.factory=properties.tab.factory.provider)")
+    public void setPropertiesTabPanelFactory(final ComponentFactory propertiesTabPanelFactory) {
+        this.propertiesTabPanelFactory = propertiesTabPanelFactory;
+    }
+
+    @Reference(target = "(component.factory=interproscan.tab.factory.provider)")
+    public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
+        this.interProScanTabPanelFactory = interProScanTabPanelFactory;
+    }
 
     /**
      * Removes currently loaded data by clearing maps.
@@ -172,14 +319,45 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 //        table_view.showProperties(new Properties[0]);
     }
 
+    private Map<String, Color> loadPrefs() {
+        Map<String, Color> phash = new HashMap<>();
+
+        prefs
+                = Preferences.userNodeForPackage(ProtAnnotAction.class
+                );
+
+        try {
+            for (Entry<String, Color> color_pref : GenomeView.COLORS.defaultColorList().entrySet()) {
+                phash.put(color_pref.getKey(), new Color(prefs.getInt(color_pref.getKey(), color_pref.getValue().getRGB())));
+            }
+            updatePrefs(phash);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+
+        prefs_hash = phash;
+        return prefs_hash;
+    }
+
+    private
+            void updatePrefs(Map<String, Color> hash) {
+        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class
+        );
+
+        for (Entry<String, Color> entry
+                : hash.entrySet()) {
+            prefs.putInt(entry.getKey(), entry.getValue().getRGB());
+        }
+    }
+
     /**
      * Sets up the layout for the maps and the other elements that are part of the application.
      *
      * @param phash Color perferences stored in hashtable to setup the layout.
      */
-    GenomeView(Map<String, Color> phash) {
+    public GenomeView() {
 
-        initPrefs(phash);
+        initPrefs(loadPrefs());
         popup = new JPopupMenu();
         seqmap = new TieredNeoMap(true, false);
         seqmap.enableDragScrolling(true);
@@ -191,8 +369,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
-        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
-        seqmap.setOffsetScroller(y_scroller);
 
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
@@ -222,63 +398,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         this.setLayout(new BorderLayout());
 
-        JPanel map_panel = new JPanel();
-
-        map_panel.setLayout(new BorderLayout());
-        JPanel top = new JPanel();
-        top.setLayout(new BorderLayout());
-        top.addComponentListener(this);
-        top.add("North", xzoomer);
-        top.add("South", axismap);
-        map_panel.add("North", top);
-//        map_panel.add("South", axismap);
-        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
-        seqmap.setBackground(col_bg);
-        map_panel.add("Center", seqmap);
-        JPanel right = new JPanel();
-        right.setLayout(new GridLayout(1, 2));
-//        right.add(y_scroller);
-        right.add(yzoomer);
-        int maps_height = axis_pixel_height + seq_pixel_height
-                + upper_white_space + middle_white_space + lower_white_space
-                + divider_size + seqmap_pixel_height;
-
-        JPanel p = new JPanel();
-        p.addComponentListener(this);
-        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
-        p.setLayout(new BorderLayout());
-        p.add("East", y_scroller);
-        p.add("Center", map_panel);
-        p.add("West", right);
-//        map_panel.add("North", xzoomer);
-        table_view = new ModPropertySheet();
-        table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
-
-        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, table_view);
-        this.add("Center", split_pane);
-        //this.add("Center", p);
-        //this.add("South", table_view);
-        seqmap.addMouseListener(this);
-        seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
-
-        seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
-        axismap.addMouseListener(this);
-        axismap.setSelectionEvent(NeoMap.NO_SELECTION);
-        axismap.setSize(seqmap.getSize().width, upper_white_space
-                + middle_white_space + lower_white_space
-                + axis_pixel_height + seq_pixel_height);
-        maps = new NeoMap[2];
-        maps[0] = seqmap;
-        maps[1] = axismap;
-
-        zoomPoint = new VisibleRange();
-        hairline = new Shadow(this.seqmap);
-        axishairline = new Shadow(this.axismap);
-        zoomPoint.addListener(hairline);
-        zoomPoint.removeListener(axishairline);
-
-        hairline.setUseXOR(true);
-        hairline.setLabeled(showhairlineLabel);
     }
 
     /**
@@ -1205,7 +1324,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(GenomeView.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenomeView.class
+    );
 
     /**
      * Copies a SeqSymmetry. Note that this clears all previous data from the MutableSeqSymmetry.
@@ -1302,4 +1422,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     Map<String, Color> getColorPrefs() {
         return prefs_hash;
     }
+
+    public JRPTabbedPane getTabbedPane() {
+        return tabbedPane;
+    }
+
 }

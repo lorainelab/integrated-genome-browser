@@ -5,7 +5,9 @@
  */
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
@@ -13,7 +15,9 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.EventBus;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
@@ -23,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
@@ -34,6 +38,7 @@ import java.util.TimerTask;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -48,6 +53,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.bioviz.protannot.event.StatusSetEvent;
+import org.bioviz.protannot.event.StatusStartEvent;
+import org.bioviz.protannot.event.StatusTerminateEvent;
 import org.bioviz.protannot.interproscan.InterProscanTranslator;
 import org.bioviz.protannot.interproscan.api.InterProscanService;
 import org.bioviz.protannot.interproscan.api.InterProscanService.Status;
@@ -57,7 +65,9 @@ import org.bioviz.protannot.interproscan.api.JobSequence;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.bioviz.protannot.model.Dnaseq;
+import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.bioviz.protannot.view.StatusBar;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
@@ -65,10 +75,12 @@ import org.w3c.dom.Document;
  *
  * @author jeckstei
  */
-@aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class)
+@aQute.bnd.annotation.component.Component(provide = ProtAnnotService.class, factory = "protannot.service.factory.provider")
 public class ProtAnnotService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotService.class);
+
+    private static final Icon INFO_ICON = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
 
     private InterProscanService interProscanService;
 
@@ -99,12 +111,73 @@ public class ProtAnnotService {
     private JLabel selectAllLabel;
     private JPanel applicationsPanel;
     private final Preferences protAnnotPreferencesNode;
+    private Map<String, Object> properties;
+    private Dnaseq dnaseq;
+    private CThreadWorker< Void, Void> applicationLoadingWorker;
+    private CThreadWorker<Void, Void> loadResultsWorker;
+    private EventBus eventBus;
+    private ProtAnnotEventService eventService;
+    private volatile boolean interProScanRunning;
+    private volatile String id;
+    private InterProScanTableModel model;
+
+    @Reference
+    public void setModel(InterProScanTableModel model) {
+        this.model = model;
+    }
+
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
 
     public ProtAnnotService() throws JAXBException {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
+        dnaseq = new Dnaseq();
+        interProScanRunning = false;
+    }
+
+    public boolean isInterProScanRunning() {
+        return interProScanRunning;
+    }
+
+    public void cancelBackgroundTasks() {
+        eventBus.post(new StatusTerminateEvent(id));
+        interProScanRunning = false;
+        if (applicationLoadingWorker != null) {
+            try {
+                applicationLoadingWorker.cancelThread(true);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        if (loadResultsWorker != null) {
+            try {
+                loadResultsWorker.cancelThread(true);
+            } catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+
+    }
+
+    public Dnaseq getDnaseq() {
+        return dnaseq;
+    }
+
+    public void setDnaseq(Dnaseq dnaseq) {
+        this.dnaseq = dnaseq;
+    }
+
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        this.properties = properties;
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+        id = (String) properties.get("id");
     }
 
     private void initEmail() {
@@ -127,6 +200,7 @@ public class ProtAnnotService {
         } else {
             statusLabel.setText(text);
         }
+        eventBus.post(new StatusSetEvent(text, StatusBar.ICONS.INFO, true, id));
     }
 
     private void initProgressBar() {
@@ -143,7 +217,7 @@ public class ProtAnnotService {
     }
 
     private boolean showApplicationOptionsLoadingModal() {
-        CThreadWorker worker = createLoadApplicationsThread();
+        applicationLoadingWorker = createLoadApplicationsThread();
 
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel("Loading InterProScan Options. Please wait...");
@@ -158,7 +232,7 @@ public class ProtAnnotService {
         Object[] options = {"Cancel"};
 
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Options");
-        return processApplicationLoadingSelection(selectedValue, options, worker);
+        return processApplicationLoadingSelection(selectedValue, options);
     }
 
     private Object showOptionPane(final JComponent[] inputs, Object[] options, String message) throws HeadlessException {
@@ -173,9 +247,10 @@ public class ProtAnnotService {
         return pane.getValue();
     }
 
-    private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options, CThreadWorker worker) {
+    private boolean processApplicationLoadingSelection(Object selectedValue, Object[] options) {
         if (selectedValue != null && selectedValue.equals(options[0])) {
-            worker.cancelThread(true);
+            //applicationLoadingWorker.cancelThread(true);
+            cancelBackgroundTasks();
             return false;
         }
         return true;
@@ -186,11 +261,15 @@ public class ProtAnnotService {
             return false;
         }
         boolean isAllSelected = true;
-        for (java.awt.Component c : applicationsPanel.getComponents()) {
-            if (c instanceof JCheckBox) {
-                if (!((JCheckBox) c).isSelected()) {
-                    isAllSelected = false;
-                    break;
+        for (java.awt.Component parent : applicationsPanel.getComponents()) {
+            if (parent instanceof JPanel) {
+                for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                    if (child instanceof JCheckBox) {
+                        if (!((JCheckBox) child).isSelected()) {
+                            isAllSelected = false;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -207,14 +286,38 @@ public class ProtAnnotService {
         });
     }
 
-    private void initApplicationCheckboxValues(JCheckBox applCheckBox, ValueType vt) {
-        applCheckBox.setName(vt.getValue());
+    private void initApplicationToolTip(JPanel container, JCheckBox applCheckBox, ValueType vt) {
         if (vt.getProperties() != null
                 && vt.getProperties().getProperty() != null
                 && vt.getProperties().getProperty().getKey() != null
                 && vt.getProperties().getProperty().getKey().equals("description")) {
-            applCheckBox.setToolTipText(vt.getProperties().getProperty().getValue());
+            JLabel icon = new JLabel();
+            icon.setIcon(INFO_ICON);
+            String originalToolTip = vt.getProperties().getProperty().getValue();
+            StringBuilder sb = new StringBuilder("<html>");
+            for (int i = 0; i < originalToolTip.length(); i += 50) {
+                if ((originalToolTip.length() - i) < 50) {
+                    sb.append(originalToolTip.substring(i));
+                } else {
+                    sb.append(originalToolTip.substring(i, i + 50));
+//                    if(originalToolTip.length() > (i + 51 - 1) 
+//                            && originalToolTip.charAt(i+50) != ' ' 
+//                            && originalToolTip.charAt(i+51) != ' ') {
+//                        sb.append("-");
+//                    }
+                    sb.append("<br />");
+                }
+
+            }
+            sb.append("</html>");
+            icon.setToolTipText(sb.toString());
+            container.add(icon, "left");
         }
+    }
+
+    private void initApplicationCheckboxValues(JPanel container, JCheckBox applCheckBox, ValueType vt) {
+        applCheckBox.setName(vt.getValue());
+        container.add(applCheckBox, "left");
     }
 
     private void initApplicationCheckboxSelection(JCheckBox applCheckBox, ValueType vt) {
@@ -231,11 +334,13 @@ public class ProtAnnotService {
         ParameterType applications = interProscanService.getApplications();
         applicationsPanel = new JPanel(new MigLayout(new LC().wrapAfter(3)));
         applications.getValues().getValue().forEach(vt -> {
+            JPanel container = new JPanel(new MigLayout());
             JCheckBox applCheckBox = new JCheckBox(vt.getLabel());
             initApplicationListener(applCheckBox);
-            initApplicationCheckboxValues(applCheckBox, vt);
+            initApplicationCheckboxValues(container, applCheckBox, vt);
+            initApplicationToolTip(container, applCheckBox, vt);
             initApplicationCheckboxSelection(applCheckBox, vt);
-            applicationsPanel.add(applCheckBox);
+            applicationsPanel.add(container);
         });
         configParentPanel.add(applicationsPanel, "wrap");
         if (isAllApplicationsSelected()) {
@@ -243,7 +348,7 @@ public class ProtAnnotService {
         }
     }
 
-    private CThreadWorker createLoadApplicationsThread() {
+    private CThreadWorker< Void, Void> createLoadApplicationsThread() {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan Options") {
             @Override
             protected Void runInBackground() {
@@ -271,7 +376,7 @@ public class ProtAnnotService {
         return worker;
     }
 
-    private void showResultLoadingModal(CThreadWorker worker) {
+    private void showResultLoadingModal() {
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
@@ -289,7 +394,9 @@ public class ProtAnnotService {
         Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
         if (selectedValue != null && selectedValue.equals(options[1])) {
             LOG.info("cancelling result request");
-            worker.cancelThread(true);
+            cancelBackgroundTasks();
+        } else {
+            eventBus.post(new InterProScanModelUpdateEvent());
         }
     }
 
@@ -311,16 +418,20 @@ public class ProtAnnotService {
                     setSelectAllText(UNSELECT_ALL);
                 }
 
-                for (java.awt.Component c : applicationsPanel.getComponents()) {
-                    if (c instanceof JCheckBox) {
-                        if (isAllSelected) {
-                            ((JCheckBox) c).setSelected(false);
-                        } else {
-                            ((JCheckBox) c).setSelected(true);
+                for (java.awt.Component parent : applicationsPanel.getComponents()) {
+                    if (parent instanceof JPanel) {
+                        for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                            if (child instanceof JCheckBox) {
+                                if (isAllSelected) {
+                                    ((JCheckBox) child).setSelected(false);
+                                } else {
+                                    ((JCheckBox) child).setSelected(true);
+                                }
+                            }
                         }
                     }
-                }
 
+                }
             }
 
             @Override
@@ -366,13 +477,14 @@ public class ProtAnnotService {
         JPanel linkPanel = new JPanel(new MigLayout());
         linkPanel.add(new JLabel("For more information,"), "left");
         JLabel hyperlink = new JLabel("<html><a href='#'>visit the InterPro Web page at EBI</a>.</html>");
+        hyperlink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         hyperlink.addMouseListener(new MouseListener() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (Desktop.isDesktopSupported()) {
                     try {
-                        Desktop.getDesktop().browse(new URI("http://www.ebi.ac.uk/interpro"));
+                        Desktop.getDesktop().browse(new URI("http://www.ebi.ac.uk/interpro/about.html"));
                     } catch (IOException | URISyntaxException ex) {
                         LOG.error("Error navigating to hyperlink in about IGB window", ex);
                     }
@@ -389,6 +501,7 @@ public class ProtAnnotService {
 
             @Override
             public void mouseEntered(MouseEvent e) {
+
             }
 
             @Override
@@ -411,11 +524,15 @@ public class ProtAnnotService {
     private boolean processSetupOption(int optionChosen) {
         if (optionChosen == 0) {
             inputAppl.clear();
-            for (java.awt.Component c : applicationsPanel.getComponents()) {
-                if (c instanceof JCheckBox) {
-                    if (((JCheckBox) c).isSelected()) {
-                        String value = ((JCheckBox) c).getName();
-                        inputAppl.add(value);
+            for (java.awt.Component parent : applicationsPanel.getComponents()) {
+                if (parent instanceof JPanel) {
+                    for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                        if (child instanceof JCheckBox) {
+                            if (((JCheckBox) child).isSelected()) {
+                                String value = ((JCheckBox) child).getName();
+                                inputAppl.add(value);
+                            }
+                        }
                     }
                 }
             }
@@ -431,9 +548,11 @@ public class ProtAnnotService {
     }
 
     public void asyncLoadSequence(Callback callback) {
+        interProScanRunning = true;
+        eventBus.post(new StatusStartEvent(id));
         if (showSetupModal()) {
             resultFetchTimer = new Timer();
-            CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("Loading InterProScan") {
+            loadResultsWorker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override
                 protected Void runInBackground() {
                     try {
@@ -458,10 +577,14 @@ public class ProtAnnotService {
 
                 @Override
                 protected void finished() {
+
                 }
             };
-            CThreadHolder.getInstance().execute(this, worker);
-            showResultLoadingModal(worker);
+            CThreadHolder.getInstance().execute(this, loadResultsWorker);
+            showResultLoadingModal();
+        } else {
+            interProScanRunning = false;
+            eventBus.post(new StatusTerminateEvent(id));
         }
     }
 
@@ -473,7 +596,7 @@ public class ProtAnnotService {
         request.setTitle(Optional.empty());
         request.setGoterms(Optional.empty());
         request.setPathways(Optional.empty());
-        for (Object obj : parser.getDnaseq().getMRNAAndAaseq()) {
+        for (Object obj : getDnaseq().getMRNAAndAaseq()) {
             if (obj instanceof Dnaseq.MRNA) {
                 String proteinSequence = null;
                 String sequenceName = null;
@@ -492,8 +615,8 @@ public class ProtAnnotService {
         return request;
     }
 
-    private void processJobResults(final List<Job> successfulJobs, Callback callback) {
-        Dnaseq original = parser.getDnaseq();
+    private void processJobResults(final List<Job> jobs, Callback callback) {
+        Dnaseq original = getDnaseq();
         Iterator it = original.getMRNAAndAaseq().iterator();
         while (it.hasNext()) {
             Object obj = it.next();
@@ -502,59 +625,73 @@ public class ProtAnnotService {
             }
         }
 
-        for (Job job : successfulJobs) {
+        jobs.stream().filter(job -> job.getStatus().equals(Status.FINISHED)).forEach(job -> {
             Optional<Document> doc = interProscanService.result(job.getId());
             if (doc.isPresent()) {
                 Dnaseq.Aaseq aaseq = interProscanTranslator.translateFromResultDocumentToModel(job.getSequenceName(), doc.get());
                 original.getMRNAAndAaseq().add(aaseq);
             }
-        }
+        });
         callback.execute(original);
         dialog.dispose();
         resultFetchTimer.cancel();
     }
 
     private TimerTask buildTimerTask(final List<Job> jobs, Callback callback) {
-        final List<Job> successfulJobs = new ArrayList<>();
+
         return new TimerTask() {
 
             @Override
             public void run() {
 
-                int failed = 0;
+                int failed = (int) jobs.stream().filter(job -> (!job.getStatus().equals(Status.RUNNING)
+                        && !job.getStatus().equals(Status.FINISHED))).count();;
+                int successful = (int) jobs.stream().filter(job -> job.getStatus().equals(Status.FINISHED)).count();;
+                int running = (int) jobs.stream().filter(job -> job.getStatus().equals(Status.RUNNING)).count();
+                for (int i = 0; i < jobs.size(); i++) {
+                    Job job = jobs.get(i);
+                    Status status = job.getStatus();
+                    if (!status.equals(Status.RUNNING)) {
+                        continue;
+                    }
+                    status = interProscanService.status(job.getId());
+                    job.setStatus(status);
+                    LOG.info(job.getId() + " " + status.toString());
 
-                Iterator<Job> it = jobs.iterator();
-                while (it.hasNext()) {
-                    Job job = it.next();
-                    Status status = interProscanService.status(job.getId());
-                    LOG.info(status.toString());
-                    if (status.equals(Status.FINISHED)) {
-                        successfulJobs.add(job);
-                        it.remove();
-                    }
-                    if (status.equals(Status.ERROR)) {
+                    if (status.equals(Status.RUNNING)) {
+                        //running++;
+                    } else if (status.equals(Status.FINISHED)) {
+                        running--;
+                        successful++;
+                    } else {
+                        running--;
                         failed++;
-                        it.remove();
                     }
-                    if (status.equals(Status.FAILURE)) {
-                        failed++;
-                        it.remove();
-                    }
-                    if (status.equals(Status.NOT_FOUND)) {
-                        //TODO: Notify user
-                        it.remove();
-                    }
+                    initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
+                    model.updateModel(jobs);
                 }
-                if (jobs != null && !jobs.isEmpty()) {
-                    initStatusLabel(jobs.size() + " Running, " + successfulJobs.size() + " Successful, " + failed + " Failed ");
+                if (anyJobRunning(jobs)) {
+                    initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
                 } else {
                     initStatusLabel("Fetching results from InterProscan");
                 }
-                if (jobs.isEmpty()) {
-                    processJobResults(successfulJobs, callback);
+                model.updateModel(jobs);
+                if (!anyJobRunning(jobs)) {
+                    processJobResults(jobs, callback);
+                    interProScanRunning = false;
+                    eventBus.post(new StatusTerminateEvent(id));
                 }
             }
         };
+    }
+
+    private boolean anyJobRunning(final List<Job> jobs) {
+        for (Job job : jobs) {
+            if (job.getStatus().equals(Status.RUNNING)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void loadSequence(Callback callback) {
@@ -577,7 +714,7 @@ public class ProtAnnotService {
         int option = chooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = chooser.getSelectedFile();
-            Dnaseq dnaseq = parser.getDnaseq();
+            Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {
                 jaxbContext = JAXBContext.newInstance(Dnaseq.class);

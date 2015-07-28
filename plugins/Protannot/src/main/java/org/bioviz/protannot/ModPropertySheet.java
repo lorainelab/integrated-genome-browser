@@ -1,18 +1,8 @@
 package org.bioviz.protannot;
 
-import com.affymetrix.genometry.util.GeneralUtils;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -21,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.bioviz.protannot.model.ProtannotParser;
@@ -29,7 +18,7 @@ import org.bioviz.protannot.model.ProtannotParser;
 /**
  * Displays Properties (name, value pairs) associated with whatever Glyph objects the user has selected.
  */
-class ModPropertySheet extends JPanel {
+public class ModPropertySheet extends JPanel {
 
     private final JLabel title;
     private final JScrollPane scroll_pane;
@@ -42,12 +31,12 @@ class ModPropertySheet extends JPanel {
     /**
      * Create a new PropertySheet containing no data.
      */
-    ModPropertySheet() {
+    public ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
-        helper = new PropertySheetHelper();
-        jvp = new JViewport();
         table = new JTable();
+        helper = new PropertySheetHelper(table);
+        jvp = new JViewport();
         scroll_pane = new JScrollPane(table);
 
         setUpPanel();
@@ -202,87 +191,5 @@ class ModPropertySheet extends JPanel {
         return table.getSize();
     }
 
-    private class PropertySheetHelper extends DefaultTableCellRenderer implements
-            MouseListener, MouseMotionListener {
-
-        private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
-        private final Cursor defaultCursor = null;
-
-        PropertySheetHelper() {
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table,
-                Object obj, boolean isSelected, boolean hasFocus, int row, int column) {
-
-            if (isURLField(row, column)) {
-
-                String url = "<html> <a href='" + (String) obj + "'>"
-                        + (String) obj + "</a> </html>)";
-
-                return super.getTableCellRendererComponent(table, url,
-                        isSelected, hasFocus, row, column);
-            }
-
-            return super.getTableCellRendererComponent(table, obj, isSelected,
-                    hasFocus, row, column);
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-
-            Point p = e.getPoint();
-            int row = table.rowAtPoint(p);
-            int column = table.columnAtPoint(p);
-
-            if (e.getClickCount() >= 2) {
-                Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
-                StringSelection data = new StringSelection((String) table.getValueAt(row, column));
-                system.setContents(data, null);
-                return;
-            }
-
-            if (isURLField(row, column)) {
-                GeneralUtils.browse((String) table.getValueAt(row, column));
-            }
-
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            Point p = e.getPoint();
-            int row = table.rowAtPoint(p);
-            int column = table.columnAtPoint(p);
-
-            if (isURLField(row, column)) {
-                table.setCursor(handCursor);
-            } else if (table.getCursor() != defaultCursor) {
-                table.setCursor(defaultCursor);
-            }
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-        }
-
-        private boolean isURLField(int row, int column) {
-            return (column != 0 && table.getValueAt(row, 0).equals("URL"));
-        }
-    }
+    
 }

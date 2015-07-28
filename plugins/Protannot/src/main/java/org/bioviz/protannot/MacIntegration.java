@@ -57,12 +57,12 @@ class MacIntegration {
      *
      * @return a singleton instance of MacIntegration
      */
-    public static synchronized MacIntegration getInstance() {
-        if (instance == null) {
-            instance = new MacIntegration();
-        }
-        return instance;
-    }
+//    public static synchronized MacIntegration getInstance() {
+//        if (instance == null) {
+//            instance = new MacIntegration();
+//        }
+//        return instance;
+//    }
 
     /**
      * Wrapper around Apple's com.apple.eawt.setDockIconImage.
@@ -102,15 +102,15 @@ class ApplicationListenerProxy implements InvocationHandler {
         try {
             switch (method.getName()) {
                 case "handleAbout":
-                    ProtAnnotAction.getAboutAction().actionPerformed(null);
+                   // actionPerformed(null);
                     Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
                     setHandled.invoke(args[0], true);
                     break;
                 case "handleQuit":
-                    ProtAnnotAction.getExitAction().actionPerformed(null);
+                    //actionPerformed(null);
                     break;
                 case "handlePreferences":
-                    ProtAnnotAction.getPreferencesAction().actionPerformed(null);
+                    //actionPerformed(null);
                     break;
                 default:
                     result = method.invoke(o, args);

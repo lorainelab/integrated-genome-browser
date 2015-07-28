@@ -3,8 +3,6 @@
  */
 package org.bioviz.protannot;
 
-import org.bioviz.protannot.event.StatusTerminateEvent;
-import org.bioviz.protannot.view.StatusBar;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
@@ -96,8 +94,10 @@ import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import net.miginfocom.swing.MigLayout;
+import org.bioviz.protannot.event.StatusTerminateEvent;
 import org.bioviz.protannot.model.Dnaseq;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.bioviz.protannot.view.StatusBar;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -332,10 +332,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      */
     private void start() {
         if ("Mac OS X".equals(System.getProperty("os.name"))) {
-//            MacIntegration mi = MacIntegration.getInstance();
-//            if (imageIcon != null) {
-//                mi.setDockIconImage(imageIcon);
-//            }
+            MacIntegration mi = new MacIntegration(this);
+            if (imageIcon != null) {
+                mi.setDockIconImage(imageIcon);
+            }
         }
         frm.setTransferHandler(fdh);
         frm.setIconImage(imageIcon);

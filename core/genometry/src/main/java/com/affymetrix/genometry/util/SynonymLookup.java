@@ -101,7 +101,7 @@ public class SynonymLookup {
                             preferredNames.add(record.get(0));
                         }
                     }
-                    Set<String> row = Sets.newConcurrentHashSet();
+                    Set<String> row = Sets.newLinkedHashSet();
                     for (String entry : record) {
                         if (StringUtils.isNotEmpty(entry)) {
                             row.add(entry);
@@ -123,21 +123,24 @@ public class SynonymLookup {
      * @param row
      */
     public void addSynonyms(Set<String> row) {
-        updateRowWithExistingSynonyms(row);
-        for (String synonymCandidate : row) {
-            Set<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonymCandidate)).build();
-            if (thesaurus.get(synonymCandidate).addAll(row)) {
+        Set<String> synonyms = getExistingSynonyms(row);
+        for (String synonym : synonyms) {
+            Set<String> previousSynonymList = ImmutableSet.<String>builder().addAll(thesaurus.get(synonym)).build();
+            if (thesaurus.get(synonym).addAll(synonyms)) {
                 for (String previousSynonym : previousSynonymList) {
-                    thesaurus.get(previousSynonym).addAll(row);
+                    thesaurus.get(previousSynonym).addAll(synonyms);
                 }
             }
         }
     }
 
-    private void updateRowWithExistingSynonyms(Set<String> row) {
+    private Set<String> getExistingSynonyms(Set<String> row) {
+        Set<String> synonyms = Sets.newLinkedHashSet();
         for (String synonymCandidate : row) {
-            row.addAll(thesaurus.get(synonymCandidate));
+            synonyms.add(synonymCandidate);
+            synonyms.addAll(thesaurus.get(synonymCandidate));
         }
+        return synonyms;
     }
 
     /**

@@ -133,10 +133,10 @@
                 <configuration>
                     <instructions>    
                         <Import-Package>
-                            !org.bioviz.protannot*,
+                            com.apple.eawt,
                             *
                         </Import-Package>
-                        <Export-Package/>                        
+                        <Export-Package/>                    
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

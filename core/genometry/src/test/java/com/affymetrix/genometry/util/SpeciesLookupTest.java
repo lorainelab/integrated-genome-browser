@@ -50,7 +50,7 @@ public class SpeciesLookupTest {
 
         version = "caepb9";
         result = SpeciesLookup.getSpeciesName(version, true);
-        assertEquals("caepb", result);
+        assertEquals("Caenorhabditis brenneri", result);
         result = SpeciesLookup.getSpeciesName(version, false);
         assertEquals(c_brenneri, result);
 
@@ -60,7 +60,7 @@ public class SpeciesLookupTest {
 
         version = "MM9";
         result = SpeciesLookup.getSpeciesName(version, true);
-        assertEquals("MM", result);
+        assertEquals("Mus musculus", result);
         result = SpeciesLookup.getSpeciesName(version, false);
         assertEquals(m_musculus, result);
 
@@ -70,7 +70,7 @@ public class SpeciesLookupTest {
 
         version = "ponabe9";
         result = SpeciesLookup.getSpeciesName(version, true);
-        assertEquals("ponabe", result);
+        assertEquals("Pongo pygmaeus abelii", result);
         result = SpeciesLookup.getSpeciesName(version, false);
         assertEquals(p_pygmaeus_abelii, result);
     }

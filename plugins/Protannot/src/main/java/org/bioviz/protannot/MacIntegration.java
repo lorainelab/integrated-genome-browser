@@ -14,20 +14,17 @@ import org.slf4j.LoggerFactory;
  * @author sgblanch
  * @version $Id: MacIntegration.java 5804 2010-04-28 18:54:46Z sgblanch $
  */
-class MacIntegration {
+public class MacIntegration {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MacIntegration.class);
-    /**
-     * private instance of MacIntegration for singleton pattern
-     */
-    private static MacIntegration instance = null;
+
     private Class<?> applicationClass = null;
     private Object application = null;
 
     /**
      * Private constructor to enforce singleton pattern
      */
-    private MacIntegration() {
+    public MacIntegration(ProtAnnotAction protAnnotAction) {
         try {
             applicationClass = Class.forName("com.apple.eawt.Application");
             Method getApplication = applicationClass.getDeclaredMethod("getApplication");
@@ -41,7 +38,7 @@ class MacIntegration {
                     Class.forName("com.apple.eawt.ApplicationListener"));
 
             Class<?> applicationAdapterClass = Class.forName("com.apple.eawt.ApplicationAdapter");
-            Object proxy = ApplicationListenerProxy.newInstance(applicationAdapterClass.newInstance());
+            Object proxy = ApplicationListenerProxy.newInstance(applicationAdapterClass.newInstance(), protAnnotAction);
             addApplicationListener.invoke(application, proxy);
 
         } catch (Exception ex) {
@@ -84,16 +81,19 @@ class ApplicationListenerProxy implements InvocationHandler {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ApplicationListenerProxy.class);
 
     private final Object o;
+    
+    private final ProtAnnotAction protAnnotAction;
 
-    public static Object newInstance(Object o) {
+    public static Object newInstance(Object o, ProtAnnotAction pa) {
         return Proxy.newProxyInstance(
                 o.getClass().getClassLoader(),
                 o.getClass().getInterfaces(),
-                new ApplicationListenerProxy(o));
+                new ApplicationListenerProxy(o, pa));
     }
 
-    private ApplicationListenerProxy(Object o) {
+    private ApplicationListenerProxy(Object o, ProtAnnotAction protAnnotAction) {
         this.o = o;
+        this.protAnnotAction = protAnnotAction;
     }
 
     @Override
@@ -102,15 +102,15 @@ class ApplicationListenerProxy implements InvocationHandler {
         try {
             switch (method.getName()) {
                 case "handleAbout":
-                   // actionPerformed(null);
+                    protAnnotAction.actionPerformed(null);
                     Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
                     setHandled.invoke(args[0], true);
                     break;
                 case "handleQuit":
-                    //actionPerformed(null);
+                    protAnnotAction.actionPerformed(null);
                     break;
                 case "handlePreferences":
-                    //actionPerformed(null);
+                    protAnnotAction.actionPerformed(null);
                     break;
                 default:
                     result = method.invoke(o, args);

@@ -143,7 +143,11 @@ public final class DataProviderTableModel extends AbstractTableModel {
             case Type:
                 return dataProvider.getFactoryName().get();
             case URL:
+                try {
+                return URLDecoder.decode(dataProvider.getUrl(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
                 return dataProvider.getUrl();
+            }
             case Enabled:
                 return dataProvider.getStatus() != ResourceStatus.Disabled;
             default:

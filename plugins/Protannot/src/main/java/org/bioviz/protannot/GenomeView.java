@@ -286,6 +286,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void initInterProScanTab() {
         final Properties ipsProps = new Properties();
         ipsProps.put("id", properties.get("id"));
+        ipsProps.put("protannotService", properties.get("protannotService"));
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
         ipsTable = (InterProScanResultSheet) ipsTab.getComponent();
         ipsTableModel = new InterProScanTableModel();

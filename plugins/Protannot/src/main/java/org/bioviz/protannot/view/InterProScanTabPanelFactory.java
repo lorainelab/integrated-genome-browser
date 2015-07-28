@@ -7,13 +7,11 @@ package org.bioviz.protannot.view;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Properties;
 import org.bioviz.protannot.InterProScanResultSheet;
 import org.bioviz.protannot.ProtAnnotService;
-import org.osgi.service.component.ComponentFactory;
 
 /**
  *
@@ -25,16 +23,12 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
     private static final String NAME = "InterProScan";
 
     private Map<String, Object> properties;
-    private ComponentFactory protannotServiceFactory;
-
-    @Reference(target = "(component.factory=protannot.service.factory.provider)")
-    public void setProtannotServiceFactory(ComponentFactory protannotServiceFactory) {
-        this.protannotServiceFactory = protannotServiceFactory;
-    }
+    private ProtAnnotService protannotService;
 
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
+        this.protannotService = (ProtAnnotService) properties.get("protannotService");
     }
 
     @Override
@@ -43,7 +37,7 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
         tableView.getCancelAllJobs().addActionListener((ActionEvent e) -> {
             Properties props = new Properties();
             props.put("id", properties.get("id"));
-            ((ProtAnnotService) protannotServiceFactory.newInstance(props).getInstance()).cancelBackgroundTasks();
+            protannotService.cancelBackgroundTasks();
         });
 
         return tableView;

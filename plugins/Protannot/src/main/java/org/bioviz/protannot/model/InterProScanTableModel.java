@@ -23,6 +23,7 @@ public class InterProScanTableModel extends AbstractTableModel {
     private static int MODEL_ID = 1;
     private ProtAnnotEventService eventService;
     private int id;
+    private static boolean allJobsCancelled = false;
 
     public InterProScanTableModel() {
         this.results = new ArrayList<>();
@@ -47,17 +48,21 @@ public class InterProScanTableModel extends AbstractTableModel {
     }
 
     public void updateModel(List<Job> jobs) {
+        if (allJobsCancelled) {
+            return;
+        }
         results.clear();
         for (Job job : jobs) {
             addData(job.getSequenceName(), job.getId(), job.getStatus());
         }
         eventService.getEventBus().post(new InterProScanModelUpdateEvent());
     }
-    
+
     public void cancelAllJobs() {
-        for(InterProScanTableData result : results) {
+        for (InterProScanTableData result : results) {
             result.status = Status.CANCELLED;
         }
+        allJobsCancelled = true;
         eventService.getEventBus().post(new InterProScanModelUpdateEvent());
     }
 

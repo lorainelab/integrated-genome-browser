@@ -44,7 +44,7 @@ public class SpeciesLookupTest {
 
         version = "c_Brenneri_Aug_2009";
         result = SpeciesLookup.getSpeciesName(version, true);
-        assertEquals("C_brenneri", result);
+        assertEquals("Caenorhabditis brenneri", result);
         result = SpeciesLookup.getSpeciesName(version, false);
         assertEquals(c_brenneri, result);
 

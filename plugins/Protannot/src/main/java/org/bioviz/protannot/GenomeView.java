@@ -189,7 +189,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.eventService = eventService;
     }
 
-    @Reference
     public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
         this.ipsTableModel = ipsTableModel;
     }
@@ -210,9 +209,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public synchronized void updateInterProScanTableModel(InterProScanModelUpdateEvent e) {
         ipsTable.showTableData(ipsTableModel);
         ipsTableModel.fireTableDataChanged();
-        tabbedPane.setSelectedIndex(1);
     }
-
+    
     public void initAxis() {
         axismap.setSize(seqmap.getSize().width, upper_white_space
                 + middle_white_space + lower_white_space
@@ -284,6 +282,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         final Properties ipsProps = new Properties();
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
         ipsTable = (InterProScanResultSheet) ipsTab.getComponent();
+        ipsTableModel = new InterProScanTableModel();
+        ipsTableModel.setEventService(eventService);
         ipsTable.showTableData(ipsTableModel);
         tabbedPane.add(ipsTable.getTitle(), ipsTable);
     }
@@ -1425,6 +1425,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     public JRPTabbedPane getTabbedPane() {
         return tabbedPane;
+    }
+
+    public InterProScanTableModel getIpsTableModel() {
+        return ipsTableModel;
     }
 
 }

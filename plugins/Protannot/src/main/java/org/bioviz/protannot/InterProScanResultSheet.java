@@ -5,10 +5,6 @@
  */
 package org.bioviz.protannot;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
-import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,7 +20,6 @@ import org.bioviz.protannot.model.InterProScanTableModel;
  *
  * @author Tarun
  */
-@Component
 public class InterProScanResultSheet extends JPanel {
 
     public static final String COMPONENT_NAME = "InterProScanResultSheet";
@@ -32,17 +27,10 @@ public class InterProScanResultSheet extends JPanel {
     private final JScrollPane scrollPane;
     private final JViewport jvp;
     private static final String DEFAULT_TITLE = "InterProScan";
-    private InterProScanTableModel tableData;
+    private InterProScanTableModel ipsTableModel;
     private final JTable table;
     private final PropertySheetHelper helper;
     private final JButton cancelAllJobs;
-
-    private ProtAnnotService protAnnotService;
-
-    @Reference
-    public void setProtAnnotService(ProtAnnotService protAnnotService) {
-        this.protAnnotService = protAnnotService;
-    }
 
     public InterProScanResultSheet() {
         super();
@@ -53,13 +41,6 @@ public class InterProScanResultSheet extends JPanel {
         this.scrollPane = new JScrollPane(table);
         cancelAllJobs = new JButton("Cancel All Jobs");
         setUpPanel();
-    }
-
-    @Activate
-    public void activate() {
-        cancelAllJobs.addActionListener((ActionEvent e) -> {
-            protAnnotService.cancelBackgroundTasks();
-        });
     }
 
     private void setUpPanel() {
@@ -86,9 +67,14 @@ public class InterProScanResultSheet extends JPanel {
         return title.getText();
     }
 
-    public void showTableData(InterProScanTableModel tableData) {
-        this.tableData = tableData;
-        table.setModel(tableData);
+    public void showTableData(InterProScanTableModel ipsTableModel) {
+        this.ipsTableModel = ipsTableModel;
+        table.setModel(ipsTableModel);
         table.setDefaultRenderer(Object.class, helper);
     }
+
+    public JButton getCancelAllJobs() {
+        return cancelAllJobs;
+    }
+
 }

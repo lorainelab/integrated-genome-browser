@@ -5,9 +5,6 @@
  */
 package org.bioviz.protannot.model;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -20,30 +17,29 @@ import org.bioviz.protannot.interproscan.api.Job;
  *
  * @author Tarun
  */
-@Component(name = InterProScanTableModel.COMPONENT_NAME, immediate = true, provide = InterProScanTableModel.class)
 public class InterProScanTableModel extends AbstractTableModel {
 
-    public static final String COMPONENT_NAME = "InterProScanTableModel";
-    List<InterProScanTableData> results;
-
-    ProtAnnotEventService eventService;
+    private List<InterProScanTableData> results;
+    private static int MODEL_ID = 1;
+    private ProtAnnotEventService eventService;
+    private int id;
 
     public InterProScanTableModel() {
         this.results = new ArrayList<>();
+        id = MODEL_ID++;
     }
 
-    @Reference
     public void setEventService(ProtAnnotEventService eventService) {
         this.eventService = eventService;
+        this.eventService.getEventBus().register(this);
     }
 
-    @Activate
-    public void activate() {
-        eventService.getEventBus().register(this);
+    public int getId() {
+        return id;
     }
 
-    public void addData(String proteinProductId, String jobId) {
-        results.add(new InterProScanTableData(proteinProductId, jobId));
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void addData(String proteinProductId, String jobId, Status status) {

@@ -141,13 +141,13 @@ public final class SpeciesLookup {
             }
         }
 
-//        pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+)+)");
-//        m = pattern.matcher(species);
-//        if (m.find()) {
-//            species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
-//        }
+        pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+).*)");
+        m = pattern.matcher(species);
+        if (m.find()) {
+            species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
+        }
         //end of adding
-        species = speciesLookup.getPreferredName(species, cs);
+        species = speciesLookup.getPreferredName(species, false);
         return species;
     }
 

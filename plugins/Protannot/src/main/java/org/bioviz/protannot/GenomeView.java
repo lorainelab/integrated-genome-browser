@@ -197,8 +197,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
 //        JPanel p = initPanel();
-//        initPropertiesTab();
-//        initInterProScanTab();
+
 //        initListerners();
         initPrefs(loadPrefs());
         popup = new JPopupMenu();
@@ -215,7 +214,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
         seqmap.setOffsetScroller(y_scroller);
-
 
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
@@ -274,10 +272,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("Center", map_panel);
         p.add("West", right);
 //        map_panel.add("North", xzoomer);
-        table_view = new ModPropertySheet();
-        table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
+//        table_view = new ModPropertySheet();
+//        table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
 
-        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, table_view);
+        tabbedPane = new JRPTabbedPane(GenomeView.class
+                        .getName());
+        
+        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
         this.add("Center", split_pane);
         //this.add("Center", p);
         //this.add("South", table_view);
@@ -306,6 +307,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
+
+        initPropertiesTab();
+        initInterProScanTab();
     }
 
     @Subscribe
@@ -467,7 +471,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     public GenomeView() {
 
-        
     }
 
     /**
@@ -1100,7 +1103,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        
+
         tabbedPane.setSelectedIndex(0);
 
         if (!(e instanceof NeoMouseEvent)) {

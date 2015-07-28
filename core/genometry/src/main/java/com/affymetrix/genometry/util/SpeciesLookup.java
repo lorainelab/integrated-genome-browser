@@ -67,15 +67,15 @@ public final class SpeciesLookup {
 
     public static void load(SpeciesInfo speciesInfo) {
         speciesLookup.preferredNames.add(speciesInfo.getName());
-        Set<String> row = Sets.newTreeSet();
+        Set<String> row = Sets.newLinkedHashSet();
         row.add(speciesInfo.getName());
         row.add(speciesInfo.getGenomeVersionNamePrefix());
         speciesLookup.addSynonyms(row);
     }
 
     /**
-     * Return the common name of a species
-     * using the default case sensitivity of this lookup.
+     * Return the common name of a species using the default case sensitivity of
+     * this lookup.
      *
      * @return the user-friendly name of the species.
      */
@@ -100,7 +100,8 @@ public final class SpeciesLookup {
      *
      * @param version the version to find the species name of.
      * @param cs true if this search should be case sensitive, false otherwise.
-     * @return the user-friendly name of the species or the version if not found.
+     * @return the user-friendly name of the species or the version if not
+     * found.
      */
     public static String getSpeciesName(String version, boolean cs) {
         String species = null;
@@ -128,19 +129,6 @@ public final class SpeciesLookup {
             species = speciesLookup.getPreferredName(version, cs);
         }
 
-        //Added by Max
-		/*
-         String[] nameParts = species.split("_");
-         if(nameParts.length == 5) {
-         StringBuilder sb = new StringBuilder( nameParts[0]);
-         species = sb.append("_").append(nameParts[1]).append("_").append(nameParts[2]).toString();
-         } else if(nameParts.length == 1) {
-         species = species.substring(0, (species.length() - 1));
-         } else {
-         StringBuilder sb = new StringBuilder( nameParts[0]);
-         species = sb.append("_").append(nameParts[1]).toString();
-         }
-         */
         Pattern pattern = Pattern.compile("(\\S+)(?>_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\\d{4})");
         Matcher m = pattern.matcher(species);
         if (m.find()) {
@@ -153,13 +141,13 @@ public final class SpeciesLookup {
             }
         }
 
-        pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+)+)");
-        m = pattern.matcher(species);
-        if (m.find()) {
-            species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
-        }
+//        pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+)+)");
+//        m = pattern.matcher(species);
+//        if (m.find()) {
+//            species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
+//        }
         //end of adding
-
+        species = speciesLookup.getPreferredName(species, cs);
         return species;
     }
 

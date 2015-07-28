@@ -5,10 +5,9 @@
 package com.affymetrix.genometry.util;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,11 +46,11 @@ public class SpeciesSynonymsLookup extends SynonymLookup {
     public synchronized void addSynonyms(Set<String> row) {
         //we don't allow more than one common name.
         //we reject the common name if we  already have one.
-        Set<String> synonymList = new HashSet<>();
+        Set<String> synonymList = Sets.newLinkedHashSet();
 
         String common_name = row.iterator().next();
         Collection<String> values = thesaurus.get(common_name);
-        if (values != null) {
+        if (!values.isEmpty()) {
             //this means we have common name from a previous species.txt
             //but we are still interested in the genome_versions_that can point to this
             //common name
@@ -69,7 +68,7 @@ public class SpeciesSynonymsLookup extends SynonymLookup {
                 }
             }
         } else {
-            synonymList = new LinkedHashSet<>();
+            synonymList = Sets.newLinkedHashSet();
             for (String entry : row) {
                 synonymList.add(entry);
             }

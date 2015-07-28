@@ -94,6 +94,8 @@ public class ProtAnnotService {
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    
+    private static final int TOOL_TIP_WIDTH = 50;
     private final Pattern pattern;
     private Matcher matcher;
 
@@ -295,16 +297,16 @@ public class ProtAnnotService {
             icon.setIcon(INFO_ICON);
             String originalToolTip = vt.getProperties().getProperty().getValue();
             StringBuilder sb = new StringBuilder("<html>");
-            for (int i = 0; i < originalToolTip.length(); i += 50) {
-                if ((originalToolTip.length() - i) < 50) {
+            for (int i = 0; i < originalToolTip.length(); i += TOOL_TIP_WIDTH) {
+                if ((originalToolTip.length() - i) < TOOL_TIP_WIDTH) {
                     sb.append(originalToolTip.substring(i));
                 } else {
-                    sb.append(originalToolTip.substring(i, i + 50));
-//                    if(originalToolTip.length() > (i + 51 - 1) 
-//                            && originalToolTip.charAt(i+50) != ' ' 
-//                            && originalToolTip.charAt(i+51) != ' ') {
-//                        sb.append("-");
-//                    }
+                    sb.append(originalToolTip.substring(i, i + TOOL_TIP_WIDTH));
+                    if(originalToolTip.length() > (i + 51) 
+                            && originalToolTip.charAt(i+50) != ' ' 
+                            && originalToolTip.charAt(i+51) != ' ') {
+                        sb.append("-");
+                    }
                     sb.append("<br />");
                 }
 

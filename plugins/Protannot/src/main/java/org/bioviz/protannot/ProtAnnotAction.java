@@ -414,7 +414,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                     load(bioseq);
                     eventBus.post(new StatusTerminateEvent(id));
                 }
-            });
+            }, gview);
         } else {
             JPanel iPSIsRunningPanel = new JPanel(new MigLayout());
             iPSIsRunningPanel.add(new JLabel("InterProScan is already running in the background."), "wrap");

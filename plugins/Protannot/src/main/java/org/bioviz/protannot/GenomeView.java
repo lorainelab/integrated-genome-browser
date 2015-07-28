@@ -1035,6 +1035,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     @Override
     public void mousePressed(MouseEvent e) {
+        
+        tabbedPane.setSelectedIndex(0);
 
         if (!(e instanceof NeoMouseEvent)) {
             return;

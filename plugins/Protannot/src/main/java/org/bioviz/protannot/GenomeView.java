@@ -129,13 +129,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
     private static final boolean DEBUG_PROTEIN_ANNOTS = false;
     // the map that displays the transcripts and protein annotations
-    private final TieredNeoMap seqmap;
+    private TieredNeoMap seqmap;
     // the map that shows the sequence and axis
-    private final NeoMap axismap;
+    private NeoMap axismap;
     private NeoMap[] maps;
     private ModPropertySheet table_view;
-    private final AdjustableJSlider xzoomer;
-    private final AdjustableJSlider yzoomer;
+    private AdjustableJSlider xzoomer;
+    private AdjustableJSlider yzoomer;
     private BioSeq gseq;
     private BioSeq vseq;
     private List<GlyphI> exonGlyphs = null;
@@ -196,10 +196,113 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
-        JPanel p = initPanel();
-        initPropertiesTab();
-        initInterProScanTab();
-        initListerners();
+//        JPanel p = initPanel();
+//        initPropertiesTab();
+//        initInterProScanTab();
+//        initListerners();
+        initPrefs(loadPrefs());
+        popup = new JPopupMenu();
+        seqmap = new TieredNeoMap(true, false);
+        seqmap.enableDragScrolling(true);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
+        seqmap.setMapOffset(0, seqmap_pixel_height);
+        axismap = new NeoMap(false, false);
+        axismap.setMapColor(col_axis_bg);
+        axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
+                + upper_white_space + middle_white_space
+                + lower_white_space);
+
+        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
+        seqmap.setOffsetScroller(y_scroller);
+
+
+        xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+        xzoomer.setBackground(Color.white);
+        yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+        yzoomer.setBackground(Color.white);
+
+        seqmap.setZoomer(NeoMap.X, xzoomer);
+        seqmap.setZoomer(NeoMap.Y, yzoomer);
+
+        axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
+
+        seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
+            }
+        });
+
+        seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
+            }
+        });
+
+        this.setLayout(new BorderLayout());
+
+        JPanel map_panel = new JPanel();
+
+        map_panel.setLayout(new BorderLayout());
+        JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());
+        top.addComponentListener(this);
+        top.add("North", xzoomer);
+        top.add("South", axismap);
+        map_panel.add("North", top);
+//        map_panel.add("South", axismap);
+        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
+        seqmap.setBackground(col_bg);
+        map_panel.add("Center", seqmap);
+        JPanel right = new JPanel();
+        right.setLayout(new GridLayout(1, 2));
+//        right.add(y_scroller);
+        right.add(yzoomer);
+        int maps_height = axis_pixel_height + seq_pixel_height
+                + upper_white_space + middle_white_space + lower_white_space
+                + divider_size + seqmap_pixel_height;
+
+        JPanel p = new JPanel();
+        p.addComponentListener(this);
+        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
+        p.setLayout(new BorderLayout());
+        p.add("East", y_scroller);
+        p.add("Center", map_panel);
+        p.add("West", right);
+//        map_panel.add("North", xzoomer);
+        table_view = new ModPropertySheet();
+        table_view.setPreferredSize(new Dimension(seqmap.getWidth(), table_height));
+
+        split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, table_view);
+        this.add("Center", split_pane);
+        //this.add("Center", p);
+        //this.add("South", table_view);
+        seqmap.addMouseListener(this);
+        seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
+
+        seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
+        axismap.addMouseListener(this);
+
+        axismap.setSelectionEvent(NeoMap.NO_SELECTION);
+        axismap.setSize(seqmap.getSize().width, upper_white_space
+                + middle_white_space + lower_white_space
+                + axis_pixel_height + seq_pixel_height);
+        maps = new NeoMap[2];
+        maps[0] = seqmap;
+        maps[1] = axismap;
+
+        zoomPoint = new VisibleRange();
+        hairline = new Shadow(this.seqmap);
+        axishairline = new Shadow(this.axismap);
+        zoomPoint.addListener(hairline);
+        zoomPoint.removeListener(axishairline);
+
+        hairline.setUseXOR(true);
+        hairline.setLabeled(showhairlineLabel);
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
@@ -364,47 +467,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     public GenomeView() {
 
-        initPrefs(loadPrefs());
-        popup = new JPopupMenu();
-        seqmap = new TieredNeoMap(true, false);
-        seqmap.enableDragScrolling(true);
-        seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
-        seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
-        seqmap.setMapOffset(0, seqmap_pixel_height);
-        axismap = new NeoMap(false, false);
-        axismap.setMapColor(col_axis_bg);
-        axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
-                + upper_white_space + middle_white_space
-                + lower_white_space);
-
-        xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-        xzoomer.setBackground(Color.white);
-        yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-        yzoomer.setBackground(Color.white);
-
-        seqmap.setZoomer(NeoMap.X, xzoomer);
-        seqmap.setZoomer(NeoMap.Y, yzoomer);
-
-        axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
-
-        seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
-            }
-        });
-
-        seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
-            }
-        });
-
-        this.setLayout(new BorderLayout());
-
+        
     }
 
     /**

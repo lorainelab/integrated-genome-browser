@@ -65,7 +65,6 @@ import org.bioviz.protannot.interproscan.api.JobSequence;
 import org.bioviz.protannot.interproscan.appl.model.ParameterType;
 import org.bioviz.protannot.interproscan.appl.model.ValueType;
 import org.bioviz.protannot.model.Dnaseq;
-import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.bioviz.protannot.view.StatusBar;
 import org.slf4j.LoggerFactory;
@@ -121,12 +120,6 @@ public class ProtAnnotService {
     private ProtAnnotEventService eventService;
     private volatile boolean interProScanRunning;
     private volatile String id;
-    private InterProScanTableModel model;
-
-    @Reference
-    public void setModel(InterProScanTableModel model) {
-        this.model = model;
-    }
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -163,8 +156,12 @@ public class ProtAnnotService {
                 LOG.error(e.getMessage(), e);
             }
         }
-
+        if (gview != null) {
+            gview.getIpsTableModel().cancelAllJobs();
+        }
+        LOG.info("All jobs cancelled");
     }
+    GenomeView gview;
 
     public Dnaseq getDnaseq() {
         return dnaseq;
@@ -378,7 +375,7 @@ public class ProtAnnotService {
         return worker;
     }
 
-    private void showResultLoadingModal() {
+    private void showResultLoadingModal(GenomeView gview) {
         parentPanel = new JPanel(new MigLayout());
         initInfoLabel(LOADING_IPS_DATA);
         initStatusLabel("Initializing ...");
@@ -398,7 +395,7 @@ public class ProtAnnotService {
             LOG.info("cancelling result request");
             cancelBackgroundTasks();
         } else {
-            eventBus.post(new InterProScanModelUpdateEvent());
+            gview.getTabbedPane().setSelectedIndex(1);
         }
     }
 
@@ -549,7 +546,8 @@ public class ProtAnnotService {
         return false;
     }
 
-    public void asyncLoadSequence(Callback callback) {
+    public void asyncLoadSequence(Callback callback, GenomeView gview) {
+        this.gview = gview;
         interProScanRunning = true;
         eventBus.post(new StatusStartEvent(id));
         if (showSetupModal()) {
@@ -558,7 +556,7 @@ public class ProtAnnotService {
                 @Override
                 protected Void runInBackground() {
                     try {
-                        loadSequence(callback);
+                        loadSequence(callback, gview);
                     } catch (Exception e) {
                         LOG.error(e.getMessage(), e);
                     }
@@ -583,7 +581,7 @@ public class ProtAnnotService {
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
-            showResultLoadingModal();
+            showResultLoadingModal(gview);
         } else {
             interProScanRunning = false;
             eventBus.post(new StatusTerminateEvent(id));
@@ -639,7 +637,7 @@ public class ProtAnnotService {
         resultFetchTimer.cancel();
     }
 
-    private TimerTask buildTimerTask(final List<Job> jobs, Callback callback) {
+    private TimerTask buildTimerTask(final List<Job> jobs, Callback callback, GenomeView gview) {
 
         return new TimerTask() {
 
@@ -670,14 +668,14 @@ public class ProtAnnotService {
                         failed++;
                     }
                     initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
-                    model.updateModel(jobs);
+                    gview.getIpsTableModel().updateModel(jobs);
                 }
                 if (anyJobRunning(jobs)) {
                     initStatusLabel(running + " Running, " + successful + " Successful, " + failed + " Failed ");
                 } else {
                     initStatusLabel("Fetching results from InterProscan");
                 }
-                model.updateModel(jobs);
+                gview.getIpsTableModel().updateModel(jobs);
                 if (!anyJobRunning(jobs)) {
                     processJobResults(jobs, callback);
                     interProScanRunning = false;
@@ -696,7 +694,7 @@ public class ProtAnnotService {
         return false;
     }
 
-    public void loadSequence(Callback callback) {
+    public void loadSequence(Callback callback, GenomeView gview) {
         JobRequest jobRequest = createJobRequest();
         final List<Job> jobs = interProscanService.run(jobRequest);
         if (LOG.isDebugEnabled()) {
@@ -705,7 +703,7 @@ public class ProtAnnotService {
             });
         }
 
-        resultFetchTimer.schedule(buildTimerTask(jobs, callback), new Date(), 1000);
+        resultFetchTimer.schedule(buildTimerTask(jobs, callback, gview), new Date(), 1000);
 
     }
 

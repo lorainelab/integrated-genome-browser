@@ -191,8 +191,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         serviceProps.put("id", id);
         protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
 
-        final Properties genomeViewProps = new Properties();
-        gview = (GenomeView) genomeViewFactory.newInstance(genomeViewProps).getInstance();
+        serviceProps.put("protannotService", protAnnotService);
+        gview = (GenomeView) genomeViewFactory.newInstance(serviceProps).getInstance();
         eventBus = eventService.getEventBus();
         eventBus.register(this);
     }
@@ -404,6 +404,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     public void doLoadInterProscan() {
         if (!protAnnotService.isInterProScanRunning()) {
+            gview.getIpsTableModel().resetModel();
             protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
                 @Override
@@ -414,7 +415,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                     load(bioseq);
                     eventBus.post(new StatusTerminateEvent(id));
                 }
-            });
+            }, gview);
         } else {
             JPanel iPSIsRunningPanel = new JPanel(new MigLayout());
             iPSIsRunningPanel.add(new JLabel("InterProScan is already running in the background."), "wrap");
@@ -429,9 +430,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             processIPSRunningOptionChosen(optionChosen);
         }
     }
-    
+
     private void processIPSRunningOptionChosen(int optionChosen) {
-        switch(optionChosen) {
+        switch (optionChosen) {
             case 0:
                 protAnnotService.cancelBackgroundTasks();
                 return;
@@ -732,7 +733,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
         BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
-        gview.setBioSeq(genome_seq, true);
+        gview.setBioSeq(genome_seq, false);
         frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
     }
 

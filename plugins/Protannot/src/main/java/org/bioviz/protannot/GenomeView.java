@@ -129,13 +129,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
     private static final boolean DEBUG_PROTEIN_ANNOTS = false;
     // the map that displays the transcripts and protein annotations
-    private final TieredNeoMap seqmap;
+    private TieredNeoMap seqmap;
     // the map that shows the sequence and axis
-    private final NeoMap axismap;
+    private NeoMap axismap;
     private NeoMap[] maps;
     private ModPropertySheet table_view;
-    private final AdjustableJSlider xzoomer;
-    private final AdjustableJSlider yzoomer;
+    private AdjustableJSlider xzoomer;
+    private AdjustableJSlider yzoomer;
     private BioSeq gseq;
     private BioSeq vseq;
     private List<GlyphI> exonGlyphs = null;
@@ -189,7 +189,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.eventService = eventService;
     }
 
-    @Reference
     public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
         this.ipsTableModel = ipsTableModel;
     }
@@ -204,13 +203,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
+
     }
 
     @Subscribe
     public synchronized void updateInterProScanTableModel(InterProScanModelUpdateEvent e) {
         ipsTable.showTableData(ipsTableModel);
         ipsTableModel.fireTableDataChanged();
-        tabbedPane.setSelectedIndex(1);
     }
 
     public void initAxis() {
@@ -243,7 +242,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel map_panel = new JPanel();
 
         map_panel.setLayout(new BorderLayout());
-        map_panel.add("North", axismap);
+        JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());
+        top.addComponentListener(this);
+        top.add("North", xzoomer);
+        top.add("South", axismap);
+        map_panel.add("North", top);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(col_bg);
         map_panel.add("Center", seqmap);
@@ -259,12 +263,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.addComponentListener(this);
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
+        p.add("East", y_scroller);
         p.add("Center", map_panel);
-        p.add("East", right);
-        map_panel.add("South", xzoomer);
-        tabbedPane
-                = new JRPTabbedPane(GenomeView.class
-                        .getName());
+        p.add("West", right);
+        tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
+        Dimension minimumSize = new Dimension(0, 500);
+        p.setMinimumSize(minimumSize);
         initSplitPane(p);
 
         initAxis();
@@ -282,8 +286,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     public void initInterProScanTab() {
         final Properties ipsProps = new Properties();
+        ipsProps.put("id", properties.get("id"));
+        ipsProps.put("protannotService", properties.get("protannotService"));
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
         ipsTable = (InterProScanResultSheet) ipsTab.getComponent();
+        ipsTableModel = new InterProScanTableModel();
+        ipsTableModel.setEventService(eventService);
         ipsTable.showTableData(ipsTableModel);
         tabbedPane.add(ipsTable.getTitle(), ipsTable);
     }
@@ -385,7 +393,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
-            }
+    }
         });
 
         seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
@@ -394,6 +402,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
             }
+
         });
 
         this.setLayout(new BorderLayout());
@@ -1031,6 +1040,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     @Override
     public void mousePressed(MouseEvent e) {
 
+        tabbedPane.setSelectedIndex(0);
+
         if (!(e instanceof NeoMouseEvent)) {
             return;
         }
@@ -1425,6 +1436,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     public JRPTabbedPane getTabbedPane() {
         return tabbedPane;
+    }
+
+    public InterProScanTableModel getIpsTableModel() {
+        return ipsTableModel;
     }
 
 }

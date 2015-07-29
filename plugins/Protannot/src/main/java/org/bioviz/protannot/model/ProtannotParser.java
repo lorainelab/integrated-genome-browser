@@ -139,6 +139,9 @@ public class ProtannotParser {
             if (sym instanceof SupportsCdsSpan) {
                 SeqSpan cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
                 Dnaseq.MRNA.Cds cds = new Dnaseq.MRNA.Cds();
+                if (cds == null) {
+                    continue;
+                }
                 cds.setStart(BigInteger.valueOf(cdsSpan.getStart()));
                 cds.setEnd(BigInteger.valueOf(cdsSpan.getEnd()));
                 mrna.setCds(cds);

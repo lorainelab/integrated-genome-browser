@@ -404,6 +404,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     public void doLoadInterProscan() {
         if (!protAnnotService.isInterProScanRunning()) {
+            gview.getIpsTableModel().resetModel();
             protAnnotService.asyncLoadSequence(new ProtAnnotService.Callback() {
 
                 @Override

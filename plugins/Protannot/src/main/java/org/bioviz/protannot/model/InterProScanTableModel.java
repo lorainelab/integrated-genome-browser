@@ -154,4 +154,9 @@ public class InterProScanTableModel extends AbstractTableModel {
 
     }
 
+    public void resetModel() {
+        allJobsCancelled = false;
+        results.clear();
+    }
+
 }

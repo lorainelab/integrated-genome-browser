@@ -277,7 +277,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         tabbedPane = new JRPTabbedPane(GenomeView.class
                         .getName());
-        Dimension minimumSize = new Dimension(0, 200);
+        Dimension minimumSize = new Dimension(0, 500);
         p.setMinimumSize(minimumSize);
         split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
       

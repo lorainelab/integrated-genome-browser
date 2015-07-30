@@ -710,7 +710,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             if (amino_acid != null) {
 
                 final Properties props = new Properties();
-                props.put("draw.rect", true);
+                props.put("draw.rect", false);
                 SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
 
                 int start = prev_amino_end;

@@ -1275,8 +1275,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         Rectangle2D candidate_box;
         double champion_end = 0;
         double champion_start = 0;
+        double championHeight = 0;
         double candidate_end = 0;
         double candidate_start = 0;
+        double candidateHeight = 0;
         for (GlyphI candidate : candidates) {
             // we want everything
             if (multiselect) {
@@ -1287,16 +1289,18 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 candidate_box = candidate.getCoordBox();
                 candidate_start = candidate_box.getX();
                 candidate_end = candidate_box.getX() + candidate_box.getWidth();
+                candidateHeight = candidate_box.getHeight();
                 // note: if champion is null, we're on the first Glyph - so let the
                 // candidate be the champion for now
                 if (champion == null
                         || (candidate_end < champion_end && candidate_start >= champion_start)
                         || (candidate_end <= champion_end && candidate_start > champion_start)
-                        || // we leave the most computationally intensive test for last
-                        (champion.getChildren() != null && champion.getChildren().contains(candidate))) {
+                        || candidateHeight > championHeight
+                        || (champion.getChildren() != null && champion.getChildren().contains(candidate))) {
                     champion = candidate;
                     champion_start = candidate_start;
                     champion_end = candidate_end;
+                    championHeight = candidateHeight;
                 }
             }
         }

@@ -716,7 +716,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         for (int i = 0; i < childcount; i++) {
             SeqSymmetry exon2genome = annot2genome.getChild(i);
             SeqSpan gSpan = exon2genome.getSpan(vseq);
-            GlyphI cglyph = new OutlineRectGlyph();
+            GlyphI cglyph = new FillRectGlyph();
             seqmap.setDataModel(cglyph, exon2genome);
             // can't give this a type and therefore signal
             // to the selection logic that this is first class selectable

@@ -116,6 +116,11 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

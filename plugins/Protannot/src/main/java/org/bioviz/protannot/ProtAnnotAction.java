@@ -60,11 +60,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -155,10 +153,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     // has NeoMaps and PropertySheet (JTable)
     private ComponentFactory genomeViewFactory;
     private GenomeView gview;
-    // is populated from prefs_file
-    private Map<String, Color> prefs_hash;
-    // for storing user prefrences
-    private Preferences prefs;
+
     // width of the user's screen
     private Dimension screen;
 
@@ -182,6 +177,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private Map<String, Object> properties;
     private String id;
+    
+    private ProtAnnotPreferencesService protAnnotPreferencesService;
 
     @Activate
     public void activate(Map<String, Object> properties) {
@@ -196,6 +193,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         eventBus = eventService.getEventBus();
         eventBus.register(this);
     }
+
+    @Reference
+    public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
+        this.protAnnotPreferencesService = protAnnotPreferencesService;
+    }
+    
+    
 
     @Reference(target = "(component.factory=protannot.service.factory.provider)")
     public void setProtannotServiceFactory(ComponentFactory protannotServiceFactory) {
@@ -299,21 +303,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      * @return Returns a Map with name as key and Color as a value.
      */
     private Map<String, Color> loadPrefs() {
-        Map<String, Color> phash = new HashMap<>();
-
-        prefs = Preferences.userNodeForPackage(ProtAnnotAction.class);
-
-        try {
-            for (Entry<String, Color> color_pref : GenomeView.COLORS.defaultColorList().entrySet()) {
-                phash.put(color_pref.getKey(), new Color(prefs.getInt(color_pref.getKey(), color_pref.getValue().getRGB())));
-            }
-            updatePrefs(phash);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-
-        prefs_hash = phash;
-        return prefs_hash;
+        return protAnnotPreferencesService.getAllColorPreferences();
     }
 
     public ProtAnnotAction() {
@@ -483,7 +473,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     @Override
     public void windowClosing(WindowEvent evt) {
         if (evt.getSource() == frm) {
-            updatePrefs(gview.getColorPrefs());
+            protAnnotPreferencesService.updatePrefs(gview.getColorPrefs());
             protAnnotService.cancelBackgroundTasks();
         }
     }
@@ -976,19 +966,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Updates users color preferences
-     *
-     * @param hash Map containing color name and color value pairs.
-     */
-    private void updatePrefs(Map<String, Color> hash) {
-        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class);
-
-        for (Entry<String, Color> entry : hash.entrySet()) {
-            prefs.putInt(entry.getKey(), entry.getValue().getRGB());
-        }
-    }
-
-    /**
      *
      * @return Returns protannot frame.
      */
@@ -1061,7 +1038,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                gview.changePreference(GenomeView.COLORS.defaultColorList());
+                protAnnotPreferencesService.reset();
+                gview.changePreference(protAnnotPreferencesService.getAllColorPreferences());
                 model.setValues(gview.getColorPrefs());
                 colorChooser.setVisible(false);
             }

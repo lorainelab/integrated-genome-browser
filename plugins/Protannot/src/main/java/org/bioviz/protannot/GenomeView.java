@@ -45,14 +45,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.prefs.Preferences;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
@@ -80,49 +78,48 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     // people with red/green color blindness and also to make it
     // possible to distinguish the frame colors when printed in
     // black and white.
-    static enum COLORS {
-
-        BACKGROUND("background", Color.white),
-        FRAME0("frame0", new Color(0, 100, 145)),
-        FRAME1("frame1", new Color(0, 100, 255)),
-        FRAME2("frame2", new Color(192, 192, 114)),
-        TRANSCRIPT("transcript", Color.black),
-        DOMAIN("domain", new Color(84, 168, 132)),
-        EXONSUMMARY("exonsummary", Color.blue),
-        AMINOACID("amino_acid", Color.black);
-
-        private final String name;
-        private final Color color;
-
-        COLORS(String nm, Color col) {
-            this.name = nm;
-            this.color = col;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        private Color defaultColor() {
-            return color;
-        }
-
-        int getRGB() {
-            return color.getRGB();
-        }
-
-        static Map<String, Color> defaultColorList() {
-            Map<String, Color> defaults = new HashMap<>();
-
-            for (COLORS C : values()) {
-                defaults.put(C.toString(), C.defaultColor());
-            }
-
-            return defaults;
-        }
-    };
-
+//    static enum COLORS {
+//
+//        BACKGROUND("background", Color.white),
+//        FRAME0("frame0", new Color(0, 100, 145)),
+//        FRAME1("frame1", new Color(0, 100, 255)),
+//        FRAME2("frame2", new Color(192, 192, 114)),
+//        TRANSCRIPT("transcript", Color.black),
+//        DOMAIN("domain", new Color(84, 168, 132)),
+//        EXONSUMMARY("exonsummary", Color.blue),
+//        AMINOACID("amino_acid", Color.black);
+//
+//        private final String name;
+//        private final Color color;
+//
+//        COLORS(String nm, Color col) {
+//            this.name = nm;
+//            this.color = col;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return name;
+//        }
+//
+//        private Color defaultColor() {
+//            return color;
+//        }
+//
+//        int getRGB() {
+//            return color.getRGB();
+//        }
+//
+//        static Map<String, Color> defaultColorList() {
+//            Map<String, Color> defaults = new HashMap<>();
+//
+//            for (COLORS C : values()) {
+//                defaults.put(C.toString(), C.defaultColor());
+//            }
+//
+//            return defaults;
+//        }
+//    };
     JPopupMenu popup;
 
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
@@ -146,14 +143,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Shadow hairline, axishairline;
     private JSplitPane split_pane;
 
-    private static Color col_bg = COLORS.BACKGROUND.defaultColor();
-    private static Color col_frame0 = COLORS.FRAME0.defaultColor();
-    private static Color col_frame1 = COLORS.FRAME1.defaultColor();
-    private static Color col_frame2 = COLORS.FRAME2.defaultColor();
-    private static Color col_ts = COLORS.TRANSCRIPT.defaultColor();
-    private static Color col_domain = COLORS.DOMAIN.defaultColor();
-    private static Color col_exon_summary = COLORS.EXONSUMMARY.defaultColor();
-    private static Color col_amino_acid = COLORS.AMINOACID.defaultColor();
+    private static Color col_bg = ProtAnnotPreferencesService.COLORS.BACKGROUND.defaultColor();
+    private static Color col_frame0 = ProtAnnotPreferencesService.COLORS.FRAME0.defaultColor();
+    private static Color col_frame1 = ProtAnnotPreferencesService.COLORS.FRAME1.defaultColor();
+    private static Color col_frame2 = ProtAnnotPreferencesService.COLORS.FRAME2.defaultColor();
+    private static Color col_ts = ProtAnnotPreferencesService.COLORS.TRANSCRIPT.defaultColor();
+    private static Color col_domain = ProtAnnotPreferencesService.COLORS.DOMAIN.defaultColor();
+    private static Color col_exon_summary = ProtAnnotPreferencesService.COLORS.EXONSUMMARY.defaultColor();
+    private static Color col_amino_acid = ProtAnnotPreferencesService.COLORS.AMINOACID.defaultColor();
     private static Color col_sequence = Color.black;
     private static Color col_axis_bg = Color.lightGray;
 
@@ -173,7 +170,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final int seqmap_pixel_height = 500;
     private static final double zoomRatio = 30.0;
     private JRPTabbedPane tabbedPane;
-    private Preferences prefs;
+
 
     private ComponentFactory propertiesTabPanelFactory;
 
@@ -183,6 +180,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private InterProScanResultSheet ipsTable;
     private InterProScanTableModel ipsTableModel;
     private ProtAnnotEventService eventService;
+
+    private ComponentFactory coloredResiduesGlyphFactory;
+
+    private ProtAnnotPreferencesService protAnnotPreferencesService;
+
+    @Reference
+    public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
+        this.protAnnotPreferencesService = protAnnotPreferencesService;
+    }
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -196,6 +202,49 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
+
+        initPrefs(loadPrefs());
+        popup = new JPopupMenu();
+        seqmap = new TieredNeoMap(true, false);
+        seqmap.enableDragScrolling(true);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
+        seqmap.setMapOffset(0, seqmap_pixel_height);
+        axismap = new NeoMap(false, false);
+        axismap.setMapColor(col_axis_bg);
+        axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
+                + upper_white_space + middle_white_space
+                + lower_white_space);
+
+        xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+        xzoomer.setBackground(Color.white);
+        yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+        yzoomer.setBackground(Color.white);
+
+        seqmap.setZoomer(NeoMap.X, xzoomer);
+        seqmap.setZoomer(NeoMap.Y, yzoomer);
+
+        axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
+
+        seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
+            }
+        });
+
+        seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
+            }
+
+        });
+
+        this.setLayout(new BorderLayout());
+
         JPanel p = initPanel();
         initPropertiesTab();
         initInterProScanTab();
@@ -316,6 +365,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.interProScanTabPanelFactory = interProScanTabPanelFactory;
     }
 
+    @Reference(target = "(component.factory=residues.glyph.factory.provider)")
+    public void setColoredResiduesGlyphFacatory(final ComponentFactory coloredResiduesGlyphFactory) {
+        this.coloredResiduesGlyphFactory = coloredResiduesGlyphFactory;
+    }
+
     /**
      * Removes currently loaded data by clearing maps.
      */
@@ -328,34 +382,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     private Map<String, Color> loadPrefs() {
-        Map<String, Color> phash = new HashMap<>();
-
-        prefs
-                = Preferences.userNodeForPackage(ProtAnnotAction.class
-                );
-
-        try {
-            for (Entry<String, Color> color_pref : GenomeView.COLORS.defaultColorList().entrySet()) {
-                phash.put(color_pref.getKey(), new Color(prefs.getInt(color_pref.getKey(), color_pref.getValue().getRGB())));
-            }
-            updatePrefs(phash);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-
-        prefs_hash = phash;
-        return prefs_hash;
-    }
-
-    private
-            void updatePrefs(Map<String, Color> hash) {
-        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotAction.class
-        );
-
-        for (Entry<String, Color> entry
-                : hash.entrySet()) {
-            prefs.putInt(entry.getKey(), entry.getValue().getRGB());
-        }
+        return protAnnotPreferencesService.getAllColorPreferences();
     }
 
     /**
@@ -364,48 +391,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param phash Color perferences stored in hashtable to setup the layout.
      */
     public GenomeView() {
-
-        initPrefs(loadPrefs());
-        popup = new JPopupMenu();
-        seqmap = new TieredNeoMap(true, false);
-        seqmap.enableDragScrolling(true);
-        seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
-        seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
-        seqmap.setMapOffset(0, seqmap_pixel_height);
-        axismap = new NeoMap(false, false);
-        axismap.setMapColor(col_axis_bg);
-        axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
-                + upper_white_space + middle_white_space
-                + lower_white_space);
-
-        xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-        xzoomer.setBackground(Color.white);
-        yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-        yzoomer.setBackground(Color.white);
-
-        seqmap.setZoomer(NeoMap.X, xzoomer);
-        seqmap.setZoomer(NeoMap.Y, yzoomer);
-
-        axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
-
-        seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
-    }
-        });
-
-        seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
-            }
-
-        });
-
-        this.setLayout(new BorderLayout());
 
     }
 
@@ -429,29 +414,29 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             return;
         }
 
-        if (phash.containsKey(COLORS.BACKGROUND.toString())) {
-            col_bg = phash.get(COLORS.BACKGROUND.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.BACKGROUND.toString())) {
+            col_bg = phash.get(ProtAnnotPreferencesService.COLORS.BACKGROUND.toString());
         }
-        if (phash.containsKey(COLORS.FRAME0.toString())) {
-            col_frame0 = phash.get(COLORS.FRAME0.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME0.toString())) {
+            col_frame0 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME0.toString());
         }
-        if (phash.containsKey(COLORS.FRAME1.toString())) {
-            col_frame1 = phash.get(COLORS.FRAME1.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME1.toString())) {
+            col_frame1 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME1.toString());
         }
-        if (phash.containsKey(COLORS.FRAME2.toString())) {
-            col_frame2 = phash.get(COLORS.FRAME2.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME2.toString())) {
+            col_frame2 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME2.toString());
         }
-        if (phash.containsKey(COLORS.TRANSCRIPT.toString())) {
-            col_ts = phash.get(COLORS.TRANSCRIPT.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.TRANSCRIPT.toString())) {
+            col_ts = phash.get(ProtAnnotPreferencesService.COLORS.TRANSCRIPT.toString());
         }
-        if (phash.containsKey(COLORS.DOMAIN.toString())) {
-            col_domain = phash.get(COLORS.DOMAIN.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.DOMAIN.toString())) {
+            col_domain = phash.get(ProtAnnotPreferencesService.COLORS.DOMAIN.toString());
         }
-        if (phash.containsKey(COLORS.EXONSUMMARY.toString())) {
-            col_exon_summary = phash.get(COLORS.EXONSUMMARY.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.EXONSUMMARY.toString())) {
+            col_exon_summary = phash.get(ProtAnnotPreferencesService.COLORS.EXONSUMMARY.toString());
         }
-        if (phash.containsKey(COLORS.AMINOACID.toString())) {
-            col_amino_acid = phash.get(COLORS.AMINOACID.toString());
+        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.AMINOACID.toString())) {
+            col_amino_acid = phash.get(ProtAnnotPreferencesService.COLORS.AMINOACID.toString());
         }
     }
 
@@ -787,7 +772,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param amino_acid String representing amino acids; visible when zoomed in
      * @param vseq
      */
-    private static void glyphifyCDSs(
+    private void glyphifyCDSs(
             MutableSeqSymmetry annot2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
@@ -803,7 +788,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
-                SequenceGlyph sg = new ColoredResiduesGlyph(false);
+                final Properties props = new Properties();
+                props.put("draw.rect", false);
+                SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
                 int start = prev_amino_end;
                 int end = start + gSpan.getLength();
                 String sub_amino_acid = amino_acid.substring(start, end);
@@ -979,7 +966,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         axismap.addAxis(upper_white_space + axis_pixel_height);
         //String residues = gseq.getResidues();
-        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
+        //ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
+        final Properties props = new Properties();
+        props.put("draw.rect", true);
+        ColoredResiduesGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
         sg.setResiduesProvider(gseq, gseq.getLength());
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength(), seq_pixel_height);
@@ -1394,7 +1384,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param colorhash Map<String,Color> new color preferences
      */
     void changePreference(Map<String, Color> colorhash) {
-        tempChangePreference(colorhash);
+        protAnnotPreferencesService.updatePrefs(colorhash);
+        protAnnotPreferencesService.commit();
+        updatePreferences(colorhash);
+
+    }
+
+    private void updatePreferences(Map<String, Color> colorhash) {
+        tempColorPrefs(colorhash);
+        initPrefs(colorhash);
+        if (gseq != null) {
+            storeCurrentSelection();
+            setBioSeq(gseq, false);
+            restorePreviousSelection();
+        }
         initPrefs(colorhash);
     }
 
@@ -1404,12 +1407,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param colorhash Map<String,Color> new color preferences
      */
     void tempChangePreference(Map<String, Color> colorhash) {
-        tempColorPrefs(colorhash);
-        if (gseq != null) {
-            storeCurrentSelection();
-            setBioSeq(gseq, false);
-            restorePreviousSelection();
-        }
+        protAnnotPreferencesService.updatePrefs(colorhash);
+        updatePreferences(colorhash);
     }
 
     /**
@@ -1417,6 +1416,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      *
      */
     void cancelChangePrefernce() {
+        protAnnotPreferencesService.abort();
+        prefs_hash = protAnnotPreferencesService.getAllColorPreferences();
         tempColorPrefs(prefs_hash);
         if (gseq != null) {
             storeCurrentSelection();

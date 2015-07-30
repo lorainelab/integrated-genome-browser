@@ -180,7 +180,7 @@ public class SynonymLookup {
      * @return the set of matching synonyms for the given synonym or an epmty
      * set.
      */
-    public Set<String> getSynonyms(String synonym, boolean cs) {
+    public synchronized Set<String> getSynonyms(String synonym, boolean cs) {
         if (synonym == null) {
             throw new IllegalArgumentException("str can not be null");
         }

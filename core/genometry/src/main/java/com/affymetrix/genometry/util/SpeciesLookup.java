@@ -51,6 +51,16 @@ public final class SpeciesLookup {
 
     private static final SpeciesLookup singleton = new SpeciesLookup();
 
+    private static final String SPECIES_SYNONYM_FILE = "species.txt";
+
+    private SpeciesLookup() {
+        try (InputStream resourceAsStream = SynonymLookup.class.getClassLoader().getResourceAsStream(SPECIES_SYNONYM_FILE)) {
+            load(resourceAsStream);
+        } catch (IOException ex) {
+            logger.error("Error retrieving Species synonym file", ex);
+        }
+    }
+
     public static SpeciesLookup getSpeciesLookup() {
         return singleton;
     }
@@ -104,7 +114,7 @@ public final class SpeciesLookup {
      * found.
      */
     public static String getSpeciesName(String version, boolean cs) {
-        String species = null;
+        String species;
 
         /* check to see if the synonym exists in the lookup */
         species = speciesLookup.getPreferredName(version, cs);

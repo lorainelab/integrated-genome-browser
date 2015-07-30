@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.util;
 
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.common.PreferenceUtils;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
  *
@@ -123,6 +124,20 @@ public class ModalUtils {
 
     public static void infoPanel(String message) {
         JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void errorPanel(String message) {
+        final Component activeWindow = getActiveWindow();
+        if (activeWindow != null && activeWindow.isVisible()) {
+            JOptionPane.showMessageDialog(activeWindow, message, "IGB", JOptionPane.ERROR_MESSAGE);
+        } else {
+            //wait 3 seconds and display anyway -- better solution may be possible, but this solves immediate issue of pop-up appearing before the main window
+            Timer timer = new Timer(3 * 1000, evt -> {
+                JOptionPane.showMessageDialog(getActiveWindow(), message, "IGB", JOptionPane.ERROR_MESSAGE);
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     private static Component getActiveWindow() {

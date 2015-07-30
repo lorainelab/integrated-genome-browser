@@ -270,9 +270,6 @@ public class DataProviderManager {
     }
 
     private void initializeDataProvider(DataProvider dataProvider) {
-        if (dataProvider.getStatus() != Disabled) {
-            dataProvider.initialize();
-        }
         if (dataProvider.getStatus() == Initialized) {
             //TODO don't assume GenomeVersionProvider instances are all derrived from DataProvider instances... a separate whiteboard/service listener would improve design.
             loadGenomeVersionSynonyms(dataProvider);

@@ -724,7 +724,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             // so let's put it in a list
             exonList.add(exon2genome);
             cglyph.setColor(col_ts);
-            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 10);
             exonGlyphs.add(cglyph);
             tGlyph.addChild(cglyph);
             //  testing display of "exon segments" for transcripts that have
@@ -762,7 +762,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             for (int i = 0; i < acount; i++) {
                 SeqSymmetry annot2mrna = mrna.getAnnotation(i);
                 if (annot2mrna != mrna2genome) {
-                    glyphifyTranscriptAnnots(mrna, annot2mrna, new_path2view, tier, tGlyph);
+                    glyphifyTranscriptAnnots(mrna, annot2mrna, mrna2genome, new_path2view, tier, tGlyph);
                 }
             }
         }
@@ -808,7 +808,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void glyphifyTranscriptAnnots(BioSeq mrna,
-            SeqSymmetry annot2mrna, SeqSymmetry[] path2view,
+            SeqSymmetry annot2mrna, SeqSymmetry mrna2genome, SeqSymmetry[] path2view,
             MapTierGlyph tier, GlyphI trans_parent) {
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2mrna);
@@ -837,7 +837,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(col_ts);
         seqmap.setDataModel(aGlyph, annot2mrna);
-        glyphifyCDSs(annot2genome, protein, aGlyph, amino_acid, vseq);
+        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq);
         trans_parent.addChild(aGlyph);
         displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
@@ -852,7 +852,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param vseq
      */
     private static void glyphifyCDSs(
-            MutableSeqSymmetry annot2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
         int prev_add = 0;
@@ -865,9 +865,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             colorByFrame(cglyph, gSpan.getMin() + prev_add);
             prev_add += 3 - (gSpan.getLength() % 3);	//Keep a track of no of complete amino acid added.
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+            cglyph.setSelectable(true);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
-                SequenceGlyph sg = new ColoredResiduesGlyph(false);
+                SequenceGlyph sg = new ColoredResiduesGlyph(true);
                 int start = prev_amino_end;
                 int end = start + gSpan.getLength();
                 String sub_amino_acid = amino_acid.substring(start, end);
@@ -876,6 +877,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
                 sg.setForegroundColor(col_amino_acid);
                 sg.setBackgroundColor(cglyph.getBackgroundColor());
+                sg.setSelectable(true);
+                sg.setInfo(mrna2genome);
                 aGlyph.addChild(sg);
             }
         }

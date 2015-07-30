@@ -139,7 +139,7 @@ public class ProtannotParser {
             if (sym instanceof SupportsCdsSpan) {
                 SeqSpan cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
                 Dnaseq.MRNA.Cds cds = new Dnaseq.MRNA.Cds();
-                if (cds == null) {
+                if (cdsSpan == null) {
                     continue;
                 }
                 cds.setStart(BigInteger.valueOf(cdsSpan.getStart()));

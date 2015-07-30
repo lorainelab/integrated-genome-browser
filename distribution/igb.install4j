@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="6.0.1" transformSequenceNumber="5">
+<install4j version="6.0.3" transformSequenceNumber="5">
   <directoryPresets config="/opt/igb/developerID_application_igb.p12" />
   <application name="Integrated Genome Browser" distributionSourceDir="" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:igbVersion}" compression="6" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="http://bioviz.org/igb/" version="${compiler:igbVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -1505,7 +1505,9 @@
     </applications>
   </installerGui>
   <mediaSets>
-    <windows name="Windows_x86_64" id="23" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.8.0_40" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows_x86_64" id="23" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-amd64-1.8.0_51" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
@@ -1517,10 +1519,10 @@
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
     </windows>
-    <unixInstaller name="Unix Installer" id="25" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="25" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1">
+      <excludedComponents />
+      <includedDownloadableComponents />
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
@@ -1532,13 +1534,13 @@
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
       <installerScript mode="1" file="">
         <content />
       </installerScript>
     </unixInstaller>
-    <windows name="Windows_x86" id="179" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.8.0_40" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows_x86" id="179" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_51" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
       <excludedLaunchers>
         <launcher id="22" />
       </excludedLaunchers>
@@ -1552,10 +1554,10 @@
         <commentFiles />
         <customAttributes />
       </autoUpdate>
+    </windows>
+    <macosFolder name="Mac OS X Folder" id="552" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="macosx-amd64-1.8.0_51" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" signLaunchers="true">
       <excludedComponents />
       <includedDownloadableComponents />
-    </windows>
-    <macosFolder name="Mac OS X Folder" id="552" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_40" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" signLaunchers="true">
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
@@ -1567,8 +1569,6 @@
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
       <topLevelFiles />
     </macosFolder>
   </mediaSets>

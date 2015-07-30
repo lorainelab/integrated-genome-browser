@@ -875,8 +875,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
          zoomtoselected feature is used. So to correct it below used method is used */
 
         axismap.addAxis(upper_white_space + axis_pixel_height);
-        //String residues = gseq.getResidues();
-        //ColoredResiduesGlyph sg = new ColoredResiduesGlyph(true);
         final Properties props = new Properties();
         props.put("draw.rect", true);
         ColoredResiduesGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();

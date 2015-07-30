@@ -24,10 +24,6 @@ import java.util.Map;
 @Component(provide = ColoredResiduesGlyph.class, factory = "residues.glyph.factory.provider")
 public class ColoredResiduesGlyph extends SequenceGlyph {
 
-//    public static final Color default_A_color = Color.BLUE;
-//    public static final Color default_T_color = Color.BLUE;
-//    public static final Color default_G_color = Color.BLUE;
-//    public static final Color default_C_color = Color.BLUE;
     private SearchableCharIterator chariter;
     private boolean residuesSet = false;
     private int residue_length = 0;
@@ -47,10 +43,6 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     public ColoredResiduesGlyph() {
         super();
     }
-    
-//    public ColoredResiduesGlyph(boolean drawRect) {
-//        super();
-//    }
 
     @Reference
     public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {

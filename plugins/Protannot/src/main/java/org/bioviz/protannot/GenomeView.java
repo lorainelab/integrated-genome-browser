@@ -162,10 +162,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 + upper_white_space + middle_white_space
                 + lower_white_space);
 
-
-        JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
-        seqmap.setOffsetScroller(y_scroller);
-
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
         yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);

@@ -1,5 +1,9 @@
 package org.bioviz.protannot;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.genometry.util.ImprovedStringCharIter;
 import com.affymetrix.genometry.util.SearchableCharIterator;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -10,31 +14,44 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 /**
  * Draws colored rectangles and corresponding character based upon nucleotide.
  *
  * @see com.affymetrix.genoviz.glyph.SequenceGlyph
  */
-class ColoredResiduesGlyph extends SequenceGlyph {
+@Component(provide = ColoredResiduesGlyph.class, factory = "residues.glyph.factory.provider")
+public class ColoredResiduesGlyph extends SequenceGlyph {
 
-    public static final Color default_A_color = Color.GREEN;
-    public static final Color default_T_color = Color.PINK;
-    public static final Color default_G_color = Color.YELLOW;
-    public static final Color default_C_color = Color.CYAN;
     private SearchableCharIterator chariter;
     private boolean residuesSet = false;
     private int residue_length = 0;
     private static final Font mono_default_font = NeoConstants.default_bold_font;
-    private final boolean drawRect;
+    private boolean drawRect;
+    
+    private ProtAnnotPreferencesService protAnnotPreferencesService;
 
-    ColoredResiduesGlyph(boolean drawRect) {
-        super();
+    @Activate
+    public void activate(Map<String, Object> properties) {
         setResidueFont(mono_default_font);
-        this.drawRect = drawRect;
+        this.drawRect = (Boolean)properties.get("draw.rect");
         // default to true for backward compatability
         setHitable(true);
     }
+
+    public ColoredResiduesGlyph() {
+        super();
+    }
+
+    @Reference
+    public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
+        this.protAnnotPreferencesService = protAnnotPreferencesService;
+    }
+
+
+    
+
 
     @Override
     public void setResidues(String residues) {
@@ -129,13 +146,13 @@ class ColoredResiduesGlyph extends SequenceGlyph {
         for (int j = 0; j < str.length(); j++) {
             char charAt = str.charAt(j);
             if (charAt == 'A' || charAt == 'a') {
-                g.setColor(default_A_color);
+                g.setColor(new Color(protAnnotPreferencesService.getResidueRGB(AminoAcid.Alanine)));
             } else if (charAt == 'T' || charAt == 't') {
-                g.setColor(default_T_color);
+                g.setColor(new Color(protAnnotPreferencesService.getResidueRGB(AminoAcid.Threonine)));
             } else if (charAt == 'G' || charAt == 'g') {
-                g.setColor(default_G_color);
+                g.setColor(new Color(protAnnotPreferencesService.getResidueRGB(AminoAcid.Glycine)));
             } else if (charAt == 'C' || charAt == 'c') {
-                g.setColor(default_C_color);
+                g.setColor(new Color(protAnnotPreferencesService.getResidueRGB(AminoAcid.Cysteine)));
             } else {
                 continue;
             }

@@ -979,7 +979,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private void setupColorChooser() {
         colorChooser = new JFrame("Color Preference");
         colorChooser.setIconImage(new ImageIcon(imageIcon).getImage());
-        colorChooser.setSize(375, 200);
+        colorChooser.setSize(375, 300);
         colorChooser.setLocation((int) (screen.width * .4f), (int) (screen.height * .15f));
         colorChooser.setLayout(new BorderLayout());
 

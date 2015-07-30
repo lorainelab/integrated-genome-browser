@@ -45,6 +45,19 @@ public class ProtAnnotPreferencesService {
     public void setResidueColorService(ResidueColorService residueColorService) {
         this.residueColorService = residueColorService;
     }
+    
+    public int getPanelRGB(Panel panel){
+        try {
+            if (uncommitted != null && uncommitted.containsKey(panel.toString())) {
+                return uncommitted.get(panel.toString()).getRGB();
+            }
+
+            return prefs.getInt(panel.toString(), panel.defaultColor().getRGB());
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return defaultColor.getRGB();
+    }
 
     public int getResidueRGB(AminoAcid aminoAcid) {
         try {
@@ -66,7 +79,7 @@ public class ProtAnnotPreferencesService {
         Map<String, Color> phash = new HashMap<>();
 
         try {
-            COLORS.defaultColorList().entrySet().stream().forEach((color_pref) -> {
+            Panel.defaultColorList().entrySet().stream().forEach((color_pref) -> {
                 phash.put(color_pref.getKey(), new Color(prefs.getInt(color_pref.getKey(), color_pref.getValue().getRGB())));
             });
 
@@ -97,7 +110,7 @@ public class ProtAnnotPreferencesService {
 
     public void reset() {
         uncommitted = null;
-        COLORS.defaultColorList().entrySet().stream().forEach((color_pref) -> {
+        Panel.defaultColorList().entrySet().stream().forEach((color_pref) -> {
             prefs.remove(color_pref.getKey());
         });
 
@@ -153,21 +166,21 @@ public class ProtAnnotPreferencesService {
     }
 
     //TODO: Refactor into service
-    public enum COLORS {
+    public enum Panel {
 
-        BACKGROUND("background", Color.white),
-        FRAME0("frame0", new Color(0, 100, 145)),
-        FRAME1("frame1", new Color(0, 100, 255)),
-        FRAME2("frame2", new Color(192, 192, 114)),
-        TRANSCRIPT("transcript", Color.black),
-        DOMAIN("domain", new Color(84, 168, 132)),
-        EXONSUMMARY("exonsummary", Color.blue),
-        AMINOACID("amino_acid", Color.black);
+        BACKGROUND("Background", Color.white),
+        FRAME0("Frame 0", new Color(0, 100, 145)),
+        FRAME1("Frame 1", new Color(0, 100, 255)),
+        FRAME2("Frame 2", new Color(192, 192, 114)),
+        TRANSCRIPT("Transcript", Color.black),
+        DOMAIN("Domain", new Color(84, 168, 132)),
+        EXONSUMMARY("Exon Summary", Color.blue),
+        AMINOACID("Amino Acid", Color.black);
 
         private final String name;
         private final Color color;
 
-        COLORS(String nm, Color col) {
+        Panel(String nm, Color col) {
             this.name = nm;
             this.color = col;
         }
@@ -177,18 +190,18 @@ public class ProtAnnotPreferencesService {
             return name;
         }
 
-        public Color defaultColor() {
+        private Color defaultColor() {
             return color;
         }
 
-        int getRGB() {
+        private int getRGB() {
             return color.getRGB();
         }
 
-        public static Map<String, Color> defaultColorList() {
+        private static Map<String, Color> defaultColorList() {
             Map<String, Color> defaults = new HashMap<>();
 
-            for (COLORS C : values()) {
+            for (Panel C : values()) {
                 defaults.put(C.toString(), C.defaultColor());
             }
 

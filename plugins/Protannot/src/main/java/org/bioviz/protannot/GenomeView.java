@@ -55,6 +55,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import org.bioviz.protannot.ProtAnnotPreferencesService.Panel;
 import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.bioviz.protannot.view.TabPanelComponent;
@@ -72,54 +73,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
 
-    // We allow users to change the colors of transcripts, protein
-    // annotations, etc
-    // The default colors (see below) were chosen to accommodate
-    // people with red/green color blindness and also to make it
-    // possible to distinguish the frame colors when printed in
-    // black and white.
-//    static enum COLORS {
-//
-//        BACKGROUND("background", Color.white),
-//        FRAME0("frame0", new Color(0, 100, 145)),
-//        FRAME1("frame1", new Color(0, 100, 255)),
-//        FRAME2("frame2", new Color(192, 192, 114)),
-//        TRANSCRIPT("transcript", Color.black),
-//        DOMAIN("domain", new Color(84, 168, 132)),
-//        EXONSUMMARY("exonsummary", Color.blue),
-//        AMINOACID("amino_acid", Color.black);
-//
-//        private final String name;
-//        private final Color color;
-//
-//        COLORS(String nm, Color col) {
-//            this.name = nm;
-//            this.color = col;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return name;
-//        }
-//
-//        private Color defaultColor() {
-//            return color;
-//        }
-//
-//        int getRGB() {
-//            return color.getRGB();
-//        }
-//
-//        static Map<String, Color> defaultColorList() {
-//            Map<String, Color> defaults = new HashMap<>();
-//
-//            for (COLORS C : values()) {
-//                defaults.put(C.toString(), C.defaultColor());
-//            }
-//
-//            return defaults;
-//        }
-//    };
+
     JPopupMenu popup;
 
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
@@ -143,16 +97,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Shadow hairline, axishairline;
     private JSplitPane split_pane;
 
-    private static Color col_bg = ProtAnnotPreferencesService.COLORS.BACKGROUND.defaultColor();
-    private static Color col_frame0 = ProtAnnotPreferencesService.COLORS.FRAME0.defaultColor();
-    private static Color col_frame1 = ProtAnnotPreferencesService.COLORS.FRAME1.defaultColor();
-    private static Color col_frame2 = ProtAnnotPreferencesService.COLORS.FRAME2.defaultColor();
-    private static Color col_ts = ProtAnnotPreferencesService.COLORS.TRANSCRIPT.defaultColor();
-    private static Color col_domain = ProtAnnotPreferencesService.COLORS.DOMAIN.defaultColor();
-    private static Color col_exon_summary = ProtAnnotPreferencesService.COLORS.EXONSUMMARY.defaultColor();
-    private static Color col_amino_acid = ProtAnnotPreferencesService.COLORS.AMINOACID.defaultColor();
-    private static Color col_sequence = Color.black;
-    private static Color col_axis_bg = Color.lightGray;
+    private final Color col_sequence = Color.black;
+    private final Color col_axis_bg = Color.lightGray;
 
     private List<GlyphI> selected = new ArrayList<>();
     private List<GlyphI> storeSelected;
@@ -298,7 +244,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         top.add("South", axismap);
         map_panel.add("North", top);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
-        seqmap.setBackground(col_bg);
+        seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
         map_panel.add("Center", seqmap);
         JPanel right = new JPanel();
         right.setLayout(new GridLayout(1, 2));
@@ -400,45 +346,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param phash Map providing color preferences for GenomeView
      */
     private void initPrefs(Map<String, Color> phash) {
-        tempColorPrefs(phash);
         prefs_hash = phash;
     }
 
-    /**
-     * Changes color preferences
-     *
-     * @param phash Map<String,Color>
-     */
-    private static void tempColorPrefs(Map<String, Color> phash) {
-        if (phash == null) {
-            return;
-        }
-
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.BACKGROUND.toString())) {
-            col_bg = phash.get(ProtAnnotPreferencesService.COLORS.BACKGROUND.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME0.toString())) {
-            col_frame0 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME0.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME1.toString())) {
-            col_frame1 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME1.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.FRAME2.toString())) {
-            col_frame2 = phash.get(ProtAnnotPreferencesService.COLORS.FRAME2.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.TRANSCRIPT.toString())) {
-            col_ts = phash.get(ProtAnnotPreferencesService.COLORS.TRANSCRIPT.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.DOMAIN.toString())) {
-            col_domain = phash.get(ProtAnnotPreferencesService.COLORS.DOMAIN.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.EXONSUMMARY.toString())) {
-            col_exon_summary = phash.get(ProtAnnotPreferencesService.COLORS.EXONSUMMARY.toString());
-        }
-        if (phash.containsKey(ProtAnnotPreferencesService.COLORS.AMINOACID.toString())) {
-            col_amino_acid = phash.get(ProtAnnotPreferencesService.COLORS.AMINOACID.toString());
-        }
-    }
 
     /**
      * Add mouse listener to maps so that the application can detect user interactions with the display.
@@ -477,7 +387,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.setMapRange(gseq.getMin(), gseq.getMax());
         axismap.clearWidget();
         axismap.setMapRange(gseq.getMin(), gseq.getMax());
-        seqmap.setBackground(col_bg);
+        seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
         seqmap.setMaxZoom(NeoMap.Y, seqmap.getHeight() / zoomRatio);
 
         exonGlyphs = new ArrayList<>();
@@ -513,7 +423,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         ExpandedTierPacker epack = (ExpandedTierPacker) sumTier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
-        GlyphSummarizer summer = new GlyphSummarizer(col_exon_summary);
+        GlyphSummarizer summer = new GlyphSummarizer(new Color(protAnnotPreferencesService.getPanelRGB(Panel.EXONSUMMARY)));
         if (exonGlyphs.size() > 0) {
             GlyphI gl = summer.getSummaryGlyph(exonGlyphs);
             sumTier.addChild(gl);
@@ -633,7 +543,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.setDataModel(tGlyph, mrna2genome);
         SeqSpan tSpan = annot2genome.getSpan(vseq);
         tGlyph.setCoords(tSpan.getMin(), 0, tSpan.getLength(), 20);
-        tGlyph.setColor(col_ts);
+        tGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         for (int i = 0; i < childcount; i++) {
             SeqSymmetry exon2genome = annot2genome.getChild(i);
             SeqSpan gSpan = exon2genome.getSpan(vseq);
@@ -644,7 +554,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             // object
             // so let's put it in a list
             exonList.add(exon2genome);
-            cglyph.setColor(col_ts);
+            cglyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
             exonGlyphs.add(cglyph);
             tGlyph.addChild(cglyph);
@@ -659,7 +569,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 if (seg_gspan.getLength() == 0) {
                     // only mark the inserts (those whose genomic extent is zero
                     GlyphI segGlyph = new OutlineRectGlyph();
-                    segGlyph.setColor(col_bg);
+                    segGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
                     segGlyph.setCoords(seg_gspan.getMin(), 0, seg_gspan.getLength(), 25);
                     tGlyph.addChild(segGlyph);
                 }
@@ -756,7 +666,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         GlyphI aGlyph = new LineContainerGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
-        aGlyph.setColor(col_ts);
+        aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);
         glyphifyCDSs(annot2genome, protein, aGlyph, amino_acid, vseq);
         trans_parent.addChild(aGlyph);
@@ -797,7 +707,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 prev_amino_end += gSpan.getLength();
                 sg.setResidues(sub_amino_acid);
                 sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-                sg.setForegroundColor(col_amino_acid);
+                sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
                 sg.setBackgroundColor(cglyph.getBackgroundColor());
                 aGlyph.addChild(sg);
             }
@@ -810,15 +720,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param gl
      * @param genome_codon_start	First position of complete amino acid.
      */
-    private static void colorByFrame(GlyphI gl, int genome_codon_start) {
+    private void colorByFrame(GlyphI gl, int genome_codon_start) {
 
         genome_codon_start %= 3;
         if (genome_codon_start == 0) {
-            gl.setColor(col_frame0);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME0)));
         } else if (genome_codon_start == 1) {
-            gl.setColor(col_frame1);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME1)));
         } else {
-            gl.setColor(col_frame2);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME2)));
         }  // genome_codon_start = 2
     }
 
@@ -831,7 +741,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genometryImpl.SeqSpan
      */
-    private static void colorByFrame(GlyphI gl, SeqSpan protSpan, SeqSpan genSpan) {
+    private void colorByFrame(GlyphI gl, SeqSpan protSpan, SeqSpan genSpan) {
         double pstart = protSpan.getStartDouble();
         double fraction = Math.abs(pstart - (int) pstart);
         int genome_codon_start = genSpan.getStart();
@@ -846,11 +756,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         genome_codon_start += exon_codon_start;
         genome_codon_start %= 3;
         if (genome_codon_start == 0) {
-            gl.setColor(col_frame0);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME0)));
         } else if (genome_codon_start == 1) {
-            gl.setColor(col_frame1);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME1)));
         } else {
-            gl.setColor(col_frame2);
+            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME2)));
         }  // genome_codon_start = 2
     }
 
@@ -944,8 +854,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @return Color
      * @see com.affymetrix.genometryImpl.symmetry.SymWithProps
      */
-    private static Color pick_color_for_domain(Object propertied, Map<String, Color> prefs_hash) {
-        Color to_return = col_domain;
+    private Color pick_color_for_domain(Object propertied, Map<String, Color> prefs_hash) {
+        Color to_return = new Color(protAnnotPreferencesService.getPanelRGB(Panel.DOMAIN));
         if (propertied instanceof SymWithProps) {
             Object property = ((SymWithProps) propertied).getProperty("method");
             if (property != null) {
@@ -1391,7 +1301,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     private void updatePreferences(Map<String, Color> colorhash) {
-        tempColorPrefs(colorhash);
         initPrefs(colorhash);
         if (gseq != null) {
             storeCurrentSelection();
@@ -1418,7 +1327,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     void cancelChangePrefernce() {
         protAnnotPreferencesService.abort();
         prefs_hash = protAnnotPreferencesService.getAllColorPreferences();
-        tempColorPrefs(prefs_hash);
         if (gseq != null) {
             storeCurrentSelection();
             setBioSeq(gseq, false);

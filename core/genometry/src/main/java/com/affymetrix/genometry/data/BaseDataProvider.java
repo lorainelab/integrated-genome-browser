@@ -189,9 +189,6 @@ public abstract class BaseDataProvider implements DataProvider {
     public void setStatus(ResourceStatus status) {
         this.status = status;
         preferencesNode.put(STATUS, status.toString());
-        if (status == NotInitialized) {
-            initialize();
-        }
         if (status == Disabled) {
             useMirror = false;
             disable();

@@ -299,9 +299,9 @@ public class ProtAnnotService {
                     sb.append(originalToolTip.substring(i));
                 } else {
                     sb.append(originalToolTip.substring(i, i + TOOL_TIP_WIDTH));
-                    if(originalToolTip.length() > (i + 51) 
-                            && originalToolTip.charAt(i+50) != ' ' 
-                            && originalToolTip.charAt(i+51) != ' ') {
+                    if(originalToolTip.length() > (i + TOOL_TIP_WIDTH) 
+                            && originalToolTip.charAt(i+TOOL_TIP_WIDTH-1) != ' ' 
+                            && originalToolTip.charAt(i+TOOL_TIP_WIDTH) != ' ') {
                         sb.append("-");
                     }
                     sb.append("<br />");

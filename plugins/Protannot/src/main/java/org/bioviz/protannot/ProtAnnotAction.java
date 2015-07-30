@@ -473,7 +473,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     @Override
     public void windowClosing(WindowEvent evt) {
         if (evt.getSource() == frm) {
-            protAnnotPreferencesService.updatePrefs(gview.getColorPrefs());
             protAnnotService.cancelBackgroundTasks();
         }
     }

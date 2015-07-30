@@ -261,9 +261,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("East", y_scroller);
         p.add("Center", map_panel);
         p.add("West", right);
+
         tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
         Dimension minimumSize = new Dimension(0, 500);
         p.setMinimumSize(minimumSize);
+
         initSplitPane(p);
 
         initAxis();
@@ -547,15 +549,17 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         for (int i = 0; i < childcount; i++) {
             SeqSymmetry exon2genome = annot2genome.getChild(i);
             SeqSpan gSpan = exon2genome.getSpan(vseq);
-            GlyphI cglyph = new OutlineRectGlyph();
+            GlyphI cglyph = new FillRectGlyph();
             seqmap.setDataModel(cglyph, exon2genome);
             // can't give this a type and therefore signal
             // to the selection logic that this is first class selectable
             // object
             // so let's put it in a list
             exonList.add(exon2genome);
+
             cglyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
-            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+            cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 10);
+
             exonGlyphs.add(cglyph);
             tGlyph.addChild(cglyph);
             //  testing display of "exon segments" for transcripts that have
@@ -593,7 +597,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             for (int i = 0; i < acount; i++) {
                 SeqSymmetry annot2mrna = mrna.getAnnotation(i);
                 if (annot2mrna != mrna2genome) {
-                    glyphifyTranscriptAnnots(mrna, annot2mrna, new_path2view, tier, tGlyph);
+                    glyphifyTranscriptAnnots(mrna, annot2mrna, mrna2genome, new_path2view, tier, tGlyph);
                 }
             }
         }
@@ -639,7 +643,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genometryImpl.util.SeqUtils
      */
     private void glyphifyTranscriptAnnots(BioSeq mrna,
-            SeqSymmetry annot2mrna, SeqSymmetry[] path2view,
+            SeqSymmetry annot2mrna, SeqSymmetry mrna2genome, SeqSymmetry[] path2view,
             MapTierGlyph tier, GlyphI trans_parent) {
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2mrna);
@@ -668,7 +672,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);
-        glyphifyCDSs(annot2genome, protein, aGlyph, amino_acid, vseq);
+        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq);
         trans_parent.addChild(aGlyph);
         displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
@@ -683,7 +687,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param vseq
      */
     private void glyphifyCDSs(
-            MutableSeqSymmetry annot2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
         int prev_add = 0;
@@ -696,11 +701,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             colorByFrame(cglyph, gSpan.getMin() + prev_add);
             prev_add += 3 - (gSpan.getLength() % 3);	//Keep a track of no of complete amino acid added.
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+            cglyph.setSelectable(true);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
+
                 final Properties props = new Properties();
                 props.put("draw.rect", false);
                 SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+
                 int start = prev_amino_end;
                 int end = start + gSpan.getLength();
                 String sub_amino_acid = amino_acid.substring(start, end);
@@ -709,6 +717,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
                 sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
                 sg.setBackgroundColor(cglyph.getBackgroundColor());
+                sg.setSelectable(true);
+                sg.setInfo(mrna2genome);
                 aGlyph.addChild(sg);
             }
         }
@@ -1106,8 +1116,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         Rectangle2D candidate_box;
         double champion_end = 0;
         double champion_start = 0;
+        double championHeight = 0;
         double candidate_end = 0;
         double candidate_start = 0;
+        double candidateHeight = 0;
         for (GlyphI candidate : candidates) {
             // we want everything
             if (multiselect) {
@@ -1118,16 +1130,18 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 candidate_box = candidate.getCoordBox();
                 candidate_start = candidate_box.getX();
                 candidate_end = candidate_box.getX() + candidate_box.getWidth();
+                candidateHeight = candidate_box.getHeight();
                 // note: if champion is null, we're on the first Glyph - so let the
                 // candidate be the champion for now
                 if (champion == null
                         || (candidate_end < champion_end && candidate_start >= champion_start)
                         || (candidate_end <= champion_end && candidate_start > champion_start)
-                        || // we leave the most computationally intensive test for last
-                        (champion.getChildren() != null && champion.getChildren().contains(candidate))) {
+                        || candidateHeight > championHeight
+                        || (champion.getChildren() != null && champion.getChildren().contains(candidate))) {
                     champion = candidate;
                     champion_start = candidate_start;
                     champion_end = candidate_end;
+                    championHeight = candidateHeight;
                 }
             }
         }

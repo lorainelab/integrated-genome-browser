@@ -21,96 +21,6 @@ import org.slf4j.LoggerFactory;
 public class ProtAnnotMapTierGlyph extends MapTierGlyph {
     
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotMapTierGlyph.class);
-    
-//    @Override
-//    public void addChild(GlyphI glyph, int position) {
-//        try {
-//            Field gsnField = MapTierGlyph.class.getDeclaredField("gsn");
-//            gsnField.setAccessible(true);
-//            GlyphSearchNode gsn = (GlyphSearchNode) gsnField.get(this);
-//            
-//            parentAddChild(glyph, position);
-//            gsn.addGlyph(glyph);
-//            gsnField.setAccessible(false);
-//        } catch (Exception ex) {
-//            logger.error(ex.getMessage(), ex);
-//        }
-//    }
-//    
-//    @Override
-//    public void addChild(GlyphI glyph) {
-//        try {
-//            Field gsnField = MapTierGlyph.class.getDeclaredField("gsn");
-//            gsnField.setAccessible(true);
-//            GlyphSearchNode gsn = (GlyphSearchNode) gsnField.get(this);
-//            
-//            Field lrpField = MapTierGlyph.class.getDeclaredField("last_removed_position");
-//            lrpField.setAccessible(true);
-//            int last_removed_position = (Integer) lrpField.get(this);
-//            
-//            if (last_removed_position != -1) {
-//                parentAddChild(glyph, last_removed_position);
-//
-//                last_removed_position = -1;
-//                lrpField.setInt(this, last_removed_position);
-//                
-//            } else {
-//                parentAddChild(glyph);
-//            }
-//            
-//            lrpField.setAccessible(false);
-//            gsn.addGlyph(glyph);
-//            gsnField.setAccessible(false);
-//        } catch (Exception ex) {
-//            logger.error(ex.getMessage(), ex);
-//        }
-//    }
-//    
-//    public void parentAddChild(GlyphI glyph, int position) {
-//        if (this == glyph) {
-//            throw new IllegalArgumentException(
-//                    "Illegal to add a Glyph as a child of itself!");
-//        }
-//        GlyphI prev_parent = glyph.getParent();
-//        if (prev_parent != null) {
-//            prev_parent.removeChild(glyph);
-//        }
-//        
-//        if (getChildren() == null) {
-//            resetChildren();
-//        }
-//        if (position == getChildren().size()) {
-//            getChildren().add(glyph);
-//        } else {
-//            getChildren().add(position, glyph);
-//        }
-//        // setParent() also calls setScene()
-//        glyph.setParent(this);
-//    }
-//    
-//    public void parentAddChild(GlyphI glyph) {
-//        GlyphI prev_parent = glyph.getParent();
-//        if (prev_parent != null) {
-//            prev_parent.removeChild(glyph);
-//        }
-//        if (getChildren() == null) {
-//            resetChildren();
-//        }
-//        getChildren().add(glyph);
-//        glyph.setParent(this);
-//    }
-//    
-//    @Override
-//    public void resetChildren() {
-//        try {
-//            Field childrenField = Glyph.class.getDeclaredField("children");
-//            childrenField.setAccessible(true);
-//            childrenField.set(this, new ArrayList<GlyphI>());
-//            childrenField.setAccessible(false);
-//        } catch (Exception ex) {
-//            logger.error(ex.getMessage(), ex);
-//        }
-//    }
 
     /**
      * Remove all children of the glyph
@@ -127,9 +37,6 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
             List kids = this.getChildren();
             
             if (kids != null) {
-//            for (Object kid : kids) {
-//                this.removeChild((GlyphI) kid);
-//            }
                 Iterator iterator = kids.iterator();
                 while (iterator.hasNext()) {
                     Object kid = iterator.next();

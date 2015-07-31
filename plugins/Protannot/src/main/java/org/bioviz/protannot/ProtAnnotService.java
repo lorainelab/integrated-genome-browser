@@ -53,6 +53,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bioviz.protannot.event.StatusSetEvent;
 import org.bioviz.protannot.event.StatusStartEvent;
 import org.bioviz.protannot.event.StatusTerminateEvent;
@@ -94,7 +95,7 @@ public class ProtAnnotService {
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     
-    private static final int TOOL_TIP_WIDTH = 50;
+    private static final int TOOL_TIP_WIDTH = 30;
     private final Pattern pattern;
     private Matcher matcher;
 
@@ -294,19 +295,9 @@ public class ProtAnnotService {
             icon.setIcon(INFO_ICON);
             String originalToolTip = vt.getProperties().getProperty().getValue();
             StringBuilder sb = new StringBuilder("<html>");
-            for (int i = 0; i < originalToolTip.length(); i += TOOL_TIP_WIDTH) {
-                if ((originalToolTip.length() - i) < TOOL_TIP_WIDTH) {
-                    sb.append(originalToolTip.substring(i));
-                } else {
-                    sb.append(originalToolTip.substring(i, i + TOOL_TIP_WIDTH));
-                    if(originalToolTip.length() > (i + TOOL_TIP_WIDTH) 
-                            && originalToolTip.charAt(i+TOOL_TIP_WIDTH-1) != ' ' 
-                            && originalToolTip.charAt(i+TOOL_TIP_WIDTH) != ' ') {
-                        sb.append("-");
-                    }
-                    sb.append("<br />");
-                }
-
+            String wrappedText = WordUtils.wrap(originalToolTip, TOOL_TIP_WIDTH, "<br />", true);
+            if(wrappedText != null) {
+                sb.append(wrappedText);
             }
             sb.append("</html>");
             icon.setToolTipText(sb.toString());

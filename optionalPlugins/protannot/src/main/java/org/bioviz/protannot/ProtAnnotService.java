@@ -8,10 +8,10 @@ package org.bioviz.protannot;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ModalUtils;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -121,6 +121,7 @@ public class ProtAnnotService {
     private ProtAnnotEventService eventService;
     private volatile boolean interProScanRunning;
     private volatile String id;
+    private String PROTANNOT_IPS_EMAIL = "protannot interproscan email";
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -131,7 +132,7 @@ public class ProtAnnotService {
         inputAppl = Sets.newConcurrentHashSet();
         defaultApplications = Lists.newArrayList("PfamA", "TMHMM", "SignalP");
         pattern = Pattern.compile(EMAIL_PATTERN);
-        protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
+        protAnnotPreferencesNode = PreferenceUtils.getSessionPrefsNode();
         dnaseq = new Dnaseq();
         interProScanRunning = false;
     }
@@ -182,7 +183,7 @@ public class ProtAnnotService {
 
     private void initEmail() {
         email = new JTextField();
-        email.setText(protAnnotPreferencesNode.get(PreferenceUtils.PROTANNOT_IPS_EMAIL, ""));
+        email.setText(protAnnotPreferencesNode.get(PROTANNOT_IPS_EMAIL, ""));
     }
 
     private void initInfoLabel(String text) {
@@ -531,7 +532,7 @@ public class ProtAnnotService {
                 ModalUtils.infoPanel("To run a search, enter an email address.");
                 return false;
             }
-            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
+            protAnnotPreferencesNode.put(PROTANNOT_IPS_EMAIL, email.getText());
             return true;
         }
         return false;

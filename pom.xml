@@ -413,7 +413,7 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.bioviz</groupId>
                 <artifactId>protannot</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>

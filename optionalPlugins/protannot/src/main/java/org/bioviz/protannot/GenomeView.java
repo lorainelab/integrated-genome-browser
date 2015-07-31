@@ -28,7 +28,6 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.TieredNeoMap;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
-import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -58,6 +57,7 @@ import javax.swing.JSplitPane;
 import org.bioviz.protannot.ProtAnnotPreferencesService.Panel;
 import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
+import org.bioviz.protannot.view.ProtAnnotMapTierGlyph;
 import org.bioviz.protannot.view.TabPanelComponent;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
@@ -381,7 +381,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genoviz.widget.Shadow
      * @see com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker
-     * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
+     * @see com.affymetrix.genoviz.widget.tieredmap.ProtAnnotMapTierGlyph
      */
     synchronized void setBioSeq(BioSeq gseq, boolean is_new) {
         this.gseq = gseq;
@@ -419,9 +419,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             glyphifyMRNA(asym, path2view);
         }
 
-        MapTierGlyph sumTier = new MapTierGlyph();
+        ProtAnnotMapTierGlyph sumTier = new ProtAnnotMapTierGlyph();
         sumTier.setCoords(gseq.getMin(), seqmap_pixel_height - 20, gseq.getLength(), 20);
-        sumTier.setState(MapTierGlyph.EXPANDED);
+        sumTier.setState(ProtAnnotMapTierGlyph.EXPANDED);
 
         ExpandedTierPacker epack = (ExpandedTierPacker) sumTier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
@@ -509,13 +509,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @see com.affymetrix.genometryImpl.SeqSpan
      * @see com.affymetrix.genometryImpl.util.SeqUtils
      * @see com.affymetrix.genoviz.bioviews.GlyphI
-     * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
+     * @see com.affymetrix.genoviz.widget.tieredmap.ProtAnnotMapTierGlyph
      */
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
-        MapTierGlyph tier = new MapTierGlyph();
+        ProtAnnotMapTierGlyph tier = new ProtAnnotMapTierGlyph();
         tier.setCoords(gseq.getMin(), 0, gseq.getLength(), 80);
-        tier.setState(MapTierGlyph.EXPANDED);
+        tier.setState(ProtAnnotMapTierGlyph.EXPANDED);
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
         seqmap.addTier(tier);
@@ -585,7 +585,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     // now follow symmetry link to annotated mrna seqs, map those annotations to genomic
     //    coords, and display
     private void displayAssociatedmRNAforTranscript(
-            BioSeq mrna, SeqSymmetry[] path2view, SeqSymmetry mrna2genome, MapTierGlyph tier, GlyphI tGlyph) {
+            BioSeq mrna, SeqSymmetry[] path2view, SeqSymmetry mrna2genome, ProtAnnotMapTierGlyph tier, GlyphI tGlyph) {
         if (mrna != null) {
             if (DEBUG_TRANSCRIPT_ANNOTS) {
                 LOG.info(mrna.getId() + ",  " + mrna);
@@ -607,7 +607,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     //    coords, and display
     // consider merging with displayAssociatedmRNAforTranscript
     private void displayAssociatedmRNAforProtein(
-            BioSeq protein, SeqSymmetry[] path2view, SeqSymmetry annot2mrna, MapTierGlyph tier) {
+            BioSeq protein, SeqSymmetry[] path2view, SeqSymmetry annot2mrna, ProtAnnotMapTierGlyph tier) {
         if (protein != null) {
             if (DEBUG_PROTEIN_ANNOTS) {
                 LOG.info(protein.getId() + ",  " + protein);
@@ -636,7 +636,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param trans_parent - parent glyph
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
-     * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
+     * @see com.affymetrix.genoviz.widget.tieredmap.ProtAnnotMapTierGlyph
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see com.affymetrix.genometryImpl.SeqSpan
@@ -644,7 +644,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private void glyphifyTranscriptAnnots(BioSeq mrna,
             SeqSymmetry annot2mrna, SeqSymmetry mrna2genome, SeqSymmetry[] path2view,
-            MapTierGlyph tier, GlyphI trans_parent) {
+            ProtAnnotMapTierGlyph tier, GlyphI trans_parent) {
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2mrna);
         }
@@ -781,7 +781,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param tier
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
-     * @see com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph
+     * @see com.affymetrix.genoviz.widget.tieredmap.ProtAnnotMapTierGlyph
      * @see com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see com.affymetrix.genometryImpl.SeqSpan
      * @see com.affymetrix.genometryImpl.symmetry.SymWithProps
@@ -791,7 +791,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private void glyphifyProteinAnnots(
             SeqSymmetry annot2protein,
             SeqSymmetry[] path2view,
-            MapTierGlyph tier) {
+            ProtAnnotMapTierGlyph tier) {
 
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(annot2protein, annot2genome);

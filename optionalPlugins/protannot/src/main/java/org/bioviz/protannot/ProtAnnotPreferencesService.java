@@ -7,10 +7,8 @@ package org.bioviz.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.AminoAcid;
-import com.affymetrix.igb.shared.ResidueColorService;
+import com.affymetrix.genometry.util.PreferenceUtils;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +26,11 @@ public class ProtAnnotPreferencesService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotPreferencesService.class);
 
-    private ResidueColorService residueColorService;
+    public static final Color DEFAULT_A_COLOR = new Color(151, 255, 179);
+    public static final Color DEFAULT_T_COLOR = new Color(102, 211, 255);
+    public static final Color DEFAULT_G_COLOR = new Color(255, 210, 0);
+    public static final Color DEFAULT_C_COLOR = new Color(255, 176, 102);
+    public static final Color DEFAULT_OTHER_COLOR = Color.LIGHT_GRAY;
 
     private Preferences prefs;
 
@@ -38,15 +40,10 @@ public class ProtAnnotPreferencesService {
 
     @Activate
     public void activate() {
-        prefs = PreferenceUtils.getProtAnnotNode();
+        prefs = PreferenceUtils.getSessionPrefsNode();
     }
 
-    @Reference
-    public void setResidueColorService(ResidueColorService residueColorService) {
-        this.residueColorService = residueColorService;
-    }
-    
-    public int getPanelRGB(Panel panel){
+    public int getPanelRGB(Panel panel) {
         try {
             if (uncommitted != null && uncommitted.containsKey(panel.toString())) {
                 return uncommitted.get(panel.toString()).getRGB();
@@ -65,7 +62,7 @@ public class ProtAnnotPreferencesService {
                 return uncommitted.get(getResidueLabelByAminoAcid(aminoAcid)).getRGB();
             }
 
-            return prefs.getInt(getResidueLabelByAminoAcid(aminoAcid), residueColorService.getDefaultColor(aminoAcid).getRGB());
+            return prefs.getInt(getResidueLabelByAminoAcid(aminoAcid), getDefaultColor(aminoAcid).getRGB());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -84,13 +81,13 @@ public class ProtAnnotPreferencesService {
             });
 
             phash.put(ResidueName.A.toString(), new Color(prefs.getInt(ResidueName.A.toString(),
-                    residueColorService.getDefaultColor(AminoAcid.Alanine).getRGB())));
+                    getDefaultColor(AminoAcid.Alanine).getRGB())));
             phash.put(ResidueName.T.toString(), new Color(prefs.getInt(ResidueName.T.toString(),
-                    residueColorService.getDefaultColor(AminoAcid.Threonine).getRGB())));
+                    getDefaultColor(AminoAcid.Threonine).getRGB())));
             phash.put(ResidueName.G.toString(), new Color(prefs.getInt(ResidueName.G.toString(),
-                    residueColorService.getDefaultColor(AminoAcid.Glycine).getRGB())));
+                    getDefaultColor(AminoAcid.Glycine).getRGB())));
             phash.put(ResidueName.C.toString(), new Color(prefs.getInt(ResidueName.C.toString(),
-                    residueColorService.getDefaultColor(AminoAcid.Cysteine).getRGB())));
+                    getDefaultColor(AminoAcid.Cysteine).getRGB())));
 
             updatePrefs(phash);
         } catch (Exception ex) {
@@ -145,6 +142,21 @@ public class ProtAnnotPreferencesService {
                 return ResidueName.C.toString();
             default:
                 throw new Exception("Unknown Label");
+        }
+    }
+
+    private Color getDefaultColor(AminoAcid aminoAcid) {
+        switch (aminoAcid) {
+            case Alanine:
+                return DEFAULT_A_COLOR;
+            case Threonine:
+                return DEFAULT_T_COLOR;
+            case Glycine:
+                return DEFAULT_G_COLOR;
+            case Cysteine:
+                return DEFAULT_C_COLOR;
+            default:
+                return DEFAULT_OTHER_COLOR;
         }
     }
 

@@ -16,6 +16,7 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotInitiali
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -194,4 +195,31 @@ public abstract class BaseDataProvider implements DataProvider {
             disable();
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.url);
+        hash = 59 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BaseDataProvider other = (BaseDataProvider) obj;
+        if (!Objects.equals(this.url, other.url)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+
 }

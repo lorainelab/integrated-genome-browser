@@ -24,9 +24,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenomeVersion {
 
+    private static final Logger logger = LoggerFactory.getLogger(GenomeVersion.class);
     private final String UNKNOWN_ID = "UNKNOWN_SYM_";
     private int unknown_id_no = 1;
     final private String name;
@@ -91,7 +94,7 @@ public class GenomeVersion {
     }
 
     final public Set<DataContainer> getAvailableDataContainers() {
-        return dataContainers.stream()
+       return dataContainers.stream()
                 .filter(dc -> dc.getDataProvider() != null)
                 .filter(dc -> dc.getDataProvider().getStatus() != Disabled)
                 .filter(dc -> dc.getDataProvider().getStatus() != NotResponding)

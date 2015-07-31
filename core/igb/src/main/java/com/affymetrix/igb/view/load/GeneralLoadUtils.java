@@ -59,6 +59,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
@@ -114,7 +115,7 @@ public final class GeneralLoadUtils {
      * lookup is done using {@link Class#getResourceAsStream(String)}. The
      * default file is {@value}.
      */
-    
+
     private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
     private final static SeqMapView gviewer = IGB.getInstance().getMapView();
     // versions associated with a given genome.
@@ -184,7 +185,7 @@ public final class GeneralLoadUtils {
     }
 
     public static Set<String> getLoadedSpeciesNames() {
-        return  ImmutableSet.copyOf(speciesDataContainerReference.keySet());
+        return ImmutableSet.copyOf(speciesDataContainerReference.keySet());
     }
 
     public static Optional<DataSet> findFeatureFromUri(URI featurePath) {
@@ -305,8 +306,10 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
-        sortedContainers.addAll(genomeVersion.getAvailableDataContainers());
+        final Set<DataContainer> availableDataContainers = genomeVersion.getAvailableDataContainers();
+        List<DataContainer> sortedContainers = Lists.newArrayList();
+        sortedContainers.addAll(availableDataContainers);
+        Collections.sort(sortedContainers, DATA_CONTAINER_PRIORITY_COMPARATOR);
         sortedContainers.stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
@@ -816,8 +819,9 @@ public final class GeneralLoadUtils {
         String bioSeqId = bioSeq.getId();
         boolean residuesLoaded = false;
 
-        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
+        List<DataContainer> sortedContainers = Lists.newArrayList();
         sortedContainers.addAll(versionsWithChrom);
+        Collections.sort(sortedContainers, DATA_CONTAINER_PRIORITY_COMPARATOR);
         for (DataContainer dataContainer : sortedContainers) {
             final DataProvider dataProvider = dataContainer.getDataProvider();
             if (dataProvider.getStatus() == ResourceStatus.Disabled

@@ -254,5 +254,5 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             ModalUtils.errorPanel("The following genome versions for quickload site (" + getUrl() + ") are missing a " + GENOME_TXT + " file: " + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(genomesMissingGenomeTxt));
         }
     }
-
+    
 }

@@ -18,10 +18,6 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
-<<<<<<< HEAD:optionalPlugins/protannot/src/main/java/org/bioviz/protannot/GenomeView.java
-=======
-import com.affymetrix.genoviz.glyph.LineContainerGlyph;
->>>>>>> 3d8de80... Moved LineContainerDashGlyph to protannot:plugins/protannot/src/main/java/org/bioviz/protannot/GenomeView.java
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -447,8 +443,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
                 ((gseq.getMin() + gseq.getMax()) / 2.0));
 
-        seqmap.updateWidget();
-        axismap.updateWidget();
+        updateWidget();
     }
 
     /**
@@ -544,7 +539,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private GlyphI glyphifyExons(
             SeqSymmetry mrna2genome, MutableSeqSymmetry annot2genome, int childcount) {
-        GlyphI tGlyph = new LineContainerGlyph();
+        GlyphI tGlyph = new LineContainerDashGlyph();
         seqmap.setDataModel(tGlyph, mrna2genome);
         SeqSpan tSpan = annot2genome.getSpan(vseq);
         tGlyph.setCoords(tSpan.getMin(), 0, tSpan.getLength(), 20);

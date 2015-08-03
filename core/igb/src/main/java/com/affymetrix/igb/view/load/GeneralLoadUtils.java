@@ -681,25 +681,25 @@ public final class GeneralLoadUtils {
         CThreadHolder.getInstance().execute(feature, worker);
     }
 
-    private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final DataSet feature) throws OutOfMemoryError {
+    private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final DataSet dataSet) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            logger.debug("All of new query covered by previous queries for feature {}", feature.getDataSetName());
+            logger.debug("All of new query covered by previous queries for feature {}", dataSet.getDataSetName());
             return;
         }
 
         final int seq_count = gmodel.getSelectedGenomeVersion().getSeqCount();
         final CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object> worker
-                = new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>(LOADING_MESSAGE_PREFIX + feature.getDataSetName(), Thread.MIN_PRIORITY) {
+                = new CThreadWorker<Map<String, List<? extends SeqSymmetry>>, Object>(LOADING_MESSAGE_PREFIX + dataSet.getDataSetName(), Thread.MIN_PRIORITY) {
 
                     @Override
                     protected Map<String, List<? extends SeqSymmetry>> runInBackground() {
                         try {
-                            return loadFeaturesForSym(feature, optimized_sym);
+                            return loadFeaturesForSym(dataSet, optimized_sym);
                         } catch (RuntimeException ex) {
                             logger.error(ex.getMessage(), ex);
                         } catch (Exception ex) {
                             if (ex instanceof FileNotFoundException) {
-                                ErrorHandler.errorPanel(feature.getDataSetName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
+                                ErrorHandler.errorPanel(dataSet.getDataSetName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                             }
                         } catch (Throwable ex) {
                             logger.error(ex.getMessage(), ex);
@@ -730,7 +730,7 @@ public final class GeneralLoadUtils {
                     }
                 };
 
-        CThreadHolder.getInstance().execute(feature, worker);
+        CThreadHolder.getInstance().execute(dataSet, worker);
     }
 
     //TO DO: Make this private again.

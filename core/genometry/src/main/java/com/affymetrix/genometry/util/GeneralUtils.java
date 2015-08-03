@@ -1,9 +1,11 @@
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import com.github.kevinsawicki.http.HttpRequest;
 import static com.google.common.io.Closeables.close;
 import java.awt.Desktop;
 import java.awt.Toolkit;
@@ -242,10 +244,12 @@ public final class GeneralUtils {
     /**
      * Get a favicon from the URL.
      *
+     * @param dataProvider
      * @param iconString
      * @return null
      */
-    public static ImageIcon determineFriendlyIcon(String iconString) {
+    public static ImageIcon determineFriendlyIcon(DataProvider dataProvider) {
+        String iconString = dataProvider.getUrl() + "favicon.ico";
         // Step 1. getting IconURL
         URL iconURL = null;
         try {
@@ -259,17 +263,15 @@ public final class GeneralUtils {
 
         // Step 2. loading the icon and find a proper icon
         BufferedImage icon = null;
-        URLConnection conn = null;
         List<ICOImage> icoImages = null;
         try {
-            conn = iconURL.openConnection();
-            conn.setConnectTimeout(5000);	// only wait a few seconds, since this isn't critical
-            conn.setReadTimeout(5000);		// only wait a few seconds, since this isn't critical
-            conn.connect();
-            if (conn.getInputStream() == null) {
-                return null;
+            BufferedInputStream bufferedInputStream;
+            if (dataProvider.getLogin().isPresent()) {
+                bufferedInputStream = HttpRequest.get(iconURL).followRedirects(true).trustAllCerts().basic(dataProvider.getLogin().get(), dataProvider.getPassword().get()).buffer();
+            } else {
+                bufferedInputStream = HttpRequest.get(iconURL).followRedirects(true).trustAllCerts().buffer();
             }
-            icoImages = ICODecoder.readExt(conn.getInputStream());
+            icoImages = ICODecoder.readExt(bufferedInputStream);
         } catch (Exception ex) {
             return null;
         }

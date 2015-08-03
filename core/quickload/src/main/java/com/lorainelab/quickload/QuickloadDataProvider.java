@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             Thread validationThread = new Thread() {
                 @Override
                 public void run() {
-                   validateAssemblyInformationIsAvailable(); //expensive, but according to quickload specification, this is required
+                    validateAssemblyInformationIsAvailable(); //expensive, but according to quickload specification, this is required
                 }
             };
             validationThread.start();
@@ -154,6 +155,12 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         if (genomeVersionData.isPresent()) {
             Set<QuickloadFile> versionFiles = genomeVersionData.get();
             LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
+
+            List<QuickloadFile> missingNameAttribute = versionFiles.stream().filter(file -> Strings.isNullOrEmpty(file.getName())).collect(Collectors.toList());
+            if (!missingNameAttribute.isEmpty()) {
+                ModalUtils.errorPanel("The " + genomeVersionName + " genome contains some missing name attributes in its annots.xml file on the quickload site (" + getUrl() + ")");
+            }
+
             versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
                 try {
                     URI uri;
@@ -163,6 +170,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
                         uri = new URI(file.getName());
                     }
                     DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
+                    dataSet.setSupportsAvailabilityCheck(true);
                     dataSets.add(dataSet);
                 } catch (URISyntaxException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -233,7 +241,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     }
     private static final String QUICKLOAD_FACTORY_NAME = "Quickload";
 
-    private void validateAssemblyInformationIsAvailable() {
+    private synchronized void validateAssemblyInformationIsAvailable() {
         List<String> genomesMissingGenomeTxt = Lists.newArrayList();
         supportedGenomeVersionInfo.keySet().forEach(genomeVersionName -> {
             try {
@@ -254,5 +262,5 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             ModalUtils.errorPanel("The following genome versions for quickload site (" + getUrl() + ") are missing a " + GENOME_TXT + " file: " + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(genomesMissingGenomeTxt));
         }
     }
-    
+
 }

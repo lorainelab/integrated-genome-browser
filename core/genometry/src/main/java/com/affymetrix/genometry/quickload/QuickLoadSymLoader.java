@@ -241,8 +241,8 @@ public class QuickLoadSymLoader extends SymLoader {
     }
 
     /**
-     * Get list of chromosomes used in the file/uri.
-     * Especially useful when loading a file into an "unknown" genome
+     * Get list of chromosomes used in the file/uri. Especially useful when
+     * loading a file into an "unknown" genome
      *
      * @return List of chromosomes
      */

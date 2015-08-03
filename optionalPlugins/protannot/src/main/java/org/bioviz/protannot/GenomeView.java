@@ -18,6 +18,10 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
+<<<<<<< HEAD:optionalPlugins/protannot/src/main/java/org/bioviz/protannot/GenomeView.java
+=======
+import com.affymetrix.genoviz.glyph.LineContainerGlyph;
+>>>>>>> 3d8de80... Moved LineContainerDashGlyph to protannot:plugins/protannot/src/main/java/org/bioviz/protannot/GenomeView.java
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;

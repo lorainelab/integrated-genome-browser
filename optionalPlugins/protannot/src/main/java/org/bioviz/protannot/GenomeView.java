@@ -1033,6 +1033,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 info = (SymWithProps) candidate;
                 candidate = gl.getParent().getInfo();
                 addParentInfo(candidate, info);
+                info.setProperty("start", String.valueOf((int) gl.getCoordBox().x));
+                info.setProperty("end", String.valueOf((int) (gl.getCoordBox().x + gl.getCoordBox().width)));
+                info.setProperty("length", String.valueOf((int) gl.getCoordBox().width));
             } else {
                 if (candidate instanceof SimpleMutableSeqSymmetry && exonList.contains((SeqSymmetry) candidate)) {
                     props = new Properties();

@@ -119,7 +119,7 @@
         <module>plugins/Keybinding-registry</module>
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
-        <module>plugins/Protannot</module>
+        <module>plugins/protannot</module>
     </modules>
 
     <profiles>

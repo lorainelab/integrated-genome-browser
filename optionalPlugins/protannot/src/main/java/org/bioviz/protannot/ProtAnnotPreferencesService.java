@@ -9,11 +9,13 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.genometry.util.PreferenceUtils;
+import com.google.common.eventbus.EventBus;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.bioviz.protannot.event.PreferenceChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +39,13 @@ public class ProtAnnotPreferencesService {
     private static final Color defaultColor = Color.gray;
 
     private Map<String, Color> uncommitted;
+    
+    private EventBus eventBus;
 
     @Activate
     public void activate() {
         prefs = PreferenceUtils.getSessionPrefsNode();
+        eventBus = eventBus = new EventBus();
     }
 
     public int getPanelRGB(Panel panel) {
@@ -128,6 +133,15 @@ public class ProtAnnotPreferencesService {
         } finally {
             uncommitted = null;
         }
+        eventBus.post(new PreferenceChangeEvent());
+    }
+    
+    public void registerEventListener(Object listener) {
+        eventBus.register(listener);
+    }
+
+    public void unregisterEventListener(Object listener) {
+        eventBus.unregister(listener);
     }
 
     private String getResidueLabelByAminoAcid(AminoAcid aminoAcid) throws Exception {

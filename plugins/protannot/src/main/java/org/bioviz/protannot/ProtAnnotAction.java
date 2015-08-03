@@ -321,12 +321,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      * @param args - optional path name as a parameter.
      */
     private void start() {
-        if ("Mac OS X".equals(System.getProperty("os.name"))) {
-            MacIntegration mi = new MacIntegration(this);
-            if (imageIcon != null) {
-                mi.setDockIconImage(imageIcon);
-            }
-        }
         frm.setTransferHandler(fdh);
         frm.setIconImage(imageIcon);
         screen = frm.getToolkit().getScreenSize();

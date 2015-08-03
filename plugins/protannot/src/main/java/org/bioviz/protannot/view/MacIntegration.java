@@ -1,9 +1,10 @@
-package org.bioviz.protannot;
+package org.bioviz.protannot.view;
 
 import java.awt.Image;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import org.bioviz.protannot.ProtAnnotAction;
 import org.slf4j.LoggerFactory;
 
 /**

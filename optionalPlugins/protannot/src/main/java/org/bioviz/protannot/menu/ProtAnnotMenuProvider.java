@@ -29,13 +29,16 @@ public class ProtAnnotMenuProvider extends GenericAction implements IgbMenuItemP
     
     private ComponentFactory protannotFactory;
     
+    private final JRPMenuItem menuItem;
+    
     public ProtAnnotMenuProvider() {
         super("Start ProtAnnot", null, null);
+        menuItem = new JRPMenuItem("Protannot", this, MENU_ITEM_WEIGHT);
     }
 
     @Override
     public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Protannot", this, getMenuItemWeight());
+        return menuItem;
     }
 
     @Override

@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
-import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -667,7 +666,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             LOG.error(ex.getMessage(), ex);
         }
 
-        GlyphI aGlyph = new LineContainerGlyph();
+        GlyphI aGlyph = new LineContainerDashGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
@@ -804,7 +803,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             SeqUtils.printSymmetry(annot2genome);
         }
 
-        GlyphI aGlyph = new LineContainerGlyph();
+        GlyphI aGlyph = new LineContainerDashGlyph();
         seqmap.setDataModel(aGlyph, annot2protein);
 
         SeqSpan aSpan = annot2genome.getSpan(vseq);

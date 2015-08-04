@@ -522,17 +522,18 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     ImageExportService exportService;
 
-    @Reference
-    public void addImageExportService(ImageExportService exportService) {
-        this.exportService = exportService;
-    }
+//    @Reference
+//    public void addImageExportService(ImageExportService exportService) {
+//        this.exportService = exportService;
+//    }
 
     private void export() {
         protAnnotService.exportAsXml(gview);
     }
 
     void saveImage() {
-        exportService.exportComponent(gview);
+//        exportService.exportComponent(gview);
+        protAnnotService.exportAsImage(gview);
     }
 
     void print() {

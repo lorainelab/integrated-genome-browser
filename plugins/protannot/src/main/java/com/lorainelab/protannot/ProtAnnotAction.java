@@ -177,7 +177,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private Map<String, Object> properties;
     private String id;
-    
+
     private ProtAnnotPreferencesService protAnnotPreferencesService;
 
     @Activate
@@ -198,8 +198,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
-    
-    
 
     @Reference(target = "(component.factory=protannot.service.factory.provider)")
     public void setProtannotServiceFactory(ComponentFactory protannotServiceFactory) {
@@ -380,10 +378,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             load(cfil);
         }
     }
-    
+
     @Subscribe
     public void eventListenerLoadInterProScan(StartInterProScanEvent event) {
-        if(event.getId().equals(id)) {
+        if (event.getId().equals(id)) {
             doLoadInterProscan();
         }
     }
@@ -716,7 +714,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         int relativeStart = Math.min(absoluteStart, absoluteEnd);
         int relativeEnd = Math.max(absoluteStart, absoluteEnd);
         String strand = "+";
-        if(absoluteStart > absoluteEnd) {
+        if (absoluteStart > absoluteEnd) {
             strand = "-";
         }
         gview.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());

@@ -2,6 +2,7 @@ package org.bioviz.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -54,6 +55,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
 import org.bioviz.protannot.ProtAnnotPreferencesService.Panel;
+import org.bioviz.protannot.event.PreferenceChangeEvent;
 import org.bioviz.protannot.model.InterProScanTableModel;
 import org.bioviz.protannot.model.ProtannotParser;
 import org.bioviz.protannot.view.ProtAnnotMapTierGlyph;
@@ -144,10 +146,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.ipsTableModel = ipsTableModel;
     }
 
+    @Deactivate
+    public void deactivate() {
+        protAnnotPreferencesService.unregisterEventListener(this);
+    }
+    
+    @Subscribe
+    public void preferenceChangeEventListener(PreferenceChangeEvent event) {
+        updatePreferences(protAnnotPreferencesService.getAllColorPreferences());
+    }
+    
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
-
+        protAnnotPreferencesService.registerEventListener(this);
         initPrefs(loadPrefs());
         popup = new JPopupMenu();
         seqmap = new TieredNeoMap(true, false);

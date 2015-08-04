@@ -166,7 +166,11 @@ public abstract class BaseDataProvider implements DataProvider {
     @Override
     public void setLogin(String login) {
         this.login = login;
-        preferencesNode.put(LOGIN, login);
+        if (login == null) {
+            preferencesNode.remove(LOGIN);
+        } else {
+            preferencesNode.put(LOGIN, login);
+        }
     }
 
     @Override
@@ -177,7 +181,11 @@ public abstract class BaseDataProvider implements DataProvider {
     @Override
     public void setPassword(String password) {
         this.password = password;
-        preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+        if (password == null) {
+            preferencesNode.remove(PASSWORD);
+        } else {
+            preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+        }
 
     }
 

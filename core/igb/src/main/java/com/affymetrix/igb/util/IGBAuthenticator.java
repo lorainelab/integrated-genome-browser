@@ -177,6 +177,8 @@ public class IGBAuthenticator extends Authenticator {
     public static void resetAuthentication(DataProvider dataProvider) {
         Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.getUrl());
         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
+        dataProvider.setLogin(null);
+        dataProvider.setPassword(null);
         loginAttempts = 0;
     }
 }

@@ -716,7 +716,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
         BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
         gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
-        gview.setBioSeq(genome_seq, false);
+        gview.setBioSeq(genome_seq, true);
         frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
     }
 

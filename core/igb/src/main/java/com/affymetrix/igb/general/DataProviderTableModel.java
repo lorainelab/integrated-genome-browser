@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.services.IgbService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -131,11 +133,21 @@ public final class DataProviderTableModel extends AbstractTableModel {
             case Refresh:
                 return "";
             case Name:
+        {
+            try {
+                return URLDecoder.decode(dataProvider.getName(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
                 return dataProvider.getName();
+            }
+        }
             case Type:
                 return dataProvider.getFactoryName().get();
             case URL:
+                try {
+                return URLDecoder.decode(dataProvider.getUrl(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
                 return dataProvider.getUrl();
+            }
             case Enabled:
                 return dataProvider.getStatus() != ResourceStatus.Disabled;
             default:

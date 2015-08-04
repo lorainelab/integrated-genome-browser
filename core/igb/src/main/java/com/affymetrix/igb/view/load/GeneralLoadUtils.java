@@ -43,7 +43,6 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
-import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -58,6 +57,7 @@ import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
@@ -65,7 +65,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -116,7 +115,7 @@ public final class GeneralLoadUtils {
      * lookup is done using {@link Class#getResourceAsStream(String)}. The
      * default file is {@value}.
      */
-    private static final String SPECIES_SYNONYM_FILE = "/species.txt";
+
     private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
     private final static SeqMapView gviewer = IGB.getInstance().getMapView();
     // versions associated with a given genome.
@@ -145,14 +144,6 @@ public final class GeneralLoadUtils {
     private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
     public static final String LOADING_MESSAGE_PREFIX = "Loading data set ";
-
-    static {
-        try (InputStream resourceAsStream = GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE)) {
-            SpeciesLookup.load(resourceAsStream);
-        } catch (IOException ex) {
-            logger.error("Error retrieving Species synonym file", ex);
-        }
-    }
 
     public static DataContainer getLocalFileDataContainer(GenomeVersion genomeVersion, String speciesName) {
         String versionName = genomeVersion.getName();
@@ -190,11 +181,11 @@ public final class GeneralLoadUtils {
     }
 
     public static Set<DataContainer> getDataContainersForSpecies(String speciesName) {
-        return speciesDataContainerReference.get(speciesName);
+        return ImmutableSet.copyOf(speciesDataContainerReference.get(speciesName));
     }
 
     public static Set<String> getLoadedSpeciesNames() {
-        return speciesDataContainerReference.keySet();
+        return ImmutableSet.copyOf(speciesDataContainerReference.keySet());
     }
 
     public static Optional<DataSet> findFeatureFromUri(URI featurePath) {
@@ -315,11 +306,11 @@ public final class GeneralLoadUtils {
      */
     public static void initVersionAndSeq(String versionName) {
         GenomeVersion genomeVersion = gmodel.getSeqGroup(versionName);
-        List<DataContainer> availableDataContainers = Lists.newArrayList(genomeVersion.getAvailableDataContainers());
-        Collections.sort(availableDataContainers, (DataContainer o1, DataContainer o2) -> {
-            return new DataProviderComparator().compare(o1.getDataProvider(), o2.getDataProvider());
-        });
-        availableDataContainers.stream()
+        final Set<DataContainer> availableDataContainers = genomeVersion.getAvailableDataContainers();
+        List<DataContainer> sortedContainers = Lists.newArrayList();
+        sortedContainers.addAll(availableDataContainers);
+        Collections.sort(sortedContainers, DATA_CONTAINER_PRIORITY_COMPARATOR);
+        sortedContainers.stream()
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
                 .forEach(dataContainer -> {
@@ -328,32 +319,7 @@ public final class GeneralLoadUtils {
                     dataContainer.setInitialized();
                 });
 
-        if (genomeVersion.getSeqCount() == 0) {
-            loadChromInfo(genomeVersion);
-        }
         addGenomeVirtualSeq(genomeVersion);	// okay to run this multiple times
-    }
-
-    /**
-     * Load the sequence info for the given genomeVersion. Try loading from DAS/2 before
-     * loading from DAS; chances are DAS/2 will be faster, and that the
-     * chromosome names will be closer to what is expected.
-     */
-    private static void loadChromInfo(GenomeVersion genomeVersion) {
-        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
-        sortedContainers.addAll(genomeVersion.getAvailableDataContainers());
-        for (DataContainer dataContainer : sortedContainers) {
-            if (dataContainer.getDataProvider() instanceof AssemblyProvider) {
-                AssemblyProvider assemblyProvider = (AssemblyProvider) dataContainer.getDataProvider();
-                //TODO load chromosome info
-                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
-                assemblyInfo.entrySet().stream().forEach(entry -> {
-                    genomeVersion.addSeq(entry.getKey(), entry.getValue());
-                });
-            }
-
-        }
-
     }
 
     private static void addGenomeVirtualSeq(GenomeVersion genomeVersion) {
@@ -852,8 +818,9 @@ public final class GeneralLoadUtils {
         String bioSeqId = bioSeq.getId();
         boolean residuesLoaded = false;
 
-        Set<DataContainer> sortedContainers = Sets.newTreeSet(DATA_CONTAINER_PRIORITY_COMPARATOR);
+        List<DataContainer> sortedContainers = Lists.newArrayList();
         sortedContainers.addAll(versionsWithChrom);
+        Collections.sort(sortedContainers, DATA_CONTAINER_PRIORITY_COMPARATOR);
         for (DataContainer dataContainer : sortedContainers) {
             final DataProvider dataProvider = dataContainer.getDataProvider();
             if (dataProvider.getStatus() == ResourceStatus.Disabled

@@ -11,6 +11,7 @@ import com.affymetrix.igb.general.DataProviderManager;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import java.awt.Color;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -49,8 +50,13 @@ public class IGBAuthenticator extends Authenticator {
         if (HOSTIGNORELIST.contains(getRequestingHost())) {
             return null;
         }
+        Optional<DataProvider> dataProvider = DataProviderManager.getServerFromUrlStatic(this.getRequestingURL().toString());
         final JPanel panel = new JPanel(new MigLayout("wrap 2"));
-        panel.add(new JLabel(getRequestingHost() + " asks for authentication:"), "span 2");
+        if (dataProvider.isPresent()) {
+            panel.add(new JLabel(dataProvider.get().getUrl() + " asks for authentication:"), "span 2");
+        } else {
+            panel.add(new JLabel(getRequestingHost() + " asks for authentication:"), "span 2");
+        }
         final JLabel errorLoginLabel = new JLabel("");
         panel.add(errorLoginLabel, "span 2");
         errorLoginLabel.setForeground(Color.red);
@@ -70,7 +76,6 @@ public class IGBAuthenticator extends Authenticator {
         });
         showPassword.setText("Show Password");
         panel.add(showPassword, "wrap");
-        Optional<DataProvider> dataProvider = DataProviderManager.getServerFromUrlStatic(this.getRequestingURL().toString());
         final JCheckBox rememberCredentials = new JCheckBox("Save Password");
 
         if (loginAttempts > 0) {
@@ -89,6 +94,9 @@ public class IGBAuthenticator extends Authenticator {
                     try {
                         PasswordAuthentication persistedCredentials = validateAuthentication(userName, new JPasswordField(prefPwd).getPassword());
                         return persistedCredentials;
+                    } catch (FileNotFoundException ex) {
+                        //do nothing
+                        return null;
                     } catch (IOException ex) {
                         logger.error(BUNDLE.getString("invalidCredentials"));
                         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
@@ -169,6 +177,8 @@ public class IGBAuthenticator extends Authenticator {
     public static void resetAuthentication(DataProvider dataProvider) {
         Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.getUrl());
         dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
+        dataProvider.setLogin(null);
+        dataProvider.setPassword(null);
         loginAttempts = 0;
     }
 }

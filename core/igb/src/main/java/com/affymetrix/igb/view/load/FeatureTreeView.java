@@ -30,7 +30,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -41,7 +40,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -493,12 +491,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
     }
 
-    private static Optional<ImageIcon> getServerFavicon(DataProvider gServer) {
-        if (faviconReference.containsKey(gServer)) {
-            return Optional.ofNullable(faviconReference.get(gServer));
+    private static Optional<ImageIcon> getServerFavicon(DataProvider dataProvider) {
+        if (faviconReference.containsKey(dataProvider)) {
+            return Optional.ofNullable(faviconReference.get(dataProvider));
         }
-        final Optional<ImageIcon> serverFavicon = Optional.ofNullable(GeneralUtils.determineFriendlyIcon(gServer.getUrl() + "/favicon.ico"));
-        serverFavicon.ifPresent(favicon -> faviconReference.put(gServer, favicon));
+        final Optional<ImageIcon> serverFavicon = Optional.ofNullable(GeneralUtils.determineFriendlyIcon(dataProvider));
+        serverFavicon.ifPresent(favicon -> faviconReference.put(dataProvider, favicon));
         return serverFavicon;
     }
 
@@ -716,14 +714,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         private boolean isReachable(DataSet dataSet) {
             if (dataSet.isSupportsAvailabilityCheck()) {
-                try {
-                    if (LocalUrlCacher.getInputStream(dataSet.getURI().toURL()) == null) {
-                        return false;
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
-                }
+                return LocalUrlCacher.isURIReachable(dataSet.getURI());
             }
             return true;
         }

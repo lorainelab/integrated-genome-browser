@@ -24,9 +24,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenomeVersion {
 
+    private static final Logger logger = LoggerFactory.getLogger(GenomeVersion.class);
     private final String UNKNOWN_ID = "UNKNOWN_SYM_";
     private int unknown_id_no = 1;
     final private String name;
@@ -277,9 +280,6 @@ public class GenomeVersion {
                 id2seq.put(seqID.toLowerCase(), seq);
                 seq.setGenomeVersion(this);
             }
-        } else {
-            throw new IllegalStateException("ERROR! tried to add seq: " + seqID + " to AnnotatedSeqGroup: "
-                    + this.getName() + ", but seq with same id is already in group");
         }
     }
 
@@ -395,7 +395,5 @@ public class GenomeVersion {
         }
         return true;
     }
-    
-    
 
 }

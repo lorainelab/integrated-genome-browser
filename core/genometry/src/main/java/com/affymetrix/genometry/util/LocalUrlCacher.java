@@ -255,6 +255,7 @@ public final class LocalUrlCacher {
             if (!url_reachable) {
                 if (!fileMayNotExist) {
                     logger.warn("URL not reachable, status code = {}: {}", new Object[]{http_status, url});
+//                    throw new FileNotFoundException(); 
                 }
                 if (rqstHeaders != null) {
                     rqstHeaders.put("LocalUrlCacher", URL_NOT_REACHABLE);
@@ -262,8 +263,9 @@ public final class LocalUrlCacher {
                 if (!cacheFile.exists()) {
                     if (!fileMayNotExist) {
                         logger.warn("URL {} is not reachable, and is not cached!", url);
+//                        throw new FileNotFoundException();
                     }
-                    return null;
+                    return null; //TODO throw appropriate exception instead of reaching this situation
                 }
             }
         }
@@ -634,7 +636,9 @@ public final class LocalUrlCacher {
             logger.error("URL scheme: {} not recognized", scheme);
             return null;
         }
-
+        if (is == null) {
+            throw new FileNotFoundException();
+        }
         StringBuffer stripped_name = new StringBuffer();
         InputStream str = GeneralUtils.unzipStream(is, uri.toString(), stripped_name);
         if (str instanceof BufferedInputStream) {
@@ -847,7 +851,7 @@ public final class LocalUrlCacher {
         return sb.toString();
     }
 
-    public static boolean isURLReachable(URI uri) {
+    public static boolean isURIReachable(URI uri) {
         try {
             if (LocalUrlCacher.getInputStream(uri.toURL()) == null) {
                 return false;

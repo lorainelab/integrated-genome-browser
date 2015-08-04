@@ -16,6 +16,7 @@ import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -165,7 +166,11 @@ public abstract class BaseDataProvider implements DataProvider {
     @Override
     public void setLogin(String login) {
         this.login = login;
-        preferencesNode.put(LOGIN, login);
+        if (login == null) {
+            preferencesNode.remove(LOGIN);
+        } else {
+            preferencesNode.put(LOGIN, login);
+        }
     }
 
     @Override
@@ -176,7 +181,11 @@ public abstract class BaseDataProvider implements DataProvider {
     @Override
     public void setPassword(String password) {
         this.password = password;
-        preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+        if (password == null) {
+            preferencesNode.remove(PASSWORD);
+        } else {
+            preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+        }
 
     }
 
@@ -189,12 +198,36 @@ public abstract class BaseDataProvider implements DataProvider {
     public void setStatus(ResourceStatus status) {
         this.status = status;
         preferencesNode.put(STATUS, status.toString());
-        if (status == NotInitialized) {
-            initialize();
-        }
         if (status == Disabled) {
             useMirror = false;
             disable();
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.url);
+        hash = 59 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BaseDataProvider other = (BaseDataProvider) obj;
+        if (!Objects.equals(this.url, other.url)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -26,7 +26,10 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LocalUrlCacher;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
@@ -41,6 +44,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -56,6 +60,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -273,6 +278,22 @@ public final class GeneralLoadView {
     private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
     public synchronized static void loadGenomeLoadModeDataSets() {
+        List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
+                .filter(isLoaded.negate())
+                .filter(dataSet -> !LocalUrlCacher.isURIReachable(dataSet.getURI())).collect(Collectors.toList());
+        if (!unreachableGenomeLoadDataSets.isEmpty()) {
+            ModalUtils.errorPanel("The following data sets are required, but unreachable {}" + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(unreachableGenomeLoadDataSets));
+        }
+        unreachableGenomeLoadDataSets.iterator().forEachRemaining(dataSet -> {
+            DataContainer dataContainer = dataSet.getDataContainer();
+            dataContainer.removeDataSet(dataSet);
+            if (dataContainer.getDataSets().isEmpty()) {
+                dataContainer.getDataProvider().setStatus(LoadUtils.ResourceStatus.NotResponding);
+            }
+        });
+        GeneralLoadView.getLoadView().refreshTreeView();
+
         GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
                 .filter(isLoaded.negate())

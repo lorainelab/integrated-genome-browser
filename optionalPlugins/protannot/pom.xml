@@ -13,7 +13,8 @@
     <artifactId>protannot</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Protannot</name>
+    <name>ProtAnnot</name>
+    <description>Protein annotation viewer</description>
 
     <dependencies>
         <dependency>

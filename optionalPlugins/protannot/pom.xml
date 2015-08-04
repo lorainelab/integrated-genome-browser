@@ -9,7 +9,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.bioviz</groupId>
+    <groupId>com.lorainelab</groupId>
     <artifactId>protannot</artifactId>
     <packaging>bundle</packaging>
 

@@ -26,6 +26,10 @@ import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StatusTerminateEvent;
+import com.lorainelab.protannot.model.Dnaseq;
+import com.lorainelab.protannot.model.ProtannotParser;
+import com.lorainelab.protannot.view.StatusBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -92,10 +96,6 @@ import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import net.miginfocom.swing.MigLayout;
-import com.lorainelab.protannot.event.StatusTerminateEvent;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.ProtannotParser;
-import com.lorainelab.protannot.view.StatusBar;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,9 +284,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         return icon;
     }
 
-//    public static ProtAnnotAction getInstance() {
-//        return singleton;
-//    }
     /**
      * Unloads everything from GnomeView if unable to read the selected path.
      */
@@ -294,7 +291,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         frm.setTitle(" ProtAnnot");
         gview.setTitle("");
         gview.no_data();
-        //showhairline.setEnabled(false);
     }
 
     /**
@@ -310,7 +306,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         super("Start ProtAnnot", null, null);
         frm = new JFrame(APP_NAME);
         frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        singleton = this;
         loadFileOnStart = false;
         id = UUID.randomUUID().toString();
     }
@@ -522,17 +517,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     ImageExportService exportService;
 
-//    @Reference
-//    public void addImageExportService(ImageExportService exportService) {
-//        this.exportService = exportService;
-//    }
-
     private void export() {
         protAnnotService.exportAsXml(gview);
     }
 
     void saveImage() {
-//        exportService.exportComponent(gview);
         protAnnotService.exportAsImage(gview);
     }
 

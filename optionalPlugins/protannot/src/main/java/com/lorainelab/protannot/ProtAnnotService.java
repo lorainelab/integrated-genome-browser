@@ -16,6 +16,21 @@ import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
+import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StatusSetEvent;
+import com.lorainelab.protannot.event.StatusStartEvent;
+import com.lorainelab.protannot.event.StatusTerminateEvent;
+import com.lorainelab.protannot.interproscan.InterProscanTranslator;
+import com.lorainelab.protannot.interproscan.api.InterProscanService;
+import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
+import com.lorainelab.protannot.interproscan.api.Job;
+import com.lorainelab.protannot.interproscan.api.JobRequest;
+import com.lorainelab.protannot.interproscan.api.JobSequence;
+import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
+import com.lorainelab.protannot.interproscan.appl.model.ValueType;
+import com.lorainelab.protannot.model.Dnaseq;
+import com.lorainelab.protannot.model.ProtannotParser;
+import com.lorainelab.protannot.view.StatusBar;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -54,20 +69,6 @@ import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.text.WordUtils;
-import com.lorainelab.protannot.event.StatusSetEvent;
-import com.lorainelab.protannot.event.StatusStartEvent;
-import com.lorainelab.protannot.event.StatusTerminateEvent;
-import com.lorainelab.protannot.interproscan.InterProscanTranslator;
-import com.lorainelab.protannot.interproscan.api.InterProscanService;
-import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
-import com.lorainelab.protannot.interproscan.api.Job;
-import com.lorainelab.protannot.interproscan.api.JobRequest;
-import com.lorainelab.protannot.interproscan.api.JobSequence;
-import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
-import com.lorainelab.protannot.interproscan.appl.model.ValueType;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.ProtannotParser;
-import com.lorainelab.protannot.view.StatusBar;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
@@ -94,7 +95,7 @@ public class ProtAnnotService {
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    
+
     private static final int TOOL_TIP_WIDTH = 30;
     private final Pattern pattern;
     private Matcher matcher;
@@ -122,10 +123,17 @@ public class ProtAnnotService {
     private volatile boolean interProScanRunning;
     private volatile String id;
     private String PROTANNOT_IPS_EMAIL = "protannot interproscan email";
+    private ImageExportService imageExportService;
+
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
         this.eventService = eventService;
+    }
+
+    @Reference
+    public void setImageExportService(ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
     }
 
     public ProtAnnotService() throws JAXBException {
@@ -297,7 +305,7 @@ public class ProtAnnotService {
             String originalToolTip = vt.getProperties().getProperty().getValue();
             StringBuilder sb = new StringBuilder("<html>");
             String wrappedText = WordUtils.wrap(originalToolTip, TOOL_TIP_WIDTH, "<br />", true);
-            if(wrappedText != null) {
+            if (wrappedText != null) {
                 sb.append(wrappedText);
             }
             sb.append("</html>");
@@ -717,6 +725,22 @@ public class ProtAnnotService {
                 LOG.error(ex.getMessage(), ex);
             }
 
+        }
+    }
+
+    public void exportAsImage(Component component) {
+        JFileChooser fileChooser = new UniFileChooser("Save As", "png");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.rescanCurrentDirectory();
+        int option = fileChooser.showSaveDialog(component);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File exportFile = fileChooser.getSelectedFile();
+            String filePath = exportFile.getName();
+            if (filePath.lastIndexOf(".") > 0) {
+                String ext = filePath.substring(filePath.lastIndexOf("."));
+                
+            }
+            imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }
     }
 

@@ -446,7 +446,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.bioviz</groupId>
+                <groupId>com.lorainelab</groupId>
                 <artifactId>protannot</artifactId>
                 <version>${project.version}</version>
             </dependency>

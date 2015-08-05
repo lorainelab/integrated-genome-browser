@@ -301,7 +301,7 @@
             <scope>runtime</scope>  
         </dependency>
         <dependency>
-            <groupId>org.bioviz</groupId>
+            <groupId>com.lorainelab</groupId>
             <artifactId>protannot</artifactId>
             <scope>runtime</scope>
         </dependency>

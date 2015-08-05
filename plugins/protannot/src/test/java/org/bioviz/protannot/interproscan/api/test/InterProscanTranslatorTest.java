@@ -5,10 +5,10 @@
  */
 package org.bioviz.protannot.interproscan.api.test;
 
-import org.bioviz.protannot.model.Dnaseq;
-import org.bioviz.protannot.model.Dnaseq.Aaseq;
-import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch;
-import org.bioviz.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
+import com.lorainelab.protannot.model.Dnaseq;
+import com.lorainelab.protannot.model.Dnaseq.Aaseq;
+import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
+import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
 import org.slf4j.LoggerFactory;
 
 /**

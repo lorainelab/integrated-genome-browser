@@ -7,8 +7,8 @@ package org.bioviz.protannot.interproscan.api.test;
 
 import java.util.Optional;
 import junit.framework.Assert;
-import org.bioviz.protannot.interproscan.InterProscanServiceRest;
-import org.bioviz.protannot.interproscan.api.InterProscanService;
+import com.lorainelab.protannot.interproscan.InterProscanServiceRest;
+import com.lorainelab.protannot.interproscan.api.InterProscanService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

@@ -1,6 +1,7 @@
 package com.lorainelab.quickload.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
@@ -128,11 +129,13 @@ public class QuickloadUtils {
                 if (!annotsFiles.isEmpty()) {
                     return Optional.of(Sets.newLinkedHashSet(annotsFiles));
                 } else {
+                    ModalUtils.errorPanel("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site (" + genomeVersionBaseUrl + ")");
                     logger.error("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site {}", genomeVersionBaseUrl);
                     supportedGenomeVersionInfo.remove(genomeVersionName);
                 }
             }
         } catch (URISyntaxException | IOException ex) {
+            ModalUtils.errorPanel("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site (" + genomeVersionBaseUrl + ")");
             logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, genomeVersionBaseUrl, ex);
         }
         return Optional.empty();

@@ -61,6 +61,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import org.bioviz.protannot.event.ZoomInEvent;
 import org.bioviz.protannot.event.ZoomOutEvent;
@@ -260,7 +261,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         mapPanel.add("Center", seqmap);
         JPanel right = new JPanel();
         right.setLayout(new GridLayout(1, 2));
-        right.add(y_scroller);
+//        right.add(y_scroller);
         right.add(getYZoomPanel());
         int maps_height = axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space + lower_white_space
@@ -302,9 +303,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel yZoomPanel = new JPanel(new MigLayout("filly"));
         JButton yZoomOutBtn = new JButton(new ZoomOutEvent(yzoomer));
         JButton xZoomInBtn = new JButton(new ZoomInEvent(yzoomer));
-        yZoomPanel.add(xZoomInBtn, "width 20!, height 20!, north");
-        yZoomPanel.add(yzoomer, "grow, wrap");
-        yZoomPanel.add(yZoomOutBtn, "width 20!, height 20!, south, wrap");
+        yZoomPanel.add(yZoomOutBtn, new CC().width("20!").height("20!").alignY("top").wrap());
+        yZoomPanel.add(yzoomer, new CC().grow().pushY().wrap());
+        yZoomPanel.add(xZoomInBtn, new CC().width("20!").height("20!").alignY("bottom"));
         yZoomPanelWrapper.add(yZoomPanel, "growy");
         return yZoomPanelWrapper;
     }

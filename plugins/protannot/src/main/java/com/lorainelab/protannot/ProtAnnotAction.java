@@ -48,7 +48,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedInputStream;
@@ -89,7 +88,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -508,7 +506,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
         AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
         MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getOpenInNewWindow()));
 
         gview.popup.add(copyAction);
         gview.popup.add(browserAction);
@@ -1424,37 +1421,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         toggle_label_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineLabelTip"));
         toggle_label_action.putValue(AbstractAction.SELECTED_KEY, true);
         return toggle_label_action;
-    }
-
-    private AbstractAction getOpenInNewWindow() {
-        final AbstractAction newwin_action = new AbstractAction("Open table in new window") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final AbstractAction action = this;
-                action.setEnabled(false);
-
-                final JPanel table_panel = getGenomeView().getTablePanel();
-                final JSplitPane split_pane = getGenomeView().getSplitPane();
-                split_pane.remove(table_panel);
-
-                final JFrame jframe = new JFrame();
-                jframe.setMinimumSize(new Dimension(table_panel.getWidth(), 100));
-                jframe.setSize(table_panel.getSize());
-                jframe.addWindowListener(new WindowAdapter() {
-
-                    @Override
-                    public void windowClosing(WindowEvent evt) {
-                        split_pane.add(table_panel);
-                        action.setEnabled(true);
-                    }
-                });
-                jframe.add(table_panel);
-                jframe.setVisible(true);
-            }
-        };
-
-        return newwin_action;
     }
 
     private AbstractAction getAboutAction() {

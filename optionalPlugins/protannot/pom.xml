@@ -170,7 +170,8 @@
                     <instructions>    
                         <Import-Package>
                             com.apple.eawt,
-                            *
+                            com.lorainelab.igb.services;version="[8.4,8.5)",
+			    *
                         </Import-Package>
                         <Export-Package/>                    
                         <Service-Component>*</Service-Component>

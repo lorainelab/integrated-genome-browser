@@ -7,18 +7,21 @@ package com.lorainelab.protannot.interproscan;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import java.math.BigInteger;
-import java.util.Optional;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import com.lorainelab.protannot.interproscan.api.InterProscanService;
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
 import com.lorainelab.protannot.model.Dnaseq.Descriptor;
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -111,7 +114,7 @@ public class InterProscanTranslator {
     }
 
     private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit, String prefix) {
-        if(prefix == null) {
+        if (prefix == null) {
             prefix = "";
         }
         if (attributes == null) {
@@ -194,8 +197,21 @@ public class InterProscanTranslator {
                     }
                 }
             }
+            orderSimspans(simhit.getSimspan());
         } catch (XPathExpressionException ex) {
             LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    private void orderSimspans(List<Simhit.Simspan> simspans) {
+        Collections.sort(simspans, new SimhitComparer());
+    }
+
+    public class SimhitComparer implements Comparator<Simhit.Simspan> {
+
+        @Override
+        public int compare(Simhit.Simspan x, Simhit.Simspan y) {
+            return x.getQueryStart().compareTo(y.getQueryStart());
         }
     }
 

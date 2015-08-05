@@ -78,7 +78,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private static final BundleFilter INSTALLED_BUNDLE_FILTER = PluginsView::isInstalled;
     private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = bundle -> !isInstalled(bundle);
     private static final BundleFilter NEITHER_BUNDLE_FILTER = bundle -> false;
-    private BundleFilter DEFAULT_BUNDLES;
+    private BundleFilter DEFAULT_BUNDLE_FILTER;
 
     /**
      * determins if a given bundle is installed
@@ -139,7 +139,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
 
     private void initializeDefaultBundleFilter() {
         defaultBundles.addAll(Arrays.asList(bundleContext.getBundles()));
-        DEFAULT_BUNDLES = (Bundle bundle) -> !defaultBundles.contains(bundle);
+        DEFAULT_BUNDLE_FILTER = (Bundle bundle) -> !defaultBundles.contains(bundle);
     }
 
     private void init() {
@@ -606,7 +606,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private synchronized void filterBundles() {
         filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
-            if (DEFAULT_BUNDLES.filterBundle(bundle) && bundleFilter.filterBundle(bundle)) {
+            if (bundle.getLocation().startsWith("obr:") || (DEFAULT_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle))) {
                 try {
                     Resource[] resources = repoAdmin.discoverResources("(&(" + SYMBOLIC_NAME + "=" + bundle.getSymbolicName() + ")(" + VERSION + "=" + bundle.getVersion() + "))");
                     Resolver resolver = repoAdmin.resolver();

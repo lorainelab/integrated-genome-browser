@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
+import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -76,12 +77,9 @@ import org.slf4j.LoggerFactory;
  */
 @Component(provide = GenomeView.class, factory = "genome.view.factory.provider")
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
-
+    
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
-
-
-    JPopupMenu popup;
-
+    
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
     private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
     private static final boolean DEBUG_PROTEIN_ANNOTS = false;
@@ -102,10 +100,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private boolean showhairlineLabel = true;
     private Shadow hairline, axishairline;
     private JSplitPane split_pane;
-
+    
     private final Color col_sequence = Color.black;
     private final Color col_axis_bg = Color.lightGray;
-
+    
     private List<GlyphI> selected = new ArrayList<>();
     private List<GlyphI> storeSelected;
     private VisibleRange zoomPoint = new VisibleRange();
@@ -123,34 +121,33 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final double zoomRatio = 30.0;
     private JRPTabbedPane tabbedPane;
 
-
     private ComponentFactory propertiesTabPanelFactory;
-
+    
     private ComponentFactory interProScanTabPanelFactory;
     private Map<String, Object> properties;
-
+    
     private InterProScanResultSheet ipsTable;
     private InterProScanTableModel ipsTableModel;
     private ProtAnnotEventService eventService;
-
+    
     private ComponentFactory coloredResiduesGlyphFactory;
-
+    
     private ProtAnnotPreferencesService protAnnotPreferencesService;
-
+    
     @Reference
     public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
-
+    
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
         this.eventService = eventService;
     }
-
+    
     public void setIpsTableModel(InterProScanTableModel ipsTableModel) {
         this.ipsTableModel = ipsTableModel;
     }
-
+    
     @Deactivate
     public void deactivate() {
         protAnnotPreferencesService.unregisterEventListener(this);
@@ -177,52 +174,52 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
-
+        
         xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
         xzoomer.setBackground(Color.white);
         yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
         yzoomer.setBackground(Color.white);
-
+        
         seqmap.setZoomer(NeoMap.X, xzoomer);
         seqmap.setZoomer(NeoMap.Y, yzoomer);
-
+        
         axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
-
+        
         seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
+            
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
             }
         });
-
+        
         seqmap.getZoomer(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
-
+            
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 axismap.getScroller(NeoMap.X).setValue(seqmap.getScroller(NeoMap.X).getValue());
             }
-
+            
         });
-
+        
         this.setLayout(new BorderLayout());
-
+        
         JPanel p = initPanel();
         initPropertiesTab();
         initInterProScanTab();
         initListerners();
-
+        
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
-
+        
     }
-
+    
     @Subscribe
     public synchronized void updateInterProScanTableModel(InterProScanModelUpdateEvent e) {
         ipsTable.showTableData(ipsTableModel);
         ipsTableModel.fireTableDataChanged();
     }
-
+    
     public void initAxis() {
         axismap.setSize(seqmap.getSize().width, upper_white_space
                 + middle_white_space + lower_white_space
@@ -230,22 +227,22 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         maps = new NeoMap[2];
         maps[0] = seqmap;
         maps[1] = axismap;
-
+        
         zoomPoint = new VisibleRange();
         hairline = new Shadow(this.seqmap);
         axishairline = new Shadow(this.axismap);
         zoomPoint.addListener(hairline);
         zoomPoint.removeListener(axishairline);
-
+        
         hairline.setUseXOR(true);
         hairline.setLabeled(showhairlineLabel);
     }
-
+    
     public void initSplitPane(JPanel p) {
         split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
         this.add(split_pane);
     }
-
+    
     public JPanel initPanel() {
         JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
         seqmap.setOffsetScroller(y_scroller);
@@ -267,7 +264,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         int maps_height = axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space + lower_white_space
                 + divider_size + seqmap_pixel_height;
-
+        
         JPanel p = new JPanel();
         p.addComponentListener(this);
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
@@ -276,13 +273,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("Center", mapPanel);
         p.add("North", getXZoomPanel());
         p.add("West", right);
-
+        
         tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
         Dimension minimumSize = new Dimension(0, 500);
         p.setMinimumSize(minimumSize);
-
+        
         initSplitPane(p);
-
+        
         initAxis();
         return p;
     }
@@ -314,12 +311,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void initListerners() {
         seqmap.addMouseListener(this);
         seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
-
+        
         seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
         axismap.addMouseListener(this);
         axismap.setSelectionEvent(NeoMap.NO_SELECTION);
     }
-
+    
     public void initInterProScanTab() {
         final Properties ipsProps = new Properties();
         ipsProps.put("id", properties.get("id"));
@@ -331,7 +328,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         ipsTable.showTableData(ipsTableModel);
         tabbedPane.add(ipsTable.getTitle(), ipsTable);
     }
-
+    
     public void initPropertiesTab() {
         final Properties props = new Properties();
         props.setProperty("seqmap.width", seqmap.getWidth() + "");
@@ -341,17 +338,17 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         table_view = (ModPropertySheet) tb.getComponent();
         tabbedPane.add(tb.getName(), table_view);
     }
-
+    
     @Reference(target = "(component.factory=properties.tab.factory.provider)")
     public void setPropertiesTabPanelFactory(final ComponentFactory propertiesTabPanelFactory) {
         this.propertiesTabPanelFactory = propertiesTabPanelFactory;
     }
-
+    
     @Reference(target = "(component.factory=interproscan.tab.factory.provider)")
     public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
         this.interProScanTabPanelFactory = interProScanTabPanelFactory;
     }
-
+    
     @Reference(target = "(component.factory=residues.glyph.factory.provider)")
     public void setColoredResiduesGlyphFacatory(final ComponentFactory coloredResiduesGlyphFactory) {
         this.coloredResiduesGlyphFactory = coloredResiduesGlyphFactory;
@@ -367,7 +364,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.updateWidget();
 //        table_view.showProperties(new Properties[0]);
     }
-
+    
     private Map<String, Color> loadPrefs() {
         return protAnnotPreferencesService.getAllColorPreferences();
     }
@@ -378,7 +375,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param phash Color perferences stored in hashtable to setup the layout.
      */
     public GenomeView() {
-
+        
     }
 
     /**
@@ -400,7 +397,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
-
+    
     void clearGenomeView() {
         seqmap.clearWidget();
         axismap.clearWidget();
@@ -430,26 +427,26 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.setMapRange(gseq.getMin(), gseq.getMax());
         seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
         seqmap.setMaxZoom(NeoMap.Y, seqmap.getHeight() / zoomRatio);
-
+        
         exonGlyphs = new ArrayList<>();
         exonList = new ArrayList<>();
-
+        
         hairline.reset(this.seqmap, NeoConstants.HORIZONTAL, Color.lightGray);
         axishairline.reset(this.axismap, NeoConstants.HORIZONTAL, Color.lightGray);
         hairline.setLabeled(showhairlineLabel);
-
+        
         int acount = gseq.getAnnotationCount();
-
+        
         SeqSymmetry[] path2view = new SeqSymmetry[1];
         MutableSeqSymmetry viewSym = new SimpleMutableSeqSymmetry();
         viewSym.addSpan(new SimpleSeqSpan(gseq.getMin(), gseq.getMax(), gseq));
         vseq = new BioSeq("view seq", gseq.getLength());
         vseq.setBounds(gseq.getMin(), gseq.getMax());
-
+        
         viewSym.addSpan(new SimpleSeqSpan(vseq.getMin(), vseq.getMax(), vseq));
-
+        
         path2view[0] = viewSym;
-
+        
         for (int i = 0; i < acount; i++) {
             SeqSymmetry asym = gseq.getAnnotation(i);
             if (DEBUG_GENOMIC_ANNOTS) {
@@ -474,15 +471,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
 //        table_view.showProperties(new Properties[0]);
         setupAxisMap();
-
+        
         axismap.stretchToFit(is_new, false);
         seqmap.stretchToFit(is_new, true);
-
+        
         seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
                 ((gseq.getMin() + gseq.getMax()) / 2.0));
         axismap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
                 ((gseq.getMin() + gseq.getMax()) / 2.0));
-
+        
         updateWidget();
     }
 
@@ -493,12 +490,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     public boolean toggleHairline() {
         showhairline = !showhairline;
-
+        
         hairline.setShowHairline(showhairline);
         axishairline.setShowHairline(showhairline);
-
+        
         updateWidget();
-
+        
         return showhairline;
     }
 
@@ -509,19 +506,19 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     public boolean toggleHairlineLabel() {
         showhairlineLabel = !showhairlineLabel;
-
+        
         hairline.setLabeled(showhairlineLabel);
-
+        
         updateWidget();
-
+        
         return showhairlineLabel;
     }
-
+    
     public void stretchToFit(boolean x, boolean y) {
         seqmap.stretchToFit(x, y);
         axismap.stretchToFit(x, y);
     }
-
+    
     public void updateWidget() {
         seqmap.updateWidget();
         axismap.updateWidget();
@@ -552,15 +549,16 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
         ProtAnnotMapTierGlyph tier = new ProtAnnotMapTierGlyph();
-        tier.setCoords(gseq.getMin(), 0, gseq.getLength(), 80);
+        tier.setCoords(gseq.getMin(), 120, gseq.getLength(), 200);
         tier.setState(ProtAnnotMapTierGlyph.EXPANDED);
+        tier.setLabel("Testing");
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
         seqmap.addTier(tier);
-
+        
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(mrna2genome, annot2genome);
-
+        
         boolean result = SeqUtils.transformSymmetry(annot2genome, path2view);
         logger.debug(Boolean.toString(result));
         GlyphI tGlyph = glyphifyExons(mrna2genome, annot2genome, childcount);
@@ -594,10 +592,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             // object
             // so let's put it in a list
             exonList.add(exon2genome);
-
+            
             cglyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 10);
-
+            
             exonGlyphs.add(cglyph);
             tGlyph.addChild(cglyph);
             //  testing display of "exon segments" for transcripts that have
@@ -689,23 +687,23 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         SeqSpan mrna_span = annot2mrna.getSpan(mrna);
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(annot2mrna, annot2genome);
-
+        
         SeqUtils.transformSymmetry(annot2genome, path2view);
         if (DEBUG_TRANSCRIPT_ANNOTS) {
             SeqUtils.printSymmetry(annot2genome);
         }
-
+        
         SeqSpan pSpan = SeqUtils.getOtherSpan(annot2mrna, mrna_span);
         BioSeq protein = pSpan.getBioSeq();
         String amino_acid = null;
-
+        
         try {
             amino_acid = protein.getResidues(0, protein.getLength());
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
         }
-
-        GlyphI aGlyph = new LineContainerDashGlyph();
+        
+        GlyphI aGlyph = new LineContainerGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
@@ -726,7 +724,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private void glyphifyCDSs(
             MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
-
+        
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
         int prev_add = 0;
@@ -742,11 +740,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             cglyph.setSelectable(true);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
-
+                
                 final Properties props = new Properties();
                 props.put("draw.rect", false);
                 SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
-
+                
                 int start = prev_amino_end;
                 int end = start + gSpan.getLength();
                 String sub_amino_acid = amino_acid.substring(start, end);
@@ -769,7 +767,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param genome_codon_start	First position of complete amino acid.
      */
     private void colorByFrame(GlyphI gl, int genome_codon_start) {
-
+        
         genome_codon_start %= 3;
         if (genome_codon_start == 0) {
             gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME0)));
@@ -833,7 +831,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(annot2protein, annot2genome);
-
+        
         if (DEBUG_PROTEIN_ANNOTS) {
             SeqUtils.printSymmetry(annot2genome);
         }
@@ -841,10 +839,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         if (DEBUG_PROTEIN_ANNOTS) {
             SeqUtils.printSymmetry(annot2genome);
         }
-
-        GlyphI aGlyph = new LineContainerDashGlyph();
+        
+        GlyphI aGlyph = new LineContainerGlyph();
         seqmap.setDataModel(aGlyph, annot2protein);
-
+        
         SeqSpan aSpan = annot2genome.getSpan(vseq);
         if (aSpan == null) {
             SeqSpan span = annot2genome.getSpan(0);
@@ -861,7 +859,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         //    first set up as part of SeqUtils)
         int count1 = annot2genome.getChildCount();
         for (int i = 0; i < count1; i++) {
-
+            
             SeqSymmetry child = annot2genome.getChild(i);
             int count2 = child.getChildCount();
 
@@ -869,7 +867,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             //   really need some sort of tracking in transform mechanism to associate calculated
             //   symmetries with original symmetries that they map back to...
             SymWithProps original_child = (SymWithProps) annot2protein.getChild(i);
-
+            
             for (int j = 0; j < count2; j++) {
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
@@ -879,7 +877,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 } else {
                     cglyph.setColor(color.darker());
                 }
-
+                
                 String spanno = "Span " + String.valueOf(i + 1) + " of ";
                 String interpro = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
                 if (interpro != null) {
@@ -921,7 +919,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private void setupAxisMap() {
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
-
+        
         axismap.addAxis(upper_white_space + axis_pixel_height);
         final Properties props = new Properties();
         props.put("draw.rect", true);
@@ -933,37 +931,37 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         sg.setBackgroundColor(col_axis_bg);
         axismap.getScene().addGlyph(sg);
     }
-
+    
     @Override
     public void componentResized(ComponentEvent e) {
         split_pane.repaint();
         stretchToFit(false, true);
     }
-
+    
     @Override
     public void componentMoved(ComponentEvent e) {
     }
-
+    
     @Override
     public void componentShown(ComponentEvent e) {
     }
-
+    
     @Override
     public void componentHidden(ComponentEvent e) {
     }
-
+    
     @Override
     public void mouseClicked(MouseEvent e) {
     }
-
+    
     @Override
     public void mouseEntered(MouseEvent e) {
     }
-
+    
     @Override
     public void mouseExited(MouseEvent e) {
     }
-
+    
     @Override
     public void mouseReleased(MouseEvent e) {
 //        if (e.isPopupTrigger()) {
@@ -985,15 +983,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     @Override
     public void mousePressed(MouseEvent e) {
-
+        
         tabbedPane.setSelectedIndex(0);
-
+        
         if (!(e instanceof NeoMouseEvent)) {
             return;
         }
         NeoMouseEvent nme = (NeoMouseEvent) e;
         Object coord_source = nme.getSource();
-
+        logger.info(nme.getCoordX() + " " + nme.getCoordY());
         seqmap.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_COORD,
                 nme.getCoordY());
         seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,
@@ -1006,13 +1004,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         if (nme.isAltDown() || nme.isShiftDown()) {
             multiselect = true;
         }
-
+        
         if (coord_source == axismap) {
             if (!multiselect) {
                 seqmap.clearSelected();
             }
         } else {
-
+            
             List<GlyphI> hitGlyphs = seqmap.getItems(nme.getCoordX(),
                     nme.getCoordY());
             if (!multiselect) {
@@ -1031,25 +1029,25 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             }
         }
         zoomPoint.setSpot(seqmap.getZoomCoord(NeoMap.X));
-
+        
         axismap.updateWidget();
         seqmap.updateWidget();
-
+        
         showProperties();
-
+        
         if (hairline != null) {
             hairline.setRange((int) nme.getCoordX(), (int) nme.getCoordX() + 1);
         }
-
+        
         if (e.isPopupTrigger()) {
             popup.show(this, e.getX(), e.getY());
         }
     }
-
+    
     public JSplitPane getSplitPane() {
         return split_pane;
     }
-
+    
     public JPanel getTablePanel() {
         return table_view;
     }
@@ -1100,11 +1098,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         Properties[] prop_array = propvec.toArray(new Properties[propvec.size()]);
         table_view.showProperties(prop_array);
     }
-
+    
     public void clearPropertiesTable() {
         table_view.showProperties(new Properties[0]);
     }
-
+    
     private void addParentInfo(Object candidate, SymWithProps info) {
         if (candidate instanceof SymWithProps) {
             SymWithProps parent = (SymWithProps) candidate;
@@ -1146,12 +1144,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             List<GlyphI> prev_glyphs,
             boolean multiselect) {
         List<GlyphI> candidates = new ArrayList<>();
-
+        
         if (multiselect) {
             filterGlyphs(candidates, prev_glyphs);
         }
         filterGlyphs(candidates, clicked_glyphs);
-
+        
         List<GlyphI> to_return = new ArrayList<>();
         GlyphI champion = null;
         Rectangle2D candidate_box;
@@ -1249,10 +1247,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         if (selections.isEmpty()) {
             return;
         }
-
+        
         double min_x = -1f;
         double max_x = -1f;
-
+        
         for (GlyphI glyph : selections) {
             Rectangle2D glyphbox = glyph.getCoordBox();
             if (min_x == -1 || min_x > glyphbox.getX()) {
@@ -1262,13 +1260,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 max_x = glyphbox.getX() + glyphbox.getWidth();
             }
         }
-
+        
         double zoom_focus = (min_x + max_x) / 2f;
         double width = max_x - min_x;
         double pixels_per_coord
                 = Math.min(seqmap.getView().getPixelBox().width / (width * 1.1f),
                         seqmap.getMaxZoom(NeoAbstractWidget.X));
-
+        
         if (pixels_per_coord < seqmap.getMinZoom(NeoAbstractWidget.X)) {
             unzoom();
             seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, zoom_focus);
@@ -1283,11 +1281,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, zoom_focus);
             map.updateWidget(true);
         }
-
+        
         seqmap.adjustScroller(NeoAbstractWidget.X);
         seqmap.adjustZoomer(NeoAbstractWidget.X);
     }
-
+    
     private static final Logger logger = LoggerFactory.getLogger(GenomeView.class
     );
 
@@ -1330,15 +1328,15 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * Restores old values.
      */
     private void restorePreviousSelection() {
-
+        
         seqmap.select(storeSelected);
         selected = storeSelected;
-
+        
         zoomPoint.setSpot(seqmap.getZoomCoord(NeoMap.X));
         axismap.updateWidget();
         seqmap.updateWidget();
         showProperties();
-
+        
     }
 
     /**
@@ -1350,9 +1348,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         protAnnotPreferencesService.updatePrefs(colorhash);
         protAnnotPreferencesService.commit();
         updatePreferences(colorhash);
-
+        
     }
-
+    
     private void updatePreferences(Map<String, Color> colorhash) {
         initPrefs(colorhash);
         if (gseq != null) {
@@ -1395,13 +1393,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     Map<String, Color> getColorPrefs() {
         return prefs_hash;
     }
-
+    
     public JRPTabbedPane getTabbedPane() {
         return tabbedPane;
     }
-
+    
     public InterProScanTableModel getIpsTableModel() {
         return ipsTableModel;
     }
-
+    
 }

@@ -5,6 +5,8 @@
  */
 package com.lorainelab.protannot;
 
+import static com.lorainelab.protannot.ProtAnnotAction.BUNDLE;
+import com.lorainelab.protannot.model.InterProScanTableModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,8 +15,6 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
-import com.lorainelab.protannot.PropertySheetHelper;
-import com.lorainelab.protannot.model.InterProScanTableModel;
 
 /**
  *
@@ -31,6 +31,7 @@ public class InterProScanResultSheet extends JPanel {
     private final JTable table;
     private final PropertySheetHelper helper;
     private final JButton cancelAllJobs;
+    private final JButton runInterProScan;
 
     public InterProScanResultSheet() {
         super();
@@ -40,6 +41,7 @@ public class InterProScanResultSheet extends JPanel {
         this.jvp = new JViewport();
         this.scrollPane = new JScrollPane(table);
         cancelAllJobs = new JButton("Cancel All Jobs");
+        runInterProScan = new JButton(BUNDLE.getString("menuRunInterProScan"));
         setUpPanel();
     }
 
@@ -48,7 +50,10 @@ public class InterProScanResultSheet extends JPanel {
         scrollPane.setColumnHeader(jvp);
         LC lc = new LC();
         setLayout(new MigLayout("fill"));
-        add(cancelAllJobs, "wrap");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(runInterProScan, "left");
+        buttonPanel.add(cancelAllJobs, "left");
+        add(buttonPanel, "wrap");
         add(scrollPane, "grow, push, span");
 
         table.addMouseListener(helper);
@@ -77,4 +82,9 @@ public class InterProScanResultSheet extends JPanel {
         return cancelAllJobs;
     }
 
+    public JButton getRunInterProScan() {
+        return runInterProScan;
+    }
+
+    
 }

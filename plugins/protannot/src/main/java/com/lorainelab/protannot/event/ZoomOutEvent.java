@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot.event;
+package com.lorainelab.protannot.event;
 
 import com.affymetrix.genometry.event.GenericAction;
 import java.awt.Adjustable;

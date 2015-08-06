@@ -143,6 +143,8 @@ public class ProtAnnotService {
         interProScanRunning = false;
     }
 
+    
+    
     public boolean isInterProScanRunning() {
         return interProScanRunning;
     }

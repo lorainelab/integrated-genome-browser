@@ -714,9 +714,17 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void load(SeqMapViewI seqMapView) {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
         BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
-        gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
+        int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
+        int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
+        int relativeStart = Math.min(absoluteStart, absoluteEnd);
+        int relativeEnd = Math.max(absoluteStart, absoluteEnd);
+        String strand = "+";
+        if(absoluteStart > absoluteEnd) {
+            strand = "-";
+        }
+        gview.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
         gview.setBioSeq(genome_seq, true);
-        frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
+        frm.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
     }
 
     public boolean validateSelection(SeqMapViewI seqMapView) {

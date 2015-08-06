@@ -23,9 +23,11 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.model.ProtannotParser;
@@ -384,6 +386,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
+        }
+    }
+    
+    @Subscribe
+    public void eventListenerLoadInterProScan(StartInterProScanEvent event) {
+        if(event.getId().equals(id)) {
+            doLoadInterProscan();
         }
     }
 
@@ -1185,7 +1194,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
-                "Load InterProScan")) {
+                BUNDLE.getString("menuRunInterProScan"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         doLoadInterProscan();
@@ -1584,7 +1593,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         }
         val = p.getProperty("interpro_id");
         if (val != null) {
-            return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + val;
+            return "http://www.ebi.ac.uk/interpro/entry/" + val;
         }
         val = p.getProperty("exp_ngi");
         if (val != null) {

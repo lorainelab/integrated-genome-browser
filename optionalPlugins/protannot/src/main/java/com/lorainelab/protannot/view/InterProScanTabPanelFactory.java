@@ -7,11 +7,14 @@ package com.lorainelab.protannot.view;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.lorainelab.protannot.InterProScanResultSheet;
+import com.lorainelab.protannot.ProtAnnotEventService;
+import com.lorainelab.protannot.ProtAnnotService;
+import com.lorainelab.protannot.event.StartInterProScanEvent;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Properties;
-import com.lorainelab.protannot.InterProScanResultSheet;
-import com.lorainelab.protannot.ProtAnnotService;
 
 /**
  *
@@ -24,6 +27,7 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
 
     private Map<String, Object> properties;
     private ProtAnnotService protannotService;
+    private ProtAnnotEventService protAnnotEventService;
 
     @Activate
     public void activate(Map<String, Object> properties) {
@@ -39,6 +43,10 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
             props.put("id", properties.get("id"));
             protannotService.cancelBackgroundTasks();
         });
+        
+        tableView.getRunInterProScan().addActionListener((ActionEvent e) -> {
+            protAnnotEventService.getEventBus().post(new StartInterProScanEvent((String)properties.get("id")));
+        });
 
         return tableView;
     }
@@ -47,4 +55,11 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
     public String getName() {
         return NAME;
     }
+
+    @Reference
+    public void setProtAnnotEventService(ProtAnnotEventService protAnnotEventService) {
+        this.protAnnotEventService = protAnnotEventService;
+    }
+    
+    
 }

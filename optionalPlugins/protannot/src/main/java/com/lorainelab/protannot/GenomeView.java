@@ -31,6 +31,14 @@ import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
+import com.lorainelab.protannot.event.PreferenceChangeEvent;
+import com.lorainelab.protannot.event.ZoomInEvent;
+import com.lorainelab.protannot.event.ZoomOutEvent;
+import com.lorainelab.protannot.model.InterProScanTableModel;
+import com.lorainelab.protannot.model.ProtannotParser;
+import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
+import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,16 +58,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
-import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
-import com.lorainelab.protannot.event.PreferenceChangeEvent;
-import com.lorainelab.protannot.model.InterProScanTableModel;
-import com.lorainelab.protannot.model.ProtannotParser;
-import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
-import com.lorainelab.protannot.view.TabPanelComponent;
+import net.miginfocom.layout.CC;
+import net.miginfocom.swing.MigLayout;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
@@ -238,29 +243,27 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     public void initSplitPane(JPanel p) {
         split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
-        this.add("Center", split_pane);
+        this.add(split_pane);
     }
 
     public JPanel initPanel() {
         JScrollBar y_scroller = new JScrollBar(JScrollBar.VERTICAL);
         seqmap.setOffsetScroller(y_scroller);
+        JPanel mapPanel = new JPanel();
 
-        JPanel map_panel = new JPanel();
-
-        map_panel.setLayout(new BorderLayout());
+        mapPanel.setLayout(new BorderLayout());
         JPanel top = new JPanel();
         top.setLayout(new BorderLayout());
         top.addComponentListener(this);
-        top.add("North", xzoomer);
         top.add("South", axismap);
-        map_panel.add("North", top);
+        mapPanel.add("North", top);
         seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
-        map_panel.add("Center", seqmap);
+        mapPanel.add("Center", seqmap);
         JPanel right = new JPanel();
         right.setLayout(new GridLayout(1, 2));
-        right.add(y_scroller);
-        right.add(yzoomer);
+//        right.add(y_scroller);
+        right.add(getYZoomPanel());
         int maps_height = axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space + lower_white_space
                 + divider_size + seqmap_pixel_height;
@@ -270,7 +273,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
         p.add("East", y_scroller);
-        p.add("Center", map_panel);
+        p.add("Center", mapPanel);
+        p.add("North", getXZoomPanel());
         p.add("West", right);
 
         tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
@@ -281,6 +285,30 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         initAxis();
         return p;
+    }
+
+    private JPanel getXZoomPanel() {
+        JPanel xZoomPanelWrapper = new JPanel(new MigLayout("fillx"));
+        JPanel xZoomPanel = new JPanel(new MigLayout("fillx"));
+        JButton xZoomOutBtn = new JButton(new ZoomOutEvent(xzoomer));
+        JButton xZoomInBtn = new JButton(new ZoomInEvent(xzoomer));
+        xZoomPanel.add(xZoomOutBtn, "width 20!, height 20!");
+        xZoomPanel.add(xzoomer, "width 96%");
+        xZoomPanel.add(xZoomInBtn, "width 20!, height 20!");
+        xZoomPanelWrapper.add(xZoomPanel, "width 60%, center");
+        return xZoomPanelWrapper;
+    }
+
+    private JPanel getYZoomPanel() {
+        JPanel yZoomPanelWrapper = new JPanel(new MigLayout("filly"));
+        JPanel yZoomPanel = new JPanel(new MigLayout("filly"));
+        JButton yZoomOutBtn = new JButton(new ZoomOutEvent(yzoomer));
+        JButton xZoomInBtn = new JButton(new ZoomInEvent(yzoomer));
+        yZoomPanel.add(yZoomOutBtn, new CC().width("20!").height("20!").alignY("top").wrap());
+        yZoomPanel.add(yzoomer, new CC().grow().pushY().wrap());
+        yZoomPanel.add(xZoomInBtn, new CC().width("20!").height("20!").alignY("bottom"));
+        yZoomPanelWrapper.add(yZoomPanel, "growy");
+        return yZoomPanelWrapper;
     }
 
     public void initListerners() {

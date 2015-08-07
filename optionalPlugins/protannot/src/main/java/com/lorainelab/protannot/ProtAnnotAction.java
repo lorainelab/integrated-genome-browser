@@ -23,9 +23,11 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.model.ProtannotParser;
@@ -386,6 +388,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             load(cfil);
         }
     }
+    
+    @Subscribe
+    public void eventListenerLoadInterProScan(StartInterProScanEvent event) {
+        if(event.getId().equals(id)) {
+            doLoadInterProscan();
+        }
+    }
 
     public void doLoadInterProscan() {
         if (!protAnnotService.isInterProScanRunning()) {
@@ -711,9 +720,17 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void load(SeqMapViewI seqMapView) {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
         BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
-        gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
+        int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
+        int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
+        int relativeStart = Math.min(absoluteStart, absoluteEnd);
+        int relativeEnd = Math.max(absoluteStart, absoluteEnd);
+        String strand = "+";
+        if(absoluteStart > absoluteEnd) {
+            strand = "-";
+        }
+        gview.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
         gview.setBioSeq(genome_seq, true);
-        frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
+        frm.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
     }
 
     public boolean validateSelection(SeqMapViewI seqMapView) {
@@ -1185,7 +1202,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private AbstractAction getInterProscanAction() {
         AbstractAction load_action = new AbstractAction(MessageFormat.format(
                 BUNDLE.getString("menuItemHasDialog"),
-                "Load InterProScan")) {
+                BUNDLE.getString("menuRunInterProScan"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         doLoadInterProscan();
@@ -1584,7 +1601,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         }
         val = p.getProperty("interpro_id");
         if (val != null) {
-            return "http://www.ebi.ac.uk/interpro/IEntry?ac=" + val;
+            return "http://www.ebi.ac.uk/interpro/entry/" + val;
         }
         val = p.getProperty("exp_ngi");
         if (val != null) {

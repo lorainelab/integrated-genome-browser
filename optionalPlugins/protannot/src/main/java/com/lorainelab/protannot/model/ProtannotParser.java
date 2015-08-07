@@ -30,6 +30,8 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.protannot.NormalizeXmlStrand;
+import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -41,8 +43,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import com.lorainelab.protannot.NormalizeXmlStrand;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
@@ -200,6 +200,8 @@ public class ProtannotParser {
         }
         dnaseq.setResidues(residue);
         dnaseq.setLocation(seqId + ":" + spanStart + "-" + spanEnd);
+        dnaseq.setAbsoluteStart(spanStart+"");
+        dnaseq.setAbsoluteEnd(spanEnd+"");
 
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());

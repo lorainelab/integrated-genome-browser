@@ -145,7 +145,7 @@ public class InterProscanTranslator {
 
                     Dnaseq.Descriptor url = new Dnaseq.Descriptor();
                     url.setType("URL");
-                    url.setValue("http://www.ebi.ac.uk/interpro/IEntry?ac=" + item.getValue());
+                    url.setValue("http://www.ebi.ac.uk/interpro/entry/" + item.getValue());
                     simhit.getDescriptor().add(url);
                     continue;
                 case "desc":

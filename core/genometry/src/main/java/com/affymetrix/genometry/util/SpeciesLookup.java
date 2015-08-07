@@ -79,6 +79,7 @@ public final class SpeciesLookup {
         speciesLookup.preferredNames.add(speciesInfo.getName());
         Set<String> row = Sets.newLinkedHashSet();
         row.add(speciesInfo.getName());
+        row.add(speciesInfo.getCommonName());
         row.add(speciesInfo.getGenomeVersionNamePrefix());
         speciesLookup.addSynonyms(row);
     }

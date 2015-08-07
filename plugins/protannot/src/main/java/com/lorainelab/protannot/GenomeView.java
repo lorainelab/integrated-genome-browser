@@ -556,7 +556,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
         MapTierGlyph tier = new MapTierGlyph();
-        tier.setCoords(gseq.getMin(), 120, gseq.getLength(), 200);
+        tier.setCoords(gseq.getMin(), 30, gseq.getLength(), 80);
         tier.setState(MapTierGlyph.EXPANDED);
         tier.setLabel((String) ((TypeContainerAnnot) mrna2genome).getProperty("protein_product_id"));
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();

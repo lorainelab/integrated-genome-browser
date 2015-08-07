@@ -31,7 +31,7 @@ public class LineContainerDashGlyph extends LineContainerGlyph {
         Rectangle pixelbox = getPixelBox();
         drawDirectedLine(view.getGraphics(), pixelbox.x, pixelbox.y + (pixelbox.height / 2), pixelbox.width, NeoConstants.RIGHT);
     }
-    
+
     static void drawDirectedLine(Graphics g, final int x, final int y, final int width, final int direction) {
         switch (direction) {
             case NeoConstants.RIGHT:

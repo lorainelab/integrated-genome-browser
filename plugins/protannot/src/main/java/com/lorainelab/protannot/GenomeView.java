@@ -1,5 +1,7 @@
 package com.lorainelab.protannot;
 
+import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
+import com.lorainelab.protannot.view.LineContainerDashGlyph;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
@@ -66,7 +68,7 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
-import org.bioviz.protannot.view.ProtAnnotMapTierGlyph;
+import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;

@@ -67,6 +67,7 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
+import org.bioviz.protannot.view.ProtAnnotMapTierGlyph;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
@@ -462,7 +463,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             glyphifyMRNA(asym, path2view);
         }
 
-        MapTierGlyph sumTier = new MapTierGlyph();
+        MapTierGlyph sumTier = new ProtAnnotMapTierGlyph();
         sumTier.setCoords(gseq.getMin(), seqmap_pixel_height - 20, gseq.getLength(), 20);
         sumTier.setState(MapTierGlyph.EXPANDED);
 
@@ -555,7 +556,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
-        MapTierGlyph tier = new MapTierGlyph();
+        MapTierGlyph tier = new ProtAnnotMapTierGlyph();
         tier.setCoords(gseq.getMin(), 30, gseq.getLength(), 80);
         tier.setState(MapTierGlyph.EXPANDED);
         tier.setLabel((String) ((TypeContainerAnnot) mrna2genome).getProperty("protein_product_id"));

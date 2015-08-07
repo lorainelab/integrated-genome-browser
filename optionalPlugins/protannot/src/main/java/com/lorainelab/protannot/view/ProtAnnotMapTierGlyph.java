@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class ProtAnnotMapTierGlyph extends MapTierGlyph {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotMapTierGlyph.class);
+    private static final int MIN_FONT_SIZE = 6;
 
     public ProtAnnotMapTierGlyph() {
         super();
@@ -41,39 +42,14 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         showLabel = true;
         GlyphI child = getChildren().get(0);
         Graphics2D g = view.getGraphics();
-
         // No font is readable at less than 5 pixels!
         FontMetrics fm = g.getFontMetrics();
         // 0.8 is a kludge, but getAscent() overestimates the amount
         // of space needed for normal capital letters; it includes
         // room for weirdly tall characters like '|' and accents.
-        int fontSize = (int) (0.4 * (fm.getAscent() + fm.getDescent()));
-        int textYPos = getPixelBox().y + (int) (0.4 * fm.getAscent());
-        int textXPos = (child.getPixelBox(view).x + child.getPixelBox(view).width) / 2;
-        int xCoord = (int) (child.getCoordBox().x + child.getCoordBox().width / 2);
-        Point2D.Double labelStartCoord = new Point2D.Double(xCoord, 0);
-        Point labelStartPoint = new Point();
-        view.transformToPixels(labelStartCoord, labelStartPoint);
-        int bottom = getPixelBox().y + getPixelBox().height - fm.getDescent();
-        if (outline_color != null) {
-            textYPos += 2;
-            bottom -= 1;
-        }
-        g.setColor(label_color);
-        drawlabel(view, (int) labelStartPoint.getX(), textYPos);
-        if (moreStrings != null) {
-            if (label_spacing == -1) {
-                label_spacing = fontSize + 2;
-            }
-            for (String moreString : moreStrings) {
-                textYPos += label_spacing;
-                if (textYPos >= bottom) {
-                    break;
-                }
-                g.drawString(moreString, textXPos, textYPos);
-            }
-        }
 
+        g.setColor(label_color);
+        drawlabel(view);
     }
 
     /**
@@ -119,15 +95,21 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         }
     }
 
-    private void drawlabel(ViewI view, int x, int y) {
+    private void drawlabel(ViewI view) {
         Graphics2D g = view.getGraphics();
         GlyphI child = getChild(0);
         if (child == null || !showLabel || Strings.isNullOrEmpty(label)) {
             return;
         }
+
+        int xCoord = (int) (child.getCoordBox().x + child.getCoordBox().width / 2);
+        Point2D.Double labelStartCoord = new Point2D.Double(xCoord, 0);
+        Point labelStartPoint = new Point();
+        view.transformToPixels(labelStartCoord, labelStartPoint);
+
         FontMetrics fontMetrics = g.getFontMetrics();
         int textHeight = fontMetrics.getAscent();
-        int availableHeight = getPixelBox().height - child.getPixelBox(view).height;
+        int availableHeight = (getPixelBox().height - child.getPixelBox(view).height) / 2;
         int availableWidth = child.getPixelBox(view).width;
 
         int bestFontSize = (int) (0.4 * (fontMetrics.getAscent() + fontMetrics.getDescent()));
@@ -146,6 +128,9 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
                 bestFontSize--;
             } while (testHeight > availableHeight);
         }
+        if (bestFontSize < MIN_FONT_SIZE) {
+            return;
+        }
         g.setFont(new Font(fontMetrics.getFont().getName(), fontMetrics.getFont().getStyle(), bestFontSize));
         fontMetrics = g.getFontMetrics();
         String drawLabel = label;
@@ -156,7 +141,7 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
             textWidth = fontMetrics.stringWidth(drawLabel);
         }
 
-        g.drawString(drawLabel, x - textWidth / 2, y);
+        g.drawString(drawLabel, labelStartPoint.x - textWidth / 2, getPixelBox().y + fontMetrics.getAscent());
     }
 
 }

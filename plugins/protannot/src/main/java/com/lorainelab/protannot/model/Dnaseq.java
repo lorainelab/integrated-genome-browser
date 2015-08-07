@@ -40,6 +40,30 @@ public class Dnaseq {
     protected String seq;
     @XmlAttribute(name = "location", required = true)
     protected String location;
+    
+    @XmlAttribute(name = "start", required = true)
+    protected String absoluteStart;
+    
+    @XmlAttribute(name = "end", required = true)
+    protected String absoluteEnd;
+
+    public String getAbsoluteStart() {
+        return absoluteStart;
+    }
+
+    public void setAbsoluteStart(String absoluteStart) {
+        this.absoluteStart = absoluteStart;
+    }
+
+    public String getAbsoluteEnd() {
+        return absoluteEnd;
+    }
+
+    public void setAbsoluteEnd(String absoluteEnd) {
+        this.absoluteEnd = absoluteEnd;
+    }
+    
+    
 
     /**
      * Gets the value of the mrnaAndAaseq property.

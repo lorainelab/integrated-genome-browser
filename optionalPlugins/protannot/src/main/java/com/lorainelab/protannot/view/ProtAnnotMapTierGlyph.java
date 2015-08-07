@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 public class ProtAnnotMapTierGlyph extends MapTierGlyph {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotMapTierGlyph.class);
-    private static final int MIN_FONT_SIZE = 6;
+    private static final int MIN_FONT_SIZE = 7;
+    private static final int MAX_FONT_SIZE = 36;
 
     public ProtAnnotMapTierGlyph() {
         super();
@@ -126,12 +127,15 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         if (bestFontSize < MIN_FONT_SIZE) {
             return;
         }
+        if(bestFontSize > MAX_FONT_SIZE) {
+            bestFontSize = MAX_FONT_SIZE;
+        }
         g.setFont(new Font(fontMetrics.getFont().getName(), fontMetrics.getFont().getStyle(), bestFontSize));
         fontMetrics = g.getFontMetrics();
         String drawLabel = label;
 
         int textWidth = fontMetrics.stringWidth(drawLabel);
-        while (textWidth > availableWidth) {
+        while (textWidth > availableWidth && drawLabel.length() > 3) {
             drawLabel = drawLabel.substring(0, drawLabel.length() - 2) + "\u2026";
             textWidth = fontMetrics.stringWidth(drawLabel);
         }

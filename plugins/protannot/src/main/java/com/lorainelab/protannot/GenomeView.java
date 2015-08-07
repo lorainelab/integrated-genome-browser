@@ -1,5 +1,7 @@
 package com.lorainelab.protannot;
 
+import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
+import com.lorainelab.protannot.view.LineContainerDashGlyph;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
@@ -12,6 +14,7 @@ import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -65,6 +68,7 @@ import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
+import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
@@ -79,7 +83,6 @@ import org.slf4j.LoggerFactory;
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
-
     JPopupMenu popup;
 
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
@@ -122,7 +125,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final int seqmap_pixel_height = 500;
     private static final double zoomRatio = 30.0;
     private JRPTabbedPane tabbedPane;
-
     private ComponentFactory propertiesTabPanelFactory;
 
     private ComponentFactory interProScanTabPanelFactory;
@@ -462,7 +464,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             glyphifyMRNA(asym, path2view);
         }
 
-        MapTierGlyph sumTier = new MapTierGlyph();
+        MapTierGlyph sumTier = new ProtAnnotMapTierGlyph();
         sumTier.setCoords(gseq.getMin(), seqmap_pixel_height - 20, gseq.getLength(), 20);
         sumTier.setState(MapTierGlyph.EXPANDED);
 
@@ -555,13 +557,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
-        MapTierGlyph tier = new MapTierGlyph();
-        tier.setCoords(gseq.getMin(), 0, gseq.getLength(), 80);
+        MapTierGlyph tier = new ProtAnnotMapTierGlyph();
+        tier.setCoords(gseq.getMin(), 80, gseq.getLength(), 120);
         tier.setState(MapTierGlyph.EXPANDED);
+        tier.setLabel((String) ((TypeContainerAnnot) mrna2genome).getProperty("protein_product_id"));
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
         seqmap.addTier(tier);
-
         MutableSeqSymmetry annot2genome = new SimpleMutableSeqSymmetry();
         copyToMutable(mrna2genome, annot2genome);
 
@@ -710,7 +712,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             LOG.error(ex.getMessage(), ex);
         }
 
-        GlyphI aGlyph = new LineContainerDashGlyph();
+        GlyphI aGlyph = new LineContainerProtAnnotGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
@@ -849,7 +851,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             SeqUtils.printSymmetry(annot2genome);
         }
 
-        GlyphI aGlyph = new LineContainerDashGlyph();
+        GlyphI aGlyph = new LineContainerProtAnnotGlyph();
         seqmap.setDataModel(aGlyph, annot2protein);
 
         SeqSpan aSpan = annot2genome.getSpan(vseq);
@@ -1001,7 +1003,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }
         NeoMouseEvent nme = (NeoMouseEvent) e;
         Object coord_source = nme.getSource();
-
         seqmap.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_COORD,
                 nme.getCoordY());
         seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,

@@ -7,6 +7,7 @@ import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.REMEMBER_CREDENTIALS;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
@@ -168,7 +169,7 @@ public abstract class BaseDataProvider implements DataProvider {
         this.login = login;
         if (login == null) {
             preferencesNode.remove(LOGIN);
-        } else {
+        } else if (preferencesNode.getBoolean(REMEMBER_CREDENTIALS, false)) {
             preferencesNode.put(LOGIN, login);
         }
     }
@@ -183,8 +184,12 @@ public abstract class BaseDataProvider implements DataProvider {
         this.password = password;
         if (password == null) {
             preferencesNode.remove(PASSWORD);
-        } else {
-            preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+        } else if (preferencesNode.getBoolean(REMEMBER_CREDENTIALS, false)) {
+            if (password.isEmpty()) {
+                preferencesNode.put(PASSWORD, "");
+            } else {
+                preferencesNode.put(PASSWORD, encrypter.encrypt(password));
+            }
         }
 
     }
@@ -206,9 +211,8 @@ public abstract class BaseDataProvider implements DataProvider {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + Objects.hashCode(this.url);
-        hash = 59 * hash + Objects.hashCode(this.name);
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.url);
         return hash;
     }
 
@@ -221,13 +225,7 @@ public abstract class BaseDataProvider implements DataProvider {
             return false;
         }
         final BaseDataProvider other = (BaseDataProvider) obj;
-        if (!Objects.equals(this.url, other.url)) {
-            return false;
-        }
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.url, other.url);
     }
 
 }

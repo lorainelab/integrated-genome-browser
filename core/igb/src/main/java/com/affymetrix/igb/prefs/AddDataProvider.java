@@ -288,8 +288,8 @@ public class AddDataProvider extends JFrame {
                         dataProvider.setName(updatedName);
                     }
                     if (!existingUrl.equalsIgnoreCase(updatedUrl)) {
-                        dataProvider.setUrl(updatedUrl);
                         dataProviderManager.disableDataProvider(dataProvider);
+                        dataProvider.setUrl(updatedUrl);
                         //timer allows any async actions triggered in callstack of disableDataProvider to complete
                         Timer timer = new Timer(500, evt -> {
                             dataProviderManager.enableDataProvider(dataProvider);

@@ -86,21 +86,30 @@ public class IGBAuthenticator extends Authenticator {
         if (dataProvider.isPresent()) {
             Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
             final boolean currentRememberStatus = dataProviderNode.getBoolean(REMEMBER_CREDENTIALS, false);
+            String userName = null;
+            String prefPwd = null;
             if (currentRememberStatus) {
-                String userName = dataProviderNode.get(LOGIN, null);
-                String prefPwd = dataProviderNode.get(PASSWORD, null);
-                if (!Strings.isNullOrEmpty(userName) || !Strings.isNullOrEmpty(prefPwd)) {
+                userName = dataProviderNode.get(LOGIN, null);
+                prefPwd = dataProviderNode.get(PASSWORD, null);
+                if (!prefPwd.isEmpty()) {
                     prefPwd = ENCRYPTER.decrypt(prefPwd);
-                    try {
-                        PasswordAuthentication persistedCredentials = validateAuthentication(userName, new JPasswordField(prefPwd).getPassword());
-                        return persistedCredentials;
-                    } catch (FileNotFoundException ex) {
-                        //do nothing
-                        return null;
-                    } catch (IOException ex) {
-                        logger.error(BUNDLE.getString("invalidCredentials"));
-                        dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
-                    }
+                }
+            } else if (dataProvider.get().getLogin().isPresent()) {
+                userName = dataProvider.get().getLogin().get();
+                if (dataProvider.get().getPassword().isPresent()) {
+                    prefPwd = dataProvider.get().getPassword().get();
+                }
+            }
+            if (!Strings.isNullOrEmpty(userName) || !Strings.isNullOrEmpty(prefPwd)) {
+                try {
+                    PasswordAuthentication persistedCredentials = validateAuthentication(userName, new JPasswordField(prefPwd).getPassword());
+                    return persistedCredentials;
+                } catch (FileNotFoundException ex) {
+                    //do nothing
+                    return null;
+                } catch (IOException ex) {
+                    logger.error(BUNDLE.getString("invalidCredentials"));
+                    dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
                 }
             }
             rememberCredentials.setSelected(currentRememberStatus);
@@ -126,9 +135,9 @@ public class IGBAuthenticator extends Authenticator {
             if (dataProvider.isPresent() && rememberCredentials.isSelected()) {
                 Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
                 dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, true);
-                dataProvider.get().setLogin(username);
-                dataProvider.get().setPassword(passwordPlainText);
             }
+            dataProvider.get().setLogin(username);
+            dataProvider.get().setPassword(passwordPlainText);
             if (Strings.isNullOrEmpty(username) || chars.length == 0) {
                 return null;
             }

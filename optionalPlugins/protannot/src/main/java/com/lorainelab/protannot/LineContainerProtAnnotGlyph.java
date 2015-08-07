@@ -28,14 +28,8 @@ public class LineContainerProtAnnotGlyph extends LineContainerGlyph {
         Graphics g = view.getGraphics();
         g.setColor(getBackgroundColor());
 
-        // temp fix for AWT drawing bug when rect gets too big.
         Rectangle compbox = view.getComponentSizeRect();
         setPixelBox(getPixelBox().intersection(compbox));
-
-        // We use fillRect instead of drawLine, because it may be faster.
-//        g.fillRect(getPixelBox().x, getPixelBox().y + getPixelBox().height / 2, getPixelBox().width, 1);
-
-//        super.draw(view);
     }
     
 }

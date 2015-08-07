@@ -42,12 +42,7 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         showLabel = true;
         GlyphI child = getChildren().get(0);
         Graphics2D g = view.getGraphics();
-        // No font is readable at less than 5 pixels!
         FontMetrics fm = g.getFontMetrics();
-        // 0.8 is a kludge, but getAscent() overestimates the amount
-        // of space needed for normal capital letters; it includes
-        // room for weirdly tall characters like '|' and accents.
-
         g.setColor(label_color);
         drawlabel(view);
     }

@@ -993,7 +993,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }
         NeoMouseEvent nme = (NeoMouseEvent) e;
         Object coord_source = nme.getSource();
-        logger.info(nme.getCoordX() + " " + nme.getCoordY());
         seqmap.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_COORD,
                 nme.getCoordY());
         seqmap.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD,

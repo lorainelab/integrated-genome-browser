@@ -127,7 +127,7 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         if (bestFontSize < MIN_FONT_SIZE) {
             return;
         }
-        if(bestFontSize > MAX_FONT_SIZE) {
+        if (bestFontSize > MAX_FONT_SIZE) {
             bestFontSize = MAX_FONT_SIZE;
         }
         g.setFont(new Font(fontMetrics.getFont().getName(), fontMetrics.getFont().getStyle(), bestFontSize));

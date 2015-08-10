@@ -127,7 +127,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
     }
 
-    protected void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
+    private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
         for (int j = 0; j < str.length(); j++) {
             char charAt = str.charAt(j);
             if (charAt == 'A' || charAt == 'a') {

@@ -30,13 +30,6 @@ public interface DataProvider {
     public String getUrl();
 
     /**
-     * Updates the primary URL
-     *
-     * @param url
-     */
-    public void setUrl(String url);
-
-    /**
      * It is expected this method will be called before any DataProvider content is loaded.
      * The expectation is implementors will wait for a call to this method before making remote request
      * to initialize content.

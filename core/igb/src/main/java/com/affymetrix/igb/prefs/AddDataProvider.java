@@ -256,103 +256,112 @@ public class AddDataProvider extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
-        File f = fileChooser(DIRECTORIES_ONLY, this);
-        if (f != null && f.isDirectory()) {
-            try {
-                urlText.setText(f.toURI().toURL().toString());
-            } catch (MalformedURLException ex) {
-                logger.error(ex.getMessage(), ex);
+            File f = fileChooser(DIRECTORIES_ONLY, this);
+            if (f != null && f.isDirectory()) {
+                try {
+                    urlText.setText(f.toURI().toURL().toString());
+                } catch (MalformedURLException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
             }
-        }
 	}//GEN-LAST:event_openDirActionPerformed
 
 	private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
-        Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
-        openDir.setEnabled(factory.get().supportsLocalFileInstances());
+            Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
+            openDir.setEnabled(factory.get().supportsLocalFileInstances());
 	}//GEN-LAST:event_typeComboActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
 
-        CThreadWorker<Boolean, Void> worker;
-        worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText().trim()) {
-            boolean isUnavailable = false;
+            CThreadWorker<Boolean, Void> worker;
+            worker = new CThreadWorker<Boolean, Void>("Adding " + nameText.getText().trim()) {
+                boolean isUnavailable = false;
 
-            @Override
-            protected Boolean runInBackground() {
-                if (isEditPanel) {
-                    String existingName = dataProvider.getName();
-                    final String updatedName = nameText.getText().trim();
-                    String existingUrl = toExternalForm(dataProvider.getUrl());
-                    final String updatedUrl = toExternalForm(urlText.getText().trim());
-                    if (!existingName.equals(updatedName)) {
-                        dataProvider.setName(updatedName);
-                    }
-                 if (!existingUrl.equalsIgnoreCase(updatedUrl)) {
-                        dataProviderManager.disableDataProvider(dataProvider);
-                        dataProvider.setUrl(updatedUrl);
-                        //timer allows any async actions triggered in callstack of disableDataProvider to complete
-                        Timer timer = new Timer(500, evt -> {
-                            dataProviderManager.enableDataProvider(dataProvider);
+                @Override
+                protected Boolean runInBackground() {
+                    DataProvider updatedDataProvider = null;
+                    if (isEditPanel) {
+                        String existingName = dataProvider.getName();
+                        final String updatedName = nameText.getText().trim();
+                        String existingUrl = toExternalForm(dataProvider.getUrl());
+                        final String updatedUrl = toExternalForm(urlText.getText().trim());
+                        if (!existingName.equals(updatedName)) {
+                            dataProvider.setName(updatedName);
+                        }
+                        if (!existingUrl.equalsIgnoreCase(updatedUrl)) {
+                            if (dataProvider.getFactoryName().isPresent()) {
+                                Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(dataProvider.getFactoryName().get());
+                                if (dataProviderFactory.isPresent()) {
+                                    updatedDataProvider = dataProviderFactory.get().createDataProvider(updatedUrl, updatedName, dataProvider.getLoadPriority());
+                                }
+                            }
+                            dataProviderManager.removeDataProvider(dataProvider);
+                            dataProvider = updatedDataProvider;
+                            Timer timer = new Timer(500, evt -> {
+                                if (dataProvider != null) {
+                                    dataProviderManager.addDataProvider(dataProvider);
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.start();
+
+                        }
+                        Timer timer = new Timer(2000, event -> {
+                            if (dataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                                ModalUtils.infoPanel("Your Data Source is not responding, please confirm you have entered everything correctly.");
+                            }
                         });
                         timer.setRepeats(false);
                         timer.start();
-                    }
-                    Timer timer = new Timer(2000, event -> {
-                        if (dataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                            ModalUtils.infoPanel("Your Data Source is not responding, please confirm you have entered everything correctly.");
-                        }
-                    });
-                    timer.setRepeats(false);
-                    timer.start();
-                } else {
-                    String url = urlText.getText().trim();
-                    String name = nameText.getText().trim();
-                    if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
-                        Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
-                        if (factory.isPresent()) {
-                            DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
-                            dataProviderManager.addDataProvider(createdDataProvider);
-                            if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
-                                isUnavailable = true;
+                    } else {
+                        String url = urlText.getText().trim();
+                        String name = nameText.getText().trim();
+                        if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
+                            Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
+                            if (factory.isPresent()) {
+                                DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
+                                dataProviderManager.addDataProvider(createdDataProvider);
+                                if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                                    isUnavailable = true;
+                                }
                             }
                         }
                     }
+                    return true;
                 }
-                return true;
+
+                @Override
+
+                protected void finished() {
+                    boolean serverAdded = true;
+                    try {
+                        serverAdded = get();
+                    } catch (InterruptedException | ExecutionException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                    GenometryModel gmodel = GenometryModel.getInstance();
+                    GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+                    if (serverAdded && genomeVersion != null) {
+                        ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText().trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    }
+                    if (isUnavailable) {
+                        ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                    }
+                }
+            };
+
+            Optional<DataProvider> server = dataProviderManager.getServerFromUrl(urlText.getText().trim());
+            if (!server.isPresent() || isEditPanel) {
+                CThreadHolder.getInstance().execute(evt, worker);
+            } else {
+                ModalUtils.infoPanel("<html>The server <i color=blue>" + server.get().getUrl() + "</i> has already been added. </html>");
             }
-
-            @Override
-
-            protected void finished() {
-                boolean serverAdded = true;
-                try {
-                    serverAdded = get();
-                } catch (InterruptedException | ExecutionException ex) {
-                    logger.error(ex.getMessage(), ex);
-                }
-                GenometryModel gmodel = GenometryModel.getInstance();
-                GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
-                if (serverAdded && genomeVersion != null) {
-                    ModalUtils.infoPanel("<html>Your data source <b>" + nameText.getText().trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
-                }
-                if (isUnavailable) {
-                    ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
-                }
-            }
-        };
-
-        Optional<DataProvider> server = dataProviderManager.getServerFromUrl(urlText.getText().trim());
-        if (!server.isPresent() || isEditPanel) {
-            CThreadHolder.getInstance().execute(evt, worker);
-        } else {
-            ModalUtils.infoPanel("<html>The server <i color=blue>" + server.get().getUrl() + "</i> has already been added. </html>");
-        }
-        this.setVisible(false);
-        eventService.getEventBus().post(new DataProviderServiceChangeEvent());
+            this.setVisible(false);
+            eventService.getEventBus().post(new DataProviderServiceChangeEvent());
 	}//GEN-LAST:event_addServerButtonActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.setVisible(false);
+            this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerButton;

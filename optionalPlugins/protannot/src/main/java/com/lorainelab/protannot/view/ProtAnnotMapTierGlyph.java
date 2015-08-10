@@ -93,20 +93,21 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
 
     private void drawlabel(ViewI view) {
         Graphics2D g = view.getGraphics();
-        GlyphI child = getChild(0);
-        if (child == null || !showLabel || Strings.isNullOrEmpty(label)) {
+        GlyphI firstChild = getChild(0);
+
+        if (firstChild == null || !showLabel || Strings.isNullOrEmpty(label)) {
             return;
         }
 
-        int xCoord = (int) (child.getCoordBox().x + child.getCoordBox().width / 2);
+        int xCoord = (int) (firstChild.getCoordBox().x + firstChild.getCoordBox().width / 2);
         Point2D.Double labelStartCoord = new Point2D.Double(xCoord, 0);
         Point labelStartPoint = new Point();
         view.transformToPixels(labelStartCoord, labelStartPoint);
 
         FontMetrics fontMetrics = g.getFontMetrics();
         int textHeight = fontMetrics.getAscent();
-        int availableHeight = (getPixelBox().height - child.getPixelBox(view).height) / 2;
-        int availableWidth = child.getPixelBox(view).width;
+        int availableHeight = (firstChild.getPixelBox(view).y - getPixelBox().y);
+        int availableWidth = firstChild.getPixelBox(view).width;
 
         int bestFontSize = (int) (0.4 * (fontMetrics.getAscent() + fontMetrics.getDescent()));
         int temp = 0;

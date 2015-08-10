@@ -1,7 +1,6 @@
 package com.affymetrix.genometry.data;
 
 import com.affymetrix.common.PreferenceUtils;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
@@ -19,7 +18,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,7 @@ public abstract class BaseDataProvider implements DataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseDataProvider.class);
     private Preferences preferencesNode;
-    protected String url;
+    protected final String url;
     protected String mirrorUrl;
     protected String name;
     protected String login;
@@ -116,30 +114,6 @@ public abstract class BaseDataProvider implements DataProvider {
             return mirrorUrl;
         } else {
             return url;
-        }
-    }
-
-    @Override
-    public void setUrl(String url) {
-        if (!url.equalsIgnoreCase(this.url)) {
-            this.url = url;
-            Preferences replacementNode = PreferenceUtils.getDataProviderNode(url);
-            replacementNode.put(PRIMARY_URL, url);
-            replacementNode.put(PROVIDER_NAME, name);
-            replacementNode.putInt(LOAD_PRIORITY, loadPriority);
-            if (!Strings.isNullOrEmpty(mirrorUrl)) {
-                replacementNode.put(MIRROR_URL, mirrorUrl);
-            }
-            if (getFactoryName().isPresent()) {
-                replacementNode.put(FACTORY_NAME, getFactoryName().get());
-            }
-            try {
-                preferencesNode.removeNode();
-            } catch (BackingStoreException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
-            preferencesNode = replacementNode;
-            initialize();
         }
     }
 

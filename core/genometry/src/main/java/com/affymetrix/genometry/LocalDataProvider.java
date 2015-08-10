@@ -46,11 +46,6 @@ public class LocalDataProvider implements DataProvider {
     }
 
     @Override
-    public void setUrl(String url) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void initialize() {
     }
 

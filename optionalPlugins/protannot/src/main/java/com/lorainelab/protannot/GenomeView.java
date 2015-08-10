@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -52,6 +53,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -580,6 +582,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             SeqSymmetry exon2genome = annot2genome.getChild(i);
             SeqSpan gSpan = exon2genome.getSpan(vseq);
             GlyphI cglyph = new FillRectGlyph();
+            if (i == childcount - 1) {
+                cglyph = new PointedGlyph();
+            }
             seqmap.setDataModel(cglyph, exon2genome);
             // can't give this a type and therefore signal
             // to the selection logic that this is first class selectable
@@ -702,7 +707,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);
-        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq);
+        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq, trans_parent);
         trans_parent.addChild(aGlyph);
         displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
@@ -717,7 +722,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param vseq
      */
     private void glyphifyCDSs(
-            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq, GlyphI trans_parent) {
 
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
@@ -725,7 +730,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         for (int j = 0; j < cdsCount; j++) {
             SeqSymmetry cds2genome = annot2genome.getChild(j);
             SeqSpan gSpan = cds2genome.getSpan(vseq);
-            GlyphI cglyph = new FillRectGlyph();
+            GlyphI cglyph;
+            if (isLastGlyph(j, cdsCount, gSpan, aGlyph)) {
+                cglyph = new PointedGlyph();
+            } else {
+                cglyph = new FillRectGlyph();
+            }
             //SeqSpan protSpan = cds2genome.getSpan(protein);
             // coloring based on frame
             colorByFrame(cglyph, gSpan.getMin() + prev_add);
@@ -734,22 +744,34 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             cglyph.setSelectable(true);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
-         
-                SequenceGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, false);
 
-                int start = prev_amino_end;
-                int end = start + gSpan.getLength();
-                String sub_amino_acid = amino_acid.substring(start, end);
-                prev_amino_end += gSpan.getLength();
-                sg.setResidues(sub_amino_acid);
-                sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-                sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
-                sg.setBackgroundColor(cglyph.getBackgroundColor());
-                sg.setSelectable(true);
-                sg.setInfo(mrna2genome);
-                aGlyph.addChild(sg);
+                try {
+                    SequenceGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, false);
+                    if (isLastGlyph(j, cdsCount, gSpan, trans_parent)) {
+                        Field fullRect = SequenceGlyph.class.getDeclaredField("full_rect");
+                        fullRect.setAccessible(true);
+                        fullRect.set(sg, new PointedFillRectGlyph());
+                    }
+                    int start = prev_amino_end;
+                    int end = start + gSpan.getLength();
+                    String sub_amino_acid = amino_acid.substring(start, end);
+                    prev_amino_end += gSpan.getLength();
+                    sg.setResidues(sub_amino_acid);
+                    sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+                    sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
+                    sg.setBackgroundColor(cglyph.getBackgroundColor());
+                    sg.setSelectable(true);
+                    sg.setInfo(mrna2genome);
+                    aGlyph.addChild(sg);
+                } catch (Exception ex) {
+                    logger.debug("Reflection hack failed", ex);
+                }
             }
         }
+    }
+
+    private static boolean isLastGlyph(int j, int cdsCount, SeqSpan gSpan, GlyphI aGlyph) {
+        return j == cdsCount - 1 && gSpan.getEnd() == aGlyph.getCoordBox().x + aGlyph.getCoordBox().width;
     }
 
     /**

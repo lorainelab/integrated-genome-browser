@@ -39,17 +39,17 @@ public class LineContainerDashGlyph extends LineContainerProtAnnotGlyph {
     }
 
     static void drawDirectedLine(Graphics g, final int x, final int y, final int width) {
-                Graphics2D g2R = (Graphics2D) g;
-                Stroke old_strokeR = g2R.getStroke();
-                g2R.setStroke(dashStroke0);
-                g2R.drawLine(x, y, x + width, y);
-                g2R.setStroke(dashStroke1);
-                g2R.drawLine(x, y + 1, x + width, y + 1);
-                g2R.drawLine(x, y - 1, x + width, y - 1);
-                g2R.setStroke(dashStroke2);
-                g2R.drawLine(x, y + 2, x + width, y + 2);
-                g2R.drawLine(x, y - 2, x + width, y - 2);
-                g2R.setStroke(old_strokeR);
+        Graphics2D g2R = (Graphics2D) g;
+        Stroke old_strokeR = g2R.getStroke();
+        g2R.setStroke(dashStroke0);
+        g2R.drawLine(x, y, x + width - 2, y);
+        g2R.setStroke(dashStroke1);
+        g2R.drawLine(x, y + 1, x + width - 2, y + 1);
+        g2R.drawLine(x, y - 1, x + width - 2, y - 1);
+        g2R.setStroke(dashStroke2);
+        g2R.drawLine(x, y + 2, x + width - 2, y + 2);
+        g2R.drawLine(x, y - 2, x + width - 2, y - 2);
+        g2R.setStroke(old_strokeR);
     }
 
 }

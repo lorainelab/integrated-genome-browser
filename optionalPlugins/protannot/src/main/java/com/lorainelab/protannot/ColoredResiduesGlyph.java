@@ -38,10 +38,6 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
 
-
-    
-
-
     @Override
     public void setResidues(String residues) {
         chariter = new ImprovedStringCharIter(residues);
@@ -131,7 +127,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
     }
 
-    private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
+    protected void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
         for (int j = 0; j < str.length(); j++) {
             char charAt = str.charAt(j);
             if (charAt == 'A' || charAt == 'a') {

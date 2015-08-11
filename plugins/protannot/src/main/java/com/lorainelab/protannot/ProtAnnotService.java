@@ -141,8 +141,6 @@ public class ProtAnnotService {
         interProScanRunning = false;
     }
 
-    
-    
     public boolean isInterProScanRunning() {
         return interProScanRunning;
     }
@@ -713,7 +711,7 @@ public class ProtAnnotService {
             String filePath = exportFile.getName();
             if (filePath.lastIndexOf(".") > 0) {
                 String ext = filePath.substring(filePath.lastIndexOf("."));
-                
+
             }
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }

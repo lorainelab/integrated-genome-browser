@@ -1207,7 +1207,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 BUNDLE.getString("menuRunInterProScan"))) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        doLoadInterProscan();
+                        if (protAnnotService.getDnaseq() == null || protAnnotService.getDnaseq().getResidues() == null) {
+                            ModalUtils.infoPanel("You cannot run InterProScan without loading data");
+                        } else {
+                            doLoadInterProscan();
+                        }
                     }
                 };
         load_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_I);

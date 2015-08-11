@@ -29,7 +29,6 @@ import com.lorainelab.protannot.interproscan.api.JobSequence;
 import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import com.lorainelab.protannot.interproscan.appl.model.ValueType;
 import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.ProtannotParser;
 import com.lorainelab.protannot.view.StatusBar;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -109,7 +108,6 @@ public class ProtAnnotService {
     private JPanel parentPanel;
     private final Set<String> inputAppl;
     private JPanel configParentPanel;
-    private ProtannotParser parser;
     private final List<String> defaultApplications;
     private JLabel selectAllLabel;
     private JPanel applicationsPanel;
@@ -377,30 +375,6 @@ public class ProtAnnotService {
         return worker;
     }
 
-    private void showResultLoadingModal(GenomeView gview) {
-        parentPanel = new JPanel(new MigLayout());
-        initInfoLabel(LOADING_IPS_DATA);
-        initStatusLabel("Initializing ...");
-        parentPanel.add(infoLabel, "wrap");
-        parentPanel.add(statusLabel, "wrap");
-
-        initProgressBar();
-        parentPanel.add(progressBar, "align center, wrap");
-
-        final JComponent[] inputs = new JComponent[]{
-            parentPanel
-        };
-        Object[] options = {"Run in background", "Cancel"};
-
-        Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
-        if (selectedValue != null && selectedValue.equals(options[1])) {
-            LOG.info("cancelling result request");
-            cancelBackgroundTasks();
-        } else {
-            gview.getTabbedPane().setSelectedIndex(1);
-        }
-    }
-
     private void setSelectAllText(String text) {
         selectAllLabel.setText("<html><font color='blue'>" + text + "</font></html>");
     }
@@ -583,7 +557,8 @@ public class ProtAnnotService {
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
-            showResultLoadingModal(gview);
+            gview.getTabbedPane().setSelectedIndex(1);
+            initStatusLabel("Initializing ...");
         } else {
             interProScanRunning = false;
             eventBus.post(new StatusTerminateEvent(id));
@@ -749,11 +724,6 @@ public class ProtAnnotService {
     @Reference
     public void setInterProscanService(InterProscanService interProscanService) {
         this.interProscanService = interProscanService;
-    }
-
-    @Reference
-    public void setParser(ProtannotParser parser) {
-        this.parser = parser;
     }
 
     @Reference

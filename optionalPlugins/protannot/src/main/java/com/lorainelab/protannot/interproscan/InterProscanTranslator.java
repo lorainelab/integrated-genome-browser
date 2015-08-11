@@ -76,6 +76,8 @@ public class InterProscanTranslator {
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
+            NamedNodeMap attributes = signature.getAttributes();
+            //TODO:Add name if not set
             parseEntryOnSignature(signature, simhit);
             parseLibraryReleaseOnSignature(signature, simhit);
         } catch (XPathExpressionException ex) {

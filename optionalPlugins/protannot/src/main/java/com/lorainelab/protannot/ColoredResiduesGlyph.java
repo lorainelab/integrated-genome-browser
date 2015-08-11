@@ -1,8 +1,5 @@
 package com.lorainelab.protannot;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.genometry.util.ImprovedStringCharIter;
 import com.affymetrix.genometry.util.SearchableCharIterator;
@@ -14,14 +11,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
 
 /**
  * Draws colored rectangles and corresponding character based upon nucleotide.
  *
  * @see com.affymetrix.genoviz.glyph.SequenceGlyph
  */
-@Component(provide = ColoredResiduesGlyph.class, factory = "residues.glyph.factory.provider")
 public class ColoredResiduesGlyph extends SequenceGlyph {
 
     private SearchableCharIterator chariter;
@@ -29,23 +24,17 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     private int residue_length = 0;
     private static final Font mono_default_font = NeoConstants.default_bold_font;
     private boolean drawRect;
-    
-    private ProtAnnotPreferencesService protAnnotPreferencesService;
 
-    @Activate
-    public void activate(Map<String, Object> properties) {
+    private final ProtAnnotPreferencesService protAnnotPreferencesService;
+
+
+
+    public ColoredResiduesGlyph(ProtAnnotPreferencesService protAnnotPreferencesService, boolean drawRectangle) {
+        super();
         setResidueFont(mono_default_font);
-        this.drawRect = (Boolean)properties.get("draw.rect");
+        this.drawRect = drawRectangle;
         // default to true for backward compatability
         setHitable(true);
-    }
-
-    public ColoredResiduesGlyph() {
-        super();
-    }
-
-    @Reference
-    public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
 

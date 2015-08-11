@@ -1030,7 +1030,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             hairline.setRange((int) nme.getCoordX(), (int) nme.getCoordX() + 1);
         }
 
-        if (e.isPopupTrigger()) {
+        if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
             popup.show(this, e.getX() + X_OFFSET_POPUP, e.getY() + Y_OFFSET_POPUP);
         }
     }

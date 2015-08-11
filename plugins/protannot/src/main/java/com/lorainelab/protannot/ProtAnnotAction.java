@@ -9,8 +9,8 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -264,7 +264,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private final Map<Arguments, String> ArgumentValues = new EnumMap<>(Arguments.class);
 
     /**
-     * Returns the icon stored in the jar path. It is expected to be at com.affymetrix.igb.igb.gif.
+     * Returns the icon stored in the jar path. It is expected to be at
+     * com.affymetrix.igb.igb.gif.
      *
      * @return null if the image path is not found or can't be opened.
      */
@@ -363,7 +364,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
+     * Action perfomed when a path is seleced in the path browser. Calls up
+     * load(name) to load the path.
      */
     void doLoadFile() {
         if (this.chooser == null) {
@@ -726,12 +728,13 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         boolean anyPositiveStrand = false;
         boolean anyNegativeStrand = false;
         boolean isGeneModelSelected = false;
+        boolean isOnlyGeneModelsSelected = true;
         String errorMessage = null;
 
         for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
-            if (sym instanceof BasicSeqSymmetry) {
-                BasicSeqSymmetry basicSym = (BasicSeqSymmetry) sym;
-                if (basicSym.isForward()) {
+            if (sym instanceof UcscBedDetailSym) {
+                UcscBedDetailSym bedDetailSym = (UcscBedDetailSym) sym;
+                if (bedDetailSym.isForward()) {
                     anyPositiveStrand = true;
                 } else {
                     anyNegativeStrand = true;
@@ -742,6 +745,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                     return false;
                 }
                 isGeneModelSelected = true;
+            } else {
+                isOnlyGeneModelsSelected = false;
             }
         }
 
@@ -753,6 +758,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 loadFileOnStart = true;
                 return true;
             }
+            return false;
+        }
+
+        if (!isOnlyGeneModelsSelected) {
+            errorMessage = "You can only select whole gene models, please refine your selection.";
+            ModalUtils.infoPanel(errorMessage);
             return false;
         }
 
@@ -815,7 +826,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Parses command line argument and adds valid arguments to the argument dictionary.
+     * Parses command line argument and adds valid arguments to the argument
+     * dictionary.
      *
      * @param args Command line arguments
      */
@@ -833,7 +845,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Check arguments and add to Dictionary. If arguments are invalid showhairline error message.
+     * Check arguments and add to Dictionary. If arguments are invalid
+     * showhairline error message.
      *
      * @param	arg	Argument type.
      * @param	argValue	Argument Value.
@@ -1323,7 +1336,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on the currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on
+     * the currently selected Glyph.
      */
     private AbstractAction getOpenInBrowserAction() {
 
@@ -1370,7 +1384,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to center on the location of the currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to center on the location of the
+     * currently selected Glyph.
      */
     private AbstractAction getZoomToFeatureAction() {
 

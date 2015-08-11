@@ -1,6 +1,5 @@
 package com.lorainelab.protannot;
 
-import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
@@ -37,8 +36,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
 import com.lorainelab.protannot.event.PreferenceChangeEvent;
+import com.lorainelab.protannot.event.ZoomInEvent;
+import com.lorainelab.protannot.event.ZoomOutEvent;
 import com.lorainelab.protannot.model.InterProScanTableModel;
 import com.lorainelab.protannot.model.ProtannotParser;
+import com.lorainelab.protannot.view.LineContainerDashGlyph;
+import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
+import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
 import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -52,6 +56,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -66,11 +71,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
-import com.lorainelab.protannot.event.ZoomInEvent;
-import com.lorainelab.protannot.event.ZoomOutEvent;
-import com.lorainelab.protannot.view.LineContainerDashGlyph;
-import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
-import java.lang.reflect.Field;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
@@ -136,8 +136,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private InterProScanResultSheet ipsTable;
     private InterProScanTableModel ipsTableModel;
     private ProtAnnotEventService eventService;
-
-    private ComponentFactory coloredResiduesGlyphFactory;
 
     private ProtAnnotPreferencesService protAnnotPreferencesService;
 
@@ -353,11 +351,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     @Reference(target = "(component.factory=interproscan.tab.factory.provider)")
     public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
         this.interProScanTabPanelFactory = interProScanTabPanelFactory;
-    }
-
-    @Reference(target = "(component.factory=residues.glyph.factory.provider)")
-    public void setColoredResiduesGlyphFacatory(final ComponentFactory coloredResiduesGlyphFactory) {
-        this.coloredResiduesGlyphFactory = coloredResiduesGlyphFactory;
     }
 
     /**
@@ -754,9 +747,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             if (amino_acid != null) {
 
                 try {
-                    final Properties props = new Properties();
-                    props.put("draw.rect", false);
-                    SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+                    SequenceGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, false);
                     if (isLastGlyph(j, cdsCount, gSpan, trans_parent)) {
                         Field fullRect = SequenceGlyph.class.getDeclaredField("full_rect");
                         fullRect.setAccessible(true);
@@ -913,9 +904,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
          zoomtoselected feature is used. So to correct it below used method is used */
 
         axismap.addAxis(upper_white_space + axis_pixel_height);
-        final Properties props = new Properties();
-        props.put("draw.rect", true);
-        ColoredResiduesGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
         sg.setResiduesProvider(gseq, gseq.getLength());
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength(), seq_pixel_height);

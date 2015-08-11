@@ -29,13 +29,13 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     private int residue_length = 0;
     private static final Font mono_default_font = NeoConstants.default_bold_font;
     private boolean drawRect;
-    
+
     private ProtAnnotPreferencesService protAnnotPreferencesService;
 
     @Activate
     public void activate(Map<String, Object> properties) {
         setResidueFont(mono_default_font);
-        this.drawRect = (Boolean)properties.get("draw.rect");
+        this.drawRect = (Boolean) properties.get("draw.rect");
         // default to true for backward compatability
         setHitable(true);
     }
@@ -48,10 +48,6 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
-
-
-    
-
 
     @Override
     public void setResidues(String residues) {

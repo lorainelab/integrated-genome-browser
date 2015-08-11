@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
@@ -69,15 +70,15 @@ import net.miginfocom.swing.MigLayout;
 import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
 import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
+import java.lang.reflect.Field;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class displays the main view of transcripts, the conserved motifs
- * (protein annotations) they encode, and an exon summary that shows how the
- * transcript structures vary.
+ * This class displays the main view of transcripts, the conserved motifs (protein annotations) they encode, and an exon
+ * summary that shows how the transcript structures vary.
  */
 @Component(provide = GenomeView.class, factory = "genome.view.factory.provider")
 public class GenomeView extends JPanel implements MouseListener, ComponentListener {
@@ -374,8 +375,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Sets up the layout for the maps and the other elements that are part of
-     * the application.
+     * Sets up the layout for the maps and the other elements that are part of the application.
      *
      * @param phash Color perferences stored in hashtable to setup the layout.
      */
@@ -384,8 +384,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Initialized GenomeView colors with preferences provided in the parameter
-     * phash
+     * Initialized GenomeView colors with preferences provided in the parameter phash
      *
      * @param phash Map providing color preferences for GenomeView
      */
@@ -394,8 +393,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Add mouse listener to maps so that the application can detect user
-     * interactions with the display.
+     * Add mouse listener to maps so that the application can detect user interactions with the display.
      *
      * @param listener Listener that is to be added to maps.
      */
@@ -410,15 +408,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Set the data model - the BioSeq object - that the application will
-     * display.
+     * Set the data model - the BioSeq object - that the application will display.
      *
-     * @param gseq the data model representing the transcripts, their
-     * annotations, and their meta-data properties, such as their ids in
-     * external databases.
-     * @param is_new whether or not this BioSeq object has not been displayed
-     * previously. This allows ProtAnnot to redraw the Glyphs using a new color
-     * scheme without changing the zoom level.
+     * @param gseq the data model representing the transcripts, their annotations, and their meta-data properties, such
+     * as their ids in external databases.
+     * @param is_new whether or not this BioSeq object has not been displayed previously. This allows ProtAnnot to
+     * redraw the Glyphs using a new color scheme without changing the zoom level.
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.MutableSeqSymmetry
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
@@ -594,6 +589,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             SeqSymmetry exon2genome = annot2genome.getChild(i);
             SeqSpan gSpan = exon2genome.getSpan(vseq);
             GlyphI cglyph = new FillRectGlyph();
+            if (i == childcount - 1) {
+                cglyph = new PointedGlyph();
+            }
             seqmap.setDataModel(cglyph, exon2genome);
             // can't give this a type and therefore signal
             // to the selection logic that this is first class selectable
@@ -675,8 +673,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      *
      * @param mrna
      * @param annot2mrna
-     * @param path2view - "view seq" symmetry enclosed in an array appended with
-     * mrna2genome
+     * @param path2view - "view seq" symmetry enclosed in an array appended with mrna2genome
      * @param tier - tier where glyphs will be added
      * @param trans_parent - parent glyph
      * @see com.affymetrix.genometryImpl.BioSeq
@@ -717,7 +714,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);
-        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq);
+        glyphifyCDSs(annot2genome, mrna2genome, protein, aGlyph, amino_acid, vseq, trans_parent);
         trans_parent.addChild(aGlyph);
         displayAssociatedmRNAforProtein(protein, path2view, annot2mrna, tier);
     }
@@ -732,7 +729,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      * @param vseq
      */
     private void glyphifyCDSs(
-            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq) {
+            MutableSeqSymmetry annot2genome, SeqSymmetry mrna2genome, BioSeq protein, GlyphI aGlyph, String amino_acid, BioSeq vseq, GlyphI trans_parent) {
 
         int cdsCount = annot2genome.getChildCount();
         int prev_amino_end = 0;
@@ -740,7 +737,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         for (int j = 0; j < cdsCount; j++) {
             SeqSymmetry cds2genome = annot2genome.getChild(j);
             SeqSpan gSpan = cds2genome.getSpan(vseq);
-            GlyphI cglyph = new FillRectGlyph();
+            GlyphI cglyph;
+            if (isLastGlyph(j, cdsCount, gSpan, aGlyph)) {
+                cglyph = new PointedGlyph();
+            } else {
+                cglyph = new FillRectGlyph();
+            }
             //SeqSpan protSpan = cds2genome.getSpan(protein);
             // coloring based on frame
             colorByFrame(cglyph, gSpan.getMin() + prev_add);
@@ -750,23 +752,35 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
 
-                final Properties props = new Properties();
-                props.put("draw.rect", false);
-                SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
-
-                int start = prev_amino_end;
-                int end = start + gSpan.getLength();
-                String sub_amino_acid = amino_acid.substring(start, end);
-                prev_amino_end += gSpan.getLength();
-                sg.setResidues(sub_amino_acid);
-                sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-                sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
-                sg.setBackgroundColor(cglyph.getBackgroundColor());
-                sg.setSelectable(true);
-                sg.setInfo(mrna2genome);
-                aGlyph.addChild(sg);
+                try {
+                    final Properties props = new Properties();
+                    props.put("draw.rect", false);
+                    SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+                    if (isLastGlyph(j, cdsCount, gSpan, trans_parent)) {
+                        Field fullRect = SequenceGlyph.class.getDeclaredField("full_rect");
+                        fullRect.setAccessible(true);
+                        fullRect.set(sg, new PointedFillRectGlyph());
+                    }
+                    int start = prev_amino_end;
+                    int end = start + gSpan.getLength();
+                    String sub_amino_acid = amino_acid.substring(start, end);
+                    prev_amino_end += gSpan.getLength();
+                    sg.setResidues(sub_amino_acid);
+                    sg.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
+                    sg.setForegroundColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.AMINOACID)));
+                    sg.setBackgroundColor(cglyph.getBackgroundColor());
+                    sg.setSelectable(true);
+                    sg.setInfo(mrna2genome);
+                    aGlyph.addChild(sg);
+                } catch (Exception ex) {
+                    logger.debug("Reflection hack failed", ex);
+                }
             }
         }
+    }
+
+    private static boolean isLastGlyph(int j, int cdsCount, SeqSpan gSpan, GlyphI aGlyph) {
+        return j == cdsCount - 1 && gSpan.getEnd() == aGlyph.getCoordBox().x + aGlyph.getCoordBox().width;
     }
 
     /**
@@ -788,43 +802,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Colors by exon frame relative to genomic coordinates
-     *
-     * @param gl
-     * @param protSpan	represents a protein annotation, an annotation on the
-     * transcript's translated sequence
-     * @param genSpan
-     * @see com.affymetrix.genoviz.bioviews.GlyphI
-     * @see com.affymetrix.genometryImpl.SeqSpan
-     */
-    private void colorByFrame(GlyphI gl, SeqSpan protSpan, SeqSpan genSpan) {
-        double pstart = protSpan.getStartDouble();
-        double fraction = Math.abs(pstart - (int) pstart);
-        int genome_codon_start = genSpan.getStart();
-        int exon_codon_start;
-        if (fraction < 0.3) {
-            exon_codon_start = 0;
-        } else if (fraction < 0.6) {
-            exon_codon_start = 2;
-        } else {
-            exon_codon_start = 1;
-        }
-        genome_codon_start += exon_codon_start;
-        genome_codon_start %= 3;
-        if (genome_codon_start == 0) {
-            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME0)));
-        } else if (genome_codon_start == 1) {
-            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME1)));
-        } else {
-            gl.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.FRAME2)));
-        }  // genome_codon_start = 2
-    }
-
-    /**
      *
      * @param annot2protein
-     * @param path2view - "view seq" symmetry enclosed in an array appended with
-     * annot2mrna
+     * @param path2view - "view seq" symmetry enclosed in an array appended with annot2mrna
      * @param tier
      * @see com.affymetrix.genometryImpl.BioSeq
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
@@ -986,8 +966,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Sets zoom focus and selects any Glyph underlying the location of the
-     * click.
+     * Sets zoom focus and selects any Glyph underlying the location of the click.
      *
      * @see com.affymetrix.genoviz.bioviews.GlyphI
      * @see com.affymetrix.genoviz.event.NeoMouseEvent
@@ -1064,8 +1043,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Shows properties (meta-data about selected items) in the property table
-     * at the bottom of the display.
+     * Shows properties (meta-data about selected items) in the property table at the bottom of the display.
      *
      * @see com.affymetrix.genometryImpl.symmetry.SeqSymmetry
      * @see com.affymetrix.genometryImpl.symmetry.SymWithProps
@@ -1203,8 +1181,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Filters out glyphs if no information is present or if it is not a
-     * instance of SymWithProps
+     * Filters out glyphs if no information is present or if it is not a instance of SymWithProps
      *
      * @param gList
      * @param glyphs
@@ -1303,8 +1280,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     );
 
     /**
-     * Copies a SeqSymmetry. Note that this clears all previous data from the
-     * MutableSeqSymmetry.
+     * Copies a SeqSymmetry. Note that this clears all previous data from the MutableSeqSymmetry.
      *
      * @param sym Source parameter to copy from.
      * @param mut Target parameter to copy to.
@@ -1386,8 +1362,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     /**
-     * Action to be performed when user cancel color changes. So revert back to
-     * old color preferences.
+     * Action to be performed when user cancel color changes. So revert back to old color preferences.
      *
      */
     void cancelChangePrefernce() {

@@ -215,7 +215,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
-        this.setComponentPopupMenu(popup);
     }
 
     @Subscribe

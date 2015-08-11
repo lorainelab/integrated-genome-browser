@@ -375,30 +375,6 @@ public class ProtAnnotService {
         return worker;
     }
 
-    private void showResultLoadingModal(GenomeView gview) {
-        parentPanel = new JPanel(new MigLayout());
-        initInfoLabel(LOADING_IPS_DATA);
-        initStatusLabel("Initializing ...");
-        parentPanel.add(infoLabel, "wrap");
-        parentPanel.add(statusLabel, "wrap");
-
-        initProgressBar();
-        parentPanel.add(progressBar, "align center, wrap");
-
-        final JComponent[] inputs = new JComponent[]{
-            parentPanel
-        };
-        Object[] options = {"Run in background", "Cancel"};
-
-        Object selectedValue = showOptionPane(inputs, options, "Loading InterProScan Data");
-        if (selectedValue != null && selectedValue.equals(options[1])) {
-            LOG.info("cancelling result request");
-            cancelBackgroundTasks();
-        } else {
-            gview.getTabbedPane().setSelectedIndex(1);
-        }
-    }
-
     private void setSelectAllText(String text) {
         selectAllLabel.setText("<html><font color='blue'>" + text + "</font></html>");
     }
@@ -581,7 +557,8 @@ public class ProtAnnotService {
                 }
             };
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
-            showResultLoadingModal(gview);
+            gview.getTabbedPane().setSelectedIndex(1);
+            initStatusLabel("Initializing ...");
         } else {
             interProScanRunning = false;
             eventBus.post(new StatusTerminateEvent(id));

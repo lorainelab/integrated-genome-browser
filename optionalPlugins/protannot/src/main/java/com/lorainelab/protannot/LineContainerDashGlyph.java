@@ -23,9 +23,15 @@ public class LineContainerDashGlyph extends LineContainerProtAnnotGlyph {
 
     @Override
     public void draw(ViewI view) {
+        Rectangle2D.Double fullViewCbox = view.getFullView().getCoordBox();
+        Rectangle2D.Double scratchCbox = new Rectangle2D.Double();
         Rectangle2D.Double coordBox = getCoordBox();
         Rectangle pixelBox = getPixelBox();
-        view.transformToPixels(coordBox, pixelBox);
+        scratchCbox.x = Math.max(coordBox.x, fullViewCbox.x);
+        scratchCbox.width = Math.min(coordBox.x + coordBox.width, fullViewCbox.x + fullViewCbox.width) - scratchCbox.x;
+        scratchCbox.y = coordBox.y;
+        scratchCbox.height = coordBox.height;
+        view.transformToPixels(scratchCbox, pixelBox);
         if (pixelBox.width == 0) {
             pixelBox.width = 1;
         }

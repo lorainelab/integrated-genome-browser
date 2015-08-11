@@ -39,6 +39,8 @@ import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
 import com.lorainelab.protannot.model.InterProScanTableModel;
 import com.lorainelab.protannot.model.ProtannotParser;
+import com.lorainelab.protannot.view.LineContainerDashGlyph;
+import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
 import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
 import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;

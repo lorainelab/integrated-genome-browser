@@ -76,10 +76,18 @@ public class InterProscanTranslator {
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
             Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
-            NamedNodeMap attributes = signature.getAttributes();
-            //TODO:Add name if not set
             parseEntryOnSignature(signature, simhit);
             parseLibraryReleaseOnSignature(signature, simhit);
+            Optional<Descriptor> name = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro name")).findFirst();
+            NamedNodeMap attributes = signature.getAttributes();
+            if (!name.isPresent() && attributes != null 
+                    && attributes.getNamedItem("name") != null) {
+                String signatureName = ((Attr)attributes.getNamedItem("name")).getValue();
+                Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
+                descriptor.setType("InterPro name");
+                descriptor.setValue(signatureName);
+                simhit.getDescriptor().add(descriptor);
+            }
         } catch (XPathExpressionException ex) {
             LOG.error(ex.getMessage(), ex);
         }
@@ -116,7 +124,7 @@ public class InterProscanTranslator {
     }
 
     private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit, String prefix) {
-        if(prefix == null) {
+        if (prefix == null) {
             prefix = "";
         }
         if (attributes == null) {
@@ -204,11 +212,11 @@ public class InterProscanTranslator {
             LOG.error(ex.getMessage(), ex);
         }
     }
-    
+
     private void orderSimspans(List<Simhit.Simspan> simspans) {
         Collections.sort(simspans, new SimhitComparer());
     }
-    
+
     public class SimhitComparer implements Comparator<Simhit.Simspan> {
 
         @Override

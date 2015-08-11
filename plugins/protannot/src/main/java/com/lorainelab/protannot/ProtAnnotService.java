@@ -29,7 +29,6 @@ import com.lorainelab.protannot.interproscan.api.JobSequence;
 import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import com.lorainelab.protannot.interproscan.appl.model.ValueType;
 import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.ProtannotParser;
 import com.lorainelab.protannot.view.StatusBar;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -109,7 +108,6 @@ public class ProtAnnotService {
     private JPanel parentPanel;
     private final Set<String> inputAppl;
     private JPanel configParentPanel;
-    private ProtannotParser parser;
     private final List<String> defaultApplications;
     private JLabel selectAllLabel;
     private JPanel applicationsPanel;
@@ -724,11 +722,6 @@ public class ProtAnnotService {
     @Reference
     public void setInterProscanService(InterProscanService interProscanService) {
         this.interProscanService = interProscanService;
-    }
-
-    @Reference
-    public void setParser(ProtannotParser parser) {
-        this.parser = parser;
     }
 
     @Reference

@@ -125,6 +125,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final int table_height = 100;
     private static final int seqmap_pixel_height = 500;
     private static final double zoomRatio = 30.0;
+    private static final int X_OFFSET_POPUP = 45;
+    private static final int Y_OFFSET_POPUP = 85;
     private JRPTabbedPane tabbedPane;
     private ComponentFactory propertiesTabPanelFactory;
 
@@ -216,7 +218,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
-
     }
 
     @Subscribe
@@ -1029,8 +1030,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             hairline.setRange((int) nme.getCoordX(), (int) nme.getCoordX() + 1);
         }
 
-        if (e.isPopupTrigger()) {
-            popup.show(this, e.getX(), e.getY());
+        if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+            popup.show(this, e.getX() + X_OFFSET_POPUP, e.getY() + Y_OFFSET_POPUP);
         }
     }
 

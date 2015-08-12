@@ -264,8 +264,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private final Map<Arguments, String> ArgumentValues = new EnumMap<>(Arguments.class);
 
     /**
-     * Returns the icon stored in the jar path. It is expected to be at
-     * com.affymetrix.igb.igb.gif.
+     * Returns the icon stored in the jar path. It is expected to be at com.affymetrix.igb.igb.gif.
      *
      * @return null if the image path is not found or can't be opened.
      */
@@ -364,8 +363,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Action perfomed when a path is seleced in the path browser. Calls up
-     * load(name) to load the path.
+     * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
      */
     void doLoadFile() {
         if (this.chooser == null) {
@@ -378,7 +376,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
-        } else if(option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+        } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }
@@ -828,8 +826,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Parses command line argument and adds valid arguments to the argument
-     * dictionary.
+     * Parses command line argument and adds valid arguments to the argument dictionary.
      *
      * @param args Command line arguments
      */
@@ -847,8 +844,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Check arguments and add to Dictionary. If arguments are invalid
-     * showhairline error message.
+     * Check arguments and add to Dictionary. If arguments are invalid showhairline error message.
      *
      * @param	arg	Argument type.
      * @param	argValue	Argument Value.
@@ -1293,16 +1289,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     private AbstractAction getExitAction() {
-        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("exit"))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                                new WindowEvent(getFrame(),
-                                        WindowEvent.WINDOW_CLOSING));
-                    }
-                };
+        AbstractAction quit_action = new AbstractAction(BUNDLE.getString("exit")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+                        new WindowEvent(getFrame(),
+                                WindowEvent.WINDOW_CLOSING));
+            }
+        };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
         quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
         return quit_action;
@@ -1342,8 +1336,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on
-     * the currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on the currently selected Glyph.
      */
     private AbstractAction getOpenInBrowserAction() {
 
@@ -1390,8 +1383,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to center on the location of the
-     * currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to center on the location of the currently selected Glyph.
      */
     private AbstractAction getZoomToFeatureAction() {
 

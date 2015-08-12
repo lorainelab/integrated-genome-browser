@@ -131,11 +131,8 @@ public class IGBAuthenticator extends Authenticator {
             }
             String username = user.getText();
             String passwordPlainText = new String(chars);
-            Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
-            if (dataProvider.isPresent() && rememberCredentials.isSelected()) {
-                dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, true);
-            } else {
-                dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
+            if (dataProvider.isPresent()) {
+                PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl()).putBoolean(REMEMBER_CREDENTIALS, rememberCredentials.isSelected());
             }
             dataProvider.get().setLogin(username);
             dataProvider.get().setPassword(passwordPlainText);

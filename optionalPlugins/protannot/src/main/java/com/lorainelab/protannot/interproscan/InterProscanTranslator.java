@@ -78,6 +78,16 @@ public class InterProscanTranslator {
             Node signature = (Node) xPath.evaluate("signature", matchNode, XPathConstants.NODE);
             parseEntryOnSignature(signature, simhit);
             parseLibraryReleaseOnSignature(signature, simhit);
+            Optional<Descriptor> name = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro name")).findFirst();
+            NamedNodeMap attributes = signature.getAttributes();
+            if (!name.isPresent() && attributes != null 
+                    && attributes.getNamedItem("name") != null) {
+                String signatureName = ((Attr)attributes.getNamedItem("name")).getValue();
+                Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
+                descriptor.setType("InterPro name");
+                descriptor.setValue(signatureName);
+                simhit.getDescriptor().add(descriptor);
+            }
         } catch (XPathExpressionException ex) {
             LOG.error(ex.getMessage(), ex);
         }

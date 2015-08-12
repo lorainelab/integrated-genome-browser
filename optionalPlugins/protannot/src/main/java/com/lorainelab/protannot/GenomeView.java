@@ -132,8 +132,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private InterProScanTableModel ipsTableModel;
     private ProtAnnotEventService eventService;
 
-    private ComponentFactory coloredResiduesGlyphFactory;
-
     private ProtAnnotPreferencesService protAnnotPreferencesService;
 
     @Reference
@@ -349,11 +347,6 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     @Reference(target = "(component.factory=interproscan.tab.factory.provider)")
     public void setInterProScanTabPanelFactory(final ComponentFactory interProScanTabPanelFactory) {
         this.interProScanTabPanelFactory = interProScanTabPanelFactory;
-    }
-
-    @Reference(target = "(component.factory=residues.glyph.factory.provider)")
-    public void setColoredResiduesGlyphFacatory(final ComponentFactory coloredResiduesGlyphFactory) {
-        this.coloredResiduesGlyphFactory = coloredResiduesGlyphFactory;
     }
 
     /**
@@ -741,10 +734,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             cglyph.setSelectable(true);
             aGlyph.addChild(cglyph);
             if (amino_acid != null) {
-
-                final Properties props = new Properties();
-                props.put("draw.rect", false);
-                SequenceGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+         
+                SequenceGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, false);
 
                 int start = prev_amino_end;
                 int end = start + gSpan.getLength();
@@ -923,9 +914,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
          zoomtoselected feature is used. So to correct it below used method is used */
 
         axismap.addAxis(upper_white_space + axis_pixel_height);
-        final Properties props = new Properties();
-        props.put("draw.rect", true);
-        ColoredResiduesGlyph sg = (ColoredResiduesGlyph) coloredResiduesGlyphFactory.newInstance(props).getInstance();
+        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
         sg.setResiduesProvider(gseq, gseq.getLength());
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength(), seq_pixel_height);

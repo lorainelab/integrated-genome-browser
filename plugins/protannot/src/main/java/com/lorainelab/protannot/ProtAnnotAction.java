@@ -264,8 +264,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private final Map<Arguments, String> ArgumentValues = new EnumMap<>(Arguments.class);
 
     /**
-     * Returns the icon stored in the jar path. It is expected to be at
-     * com.affymetrix.igb.igb.gif.
+     * Returns the icon stored in the jar path. It is expected to be at com.affymetrix.igb.igb.gif.
      *
      * @return null if the image path is not found or can't be opened.
      */
@@ -364,8 +363,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Action perfomed when a path is seleced in the path browser. Calls up
-     * load(name) to load the path.
+     * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
      */
     void doLoadFile() {
         if (this.chooser == null) {
@@ -378,7 +376,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
-        } else if(option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+        } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }
@@ -504,15 +502,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
         AbstractAction zoomAction = getZoomToFeatureAction();
         MenuUtil.addToMenu(viewMenu, new JMenuItem(zoomAction));
-        AbstractAction hairLineAction = getToggleHairlineAction();
-        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
         AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
         MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
 
         gview.popup.add(copyAction);
         gview.popup.add(browserAction);
         gview.popup.add(zoomAction);
-        gview.popup.add(new JCheckBoxMenuItem(hairLineAction));
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
     }
 
@@ -828,8 +823,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Parses command line argument and adds valid arguments to the argument
-     * dictionary.
+     * Parses command line argument and adds valid arguments to the argument dictionary.
      *
      * @param args Command line arguments
      */
@@ -847,8 +841,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Check arguments and add to Dictionary. If arguments are invalid
-     * showhairline error message.
+     * Check arguments and add to Dictionary. If arguments are invalid showhairline error message.
      *
      * @param	arg	Argument type.
      * @param	argValue	Argument Value.
@@ -1293,9 +1286,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     private AbstractAction getExitAction() {
-        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("exit"))) {
+        AbstractAction quit_action = new AbstractAction(BUNDLE.getString("exit")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
@@ -1342,8 +1333,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on
-     * the currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to open a browser window showing info on the currently selected Glyph.
      */
     private AbstractAction getOpenInBrowserAction() {
 
@@ -1390,8 +1380,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     /**
-     * Asks ProtAnnotMain.getInstance() to center on the location of the
-     * currently selected Glyph.
+     * Asks ProtAnnotMain.getInstance() to center on the location of the currently selected Glyph.
      */
     private AbstractAction getZoomToFeatureAction() {
 
@@ -1420,20 +1409,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         getGenomeView().addMapListener(ml);
 
         return zoom_to_feature_action;
-    }
-
-    private AbstractAction getToggleHairlineAction() {
-        AbstractAction toggle_hairline_action = new AbstractAction(BUNDLE.getString("toggleHairline")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getGenomeView().toggleHairline();
-            }
-        };
-        toggle_hairline_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_H);
-        toggle_hairline_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("toggleHairlineTip"));
-        toggle_hairline_action.putValue(AbstractAction.SELECTED_KEY, true);
-        return toggle_hairline_action;
     }
 
     private AbstractAction getToggleHairlineLabelAction() {

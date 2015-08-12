@@ -380,7 +380,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
-        } else if(option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+        } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }
@@ -1281,16 +1281,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     private AbstractAction getExitAction() {
-        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("exit"))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                                new WindowEvent(getFrame(),
-                                        WindowEvent.WINDOW_CLOSING));
-                    }
-                };
+        AbstractAction quit_action = new AbstractAction(BUNDLE.getString("exit")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+                        new WindowEvent(getFrame(),
+                                WindowEvent.WINDOW_CLOSING));
+            }
+        };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
         quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
         return quit_action;

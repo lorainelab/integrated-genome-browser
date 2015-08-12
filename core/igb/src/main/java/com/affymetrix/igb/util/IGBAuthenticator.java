@@ -85,13 +85,13 @@ public class IGBAuthenticator extends Authenticator {
         }
         if (dataProvider.isPresent()) {
             Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
-            final boolean currentRememberStatus = dataProviderNode.getBoolean(REMEMBER_CREDENTIALS, true);
+            final boolean currentRememberStatus = dataProviderNode.getBoolean(REMEMBER_CREDENTIALS, false);
             String userName = null;
             String prefPwd = null;
             if (currentRememberStatus) {
                 userName = dataProviderNode.get(LOGIN, null);
                 prefPwd = dataProviderNode.get(PASSWORD, null);
-                if (!Strings.isNullOrEmpty(prefPwd)) {
+                if (!prefPwd.isEmpty()) {
                     prefPwd = ENCRYPTER.decrypt(prefPwd);
                 }
             } else if (dataProvider.get().getLogin().isPresent()) {
@@ -109,6 +109,7 @@ public class IGBAuthenticator extends Authenticator {
                     return null;
                 } catch (IOException ex) {
                     logger.error(BUNDLE.getString("invalidCredentials"));
+                    dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, false);
                 }
             }
             rememberCredentials.setSelected(currentRememberStatus);
@@ -131,8 +132,9 @@ public class IGBAuthenticator extends Authenticator {
             }
             String username = user.getText();
             String passwordPlainText = new String(chars);
-            if (dataProvider.isPresent()) {
-                PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl()).putBoolean(REMEMBER_CREDENTIALS, rememberCredentials.isSelected());
+            if (dataProvider.isPresent() && rememberCredentials.isSelected()) {
+                Preferences dataProviderNode = PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl());
+                dataProviderNode.putBoolean(REMEMBER_CREDENTIALS, true);
             }
             dataProvider.get().setLogin(username);
             dataProvider.get().setPassword(passwordPlainText);

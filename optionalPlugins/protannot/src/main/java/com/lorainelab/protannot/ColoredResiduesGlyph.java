@@ -38,10 +38,6 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
         this.protAnnotPreferencesService = protAnnotPreferencesService;
     }
 
-
-    
-
-
     @Override
     public void setResidues(String residues) {
         chariter = new ImprovedStringCharIter(residues);

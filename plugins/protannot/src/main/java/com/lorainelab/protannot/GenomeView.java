@@ -289,25 +289,25 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     private JPanel getXZoomPanel() {
-        JPanel xZoomPanelWrapper = new JPanel(new MigLayout("fillx"));
-        JPanel xZoomPanel = new JPanel(new MigLayout("fillx"));
+        JPanel xZoomPanelWrapper = new JPanel(new MigLayout("fillx, ins 0"));
+        JPanel xZoomPanel = new JPanel(new MigLayout("fillx, ins 2"));
         JButton xZoomOutBtn = new JButton(new ZoomOutEvent(xzoomer));
         JButton xZoomInBtn = new JButton(new ZoomInEvent(xzoomer));
         xZoomPanel.add(xZoomOutBtn, "width 20!, height 20!");
-        xZoomPanel.add(xzoomer, "width 96%");
+        xZoomPanel.add(xzoomer, "width 96%, height 20!");
         xZoomPanel.add(xZoomInBtn, "width 20!, height 20!");
         xZoomPanelWrapper.add(xZoomPanel, "width 60%, center");
         return xZoomPanelWrapper;
     }
 
     private JPanel getYZoomPanel() {
-        JPanel yZoomPanelWrapper = new JPanel(new MigLayout("filly"));
-        JPanel yZoomPanel = new JPanel(new MigLayout("filly"));
+        JPanel yZoomPanelWrapper = new JPanel(new MigLayout("filly, ins 0"));
+        JPanel yZoomPanel = new JPanel(new MigLayout("filly, ins 2"));
         JButton yZoomOutBtn = new JButton(new ZoomOutEvent(yzoomer));
         JButton xZoomInBtn = new JButton(new ZoomInEvent(yzoomer));
-        yZoomPanel.add(yZoomOutBtn, new CC().width("20!").height("20!").alignY("top").wrap());
-        yZoomPanel.add(yzoomer, new CC().grow().pushY().wrap());
-        yZoomPanel.add(xZoomInBtn, new CC().width("20!").height("20!").alignY("bottom"));
+        yZoomPanel.add(yZoomOutBtn, new CC().width("20!").height("20!").alignY("top").alignX("center").wrap());
+        yZoomPanel.add(yzoomer, new CC().grow().pushY().wrap().alignX("center"));
+        yZoomPanel.add(xZoomInBtn, new CC().width("20!").height("20!").alignY("bottom").alignX("center"));
         yZoomPanelWrapper.add(yZoomPanel, "growy");
         return yZoomPanelWrapper;
     }

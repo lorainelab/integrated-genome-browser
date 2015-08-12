@@ -10,6 +10,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.script.ScriptContext.ENGINE_SCOPE;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,6 +22,7 @@ import java.util.logging.Logger;
  */
 public class CommandProcessor implements Runnable {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CommandProcessor.class);
     private Socket connection;
     private BufferedReader in;
     private PrintWriter out;
@@ -35,7 +41,14 @@ public class CommandProcessor implements Runnable {
         if (out != null) {
             //TODO when time allows, I think this code probably could just use
             // ScriptEngine engine = engineMgr.getEngineByExtension("igb");...rather than use this singleton
-            ScriptManager.getInstance().runScriptString(igbCommand, "igb");
+            ScriptEngine scriptEngine = ScriptManager.getInstance().getScriptEngine("x." + "igb");
+            SimpleScriptContext c = new SimpleScriptContext();
+            c.setAttribute(ScriptManager.FILENAME, System.getProperty("user.home"), ENGINE_SCOPE);
+            try {
+                scriptEngine.eval(igbCommand, c);
+            } catch (ScriptException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
             out.println("Command processed");
         }
     }

@@ -378,6 +378,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
+        } else if(option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+            getExitAction().actionPerformed(null);
         }
     }
 

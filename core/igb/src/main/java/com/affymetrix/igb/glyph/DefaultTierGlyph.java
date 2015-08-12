@@ -11,6 +11,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import static com.affymetrix.igb.view.factories.AbstractTierGlyph.useLabel;
 import com.affymetrix.igb.view.factories.TransformTierGlyph;
 import com.affymetrix.igb.view.layout.CollapsePacker;
@@ -410,9 +411,10 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         return 1;
     }
 
+    @Override
     protected boolean shouldDrawToolBar() {
         if (tierType == TierType.GRAPH) {
-            return this.getChildCount() > 1;
+            return style.getExpandable() && IGBStateProvider.getDrawCollapseState();
         } else if (tierType == TierType.SEQUENCE) {
             return false;
         }

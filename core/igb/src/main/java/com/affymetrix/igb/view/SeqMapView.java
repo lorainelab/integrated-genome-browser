@@ -173,8 +173,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A panel hosting a labeled tier map. Despite it's name this is actually a
- * panel and not a {@link ViewI}.
+ * A panel hosting a labeled tier map. Despite it's name this is actually a panel and not a {@link ViewI}.
  */
 public class SeqMapView extends JPanel
         implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
@@ -206,8 +205,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Creates an instance to be used as the SeqMap. Set-up of listeners and
-     * such will be done in init()
+     * Creates an instance to be used as the SeqMap. Set-up of listeners and such will be done in init()
      */
     private static AffyTieredMap createAffyTieredMap() {
         AffyTieredMap resultSeqMap = new AffyLabelledTierMap(true, true);
@@ -251,8 +249,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Returns all floating layers _except_ grid layer (which is supposed to
-     * stay behind everything else).
+     * Returns all floating layers _except_ grid layer (which is supposed to stay behind everything else).
      */
     private static List<GlyphI> getFloatingLayers(GlyphI root_glyph) {
         List<GlyphI> layers = new ArrayList<>();
@@ -267,8 +264,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Given a list of glyphs, returns a list of syms that those glyphs
-     * represent.
+     * Given a list of glyphs, returns a list of syms that those glyphs represent.
      */
     public static List<SeqSymmetry> glyphsToSyms(List<? extends GlyphI> glyphs) {
         Set<SeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
@@ -281,8 +277,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Given a list of glyphs, returns a list of root syms that those glyphs
-     * represent.
+     * Given a list of glyphs, returns a list of root syms that those glyphs represent.
      */
     public static List<RootSeqSymmetry> glyphsToRootSyms(List<? extends GlyphI> glyphs) {
         Set<RootSeqSymmetry> symSet = new LinkedHashSet<>(glyphs.size());	// use LinkedHashSet to preserve order
@@ -315,10 +310,9 @@ public class SeqMapView extends JPanel
     /**
      * Find the top-most parent glyphs of the given glyphs.
      *
-     * @param childGlyphs a list of GlyphI objects, typically the selected
-     * glyphs
-     * @return a list where each child is replaced by its top-most parent, if it
-     * has a parent, or else the child itself is included in the list
+     * @param childGlyphs a list of GlyphI objects, typically the selected glyphs
+     * @return a list where each child is replaced by its top-most parent, if it has a parent, or else the child itself
+     * is included in the list
      */
     static List<GlyphI> getParents(List<GlyphI> childGlyphs) {
         Set<GlyphI> results = new LinkedHashSet<>(childGlyphs.size());
@@ -330,12 +324,11 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Get the parent, or top-level parent, of a glyph, with certain
-     * restrictions. Will not return a TierGlyph or RootGlyph or a glyph that
-     * isn't hitable, but will return the original GlyphI instead.
+     * Get the parent, or top-level parent, of a glyph, with certain restrictions. Will not return a TierGlyph or
+     * RootGlyph or a glyph that isn't hitable, but will return the original GlyphI instead.
      *
-     * @param top_level if true, will recurse up to the top-level parent, with
-     * certain restrictions: recursion will stop before reaching a TierGlyph
+     * @param top_level if true, will recurse up to the top-level parent, with certain restrictions: recursion will stop
+     * before reaching a TierGlyph
      */
     private static GlyphI getParent(GlyphI g, boolean top_level) {
         GlyphI pglyph = g.getParent();
@@ -456,6 +449,8 @@ public class SeqMapView extends JPanel
         }
     };
 
+    private int lastAltEventId = 0;
+
     AWTEventListener modeController = new AWTEventListener() {
         @Override
         public void eventDispatched(AWTEvent event) {
@@ -473,12 +468,14 @@ public class SeqMapView extends JPanel
             MapMode currMode = getMapMode();
             if (event.getKeyCode() == KeyEvent.VK_ALT
                     && (event.getID() == KeyEvent.KEY_PRESSED
-                    || event.getID() == KeyEvent.KEY_RELEASED)) {
+                    || event.getID() == KeyEvent.KEY_RELEASED)
+                    && event.getID() != lastAltEventId) {
                 if (currMode == MapMode.MapSelectMode) {
                     scroll_mode_button.doClick();
                 } else {
                     select_mode_button.doClick();
                 }
+                lastAltEventId = event.getID();
             }
         }
     };
@@ -723,9 +720,8 @@ public class SeqMapView extends JPanel
      * Sets the sequence. If null, has the same effect as calling clear().
      *
      * @param preserve_selection if true, then try and keep same selections
-     * @param preserve_view if true, then try and keep same scroll and zoom /
-     * scale and offset in // both x and y direction. [GAH: temporarily changed
-     * to preserve scale in only the x direction]
+     * @param preserve_view if true, then try and keep same scroll and zoom / scale and offset in // both x and y
+     * direction. [GAH: temporarily changed to preserve scale in only the x direction]
      */
     @Override
     public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
@@ -836,8 +832,7 @@ public class SeqMapView extends JPanel
             seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 
             /**
-             * Possible bug : When all strands are hidden. tier label and tiers
-             * do appear at same position.
+             * Possible bug : When all strands are hidden. tier label and tiers do appear at same position.
              *
              */
             // NOTE: Below call to stretchToFit is not redundancy. It is there
@@ -875,16 +870,14 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Returns a tier for the given style and direction, creating them if they
-     * don't already exist. Generally called by the Glyph Factory. Note that
-     * this can create empty tiers. But if the tiers are not filled with
-     * something, they will later be removed automatically.
+     * Returns a tier for the given style and direction, creating them if they don't already exist. Generally called by
+     * the Glyph Factory. Note that this can create empty tiers. But if the tiers are not filled with something, they
+     * will later be removed automatically.
      *
      * @param sym The SeqSymmetry (data model) for the track
-     * @param style a non-null instance of IAnnotStyle; tier label and other
-     * properties are determined by the IAnnotStyle.
-     * @param tier_direction the direction of the track (FORWARD, REVERSE, or
-     * BOTH)
+     * @param style a non-null instance of IAnnotStyle; tier label and other properties are determined by the
+     * IAnnotStyle.
+     * @param tier_direction the direction of the track (FORWARD, REVERSE, or BOTH)
      */
     @Override
     public TierGlyph getTrack(ITrackStyleExtended style, StyledGlyph.Direction tier_direction) {
@@ -986,8 +979,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * hide TierGlyphs with no children (that is how IGB indicates that a glyph
-     * is garbage)
+     * hide TierGlyphs with no children (that is how IGB indicates that a glyph is garbage)
      *
      * @param tiers the list of TierGlyphs
      */
@@ -1052,11 +1044,9 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Gets the view seq. Note: {@link #getViewSeq()} and
-     * {@link #getAnnotatedSeq()} may return different BioSeq's ! This allows
-     * for reverse complement, coord shifting, seq slicing, etc. Returns BioSeq
-     * that is the SeqMapView's _view_ onto the BioSeq returned by
-     * getAnnotatedSeq()
+     * Gets the view seq. Note: {@link #getViewSeq()} and {@link #getAnnotatedSeq()} may return different BioSeq's !
+     * This allows for reverse complement, coord shifting, seq slicing, etc. Returns BioSeq that is the SeqMapView's
+     * _view_ onto the BioSeq returned by getAnnotatedSeq()
      *
      * @see #getTransformPath()
      */
@@ -1066,8 +1056,8 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Returns the series of transformations that can be used to map a
-     * SeqSymmetry from {@link #getAnnotatedSeq()} to {@link #getViewSeq()}.
+     * Returns the series of transformations that can be used to map a SeqSymmetry from {@link #getAnnotatedSeq()} to
+     * {@link #getViewSeq()}.
      */
     @Override
     public SeqSymmetry[] getTransformPath() {
@@ -1075,9 +1065,8 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Returns a transformed copy of the given symmetry based on
-     * {@link #getTransformPath()}. If no transform is necessary, simply returns
-     * the original symmetry.
+     * Returns a transformed copy of the given symmetry based on {@link #getTransformPath()}. If no transform is
+     * necessary, simply returns the original symmetry.
      */
     @Override
     public SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
@@ -1267,9 +1256,8 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Determines which SeqSymmetry's are selected by looking at which Glyph's
-     * are currently selected. The list will not include the selected sequence
-     * region, if any. Use getSelectedRegion() for that.
+     * Determines which SeqSymmetry's are selected by looking at which Glyph's are currently selected. The list will not
+     * include the selected sequence region, if any. Use getSelectedRegion() for that.
      *
      * @return a List of SeqSymmetry objects, possibly empty.
      */
@@ -1341,8 +1329,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Zoom to include (and slightly exceed) a given rectangular region in
-     * coordbox coords.
+     * Zoom to include (and slightly exceed) a given rectangular region in coordbox coords.
      */
     private void zoomToRectangle(Rectangle2D.Double rect) {
         if (rect != null && aseq != null) {
@@ -1505,8 +1492,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Sets the hairline position and zoom center to the given spot. Does not
-     * call map.updateWidget()
+     * Sets the hairline position and zoom center to the given spot. Does not call map.updateWidget()
      */
     @Override
     public final void setZoomSpotX(double x) {
@@ -1518,8 +1504,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Sets the hairline position to the given spot. Does not call
-     * map.updateWidget()
+     * Sets the hairline position to the given spot. Does not call map.updateWidget()
      */
     @Override
     public final void setZoomSpotY(double y) {
@@ -1768,9 +1753,8 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Prepares the given popup menu to be shown. The popup menu should have
-     * items added to it by this method. Display of the popup menu will be
-     * handled by showPopup(), which calls this method.
+     * Prepares the given popup menu to be shown. The popup menu should have items added to it by this method. Display
+     * of the popup menu will be handled by showPopup(), which calls this method.
      */
     protected void preparePopup(JRPPopupMenu popup, NeoMouseEvent nevt) {
         final List<GlyphI> selected_glyphs = seqmap.getSelected();
@@ -1934,8 +1918,7 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Recurse through glyphs and collect those that are instances of
-     * GraphGlyph.
+     * Recurse through glyphs and collect those that are instances of GraphGlyph.
      */
     List<GraphGlyph> collectGraphs() {
         List<GraphGlyph> graphs = new ArrayList<>();
@@ -2265,8 +2248,8 @@ public class SeqMapView extends JPanel
     }
 
     /**
-     * Update the widget in this panel. Putting this awkward idiom here to try
-     * to contain its spread. It is here for backward compatability.
+     * Update the widget in this panel. Putting this awkward idiom here to try to contain its spread. It is here for
+     * backward compatability.
      */
     @Override
     public void updatePanel(boolean preserveViewX, boolean preserveViewY) {

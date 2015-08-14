@@ -615,20 +615,11 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 resetPath(path);
             }
         }
-
-        updateExportDialogComponents();
     }
 
     private void updateExportDialogComponents() {
-        if (selectedExt.equals(EXTENSION[0])) {
-            exportDialogGui.getMvRadioButton().setSelected(true);
-            exportDialogGui.getWfRadioButton().setEnabled(false);
-            exportDialogGui.getResolutionComboBox().setEnabled(false);
-            mvRadioButtonActionPerformed();
-        } else {
-            exportDialogGui.getWfRadioButton().setEnabled(true);
-            exportDialogGui.getResolutionComboBox().setEnabled(true);
-        }
+        exportDialogGui.getWfRadioButton().setEnabled(true);
+        exportDialogGui.getResolutionComboBox().setEnabled(true);
     }
 
     /**

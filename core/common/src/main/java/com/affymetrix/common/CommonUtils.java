@@ -40,8 +40,8 @@ public class CommonUtils {
             = System.getProperty("os.name").toLowerCase().contains("mac");
     final public static boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
+    
     final public static boolean IS_UBUNTU = IS_LINUX && isDistro("ubuntu");
-    final public static boolean IS_FEDORA = IS_LINUX && isDistro("fedora");
 
     private CommonUtils() {
     }

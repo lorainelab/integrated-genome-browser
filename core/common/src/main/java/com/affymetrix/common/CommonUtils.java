@@ -8,7 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -40,7 +39,7 @@ public class CommonUtils {
             = System.getProperty("os.name").toLowerCase().contains("mac");
     final public static boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
-    
+
     final public static boolean IS_UBUNTU = IS_LINUX && isDistro("ubuntu");
 
     private CommonUtils() {
@@ -64,15 +63,16 @@ public class CommonUtils {
     public static boolean isDistro(String name) {
         try {
             Process process = Runtime.getRuntime().exec("cat /etc/issue");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                line = line.toLowerCase();
-                if (line.contains(name)) {
-                    return true;
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    line = line.toLowerCase();
+                    if (line.contains(name)) {
+                        return true;
+                    }
                 }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             return false;
         }
         return false;

@@ -35,6 +35,7 @@ import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.protannot.NormalizeXmlStrand;
 import com.lorainelab.protannot.ProtAnnotEventService;
 import com.lorainelab.protannot.event.StatusSetEvent;
+import com.lorainelab.protannot.event.StatusStartEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
 import com.lorainelab.protannot.view.StatusBar;
@@ -88,7 +89,6 @@ public class ProtannotParser {
     private IgbService igbService;
     private EventBus eventBus;
     private ProtAnnotEventService eventService;
-    private volatile String id;
     private int padding;
     private final int MIN_PADDING = 150;
 
@@ -127,10 +127,9 @@ public class ProtannotParser {
     public void activate(Map<String, Object> properties) {
         eventBus = eventService.getEventBus();
         eventBus.register(this);
-        id = (String) properties.get("id");
     }
 
-    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq) {
+    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq, String id) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
@@ -203,9 +202,7 @@ public class ProtannotParser {
         mutableSeqSymmetry.addSpan(residueSpan);
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
-        eventBus.post(new StatusSetEvent("Loading Residue", StatusBar.ICONS.INFO, true, id));
-        igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
-        eventBus.post(new StatusTerminateEvent(id));
+        loadResidue(id, mutableSeqSymmetry, bioseq);
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
         Dnaseq.Residues residue = new Dnaseq.Residues();
         residue.setValue(residuesStr.toLowerCase());
@@ -238,6 +235,13 @@ public class ProtannotParser {
         processDNASeq(chromosome, dnaseq);
         return chromosome;
 
+    }
+
+    private void loadResidue(String id, MutableSeqSymmetry mutableSeqSymmetry, BioSeq bioseq) {
+        eventBus.post(new StatusStartEvent(id));
+        eventBus.post(new StatusSetEvent("Loading Residue", StatusBar.ICONS.INFO, true, id));
+        igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
+        eventBus.post(new StatusTerminateEvent(id));
     }
 
     private void computPadding(int residueLength) {

@@ -11,6 +11,7 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -238,7 +239,20 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         loadPrefs();
         start();
         if (!loadFileOnStart) {
-            load(igbService.getSeqMapView());
+            CThreadWorker worker = new CThreadWorker("Loading gene models in protannot") {
+
+                @Override
+                protected void finished() {
+
+                }
+
+                @Override
+                protected Object runInBackground() {
+                    load(igbService.getSeqMapView());
+                    return true;
+                }
+            };
+            worker.execute();
         } else {
             doLoadFile();
         }
@@ -715,7 +729,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     public void load(SeqMapViewI seqMapView) {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
-        BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
+        BioSeq genome_seq = parser.parse(seqMapView, dnaseq, id);
         int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
         int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
         int relativeStart = Math.min(absoluteStart, absoluteEnd);

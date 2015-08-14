@@ -6,7 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -18,8 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * utilities used by both the main, starting class, and the bundles. Singleton
- * pattern.
+ * utilities used by both the main, starting class, and the bundles. Singleton pattern.
  *
  */
 public class CommonUtils {
@@ -39,6 +40,8 @@ public class CommonUtils {
     final public static boolean IS_LINUX
             = System.getProperty("os.name").toLowerCase().contains("linux");
 
+    final public static boolean IS_UBUNTU = IS_LINUX && isDistro("ubuntu");
+
     private CommonUtils() {
     }
 
@@ -55,6 +58,24 @@ public class CommonUtils {
                 System.getProperty("os.version"),
                 System.getProperty("os.arch"),
                 Locale.getDefault().toString());
+    }
+
+    public static boolean isDistro(String name) {
+        try {
+            Process process = Runtime.getRuntime().exec("cat /etc/issue");
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    line = line.toLowerCase();
+                    if (line.contains(name)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -89,10 +110,8 @@ public class CommonUtils {
     }
 
     /**
-     * Returns the value of the argument indicated by label. If arguments are
-     * "-flag_2 -foo bar", then get_arg("foo", args) returns "bar",
-     * get_arg("flag_2") returns a non-null string, and get_arg("flag_5")
-     * returns null.
+     * Returns the value of the argument indicated by label. If arguments are "-flag_2 -foo bar", then get_arg("foo",
+     * args) returns "bar", get_arg("flag_2") returns a non-null string, and get_arg("flag_5") returns null.
      */
     public String getArg(String label, String[] args) {
         String arg = null;
@@ -122,8 +141,7 @@ public class CommonUtils {
     }
 
     /**
-     * Returns the location of the application data directory. The String will
-     * always end with "/".
+     * Returns the location of the application data directory. The String will always end with "/".
      *
      * @return the application directory
      */
@@ -143,11 +161,9 @@ public class CommonUtils {
     }
 
     /**
-     * Loads an ImageIcon from the specified system resource. The system
-     * resource should be in the classpath, for example, it could be in the
-     * jlfgr-1_0.jar file. If the resource is absent or can't be found, this
-     * routine will not throw an exception, but will return null. For example:
-     * "toolbarButtonGraphics/general/About16.gif".
+     * Loads an ImageIcon from the specified system resource. The system resource should be in the classpath, for
+     * example, it could be in the jlfgr-1_0.jar file. If the resource is absent or can't be found, this routine will
+     * not throw an exception, but will return null. For example: "toolbarButtonGraphics/general/About16.gif".
      *
      * @return An ImageIcon or null if the one specified could not be found.
      */

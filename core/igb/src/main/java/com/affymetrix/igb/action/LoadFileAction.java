@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.action;
 
-import static com.affymetrix.common.CommonUtils.IS_LINUX;
+import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
@@ -155,7 +155,7 @@ public final class LoadFileAction extends OpenURIAction {
             currDir = new File(System.getProperty("user.home"));
         }
         File[] files = null;
-        if (IS_LINUX) {
+        if (IS_UBUNTU) {
             final JFileChooser chooser = new JFileChooser(currDir.getAbsolutePath());
             chooser.setMultiSelectionEnabled(true);
             Set<String> filters = Sets.newHashSet();

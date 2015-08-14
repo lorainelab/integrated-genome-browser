@@ -2,6 +2,7 @@ package com.lorainelab.image.exporter;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
@@ -22,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
@@ -33,13 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An Export Image class for IGB. It is designed to export different part of IGB
- * views to image file. Support format: SVG, PNG and JPG
+ * An Export Image class for IGB. It is designed to export different part of IGB views to image file. Support format:
+ * SVG, PNG and JPG
  *
- * TODO: - Preview image size should changed automatically basis on real
- * percentile. - Support PDF format. - Action performed to the view(not export
- * view), this should not trigger to activate refresh button. Only current
- * export view changed should activate refresh button.
+ * TODO: - Preview image size should changed automatically basis on real percentile. - Support PDF format. - Action
+ * performed to the view(not export view), this should not trigger to activate refresh button. Only current export view
+ * changed should activate refresh button.
  *
  * @author nick
  */
@@ -113,8 +114,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Display the export panel and initialize all related objects for export
-     * process.
+     * Display the export panel and initialize all related objects for export process.
      *
      * @param isSequenceViewer
      */
@@ -134,10 +134,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Set export exportComponent by determined which radio button is selected.
-     * If the
-     * method is triggered by sequence viewer, radio buttons panel will be set
-     * to invisible and set sequence viewer as export exportComponent.
+     * Set export exportComponent by determined which radio button is selected. If the method is triggered by sequence
+     * viewer, radio buttons panel will be set to invisible and set sequence viewer as export exportComponent.
      *
      * @param isCustomComponent
      */
@@ -243,9 +241,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Set exportComponent to export: Whole frame, main view, main view with
-     * label,
-     * sliced view and seq view.
+     * Set exportComponent to export: Whole frame, main view, main view with label, sliced view and seq view.
      *
      * @param c
      */
@@ -336,20 +332,31 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         if (StringUtils.isBlank(ext)) {
             defaultFileName += selectedExt;
         }
-        FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
-        dialog.setDirectory(directory);
-        dialog.setFile(defaultFileName);
-        centerAndShowSaveDialog(dialog);
-        Optional.ofNullable(dialog.getFile()).ifPresent(fileName -> {
-            String currentExt = GeneralUtils.getExtension(fileName);
-            if (!ArrayUtils.contains(EXTENSION, currentExt)) {
-                fileName += EXTENSION[1];
-                currentExt = EXTENSION[1];
+        if (IS_UBUNTU) {
+            JFileChooser fileChooser = new JFileChooser(directory);
+            fileChooser.setDialogTitle("Save Image");
+            fileChooser.setSelectedFile(new File(defaultFileName));
+            int option = fileChooser.showOpenDialog(exportDialogGui);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                completeSaveButtonAction(selectedFile);
             }
-            selectedExt = currentExt;
-            File imageFile = new File(dialog.getDirectory(), fileName);
-            completeSaveButtonAction(imageFile);
-        });
+        } else {
+            FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
+            dialog.setDirectory(directory);
+            dialog.setFile(defaultFileName);
+            centerAndShowSaveDialog(dialog);
+            Optional.ofNullable(dialog.getFile()).ifPresent(fileName -> {
+                String currentExt = GeneralUtils.getExtension(fileName);
+                if (!ArrayUtils.contains(EXTENSION, currentExt)) {
+                    fileName += EXTENSION[1];
+                    currentExt = EXTENSION[1];
+                }
+                selectedExt = currentExt;
+                File imageFile = new File(dialog.getDirectory(), fileName);
+                completeSaveButtonAction(imageFile);
+            });
+        }
     }
 
     public void saveButtonActionPerformed() {
@@ -404,9 +411,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Test whether the current export path is valid or not. If not, reset
-     * current export path to previous export path and return false. Also, test
-     * whether the image size is valid or not.
+     * Test whether the current export path is valid or not. If not, reset current export path to previous export path
+     * and return false. Also, test whether the image size is valid or not.
      */
     private boolean isValidExportFile(String previousPath) {
         if (exportFile.getParentFile() == null || !exportFile.getParentFile().isDirectory()) {
@@ -539,8 +545,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Return whether the passed extention is contained in IGB support image
-     * extention list or not.
+     * Return whether the passed extention is contained in IGB support image extention list or not.
      */
     public boolean isExt(String ext) {
         for (String s : EXTENSION) {
@@ -580,8 +585,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Update the file path text field value when image format combo box action
-     * performed.
+     * Update the file path text field value when image format combo box action performed.
      */
     public void extComboBoxActionPerformed() {
         String path = exportFile.getAbsolutePath();
@@ -628,8 +632,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Update width and height spinner's value when unit combo box action
-     * performed.
+     * Update width and height spinner's value when unit combo box action performed.
      *
      * Reset width spinner will trigger to reset height spinner.
      */
@@ -678,10 +681,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     /**
-     * Update output image resolution value when resolution combo box action
-     * performed. If selected unit is 'inches', update width and height
-     * spinner's value(reset width spinner will trigger to reset height
-     * spinner).
+     * Update output image resolution value when resolution combo box action performed. If selected unit is 'inches',
+     * update width and height spinner's value(reset width spinner will trigger to reset height spinner).
      */
     public void resolutionComboBoxActionPerformed() {
         imageInfo.setResolution((Integer) exportDialogGui.getResolutionComboBox().getSelectedItem());

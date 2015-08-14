@@ -1,9 +1,9 @@
 package com.affymetrix.igb.view.layout;
 
-import com.affymetrix.igb.view.layout.ExpandPacker;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -14,27 +14,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * A new packer for laying out children of a TierGlyph.
  * <p>
- * FasterExpandPacker should be faster than ExpandPacker (nearly linear time),
- * but will only work provided that certain conditions are met: 1. The list of
- * children being packed into a parent must be sorted by ascending min
- * (child.getCoordBox().x) 2. All children must be the same height
- * (child.getCoordBox().height); If children are different heights, you *must*
- * indicate this by calling setConstantHeights(false). This will then act as if
- * all glyphs are the same height as the one with the maximum height, thus
- * leaving more blank vertical space than is necessary, but allowing the packing
- * to remain fast. (To meet requirement (1), call TierGlyph.pack() forces a
- * sorting of the tier if it is not sorted in ascending min)
+ * FasterExpandPacker should be faster than ExpandPacker (nearly linear time), but will only work provided that certain
+ * conditions are met: 1. The list of children being packed into a parent must be sorted by ascending min
+ * (child.getCoordBox().x) 2. All children must be the same height (child.getCoordBox().height); If children are
+ * different heights, you *must* indicate this by calling setConstantHeights(false). This will then act as if all glyphs
+ * are the same height as the one with the maximum height, thus leaving more blank vertical space than is necessary, but
+ * allowing the packing to remain fast. (To meet requirement (1), call TierGlyph.pack() forces a sorting of the tier if
+ * it is not sorted in ascending min)
  * </p>
  *
  * <p>
- * Basic idea is that since all children are the same height, there is a
- * discrete number of y-position slots that a child can occupy. Therefore, when
- * packing all the children, one can sweep through the sorted list of children
- * while keeping track of the maximum x-position (x+width) of all the children
- * in a slot/subtier, which by definition will be the maximum x-position of the
- * last child to occupy that subtier, and search the slot list (which is sorted
- * by ascending/descending y position, depending on whether packing up or down)
- * for one in which the current child will fit. In pseudo-code:  <code><pre>
+ * Basic idea is that since all children are the same height, there is a discrete number of y-position slots that a
+ * child can occupy. Therefore, when packing all the children, one can sweep through the sorted list of children while
+ * keeping track of the maximum x-position (x+width) of all the children in a slot/subtier, which by definition will be
+ * the maximum x-position of the last child to occupy that subtier, and search the slot list (which is sorted by
+ * ascending/descending y position, depending on whether packing up or down) for one in which the current child will
+ * fit. In pseudo-code:  <code><pre>
  *  for each child in tier.getChildren()  {
  *     for each slot in tier  {
  *        if (child.xmin > slot.xmax)  {
@@ -53,21 +48,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * </p>
  *
  * <p>
- * I think this will execute in order (N x P)/2, where N is the number of
- * children and P is the number of slots that need to be created to lay out the
- * children. Actually (N x P)/2 is worst case performance -- unless every
- * possible x-position for children is overlapped by P children, should actually
- * get much better performance, approaching N (linear time) as the number of
- * child overlaps approaches 0
+ * I think this will execute in order (N x P)/2, where N is the number of children and P is the number of slots that
+ * need to be created to lay out the children. Actually (N x P)/2 is worst case performance -- unless every possible
+ * x-position for children is overlapped by P children, should actually get much better performance, approaching N
+ * (linear time) as the number of child overlaps approaches 0
  * </p>
  *
  * <p>
- * THE FOLLOWING IS NOT YET IMPLEMENTED A potential improvement to this layout
- * algorithm is to also keep track of the the _minimum_ xmax (prev_min_xmax) of
- * all slots that were checked for the previous child being packed (including
- * the new xmax of the slot the prev child was placed in), as well as the index
- * of the slot the prev child (prev_slot_index) Then for the current child being
- * packed:  <code><pre>
+ * THE FOLLOWING IS NOT YET IMPLEMENTED A potential improvement to this layout algorithm is to also keep track of the
+ * the _minimum_ xmax (prev_min_xmax) of all slots that were checked for the previous child being packed (including the
+ * new xmax of the slot the prev child was placed in), as well as the index of the slot the prev child (prev_slot_index)
+ * Then for the current child being packed:  <code><pre>
  *      if (prev_min_xmax < child.xmin)  {
  *          there is a slot with index <= prev_slot_index that will fit child,
  *	    so do (for each slot in tier, etc.) same as above
@@ -77,18 +68,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *          so modify (for each slot) to be
  *          (for each slot starting at slot.index = prev_slot_index+1), then same as above
  *      }
- *</pre></code> This would help performance in the problematic cases where
- * there are many children that overlap the same region. Without this
- * improvement, such cases would force iteration over each potential slot to
- * place each child, giving (NxP)/2 performance. With this improvement, some of
- * the worst cases, such as identical ranges for all children, would actually
- * end up with order N (linear time) performance
+ *</pre></code> This would help performance in the problematic cases where there are many children that overlap the
+ * same region. Without this improvement, such cases would force iteration over each potential slot to place each child,
+ * giving (NxP)/2 performance. With this improvement, some of the worst cases, such as identical ranges for all
+ * children, would actually end up with order N (linear time) performance
  * </p>
  *
  * <p>
- * GAH 8-20-2003 Added ability to specify/adjust max number of slots -- and if a
- * child needs be placed in a slot > max_slots, then instead it is place at
- * max_slots but offset slightly to visually indicate pileup
+ * GAH 8-20-2003 Added ability to specify/adjust max number of slots -- and if a child needs be placed in a slot >
+ * max_slots, then instead it is place at max_slots but offset slightly to visually indicate pileup
  * </p>
  */
 public class FasterExpandPacker extends ExpandPacker {
@@ -107,17 +95,15 @@ public class FasterExpandPacker extends ExpandPacker {
     /**
      * Sets the maximum depth of glyphs to pack in the tier.
      *
-     * @param slotnum a positive integer or zero; zero implies there is no limit
-     * to the depth of packing.
+     * @param slotnum a positive integer or zero; zero implies there is no limit to the depth of packing.
      */
     public void setMaxSlots(int slotnum) {
         max_slots_allowed = Math.max(slotnum, 0);
     }
 
     /**
-     * Set whether or not packer can assume all children glyphs are the same
-     * height. Default is true. If false, it will pack into layers based on the
-     * maximum child height.
+     * Set whether or not packer can assume all children glyphs are the same height. Default is true. If false, it will
+     * pack into layers based on the maximum child height.
      */
     public void setConstantHeights(boolean b) {
         constant_heights = b;
@@ -155,6 +141,7 @@ public class FasterExpandPacker extends ExpandPacker {
         for (GlyphI child : children) {
             //			child.setVisibility(true);
             child.setOverlapped(false);
+            String label = ((EfficientLabelledGlyph) child).getLabel();
 //			child.setSkipDraw(false);
             cbox = child.getCoordBox();
             double child_min = cbox.x;
@@ -255,14 +242,11 @@ public class FasterExpandPacker extends ExpandPacker {
     }
 
     /**
-     * Get an optimal number of slots. i.e. what is the minimum number of slots
-     * needed to show all the glyphs in view? This is copied and pasted from
-     * pack(), but without actually moving anything and ignoring glyphs outside
-     * the view.
+     * Get an optimal number of slots. i.e. what is the minimum number of slots needed to show all the glyphs in view?
+     * This is copied and pasted from pack(), but without actually moving anything and ignoring glyphs outside the view.
      *
      * @param parent the glyph (tier) containing glyphs displayed
-     * @param theView in which the glyphs appear. Glyphs outside this view are
-     * not considered.
+     * @param theView in which the glyphs appear. Glyphs outside this view are not considered.
      * @return number of slots that would be used if packed.
      */
     public int getSlotsNeeded(GlyphI parent, ViewI theView) {
@@ -357,8 +341,8 @@ public class FasterExpandPacker extends ExpandPacker {
     }
 
     /**
-     * Get the number of slots used the last time packed. Note that this should
-     * not be greater than the maximum set for a tier.
+     * Get the number of slots used the last time packed. Note that this should not be greater than the maximum set for
+     * a tier.
      *
      * @return number of slots used to pack the visible data.
      */

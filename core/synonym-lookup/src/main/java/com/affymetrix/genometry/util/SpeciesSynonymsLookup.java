@@ -4,8 +4,10 @@
  */
 package com.affymetrix.genometry.util;
 
+import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.lorainelab.igb.services.synonymlookup.SynonymLookupService;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,21 +15,18 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  *
- * The mapping of a species to its common name is a one-to-one mapping. There
- * should not be any discrepancy among institutions on what the common name of a
- * species is
+ * The mapping of a species to its common name is a one-to-one mapping. There should not be any discrepancy among
+ * institutions on what the common name of a species is
  * <br>
  * This class inherits {@link SynonymLookup } to modify one method.
  * <br>
- * The modification is done to ensure there is only one synonym common species
- * name for each species
+ * The modification is done to ensure there is only one synonym common species name for each species
  *
  * the species.txt file is of the form [scientific name][tab][common
  * nmae][tab][genome_version_name_1][genome_version_name_2]
  *
- * The first data source read determine the final value for the common name.
- * other data sources (quickload at this time) can add genome_version_names that
- * map to the common name, but cannot modify the common name. IGB's resources
+ * The first data source read determine the final value for the common name. other data sources (quickload at this time)
+ * can add genome_version_names that map to the common name, but cannot modify the common name. IGB's resources
  * species.txt gets first dibs.
  *
  *
@@ -35,7 +34,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author dcnorris
  *
  */
+@Component(name = SpeciesSynonymsLookup.COMPONENT_NAME, immediate = true, provide = SynonymLookupService.class)
 public class SpeciesSynonymsLookup extends SynonymLookup {
+
+    public static final String COMPONENT_NAME = "SpeciesSynonymsLookup";
 
     /**
      * addSynonyms while making sure only one synonym exists for each species.

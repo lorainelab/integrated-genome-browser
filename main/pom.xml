@@ -90,6 +90,11 @@
             <artifactId>weblinks</artifactId>
             <scope>runtime</scope>
         </dependency>
+	<dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>synonym-lookup</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>quickload</artifactId>

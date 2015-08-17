@@ -10,7 +10,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.SynonymLookup;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;

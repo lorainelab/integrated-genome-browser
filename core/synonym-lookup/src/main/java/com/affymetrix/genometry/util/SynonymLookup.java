@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.util;
 
-import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
@@ -23,10 +22,8 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @version $Id: SynonymLookup.java 9461 2011-11-17 21:19:39Z jfvillal $
  */
-@Component(name = SynonymLookup.COMPONENT_NAME, immediate = true, provide = SynonymLookupService.class)
-public class SynonymLookup implements SynonymLookupService {
+public abstract class SynonymLookup implements SynonymLookupService {
 
-    public static final String COMPONENT_NAME = "SynonymLookup";
     /**
      * Default behaviour of case sensitivity for synonym lookups. If true, searches will be cases sensitive. The default
      * is {@value}.
@@ -42,12 +39,12 @@ public class SynonymLookup implements SynonymLookupService {
     /**
      * The default instance of this class, used by most code for synonym lookups.
      */
-    private static final SynonymLookup DEFAULT_LOOKUP = new SynonymLookup();
+//    private static final SynonymLookup DEFAULT_LOOKUP = new SynonymLookup();
 
     /**
      * The default instance of this class for chromosome, used by most code for synonym lookups.
      */
-    private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
+//    private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
 
     /**
      * HashMultimap to map every synonym to all equivalent synonyms.
@@ -57,25 +54,25 @@ public class SynonymLookup implements SynonymLookupService {
 
     protected final Set<String> preferredNames = Sets.<String>newConcurrentHashSet();
 
-    /**
-     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
-     * code.
-     *
-     * @return the default instance of SynonymLookup.
-     */
-    public static SynonymLookup getDefaultLookup() {
-        return DEFAULT_LOOKUP;
-    }
-
-    /**
-     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
-     * code.
-     *
-     * @return the default instance of chromosome SynonymLookup.
-     */
-    public static SynonymLookup getChromosomeLookup() {
-        return CHROM_LOOKUP;
-    }
+//    /**
+//     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
+//     * code.
+//     *
+//     * @return the default instance of SynonymLookup.
+//     */
+//    public static SynonymLookup getDefaultLookup() {
+//        return DEFAULT_LOOKUP;
+//    }
+//
+//    /**
+//     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
+//     * code.
+//     *
+//     * @return the default instance of chromosome SynonymLookup.
+//     */
+//    public static SynonymLookup getChromosomeLookup() {
+//        return CHROM_LOOKUP;
+//    }
 
     /**
      * Loads synonyms from the given input stream.

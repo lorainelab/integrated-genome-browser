@@ -7,7 +7,7 @@ package com.affymetrix.genometry.util;
 import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.services.synonymlookup.SynonymLookupService;
+import com.lorainelab.igb.services.synonymlookup.SpeciesSynonymLookup;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,8 +34,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author dcnorris
  *
  */
-@Component(name = SpeciesSynonymsLookup.COMPONENT_NAME, immediate = true, provide = SynonymLookupService.class)
-public class SpeciesSynonymsLookup extends SynonymLookup {
+@Component(name = SpeciesSynonymsLookup.COMPONENT_NAME, immediate = true, provide = SpeciesSynonymLookup.class)
+public class SpeciesSynonymsLookup extends SynonymLookup implements SpeciesSynonymLookup {
 
     public static final String COMPONENT_NAME = "SpeciesSynonymsLookup";
 

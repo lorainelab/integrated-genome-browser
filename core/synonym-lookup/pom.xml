@@ -97,7 +97,9 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package/>
+                        <Export-Package>
+                            com.lorainelab.igb.synonymlookup.services.*
+                        </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

@@ -7,7 +7,7 @@ package com.affymetrix.genometry.util;
 import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.services.synonymlookup.SpeciesSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymLookup;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.services.synonymlookup;
+package com.lorainelab.igb.synonymlookup.services;
 
 /**
  *
  * @author Tarun
  */
-public interface SpeciesSynonymLookup extends SynonymLookupService {
+public interface DefaultSynonymLookup extends SynonymLookupService{
     
 }

@@ -6,7 +6,7 @@
 package com.affymetrix.genometry.util;
 
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.igb.services.synonymlookup.DefaultSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 
 /**
  *

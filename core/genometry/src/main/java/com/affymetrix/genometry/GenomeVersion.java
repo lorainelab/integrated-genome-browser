@@ -5,13 +5,14 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
 import com.affymetrix.genometry.util.SpeciesLookup;
-import com.affymetrix.genometry.util.SynonymLookup;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,6 +25,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +46,8 @@ public class GenomeVersion {
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
-    private SynonymLookup chrLookup;
+    private DefaultSynonymLookup defSynLookup;
+    private ChromosomeSynonymLookup chrSynLookup;
     private final LocalDataProvider localDataSetProvider;
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
 
@@ -53,6 +59,15 @@ public class GenomeVersion {
         seqlist = new ArrayList<>();
         dataContainers = Sets.newConcurrentHashSet();
         localDataSetProvider = new LocalDataProvider();
+        Bundle bundle = FrameworkUtil.getBundle(GenomeVersion.class);
+        if(bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            ServiceReference<DefaultSynonymLookup> defaultSynLookupReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+            defSynLookup = bundleContext.getService(defaultSynLookupReference);
+            
+            ServiceReference<ChromosomeSynonymLookup> chrSynLookupReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
+            chrSynLookup = bundleContext.getService(chrSynLookupReference);
+        }
     }
 
     final public String getName() {
@@ -168,10 +183,7 @@ public class GenomeVersion {
     }
 
     public void loadChromosomeSynonyms(InputStream istr) throws IOException {
-        if (chrLookup == null) {
-            chrLookup = new SynonymLookup();
-        }
-        chrLookup.loadSynonyms(istr, false);
+        chrSynLookup.loadSynonyms(istr, false);
     }
 
     /**
@@ -186,20 +198,20 @@ public class GenomeVersion {
         if (useSynonyms && bioSeq == null) {
             // Try and find a synonym.
             // First look up species specific synonym
-            if (chrLookup != null) {
-                bioSeq = findSeqSynonym(synonym, chrLookup);
+            if (chrSynLookup != null) {
+                bioSeq = findSeqSynonym(synonym, chrSynLookup);
             }
 
             // If synonym is not found in local then lookup global list
             if (bioSeq == null) {
-                bioSeq = findSeqSynonym(synonym, SynonymLookup.getChromosomeLookup());
+                bioSeq = findSeqSynonym(synonym, chrSynLookup);
             }
 
         }
         return bioSeq;
     }
 
-    private BioSeq findSeqSynonym(String synonym, SynonymLookup lookup) {
+    private BioSeq findSeqSynonym(String synonym, ChromosomeSynonymLookup lookup) {
         BioSeq aseq = null;
         for (String syn : lookup.getSynonyms(synonym, false)) {
             aseq = id2seq.get(syn.toLowerCase());
@@ -232,7 +244,7 @@ public class GenomeVersion {
     }
 
     public final boolean isSynonymous(String synonym) {
-        return name.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(name, synonym);
+        return name.equals(synonym) || defSynLookup.isSynonym(name, synonym);
     }
 
     public boolean removeSeqsForUri(String uri) {

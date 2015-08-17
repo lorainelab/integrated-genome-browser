@@ -8,6 +8,8 @@ import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * OSGi Activator for genometry bundle
@@ -16,12 +18,26 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        initFileTypeHandlers(bundleContext);
-        initGenericActions(bundleContext);
+        setupSynonymLookupServiceTracker(bundleContext);
     }
 
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
+    }
+
+    private void setupSynonymLookupServiceTracker(final BundleContext bundleContext) {
+        ServiceTracker<GenometryServiceDependencyManager, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<GenometryServiceDependencyManager, Object>(bundleContext, GenometryServiceDependencyManager.class, null) {
+
+            @Override
+            public Object addingService(ServiceReference<GenometryServiceDependencyManager> reference) {
+                initFileTypeHandlers(bundleContext);
+                initGenericActions(bundleContext);
+                return super.addingService(reference);
+            }
+
+        };
+        dependencyTracker.open();
     }
 
     private void initFileTypeHandlers(BundleContext bundleContext) {

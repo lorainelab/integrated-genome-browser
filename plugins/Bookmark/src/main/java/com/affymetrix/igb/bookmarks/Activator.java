@@ -14,13 +14,16 @@ import com.lorainelab.igb.services.XServiceRegistrar;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +78,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             SimpleBookmarkServer.setServerPort(portString);
         }
         SimpleBookmarkServer.init(igbService);
-        
+
         AddBookmarkAction.createAction(igbService);
 
         BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
@@ -109,7 +112,28 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        super.start(bundleContext);
+        setupServiceDependencyTracker(bundleContext);
     }
 
+    private void startBookmark(BundleContext bundleContext) {
+        try {
+            super.start(bundleContext);
+        } catch (Exception ex) {
+            logger.debug(ex.getMessage(), ex);
+        }
+    }
+
+    private void setupServiceDependencyTracker(final BundleContext bundleContext) {
+        ServiceTracker<DefaultSynonymLookup, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<DefaultSynonymLookup, Object>(bundleContext, DefaultSynonymLookup.class, null) {
+
+            @Override
+            public Object addingService(ServiceReference<DefaultSynonymLookup> reference) {
+                startBookmark(bundleContext);
+                return super.addingService(reference);
+            }
+
+        };
+        dependencyTracker.open();
+    }
 }

@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -27,7 +26,6 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
@@ -39,6 +37,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,11 +51,15 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.LoggerFactory;
 
 /**
- * A way of allowing IGB to be controlled via hyperlinks. (This used to be an
- * implementation of HttpServlet, but it isn't now.)
+ * A way of allowing IGB to be controlled via hyperlinks. (This used to be an implementation of HttpServlet, but it
+ * isn't now.)
  * <pre>
  *  Can specify:
  *      genome version
@@ -74,9 +77,16 @@ import org.slf4j.LoggerFactory;
 public final class BookmarkUnibrowControlServlet {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BookmarkUnibrowControlServlet.class);
-    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+    private static DefaultSynonymLookup LOOKUP;
+    private static BundleContext bundleContext;
 
     private BookmarkUnibrowControlServlet() {
+        Bundle bundle = FrameworkUtil.getBundle(BookmarkUnibrowControlServlet.class);
+        if (bundle != null) {
+            bundleContext = bundle.getBundleContext();
+            ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+            LOOKUP = bundleContext.getService(serviceReference);
+        }
     }
 
     public static BookmarkUnibrowControlServlet getInstance() {
@@ -95,9 +105,8 @@ public final class BookmarkUnibrowControlServlet {
      * Loads a bookmark.
      *
      * @param igbService
-     * @param parameters Must be a Map where the only values are String and
-     * String[] objects. For example, this could be the Map returned by
-     * {@link javax.servlet.ServletRequest#getParameterMap()}.
+     * @param parameters Must be a Map where the only values are String and String[] objects. For example, this could be
+     * the Map returned by {@link javax.servlet.ServletRequest#getParameterMap()}.
      */
     public void goToBookmark(final IgbService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
         String batchFileStr = getFirstValueEntry(parameters, IgbService.SCRIPTFILETAG);
@@ -481,11 +490,10 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     /**
-     * Loads the sequence and goes to the specified location. If version doesn't
-     * match the currently-loaded version, asks the user if it is ok to proceed.
-     * NOTE: This schedules events on the AWT event queue. If you want to make
-     * sure that everything has finished before you do something else, then you
-     * have to schedule that something else to occur on the AWT event queue.
+     * Loads the sequence and goes to the specified location. If version doesn't match the currently-loaded version,
+     * asks the user if it is ok to proceed. NOTE: This schedules events on the AWT event queue. If you want to make
+     * sure that everything has finished before you do something else, then you have to schedule that something else to
+     * occur on the AWT event queue.
      *
      * @param graph_files it is ok for this parameter to be null.
      * @return true indicates that the action succeeded

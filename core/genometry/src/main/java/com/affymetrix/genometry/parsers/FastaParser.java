@@ -16,6 +16,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -29,6 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Parses a fasta-formatted file.
@@ -345,7 +350,14 @@ public final class FastaParser implements Parser {
             seq = new BioSeq(seqid, residues.length());
             seq.setResidues(residues);
         } else {  // try to merge with existing seq
-            if (SynonymLookup.getDefaultLookup().isSynonym(seq.getId(), seqid)) {
+            Bundle bundle = FrameworkUtil.getBundle(FastaParser.class);
+            DefaultSynonymLookup defSynLookup = null;
+            if(bundle != null) {
+                BundleContext bundleContext = bundle.getBundleContext();
+                ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+                defSynLookup = bundleContext.getService(serviceReference);
+            }
+            if (defSynLookup != null && defSynLookup.isSynonym(seq.getId(), seqid)) {
                 seq.setResidues(residues);
             } else {
                 System.out.println("*****  ABORTING MERGE, sequence ids don't match: "

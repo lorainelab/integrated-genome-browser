@@ -6,8 +6,8 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.TwoBitIterator;
+import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -120,8 +120,8 @@ public final class TwoBitParser implements Parser {
     }
 
     /**
-     * Load data from the bistr into the buffer. This convenience method is
-     * used to ensure that the buffer has the correct endian and is rewound.
+     * Load data from the bistr into the buffer. This convenience method is used to ensure that the buffer has the
+     * correct endian and is rewound.
      */
     private static void loadBuffer(SeekableBufferedStream bistr, ByteBuffer buffer) throws IOException {
         buffer.rewind();
@@ -196,7 +196,7 @@ public final class TwoBitParser implements Parser {
         int name_length;
         long offset, position;
         BioSeq seq = null;
-        SynonymLookup chrLookup = SynonymLookup.getChromosomeLookup();
+        ChromosomeSynonymLookup chrLookup = seq_group.getChrSynLookup();
         position = bistr.position();
         for (int i = 0; i < seq_count; i++) {
 

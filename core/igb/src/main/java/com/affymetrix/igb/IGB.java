@@ -16,6 +16,7 @@ import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
@@ -34,9 +35,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
-import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.GOOGLE_ANALYTICS_ID;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.swing.JRPMenu;
@@ -65,7 +64,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -168,17 +166,17 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     private void loadSynonyms() {
         String SYNONYMS_TXT = "synonyms.txt";
         String CHROMOSOMES_TXT = "chromosomes.txt";
-        loadSynonyms(SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
-        loadSynonyms(CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
+//        loadSynonyms(SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
+//        loadSynonyms(CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
     }
 
-    private void loadSynonyms(String file, SynonymLookup lookup) {
-        try (InputStream istr = IGB.class.getClassLoader().getResourceAsStream(file)) {
-            lookup.loadSynonyms(istr, true);
-        } catch (IOException ex) {
-            logger.info("Problem loading default synonyms file " + file, ex);
-        }
-    }
+//    private void loadSynonyms(String file, SynonymLookup lookup) {
+//        try (InputStream istr = IGB.class.getClassLoader().getResourceAsStream(file)) {
+//            lookup.loadSynonyms(istr, true);
+//        } catch (IOException ex) {
+//            logger.info("Problem loading default synonyms file " + file, ex);
+//        }
+//    }
 
     private static void setLaf() {
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)

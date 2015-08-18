@@ -23,11 +23,11 @@ public class QuickloadDataProviderTest {
 
     @BeforeClass
     public static void setup() throws InterruptedException {
-        dataProvider = new QuickloadDataProvider("http://igbquickload.org/", "igbquickload", 1);
-        Thread.sleep(1000);
-        dataProvider.setMirrorUrl("http://bioviz.org/quickload/");
-        version = new GenomeVersion("A_thaliana_Jun_2009");
-        dataProvider.initialize();
+//        dataProvider = new QuickloadDataProvider("http://igbquickload.org/", "igbquickload", 1);
+//        Thread.sleep(1000);
+//        dataProvider.setMirrorUrl("http://bioviz.org/quickload/");
+//        version = new GenomeVersion("A_thaliana_Jun_2009");
+//        dataProvider.initialize();
     }
 
     @Test

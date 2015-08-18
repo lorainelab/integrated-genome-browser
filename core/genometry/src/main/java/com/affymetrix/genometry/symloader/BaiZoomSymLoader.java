@@ -7,7 +7,6 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -25,7 +24,7 @@ import net.sf.samtools.seekablestream.SeekableHTTPStream;
 import net.sf.samtools.seekablestream.SeekableStream;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
-
+    
     public BaiZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
         super(uri, featureName, genomeVersion);
     }
@@ -38,7 +37,7 @@ public class BaiZoomSymLoader extends IndexZoomSymLoader {
     private int getRefNo(String igbSeq, SAMSequenceDictionary ssd) {
         List<SAMSequenceRecord> sList = ssd.getSequences();
         for (int i = 0; i < sList.size(); i++) {
-            String bamSeq = SynonymLookup.getChromosomeLookup().getPreferredName(sList.get(i).getSequenceName());
+            String bamSeq = genomeVersion.getChrSynLookup().getPreferredName(sList.get(i).getSequenceName());
             if (igbSeq.equals(bamSeq)) {
                 return i;
             }

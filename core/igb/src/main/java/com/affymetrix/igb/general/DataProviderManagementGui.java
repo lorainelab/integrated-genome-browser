@@ -68,7 +68,8 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private final StyledJTable dataSourcesTable;
     private DataProviderTableModel dataProviderTableModel;
     private final JPanel dataSourcesPanel;
-    private final JPanel synonymsPanel;
+    private JPanel synonymsPanel;
+    private SynonymsControlPanel synonymsControlPanel;
     private final JPanel cachePanel;
     private JButton loadPriorityUpBtn;
     private JButton loadPriorityDownBtn;
@@ -83,12 +84,12 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         setLayout(new MigLayout("fill"));
         dataSourcesTable = getStyledJTable();
         dataSourcesPanel = initilizeDataSourcesPanel();
-        synonymsPanel = new SynonymsControlPanel(this).getPanel();
         cachePanel = CacheControlPanel.getCachePanel();
     }
 
     @Activate
     public void activate() {
+        synonymsPanel = synonymsControlPanel.getPanel();
         dataSourcesTable.setModel(dataProviderTableModel);
         initializeTable();
         initilizeLayout();
@@ -381,4 +382,10 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         }
     }
 
+    @Reference
+    public void setSynonymsControlPanel(SynonymsControlPanel synonymsControlPanel) {
+        this.synonymsControlPanel = synonymsControlPanel;
+    }
+
+    
 }

@@ -1,13 +1,16 @@
 package com.affymetrix.igb.general;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.common.PreferenceUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import java.awt.Component;
+import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.SynonymLookupService;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -31,16 +34,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
+@Component(name = SynonymsControlPanel.COMPONENT_NAME, immediate = true, provide = SynonymsControlPanel.class)
 public class SynonymsControlPanel {
 
+    public static final String COMPONENT_NAME = "SynonymsControlPanel";
     private static final Logger logger = LoggerFactory.getLogger(SynonymsControlPanel.class);
     private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
     private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
-    private Component parent;
     private JPanel panel;
+    private DefaultSynonymLookup defSynLookup;
+    private ChromosomeSynonymLookup chrSynLookup;
 
-    public SynonymsControlPanel(Component parent) {
-        this.parent = parent;
+    public SynonymsControlPanel() {
         panel = initSynonymsPanel();
     }
 
@@ -48,7 +53,7 @@ public class SynonymsControlPanel {
         return panel;
     }
 
-    protected static File fileChooser(int mode, Component parent) throws HeadlessException {
+    protected static File fileChooser(int mode) throws HeadlessException {
         JFileChooser chooser = new JFileChooser();
 
         chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -57,7 +62,7 @@ public class SynonymsControlPanel {
         chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
         chooser.rescanCurrentDirectory();
 
-        if (chooser.showOpenDialog(parent) != APPROVE_OPTION) {
+        if (chooser.showOpenDialog(null) != APPROVE_OPTION) {
             return null;
         }
 
@@ -76,7 +81,7 @@ public class SynonymsControlPanel {
 
         final ActionListener vlistener = e -> {
             if (e.getSource() == vopenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+                File file = fileChooser(FILES_AND_DIRECTORIES);
                 try {
                     if (file != null) {
                         vsynonymFile.setText(file.getCanonicalPath());
@@ -87,7 +92,7 @@ public class SynonymsControlPanel {
                 }
             }
 
-            if (vsynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile)) {
+            if (vsynonymFile.getText().isEmpty() || loadSynonymFile(defSynLookup, vsynonymFile)) {
                 PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
             } else {
                 ErrorHandler.errorPanel(
@@ -98,7 +103,7 @@ public class SynonymsControlPanel {
 
         final ActionListener clistener = e -> {
             if (e.getSource() == copenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+                File file = fileChooser(FILES_AND_DIRECTORIES);
                 try {
                     if (file != null) {
                         csynonymFile.setText(file.getCanonicalPath());
@@ -109,7 +114,7 @@ public class SynonymsControlPanel {
                 }
             }
 
-            if (csynonymFile.getText().isEmpty() || loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile)) {
+            if (csynonymFile.getText().isEmpty() || loadSynonymFile(chrSynLookup, csynonymFile)) {
                 PreferenceUtils.getLocationsNode().put(PREF_CSYN_FILE_URL, csynonymFile.getText());
             } else {
                 ErrorHandler.errorPanel(
@@ -138,13 +143,13 @@ public class SynonymsControlPanel {
         /*
          * Load the synonym file from preferences on startup
          */
-        loadSynonymFile(SynonymLookup.getDefaultLookup(), vsynonymFile);
-        loadSynonymFile(SynonymLookup.getChromosomeLookup(), csynonymFile);
+        loadSynonymFile(defSynLookup, vsynonymFile);
+        loadSynonymFile(chrSynLookup, csynonymFile);
 
         return synonymsPanel;
     }
 
-    private static boolean loadSynonymFile(SynonymLookup lookup, JRPTextField synonymFile) {
+    private static boolean loadSynonymFile(SynonymLookupService lookup, JRPTextField synonymFile) {
         File file = new File(synonymFile.getText());
 
         if (!file.isFile() || !file.canRead()) {
@@ -163,5 +168,15 @@ public class SynonymsControlPanel {
         }
 
         return true;
+    }
+
+    @Reference
+    public void setDefSynLookup(DefaultSynonymLookup defSynLookup) {
+        this.defSynLookup = defSynLookup;
+    }
+
+    @Reference
+    public void setChrSynLookup(ChromosomeSynonymLookup chrSynLookup) {
+        this.chrSynLookup = chrSynLookup;
     }
 }

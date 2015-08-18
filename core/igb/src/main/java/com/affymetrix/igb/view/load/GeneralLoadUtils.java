@@ -63,6 +63,8 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -140,7 +142,7 @@ public final class GeneralLoadUtils {
      *
      * @see SynonymLookup#getDefaultLookup()
      */
-    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+//    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
     public static final String LOADING_MESSAGE_PREFIX = "Loading data set ";
 
@@ -156,10 +158,10 @@ public final class GeneralLoadUtils {
             }
         }
 
-        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true);
+        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true, genomeVersion.getDefSynLookup());
     }
 
-    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh) {
+    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh, DefaultSynonymLookup LOOKUP) {
         // Make sure we use the preferred synonym for the genome version.
         String preferredVersionName = LOOKUP.getPreferredName(versionName);
         GenomeVersion genomeVersion = gmodel.addGenomeVersion(preferredVersionName); // returns existing genomeVersion if found, otherwise creates a new genomeVersion
@@ -258,13 +260,12 @@ public final class GeneralLoadUtils {
         return serverList;
     }
 
-    private static boolean loadGeneomeVersionAssemblyInfo(DataContainer dataContainer) {
+    private static boolean loadGeneomeVersionAssemblyInfo(DataContainer dataContainer, ChromosomeSynonymLookup chromosomeLookup) {
         if (dataContainer.getGenomeVersion().getSeqList().isEmpty()) {
             DataProvider dataProvider = dataContainer.getDataProvider();
             if (dataProvider instanceof AssemblyProvider) {
                 AssemblyProvider assemblyProvider = (AssemblyProvider) dataProvider;
                 assemblyProvider.getChromosomeSynonyms(dataContainer).ifPresent(chromosomeSynonyms -> {
-                    SynonymLookup chromosomeLookup = SynonymLookup.getChromosomeLookup();
                     chromosomeSynonyms.keySet().stream().forEach(key -> {
                         chromosomeLookup.getPreferredNames().add(key);
                         chromosomeLookup.addSynonyms(Sets.newConcurrentHashSet(chromosomeSynonyms.get(key)));
@@ -313,7 +314,7 @@ public final class GeneralLoadUtils {
                 .filter(gv -> gv.getName().equals(versionName))
                 .filter(dataContainer -> !dataContainer.isInitialized())
                 .forEach(dataContainer -> {
-                    loadGeneomeVersionAssemblyInfo(dataContainer);
+                    loadGeneomeVersionAssemblyInfo(dataContainer, genomeVersion.getChrSynLookup());
                     initializeDataContainer(dataContainer);
                     dataContainer.setInitialized();
                 });
@@ -931,10 +932,10 @@ public final class GeneralLoadUtils {
      * @return a friendly HTML string of version synonyms (not including
      * versionName).
      */
-    public static String listSynonyms(String versionName) {
+    public static String listSynonyms(String versionName, DefaultSynonymLookup defSynLookup) {
         StringBuilder synonymBuilder = new StringBuilder(100);
         synonymBuilder.append("<html>").append(IGBConstants.BUNDLE.getString("synonymList"));
-        Set<String> synonymSet = LOOKUP.getSynonyms(versionName);
+        Set<String> synonymSet = defSynLookup.getSynonyms(versionName);
         for (String synonym : synonymSet) {
             if (synonym.equalsIgnoreCase(versionName)) {
                 continue;

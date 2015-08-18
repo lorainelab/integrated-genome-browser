@@ -10,8 +10,8 @@ import com.affymetrix.genometry.parsers.AnnotationWriter;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genometry.util.Timer;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -764,7 +764,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         // if standard GenomeVersion seq id resolution doesn't work, try old technique
         //    (hopefully can eliminate this soon)
         if (seq == null) {
-            SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+            DefaultSynonymLookup lookup = seq_group.getDefSynLookup();
             //TODO: Convert this to the standard way of getting synomous sequences,
             // but we may have to check for extra bar-specific synonyms involving seq genomeVersion and version
             for (BioSeq testseq : seq_group.getSeqList()) {

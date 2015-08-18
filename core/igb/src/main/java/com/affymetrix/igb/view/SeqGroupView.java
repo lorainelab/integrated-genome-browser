@@ -639,8 +639,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
      */
     private void refreshVersionCB(final String speciesName) {
         final List<String> versionNames = getAllVersions(speciesName);
-        for (String versionName : versionNames) {
-            versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
+        if (curGroup != null) {
+            for (String versionName : versionNames) {
+                versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, curGroup.getDefSynLookup()));
+            }
+        } else {
+            logger.debug("No genome version found");
         }
 
         // Sort the versions (by date)

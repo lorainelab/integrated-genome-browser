@@ -91,6 +91,11 @@
             <artifactId>cache</artifactId>
             <scope></scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>synonym-lookup</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

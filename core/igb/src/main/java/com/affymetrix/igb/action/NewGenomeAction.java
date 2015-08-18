@@ -1,11 +1,11 @@
 package com.affymetrix.igb.action;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.util.SpeciesLookup;
-import com.affymetrix.genometry.util.SynonymLookup;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
@@ -13,6 +13,7 @@ import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -29,6 +30,8 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     private static final int FILE_MENU_INDEX = 3;
     private static final long serialVersionUID = 1L;
     private final int TOOLBAR_INDEX = 3;
+
+    private DefaultSynonymLookup defSynLookup;
 
     public NewGenomeAction() {
         super(BUNDLE.getString("openCustomGenomeMenuTitle"), BUNDLE.getString("openCustomGenomeTooltip"),
@@ -72,7 +75,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         } else {
             versionName = ng.getVersionName();
         }
-        versionName = SynonymLookup.getDefaultLookup().getPreferredName(versionName);
+        versionName = defSynLookup.getPreferredName(versionName);
         return versionName;
     }
 
@@ -119,4 +122,10 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     public int getMenuItemWeight() {
         return FILE_MENU_INDEX;
     }
+
+    @Reference
+    public void setDefSynLookup(DefaultSynonymLookup defSynLookup) {
+        this.defSynLookup = defSynLookup;
+    }
+
 }

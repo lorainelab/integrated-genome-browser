@@ -7,7 +7,7 @@ import com.affymetrix.genometry.parsers.useq.data.PositionData;
 import com.affymetrix.genometry.parsers.useq.data.PositionScoreData;
 import com.affymetrix.genometry.parsers.useq.data.USeqData;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
-import com.affymetrix.genometry.util.SynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -265,7 +265,7 @@ public class USeqGraphParser {
 
         // if standard GenomeVersion seq id resolution doesn't work, look through synonyms
         if (seq == null) {
-            SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+            DefaultSynonymLookup lookup = seq_group.getDefSynLookup();
             //TODO: Convert this to the standard way of getting synomous sequences,
             // but we may have to check for extra bar-specific synonyms involving seq group and version
             for (BioSeq testseq : seq_group.getSeqList()) {

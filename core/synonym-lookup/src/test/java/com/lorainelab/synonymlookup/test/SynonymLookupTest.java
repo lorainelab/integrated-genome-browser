@@ -1,5 +1,6 @@
 package com.lorainelab.synonymlookup.test;
 
+import com.lorainelab.synonymlookup.services.impl.DefaultSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,13 +28,13 @@ public class SynonymLookupTest {
 
     @Before
     public void setUp() throws IOException {
-//        sl = new SynonymLookup();
-//
-//        String filename = "data/synonymLookup/synonymTestData1";
-//        try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
-//            assertNotNull(istr);
-//            sl.loadSynonyms(istr);
-//        }
+        sl = new DefaultSynonymLookupImpl();
+
+        String filename = "data/synonymLookup/synonymTestData1";
+        try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {
+            assertNotNull(istr);
+            sl.loadSynonyms(istr);
+        }
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.util;
+package com.lorainelab.synonymlookup.test;
 
 import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;

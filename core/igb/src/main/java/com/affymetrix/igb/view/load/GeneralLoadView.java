@@ -377,8 +377,6 @@ public final class GeneralLoadView {
                     }
 
                     if (dataSet.getSymL() instanceof SymLoaderInst) {
-                        //dataSet.getURI(); determin if bed symloader
-
                         GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
                     } else {
                         GeneralLoadUtils.iterateSeqList(dataSet);

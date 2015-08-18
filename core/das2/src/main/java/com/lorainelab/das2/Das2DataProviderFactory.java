@@ -7,7 +7,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import static com.lorainelab.das2.utils.Das2ServerUtils.toExternalForm;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 
 /**
  *

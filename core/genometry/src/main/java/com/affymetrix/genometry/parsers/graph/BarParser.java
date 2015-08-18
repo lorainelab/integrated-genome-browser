@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.Timer;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;

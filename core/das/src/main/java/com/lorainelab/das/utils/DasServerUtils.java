@@ -9,7 +9,7 @@ import com.lorainelab.das.model.dsn.DasDsn;
 import com.lorainelab.das.model.ep.DasEp;
 import com.lorainelab.das.model.gff.DasGff;
 import com.lorainelab.das.model.types.DasTypes;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

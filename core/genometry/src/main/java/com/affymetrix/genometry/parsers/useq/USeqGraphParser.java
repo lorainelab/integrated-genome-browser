@@ -7,7 +7,7 @@ import com.affymetrix.genometry.parsers.useq.data.PositionData;
 import com.affymetrix.genometry.parsers.useq.data.PositionScoreData;
 import com.affymetrix.genometry.parsers.useq.data.USeqData;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;

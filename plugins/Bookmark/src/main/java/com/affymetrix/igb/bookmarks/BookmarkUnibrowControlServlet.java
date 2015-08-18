@@ -37,7 +37,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;

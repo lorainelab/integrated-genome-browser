@@ -7,7 +7,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
 import com.affymetrix.genometry.util.TwoBitIterator;
-import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

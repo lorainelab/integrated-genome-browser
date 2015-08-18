@@ -2,8 +2,7 @@ package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
-import com.lorainelab.igb.synonymlookup.services.impl.SynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -59,16 +58,16 @@ public final class SpeciesLookup {
     private static final String SPECIES_SYNONYM_FILE = "species.txt";
 
     private SpeciesLookup() {
-        try (InputStream resourceAsStream = SynonymLookup.class.getClassLoader().getResourceAsStream(SPECIES_SYNONYM_FILE)) {
-            load(resourceAsStream);
-        } catch (IOException ex) {
-            logger.error("Error retrieving Species synonym file", ex);
-        }
         Bundle bundle = FrameworkUtil.getBundle(SpeciesLookup.class);
         if (bundle != null) {
             BundleContext bundleContext = bundle.getBundleContext();
             ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
             speciesLookup = bundleContext.getService(serviceReference);
+        }
+        try (InputStream resourceAsStream = SpeciesLookup.class.getClassLoader().getResourceAsStream(SPECIES_SYNONYM_FILE)) {
+            load(resourceAsStream);
+        } catch (IOException ex) {
+            logger.error("Error retrieving Species synonym file", ex);
         }
     }
 

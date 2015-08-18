@@ -20,7 +20,7 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;

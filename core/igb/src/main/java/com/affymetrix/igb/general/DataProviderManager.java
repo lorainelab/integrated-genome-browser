@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.preferences.model.DataProviderConfig;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;

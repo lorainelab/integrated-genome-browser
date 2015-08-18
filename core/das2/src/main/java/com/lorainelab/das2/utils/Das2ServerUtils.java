@@ -5,7 +5,7 @@ import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.lorainelab.das2.model.segments.Segments;
 import com.lorainelab.das2.model.sources.Sources;
 import com.lorainelab.das2.model.types.Types;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Set;

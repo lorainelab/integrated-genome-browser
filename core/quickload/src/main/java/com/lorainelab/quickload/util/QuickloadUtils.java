@@ -6,7 +6,7 @@ import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import com.lorainelab.quickload.QuickloadConstants;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;

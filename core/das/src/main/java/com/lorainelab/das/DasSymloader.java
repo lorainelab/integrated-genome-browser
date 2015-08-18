@@ -11,7 +11,7 @@ import com.lorainelab.das.parser.DASFeatureParser;
 import com.lorainelab.das.parser.DASSymmetry;
 import com.lorainelab.das.utils.DasServerUtils;
 import static com.lorainelab.das.utils.DasServerUtils.toExternalForm;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;

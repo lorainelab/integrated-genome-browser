@@ -21,7 +21,7 @@ import com.lorainelab.das2.model.types.Types.TYPE;
 import com.lorainelab.das2.utils.Das2ServerUtils;
 import static com.lorainelab.das2.utils.Das2ServerUtils.SEGMENTS;
 import static com.lorainelab.das2.utils.Das2ServerUtils.retrieveSegmentsResponse;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedHashSet;

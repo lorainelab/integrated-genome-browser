@@ -6,8 +6,8 @@
 package com.affymetrix.genometry;
 
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

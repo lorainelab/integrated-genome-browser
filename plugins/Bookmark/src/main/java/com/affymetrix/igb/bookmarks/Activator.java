@@ -14,7 +14,7 @@ import com.lorainelab.igb.services.XServiceRegistrar;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.ResourceBundle;

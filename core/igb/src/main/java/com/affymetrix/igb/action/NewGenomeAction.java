@@ -13,7 +13,7 @@ import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

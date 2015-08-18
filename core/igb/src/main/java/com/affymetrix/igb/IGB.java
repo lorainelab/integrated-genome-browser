@@ -144,7 +144,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         toolbar = new IGBToolBar();
         igbMainFrame.setJMenuBar(mbar);
         initializeApplicationIconImage();
-        loadSynonyms();
     }
 
     private void initializeApplicationIconImage() {
@@ -163,20 +162,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         return igbMainFrame;
     }
 
-    private void loadSynonyms() {
-        String SYNONYMS_TXT = "synonyms.txt";
-        String CHROMOSOMES_TXT = "chromosomes.txt";
-//        loadSynonyms(SYNONYMS_TXT, SynonymLookup.getDefaultLookup());
-//        loadSynonyms(CHROMOSOMES_TXT, SynonymLookup.getChromosomeLookup());
-    }
-
-//    private void loadSynonyms(String file, SynonymLookup lookup) {
-//        try (InputStream istr = IGB.class.getClassLoader().getResourceAsStream(file)) {
-//            lookup.loadSynonyms(istr, true);
-//        } catch (IOException ex) {
-//            logger.info("Problem loading default synonyms file " + file, ex);
-//        }
-//    }
 
     private static void setLaf() {
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)

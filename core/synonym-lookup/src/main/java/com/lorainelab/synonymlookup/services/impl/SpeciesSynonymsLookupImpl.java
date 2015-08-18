@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.synonymlookup.services.impl;
+package com.lorainelab.synonymlookup.services.impl;
 
 import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;

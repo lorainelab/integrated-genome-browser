@@ -6,7 +6,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
-import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
 
 /**

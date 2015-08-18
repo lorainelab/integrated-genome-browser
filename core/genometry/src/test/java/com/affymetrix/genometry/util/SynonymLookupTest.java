@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.util;
 
-import com.lorainelab.igb.synonymlookup.services.impl.SynonymLookup;
+import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -408,4 +408,12 @@ public class GenomeVersion {
         return true;
     }
 
+    public DefaultSynonymLookup getDefSynLookup() {
+        return defSynLookup;
+    }
+
+    public ChromosomeSynonymLookup getChrSynLookup() {
+        return chrSynLookup;
+    }
+
 }

@@ -9,6 +9,6 @@ package com.lorainelab.igb.synonymlookup.services;
  *
  * @author Tarun
  */
-public interface SpeciesSynonymLookup extends SynonymLookupService {
+public interface SpeciesSynonymsLookup extends SynonymLookupService {
     
 }

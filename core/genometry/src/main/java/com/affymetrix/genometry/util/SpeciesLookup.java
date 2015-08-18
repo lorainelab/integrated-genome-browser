@@ -2,19 +2,24 @@ package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.data.SpeciesInfo;
 import com.google.common.collect.Sets;
+import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import com.lorainelab.igb.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A special lookup designed for species. It is implemented using an internal
- * SynonymLookup. In the future, this may also consult the application-wide
- * SynonymLookup for unknown versions.
+ * A special lookup designed for species. It is implemented using an internal SynonymLookup. In the future, this may
+ * also consult the application-wide SynonymLookup for unknown versions.
  *
  * @author sgblanch
  * @version $Id: SpeciesLookup.java 9976 2012-01-25 21:03:58Z dcnorris $
@@ -24,8 +29,8 @@ public final class SpeciesLookup {
     private static final Logger logger = LoggerFactory.getLogger(SpeciesLookup.class);
 
     /**
-     * Default behaviour of case sensitivity for synonym lookups. If true,
-     * searches will be cases sensitive. The default is {@value}.
+     * Default behaviour of case sensitivity for synonym lookups. If true, searches will be cases sensitive. The default
+     * is {@value}.
      */
     private static final boolean DEFAULT_CS = true;
 
@@ -47,7 +52,7 @@ public final class SpeciesLookup {
     /**
      * lookup of generic species names
      */
-    private static final SpeciesSynonymsLookup speciesLookup = new SpeciesSynonymsLookup();
+    private static SpeciesSynonymsLookup speciesLookup;
 
     private static final SpeciesLookup singleton = new SpeciesLookup();
 
@@ -58,6 +63,12 @@ public final class SpeciesLookup {
             load(resourceAsStream);
         } catch (IOException ex) {
             logger.error("Error retrieving Species synonym file", ex);
+        }
+        Bundle bundle = FrameworkUtil.getBundle(SpeciesLookup.class);
+        if (bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+            speciesLookup = bundleContext.getService(serviceReference);
         }
     }
 
@@ -76,7 +87,7 @@ public final class SpeciesLookup {
     }
 
     public static void load(SpeciesInfo speciesInfo) {
-        speciesLookup.preferredNames.add(speciesInfo.getName());
+        speciesLookup.getPreferredNames().add(speciesInfo.getName());
         Set<String> row = Sets.newLinkedHashSet();
         row.add(speciesInfo.getName());
         row.add(speciesInfo.getCommonName());
@@ -85,8 +96,7 @@ public final class SpeciesLookup {
     }
 
     /**
-     * Return the common name of a species using the default case sensitivity of
-     * this lookup.
+     * Return the common name of a species using the default case sensitivity of this lookup.
      *
      * @return the user-friendly name of the species.
      */
@@ -95,8 +105,8 @@ public final class SpeciesLookup {
     }
 
     /**
-     * Return the user-friendly name of a species for the given version using
-     * the default case sensitivity of this lookup.
+     * Return the user-friendly name of a species for the given version using the default case sensitivity of this
+     * lookup.
      *
      * @param version the version to find the species name of.
      * @return the user-friendly name of the species.
@@ -106,13 +116,11 @@ public final class SpeciesLookup {
     }
 
     /**
-     * Return the user-friendly name of a species for the given version using
-     * the specified case sensitivity.
+     * Return the user-friendly name of a species for the given version using the specified case sensitivity.
      *
      * @param version the version to find the species name of.
      * @param cs true if this search should be case sensitive, false otherwise.
-     * @return the user-friendly name of the species or the version if not
-     * found.
+     * @return the user-friendly name of the species or the version if not found.
      */
     public static String getSpeciesName(String version, boolean cs) {
         String species;
@@ -163,9 +171,8 @@ public final class SpeciesLookup {
     }
 
     /**
-     * Attempts to find the correct species name for the given version using the
-     * specified regex to normalize the version into a generic species. Will
-     * return null if the user-friendly name of the species was not found.
+     * Attempts to find the correct species name for the given version using the specified regex to normalize the
+     * version into a generic species. Will return null if the user-friendly name of the species was not found.
      *
      * @param version the version to find the species name of.
      * @param regex the Pattern to use to normalize the version into a species.

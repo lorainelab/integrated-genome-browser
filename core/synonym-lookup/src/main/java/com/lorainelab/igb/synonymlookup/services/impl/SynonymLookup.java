@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.util;
+package com.lorainelab.igb.synonymlookup.services.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;

@@ -20,11 +20,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services</artifactId>
-            <scope>provided</scope>
-        </dependency>      
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <scope>provided</scope>
@@ -98,7 +93,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
                         <Export-Package>
-                            com.lorainelab.igb.synonymlookup.services.*
+                            com.lorainelab.igb.synonymlookup.services
                         </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>

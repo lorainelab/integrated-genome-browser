@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.genometry.util;
+package com.lorainelab.igb.synonymlookup.services.impl;
 
 import aQute.bnd.annotation.component.Component;
 import com.lorainelab.igb.synonymlookup.services.DefaultSynonymLookup;

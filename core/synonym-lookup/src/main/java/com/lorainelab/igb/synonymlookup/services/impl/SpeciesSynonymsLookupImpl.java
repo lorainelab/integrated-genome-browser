@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.genometry.util;
+package com.lorainelab.igb.synonymlookup.services.impl;
 
 import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymLookup;
+import com.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -34,8 +34,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author dcnorris
  *
  */
-@Component(name = SpeciesSynonymsLookup.COMPONENT_NAME, immediate = true, provide = SpeciesSynonymLookup.class)
-public class SpeciesSynonymsLookup extends SynonymLookup implements SpeciesSynonymLookup {
+@Component(name = SpeciesSynonymsLookupImpl.COMPONENT_NAME, immediate = true, provide = SpeciesSynonymsLookup.class)
+public class SpeciesSynonymsLookupImpl extends SynonymLookup implements SpeciesSynonymsLookup {
 
     public static final String COMPONENT_NAME = "SpeciesSynonymsLookup";
 

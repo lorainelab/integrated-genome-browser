@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Roman Sutormin (storage.bioinf.fbb.msu.ru/~roman)
  */
 public class TwoBitNew extends SymLoader {
-    
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TwoBitNew.class);
     public int DEFAULT_BUFFER_SIZE = 10000;
     //
@@ -58,23 +58,23 @@ public class TwoBitNew extends SymLoader {
     private static final char[] bit_chars = {
         'T', 'C', 'A', 'G'
     };
-    
+
     private final Map<BioSeq, String> chrMap = new HashMap<>();
-    
+
     public TwoBitNew(URI uri, String featureName, GenomeVersion genomeVersion) {
         super(uri, featureName, genomeVersion);
     }
-    
+
     @Override
     public void init() throws Exception {
         if (this.isInitialized) {
             return;
         }
-        
+
         if (uri.toString().startsWith("http")) {
             URL fileUrl = uri.toURL();
             CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-            
+
             if (cacheStatus.isDataExists()) {
                 Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
                 if (fileIs.isPresent()) {
@@ -85,12 +85,18 @@ public class TwoBitNew extends SymLoader {
                     }
                 }
             } else {
-                if(!remoteFileCacheService.isCachingInBackground(fileUrl)) {
-                    remoteFileCacheService.promptToCacheInBackground(fileUrl);
+                if (!remoteFileCacheService.isCachingInBackground(fileUrl)) {
+                    long totalLength = genomeVersion.getSeqList().stream().mapToLong(BioSeq::getLength).sum();
+                    //y = (1.59618882694367E-007)x - 21.2256064055;y=size in MB,x=contig sum
+                    boolean defaultIsYes = false;
+                    if(totalLength < 1699207523) {
+                        defaultIsYes = true;
+                    }
+                    remoteFileCacheService.promptToCacheInBackground(fileUrl, defaultIsYes);
                 }
                 raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
             }
-            
+
         } else {
             raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
         }
@@ -123,7 +129,7 @@ public class TwoBitNew extends SymLoader {
             if (seq == null) {
                 continue;
             }
-            
+
             chrMap.put(seq, seq_name);
             long pos = readFourBytes();
             seq2pos.put(seq_name, pos);
@@ -134,13 +140,13 @@ public class TwoBitNew extends SymLoader {
         }
         super.init();
     }
-    
+
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
         return new ArrayList<>(chrMap.keySet());
     }
-    
+
     @Override
     public String getRegionResidues(SeqSpan span) throws Exception {
         init();
@@ -149,11 +155,11 @@ public class TwoBitNew extends SymLoader {
             this.setCurrentSequence(chrMap.get(seq));
             return getResidueString(span.getMin(), span.getMax() - span.getMin());
         }
-        
+
         Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
         return "";
     }
-    
+
     private String getResidueString(int start, int len) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -162,7 +168,7 @@ public class TwoBitNew extends SymLoader {
 
         char[] residues = new char[len];
         int ch;
-        
+
         setCurrentSequencePosition(start);
         for (int qnt = 0; (qnt < residues.length); qnt++) {
             ch = read();
@@ -177,7 +183,7 @@ public class TwoBitNew extends SymLoader {
         }
         return new String(residues);
     }
-    
+
     private long readFourBytes() throws Exception {
         long ret = 0;
         if (!reverse) {
@@ -270,7 +276,7 @@ public class TwoBitNew extends SymLoader {
         }
         return cur_seq_pos;
     }
-    
+
     private void setCurrentSequencePosition(long pos) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -284,7 +290,7 @@ public class TwoBitNew extends SymLoader {
         }
         skip(pos - cur_seq_pos);
     }
-    
+
     private void loadBits() throws IOException {
         if ((buffer == null) || (buffer_pos < 0) || (file_pos < buffer_pos)
                 || (file_pos >= buffer_pos + buffer_size)) {
@@ -408,7 +414,7 @@ public class TwoBitNew extends SymLoader {
         file_pos = -1;
         start_file_pos = -1;
     }
-    
+
     private int available() throws IOException {
         if (cur_seq_name == null) {
             throw new IOException("Sequence is not set");
@@ -424,7 +430,7 @@ public class TwoBitNew extends SymLoader {
     private void closeParser() throws Exception {
         raf.close();
     }
-    
+
     private String loadFragment(long seq_pos, int len) throws IOException {
         if (cur_seq_name == null) {
             throw new IOException("Sequence is not set");
@@ -441,14 +447,14 @@ public class TwoBitNew extends SymLoader {
         }
         return new String(ret, 0, i);
     }
-    
+
     private void printFastaSequence() throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
         }
         printFastaSequence(cur_dna_size - cur_seq_pos);
     }
-    
+
     private void printFastaSequence(long len) throws IOException {
         if (cur_seq_name == null) {
             throw new RuntimeException("Sequence is not set");
@@ -475,7 +481,7 @@ public class TwoBitNew extends SymLoader {
             }
         }
     }
-    
+
     public static void main(String[] args) throws Exception {
 //        if (args.length == 0) {
 //            System.out.println("Usage: <program> <input.2bit> [<seq_name> [<start> [<length>]]]");
@@ -513,5 +519,5 @@ public class TwoBitNew extends SymLoader {
 //        }
         p.closeParser();
     }
-    
+
 }

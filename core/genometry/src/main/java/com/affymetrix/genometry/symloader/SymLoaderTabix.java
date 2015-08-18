@@ -8,6 +8,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
+import static com.affymetrix.genometry.symloader.SymLoader.remoteFileCacheService;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -40,12 +41,15 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.broad.tribble.readers.LineReader;
 import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
+import org.slf4j.LoggerFactory;
 
 /**
  * This SymLoader is intended to be used for data sources that are indexed with
  * a tabix file. This SymLoader uses the TabixReader from the Broad Institute
  */
 public class SymLoaderTabix extends SymLoader {
+    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SymLoaderTabix.class);
 
     private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
     protected final Map<BioSeq, String> seqs = Maps.newConcurrentMap();
@@ -249,7 +253,7 @@ public class SymLoaderTabix extends SymLoader {
                 return false; // ftp not supported by BlockCompressedInputStream
             } else if (path.startsWith(HTTP_PROTOCOL) || path.startsWith(HTTPS_PROTOCOL)) {
                 final URL url = new URL(path + ".tbi");
-                if (remoteFileCacheService != null) {
+                if (remoteFileCacheService != null && remoteFileCacheService.cacheExists(url)) {
                     Optional<InputStream> inputStream = remoteFileCacheService.getFilebyUrl(url);
                     if (inputStream.isPresent()) {
                         is = new BlockCompressedInputStream(inputStream.get());
@@ -267,7 +271,7 @@ public class SymLoaderTabix extends SymLoader {
             is.read(bytes);
             return (char) bytes[0] == 'T' && (char) bytes[1] == 'B';
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error(e.getMessage(), e);
             return false;
         } finally {
             GeneralUtils.safeClose(is);
@@ -304,7 +308,8 @@ public class SymLoaderTabix extends SymLoader {
                 uriString = uri.getPath();
             } else {
                 URL fileUrl = uri.toURL();
-                if(fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) {
+                if( (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) 
+                        && remoteFileCacheService.cacheExists(fileUrl)) {
                     Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
                     URL indexUrl = new URL(fileUrl.toString() + ".tbi");
                     Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl);

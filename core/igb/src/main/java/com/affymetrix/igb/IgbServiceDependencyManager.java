@@ -27,6 +27,11 @@ public class IgbServiceDependencyManager {
     public void activate() {
         logger.info("Igb Module Service Dependencies are now available.");
     }
+    
+//    @Reference
+//    public void trackRemoteFileCacheService(RemoteFileCacheService remoteFileCacheService) {
+//        logger.info("Remote Cache Service now available.");
+//    }
 
     @Reference(target = "(&(component.name=ShowConsoleAction))")
     public void trackConsoleService(IgbMenuItemProvider consoleService) {

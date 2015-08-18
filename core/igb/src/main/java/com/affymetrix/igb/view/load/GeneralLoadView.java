@@ -26,6 +26,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -47,16 +48,24 @@ import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.lorainelab.cache.api.CacheStatus;
+import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -65,6 +74,11 @@ import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -88,6 +102,8 @@ public final class GeneralLoadView {
     private static JTableX table;
     private static javax.swing.JTree tree;
     private boolean showLoadingConfirm = false;
+    private RemoteFileCacheService remoteFileCacheService;
+    private BundleContext bundleContext;
 
     public static void init(IgbService _igbService) {
         singleton = new GeneralLoadView(_igbService);
@@ -97,10 +113,28 @@ public final class GeneralLoadView {
         return singleton;
     }
 
+    private void initCacheServiceTracker() {
+        ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
+
+        dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
+                remoteFileCacheService = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+        dependencyTracker.open();
+    }
+
     /**
      * Creates new form GeneralLoadView
      */
     private GeneralLoadView(IgbService _igbService) {
+        final Bundle bundle = FrameworkUtil.getBundle(GeneralLoadView.class);
+        if (bundle != null) {
+            bundleContext = bundle.getBundleContext();
+            initCacheServiceTracker();
+        }
         igbService = _igbService;
         gviewer = IGB.getInstance().getMapView();
         initComponents();
@@ -145,8 +179,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Handles clicking of partial residue, all residue, and refresh data
-     * buttons.
+     * Handles clicking of partial residue, all residue, and refresh data buttons.
      */
     public void loadResidues(final boolean partial) {
         final BioSeq seq = gmodel.getSelectedSeq().orElse(null);
@@ -239,8 +272,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Load any features that have a autoload strategy and haven't already been
-     * loaded.
+     * Load any features that have a autoload strategy and haven't already been loaded.
      */
     public static void loadAutoLoadFeatures() {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
@@ -250,8 +282,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Load any features that have a whole strategy and haven't already been
-     * loaded.
+     * Load any features that have a whole strategy and haven't already been loaded.
      */
     public static void loadWholeRangeFeatures(DataProvider dataProvider) {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
@@ -278,7 +309,35 @@ public final class GeneralLoadView {
 
     private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
-    public synchronized static void loadGenomeLoadModeDataSets() {
+    private static boolean isRemoteBedFile(URL fileUrl) {
+        return fileUrl.getProtocol().startsWith("http") && (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed"));
+    }
+
+    private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
+        BufferedInputStream bis = null;
+        Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+
+        if (fileIs.isPresent()) {
+            try {
+                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                if (cacheStatus.isDataExists()) {
+                    StringBuffer stripped_name = new StringBuffer();
+                    InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
+                    if (is instanceof BufferedInputStream) {
+                        bis = (BufferedInputStream) is;
+                    } else {
+                        bis = new BufferedInputStream(is);
+                    }
+                    return Optional.ofNullable(bis);
+                }
+            } finally {
+                fileIs.get().close();
+            }
+        }
+        return Optional.empty();
+    }
+
+    public synchronized void loadGenomeLoadModeDataSets() {
         List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
                 .filter(isLoaded.negate())
@@ -299,7 +358,27 @@ public final class GeneralLoadView {
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
                 .filter(isLoaded.negate())
                 .forEach(dataSet -> {
+                    Optional<InputStream> fileIs = Optional.empty();
+                    try {
+                        URL fileUrl = dataSet.getURI().toURL();
+                        if (remoteFileCacheService != null && isRemoteBedFile(fileUrl)) {
+                            fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
+                    } finally {
+                        if (fileIs.isPresent()) {
+                            try {
+                                fileIs.get().close();
+                            } catch (IOException ex) {
+                                logger.error(ex.getMessage(), ex);
+                            }
+                        }
+                    }
+
                     if (dataSet.getSymL() instanceof SymLoaderInst) {
+                        //dataSet.getURI(); determin if bed symloader
+
                         GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
                     } else {
                         GeneralLoadUtils.iterateSeqList(dataSet);
@@ -342,7 +421,7 @@ public final class GeneralLoadView {
                             ((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
 
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error(ex.getMessage(), ex);
                         }
                         return null;
                     }
@@ -470,8 +549,8 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Accessor method. See if we need to enable/disable the refresh_dataB
-     * button by looking at the features' load strategies.
+     * Accessor method. See if we need to enable/disable the refresh_dataB button by looking at the features' load
+     * strategies.
      */
     void changeVisibleDataButtonIfNecessary(List<DataSet> features) {
         if (IsGenomeSequence()) {

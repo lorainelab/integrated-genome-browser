@@ -3,7 +3,6 @@ package com.affymetrix.igb.view.layout;
 import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.EfficientLabelledGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -141,7 +140,6 @@ public class FasterExpandPacker extends ExpandPacker {
         for (GlyphI child : children) {
             //			child.setVisibility(true);
             child.setOverlapped(false);
-            String label = ((EfficientLabelledGlyph) child).getLabel();
 //			child.setSkipDraw(false);
             cbox = child.getCoordBox();
             double child_min = cbox.x;

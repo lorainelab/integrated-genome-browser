@@ -2,6 +2,9 @@ package com.affymetrix.genometry.parsers;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -34,6 +37,9 @@ public class BpsParserTest {
             istr = new FileInputStream(filename);
             assertNotNull(istr);
             GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+            genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
             boolean annot_seq = true;
             String stream_name = "test_file";
 

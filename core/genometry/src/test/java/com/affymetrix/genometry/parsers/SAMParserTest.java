@@ -1,20 +1,25 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.SAM;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
-
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -34,6 +39,9 @@ public class SAMParserTest {
         assertNotNull(dis);
 
         GenomeVersion group = new GenomeVersion("M_musculus_Mar_2006");
+        group.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        group.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        group.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = group.addSeq("chr1", 197069962);
 
         SymLoader symL = new SAM(new File(filename).toURI(), "featureName", group);

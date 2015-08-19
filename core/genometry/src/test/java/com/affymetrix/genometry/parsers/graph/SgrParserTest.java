@@ -3,6 +3,9 @@ package com.affymetrix.genometry.parsers.graph;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.Sgr;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +29,9 @@ public class SgrParserTest {
         assertNotNull(istr);
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
@@ -54,6 +60,9 @@ public class SgrParserTest {
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
@@ -70,9 +79,12 @@ public class SgrParserTest {
     @Test
     public void testSgr() throws Exception {
         String filename = "data/sgr/test4.sgr";
-        GenomeVersion seq_group = new GenomeVersion("test");
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         URL url = SgrParserTest.class.getClassLoader().getResource(filename);
-        Sgr sgr = new Sgr(url.toURI(), filename, seq_group);
+        Sgr sgr = new Sgr(url.toURI(), filename, genomeVersion);
 
         List<GraphSym> results = sgr.getGenome();
 
@@ -117,8 +129,11 @@ public class SgrParserTest {
                 + "16	948026	0.363933\n";
 
         File file = createFileFromString(string);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Sgr sgr = new Sgr(file.toURI(), file.getName(), seq_group);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Sgr sgr = new Sgr(file.toURI(), file.getName(), genomeVersion);
         List<GraphSym> results = sgr.getGenome();
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();

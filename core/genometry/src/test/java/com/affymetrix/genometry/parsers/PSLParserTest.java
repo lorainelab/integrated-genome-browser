@@ -7,6 +7,9 @@ import com.affymetrix.genometry.comparator.UcscPslComparator;
 import com.affymetrix.genometry.symloader.PSL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,8 +29,7 @@ import org.junit.Test;
 public class PSLParserTest {
 
     /**
-     * Test of writeAnnotations method, of class
-     * com.affymetrix.igb.parsers.PSLParser.
+     * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.PSLParser.
      */
     @Test
     public void testWriteAnnotations() throws Exception {
@@ -39,6 +41,9 @@ public class PSLParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_query = true;
         String stream_name = "test_file";
         PSLParser instance = new PSLParser();
@@ -75,8 +80,7 @@ public class PSLParserTest {
     }
 
     /**
-     * Test of writeAnnotations method, of class
-     * com.affymetrix.genometry.symloader.PSL
+     * Test of writeAnnotations method, of class com.affymetrix.genometry.symloader.PSL
      */
     public void testPslxFile() throws Exception {
         String pslxString = "117	2	0	0	1	2	1	1	+	query	121	0	121	target	120	0	120	3	57,36,26,	0,57,95,	0,58,94,		"
@@ -86,6 +90,9 @@ public class PSLParserTest {
 
         File file = createFileFromString(pslxString);
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         PSL psl = new PSL(file.toURI(), stream_name, genomeVersion, null, null,
                 true, false, false);
         List<UcscPslSym> syms = psl.getGenome();
@@ -127,6 +134,9 @@ public class PSLParserTest {
         InputStream istr = PSLParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = null;
 
         PSLParser instance = new PSLParser();

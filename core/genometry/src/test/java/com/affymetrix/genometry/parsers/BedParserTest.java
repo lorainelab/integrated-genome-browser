@@ -10,6 +10,9 @@ import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +47,9 @@ public class BedParserTest {
         assertNotNull(dis);
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
 
         IndexWriter parser = new BedParser();
         List result = parser.parse(dis, filename, genomeVersion);
@@ -94,6 +100,9 @@ public class BedParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
@@ -132,8 +141,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of parseIntArray method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of parseIntArray method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testParseIntArray() {
@@ -181,8 +189,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of makeBlockMins method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of makeBlockMins method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testMakeBlockMins() {
@@ -203,8 +210,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of makeBlockMaxs method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of makeBlockMaxs method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testMakeBlockMaxs() {
@@ -225,8 +231,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of writeSymmetry method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of writeSymmetry method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testWriteBedFormat() throws Exception {
@@ -234,6 +239,9 @@ public class BedParserTest {
         DataOutputStream dos = new DataOutputStream(baos);
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr12", 500000);
         SeqSpan span = new SimpleSeqSpan(500, 800, seq);
         SeqSpan[] span_array = new SeqSpan[]{span};
@@ -253,8 +261,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of writeAnnotations method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testWriteAnnotations() throws Exception {
@@ -269,6 +276,9 @@ public class BedParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
@@ -294,9 +304,8 @@ public class BedParserTest {
     }
 
     /**
-     * Test of writeAnnotations method, of class
-     * com.affymetrix.igb.parsers.BedParser. Validate that if the genes have the
-     * same name, then loading and writing them out gives the same information.
+     * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.BedParser. Validate that if the genes have
+     * the same name, then loading and writing them out gives the same information.
      */
     @Test
     public void testWriteAnnotations2() throws Exception {
@@ -307,6 +316,9 @@ public class BedParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean create_container = true;
@@ -345,8 +357,7 @@ public class BedParserTest {
     }
 
     /**
-     * Test of getMimeType method, of class
-     * com.affymetrix.igb.parsers.BedParser.
+     * Test of getMimeType method, of class com.affymetrix.igb.parsers.BedParser.
      */
     @Test
     public void testGetMimeType() {
@@ -372,6 +383,9 @@ public class BedParserTest {
         filename = BedParserTest.class.getClassLoader().getResource(filename).getFile();
         assertTrue(new File(filename).exists());
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr2L", 1965498);
 
         BED bed = new BED(new File(filename).toURI(), filename, genomeVersion);

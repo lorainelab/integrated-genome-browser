@@ -3,6 +3,9 @@ package com.affymetrix.genometry.parsers;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGffSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -25,12 +28,14 @@ public class GFFParserTest {
         InputStream istr = new FileInputStream(filename);
         assertNotNull(istr);
 
-        GenomeVersion seq_group = new GenomeVersion("test");
-
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         GFFParser instance = new GFFParser();
 
         List expResult = null;
-        List result = instance.parse(istr, seq_group, true);
+        List result = instance.parse(istr, genomeVersion, true);
 
         //for (int i=0; i<result.size(); i++) {
         //  SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
@@ -95,8 +100,8 @@ public class GFFParserTest {
     }
 
     /**
-     * Test that the regular expression designed to tell the difference between
-     * GFF1 and GFF2 from the "group" or "attributes" field actually works
+     * Test that the regular expression designed to tell the difference between GFF1 and GFF2 from the "group" or
+     * "attributes" field actually works
      */
     @Test
     public void testGFF1RegularExpression() {
@@ -116,8 +121,7 @@ public class GFFParserTest {
     }
 
     /**
-     * Test of processDirective method, of class
-     * com.affymetrix.igb.parsers.GFF3Parser.
+     * Test of processDirective method, of class com.affymetrix.igb.parsers.GFF3Parser.
      */
     @Test
     public void testProcessDirective() throws Exception {

@@ -9,6 +9,9 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.CytobandParser.Arm;
 import com.affymetrix.genometry.parsers.CytobandParser.CytobandSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -38,11 +41,14 @@ public class CytobandParserTest {
         InputStream istr = CytobandParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
-        GenomeVersion seq_group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
 
         CytobandParser instance = new CytobandParser();
-        List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
+        List<SeqSymmetry> result = instance.parse(istr, genomeVersion, annot_seq);
         assertEquals(7, result.size());
         CytobandSym sym = (CytobandSym) result.get(2);
         assertEquals("gpos25", sym.getBand());
@@ -66,16 +72,19 @@ public class CytobandParserTest {
                 + "chr1\t56200000\t58700000\tp32.2\tgpos50\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        GenomeVersion seq_group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
 
         CytobandParser instance = new CytobandParser();
 
         Collection<SeqSymmetry> syms = new ArrayList<>();
 
-        syms = instance.parse(istr, seq_group, annot_seq);
+        syms = instance.parse(istr, genomeVersion, annot_seq);
 
-        BioSeq seq = seq_group.getSeq("chr1");
+        BioSeq seq = genomeVersion.getSeq("chr1");
         String type = "test_type";
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -92,15 +101,21 @@ public class CytobandParserTest {
     public void testWriteCytobandFormat() throws Exception {
         Writer out = new StringWriter();
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String filename = "data/cyt/test1.cyt";
         filename = CytobandParserTest.class.getClassLoader().getResource(filename).getFile();
         InputStream istr = new FileInputStream(filename);
         assertNotNull(istr);
-        GenomeVersion seq_group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion2 = new GenomeVersion("Test Group");
+        genomeVersion2.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion2.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion2.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         CytobandParser instance = new CytobandParser();
-        List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
-        BioSeq aseq = seq_group.getSeq(0);
+        List<SeqSymmetry> result = instance.parse(istr, genomeVersion2, annot_seq);
+        BioSeq aseq = genomeVersion2.getSeq(0);
         CytobandSym sym = (CytobandSym) result.get(2);
         CytobandParser.writeCytobandFormat(out, sym, aseq);
         assertEquals("chr1\t39600000\t43900000\tp34.2\tgpos25\n", out.toString());

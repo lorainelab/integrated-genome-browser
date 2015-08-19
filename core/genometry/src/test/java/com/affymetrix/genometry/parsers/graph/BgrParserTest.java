@@ -2,6 +2,9 @@ package com.affymetrix.genometry.parsers.graph;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -18,35 +21,26 @@ public class BgrParserTest {
 
     /**
      *
-     * //Creates a Bgr format file
- public void CreateBgrFile() throws IOException {
-
- String string =
- "16	948025	0.128646\n" +
- "16	948026	0.363933\n";
-
- InputStream istr = new ByteArrayInputStream(string.getBytes());
-
- GenomeVersion seq_group = new GenomeVersion("Test Group");
- boolean annot_seq = true;
- String stream_name = "test_file";
- boolean ensure_unique_id = true;
-
-
- List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
+     * //Creates a Bgr format file public void CreateBgrFile() throws IOException {
      *
-     * FileOutputStream fout;
-     * File file=new File("test1.bgr");
+     * String string = "16	948025	0.128646\n" + "16	948026	0.363933\n";
      *
-     * fout = new FileOutputStream(file);
-     * BufferedOutputStream bos = new BufferedOutputStream(fout);
+     * InputStream istr = new ByteArrayInputStream(string.getBytes());
+     *
+     * GenomeVersion seq_group = new GenomeVersion("Test Group"); boolean annot_seq = true; String stream_name =
+     * "test_file"; boolean ensure_unique_id = true;
+     *
+     *
+     * List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
+     *
+     * FileOutputStream fout; File file=new File("test1.bgr");
+     *
+     * fout = new FileOutputStream(file); BufferedOutputStream bos = new BufferedOutputStream(fout);
      *
      *
      * DataOutputStream dos = new DataOutputStream(bos);
      *
-     * BgrParser.writeBgrFormat(results.get(0), dos);
-     * dos.close();
-     * }
+     * BgrParser.writeBgrFormat(results.get(0), dos); dos.close(); }
      *
      */
     @Test
@@ -57,10 +51,13 @@ public class BgrParserTest {
         try (InputStream istr = BgrParserTest.class.getClassLoader().getResourceAsStream(filename)) {
             assertNotNull(istr);
             String stream_name = "test_file";
-            GenomeVersion seq_group = new GenomeVersion("Test Group");
+            GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+            genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
             boolean annot_seq = true;
             boolean ensure_unique_id = true;
-            gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
+            gr0 = BgrParser.parse(istr, stream_name, genomeVersion, ensure_unique_id);
         }
 
         assertEquals("16", gr0.getGraphSeq().getId());
@@ -80,11 +77,14 @@ public class BgrParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
-        GenomeVersion seq_group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         boolean annot_seq = true;
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
-        List<GraphSym> results = SgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
+        List<GraphSym> results = SgrParser.parse(istr, stream_name, genomeVersion, ensure_unique_id);
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
         boolean result1 = BgrParser.writeBgrFormat(results.get(0), outstream);
         assertEquals(true, result1);

@@ -1,10 +1,13 @@
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.ScoredContainerSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,13 +29,16 @@ public class ScoredIntervalParserTest {
         InputStream istr = ScoredIntervalParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
         String stream_name = "chr1";
-        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        GenomeVersion genomeVersion = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
 
         ScoredIntervalParser tester = new ScoredIntervalParser();
-        tester.parse(istr, stream_name, seq_group, true);
+        tester.parse(istr, stream_name, genomeVersion, true);
 
         //System.out.println("done testing ScoredIntervalParser");
-        String unique_container_name = GenomeVersion.getUniqueGraphID(stream_name, seq_group);
+        String unique_container_name = GenomeVersion.getUniqueGraphID(stream_name, genomeVersion);
         assertEquals("chr1.1", unique_container_name);
     }
 
@@ -40,13 +46,16 @@ public class ScoredIntervalParserTest {
     @Test
     public void testMakeNewSeq() {
 
-        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        GenomeVersion genomeVersion = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String seqid = "chr1";
 
-        BioSeq aseq = seq_group.getSeq(seqid);
+        BioSeq aseq = genomeVersion.getSeq(seqid);
         ScoredIntervalParser ins = new ScoredIntervalParser();
 
-        aseq = seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
+        aseq = genomeVersion.addSeq(seqid, 0); // hmm, should a default size be set?
         assertEquals(100208700, aseq.getLength());
         assertEquals("chr1", aseq.getId());
     }
@@ -62,17 +71,20 @@ public class ScoredIntervalParserTest {
                 + "chr1	100207533	100208700	.	230.0\n";
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
-        GenomeVersion seq_group = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        GenomeVersion genomeVersion = GenometryModel.getInstance().addGenomeVersion("Test Seq Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String stream_name = "chr1";
         ScoredIntervalParser tester = new ScoredIntervalParser();
-        tester.parse(istr, stream_name, seq_group, true);
-        assertEquals(1, seq_group.getSeqCount());
-        BioSeq aseq = seq_group.getSeq(0);
+        tester.parse(istr, stream_name, genomeVersion, true);
+        assertEquals(1, genomeVersion.getSeqCount());
+        BioSeq aseq = genomeVersion.getSeq(0);
         assertEquals("chr1", aseq.getId());
         ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
         assertEquals("chr1", symI.getID());
         assertEquals(2, aseq.getAnnotationCount());
-        GraphIntervalSym result = symI.makeGraphSym("NormDiff", seq_group);
+        GraphIntervalSym result = symI.makeGraphSym("NormDiff", genomeVersion);
         assertEquals(4, result.getChildCount());
         String genome_version = "H_sapiens_Mar_2006";
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();

@@ -77,7 +77,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
 
     public CacheConfigurationPanel() {
         super(COMPONENT_NAME);
-        setLayout(new MigLayout("fill"));
+        setLayout(new MigLayout("fill, ins 0"));
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
 
     }
@@ -127,7 +127,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JPanel initilizeCacheSettingsPanel() {
-        JPanel panel = new JPanel(new MigLayout());
+        JPanel panel = new JPanel(new MigLayout("ins 0"));
         panel.setBorder(BorderFactory.createTitledBorder("Cache Settings"));
         initCacheSettingsApply();
         initMaxCacheSize();
@@ -158,14 +158,14 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JPanel initilizeCacheDataPanel() {
-        JPanel panel = new JPanel(new MigLayout("", "[grow]", "[grow][grow]"));
+        JPanel panel = new JPanel(new MigLayout("ins 0", "[grow]", "[grow][grow]"));
         panel.setBorder(BorderFactory.createTitledBorder("Data Sources"));
         JScrollPane sourcesScrollPane = new JScrollPane(cacheDataTable);
 
         initRemoveBtn();
         initClearAllBtn();
         initRefreshBtn();
-        JPanel btnPanel = new JPanel(new MigLayout());
+        JPanel btnPanel = new JPanel(new MigLayout("ins 2"));
         btnPanel.add(clearAllBtn, "right");
         btnPanel.add(removeBtn, "right");
         btnPanel.add(refreshBtn, "right");

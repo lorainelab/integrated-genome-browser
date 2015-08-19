@@ -79,8 +79,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
 
     public ExportDialog() {
         this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
-                SVG, new ExportFileFilter(SVG),
                 PNG, new ExportFileFilter(PNG),
+                SVG, new ExportFileFilter(SVG),
                 JPEG, new ExportFileFilter(JPEG)
         );
         exportDialogGui = new ExportDialogGui(this);

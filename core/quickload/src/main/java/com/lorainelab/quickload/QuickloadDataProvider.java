@@ -28,7 +28,7 @@ import static com.lorainelab.quickload.util.QuickloadUtils.loadGenomeVersionSyno
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSpeciesInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSupportedGenomeVersionInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,7 +57,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private final SetMultimap<String, String> genomeVersionSynonyms;
     private final Map<String, Optional<String>> supportedGenomeVersionInfo;
     private final Map<String, Optional<Multimap<String, String>>> chromosomeSynonymReference;
-    private static DefaultSynonymLookup defaultSynonymLookup;
+    private static GenomeVersionSynonymLookup genomeVersionSynonymLookup;
 
     public QuickloadDataProvider(String url, String name, int loadPriority) {
         super(toExternalForm(url), name, loadPriority);
@@ -75,16 +75,16 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         chromosomeSynonymReference = Maps.newHashMap();
     }
     
-    private static DefaultSynonymLookup getDefaultSynonymLookup() {
-        if(defaultSynonymLookup == null) {
+    private static GenomeVersionSynonymLookup getDefaultSynonymLookup() {
+        if(genomeVersionSynonymLookup == null) {
             Bundle bundle = FrameworkUtil.getBundle(QuickloadDataProvider.class);
             if(bundle != null) {
                 BundleContext bundleContext = bundle.getBundleContext();
-                ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
-                defaultSynonymLookup = bundleContext.getService(serviceReference);
+                ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
+                genomeVersionSynonymLookup = bundleContext.getService(serviceReference);
             }
         }
-        return defaultSynonymLookup;
+        return genomeVersionSynonymLookup;
     }
 
     @Override

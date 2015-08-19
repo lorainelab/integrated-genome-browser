@@ -16,7 +16,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -351,13 +351,13 @@ public final class FastaParser implements Parser {
             seq.setResidues(residues);
         } else {  // try to merge with existing seq
             Bundle bundle = FrameworkUtil.getBundle(FastaParser.class);
-            DefaultSynonymLookup defSynLookup = null;
+            GenomeVersionSynonymLookup genomeVersionSynonymLookup = null;
             if(bundle != null) {
                 BundleContext bundleContext = bundle.getBundleContext();
-                ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
-                defSynLookup = bundleContext.getService(serviceReference);
+                ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
+                genomeVersionSynonymLookup = bundleContext.getService(serviceReference);
             }
-            if (defSynLookup != null && defSynLookup.isSynonym(seq.getId(), seqid)) {
+            if (genomeVersionSynonymLookup != null && genomeVersionSynonymLookup.isSynonym(seq.getId(), seqid)) {
                 seq.setResidues(residues);
             } else {
                 System.out.println("*****  ABORTING MERGE, sequence ids don't match: "

@@ -84,7 +84,7 @@ public class DasSymloader extends SymLoader {
         if (chromosomes == null) {
             chromosomes = DasServerUtils.retrieveAssemblyInfoByContextRoot(contextRoot).keySet();
         }
-        return genomeVersion.getDefSynLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
+        return genomeVersion.getGenomeVersionSynonymLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
     }
 
 }

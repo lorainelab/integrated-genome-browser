@@ -13,7 +13,7 @@ import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -31,7 +31,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     private static final long serialVersionUID = 1L;
     private final int TOOLBAR_INDEX = 3;
 
-    private DefaultSynonymLookup defSynLookup;
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
 
     public NewGenomeAction() {
         super(BUNDLE.getString("openCustomGenomeMenuTitle"), BUNDLE.getString("openCustomGenomeTooltip"),
@@ -75,7 +75,7 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         } else {
             versionName = ng.getVersionName();
         }
-        versionName = defSynLookup.getPreferredName(versionName);
+        versionName = genomeVersionSynonymLookup.getPreferredName(versionName);
         return versionName;
     }
 
@@ -124,8 +124,8 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     }
 
     @Reference
-    public void setDefSynLookup(DefaultSynonymLookup defSynLookup) {
-        this.defSynLookup = defSynLookup;
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
 
 }

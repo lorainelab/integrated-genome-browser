@@ -9,7 +9,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import com.lorainelab.synonymlookup.services.SynonymLookupService;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
@@ -42,7 +42,7 @@ public class SynonymsControlPanel {
     private static final String PREF_VSYN_FILE_URL = "Version Synonyms File URL";
     private static final String PREF_CSYN_FILE_URL = "Chromosome Synonyms File URL";
     private JPanel panel;
-    private DefaultSynonymLookup defSynLookup;
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
     private ChromosomeSynonymLookup chrSynLookup;
 
     public SynonymsControlPanel() {
@@ -92,7 +92,7 @@ public class SynonymsControlPanel {
                 }
             }
 
-            if (vsynonymFile.getText().isEmpty() || loadSynonymFile(defSynLookup, vsynonymFile)) {
+            if (vsynonymFile.getText().isEmpty() || loadSynonymFile(genomeVersionSynonymLookup, vsynonymFile)) {
                 PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
             } else {
                 ErrorHandler.errorPanel(
@@ -143,7 +143,7 @@ public class SynonymsControlPanel {
         /*
          * Load the synonym file from preferences on startup
          */
-        loadSynonymFile(defSynLookup, vsynonymFile);
+        loadSynonymFile(genomeVersionSynonymLookup, vsynonymFile);
         loadSynonymFile(chrSynLookup, csynonymFile);
 
         return synonymsPanel;
@@ -171,8 +171,8 @@ public class SynonymsControlPanel {
     }
 
     @Reference
-    public void setDefSynLookup(DefaultSynonymLookup defSynLookup) {
-        this.defSynLookup = defSynLookup;
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
 
     @Reference

@@ -641,7 +641,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         final List<String> versionNames = getAllVersions(speciesName);
         if (curGroup != null) {
             for (String versionName : versionNames) {
-                versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, curGroup.getDefSynLookup()));
+                versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, curGroup.getGenomeVersionSynonymLookup()));
             }
         } else {
             logger.debug("No genome version found");

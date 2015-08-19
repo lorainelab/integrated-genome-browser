@@ -14,7 +14,7 @@ import com.lorainelab.igb.services.XServiceRegistrar;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
@@ -124,11 +124,11 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
     }
 
     private void setupServiceDependencyTracker(final BundleContext bundleContext) {
-        ServiceTracker<DefaultSynonymLookup, Object> dependencyTracker;
-        dependencyTracker = new ServiceTracker<DefaultSynonymLookup, Object>(bundleContext, DefaultSynonymLookup.class, null) {
+        ServiceTracker<GenomeVersionSynonymLookup, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<GenomeVersionSynonymLookup, Object>(bundleContext, GenomeVersionSynonymLookup.class, null) {
 
             @Override
-            public Object addingService(ServiceReference<DefaultSynonymLookup> reference) {
+            public Object addingService(ServiceReference<GenomeVersionSynonymLookup> reference) {
                 startBookmark(bundleContext);
                 return super.addingService(reference);
             }

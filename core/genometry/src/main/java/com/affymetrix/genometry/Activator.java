@@ -18,14 +18,14 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        setupSynonymLookupServiceTracker(bundleContext);
+        setupGenometryServiceDependencyTracker(bundleContext);
     }
 
     @Override
     public void stop(BundleContext _bundleContext) throws Exception {
     }
 
-    private void setupSynonymLookupServiceTracker(final BundleContext bundleContext) {
+    private void setupGenometryServiceDependencyTracker(final BundleContext bundleContext) {
         ServiceTracker<GenometryServiceDependencyManager, Object> dependencyTracker;
         dependencyTracker = new ServiceTracker<GenometryServiceDependencyManager, Object>(bundleContext, GenometryServiceDependencyManager.class, null) {
 

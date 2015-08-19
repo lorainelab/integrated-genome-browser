@@ -9,6 +9,6 @@ package com.lorainelab.synonymlookup.services;
  *
  * @author Tarun
  */
-public interface DefaultSynonymLookup extends SynonymLookupService{
+public interface GenomeVersionSynonymLookup extends SynonymLookupService{
     
 }

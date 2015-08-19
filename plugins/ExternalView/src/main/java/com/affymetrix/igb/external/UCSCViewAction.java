@@ -20,7 +20,7 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
-    private DefaultSynonymLookup defSynonymLookup;
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
 
     public UCSCViewAction() {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
@@ -87,7 +87,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
      */
     private String getUcscGenomeVersion(String version) {
         initUCSCSources();
-        String ucsc_version = defSynonymLookup.findMatchingSynonym(UCSCSources, version);
+        String ucsc_version = genomeVersionSynonymLookup.findMatchingSynonym(UCSCSources, version);
         return UCSCSources.contains(ucsc_version) ? ucsc_version : "";
     }
 
@@ -156,7 +156,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     }
 
     @Reference
-    public void setDefSynonymLookup(DefaultSynonymLookup defSynonymLookup) {
-        this.defSynonymLookup = defSynonymLookup;
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
 }

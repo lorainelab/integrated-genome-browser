@@ -1,13 +1,11 @@
 package com.lorainelab.quickload;
 
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 
 /**
  *
@@ -19,7 +17,6 @@ public class QuickloadFactory implements DataProviderFactory {
     public static final String COMPONENT_NAME = "QuickloadFactory";
     private static final String FACTORY_NAME = "Quickload";
     private static final int WEIGHT = 1;
-    private DefaultSynonymLookup defSynLookup;
 
     @Override
     public String getFactoryName() {
@@ -51,11 +48,6 @@ public class QuickloadFactory implements DataProviderFactory {
         QuickloadDataProvider quickloadDataProvider = new QuickloadDataProvider(url, name, mirrorUrl, loadPriority);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return quickloadDataProvider;
-    }
-
-    @Reference
-    public void setDefSynLookup(DefaultSynonymLookup defSynLookup) {
-        this.defSynLookup = defSynLookup;
     }
 
 }

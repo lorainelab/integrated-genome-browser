@@ -64,7 +64,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -158,12 +158,12 @@ public final class GeneralLoadUtils {
             }
         }
 
-        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true, genomeVersion.getDefSynLookup());
+        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true, genomeVersion.getGenomeVersionSynonymLookup());
     }
 
-    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh, DefaultSynonymLookup LOOKUP) {
+    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         // Make sure we use the preferred synonym for the genome version.
-        String preferredVersionName = LOOKUP.getPreferredName(versionName);
+        String preferredVersionName = genomeVersionSynonymLookup.getPreferredName(versionName);
         GenomeVersion genomeVersion = gmodel.addGenomeVersion(preferredVersionName); // returns existing genomeVersion if found, otherwise creates a new genomeVersion
         DataContainer dataContainer = new DataContainer(genomeVersion, dataProvider);
         boolean isNewSpecies = !getLoadedSpeciesNames().contains(speciesName);
@@ -932,10 +932,10 @@ public final class GeneralLoadUtils {
      * @return a friendly HTML string of version synonyms (not including
      * versionName).
      */
-    public static String listSynonyms(String versionName, DefaultSynonymLookup defSynLookup) {
+    public static String listSynonyms(String versionName, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         StringBuilder synonymBuilder = new StringBuilder(100);
         synonymBuilder.append("<html>").append(IGBConstants.BUNDLE.getString("synonymList"));
-        Set<String> synonymSet = defSynLookup.getSynonyms(versionName);
+        Set<String> synonymSet = genomeVersionSynonymLookup.getSynonyms(versionName);
         for (String synonym : synonymSet) {
             if (synonym.equalsIgnoreCase(versionName)) {
                 continue;

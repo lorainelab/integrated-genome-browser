@@ -7,7 +7,7 @@ package com.affymetrix.genometry;
 
 import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class GenometryServiceDependencyManager {
     private static final Logger logger = LoggerFactory.getLogger(GenometryServiceDependencyManager.class);
     
     @Reference
-    public void trackDefaultSynonymLookupService(DefaultSynonymLookup defSynLookup) {
+    public void trackDefaultSynonymLookupService(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         logger.debug("DefaultSynonymLookup instantiated");
     }
     

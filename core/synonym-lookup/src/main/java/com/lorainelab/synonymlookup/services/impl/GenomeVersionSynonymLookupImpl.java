@@ -6,7 +6,7 @@
 package com.lorainelab.synonymlookup.services.impl;
 
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import org.slf4j.Logger;
@@ -16,14 +16,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tarun
  */
-@Component(name = DefaultSynonymLookupImpl.COMPONENT_NAME, immediate = true, provide = DefaultSynonymLookup.class)
-public class DefaultSynonymLookupImpl extends SynonymLookup implements DefaultSynonymLookup {
+@Component(name = GenomeVersionSynonymLookupImpl.COMPONENT_NAME, immediate = true, provide = GenomeVersionSynonymLookup.class)
+public class GenomeVersionSynonymLookupImpl extends SynonymLookup implements GenomeVersionSynonymLookup {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultSynonymLookupImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenomeVersionSynonymLookupImpl.class);
     public static final String COMPONENT_NAME = "DefaultSynonymLookupImpl";
 
-    public DefaultSynonymLookupImpl() {
-        InputStream resourceAsStream = DefaultSynonymLookupImpl.class.getClassLoader().getResourceAsStream("synonyms.txt");
+    public GenomeVersionSynonymLookupImpl() {
+        InputStream resourceAsStream = GenomeVersionSynonymLookupImpl.class.getClassLoader().getResourceAsStream("synonyms.txt");
         try {
             loadSynonyms(resourceAsStream, true);
         } catch (IOException ex) {

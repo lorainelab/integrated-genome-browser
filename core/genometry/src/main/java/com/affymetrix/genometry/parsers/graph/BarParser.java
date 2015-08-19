@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.Timer;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -764,12 +764,12 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         // if standard GenomeVersion seq id resolution doesn't work, try old technique
         //    (hopefully can eliminate this soon)
         if (seq == null) {
-            DefaultSynonymLookup lookup = seq_group.getDefSynLookup();
+            GenomeVersionSynonymLookup genomeVersionSynonymLookup = seq_group.getGenomeVersionSynonymLookup();
             //TODO: Convert this to the standard way of getting synomous sequences,
             // but we may have to check for extra bar-specific synonyms involving seq genomeVersion and version
             for (BioSeq testseq : seq_group.getSeqList()) {
                 // testing both seq id and version id (if version id is available)
-                if (lookup.isSynonym(testseq.getId(), seqname)) {
+                if (genomeVersionSynonymLookup.isSynonym(testseq.getId(), seqname)) {
                     // GAH 1-23-2005
                     // need to ensure that if bar2 format, the seq genomeVersion is also a synonym!
                     // GAH 7-7-2005
@@ -783,7 +783,7 @@ public final class BarParser implements AnnotationWriter, GraphParser {
                         break;
                     } else {
                         String test_version = seq_group.getName();
-                        if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
+                        if ((genomeVersionSynonymLookup.isSynonym(test_version, seqversion)) || (genomeVersionSynonymLookup.isSynonym(test_version, groupname)) || (genomeVersionSynonymLookup.isSynonym(test_version, groupname + ":" + seqversion))) {
                             seq = testseq;
                             break;
                         }

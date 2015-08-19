@@ -6,10 +6,10 @@ import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import com.lorainelab.quickload.QuickloadConstants;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,8 +117,8 @@ public class QuickloadUtils {
         }
     }
 
-    public static Optional<Set<QuickloadFile>> getGenomeVersionData(String quickloadUrl, String genomeVersionName, Map<String, Optional<String>> supportedGenomeVersionInfo, DefaultSynonymLookup defSynLookup) {
-        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet(), defSynLookup).orElse(genomeVersionName);
+    public static Optional<Set<QuickloadFile>> getGenomeVersionData(String quickloadUrl, String genomeVersionName, Map<String, Optional<String>> supportedGenomeVersionInfo, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet(), genomeVersionSynonymLookup).orElse(genomeVersionName);
         String genomeVersionBaseUrl = getGenomeVersionBaseUrl(quickloadUrl, genomeVersionName);
         String annotsXmlUrl = genomeVersionBaseUrl + QuickloadConstants.ANNOTS_XML;
         try {
@@ -157,11 +157,11 @@ public class QuickloadUtils {
         return Optional.empty();
     }
 
-    public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> supportedGenomeVersionNames, DefaultSynonymLookup defSynLookup) {
+    public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> supportedGenomeVersionNames, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         if (supportedGenomeVersionNames.contains(genomeVersionName)) {
             return Optional.of(genomeVersionName);
         } else {
-            Set<String> genomeVersionSynonyms = defSynLookup.getSynonyms(genomeVersionName);
+            Set<String> genomeVersionSynonyms = genomeVersionSynonymLookup.getSynonyms(genomeVersionName);
             Optional<String> matchingSynonym = genomeVersionSynonyms.stream().filter(syn -> supportedGenomeVersionNames.contains(syn)).findFirst();
             if (matchingSynonym.isPresent()) {
                 return Optional.of(matchingSynonym.get());

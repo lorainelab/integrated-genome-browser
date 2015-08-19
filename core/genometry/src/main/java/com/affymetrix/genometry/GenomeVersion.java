@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class GenomeVersion {
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
-    private static DefaultSynonymLookup defSynLookup;
+    private static GenomeVersionSynonymLookup genomeVersionSynonymLookup;
     private static ChromosomeSynonymLookup chrSynLookup;
     private final LocalDataProvider localDataSetProvider;
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
@@ -55,8 +55,8 @@ public class GenomeVersion {
         Bundle bundle = FrameworkUtil.getBundle(GenomeVersion.class);
         if (bundle != null) {
             BundleContext bundleContext = bundle.getBundleContext();
-            ServiceReference<DefaultSynonymLookup> defaultSynLookupReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
-            defSynLookup = bundleContext.getService(defaultSynLookupReference);
+            ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
+            genomeVersionSynonymLookup = bundleContext.getService(serviceReference);
 
             ServiceReference<ChromosomeSynonymLookup> chrSynLookupReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
             chrSynLookup = bundleContext.getService(chrSynLookupReference);
@@ -242,7 +242,7 @@ public class GenomeVersion {
     }
 
     public final boolean isSynonymous(String synonym) {
-        return name.equals(synonym) || defSynLookup.isSynonym(name, synonym);
+        return name.equals(synonym) || genomeVersionSynonymLookup.isSynonym(name, synonym);
     }
 
     public boolean removeSeqsForUri(String uri) {
@@ -403,8 +403,8 @@ public class GenomeVersion {
         return true;
     }
 
-    public DefaultSynonymLookup getDefSynLookup() {
-        return defSynLookup;
+    public GenomeVersionSynonymLookup getGenomeVersionSynonymLookup() {
+        return genomeVersionSynonymLookup;
     }
 
     public ChromosomeSynonymLookup getChrSynLookup() {

@@ -37,7 +37,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -77,14 +77,14 @@ import org.slf4j.LoggerFactory;
 public final class BookmarkUnibrowControlServlet {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BookmarkUnibrowControlServlet.class);
-    private static DefaultSynonymLookup LOOKUP;
+    private static GenomeVersionSynonymLookup LOOKUP;
     private static BundleContext bundleContext;
 
     private BookmarkUnibrowControlServlet() {
         Bundle bundle = FrameworkUtil.getBundle(BookmarkUnibrowControlServlet.class);
         if (bundle != null) {
             bundleContext = bundle.getBundleContext();
-            ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+            ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
             LOOKUP = bundleContext.getService(serviceReference);
         }
     }

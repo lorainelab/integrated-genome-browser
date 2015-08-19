@@ -46,10 +46,22 @@ public class GenomeVersion {
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
-    private DefaultSynonymLookup defSynLookup;
-    private ChromosomeSynonymLookup chrSynLookup;
+    private static DefaultSynonymLookup defSynLookup;
+    private static ChromosomeSynonymLookup chrSynLookup;
     private final LocalDataProvider localDataSetProvider;
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
+
+    static {
+        Bundle bundle = FrameworkUtil.getBundle(GenomeVersion.class);
+        if (bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            ServiceReference<DefaultSynonymLookup> defaultSynLookupReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+            defSynLookup = bundleContext.getService(defaultSynLookupReference);
+
+            ServiceReference<ChromosomeSynonymLookup> chrSynLookupReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
+            chrSynLookup = bundleContext.getService(chrSynLookupReference);
+        }
+    }
 
     public GenomeVersion(String name) {
         this.name = name;
@@ -59,15 +71,6 @@ public class GenomeVersion {
         seqlist = new ArrayList<>();
         dataContainers = Sets.newConcurrentHashSet();
         localDataSetProvider = new LocalDataProvider();
-        Bundle bundle = FrameworkUtil.getBundle(GenomeVersion.class);
-        if(bundle != null) {
-            BundleContext bundleContext = bundle.getBundleContext();
-            ServiceReference<DefaultSynonymLookup> defaultSynLookupReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
-            defSynLookup = bundleContext.getService(defaultSynLookupReference);
-            
-            ServiceReference<ChromosomeSynonymLookup> chrSynLookupReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
-            chrSynLookup = bundleContext.getService(chrSynLookupReference);
-        }
     }
 
     final public String getName() {
@@ -109,7 +112,7 @@ public class GenomeVersion {
     }
 
     final public Set<DataContainer> getAvailableDataContainers() {
-       return dataContainers.stream()
+        return dataContainers.stream()
                 .filter(dc -> dc.getDataProvider() != null)
                 .filter(dc -> dc.getDataProvider().getStatus() != Disabled)
                 .filter(dc -> dc.getDataProvider().getStatus() != NotResponding)
@@ -141,8 +144,7 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns a List of BioSeq objects. Will not return null. The list is in
-     * the same order as in {@link #getSeq(int)}.
+     * Returns a List of BioSeq objects. Will not return null. The list is in the same order as in {@link #getSeq(int)}.
      */
     public List<BioSeq> getSeqList() {
         if (id2seq_dirty_bit) {
@@ -172,11 +174,9 @@ public class GenomeVersion {
     }
 
     /**
-     * Sets whether or not to use the SynonymLookup class to search for
-     * synonymous BioSeqs when using the getSeq(String) method. If you set this
-     * to false and then add new sequences, you should probably NOT later set it
-     * back to true unless you are sure you did not add some synonymous
-     * sequences.
+     * Sets whether or not to use the SynonymLookup class to search for synonymous BioSeqs when using the getSeq(String)
+     * method. If you set this to false and then add new sequences, you should probably NOT later set it back to true
+     * unless you are sure you did not add some synonymous sequences.
      */
     public final void setUseSynonyms(boolean b) {
         useSynonyms = b;
@@ -187,8 +187,7 @@ public class GenomeVersion {
     }
 
     /**
-     * Gets a sequence based on its name, possibly taking synonyms into account.
-     * See {@link #setUseSynonyms(boolean)}.
+     * Gets a sequence based on its name, possibly taking synonyms into account. See {@link #setUseSynonyms(boolean)}.
      *
      * @param synonym the string identifier of the requested BioSeq
      * @return a BioSeq for the given synonym or null
@@ -223,11 +222,10 @@ public class GenomeVersion {
     }
 
     /**
-     * For the given symmetry, tries to find in the group a sequence that is
-     * pointed to by that symmetry.
+     * For the given symmetry, tries to find in the group a sequence that is pointed to by that symmetry.
      *
-     * @return the first sequence it finds (by iterating through sym's spans),
-     * or null if none is found. PRECONDITION: sym != null.
+     * @return the first sequence it finds (by iterating through sym's spans), or null if none is found. PRECONDITION:
+     * sym != null.
      */
     public BioSeq getSeq(SeqSymmetry sym) {
         final int spancount = sym.getSpanCount();
@@ -256,8 +254,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns the BioSeq with the given id (or synonym), creating it if
-     * necessary, and increasing its length to the given sym if necessary.
+     * Returns the BioSeq with the given id (or synonym), creating it if necessary, and increasing its length to the
+     * given sym if necessary.
      */
     public final BioSeq addSeq(String seqid, int length, String uri) {
         checkNotNull(seqid);
@@ -335,9 +333,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Get unique id for id/trackName combination. Note this does not
-     * auto-increment, in order for the name to be reproducible if we need to
-     * load from the same combination again.
+     * Get unique id for id/trackName combination. Note this does not auto-increment, in order for the name to be
+     * reproducible if we need to load from the same combination again.
      *
      * @param id
      * @param trackName
@@ -351,9 +348,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns input id if no GraphSyms on any seq in the given seq group are
-     * already using that id. Otherwise uses id to build a new unique id. The id
-     * returned is unique for GraphSyms on all seqs in the given group.
+     * Returns input id if no GraphSyms on any seq in the given seq group are already using that id. Otherwise uses id
+     * to build a new unique id. The id returned is unique for GraphSyms on all seqs in the given group.
      */
     public static String getUniqueGraphID(String id, GenomeVersion seq_group) {
         String result = id;
@@ -364,10 +360,9 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns input id if no GraphSyms on seq with given id. Otherwise uses id
-     * to build a new id that is not used by a GraphSym (or top-level container
-     * sym ) currently on the seq. The id returned is only unique for GraphSyms
-     * on that seq, may be used for graphs on other seqs.
+     * Returns input id if no GraphSyms on seq with given id. Otherwise uses id to build a new id that is not used by a
+     * GraphSym (or top-level container sym ) currently on the seq. The id returned is only unique for GraphSyms on that
+     * seq, may be used for graphs on other seqs.
      */
     public static String getUniqueGraphID(String id, BioSeq seq) {
         if (id == null) {

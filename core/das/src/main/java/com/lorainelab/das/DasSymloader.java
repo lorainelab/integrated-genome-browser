@@ -11,7 +11,6 @@ import com.lorainelab.das.parser.DASFeatureParser;
 import com.lorainelab.das.parser.DASSymmetry;
 import com.lorainelab.das.utils.DasServerUtils;
 import static com.lorainelab.das.utils.DasServerUtils.toExternalForm;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -30,14 +29,12 @@ public class DasSymloader extends SymLoader {
     private final GenometryModel gmodel;
     private Set<String> chromosomes;
     private final String contextRoot;
-    private DefaultSynonymLookup defSynonymLookup;
 
-    public DasSymloader(URI contextRoot, String typeName, GenomeVersion genomeVersion, DefaultSynonymLookup defSynonymLookup) {
+    public DasSymloader(URI contextRoot, String typeName, GenomeVersion genomeVersion) {
         super(contextRoot, typeName, genomeVersion);
         this.extension = DAS_EXT;
         this.contextRoot = contextRoot.toString().substring(0, contextRoot.toString().indexOf("/" + typeName));
         gmodel = GenometryModel.getInstance();
-        this.defSynonymLookup = defSynonymLookup;
     }
 
     @Override
@@ -87,7 +84,7 @@ public class DasSymloader extends SymLoader {
         if (chromosomes == null) {
             chromosomes = DasServerUtils.retrieveAssemblyInfoByContextRoot(contextRoot).keySet();
         }
-        return defSynonymLookup.findMatchingSynonym(chromosomes, currentSeq.getId());
+        return genomeVersion.getDefSynLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
     }
 
 }

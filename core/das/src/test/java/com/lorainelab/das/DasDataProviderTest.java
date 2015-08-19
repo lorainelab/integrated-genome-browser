@@ -20,8 +20,7 @@ public class DasDataProviderTest {
 
     @BeforeClass
     public static void setup() {
-        GenomeVersion genomeVersion = new GenomeVersion("sample");
-        dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1, genomeVersion.getDefSynLookup());
+        dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1);
 
     }
 

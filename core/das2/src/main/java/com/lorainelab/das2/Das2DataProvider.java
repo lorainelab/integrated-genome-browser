@@ -21,7 +21,6 @@ import com.lorainelab.das2.model.types.Types.TYPE;
 import com.lorainelab.das2.utils.Das2ServerUtils;
 import static com.lorainelab.das2.utils.Das2ServerUtils.SEGMENTS;
 import static com.lorainelab.das2.utils.Das2ServerUtils.retrieveSegmentsResponse;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -41,19 +40,16 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     private static final Logger logger = LoggerFactory.getLogger(Das2DataProvider.class);
     public LinkedHashSet<String> availableGenomeVersionNames;
     private final Set<Version> versionInfo;
-    private DefaultSynonymLookup defSynonymLookup;
 
-    public Das2DataProvider(String dasUrl, String name, int loadPriority, DefaultSynonymLookup defSynonymLookup) {
+    public Das2DataProvider(String dasUrl, String name, int loadPriority) {
         super(dasUrl, name, loadPriority);
         versionInfo = Sets.newLinkedHashSet();
-        this.defSynonymLookup = defSynonymLookup;
         initialize();
     }
 
-    public Das2DataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, DefaultSynonymLookup defSynonymLookup) {
+    public Das2DataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority) {
         super(dasUrl, name, mirrorUrl, loadPriority);
         versionInfo = Sets.newLinkedHashSet();
-        this.defSynonymLookup = defSynonymLookup;
         initialize();
     }
 
@@ -130,7 +126,7 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
         Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         try {
-            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getSupportedGenomeVersionNames(), defSynonymLookup);
+            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getSupportedGenomeVersionNames(), genomeVersion.getDefSynLookup());
             if (matchingGenomeVersionName.isPresent()) {
                 String genomeVersionName = matchingGenomeVersionName.get();
                 Optional<Version> matchingVersion = versionInfo.stream().filter(version -> version.getTitle().equals(genomeVersionName)).findFirst();

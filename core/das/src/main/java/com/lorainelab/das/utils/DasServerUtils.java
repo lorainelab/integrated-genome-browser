@@ -50,6 +50,7 @@ public class DasServerUtils {
     private static Unmarshaller dasTypesUnmarshaller;
     private static JAXBContext dasFeatureContext;
     private static Unmarshaller dasFeatureUnmarshaller;
+    private GenomeVersion genomeVersion;
 
     public static Optional<DasDsn> retrieveDsnResponse(String rootUrl) throws HttpRequestException {
         HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(rootUrl) + DSN)
@@ -114,9 +115,9 @@ public class DasServerUtils {
         return Optional.empty();
     }
 
-    public static Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion, Map<String, String> genomeContextRootMap, DefaultSynonymLookup defSynonymLookup) {
+    public static Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion, Map<String, String> genomeContextRootMap) {
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = getContextRootKey(genomeVersionName, genomeContextRootMap, defSynonymLookup);
+        Optional<String> contextRootkey = getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getDefSynLookup());
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
             return retrieveAssemblyInfoByContextRoot(contextRoot);

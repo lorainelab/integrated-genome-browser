@@ -18,7 +18,6 @@ import com.lorainelab.das.model.dsn.DasDsn;
 import com.lorainelab.das.model.types.DasTypes;
 import com.lorainelab.das.model.types.Type;
 import com.lorainelab.das.utils.DasServerUtils;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,9 +37,8 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
 
     private static final Logger logger = LoggerFactory.getLogger(DasDataProvider.class);
     private Map<String, String> genomeContextRootMap;
-    DefaultSynonymLookup defSynonymLookup;
 
-    public DasDataProvider(String dasUrl, String name, int loadPriority, DefaultSynonymLookup defSynonymLookup) {
+    public DasDataProvider(String dasUrl, String name, int loadPriority) {
         super(dasUrl, name, loadPriority);
         genomeContextRootMap = Maps.newLinkedHashMap();
         try {
@@ -52,10 +50,9 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
         if (status != Disabled) {
             initialize();
         }
-        this.defSynonymLookup = defSynonymLookup;
     }
 
-    public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, DefaultSynonymLookup defSynonymLookup) {
+    public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority) {
         super(dasUrl, name, mirrorUrl, loadPriority);
         genomeContextRootMap = Maps.newHashMap();
         try {
@@ -67,7 +64,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
         if (status != Disabled) {
             initialize();
         }
-        this.defSynonymLookup = defSynonymLookup;
     }
 
     @Override
@@ -106,7 +102,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, defSynonymLookup);
+        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getDefSynLookup());
         Set<DataSet> dataSets = Sets.newLinkedHashSet();
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
@@ -117,7 +113,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
                 for (Type type : availableTypes) {
                     final String typeId = type.getId();
                     try {
-                        DasSymloader dasSymloader = new DasSymloader(new URI(contextRoot + "/" + typeId), typeId, genomeVersion, defSynonymLookup);
+                        DasSymloader dasSymloader = new DasSymloader(new URI(contextRoot + "/" + typeId), typeId, genomeVersion);
                         DataSet dataSet = new DataSet(new URI(contextRoot + "/" + typeId), typeId, null, dataContainer, dasSymloader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
@@ -131,14 +127,14 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
 
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
-        return DasServerUtils.getAssemblyInfo(genomeVersion, genomeContextRootMap, defSynonymLookup);
+        return DasServerUtils.getAssemblyInfo(genomeVersion, genomeContextRootMap);
     }
 
     @Override
     public String getSequence(DataContainer dataContainer, SeqSpan span) {
         GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, defSynonymLookup);
+        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getDefSynLookup());
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
             return DasServerUtils.retrieveDna(contextRoot, span);

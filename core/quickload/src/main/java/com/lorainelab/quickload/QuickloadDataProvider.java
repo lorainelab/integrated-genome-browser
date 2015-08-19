@@ -19,7 +19,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import static com.lorainelab.quickload.QuickloadConstants.GENOME_TXT;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
 import com.lorainelab.quickload.util.QuickloadUtils;
@@ -29,6 +28,7 @@ import static com.lorainelab.quickload.util.QuickloadUtils.loadGenomeVersionSyno
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSpeciesInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSupportedGenomeVersionInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
+import com.lorainelab.synonymlookup.services.DefaultSynonymLookup;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,6 +38,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,24 +57,34 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private final SetMultimap<String, String> genomeVersionSynonyms;
     private final Map<String, Optional<String>> supportedGenomeVersionInfo;
     private final Map<String, Optional<Multimap<String, String>>> chromosomeSynonymReference;
-    private final DefaultSynonymLookup defaultSynonymLookup;
+    private static DefaultSynonymLookup defaultSynonymLookup;
 
-    public QuickloadDataProvider(String url, String name, int loadPriority, DefaultSynonymLookup defaultSynonymLookup) {
+    public QuickloadDataProvider(String url, String name, int loadPriority) {
         super(toExternalForm(url), name, loadPriority);
-        this.defaultSynonymLookup = defaultSynonymLookup;
         supportedGenomeVersionInfo = Maps.newConcurrentMap();
         speciesInfo = Sets.newHashSet();
         genomeVersionSynonyms = HashMultimap.create();
         chromosomeSynonymReference = Maps.newHashMap();
     }
 
-    public QuickloadDataProvider(String url, String name, String mirrorUrl, int loadPriority, DefaultSynonymLookup defaultSynonymLookup) {
+    public QuickloadDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
         super(toExternalForm(url), name, toExternalForm(mirrorUrl), loadPriority);
-        this.defaultSynonymLookup = defaultSynonymLookup;
         supportedGenomeVersionInfo = Maps.newHashMap();
         speciesInfo = Sets.newHashSet();
         genomeVersionSynonyms = HashMultimap.create();
         chromosomeSynonymReference = Maps.newHashMap();
+    }
+    
+    private static DefaultSynonymLookup getDefaultSynonymLookup() {
+        if(defaultSynonymLookup == null) {
+            Bundle bundle = FrameworkUtil.getBundle(QuickloadDataProvider.class);
+            if(bundle != null) {
+                BundleContext bundleContext = bundle.getBundleContext();
+                ServiceReference<DefaultSynonymLookup> serviceReference = bundleContext.getServiceReference(DefaultSynonymLookup.class);
+                defaultSynonymLookup = bundleContext.getService(serviceReference);
+            }
+        }
+        return defaultSynonymLookup;
     }
 
     @Override
@@ -128,7 +142,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Optional<String> getGenomeVersionDescription(String genomeVersionName) {
-        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet(), defaultSynonymLookup).orElse(genomeVersionName);
+        genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersionName);
         if (supportedGenomeVersionInfo.containsKey(genomeVersionName)) {
             return supportedGenomeVersionInfo.get(genomeVersionName);
         }
@@ -154,8 +168,8 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     @Override
     public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         final GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
-        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), defaultSynonymLookup).orElse(genomeVersion.getName());
-        final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersionName, supportedGenomeVersionInfo, defaultSynonymLookup);
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
+        final Optional<Set<QuickloadFile>> genomeVersionData = QuickloadUtils.getGenomeVersionData(getUrl(), genomeVersionName, supportedGenomeVersionInfo, getDefaultSynonymLookup());
         if (genomeVersionData.isPresent()) {
             Set<QuickloadFile> versionFiles = genomeVersionData.get();
             LinkedHashSet<DataSet> dataSets = Sets.newLinkedHashSet();
@@ -188,7 +202,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
-        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), defaultSynonymLookup).orElse(genomeVersion.getName());
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
         try {
             final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersionName);
             if (assemblyInfo.isPresent()) {
@@ -204,7 +218,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Optional<URI> getSequenceFileUri(GenomeVersion genomeVersion) {
-        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), defaultSynonymLookup).orElse(genomeVersion.getName());
+        final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
         final String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
         URI uri = null;
         try {

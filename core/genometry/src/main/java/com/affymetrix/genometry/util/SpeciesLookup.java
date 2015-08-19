@@ -58,12 +58,6 @@ public final class SpeciesLookup {
     private static final String SPECIES_SYNONYM_FILE = "species.txt";
 
     private SpeciesLookup() {
-        Bundle bundle = FrameworkUtil.getBundle(SpeciesLookup.class);
-        if (bundle != null) {
-            BundleContext bundleContext = bundle.getBundleContext();
-            ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
-            speciesLookup = bundleContext.getService(serviceReference);
-        }
         try (InputStream resourceAsStream = SpeciesLookup.class.getClassLoader().getResourceAsStream(SPECIES_SYNONYM_FILE)) {
             load(resourceAsStream);
         } catch (IOException ex) {
@@ -82,16 +76,16 @@ public final class SpeciesLookup {
      * @throws IOException if one of the files can not be read in.
      */
     public static void load(InputStream genericSpecies) throws IOException {
-        speciesLookup.loadSynonyms(genericSpecies, true);
+        getSpeciesSynLookup().loadSynonyms(genericSpecies, true);
     }
 
     public static void load(SpeciesInfo speciesInfo) {
-        speciesLookup.getPreferredNames().add(speciesInfo.getName());
+        getSpeciesSynLookup().getPreferredNames().add(speciesInfo.getName());
         Set<String> row = Sets.newLinkedHashSet();
         row.add(speciesInfo.getName());
         row.add(speciesInfo.getCommonName());
         row.add(speciesInfo.getGenomeVersionNamePrefix());
-        speciesLookup.addSynonyms(row);
+        getSpeciesSynLookup().addSynonyms(row);
     }
 
     /**
@@ -100,7 +94,7 @@ public final class SpeciesLookup {
      * @return the user-friendly name of the species.
      */
     public static String getCommonSpeciesName(String species) {
-        return speciesLookup.findSecondSynonym(species);
+        return getSpeciesSynLookup().findSecondSynonym(species);
     }
 
     /**
@@ -125,7 +119,7 @@ public final class SpeciesLookup {
         String species;
 
         /* check to see if the synonym exists in the lookup */
-        species = speciesLookup.getPreferredName(version, cs);
+        species = getSpeciesSynLookup().getPreferredName(version, cs);
 
         /* attempt to decode standard format (G_species_*) */
         if (species.equals(version)) {
@@ -144,7 +138,7 @@ public final class SpeciesLookup {
 
         /* I believe that this will always return version, but... */
         if (species == null) {
-            species = speciesLookup.getPreferredName(version, cs);
+            species = getSpeciesSynLookup().getPreferredName(version, cs);
         }
 
         Pattern pattern = Pattern.compile("(\\S+)(?>_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\\d{4})");
@@ -165,7 +159,7 @@ public final class SpeciesLookup {
             species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
         }
         //end of adding
-        species = speciesLookup.getPreferredName(species, false);
+        species = getSpeciesSynLookup().getPreferredName(species, false);
         return species;
     }
 
@@ -189,7 +183,7 @@ public final class SpeciesLookup {
             return null;
         }
 
-        String preferred = speciesLookup.getPreferredName(matched, cs);
+        String preferred = getSpeciesSynLookup().getPreferredName(matched, cs);
 
         if (matched.equals(preferred)) {
             return null;
@@ -199,7 +193,7 @@ public final class SpeciesLookup {
     }
 
     public static boolean isSynonym(String synonym1, String synonym2) {
-        return speciesLookup.isSynonym(synonym1, synonym2);
+        return getSpeciesSynLookup().isSynonym(synonym1, synonym2);
     }
 
     public static String getStandardName(String version) {
@@ -221,11 +215,11 @@ public final class SpeciesLookup {
     }
 
     public static Set<String> getAllSpeciesName() {
-        return speciesLookup.getSynonyms();
+        return getSpeciesSynLookup().getSynonyms();
     }
 
     public static String getPreferredName(String name) {
-        return speciesLookup.getPreferredName(name);
+        return getSpeciesSynLookup().getPreferredName(name);
     }
 
     private static String formatSpeciesName(Pattern pattern, String species) {
@@ -234,5 +228,18 @@ public final class SpeciesLookup {
         }
 
         return species.toLowerCase();
+    }
+
+    private static SpeciesSynonymsLookup getSpeciesSynLookup() {
+        if (speciesLookup != null) {
+            return speciesLookup;
+        }
+        Bundle bundle = FrameworkUtil.getBundle(SpeciesLookup.class);
+        if (bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+            speciesLookup = bundleContext.getService(serviceReference);
+        }
+        return speciesLookup;
     }
 }

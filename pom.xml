@@ -91,7 +91,7 @@
         <module>core/quickload</module>
         <module>core/das</module>
         <module>core/das2</module>
-	<module>core/synonym-lookup</module>
+        <module>core/synonym-lookup</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -232,7 +232,7 @@
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
-	    <dependency>
+            <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>synonym-lookup</artifactId>
                 <version>${project.version}</version>
@@ -822,6 +822,13 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

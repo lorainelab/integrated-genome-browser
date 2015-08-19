@@ -37,42 +37,12 @@ public abstract class SynonymLookup implements SynonymLookupService {
     private static final boolean WILL_NOT_STRIP_RANDOM_SUFFIX = false;
 
     /**
-     * The default instance of this class, used by most code for synonym lookups.
-     */
-//    private static final SynonymLookup DEFAULT_LOOKUP = new SynonymLookup();
-
-    /**
-     * The default instance of this class for chromosome, used by most code for synonym lookups.
-     */
-//    private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
-
-    /**
      * HashMultimap to map every synonym to all equivalent synonyms.
      */
     protected final SetMultimap<String, String> thesaurus
             = Multimaps.synchronizedSetMultimap(LinkedHashMultimap.<String, String>create());
 
     protected final Set<String> preferredNames = Sets.<String>newConcurrentHashSet();
-
-//    /**
-//     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
-//     * code.
-//     *
-//     * @return the default instance of SynonymLookup.
-//     */
-//    public static SynonymLookup getDefaultLookup() {
-//        return DEFAULT_LOOKUP;
-//    }
-//
-//    /**
-//     * Returns the default instance of SynonymLookup. This is used to share a common SynonymLookup across the entire
-//     * code.
-//     *
-//     * @return the default instance of chromosome SynonymLookup.
-//     */
-//    public static SynonymLookup getChromosomeLookup() {
-//        return CHROM_LOOKUP;
-//    }
 
     /**
      * Loads synonyms from the given input stream.

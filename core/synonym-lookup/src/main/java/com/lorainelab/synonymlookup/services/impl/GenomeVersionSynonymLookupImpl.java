@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class GenomeVersionSynonymLookupImpl extends SynonymLookup implements GenomeVersionSynonymLookup {
 
     private static final Logger logger = LoggerFactory.getLogger(GenomeVersionSynonymLookupImpl.class);
-    public static final String COMPONENT_NAME = "DefaultSynonymLookupImpl";
+    public static final String COMPONENT_NAME = "GenomeVersionSynonymLookupImpl";
 
     public GenomeVersionSynonymLookupImpl() {
         InputStream resourceAsStream = GenomeVersionSynonymLookupImpl.class.getClassLoader().getResourceAsStream("synonyms.txt");
@@ -31,5 +31,4 @@ public class GenomeVersionSynonymLookupImpl extends SynonymLookup implements Gen
         }
     }
 
-    
 }

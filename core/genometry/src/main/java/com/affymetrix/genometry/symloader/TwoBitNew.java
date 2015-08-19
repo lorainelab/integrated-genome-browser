@@ -76,7 +76,7 @@ public class TwoBitNew extends SymLoader {
             CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
 
             if (cacheStatus.isDataExists()) {
-                Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
                 if (fileIs.isPresent()) {
                     try {
                         raf = new SeekableBufferedStream(new SeekableFileStream(cacheStatus.getData()));

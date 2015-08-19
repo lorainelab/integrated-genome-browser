@@ -196,42 +196,78 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
     }
 
+    private void cacheSynchronously(URL url, String path) {
+        if (!getCacheEnabled()) {
+            return;
+        }
+        if (backgroundCaching.add(url.toString())) {
+            try {
+                HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
+                BigInteger requestSizeInMB = BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000"));
+                boolean doDownload = true;
+                if ((getCurrentCacheSize().add(requestSizeInMB)).compareTo(getMaxCacheSizeMB()) >= 0) {
+
+                    synchronized (RemoteFileDiskCacheService.this) {
+                        Date now = new Date();
+                        if (isPromptingUser) {
+                            return;
+                        }
+                        if (delayPrompt && (lastPrompt.getTime() < (now.getTime() - 60000))) {
+                            delayPrompt = false;
+                        } else if (delayPrompt) {
+                            return;
+                        }
+                        isPromptingUser = true;
+                    }
+                    doDownload = promptUserAboutCacheSize(requestSizeInMB);
+                    isPromptingUser = false;
+                }
+                if (doDownload) {
+                    tryDownload(url, path);
+                }
+            } finally {
+                backgroundCaching.remove(url.toString());
+            }
+        }
+    }
+
     private void cacheInBackground(URL url, String path) {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("caching remote file") {
             @Override
             protected Void runInBackground() {
-                if (!getCacheEnabled()) {
-                    return null;
-                }
-                if (backgroundCaching.add(url.toString())) {
-                    try {
-                        HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
-                        BigInteger requestSizeInMB = BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000"));
-                        boolean doDownload = true;
-                        if ((getCurrentCacheSize().add(requestSizeInMB)).compareTo(getMaxCacheSizeMB()) >= 0) {
-
-                            synchronized (RemoteFileDiskCacheService.this) {
-                                Date now = new Date();
-                                if (isPromptingUser) {
-                                    return null;
-                                }
-                                if (delayPrompt && (lastPrompt.getTime() < (now.getTime() - 60000))) {
-                                    delayPrompt = false;
-                                } else if (delayPrompt) {
-                                    return null;
-                                }
-                                isPromptingUser = true;
-                            }
-                            doDownload = promptUserAboutCacheSize(requestSizeInMB);
-                            isPromptingUser = false;
-                        }
-                        if (doDownload) {
-                            tryDownload(url, path);
-                        }
-                    } finally {
-                        backgroundCaching.remove(url.toString());
-                    }
-                }
+//                if (!getCacheEnabled()) {
+//                    return null;
+//                }
+//                if (backgroundCaching.add(url.toString())) {
+//                    try {
+//                        HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
+//                        BigInteger requestSizeInMB = BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000"));
+//                        boolean doDownload = true;
+//                        if ((getCurrentCacheSize().add(requestSizeInMB)).compareTo(getMaxCacheSizeMB()) >= 0) {
+//
+//                            synchronized (RemoteFileDiskCacheService.this) {
+//                                Date now = new Date();
+//                                if (isPromptingUser) {
+//                                    return null;
+//                                }
+//                                if (delayPrompt && (lastPrompt.getTime() < (now.getTime() - 60000))) {
+//                                    delayPrompt = false;
+//                                } else if (delayPrompt) {
+//                                    return null;
+//                                }
+//                                isPromptingUser = true;
+//                            }
+//                            doDownload = promptUserAboutCacheSize(requestSizeInMB);
+//                            isPromptingUser = false;
+//                        }
+//                        if (doDownload) {
+//                            tryDownload(url, path);
+//                        }
+//                    } finally {
+//                        backgroundCaching.remove(url.toString());
+//                    }
+//                }
+                cacheSynchronously(url, path);
                 return null;
             }
 
@@ -244,9 +280,9 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     @Override
     public void promptToCacheInBackground(URL url, boolean defaultIsYes) {
-        
+
         boolean isCacheSequenceEnabled = cachePrefsNode.getBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, PreferenceUtils.default_confirm_before_cache_sequence_in_background);
-        if (getCacheEnabled() && isCacheSequenceEnabled ) {
+        if (getCacheEnabled() && isCacheSequenceEnabled) {
             JPanel parentPanel = new JPanel(new MigLayout());
             parentPanel.add(new JLabel("Would you like to download a local copy of this genome sequence for faster access in the future?"));
             final JComponent[] inputs = new JComponent[]{
@@ -255,10 +291,10 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             Object[] options = {"Don't ask me again",
                 "Not right now",
                 "Yes"};
-            
+
             Object defaultOption = options[2];
-            if(!defaultIsYes) {
-               defaultOption = options[1]; 
+            if (!defaultIsYes) {
+                defaultOption = options[1];
             }
 
             int optionChosen = JOptionPane.showOptionDialog(null, inputs, "Sequence Cache", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -340,7 +376,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     @Override
-    public Optional<InputStream> getFilebyUrl(URL url) {
+    public Optional<InputStream> getFilebyUrl(URL url, boolean asynchronously) {
 
         if (!getCacheEnabled()) {
             return Optional.empty();
@@ -366,7 +402,11 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 return Optional.empty();
             }
         }
-        cacheInBackground(url, path);
+        if(asynchronously) {
+            cacheInBackground(url, path);
+        } else {
+            cacheSynchronously(url, path);
+        }
         return Optional.empty();
     }
 
@@ -568,7 +608,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             cacheStatus.setDataExists(true);
             return cacheStatus;
         }
-        
+
         cacheStatus.setDataExists(false);
         return cacheStatus;
     }
@@ -731,9 +771,9 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     public CacheStatus getCacheStatus(URL url) {
         String path = getCacheFolderPath(generateKeyFromUrl(url));
         CacheStatus cacheStatus = getCacheStatus(path);
-        if(!cacheStatus.isDataExists()) {
+        if (!cacheStatus.isDataExists()) {
             HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
-            if(httpHeader.getSize() > 0) {
+            if (httpHeader.getSize() > 0) {
                 cacheStatus.setSize(BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000")));
             }
         }

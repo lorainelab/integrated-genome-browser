@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public interface RemoteFileCacheService {
 
-    public Optional<InputStream> getFilebyUrl(URL url);
+    public Optional<InputStream> getFilebyUrl(URL url, boolean asynchronously);
 
     public void clearAllCaches();
 

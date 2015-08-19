@@ -254,7 +254,7 @@ public class SymLoaderTabix extends SymLoader {
             } else if (path.startsWith(HTTP_PROTOCOL) || path.startsWith(HTTPS_PROTOCOL)) {
                 final URL url = new URL(path + ".tbi");
                 if (remoteFileCacheService != null && remoteFileCacheService.cacheExists(url)) {
-                    Optional<InputStream> inputStream = remoteFileCacheService.getFilebyUrl(url);
+                    Optional<InputStream> inputStream = remoteFileCacheService.getFilebyUrl(url, true);
                     if (inputStream.isPresent()) {
                         is = new BlockCompressedInputStream(inputStream.get());
                     } else {
@@ -308,11 +308,11 @@ public class SymLoaderTabix extends SymLoader {
                 uriString = uri.getPath();
             } else {
                 URL fileUrl = uri.toURL();
-                if( (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed")) 
+                if( BedUtils.isRemoteBedFile(fileUrl)
                         && remoteFileCacheService.cacheExists(fileUrl)) {
-                    Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                    Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
                     URL indexUrl = new URL(fileUrl.toString() + ".tbi");
-                    Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl);
+                    Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl, true);
                     try {
                         if (fileIs.isPresent() && indexFileIs.isPresent()) {
                             CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);

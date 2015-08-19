@@ -9,6 +9,7 @@ import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -201,5 +202,9 @@ public class BedUtils {
 
     public static boolean checkRange(int start, int end, int min, int max) {
         return !(end < min || start > max);
+    }
+    
+    public static boolean isRemoteBedFile(URL fileUrl) {
+        return fileUrl.getProtocol().startsWith("http") && (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed"));
     }
 }

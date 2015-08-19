@@ -108,15 +108,11 @@ public abstract class SymLoader {
         dependencyTracker.open();
     }
 
-    private boolean isRemoteBedFile(URL fileUrl) {
-        return fileUrl.getProtocol().startsWith("http") && (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed"));
-    }
-
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
         BufferedInputStream bis = null;
 
         if (remoteFileCacheService.cacheExists(fileUrl)) {
-            Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+            Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
             try {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
                 if (cacheStatus.isDataExists()) {
@@ -144,7 +140,7 @@ public abstract class SymLoader {
         try {
 
             URL fileUrl = uri.toURL();
-            if (remoteFileCacheService != null && isRemoteBedFile(fileUrl)) {
+            if (remoteFileCacheService != null && BedUtils.isRemoteBedFile(fileUrl)) {
                 Optional<BufferedInputStream> cachedStream = checkRemoteFileCache(fileUrl);
                 if (cachedStream.isPresent()) {
                     bis = cachedStream.get();

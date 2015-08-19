@@ -16,6 +16,7 @@ import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
+import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symloader.ResidueTrackSymLoader;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInst;
@@ -26,7 +27,6 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -48,14 +48,11 @@ import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -309,34 +306,6 @@ public final class GeneralLoadView {
 
     private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
-    private static boolean isRemoteBedFile(URL fileUrl) {
-        return fileUrl.getProtocol().startsWith("http") && (fileUrl.getPath().endsWith("bed.gz") || fileUrl.getPath().endsWith("bed"));
-    }
-
-    private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
-        BufferedInputStream bis = null;
-        Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
-
-        if (fileIs.isPresent()) {
-            try {
-                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-                if (cacheStatus.isDataExists()) {
-                    StringBuffer stripped_name = new StringBuffer();
-                    InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), stripped_name);
-                    if (is instanceof BufferedInputStream) {
-                        bis = (BufferedInputStream) is;
-                    } else {
-                        bis = new BufferedInputStream(is);
-                    }
-                    return Optional.ofNullable(bis);
-                }
-            } finally {
-                fileIs.get().close();
-            }
-        }
-        return Optional.empty();
-    }
-
     public synchronized void loadGenomeLoadModeDataSets() {
         List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
@@ -359,10 +328,13 @@ public final class GeneralLoadView {
                 .filter(isLoaded.negate())
                 .forEach(dataSet -> {
                     Optional<InputStream> fileIs = Optional.empty();
+                    Optional<InputStream> indexFileIs = Optional.empty();
                     try {
                         URL fileUrl = dataSet.getURI().toURL();
-                        if (remoteFileCacheService != null && isRemoteBedFile(fileUrl)) {
-                            fileIs = remoteFileCacheService.getFilebyUrl(fileUrl);
+                        if (remoteFileCacheService != null && BedUtils.isRemoteBedFile(fileUrl)) {
+                            fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
+                            //cache index
+                            indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(fileUrl.toString() + ".tbi"), false);
                         }
                     } catch (Exception ex) {
                         logger.error(ex.getMessage(), ex);
@@ -370,6 +342,13 @@ public final class GeneralLoadView {
                         if (fileIs.isPresent()) {
                             try {
                                 fileIs.get().close();
+                            } catch (IOException ex) {
+                                logger.error(ex.getMessage(), ex);
+                            }
+                        }
+                        if(indexFileIs.isPresent()) {
+                             try {
+                                indexFileIs.get().close();
                             } catch (IOException ex) {
                                 logger.error(ex.getMessage(), ex);
                             }

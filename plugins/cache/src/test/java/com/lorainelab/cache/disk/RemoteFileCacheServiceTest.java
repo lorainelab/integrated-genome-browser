@@ -54,7 +54,7 @@ public class RemoteFileCacheServiceTest {
         try {
             URL url = new URL("http://bioviz.org/quickload/A_thaliana_Jan_2004/chr2.bnib");
             remoteFileService.clearAllCaches();
-            remoteFileService.getFilebyUrl(url);
+            remoteFileService.getFilebyUrl(url, false);
             CacheStatus cacheStatus = remoteFileService.getCacheStatus(url);
             Assert.assertTrue(cacheStatus.isDataExists());
         } catch (MalformedURLException ex) {
@@ -68,7 +68,7 @@ public class RemoteFileCacheServiceTest {
     public void testEnforceEvictionPolicies() throws MalformedURLException {
 
         remoteFileService.clearAllCaches();
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"));
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"), false);
         BigInteger size = remoteFileService.getCacheSizeInMB();
         Assert.assertTrue(size.compareTo(BigInteger.ZERO) >= 1);
         try {
@@ -81,9 +81,9 @@ public class RemoteFileCacheServiceTest {
         Assert.assertTrue(size.compareTo(BigInteger.ZERO) <= 0);
         
         remoteFileService.clearAllCaches();
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"));
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_lyrata_Apr_2011/A_lyrata_Apr_2011.2bit"));
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_thaliana_Jan_2004/chr2.bnib"));
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"), false);
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_lyrata_Apr_2011/A_lyrata_Apr_2011.2bit"), false);
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_thaliana_Jan_2004/chr2.bnib"), false);
         size = remoteFileService.getCacheSizeInMB().divide(BigInteger.valueOf(1000000));
         Assert.assertFalse(size.compareTo(RemoteFileDiskCacheService.DEFAULT_MAX_CACHE_SIZE_MB) <= 0);
         remoteFileService.enforceEvictionPolicies();
@@ -94,9 +94,9 @@ public class RemoteFileCacheServiceTest {
     @Ignore
     @Test
     public void testGetFilebyUrl() throws MalformedURLException {
-        Optional<InputStream> is = remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"));
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_lyrata_Apr_2011/A_lyrata_Apr_2011.2bit"));
-        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_thaliana_Jan_2004/chr2.bnib"));
+        Optional<InputStream> is = remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit"), false);
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_lyrata_Apr_2011/A_lyrata_Apr_2011.2bit"), false);
+        remoteFileService.getFilebyUrl(new URL("http://igbquickload.org/A_thaliana_Jan_2004/chr2.bnib"), false);
         Assert.assertTrue(is.isPresent());
     }
 
@@ -104,7 +104,7 @@ public class RemoteFileCacheServiceTest {
     @Test
     public void testFileSizeLimit() throws MalformedURLException {
         remoteFileService.clearAllCaches();
-        Optional<InputStream> is = remoteFileService.getFilebyUrl(new URL("http://localhost/index.html"));
+        Optional<InputStream> is = remoteFileService.getFilebyUrl(new URL("http://localhost/index.html"), false);
         Assert.assertTrue(is.isPresent());
         BigInteger size = remoteFileService.getCacheSizeInMB();
         Assert.assertTrue(size.compareTo(BigInteger.ZERO) == 0);
@@ -121,7 +121,7 @@ public class RemoteFileCacheServiceTest {
     @Test
     public void testClearCacheByUrl() throws MalformedURLException {
         URL url = new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit");
-        Optional<InputStream> is = remoteFileService.getFilebyUrl(url);
+        Optional<InputStream> is = remoteFileService.getFilebyUrl(url, false);
         Assert.assertTrue(remoteFileService.cacheExists(url));
         remoteFileService.clearCacheByUrl(url);
         Assert.assertFalse(remoteFileService.cacheExists(url));
@@ -131,7 +131,7 @@ public class RemoteFileCacheServiceTest {
     @Test
     public void testGetCacheSize() throws MalformedURLException {
         URL url = new URL("http://igbquickload.org/A_gambiae_Feb_2003/A_gambiae_Feb_2003.2bit");
-        Optional<InputStream> is = remoteFileService.getFilebyUrl(url);
+        Optional<InputStream> is = remoteFileService.getFilebyUrl(url, false);
         BigInteger size = remoteFileService.getCacheSizeInMB();
         Assert.assertTrue(size.compareTo(BigInteger.ZERO) > 0);
         LOG.info("size: " + size.toString());

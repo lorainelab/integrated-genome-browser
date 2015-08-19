@@ -9,8 +9,8 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -732,8 +732,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         String errorMessage = null;
 
         for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
-            if (sym instanceof UcscBedDetailSym) {
-                UcscBedDetailSym bedDetailSym = (UcscBedDetailSym) sym;
+            if (sym instanceof BasicSeqSymmetry) {
+                BasicSeqSymmetry bedDetailSym = (BasicSeqSymmetry) sym;
                 if (bedDetailSym.isForward()) {
                     anyPositiveStrand = true;
                 } else {

@@ -8,6 +8,7 @@ package com.affymetrix.genometry;
 import aQute.bnd.annotation.component.Reference;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,13 @@ public class GenometryServiceDependencyManager {
         logger.debug("DefaultSynonymLookup instantiated");
     }
     
+    @Reference
     public void trackChromosomeSynonymLookupService(ChromosomeSynonymLookup chrSynLookup) {
+        logger.debug("ChromosomeSynonymLookup instantiated");
+    }
+    
+    @Reference
+    public void trackSpeciesSynonymLookupService(SpeciesSynonymsLookup speciesSynLookup) {
         logger.debug("ChromosomeSynonymLookup instantiated");
     }
 }

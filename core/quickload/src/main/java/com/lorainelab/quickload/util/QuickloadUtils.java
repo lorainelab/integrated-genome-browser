@@ -1,6 +1,5 @@
 package com.lorainelab.quickload.util;
 
-import com.affymetrix.genometry.data.SpeciesInfo;
 import com.affymetrix.genometry.util.ModalUtils;
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
@@ -10,6 +9,7 @@ import com.lorainelab.quickload.QuickloadConstants;
 import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
 import com.lorainelab.quickload.model.annots.QuickloadFile;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

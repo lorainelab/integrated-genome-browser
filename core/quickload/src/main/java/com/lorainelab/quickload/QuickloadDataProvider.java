@@ -2,7 +2,6 @@ package com.lorainelab.quickload;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.data.BaseDataProvider;
-import com.affymetrix.genometry.data.SpeciesInfo;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
 import com.affymetrix.genometry.general.DataContainer;
@@ -29,6 +28,7 @@ import static com.lorainelab.quickload.util.QuickloadUtils.loadSpeciesInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.loadSupportedGenomeVersionInfo;
 import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesInfo;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

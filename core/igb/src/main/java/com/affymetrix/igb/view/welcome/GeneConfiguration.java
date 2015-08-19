@@ -7,7 +7,7 @@ package com.affymetrix.igb.view.welcome;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.util.SpeciesLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -27,20 +27,21 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Loads pictures into the Cover Flow Welcome screen.
  *
- * This configuration class can control multiple setting on the cover flow
- * component
- * Refer to the parent class for more information.
+ * This configuration class can control multiple setting on the cover flow component Refer to the parent class for more
+ * information.
  *
- * The class reads a resource file at $IGB_HOME/common/display_species.txt
- * to configure the data sets displayed on the welcome screen.<br>
+ * The class reads a resource file at $IGB_HOME/common/display_species.txt to configure the data sets displayed on the
+ * welcome screen.<br>
  * The file should be of the form<br>
- * [image file][tab][Data set to load upon click][tab][Name to display on
- * tag][tab][color]
- * An example is next:<br>
+ * [image file][tab][Data set to load upon click][tab][Name to display on tag][tab][color] An example is next:<br>
  * a_lyrata.png	A_lyrata_Apr_2011	A. lyrata #000000
  *
  * @author jfvillal
@@ -128,7 +129,15 @@ public class GeneConfiguration extends Configuration {
                     g.setColor(new Color(0xd4d4d4));
                     g.setFont(f);
                     version = version.split(".png")[0];
-                    String species = SpeciesLookup.getSpeciesName(version);
+
+                    Bundle bundle = FrameworkUtil.getBundle(GeneConfiguration.class);
+                    SpeciesSynonymsLookup speciesSynLookup = null;
+                    if (bundle != null) {
+                        BundleContext bundleContext = bundle.getBundleContext();
+                        ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+                        speciesSynLookup = bundleContext.getService(serviceReference);
+                    }
+                    String species = speciesSynLookup.getSpeciesName(version);
                     String speciesName = species;
                     //If name is very long shorten the name by abbreviating the first name.
                     if (species.length() > 8) {
@@ -174,8 +183,7 @@ public class GeneConfiguration extends Configuration {
     }
 
     /**
-     * from
-     * http://stackoverflow.com/questions/1324106/jai-change-jpeg-resolution
+     * from http://stackoverflow.com/questions/1324106/jai-change-jpeg-resolution
      */
     BufferedImage scaleImage(BufferedImage sourceImage, int scaledWidth) {
         float scale = scaledWidth / (float) sourceImage.getWidth();

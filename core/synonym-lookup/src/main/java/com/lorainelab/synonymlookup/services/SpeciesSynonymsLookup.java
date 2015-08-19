@@ -11,4 +11,10 @@ package com.lorainelab.synonymlookup.services;
  */
 public interface SpeciesSynonymsLookup extends SynonymLookupService {
     
+    public void load(SpeciesInfo speciesInfo);
+    
+    public String getCommonSpeciesName(String species);
+    
+    public String getSpeciesName(String version);
+    
 }

@@ -7,11 +7,18 @@ package com.lorainelab.synonymlookup.services.impl;
 import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.lorainelab.synonymlookup.services.SpeciesInfo;
 import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,7 +44,25 @@ import org.apache.commons.lang3.StringUtils;
 @Component(name = SpeciesSynonymsLookupImpl.COMPONENT_NAME, immediate = true, provide = SpeciesSynonymsLookup.class)
 public class SpeciesSynonymsLookupImpl extends SynonymLookup implements SpeciesSynonymsLookup {
 
+    private static final Logger logger = LoggerFactory.getLogger(SpeciesSynonymsLookupImpl.class);
+
     public static final String COMPONENT_NAME = "SpeciesSynonymsLookup";
+    
+    private static final boolean DEFAULT_CS = true;
+    private static final Pattern STANDARD_REGEX = Pattern.compile("^([a-zA-Z]+_[a-zA-Z]+).*$");
+    private static final Pattern UCSC_REGEX = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");
+    private static final Pattern NON_STANDARD_REGEX = Pattern.compile("^([a-zA-Z]+_[a-zA-Z]+_[a-zA-Z]+).*$");
+
+    private static final String SPECIES_SYNONYM_FILE = "species.txt";
+
+    public SpeciesSynonymsLookupImpl() {
+        InputStream resourceAsStream = SpeciesSynonymsLookupImpl.class.getClassLoader().getResourceAsStream(SPECIES_SYNONYM_FILE);
+        try {
+            loadSynonyms(resourceAsStream, true);
+        } catch (IOException ex) {
+            logger.debug(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * addSynonyms while making sure only one synonym exists for each species.
@@ -86,4 +111,92 @@ public class SpeciesSynonymsLookupImpl extends SynonymLookup implements SpeciesS
         }
     }
 
+    @Override
+    public String getCommonSpeciesName(String species) {
+        return findSecondSynonym(species);
+    }
+
+    @Override
+    public String getSpeciesName(String version) {
+        return getSpeciesName(version, DEFAULT_CS);
+    }
+
+    @Override
+    public void load(SpeciesInfo speciesInfo) {
+        getPreferredNames().add(speciesInfo.getName());
+        Set<String> row = Sets.newLinkedHashSet();
+        row.add(speciesInfo.getName());
+        row.add(speciesInfo.getCommonName());
+        row.add(speciesInfo.getGenomeVersionNamePrefix());
+        addSynonyms(row);
+    }
+
+    private String getSpeciesName(String version, boolean cs) {
+        String species;
+
+        /* check to see if the synonym exists in the lookup */
+        species = getPreferredName(version, cs);
+
+        /* attempt to decode standard format (G_species_*) */
+        if (species.equals(version)) {
+            species = getSpeciesName(version, STANDARD_REGEX, cs);
+        }
+
+//		/* attempt to decode standard format (G_species_XXX_*) */
+        if (species == null) {
+            species = getSpeciesName(version, NON_STANDARD_REGEX, cs);
+        }
+
+        /* attempt to decode UCSC format (gs# or genSpe#) */
+        if (species == null) {
+            species = getSpeciesName(version, UCSC_REGEX, cs);
+        }
+
+        /* I believe that this will always return version, but... */
+        if (species == null) {
+            species = getPreferredName(version, cs);
+        }
+
+        Pattern pattern = Pattern.compile("(\\S+)(?>_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\\d{4})");
+        Matcher m = pattern.matcher(species);
+        if (m.find()) {
+            species = m.group(1);
+        } else {
+            pattern = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");
+            m = pattern.matcher(species);
+            if (m.find()) {
+                species = species.replaceAll("[\\d]+", "");
+            }
+        }
+
+        pattern = Pattern.compile("([a-zA-Z]+)((_[a-zA-Z]+).*)");
+        m = pattern.matcher(species);
+        if (m.find()) {
+            species = m.group(1).toUpperCase() + m.group(2).toLowerCase();
+        }
+        //end of adding
+        species = getPreferredName(species, false);
+        return species;
+    }
+    
+    private String getSpeciesName(String version, Pattern regex, boolean cs) {
+        Matcher matcher = regex.matcher(version);
+        String matched = null;
+        if (matcher.matches()) {
+            matched = matcher.group(1);
+        }
+
+        if (matched == null || matched.isEmpty()) {
+            return null;
+        }
+
+        String preferred = getPreferredName(matched, cs);
+
+        if (matched.equals(preferred)) {
+            return null;
+        } else {
+            return preferred;
+        }
+    }
+    
 }

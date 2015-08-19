@@ -10,6 +10,7 @@ import com.lorainelab.igb.preferences.model.IgbPreferences;
 import com.lorainelab.igb.preferences.model.JsonWrapper;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
 import com.lorainelab.igb.preferences.weblink.model.WebLinkList;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -36,7 +37,8 @@ public class WebLinkUtils implements WebLinkExporter {
     static final WebLinkList SERVER_WEBLINK_LIST = new WebLinkList("default", false);
     //TODO this should not be static, but must be during this refactoring to avoid larger changes
     private static IgbPreferencesService igbPreferencesService;
-
+    private SpeciesSynonymsLookup speciesSynLookup;
+    
     public WebLinkUtils() {
 
     }
@@ -54,6 +56,8 @@ public class WebLinkUtils implements WebLinkExporter {
 
     @Activate
     public void activate() {
+        LOCAL_WEBLINK_LIST.setSpeciesSynLookup(speciesSynLookup);
+        SERVER_WEBLINK_LIST.setSpeciesSynLookup(speciesSynLookup);
         initializeDefaultWebLinks();
         File f = getLinksFileJson();
         if (f == null || !f.exists()) {
@@ -168,4 +172,10 @@ public class WebLinkUtils implements WebLinkExporter {
     public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
         WebLinkUtils.igbPreferencesService = igbPreferencesService;
     }
+
+    @Reference
+    public void setSpeciesSynLookup(SpeciesSynonymsLookup speciesSynLookup) {
+        this.speciesSynLookup = speciesSynLookup;
+    }
+    
 }

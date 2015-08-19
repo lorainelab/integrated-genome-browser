@@ -4,6 +4,7 @@ import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import com.google.common.collect.SetMultimap;
+import com.lorainelab.synonymlookup.services.SpeciesInfo;
 import java.util.Optional;
 import java.util.Set;
 

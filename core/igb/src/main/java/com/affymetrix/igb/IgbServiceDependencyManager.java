@@ -6,6 +6,9 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +58,21 @@ public class IgbServiceDependencyManager {
     public void trackWindowService(IWindowService windowService) {
         logger.info("Window Service now available.");
         this.windowService = windowService;
+    }
+
+    @Reference
+    public void trackSpeciesSynonymLookupService(SpeciesSynonymsLookup speciesSynLookup) {
+        logger.info("SpeciesSynonymLookupService now available.");
+    }
+
+    @Reference
+    public void trackChromosomeSynonymLookupService(ChromosomeSynonymLookup chromosomeSynLookup) {
+        logger.info("ChromosomeSynonymLookupService now available.");
+    }
+
+    @Reference
+    public void trackGenomeVersionSynonymLookupService(GenomeVersionSynonymLookup genomeVersionSynLookup) {
+        logger.info("GenomeVersionSynonymLookupService now available.");
     }
 
     public IWindowService getWindowService() {

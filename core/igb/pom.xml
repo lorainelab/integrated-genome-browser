@@ -137,6 +137,11 @@
             <artifactId>http-request</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>cache-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

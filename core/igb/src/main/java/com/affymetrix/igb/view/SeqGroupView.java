@@ -434,7 +434,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         // refreshTreeView should only be called if feature table
         // needs to be cleared.
         GeneralLoadView.getLoadView().refreshDataManagementView();
-        GeneralLoadView.loadGenomeLoadModeDataSets();
+        GeneralLoadView.getLoadView().loadGenomeLoadModeDataSets();
     }
 
     @Override

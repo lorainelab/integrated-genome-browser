@@ -243,13 +243,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     }
 
     @Override
-    public void promptToCacheInBackground(URL url) {
-        CacheStatus cacheStatus = getCacheStatus(url);
-        boolean exceedsMaxSize = false;
-        if(cacheStatus.getSize() != null 
-                && cacheStatus.getSize().compareTo(new BigInteger("250")) >= 0) {
-            exceedsMaxSize = true;
-        }
+    public void promptToCacheInBackground(URL url, boolean defaultIsYes) {
         
         boolean isCacheSequenceEnabled = cachePrefsNode.getBoolean(PreferenceUtils.CONFIRM_BEFORE_CACHE_SEQUENCE_IN_BACKGROUND, PreferenceUtils.default_confirm_before_cache_sequence_in_background);
         if (getCacheEnabled() && isCacheSequenceEnabled ) {
@@ -263,7 +257,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 "Yes"};
             
             Object defaultOption = options[2];
-            if(exceedsMaxSize) {
+            if(!defaultIsYes) {
                defaultOption = options[1]; 
             }
 
@@ -285,10 +279,6 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 default:
                     return;
             }
-//            if (confirm) {
-//                String path = getCacheFolderPath(generateKeyFromUrl(url));
-//                cacheInBackground(url, path);
-//            }
         }
     }
 

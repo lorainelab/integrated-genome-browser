@@ -705,6 +705,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         GlyphI aGlyph = new LineContainerProtAnnotGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
+        if (aSpan.getLength() == 0) {
+            return;
+        }
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);

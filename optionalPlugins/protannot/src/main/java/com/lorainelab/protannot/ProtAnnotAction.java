@@ -737,8 +737,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
         for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
             if (sym instanceof BasicSeqSymmetry) {
-                BasicSeqSymmetry basicSym = (BasicSeqSymmetry) sym;
-                if (basicSym.isForward()) {
+                BasicSeqSymmetry bedDetailSym = (BasicSeqSymmetry) sym;
+                if (bedDetailSym.isForward()) {
                     anyPositiveStrand = true;
                 } else {
                     anyNegativeStrand = true;

@@ -78,7 +78,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
 
     public CacheConfigurationPanel() {
         super(COMPONENT_NAME);
-        setLayout(new MigLayout(new LC().fill().insetsAll("0").debug(100)));
+        setLayout(new MigLayout(new LC().fill().insetsAll("0")));
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
 
     }
@@ -123,32 +123,32 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private void initilizeLayout() {
-        add(cacheDataPanel, "ins 0, grow, wrap");
-        add(cachePanel, "ins 0, grow, wrap");
+        add(cacheDataPanel, "grow, wrap");
+        add(cachePanel, "grow, wrap");
     }
 
     private JPanel initilizeCacheSettingsPanel() {
-        JPanel panel = new JPanel(new MigLayout(new LC().insetsAll("0").debug(100)));
+        JPanel panel = new JPanel(new MigLayout(new LC().insetsAll("0")));
         panel.setBorder(BorderFactory.createTitledBorder("Cache Settings"));
         initCacheSettingsApply();
         initMaxCacheSize();
         initMinFileSize();
         initCacheEnable();
 
-        JPanel cacheEnablePanel = new JPanel(new MigLayout(new LC().debug(100)));
+        JPanel cacheEnablePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         cacheEnablePanel.add(cacheEnable);
 
-        JPanel maxCacheSizePanel = new JPanel(new MigLayout(new LC().debug(100)));
+        JPanel maxCacheSizePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         maxCacheSizePanel.add(maxCacheSizeLabel, "width :125:");
         maxCacheSizePanel.add(maxCacheSize, "width :75:");
         maxCacheSizePanel.add(maxCacheSizeUnits, "width :100:");
 
-        JPanel minFileSizePanel = new JPanel(new MigLayout(new LC().debug(100)));
+        JPanel minFileSizePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         minFileSizePanel.add(minFileSizeLabel, "width :125:");
         minFileSizePanel.add(minFileSize, "width :75:");
         minFileSizePanel.add(minFileSizeUnits, "width :100:");
 
-        JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout(new LC().debug(100)));
+        JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
 
         panel.add(cacheEnablePanel, "wrap");
@@ -159,14 +159,14 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JPanel initilizeCacheDataPanel() {
-        JPanel panel = new JPanel(new MigLayout("ins 0, debug", "[grow]", "[grow][grow]"));
+        JPanel panel = new JPanel(new MigLayout("ins 0", "[grow]", "[grow][grow]"));
         panel.setBorder(BorderFactory.createTitledBorder("Data Sources"));
         JScrollPane sourcesScrollPane = new JScrollPane(cacheDataTable);
 
         initRemoveBtn();
         initClearAllBtn();
         initRefreshBtn();
-        JPanel btnPanel = new JPanel(new MigLayout(new LC().insetsAll("0").debug(100)));
+        JPanel btnPanel = new JPanel(new MigLayout(new LC().insetsAll("0")));
         btnPanel.add(clearAllBtn, "right");
         btnPanel.add(removeBtn, "right");
         btnPanel.add(refreshBtn, "right");

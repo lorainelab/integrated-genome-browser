@@ -15,12 +15,12 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,9 +40,9 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final long serialVersionUID = 1L;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
-    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
 
     public UCSCViewAction() {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
@@ -87,7 +87,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
      */
     private String getUcscGenomeVersion(String version) {
         initUCSCSources();
-        String ucsc_version = LOOKUP.findMatchingSynonym(UCSCSources, version);
+        String ucsc_version = genomeVersionSynonymLookup.findMatchingSynonym(UCSCSources, version);
         return UCSCSources.contains(ucsc_version) ? ucsc_version : "";
     }
 
@@ -153,5 +153,10 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     @Override
     public int getMenuItemWeight() {
         return VIEW_MENU_POS;
+    }
+
+    @Reference
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
 }

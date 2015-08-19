@@ -126,7 +126,7 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
         Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         try {
-            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getSupportedGenomeVersionNames());
+            Optional<String> matchingGenomeVersionName = Das2ServerUtils.getMatchingGenomeVersionName(genomeVersion.getName(), getSupportedGenomeVersionNames(), genomeVersion.getGenomeVersionSynonymLookup());
             if (matchingGenomeVersionName.isPresent()) {
                 String genomeVersionName = matchingGenomeVersionName.get();
                 Optional<Version> matchingVersion = versionInfo.stream().filter(version -> version.getTitle().equals(genomeVersionName)).findFirst();

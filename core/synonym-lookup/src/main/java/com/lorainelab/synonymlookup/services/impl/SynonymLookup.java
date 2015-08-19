@@ -1,10 +1,11 @@
-package com.affymetrix.genometry.util;
+package com.lorainelab.synonymlookup.services.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.lorainelab.synonymlookup.services.SynonymLookupService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,32 +22,19 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @version $Id: SynonymLookup.java 9461 2011-11-17 21:19:39Z jfvillal $
  */
-public class SynonymLookup {
+public abstract class SynonymLookup implements SynonymLookupService {
 
     /**
-     * Default behaviour of case sensitivity for synonym lookups. If true,
-     * searches will be cases sensitive. The default is {@value}.
+     * Default behaviour of case sensitivity for synonym lookups. If true, searches will be cases sensitive. The default
+     * is {@value}.
      */
     private static final boolean IS_CASE_SENSITIVE_SEARCH = true;
 
     /**
-     * Default behaviour for stripping '_random' from synonyms. If true, the
-     * string '_random' will be removed from the end of synonyms. The default
-     * value is {@value}.
+     * Default behaviour for stripping '_random' from synonyms. If true, the string '_random' will be removed from the
+     * end of synonyms. The default value is {@value}.
      */
     private static final boolean WILL_NOT_STRIP_RANDOM_SUFFIX = false;
-
-    /**
-     * The default instance of this class, used by most code for synonym
-     * lookups.
-     */
-    private static final SynonymLookup DEFAULT_LOOKUP = new SynonymLookup();
-
-    /**
-     * The default instance of this class for chromosome, used by most code for
-     * synonym lookups.
-     */
-    private static final SynonymLookup CHROM_LOOKUP = new SynonymLookup();
 
     /**
      * HashMultimap to map every synonym to all equivalent synonyms.
@@ -57,36 +45,17 @@ public class SynonymLookup {
     protected final Set<String> preferredNames = Sets.<String>newConcurrentHashSet();
 
     /**
-     * Returns the default instance of SynonymLookup. This is used to share a
-     * common SynonymLookup across the entire code.
-     *
-     * @return the default instance of SynonymLookup.
-     */
-    public static SynonymLookup getDefaultLookup() {
-        return DEFAULT_LOOKUP;
-    }
-
-    /**
-     * Returns the default instance of SynonymLookup. This is used to share a
-     * common SynonymLookup across the entire code.
-     *
-     * @return the default instance of chromosome SynonymLookup.
-     */
-    public static SynonymLookup getChromosomeLookup() {
-        return CHROM_LOOKUP;
-    }
-
-    /**
      * Loads synonyms from the given input stream.
      *
      * @param istream the input stream to load synonyms from.
-     * @throws java.io.IOException if the input stream is null or an error
-     * occurs reading it.
+     * @throws java.io.IOException if the input stream is null or an error occurs reading it.
      */
+    @Override
     public void loadSynonyms(InputStream istream) throws IOException {
         this.loadSynonyms(istream, false);
     }
 
+    @Override
     public void loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException {
         try (Reader reader = new InputStreamReader(istream)) {
             Iterable<CSVRecord> records = CSVFormat.TDF
@@ -113,6 +82,7 @@ public class SynonymLookup {
         }
     }
 
+    @Override
     public Set<String> getPreferredNames() {
         return preferredNames;
     }
@@ -122,6 +92,7 @@ public class SynonymLookup {
      *
      * @param row
      */
+    @Override
     public void addSynonyms(Set<String> row) {
         Set<String> synonyms = getExistingSynonyms(row);
         for (String synonym : synonyms) {
@@ -148,38 +119,36 @@ public class SynonymLookup {
      *
      * @return Set of all known synonyms.
      */
+    @Override
     public Set<String> getSynonyms() {
         return thesaurus.keySet();
     }
 
     /**
-     * Return all known synonyms for the given synonym. Will return an empty
-     * list if the synonym is unknown.
+     * Return all known synonyms for the given synonym. Will return an empty list if the synonym is unknown.
      * <p />
-     * Case sensitive lookup of the synonym is done using the default behaviour.
-     * The default case sensitive behaviour is
+     * Case sensitive lookup of the synonym is done using the default behaviour. The default case sensitive behaviour is
      * {@value #IS_CASE_SENSITIVE_SEARCH}.
      *
      * @param synonym the synonym to find matching synonyms for.
-     * @return the set of matching synonyms for the given synonym or an empty
-     * set.
+     * @return the set of matching synonyms for the given synonym or an empty set.
      * @see #IS_CASE_SENSITIVE_SEARCH
      */
+    @Override
     public Set<String> getSynonyms(String synonym) {
         return getSynonyms(synonym, IS_CASE_SENSITIVE_SEARCH);
     }
 
     /**
-     * Return all known synonyms for the given synonym. Will return an empty
-     * list if the synonym is unknown.
+     * Return all known synonyms for the given synonym. Will return an empty list if the synonym is unknown.
      * <p />
      * The lookup of the synonym will be case sensitive if cs is true.
      *
      * @param synonym the synonym to find the matching synonyms for.
      * @param cs set the case-sensitive behaviour of the synonym lookup.
-     * @return the set of matching synonyms for the given synonym or an epmty
-     * set.
+     * @return the set of matching synonyms for the given synonym or an epmty set.
      */
+    @Override
     public synchronized Set<String> getSynonyms(String synonym, boolean cs) {
         if (synonym == null) {
             throw new IllegalArgumentException("str can not be null");
@@ -203,11 +172,9 @@ public class SynonymLookup {
     }
 
     /**
-     * Determine if two potential synonyms are synonymous using the default
-     * lookup rules.
+     * Determine if two potential synonyms are synonymous using the default lookup rules.
      * <p />
-     * The default behaviour of case sensitivity is
-     * {@value #IS_CASE_SENSITIVE_SEARCH}.
+     * The default behaviour of case sensitivity is {@value #IS_CASE_SENSITIVE_SEARCH}.
      * <p />
      * The default behaviour of strip random is {$value #DEFAULT_SR}.
      *
@@ -217,6 +184,7 @@ public class SynonymLookup {
      * @see #IS_CASE_SENSITIVE_SEARCH
      * @see #WILL_NOT_STRIP_RANDOM_SUFFIX
      */
+    @Override
     public boolean isSynonym(String synonym1, String synonym2) {
         return isSynonym(synonym1, synonym2, IS_CASE_SENSITIVE_SEARCH, WILL_NOT_STRIP_RANDOM_SUFFIX);
     }
@@ -224,20 +192,19 @@ public class SynonymLookup {
     /**
      * Determine if two potential synonyms are synonymous.
      * <p />
-     * The cs parameter specifies if the synonym comparison is case sensitive.
-     * True if the comparison should be case sensitive, false otherwise.
+     * The cs parameter specifies if the synonym comparison is case sensitive. True if the comparison should be case
+     * sensitive, false otherwise.
      * <p />
-     * The sr parameter specifies if the synonym comparison should strip
-     * '_random' from the synonyms if the initial comparison is false. True if
-     * random should be stripped from the potential synonyms.
+     * The sr parameter specifies if the synonym comparison should strip '_random' from the synonyms if the initial
+     * comparison is false. True if random should be stripped from the potential synonyms.
      *
      * @param synonym1 the first potential synonym.
      * @param synonym2 the second potential synonym.
      * @param cs the case sensitivity of this query.
-     * @param sr whether tailing '_random' of the synonyms should be stripped
-     * before comparison.
+     * @param sr whether tailing '_random' of the synonyms should be stripped before comparison.
      * @return true or false
      */
+    @Override
     public boolean isSynonym(String synonym1, String synonym2, boolean cs, boolean sr) {
         if (synonym1 == null || synonym2 == null) {
             throw new IllegalArgumentException("synonyms can not be null");
@@ -259,27 +226,25 @@ public class SynonymLookup {
     }
 
     /**
-     * Find the preferred name of the given synonym. Under the hood, this just
-     * returns the first synonym in the list of available synonyms for the
-     * input.
+     * Find the preferred name of the given synonym. Under the hood, this just returns the first synonym in the list of
+     * available synonyms for the input.
      * <p />
      * Will return the input synonym if no synonyms are known.
      * <p />
-     * Case sensitive lookup of the synonym is done using the default behaviour.
-     * The default case sensitive behaviour is
+     * Case sensitive lookup of the synonym is done using the default behaviour. The default case sensitive behaviour is
      * {@value #IS_CASE_SENSITIVE_SEARCH}.
      *
      * @param synonym the synonym to find the preferred name of.
      * @return the preferred name of the synonym.
      */
+    @Override
     public String getPreferredName(String synonym) {
         return getPreferredName(synonym, IS_CASE_SENSITIVE_SEARCH);
     }
 
     /**
-     * Find the preferred name of the given synonym. Under the hood, this just
-     * returns the first synonym in the list of available synonyms for the
-     * input.
+     * Find the preferred name of the given synonym. Under the hood, this just returns the first synonym in the list of
+     * available synonyms for the input.
      * <p />
      * Will return the input synonym if no synonyms are known.
      * <p />
@@ -289,6 +254,7 @@ public class SynonymLookup {
      * @param cs set the case-sensitive behaviour of the synonym lookup.
      * @return the preferred name of the synonym.
      */
+    @Override
     public String getPreferredName(String synonym, boolean cs) {
         return this.findMatchingSynonym(preferredNames, synonym, cs, false);
     }
@@ -296,22 +262,19 @@ public class SynonymLookup {
     /**
      * Finds the first synonym in a list that matches the given synonym.
      * <p />
-     * Case sensitive lookup of the synonym is done using the default behaviour.
-     * The default case sensitive behaviour is
+     * Case sensitive lookup of the synonym is done using the default behaviour. The default case sensitive behaviour is
      * {@value #IS_CASE_SENSITIVE_SEARCH}.
      * <p />
-     * Stripping '_random' from the synonym is done using the default behaviour.
-     * The default strip random behaviour is
+     * Stripping '_random' from the synonym is done using the default behaviour. The default strip random behaviour is
      * {@value #WILL_NOT_STRIP_RANDOM_SUFFIX}
      *
-     * @param choices a list of possible synonyms that might match the given
-     * synonym.
+     * @param choices a list of possible synonyms that might match the given synonym.
      * @param synonym the id you want to find a synonym for.
-     * @return either null or a String synonym, where isSynonym(synonym,
-     * synonym) is true.
+     * @return either null or a String synonym, where isSynonym(synonym, synonym) is true.
      * @see #IS_CASE_SENSITIVE_SEARCH
      * @see #WILL_NOT_STRIP_RANDOM_SUFFIX
      */
+    @Override
     public String findMatchingSynonym(Collection<String> choices, String synonym) {
         return findMatchingSynonym(choices, synonym, IS_CASE_SENSITIVE_SEARCH, WILL_NOT_STRIP_RANDOM_SUFFIX);
     }
@@ -323,14 +286,13 @@ public class SynonymLookup {
      * <p />
      * the lookup will strip '_random' from the synonyms if sr is true.
      *
-     * @param choices a list of possible synonyms that might match the given
-     * synonym.
+     * @param choices a list of possible synonyms that might match the given synonym.
      * @param synonym the id you want to find a synonym for.
      * @param cs set the case-sensitive behaviour of the synonym lookup.
      * @param sr set the strip random behaviour of the synonym lookup.
-     * @return either String synonym, where isSynonym(synonym, synonym) is true
-     * or the original synonym.
+     * @return either String synonym, where isSynonym(synonym, synonym) is true or the original synonym.
      */
+    @Override
     public String findMatchingSynonym(Collection<String> choices, String synonym, boolean cs, boolean sr) {
         for (String id : choices) {
             if (this.isSynonym(synonym, id, cs, sr)) {
@@ -346,6 +308,7 @@ public class SynonymLookup {
      * @param synonym
      * @return
      */
+    @Override
     public String findSecondSynonym(String synonym) {
         Collection<String> synonymSet = thesaurus.get(synonym);
         if (synonymSet == null) {
@@ -363,8 +326,7 @@ public class SynonymLookup {
     }
 
     /**
-     * Determine if a synonym ends with '_random'. Detection will be case
-     * sensitive if cs is true.
+     * Determine if a synonym ends with '_random'. Detection will be case sensitive if cs is true.
      *
      * @param synonym the synonym to test for ending with '_random'.
      * @param cs the case sensitivity of the comparison.
@@ -381,8 +343,8 @@ public class SynonymLookup {
     }
 
     /**
-     * Strip the string '_random' from the end of the synonym. It is up to the
-     * caller to ensure that the synonym actually ends with '_random'.
+     * Strip the string '_random' from the end of the synonym. It is up to the caller to ensure that the synonym
+     * actually ends with '_random'.
      *
      * @param synonym the synonym to strip '_random' from.
      * @return the synonym sans the '_random'.

@@ -102,7 +102,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
         GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap);
+        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getGenomeVersionSynonymLookup());
         Set<DataSet> dataSets = Sets.newLinkedHashSet();
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
@@ -134,7 +134,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
     public String getSequence(DataContainer dataContainer, SeqSpan span) {
         GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap);
+        Optional<String> contextRootkey = DasServerUtils.getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getGenomeVersionSynonymLookup());
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
             return DasServerUtils.retrieveDna(contextRoot, span);

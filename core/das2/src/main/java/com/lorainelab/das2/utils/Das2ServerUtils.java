@@ -1,11 +1,11 @@
 package com.lorainelab.das2.utils;
 
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.lorainelab.das2.model.segments.Segments;
 import com.lorainelab.das2.model.sources.Sources;
 import com.lorainelab.das2.model.types.Types;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Set;
@@ -115,11 +115,11 @@ public class Das2ServerUtils {
         return source;
     }
 
-    public static Optional<String> getMatchingGenomeVersionName(final String genomeVersionName, Set<String> availableGenomeVersionNames) {
+    public static Optional<String> getMatchingGenomeVersionName(final String genomeVersionName, Set<String> availableGenomeVersionNames, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         if (availableGenomeVersionNames.contains(genomeVersionName)) {
             return Optional.of(genomeVersionName);
         } else {
-            Set<String> genomeVersionSynonyms = SynonymLookup.getDefaultLookup().getSynonyms(genomeVersionName);
+            Set<String> genomeVersionSynonyms = genomeVersionSynonymLookup.getSynonyms(genomeVersionName);
             Optional<String> matchingSynonym = genomeVersionSynonyms.stream().filter(syn -> availableGenomeVersionNames.contains(syn)).findFirst();
             if (matchingSynonym.isPresent()) {
                 return Optional.of(matchingSynonym.get());

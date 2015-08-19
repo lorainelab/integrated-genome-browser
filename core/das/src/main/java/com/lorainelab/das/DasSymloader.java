@@ -4,12 +4,11 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.lorainelab.das.parser.DASFeatureParser;
-import com.lorainelab.das.parser.DASSymmetry;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.lorainelab.das.parser.DASFeatureParser;
+import com.lorainelab.das.parser.DASSymmetry;
 import com.lorainelab.das.utils.DasServerUtils;
 import static com.lorainelab.das.utils.DasServerUtils.toExternalForm;
 import java.io.InputStream;
@@ -85,7 +84,7 @@ public class DasSymloader extends SymLoader {
         if (chromosomes == null) {
             chromosomes = DasServerUtils.retrieveAssemblyInfoByContextRoot(contextRoot).keySet();
         }
-        return SynonymLookup.getDefaultLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
+        return genomeVersion.getGenomeVersionSynonymLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
     }
 
 }

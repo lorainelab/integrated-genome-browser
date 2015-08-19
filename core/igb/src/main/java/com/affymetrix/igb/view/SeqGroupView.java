@@ -16,7 +16,6 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.IGB;
@@ -33,6 +32,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -61,6 +61,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -598,8 +602,17 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
             speciesCB.removeAllItems();
             speciesCB.addItem(SELECT_SPECIES);
+            
+            Bundle bundle = FrameworkUtil.getBundle(SeqGroupView.class);
+            SpeciesSynonymsLookup speciesSynLookup = null;
+            if(bundle != null) {
+                BundleContext bundleContext = bundle.getBundleContext();
+                ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+                speciesSynLookup = bundleContext.getService(serviceReference);
+            }
+            
             for (String speciesName : speciesList) {
-                speciesCBRenderer.setToolTipEntry(speciesName, SpeciesLookup.getCommonSpeciesName(speciesName));
+                speciesCBRenderer.setToolTipEntry(speciesName, speciesSynLookup.getCommonSpeciesName(speciesName));
                 speciesCB.addItem(speciesName);
             }
             if (oldSpecies == null) {
@@ -639,8 +652,12 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
      */
     private void refreshVersionCB(final String speciesName) {
         final List<String> versionNames = getAllVersions(speciesName);
-        for (String versionName : versionNames) {
-            versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName));
+        if (curGroup != null) {
+            for (String versionName : versionNames) {
+                versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, curGroup.getGenomeVersionSynonymLookup()));
+            }
+        } else {
+            logger.debug("No genome version found");
         }
 
         // Sort the versions (by date)

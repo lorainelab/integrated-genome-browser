@@ -7,6 +7,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.github.kevinsawicki.http.HttpRequest;
 import static com.google.common.io.Closeables.close;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -53,6 +54,10 @@ import net.sf.samtools.seekablestream.SeekableStreamFactory;
 import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.LoggerFactory;
 
 public final class GeneralUtils {
@@ -98,9 +103,8 @@ public final class GeneralUtils {
     }
 
     /**
-     * A list of all the compression-type file endings that this object knows
-     * how to decompress. This list is all lower-case, but should be treated as
-     * case-insensitive.
+     * A list of all the compression-type file endings that this object knows how to decompress. This list is all
+     * lower-case, but should be treated as case-insensitive.
      */
     public static final String[] compression_endings
             = {".z", ".gzip", ".gz", ".zip", ".bz2", ".tar"};
@@ -120,12 +124,12 @@ public final class GeneralUtils {
     }
 
     /**
-     * Returns a BufferedInputStream, possibly wrapped by a GZIPInputStream, or
-     * ZipInputStream, as appropriate based on the name of the given file.
+     * Returns a BufferedInputStream, possibly wrapped by a GZIPInputStream, or ZipInputStream, as appropriate based on
+     * the name of the given file.
      *
      * @param f a file
-     * @param sb a StringBuffer used to pass back the name of the file with the
-     * compression endings (like ".zip") removed, and converted to lower case.
+     * @param sb a StringBuffer used to pass back the name of the file with the compression endings (like ".zip")
+     * removed, and converted to lower case.
      */
     public static InputStream getInputStream(File f, StringBuffer sb) throws
             IOException {
@@ -137,12 +141,10 @@ public final class GeneralUtils {
     }
 
     /**
-     * Takes a named input stream and returns another one which is an instance
-     * of GZIPInputStream or ZipInputStream if the given name ends with one of
-     * the {@link #compression_endings} (case insensitive). (If the stream name
-     * does not have one of those endings, the original InputStream is simply
-     * returned unchanged.) The name with the compression ending stripped off
-     * (and converted to lower case) is returned in the value of stripped_name.
+     * Takes a named input stream and returns another one which is an instance of GZIPInputStream or ZipInputStream if
+     * the given name ends with one of the {@link #compression_endings} (case insensitive). (If the stream name does not
+     * have one of those endings, the original InputStream is simply returned unchanged.) The name with the compression
+     * ending stripped off (and converted to lower case) is returned in the value of stripped_name.
      */
     public static InputStream unzipStream(InputStream istr, String stream_name,
             StringBuffer stripped_name)
@@ -457,14 +459,12 @@ public final class GeneralUtils {
     }
 
     /**
-     * this method will return an Input for a gzip, trying to determine if this
-     * is a regular or blocked gzip file. If it cannot determine the default is
-     * blocked gzip.
+     * this method will return an Input for a gzip, trying to determine if this is a regular or blocked gzip file. If it
+     * cannot determine the default is blocked gzip.
      *
      * @param url the url (should be a url for a gzip file)
      * @param istr the raw (uncompressed) InputStream to wrap
-     * @return BlockCompressedInputStream if this is a blocked gzip file,
-     * GZIPInputStream otherwise
+     * @return BlockCompressedInputStream if this is a blocked gzip file, GZIPInputStream otherwise
      */
     public static InputStream getGZipInputStream(String url, InputStream istr) throws IOException {
         InputStream gzstr = null;
@@ -586,10 +586,15 @@ public final class GeneralUtils {
      *
      * @see SynonymLookup#getDefaultLookup()
      */
-    private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-
     public static String getPreferredVersionName(Set<DataContainer> dataContainers) {
-        return LOOKUP.getPreferredName(dataContainers.iterator().next().getName());
+        Bundle bundle = FrameworkUtil.getBundle(GeneralUtils.class);
+        ChromosomeSynonymLookup chrSynLookup = null;
+        if (bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            ServiceReference<ChromosomeSynonymLookup> serviceReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
+            chrSynLookup = bundleContext.getService(serviceReference);
+        }
+        return chrSynLookup.getPreferredName(dataContainers.iterator().next().getName());
     }
 
     public static String preferencesDisplay(Preferences prefs) {

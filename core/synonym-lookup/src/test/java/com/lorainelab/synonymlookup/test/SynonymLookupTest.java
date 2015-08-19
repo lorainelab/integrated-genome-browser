@@ -1,5 +1,7 @@
-package com.affymetrix.genometry.util;
+package com.lorainelab.synonymlookup.test;
 
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class SynonymLookupTest {
 
     @Before
     public void setUp() throws IOException {
-        sl = new SynonymLookup();
+        sl = new GenomeVersionSynonymLookupImpl();
 
         String filename = "data/synonymLookup/synonymTestData1";
         try (InputStream istr = SynonymLookupTest.class.getClassLoader().getResourceAsStream(filename)) {

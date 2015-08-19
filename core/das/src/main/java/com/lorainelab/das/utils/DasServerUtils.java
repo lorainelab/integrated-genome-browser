@@ -2,7 +2,6 @@ package com.lorainelab.das.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.common.collect.Maps;
@@ -10,6 +9,7 @@ import com.lorainelab.das.model.dsn.DasDsn;
 import com.lorainelab.das.model.ep.DasEp;
 import com.lorainelab.das.model.gff.DasGff;
 import com.lorainelab.das.model.types.DasTypes;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -50,6 +50,7 @@ public class DasServerUtils {
     private static Unmarshaller dasTypesUnmarshaller;
     private static JAXBContext dasFeatureContext;
     private static Unmarshaller dasFeatureUnmarshaller;
+    private GenomeVersion genomeVersion;
 
     public static Optional<DasDsn> retrieveDsnResponse(String rootUrl) throws HttpRequestException {
         HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(rootUrl) + DSN)
@@ -116,7 +117,7 @@ public class DasServerUtils {
 
     public static Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion, Map<String, String> genomeContextRootMap) {
         final String genomeVersionName = genomeVersion.getName();
-        Optional<String> contextRootkey = getContextRootKey(genomeVersionName, genomeContextRootMap);
+        Optional<String> contextRootkey = getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getGenomeVersionSynonymLookup());
         if (contextRootkey.isPresent()) {
             String contextRoot = genomeContextRootMap.get(contextRootkey.get());
             return retrieveAssemblyInfoByContextRoot(contextRoot);
@@ -136,11 +137,11 @@ public class DasServerUtils {
         return assemblyInfo;
     }
 
-    public static Optional<String> getContextRootKey(final String genomeVersionName, Map<String, String> genomeContextRootMap) {
+    public static Optional<String> getContextRootKey(final String genomeVersionName, Map<String, String> genomeContextRootMap, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         if (genomeContextRootMap.containsKey(genomeVersionName)) {
             return Optional.of(genomeVersionName);
         } else {
-            Set<String> genomeVersionSynonyms = SynonymLookup.getDefaultLookup().getSynonyms(genomeVersionName);
+            Set<String> genomeVersionSynonyms = genomeVersionSynonymLookup.getSynonyms(genomeVersionName);
             Optional<String> matchingSynonym = genomeVersionSynonyms.stream().filter(syn -> genomeContextRootMap.containsKey(syn)).findFirst();
             if (matchingSynonym.isPresent()) {
                 return Optional.of(matchingSynonym.get());

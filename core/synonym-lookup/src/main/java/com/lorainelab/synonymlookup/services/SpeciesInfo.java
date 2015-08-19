@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.data;
+package com.lorainelab.synonymlookup.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

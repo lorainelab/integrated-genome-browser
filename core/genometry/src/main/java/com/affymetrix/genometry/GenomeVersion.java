@@ -4,14 +4,15 @@ import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
-import com.affymetrix.genometry.util.SpeciesLookup;
-import com.affymetrix.genometry.util.SynonymLookup;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,6 +25,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +46,27 @@ public class GenomeVersion {
     private List<BioSeq> seqlist; //lazy copy of id2seq.values()
     private final Map<String, Integer> type_id2annot_id = Maps.newConcurrentMap();
     private final SetMultimap<String, String> uri2Seqs = HashMultimap.<String, String>create();
-    private SynonymLookup chrLookup;
+    private static GenomeVersionSynonymLookup genomeVersionSynonymLookup;
+    private static ChromosomeSynonymLookup chrSynLookup;
+    private static SpeciesSynonymsLookup speciesSynLookup;
     private final LocalDataProvider localDataSetProvider;
     private boolean id2seq_dirty_bit; // used to keep the lazy copy
+
+    static {
+        Bundle bundle = FrameworkUtil.getBundle(GenomeVersion.class);
+        if (bundle != null) {
+            BundleContext bundleContext = bundle.getBundleContext();
+            
+            ServiceReference<GenomeVersionSynonymLookup> genomeVersionSynLookupReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
+            genomeVersionSynonymLookup = bundleContext.getService(genomeVersionSynLookupReference);
+
+            ServiceReference<ChromosomeSynonymLookup> chrSynLookupReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
+            chrSynLookup = bundleContext.getService(chrSynLookupReference);
+            
+            ServiceReference<SpeciesSynonymsLookup> speciesSynLookupReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+            speciesSynLookup = bundleContext.getService(speciesSynLookupReference);
+        }
+    }
 
     public GenomeVersion(String name) {
         this.name = name;
@@ -72,7 +95,7 @@ public class GenomeVersion {
             return speciesName;
         }
 
-        String specName = SpeciesLookup.getSpeciesName(name);
+        String specName = speciesSynLookup.getSpeciesName(name);
 
         if (!Strings.isNullOrEmpty(specName)) {
             this.speciesName = specName;
@@ -94,7 +117,7 @@ public class GenomeVersion {
     }
 
     final public Set<DataContainer> getAvailableDataContainers() {
-       return dataContainers.stream()
+        return dataContainers.stream()
                 .filter(dc -> dc.getDataProvider() != null)
                 .filter(dc -> dc.getDataProvider().getStatus() != Disabled)
                 .filter(dc -> dc.getDataProvider().getStatus() != NotResponding)
@@ -126,8 +149,7 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns a List of BioSeq objects. Will not return null. The list is in
-     * the same order as in {@link #getSeq(int)}.
+     * Returns a List of BioSeq objects. Will not return null. The list is in the same order as in {@link #getSeq(int)}.
      */
     public List<BioSeq> getSeqList() {
         if (id2seq_dirty_bit) {
@@ -157,26 +179,20 @@ public class GenomeVersion {
     }
 
     /**
-     * Sets whether or not to use the SynonymLookup class to search for
-     * synonymous BioSeqs when using the getSeq(String) method. If you set this
-     * to false and then add new sequences, you should probably NOT later set it
-     * back to true unless you are sure you did not add some synonymous
-     * sequences.
+     * Sets whether or not to use the SynonymLookup class to search for synonymous BioSeqs when using the getSeq(String)
+     * method. If you set this to false and then add new sequences, you should probably NOT later set it back to true
+     * unless you are sure you did not add some synonymous sequences.
      */
     public final void setUseSynonyms(boolean b) {
         useSynonyms = b;
     }
 
     public void loadChromosomeSynonyms(InputStream istr) throws IOException {
-        if (chrLookup == null) {
-            chrLookup = new SynonymLookup();
-        }
-        chrLookup.loadSynonyms(istr, false);
+        chrSynLookup.loadSynonyms(istr, false);
     }
 
     /**
-     * Gets a sequence based on its name, possibly taking synonyms into account.
-     * See {@link #setUseSynonyms(boolean)}.
+     * Gets a sequence based on its name, possibly taking synonyms into account. See {@link #setUseSynonyms(boolean)}.
      *
      * @param synonym the string identifier of the requested BioSeq
      * @return a BioSeq for the given synonym or null
@@ -186,20 +202,20 @@ public class GenomeVersion {
         if (useSynonyms && bioSeq == null) {
             // Try and find a synonym.
             // First look up species specific synonym
-            if (chrLookup != null) {
-                bioSeq = findSeqSynonym(synonym, chrLookup);
+            if (chrSynLookup != null) {
+                bioSeq = findSeqSynonym(synonym, chrSynLookup);
             }
 
             // If synonym is not found in local then lookup global list
             if (bioSeq == null) {
-                bioSeq = findSeqSynonym(synonym, SynonymLookup.getChromosomeLookup());
+                bioSeq = findSeqSynonym(synonym, chrSynLookup);
             }
 
         }
         return bioSeq;
     }
 
-    private BioSeq findSeqSynonym(String synonym, SynonymLookup lookup) {
+    private BioSeq findSeqSynonym(String synonym, ChromosomeSynonymLookup lookup) {
         BioSeq aseq = null;
         for (String syn : lookup.getSynonyms(synonym, false)) {
             aseq = id2seq.get(syn.toLowerCase());
@@ -211,11 +227,10 @@ public class GenomeVersion {
     }
 
     /**
-     * For the given symmetry, tries to find in the group a sequence that is
-     * pointed to by that symmetry.
+     * For the given symmetry, tries to find in the group a sequence that is pointed to by that symmetry.
      *
-     * @return the first sequence it finds (by iterating through sym's spans),
-     * or null if none is found. PRECONDITION: sym != null.
+     * @return the first sequence it finds (by iterating through sym's spans), or null if none is found. PRECONDITION:
+     * sym != null.
      */
     public BioSeq getSeq(SeqSymmetry sym) {
         final int spancount = sym.getSpanCount();
@@ -232,7 +247,7 @@ public class GenomeVersion {
     }
 
     public final boolean isSynonymous(String synonym) {
-        return name.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(name, synonym);
+        return name.equals(synonym) || genomeVersionSynonymLookup.isSynonym(name, synonym);
     }
 
     public boolean removeSeqsForUri(String uri) {
@@ -244,8 +259,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns the BioSeq with the given id (or synonym), creating it if
-     * necessary, and increasing its length to the given sym if necessary.
+     * Returns the BioSeq with the given id (or synonym), creating it if necessary, and increasing its length to the
+     * given sym if necessary.
      */
     public final BioSeq addSeq(String seqid, int length, String uri) {
         checkNotNull(seqid);
@@ -323,9 +338,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Get unique id for id/trackName combination. Note this does not
-     * auto-increment, in order for the name to be reproducible if we need to
-     * load from the same combination again.
+     * Get unique id for id/trackName combination. Note this does not auto-increment, in order for the name to be
+     * reproducible if we need to load from the same combination again.
      *
      * @param id
      * @param trackName
@@ -339,9 +353,8 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns input id if no GraphSyms on any seq in the given seq group are
-     * already using that id. Otherwise uses id to build a new unique id. The id
-     * returned is unique for GraphSyms on all seqs in the given group.
+     * Returns input id if no GraphSyms on any seq in the given seq group are already using that id. Otherwise uses id
+     * to build a new unique id. The id returned is unique for GraphSyms on all seqs in the given group.
      */
     public static String getUniqueGraphID(String id, GenomeVersion seq_group) {
         String result = id;
@@ -352,10 +365,9 @@ public class GenomeVersion {
     }
 
     /**
-     * Returns input id if no GraphSyms on seq with given id. Otherwise uses id
-     * to build a new id that is not used by a GraphSym (or top-level container
-     * sym ) currently on the seq. The id returned is only unique for GraphSyms
-     * on that seq, may be used for graphs on other seqs.
+     * Returns input id if no GraphSyms on seq with given id. Otherwise uses id to build a new id that is not used by a
+     * GraphSym (or top-level container sym ) currently on the seq. The id returned is only unique for GraphSyms on that
+     * seq, may be used for graphs on other seqs.
      */
     public static String getUniqueGraphID(String id, BioSeq seq) {
         if (id == null) {
@@ -396,4 +408,16 @@ public class GenomeVersion {
         return true;
     }
 
+    public GenomeVersionSynonymLookup getGenomeVersionSynonymLookup() {
+        return genomeVersionSynonymLookup;
+    }
+
+    public ChromosomeSynonymLookup getChrSynLookup() {
+        return chrSynLookup;
+    }
+
+    public static SpeciesSynonymsLookup getSpeciesSynLookup() {
+        return speciesSynLookup;
+    }
+    
 }

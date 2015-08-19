@@ -28,10 +28,8 @@ import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotResponding;
-import com.affymetrix.genometry.util.SpeciesLookup;
 import com.affymetrix.genometry.util.StringEncrypter;
 import static com.affymetrix.genometry.util.StringEncrypter.DESEDE_ENCRYPTION_SCHEME;
-import com.affymetrix.genometry.util.SynonymLookup;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -42,6 +40,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.preferences.model.DataProviderConfig;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
@@ -81,6 +81,9 @@ public class DataProviderManager {
     private EventService eventService;
     private GeneralLoadView loadView;
     private EventBus eventBus;
+
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
+    private SpeciesSynonymsLookup speciesSynLookup;
 
     public DataProviderManager() {
         loadView = GeneralLoadView.getLoadView();
@@ -352,15 +355,15 @@ public class DataProviderManager {
 
     private void loadSpeciesInfo(DataProvider genomeVersionProvider) {
         genomeVersionProvider.getSpeciesInfo().ifPresent(speciesInfo -> {
-            speciesInfo.stream().forEach(SpeciesLookup::load);
+            speciesInfo.stream().forEach(si -> speciesSynLookup.load(si));
         });
     }
 
     private void loadGenomeVersionSynonyms(DataProvider genomeVersionProvider) {
         genomeVersionProvider.getGenomeVersionSynonyms().ifPresent(genomeVersionSynonyms -> {
             genomeVersionSynonyms.keySet().stream().forEach(key -> {
-                SynonymLookup.getDefaultLookup().getPreferredNames().add(key);
-                SynonymLookup.getDefaultLookup().addSynonyms(Sets.newConcurrentHashSet(genomeVersionSynonyms.get(key)));
+                genomeVersionSynonymLookup.getPreferredNames().add(key);
+                genomeVersionSynonymLookup.addSynonyms(Sets.newConcurrentHashSet(genomeVersionSynonyms.get(key)));
             });
         }
         );
@@ -368,7 +371,7 @@ public class DataProviderManager {
 
     private void loadSupportedGenomeVersions(DataProvider genomeVersionProvider) {
         for (String genomeVersionName : genomeVersionProvider.getSupportedGenomeVersionNames()) {
-            String genomeName = SynonymLookup.getDefaultLookup().findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
+            String genomeName = genomeVersionSynonymLookup.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
             String versionName, speciesName;
             GenomeVersion genomeVersion;
             genomeVersion = gmodel.addGenomeVersion(genomeName);
@@ -380,9 +383,9 @@ public class DataProviderManager {
                 speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
             } else {
                 versionName = genomeName;
-                speciesName = SpeciesLookup.getSpeciesName(genomeName);
+                speciesName = speciesSynLookup.getSpeciesName(genomeName);
             }
-            GeneralLoadUtils.retrieveDataContainer((DataProvider) genomeVersionProvider, speciesName, versionName, false);
+            GeneralLoadUtils.retrieveDataContainer((DataProvider) genomeVersionProvider, speciesName, versionName, false, genomeVersion.getGenomeVersionSynonymLookup());
         }
         if (SeqGroupView.getInstance() != null) { //ugly but required since bad patterns have been used historically
             SeqGroupView.getInstance().refreshSpeciesCB();
@@ -465,5 +468,15 @@ public class DataProviderManager {
             }
         }
         return maxLen;
+    }
+
+    @Reference
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
+    }
+
+    @Reference
+    public void setSpeciesSynLookup(SpeciesSynonymsLookup speciesSynLookup) {
+        this.speciesSynLookup = speciesSynLookup;
     }
 }

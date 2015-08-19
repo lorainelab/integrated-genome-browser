@@ -66,6 +66,11 @@
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>     
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>synonym-lookup</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

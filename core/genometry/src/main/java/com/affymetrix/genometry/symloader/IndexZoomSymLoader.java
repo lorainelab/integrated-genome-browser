@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
-import com.affymetrix.genometry.util.SynonymLookup;
+import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -142,7 +142,7 @@ public abstract class IndexZoomSymLoader extends SymLoader {
     }
 
     protected Map<String, String> getSynonymMap() {
-        final SynonymLookup chromosomeLookup = SynonymLookup.getChromosomeLookup();
+        final ChromosomeSynonymLookup chromosomeLookup = genomeVersion.getChrSynLookup();
         return new AbstractMap<String, String>() {
             @Override
             public Set<java.util.Map.Entry<String, String>> entrySet() {

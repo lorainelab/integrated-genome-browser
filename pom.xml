@@ -91,6 +91,7 @@
         <module>core/quickload</module>
         <module>core/das</module>
         <module>core/das2</module>
+	<module>core/synonym-lookup</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -231,6 +232,13 @@
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
+	    <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>synonym-lookup</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>quickload</artifactId>

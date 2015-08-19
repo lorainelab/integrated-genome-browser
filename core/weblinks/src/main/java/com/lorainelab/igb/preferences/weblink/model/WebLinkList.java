@@ -1,5 +1,6 @@
 package com.lorainelab.igb.preferences.weblink.model;
 
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -7,8 +8,8 @@ import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genometry.util.SpeciesLookup;
 import com.google.common.base.Strings;
+import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ public class WebLinkList {
     private final String name;
     private final boolean allowDuplicates;
     private final List<WebLink> weblink_list;
+    private SpeciesSynonymsLookup speciesSynLookup;
 
     public WebLinkList(String name, boolean allowDuplicates) {
         this.name = name;
@@ -119,8 +121,8 @@ public class WebLinkList {
             }
             if (!Strings.isNullOrEmpty(link.getSpeciesName())) {
                 String current_version = GenometryModel.getInstance().getSelectedGenomeVersion().getName();
-                String current_species = SpeciesLookup.getSpeciesName(current_version);
-                boolean isSynonym = SpeciesLookup.isSynonym(current_species, link.getSpeciesName());
+                String current_species = speciesSynLookup.getSpeciesName(current_version);
+                boolean isSynonym = speciesSynLookup.isSynonym(current_species, link.getSpeciesName());
                 if (!isSynonym) {
                     continue;
                 }
@@ -160,4 +162,9 @@ public class WebLinkList {
         return false;
     }
 
+    @Reference
+    public void setSpeciesSynLookup(SpeciesSynonymsLookup speciesSynLookup) {
+        this.speciesSynLookup = speciesSynLookup;
+    }
+    
 }

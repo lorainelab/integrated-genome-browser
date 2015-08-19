@@ -1,9 +1,9 @@
 package com.lorainelab.quickload.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
-import com.affymetrix.genometry.data.SpeciesInfo;
 import com.google.common.base.Strings;
 import com.lorainelab.quickload.QuickloadDataProvider;
+import com.lorainelab.synonymlookup.services.SpeciesInfo;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +23,7 @@ public class QuickloadDataProviderTest {
 
     @BeforeClass
     public static void setup() throws InterruptedException {
+        GenomeVersion genomeVersion = new GenomeVersion("Quickload sample");
         dataProvider = new QuickloadDataProvider("http://igbquickload.org/", "igbquickload", 1);
         Thread.sleep(1000);
         dataProvider.setMirrorUrl("http://bioviz.org/quickload/");

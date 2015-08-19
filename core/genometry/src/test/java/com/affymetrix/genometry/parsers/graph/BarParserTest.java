@@ -7,6 +7,9 @@ import com.affymetrix.genometry.parsers.graph.BarParser.BarFileHeader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,6 +50,9 @@ public class BarParserTest {
 
         GenometryModel gmodel = GenometryModel.getInstance();
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String stream_name = "chr15_random";
 
         boolean ensure_unique_id = true;
@@ -69,11 +75,14 @@ public class BarParserTest {
 
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
-        GenomeVersion seq_group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
-        List<GraphSym> results = SgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
+        List<GraphSym> results = SgrParser.parse(istr, stream_name, genomeVersion, ensure_unique_id);
 
         GraphSym gr0 = results.get(0);
         BioSeq seq = gr0.getGraphSeq();
@@ -112,8 +121,11 @@ public class BarParserTest {
     public void TestGetSlice() throws Exception {
         String filename = "data/bar/small.bar";
         URL url = BarParserTest.class.getClassLoader().getResource(filename);
-        GenomeVersion seq_group = new GenomeVersion("test_group");
-        BioSeq aseq = seq_group.addSeq("chr15_random", 1881177);
+        GenomeVersion genomeVersion = new GenomeVersion("test_group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        BioSeq aseq = genomeVersion.addSeq("chr15_random", 1881177);
         GraphSym gr0 = BarParser.getRegion(url.getFile(), new SimpleSeqSpan(1880135, 1880205, aseq));
         assertEquals("chr15_random", gr0.getGraphSeq().getId());
         assertEquals(2, gr0.getPointCount());
@@ -123,17 +135,10 @@ public class BarParserTest {
         assertEquals(1880149, gr0.getGraphXCoord(0));
         /**
          *
-         * FileOutputStream fout;
-         * File file=new File("slice.bar");
-         * fout = new FileOutputStream(file);
-         * BufferedOutputStream bos = new BufferedOutputStream(fout);
-         * DataOutputStream dos = new DataOutputStream(bos);
-         * BioSeq seq = (BioSeq) gr0.getGraphSeq();
-         * Collection<SeqSymmetry> syms = new ArrayList();
-         * syms.add(gr0);
-         * String type = "test_type";
-         * BarParser instance=new BarParser();
-         * instance.writeAnnotations(syms,seq,type,dos);
+         * FileOutputStream fout; File file=new File("slice.bar"); fout = new FileOutputStream(file);
+         * BufferedOutputStream bos = new BufferedOutputStream(fout); DataOutputStream dos = new DataOutputStream(bos);
+         * BioSeq seq = (BioSeq) gr0.getGraphSeq(); Collection<SeqSymmetry> syms = new ArrayList(); syms.add(gr0);
+         * String type = "test_type"; BarParser instance=new BarParser(); instance.writeAnnotations(syms,seq,type,dos);
          * dos.close();
          *
          *

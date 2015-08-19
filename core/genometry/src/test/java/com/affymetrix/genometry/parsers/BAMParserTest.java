@@ -7,6 +7,9 @@ import com.affymetrix.genometry.symloader.BAM;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +39,9 @@ public class BAMParserTest {
         assertNotNull(dis);
 
         GenomeVersion genomeVersion = new GenomeVersion("M_musculus_Mar_2006");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr1", 197069962);
 
         SymLoader symL = new BAM(new File(filename).toURI(), "featureName", genomeVersion);

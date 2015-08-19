@@ -9,6 +9,9 @@ import com.affymetrix.genometry.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -35,6 +38,9 @@ public class UseqParserTest {
         InputStream istr = UseqParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
         GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Mar_2006");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         USeqRegionParser up = new USeqRegionParser();
         List<SeqSymmetry> results = up.parse(istr, genomeVersion, stream_name, false, null);
 
@@ -75,6 +81,9 @@ public class UseqParserTest {
         assertNotNull(istr);
         GenometryModel gmodel = GenometryModel.getInstance();
         GenomeVersion genomeVersion = new GenomeVersion("H_sapiens_Mar_2006");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         gmodel.addSeqGroup(genomeVersion);
         gmodel.setSelectedGenomeVersion(genomeVersion);
 

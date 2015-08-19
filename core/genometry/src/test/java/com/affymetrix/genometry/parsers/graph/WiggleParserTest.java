@@ -6,14 +6,17 @@
  */
 package com.affymetrix.genometry.parsers.graph;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.symloader.Wiggle;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -41,11 +44,14 @@ public class WiggleParserTest {
         InputStream istr = WiggleParserTest.class.getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
-        GenomeVersion seq_group = new GenomeVersion("test");
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
 
         WiggleParser parser = new WiggleParser();
 
-        List<GraphSym> results = parser.parse(istr, seq_group, true, filename);
+        List<GraphSym> results = parser.parse(istr, genomeVersion, true, filename);
 
         assertEquals(3, results.size());
 
@@ -93,9 +99,12 @@ public class WiggleParserTest {
     public void testWiggle1() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
-        BioSeq aseq = seq_group.addSeq("chr19", 59310300);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
+        BioSeq aseq = genomeVersion.addSeq("chr19", 59310300);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -181,8 +190,11 @@ public class WiggleParserTest {
     public void testWiggle2() throws Exception {
         String filename = "data/wiggle/wiggleExample2.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -237,8 +249,11 @@ public class WiggleParserTest {
     public void testWriteBarFormat() throws Exception {
         String filename = "wiggleExample.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -246,13 +261,13 @@ public class WiggleParserTest {
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
-        boolean written = Wiggle.writeBarFormat(results, seq_group.getName(), outstream);
+        boolean written = Wiggle.writeBarFormat(results, genomeVersion.getName(), outstream);
         assertTrue(written);
 
         GenometryModel gmodel = GenometryModel.getInstance();
 
         InputStream istr = new ByteArrayInputStream(outstream.toByteArray());
-        results = BarParser.parse(url.getFile(), istr, gmodel, seq_group, null, 0, Integer.MAX_VALUE, "chr19", true, false);
+        results = BarParser.parse(url.getFile(), istr, gmodel, genomeVersion, null, 0, Integer.MAX_VALUE, "chr19", true, false);
 
         GraphSym gr1 = results.get(0);
         assertEquals(gr0.getGraphSeq().getId(), gr1.getGraphSeq().getId());
@@ -264,8 +279,11 @@ public class WiggleParserTest {
     public void testWriteAnnotation() throws Exception {
         String filename = "wiggleExample2.wig";
         URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, seq_group);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -276,7 +294,7 @@ public class WiggleParserTest {
         wiggle.writeAnnotations(results, null, null, outstream);
 
         File outfile = createFileFromString(outstream.toString());
-        Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), seq_group);
+        Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), genomeVersion);
         List<GraphSym> outresults = outwiggle.getGenome();
 
         testResults2(url.getFile(), outresults, false);

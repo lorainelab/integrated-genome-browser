@@ -6,11 +6,14 @@
  */
 package com.lorainelab.das;
 
-import com.lorainelab.das.parser.DASFeatureParser;
-import com.lorainelab.das.parser.DASSymmetry;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.lorainelab.das.parser.DASFeatureParser;
+import com.lorainelab.das.parser.DASSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -44,7 +47,10 @@ public class DASFeatureParserTest {
         InputStream istr = null;
         assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_1).getFile()).exists());
 
-        GenomeVersion group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         DASFeatureParser parser = new DASFeatureParser();
         parser.setAnnotateSeq(false);
 
@@ -53,7 +59,7 @@ public class DASFeatureParserTest {
             istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_1);
             assertNotNull(istr);
 
-            results = parser.parse(istr, group);
+            results = parser.parse(istr, genomeVersion);
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -90,7 +96,10 @@ public class DASFeatureParserTest {
         InputStream istr = null;
         assertTrue(new File(DASFeatureParserTest.class.getClassLoader().getResource(test_file_name_2).getFile()).exists());
 
-        GenomeVersion group = new GenomeVersion("Test Group");
+        GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         DASFeatureParser parser = new DASFeatureParser();
         parser.setAnnotateSeq(false);
 
@@ -99,7 +108,7 @@ public class DASFeatureParserTest {
             istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_2);
             assertNotNull(istr);
 
-            results = parser.parse(istr, group);
+            results = parser.parse(istr, genomeVersion);
         } finally {
             GeneralUtils.safeClose(istr);
         }

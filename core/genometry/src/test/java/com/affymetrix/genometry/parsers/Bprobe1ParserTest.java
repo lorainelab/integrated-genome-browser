@@ -7,6 +7,9 @@ package com.affymetrix.genometry.parsers;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.EfficientProbesetSymA;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -35,6 +38,9 @@ public class Bprobe1ParserTest {
         try (InputStream istr = new FileInputStream(filename)) {
             assertNotNull(istr);
             GenomeVersion genomeVersion = new GenomeVersion("rn4");
+            genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
             boolean annot_seq = true;
             String default_type = "test_type";
             boolean populate_id_hash = true;

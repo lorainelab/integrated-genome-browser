@@ -1,7 +1,10 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -9,9 +12,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -34,6 +39,9 @@ public class BrsParserTest {
             BufferedInputStream bis = new BufferedInputStream(istr);
             DataInputStream dis = new DataInputStream(bis);
             genome = new GenomeVersion("testGenome");
+            genome.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genome.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genome.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
             results = parser.parse(dis, filename, genome);
         } catch (Exception ex) {
             Logger.getLogger(BrsParserTest.class.getName()).log(Level.SEVERE, null, ex);

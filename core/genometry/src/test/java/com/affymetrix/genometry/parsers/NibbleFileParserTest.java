@@ -1,8 +1,11 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -75,7 +78,11 @@ public class NibbleFileParserTest {
         sb = new StringBuffer();
         isr = GeneralUtils.getInputStream(infile, sb);
         try (ByteArrayOutputStream outstream = new ByteArrayOutputStream()) {
-            boolean result = NibbleResiduesParser.parse(isr, new GenomeVersion("Test"), start, end, outstream);
+            final GenomeVersion genomeVersion = new GenomeVersion("Test");
+            genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+            boolean result = NibbleResiduesParser.parse(isr, genomeVersion, start, end, outstream);
 
             if (start < end) {
                 start = Math.max(0, start);

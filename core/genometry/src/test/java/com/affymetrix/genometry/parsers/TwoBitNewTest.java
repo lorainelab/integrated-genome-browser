@@ -1,16 +1,20 @@
 package com.affymetrix.genometry.parsers;
 
-import java.net.URI;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Random;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -56,7 +60,11 @@ public class TwoBitNewTest {
 
     public void testOriginal() throws Exception {
         infile = new File(TwoBitNewTest.class.getClassLoader().getResource(file).getFile());
-        BioSeq seq = TwoBitParser.parse(infile.toURI());
+        final GenomeVersion genomeVersion = new GenomeVersion("No_Data");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        BioSeq seq = TwoBitParser.parse(infile.toURI(), genomeVersion).get(0);
         assertEquals(seq.getResidues(), residues);
         //System.out.println(residues + "==" +seq.getResidues());
     }

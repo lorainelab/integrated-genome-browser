@@ -9,6 +9,9 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.GFF3;
 import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,14 +43,18 @@ public class GFF3ParserTest {
         try (InputStream istr = new FileInputStream(filename)) {
             assertNotNull(istr);
 
-            GenomeVersion seq_group = new GenomeVersion("test");
-            assertNotNull(seq_group);
+            GenomeVersion genomeVersion = new GenomeVersion("test");
+            genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+            genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+            genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+            
+            assertNotNull(genomeVersion);
 
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
 //			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
 //			List result = instance.parse(istr, seq_group, true);
 //			testResults(result);
-            GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), seq_group, false);
+            GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), genomeVersion, false);
             testResults(gff3.getGenome());
 
             // Replacing test with above test. hiralv 08-16-10

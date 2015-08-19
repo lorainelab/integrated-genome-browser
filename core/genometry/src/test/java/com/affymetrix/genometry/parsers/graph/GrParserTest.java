@@ -4,6 +4,9 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.Gr;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,6 +31,9 @@ public class GrParserTest {
         assertNotNull(istr);
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
@@ -54,6 +60,9 @@ public class GrParserTest {
         InputStream istr = new ByteArrayInputStream(string.getBytes());
 
         GenomeVersion genomeVersion = new GenomeVersion("Test Group");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         String stream_name = "test_file";
         boolean ensure_unique_id = true;
 
@@ -71,12 +80,15 @@ public class GrParserTest {
     @Test
     public void testGr() throws Exception {
         String filename = "data/gr/test1.gr";
-        GenomeVersion seq_group = new GenomeVersion("test");
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         URL url = GrParserTest.class.getClassLoader().getResource(filename);
-        Gr gr = new Gr(url.toURI(), filename, seq_group);
+        Gr gr = new Gr(url.toURI(), filename, genomeVersion);
 
         String stream_name = "test_file";
-        BioSeq aseq = seq_group.addSeq(stream_name, 948034);
+        BioSeq aseq = genomeVersion.addSeq(stream_name, 948034);
 
         List<GraphSym> results = gr.getChromosome(aseq);
 
@@ -106,8 +118,11 @@ public class GrParserTest {
                 + "948026	0.363933\n";
 
         File file = createFileFromString(string);
-        GenomeVersion seq_group = new GenomeVersion("test");
-        Gr gr = new Gr(file.toURI(), file.getName(), seq_group);
+        GenomeVersion genomeVersion = new GenomeVersion("test");
+        genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
+        genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
+        genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
+        Gr gr = new Gr(file.toURI(), file.getName(), genomeVersion);
         List<GraphSym> results = gr.getGenome();
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();

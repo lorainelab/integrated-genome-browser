@@ -416,8 +416,20 @@ public class GenomeVersion {
         return chrSynLookup;
     }
 
-    public static SpeciesSynonymsLookup getSpeciesSynLookup() {
+    public SpeciesSynonymsLookup getSpeciesSynLookup() {
         return speciesSynLookup;
+    }
+
+    public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
+        GenomeVersion.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
+    }
+
+    public void setChrSynLookup(ChromosomeSynonymLookup chrSynLookup) {
+        GenomeVersion.chrSynLookup = chrSynLookup;
+    }
+
+    public void setSpeciesSynLookup(SpeciesSynonymsLookup speciesSynLookup) {
+        GenomeVersion.speciesSynLookup = speciesSynLookup;
     }
     
 }

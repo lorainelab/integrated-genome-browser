@@ -472,6 +472,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
             IOUtils.copy(bis, bos);
             bos.flush();
+            bos.close();
 
             if (!Strings.isNullOrEmpty(md5) && verifyFile(md5, tmpFile)) {
 
@@ -482,6 +483,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 }
                 return true;
             } else if (Strings.isNullOrEmpty(md5)) {
+                
                 FileUtils.moveFile(tmpFile, finalFile);
                 FileUtils.deleteQuietly(lockFile);
                 synchronized (this) {

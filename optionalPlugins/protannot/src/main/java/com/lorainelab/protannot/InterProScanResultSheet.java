@@ -41,7 +41,7 @@ public class InterProScanResultSheet extends JPanel {
         this.jvp = new JViewport();
         this.scrollPane = new JScrollPane(table);
         cancelAllJobs = new JButton("Cancel All Jobs");
-        runInterProScan = new JButton(BUNDLE.getString("menuRunInterProScan"));
+        runInterProScan = new JButton(BUNDLE.getString("menuRunInterProScan") + "...");
         setUpPanel();
     }
 

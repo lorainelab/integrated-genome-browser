@@ -62,7 +62,7 @@ public class TrackOperationMenuItemAction extends AbstractAction {
         configureOptionsDialog.setInitialValue(matchingOperators.get(0));
         Operator showDialog = configureOptionsDialog.showDialog();
         Object value = configureOptionsDialog.getValue();
-        if (value != null && (Integer) value == JOptionPane.OK_OPTION) {
+        if (value != null && value instanceof Integer &&(Integer) value == JOptionPane.OK_OPTION) {
             if (showDialog == null) {
                 return;
             }

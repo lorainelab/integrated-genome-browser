@@ -41,7 +41,6 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
         showLabel = false; // a hack to prevent Parent MapTierGlyph to draw the label
         super.draw(view);
         showLabel = true;
-        GlyphI child = getChildren().get(0);
         Graphics2D g = view.getGraphics();
         FontMetrics fm = g.getFontMetrics();
         g.setColor(label_color);

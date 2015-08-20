@@ -5,6 +5,7 @@
  */
 package com.lorainelab.protannot.model;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
@@ -28,10 +29,16 @@ import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.protannot.NormalizeXmlStrand;
+import com.lorainelab.protannot.ProtAnnotEventService;
+import com.lorainelab.protannot.event.StatusSetEvent;
+import com.lorainelab.protannot.event.StatusStartEvent;
+import com.lorainelab.protannot.event.StatusTerminateEvent;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
+import com.lorainelab.protannot.view.StatusBar;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -80,6 +87,8 @@ public class ProtannotParser {
     public static final String AA_LENGTH = "aa_length";
     // private Dnaseq dnaseq;
     private IgbService igbService;
+    private EventBus eventBus;
+    private ProtAnnotEventService eventService;
     private int padding;
     private final int MIN_PADDING = 150;
 
@@ -114,7 +123,13 @@ public class ProtannotParser {
         return chromosome;
     }
 
-    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq) {
+    @Activate
+    public void activate(Map<String, Object> properties) {
+        eventBus = eventService.getEventBus();
+        eventBus.register(this);
+    }
+
+    public BioSeq parse(SeqMapViewI seqMapView, Dnaseq dnaseq, String id) {
         mrna_hash = new HashMap<>();
         prot_hash = new HashMap<>();
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
@@ -140,10 +155,12 @@ public class ProtannotParser {
                 SeqSpan cdsSpan = ((SupportsCdsSpan) sym).getCdsSpan();
                 Dnaseq.MRNA.Cds cds = new Dnaseq.MRNA.Cds();
                 if (cdsSpan == null) {
-                    continue;
+                    cds.setStart(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
+                    cds.setEnd(BigInteger.valueOf(sym.getSpan(bioseq).getStart()));
+                } else {
+                    cds.setStart(BigInteger.valueOf(cdsSpan.getStart()));
+                    cds.setEnd(BigInteger.valueOf(cdsSpan.getEnd()));
                 }
-                cds.setStart(BigInteger.valueOf(cdsSpan.getStart()));
-                cds.setEnd(BigInteger.valueOf(cdsSpan.getEnd()));
                 mrna.setCds(cds);
             }
             if (checkForward(sym)) {
@@ -185,8 +202,7 @@ public class ProtannotParser {
         mutableSeqSymmetry.addSpan(residueSpan);
         dnaseq.setSeq(seqId);
         dnaseq.setVersion(bioseq.getGenomeVersion().getUniqueID());
-        igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
-
+        loadResidue(id, mutableSeqSymmetry, bioseq);
         String residuesStr = SeqUtils.getResidues(mutableSeqSymmetry, bioseq);
         Dnaseq.Residues residue = new Dnaseq.Residues();
         residue.setValue(residuesStr.toLowerCase());
@@ -200,8 +216,8 @@ public class ProtannotParser {
         }
         dnaseq.setResidues(residue);
         dnaseq.setLocation(seqId + ":" + spanStart + "-" + spanEnd);
-        dnaseq.setAbsoluteStart(spanStart+"");
-        dnaseq.setAbsoluteEnd(spanEnd+"");
+        dnaseq.setAbsoluteStart(spanStart + "");
+        dnaseq.setAbsoluteEnd(spanEnd + "");
 
         addProteinSequenceToMrnas(dnaseq, bioseq);
         dnaseq.setVersion(bioseq.getId());
@@ -219,6 +235,13 @@ public class ProtannotParser {
         processDNASeq(chromosome, dnaseq);
         return chromosome;
 
+    }
+
+    private void loadResidue(String id, MutableSeqSymmetry mutableSeqSymmetry, BioSeq bioseq) {
+        eventBus.post(new StatusStartEvent(id));
+        eventBus.post(new StatusSetEvent("Loading Residue", StatusBar.ICONS.INFO, true, id));
+        igbService.loadResidues(mutableSeqSymmetry.getSpan(bioseq), true);
+        eventBus.post(new StatusTerminateEvent(id));
     }
 
     private void computPadding(int residueLength) {
@@ -819,4 +842,8 @@ public class ProtannotParser {
         this.igbService = igbService;
     }
 
+    @Reference
+    public void setEventService(ProtAnnotEventService eventService) {
+        this.eventService = eventService;
+    }
 }

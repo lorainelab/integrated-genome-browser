@@ -11,6 +11,7 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -238,7 +239,20 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         loadPrefs();
         start();
         if (!loadFileOnStart) {
-            load(igbService.getSeqMapView());
+            CThreadWorker worker = new CThreadWorker("Loading gene models in protannot") {
+
+                @Override
+                protected void finished() {
+
+                }
+
+                @Override
+                protected Object runInBackground() {
+                    load(igbService.getSeqMapView());
+                    return true;
+                }
+            };
+            worker.execute();
         } else {
             doLoadFile();
         }
@@ -380,7 +394,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
             load(cfil);
-        } else if(option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+        } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }
@@ -715,7 +729,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     public void load(SeqMapViewI seqMapView) {
         Dnaseq dnaseq = protAnnotService.getDnaseq();
-        BioSeq genome_seq = parser.parse(seqMapView, dnaseq);
+        BioSeq genome_seq = parser.parse(seqMapView, dnaseq, id);
         int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
         int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
         int relativeStart = Math.min(absoluteStart, absoluteEnd);
@@ -737,8 +751,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
         for (SeqSymmetry sym : seqMapView.getSelectedSyms()) {
             if (sym instanceof BasicSeqSymmetry) {
-                BasicSeqSymmetry basicSym = (BasicSeqSymmetry) sym;
-                if (basicSym.isForward()) {
+                BasicSeqSymmetry bedDetailSym = (BasicSeqSymmetry) sym;
+                if (bedDetailSym.isForward()) {
                     anyPositiveStrand = true;
                 } else {
                     anyNegativeStrand = true;
@@ -1281,16 +1295,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     private AbstractAction getExitAction() {
-        AbstractAction quit_action = new AbstractAction(MessageFormat.format(
-                BUNDLE.getString("menuItemHasDialog"),
-                BUNDLE.getString("exit"))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                                new WindowEvent(getFrame(),
-                                        WindowEvent.WINDOW_CLOSING));
-                    }
-                };
+        AbstractAction quit_action = new AbstractAction(BUNDLE.getString("exit")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+                        new WindowEvent(getFrame(),
+                                WindowEvent.WINDOW_CLOSING));
+            }
+        };
         quit_action.putValue(AbstractAction.MNEMONIC_KEY, KeyEvent.VK_X);
         quit_action.putValue(AbstractAction.SHORT_DESCRIPTION, BUNDLE.getString("exitTip"));
         return quit_action;

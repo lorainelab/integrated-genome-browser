@@ -126,7 +126,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static final int seqmap_pixel_height = 500;
     private static final double zoomRatio = 30.0;
     private static final int X_OFFSET_POPUP = 45;
-    private static final int Y_OFFSET_POPUP = 85;
+    private static final int Y_OFFSET_POPUP = 65;
     private JRPTabbedPane tabbedPane;
 
     private ComponentFactory propertiesTabPanelFactory;
@@ -707,6 +707,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         GlyphI aGlyph = new LineContainerProtAnnotGlyph();
         SeqSpan aSpan = annot2genome.getSpan(vseq);
+        if (aSpan.getLength() == 0) {
+            return;
+        }
         aGlyph.setCoords(aSpan.getMin(), 0, aSpan.getLength(), 20);
         aGlyph.setColor(new Color(protAnnotPreferencesService.getPanelRGB(Panel.TRANSCRIPT)));
         seqmap.setDataModel(aGlyph, annot2mrna);
@@ -1055,7 +1058,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }
 
         if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
-            popup.show(this, e.getX() + X_OFFSET_POPUP, e.getY() + Y_OFFSET_POPUP);
+            popup.show(this, e.getX(), e.getY() + Y_OFFSET_POPUP);
         }
     }
 

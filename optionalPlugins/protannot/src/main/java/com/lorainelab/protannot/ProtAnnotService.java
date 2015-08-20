@@ -717,6 +717,7 @@ public class ProtAnnotService {
         JFileChooser fileChooser = new UniFileChooser("Save As", "png");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.rescanCurrentDirectory();
+        fileChooser.setSelectedFile(new File("Protannot.png"));
         int option = fileChooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = fileChooser.getSelectedFile();

@@ -3,6 +3,7 @@ package com.affymetrix.igb;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.ContextualPopupListener;
@@ -10,7 +11,6 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.action.AutoLoadThresholdAction;
 import com.affymetrix.igb.action.ChangeBackgroundColorAction;
@@ -310,8 +310,15 @@ public class Activator implements BundleActivator {
                             }
 
                             IGB.getInstance().addAction(genericAction);
+                            String NO_VALUE = "no value";
 
-                            boolean isToolbar = genericAction.isToolbarDefault() || PreferenceUtils.getToolbarNode().getBoolean(genericAction.getId(), false);
+                            String actionToolbarStatus = PreferenceUtils.getToolbarNode().get(genericAction.getId(), NO_VALUE);
+                            boolean isToolbar;
+                            if (NO_VALUE.equals(actionToolbarStatus)) {
+                                isToolbar = genericAction.isToolbarDefault();
+                            } else {
+                                isToolbar = Boolean.valueOf(actionToolbarStatus);
+                            }
                             if (isToolbar) {
                                 int index = PreferenceUtils.getToolbarNode().getInt(genericAction.getId() + ".index", -1);
                                 if (index == -1) {

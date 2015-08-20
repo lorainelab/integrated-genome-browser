@@ -2,9 +2,9 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
+import com.affymetrix.igb.prefs.TrackPreferencesPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -30,7 +30,7 @@ public class CustomizeAction extends SeqMapViewActionA {
     private void showCustomizer() {
         TierLabelManager handler = getTierManager();
         PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(OtherOptionsView.class);
+        pv.setTab(TrackPreferencesPanel.class);
         ((TierPrefsView) pv.tpvGUI.tdv).setTier_label_glyphs(handler.getSelectedTierLabels());
 
 //		// If and only if the selected track is coordinate track, will open 'Other Options' panel 

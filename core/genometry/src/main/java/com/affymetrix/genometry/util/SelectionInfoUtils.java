@@ -6,11 +6,13 @@
 package com.affymetrix.genometry.util;
 
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_INS_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_PROP_LIST;
+import static com.affymetrix.genometry.util.SeqUtils.isBamInsSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBamSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
 import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
@@ -33,7 +35,12 @@ public class SelectionInfoUtils {
     public static Map<String, Object> orderProperties(Map<String, Object> properties, SymWithProps sym) {
         List<String> propertyKeys;
         if (isBamSym(sym)) {
-            propertyKeys = BAM_PROP_LIST;
+            if (isBamInsSym(sym)) {
+                propertyKeys = BAM_INS_PROP_LIST;
+                return orderProperties(propertyKeys, properties, true);
+            } else {
+                propertyKeys = BAM_PROP_LIST;
+            }
         } else if (isBedSym(sym)) {
             propertyKeys = BED14_PROP_LIST;
         } else if (isLinkPSL(sym)) {
@@ -50,28 +57,30 @@ public class SelectionInfoUtils {
             }
             propertyKeys = DEFAULT_PROP_LIST;
         }
-        return orderProperties(propertyKeys, properties);
+        return orderProperties(propertyKeys, properties, false);
     }
 
-    private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties) {
+    private static Map<String, Object> orderProperties(List<String> propertyKeys, Map<String, Object> properties, boolean ignoreNotInKeys) {
         Map<String, Object> orderedProps = new LinkedHashMap<>();
         final Predicate<String> keyMapsToNull = key -> properties.get(key) != null;
         propertyKeys.stream().filter(property -> properties.containsKey(property)).filter(keyMapsToNull).forEach(property -> {
             orderedProps.put(property, properties.get(property).toString());
         });
 
-        properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).filter(keyMapsToNull).forEach(key -> {
-            Object property = properties.get(key);
-            if (property instanceof String[]) {
-                StringBuilder value = new StringBuilder();
-                for (String str : (String[]) property) {
-                    value.append(str);
+        if (!ignoreNotInKeys) {
+            properties.keySet().stream().filter(key -> !propertyKeys.contains(key)).filter(keyMapsToNull).forEach(key -> {
+                Object property = properties.get(key);
+                if (property instanceof String[]) {
+                    StringBuilder value = new StringBuilder();
+                    for (String str : (String[]) property) {
+                        value.append(str);
+                    }
+                    orderedProps.put(key, value.toString());
+                } else {
+                    orderedProps.put(key, properties.get(key).toString());
                 }
-                orderedProps.put(key, value.toString());
-            } else {
-                orderedProps.put(key, properties.get(key).toString());
-            }
-        });
+            });
+        }
         return orderedProps;
     }
 }

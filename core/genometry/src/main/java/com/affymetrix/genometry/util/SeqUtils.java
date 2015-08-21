@@ -12,26 +12,31 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.BAMSym;
+import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.EfficientPairSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithPropsWithCdsSpan;
-import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.symmetry.impl.BAMSym;
-import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.EfficientPairSeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
-import com.affymetrix.genometry.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Holds many static methods for manipulating BioSeqs, SeqSpans, and
@@ -1471,6 +1476,10 @@ public class SeqUtils {
     public static boolean isBamSym(SeqSymmetry sym) {
         return (sym instanceof BAMSym
                 || BAMSym.isBamChildType(sym));
+    }
+    
+    public static boolean isBamInsSym(SeqSymmetry sym) {
+        return BAMSym.isBamInsChildType(sym);
     }
 
     public static boolean isMultiStrandWrapperType(SeqSymmetry sym) {

@@ -90,6 +90,15 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
     public static final Map<String, List<String>> BAM_DETAILS_CATEGORY = ImmutableMap.of("Details", BAM_DETAILS_GRP);
     public static final String MISC_CATEGORY = "Misc";
+    
+    // BAM Insertion
+    public static final List<String> BAM_INS_INFO_GRP = Arrays.asList(FEATURE_TYPE, ID, CHROMOSOME, START, END, LENGTH);
+    public static final List<String> BAM_INS_LOC_GRP = Arrays.asList(STRAND, RESIDUES, FORWARD);
+    
+    public static final List<String> BAM_INS_PROP_LIST = new ArrayList<>();
+
+    public static final Map<String, List<String>> BAM_INS_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INS_INFO_GRP);
+    public static final Map<String, List<String>> BAM_INS_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_INS_LOC_GRP);
 
     // BED-14
     public static final List<String> BED14_INFO_GRP = Arrays.asList(TITLE, ID, DESCRIPTION);
@@ -137,6 +146,9 @@ public class ToolTipConstants {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);
         BAM_PROP_LIST.addAll(BAM_LOC_GRP);
         BAM_PROP_LIST.addAll(BAM_DETAILS_GRP);
+        
+        BAM_INS_PROP_LIST.addAll(BAM_INS_INFO_GRP);
+        BAM_INS_PROP_LIST.addAll(BAM_INS_LOC_GRP);
 
         BED14_PROP_LIST.addAll(BED14_INFO_GRP);
         BED14_PROP_LIST.addAll(BED14_LOC_GRP);

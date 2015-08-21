@@ -151,9 +151,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     }
 
     /**
-     * Initialize (or simply refresh) the tree. If a node is already selected
-     * (this could happen if the user used a leaf checkbox), then we don't need
-     * to do this.
+     * Initialize (or simply refresh) the tree. If a node is already selected (this could happen if the user used a leaf
+     * checkbox), then we don't need to do this.
      *
      * @param features
      */
@@ -214,10 +213,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     }
 
     /**
-     * Convert list of features into a tree. If a feature name has a slash (e.g.
-     * "a/b/c"), then it is to be represented as a series of nodes. Note that if
-     * a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
-     * these features have distinct parents.
+     * Convert list of features into a tree. If a feature name has a slash (e.g. "a/b/c"), then it is to be represented
+     * as a series of nodes. Note that if a feature "a/b" is on server #1, and feature "a/c" is on server #2, then these
+     * features have distinct parents.
      *
      * @param features
      * @return root which is of the type DefaultMutableTreeNode
@@ -710,6 +708,12 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     }
                 }
             }
+
+            @Override
+            public String getId() {
+                return this.getClass().getPackage().getName() + "." + this.getClass().getSimpleName();
+            }
+
         }
 
         private boolean isReachable(DataSet dataSet) {

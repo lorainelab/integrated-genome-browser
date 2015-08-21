@@ -523,9 +523,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
         gview.popup.add(copyAction);
         gview.popup.add(browserAction);
-        gview.popup.add(zoomAction);
         gview.popup.add(new JCheckBoxMenuItem(hairLineAction));
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
+        gview.popup.add(zoomAction);
     }
 
     private void colorChooser() {

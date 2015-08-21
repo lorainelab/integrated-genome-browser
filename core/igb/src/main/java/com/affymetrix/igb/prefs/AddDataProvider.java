@@ -28,7 +28,9 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JComboBox;
@@ -259,8 +261,10 @@ public class AddDataProvider extends JFrame {
             File f = fileChooser(DIRECTORIES_ONLY, this);
             if (f != null && f.isDirectory()) {
                 try {
-                    urlText.setText(f.toURI().toURL().toString());
+                    urlText.setText(URLDecoder.decode(f.toURI().toURL().toString(), "UTF-8"));
                 } catch (MalformedURLException ex) {
+                    logger.error(ex.getMessage(), ex);
+                } catch (UnsupportedEncodingException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
             }

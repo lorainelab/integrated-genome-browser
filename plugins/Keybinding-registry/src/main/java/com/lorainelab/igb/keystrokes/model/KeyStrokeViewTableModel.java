@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -283,7 +282,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
                 try {
                     allServiceReferences = bundleContext.getAllServiceReferences(GenericAction.class.getName(), null);
                 } catch (InvalidSyntaxException ex) {
-                    java.util.logging.Logger.getLogger(KeyStrokeViewTableModel.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error(ex.getMessage(), ex);
                 }
                 for (ServiceReference sr : allServiceReferences) {
                     GenericAction ga = (GenericAction) bundleContext.getService(sr);

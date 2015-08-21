@@ -2,9 +2,9 @@ package com.affymetrix.igb.action;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.IGB;
 import javax.swing.Action;
 import javax.swing.KeyStroke;

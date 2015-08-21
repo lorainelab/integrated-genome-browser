@@ -12,10 +12,10 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.google.common.collect.Sets;
 import com.lorainelab.igb.keystrokes.KeyStrokesView;
@@ -66,6 +66,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeViewTableModel.class);
     List<GenericAction> actionQueue;
     ServiceTracker<GenericAction, Object> actionServiceTracker;
+    BundleContext bundleContext;
 
     public KeyStrokeViewTableModel() {
         actionKeys = Sets.newCopyOnWriteArraySet();
@@ -74,6 +75,7 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
 
     @Activate
     public void activator(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
         loadDefaultToolbarActionsAndKeystrokeBindings();
         addShortcuts();
         GenericActionHolder.getInstance().addGenericActionListener(this);
@@ -276,9 +278,21 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
             GenericAction genericAction = GenericActionHolder.getInstance()
                     .getGenericAction(pref_name);
             if (genericAction == null) {
-                System.err.println(this.getClass().getName() + ".setValueAt: "
-                        + pref_name + " action not found.");
-            } else {
+                ServiceReference<?>[] allServiceReferences = null;
+                try {
+                    allServiceReferences = bundleContext.getAllServiceReferences(GenericAction.class.getName(), null);
+                } catch (InvalidSyntaxException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
+                for (ServiceReference sr : allServiceReferences) {
+                    GenericAction ga = (GenericAction) bundleContext.getService(sr);
+                    if (pref_name.equals(ga.getId())) {
+                        genericAction = ga;
+                        break;
+                    }
+                }
+            }
+            if (genericAction != null) {
                 if (bValue) {
                     int index = igbService.addToolbarAction(genericAction);
                     PreferenceUtils.getToolbarNode().putInt(pref_name + ".index", index);

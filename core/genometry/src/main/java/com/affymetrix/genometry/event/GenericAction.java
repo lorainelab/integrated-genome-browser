@@ -48,7 +48,7 @@ public abstract class GenericAction extends AbstractAction {
     public GenericAction(String text, String iconPath, String largeIconPath) {
         this(text, null, iconPath, largeIconPath, KeyEvent.VK_UNDEFINED);
     }
-    
+
     public GenericAction(String text, String tooltip, String iconPath, String largeIconPath, int mnemonic) {
         this(text, tooltip, iconPath, largeIconPath, mnemonic, null, false);
     }
@@ -99,6 +99,13 @@ public abstract class GenericAction extends AbstractAction {
             this.putValue(SHORT_DESCRIPTION, tooltip);
         }
         loadPreferredKeystrokes();
+        String NO_VALUE = "no value";
+        if (!Strings.isNullOrEmpty(getId())) {
+            String toolbarStatus = PreferenceUtils.getToolbarNode().get(getId(), NO_VALUE);
+            if (NO_VALUE.equals(toolbarStatus)) {
+                PreferenceUtils.getToolbarNode().putBoolean(getId(), isToolbarDefault());
+            }
+        }
     }
 
     protected final void loadPreferredKeystrokes() {

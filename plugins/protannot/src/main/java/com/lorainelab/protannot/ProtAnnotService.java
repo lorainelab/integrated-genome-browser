@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusSetEvent;
 import com.lorainelab.protannot.event.StatusStartEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
@@ -121,6 +122,7 @@ public class ProtAnnotService {
     private volatile boolean interProScanRunning;
     private volatile String id;
     private ImageExportService imageExportService;
+    private boolean emailReset;
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -139,6 +141,7 @@ public class ProtAnnotService {
         protAnnotPreferencesNode = PreferenceUtils.getProtAnnotNode();
         dnaseq = new Dnaseq();
         interProScanRunning = false;
+        emailReset = false;
     }
 
     public boolean isInterProScanRunning() {
@@ -510,6 +513,7 @@ public class ProtAnnotService {
             matcher = pattern.matcher(email.getText());
             if (!matcher.matches()) {
                 ModalUtils.infoPanel("To run a search, enter an email address.");
+                emailReset = true;
                 return false;
             }
             protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
@@ -555,6 +559,10 @@ public class ProtAnnotService {
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
             gview.getTabbedPane().setSelectedIndex(1);
             initStatusLabel("Initializing ...");
+        } else if(emailReset) {
+            interProScanRunning = false;
+            emailReset = false;
+            eventBus.post(new StartInterProScanEvent(id));
         } else {
             interProScanRunning = false;
             eventBus.post(new StatusTerminateEvent(id));

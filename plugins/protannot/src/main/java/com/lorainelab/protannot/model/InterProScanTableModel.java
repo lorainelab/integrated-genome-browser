@@ -8,7 +8,7 @@ package com.lorainelab.protannot.model;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import com.lorainelab.protannot.InterProScanModelUpdateEvent;
+import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
 import com.lorainelab.protannot.ProtAnnotEventService;
 import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
 import com.lorainelab.protannot.interproscan.api.Job;

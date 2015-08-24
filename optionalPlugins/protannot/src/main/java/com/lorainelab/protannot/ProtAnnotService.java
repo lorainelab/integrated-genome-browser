@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusSetEvent;
 import com.lorainelab.protannot.event.StatusStartEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
@@ -122,6 +123,7 @@ public class ProtAnnotService {
     private volatile String id;
     private String PROTANNOT_IPS_EMAIL = "protannot interproscan email";
     private ImageExportService imageExportService;
+    private boolean emailReset;
 
 
     @Reference
@@ -141,6 +143,7 @@ public class ProtAnnotService {
         protAnnotPreferencesNode = PreferenceUtils.getSessionPrefsNode();
         dnaseq = new Dnaseq();
         interProScanRunning = false;
+        emailReset = false;
     }
 
     
@@ -514,6 +517,7 @@ public class ProtAnnotService {
             matcher = pattern.matcher(email.getText());
             if (!matcher.matches()) {
                 ModalUtils.infoPanel("To run a search, enter an email address.");
+                emailReset = true;
                 return false;
             }
             protAnnotPreferencesNode.put(PROTANNOT_IPS_EMAIL, email.getText());
@@ -559,6 +563,10 @@ public class ProtAnnotService {
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
             gview.getTabbedPane().setSelectedIndex(1);
             initStatusLabel("Initializing ...");
+        } else if(emailReset) {
+            interProScanRunning = false;
+            emailReset = false;
+            eventBus.post(new StartInterProScanEvent(id));
         } else {
             interProScanRunning = false;
             eventBus.post(new StatusTerminateEvent(id));
@@ -709,6 +717,7 @@ public class ProtAnnotService {
         JFileChooser fileChooser = new UniFileChooser("Save As", "png");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.rescanCurrentDirectory();
+        fileChooser.setSelectedFile(new File("Protannot.png"));
         int option = fileChooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = fileChooser.getSelectedFile();

@@ -1,5 +1,6 @@
 package com.lorainelab.protannot;
 
+import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;

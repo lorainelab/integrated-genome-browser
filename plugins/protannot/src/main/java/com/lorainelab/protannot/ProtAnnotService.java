@@ -527,6 +527,7 @@ public class ProtAnnotService {
         interProScanRunning = true;
         eventBus.post(new StatusStartEvent(id));
         if (showSetupModal()) {
+            gview.getIpsTableModel().resetModel();
             resultFetchTimer = new Timer();
             loadResultsWorker = new CThreadWorker<Void, Void>("Loading InterProScan") {
                 @Override

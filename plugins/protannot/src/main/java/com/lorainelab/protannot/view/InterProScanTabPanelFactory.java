@@ -28,16 +28,14 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
     private Map<String, Object> properties;
     private ProtAnnotService protannotService;
     private ProtAnnotEventService protAnnotEventService;
+    private InterProScanResultSheet tableView;
 
     @Activate
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
         this.protannotService = (ProtAnnotService) properties.get("protannotService");
-    }
-
-    @Override
-    public java.awt.Component getComponent() {
-        InterProScanResultSheet tableView = new InterProScanResultSheet();
+        
+        tableView = new InterProScanResultSheet();
         tableView.getCancelAllJobs().addActionListener((ActionEvent e) -> {
             Properties props = new Properties();
             props.put("id", properties.get("id"));
@@ -47,7 +45,10 @@ public class InterProScanTabPanelFactory implements TabPanelComponent {
         tableView.getRunInterProScan().addActionListener((ActionEvent e) -> {
             protAnnotEventService.getEventBus().post(new StartInterProScanEvent((String)properties.get("id")));
         });
+    }
 
+    @Override
+    public java.awt.Component getComponent() {
         return tableView;
     }
 

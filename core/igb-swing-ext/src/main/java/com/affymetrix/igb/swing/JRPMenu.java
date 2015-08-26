@@ -12,7 +12,7 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
 
     private static final long serialVersionUID = 1L;
     private final String id;
-    private int weight;
+    private int weight = -1;
     private List<WeightedJRPWidget> menuItemComponents;
 
     public JRPMenu(String id) {

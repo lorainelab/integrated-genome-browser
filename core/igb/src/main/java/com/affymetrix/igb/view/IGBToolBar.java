@@ -1,10 +1,10 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.ContinuousAction;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.igb.action.SelectionRuleAction;
@@ -183,13 +183,20 @@ public class IGBToolBar extends JToolBar {
                 button.addMouseListener(continuousActionListener);
             }
 
-            int local_index = 0;
-            while (local_index < index && local_index < toolbarItemPanel.getComponentCount()
-                    && index >= getOrdinal(toolbarItemPanel.getComponent(local_index))) {
-                local_index++;
+            boolean actionAdded = false;
+            for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
+                JRPButtonTLP actionButton = (JRPButtonTLP) toolbarItemPanel.getComponent(i);
+                int actionIndex = actionButton.getIndex();
+                if (actionIndex != -1 && actionIndex > index) {
+                    toolbarItemPanel.add(button, i);
+                    actionAdded = true;
+                    break;
+                }
             }
 
-            toolbarItemPanel.add(button, local_index);
+            if (!actionAdded) {
+                toolbarItemPanel.add(button, -1);
+            }
             refreshToolbar();
         }
     }

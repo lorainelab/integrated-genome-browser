@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -161,7 +160,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     public JFrame getFrame() {
         return igbMainFrame;
     }
-
 
     private static void setLaf() {
         // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
@@ -432,7 +430,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     public int addToolbarAction(GenericAction genericAction) {
-        addToolbarAction(genericAction, toolbar.getItemCount());
+        addToolbarAction(genericAction, genericAction.getToolbarIndex());
         return toolbar.getItemCount();
     }
 
@@ -496,12 +494,10 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     /**
-     * Get a named view. This differs from {@link #getView(String)} in that it
-     * wants the display name instead of the full name. This is easier for
-     * scripting.
+     * Get a named view. This differs from {@link #getView(String)} in that it wants the display name instead of the
+     * full name. This is easier for scripting.
      *
-     * @param viewName the display name of a tab instead of a full package and
-     * class name.
+     * @param viewName the display name of a tab instead of a full package and class name.
      */
     public IgbTabPanel getViewByDisplayName(String viewName) {
         for (IgbTabPanelI plugin : windowService.getPlugins()) {
@@ -528,9 +524,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     /**
-     * Put the action's accelerator key (if there is one) in the panel's input
-     * and action maps. This makes the action available via shortcut, even if it
-     * is "hidden" in a pop up menu.
+     * Put the action's accelerator key (if there is one) in the panel's input and action maps. This makes the action
+     * available via shortcut, even if it is "hidden" in a pop up menu.
      *
      * @param theAction to which the shortcut points.
      */
@@ -590,8 +585,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     /**
-     * Set the status text, and show a little progress bar so that the
-     * application doesn't look locked up.
+     * Set the status text, and show a little progress bar so that the application doesn't look locked up.
      *
      * @param s text of the message
      */
@@ -600,18 +594,16 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     /**
-     * Sets the text in the status bar. Will also echo a copy of the string to
-     * System.out. It is safe to call this method even if the status bar is not
-     * being displayed.
+     * Sets the text in the status bar. Will also echo a copy of the string to System.out. It is safe to call this
+     * method even if the status bar is not being displayed.
      */
     public void setStatus(String s) {
         setStatus(s, true);
     }
 
     /**
-     * Sets the text in the status bar. Will optionally echo a copy of the
-     * string to System.out. It is safe to call this method even if the status
-     * bar is not being displayed.
+     * Sets the text in the status bar. Will optionally echo a copy of the string to System.out. It is safe to call this
+     * method even if the status bar is not being displayed.
      *
      * @param echo Whether to echo a copy to System.out.
      */

@@ -39,7 +39,7 @@ public class QuickloadUtils {
 
     public static void loadGenomeVersionSynonyms(String urlString, Multimap<String, String> genomeVersionSynonyms) {
         try {
-            urlString = toExternalForm(urlString);
+            urlString = toExternalForm(urlString).replaceAll(" ", "%20");
             urlString += QuickloadConstants.SYNONYMS_TXT;
             URI uri = new URI(urlString);
             parseGenomeVersionSynonyms(getInputStream(uri), genomeVersionSynonyms);

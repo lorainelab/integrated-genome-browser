@@ -91,7 +91,8 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
 
     public void addSeparator(int weight) {
         JRPSeparator separator = new JRPSeparator(weight);
+        int loc = WeightUtil.locationToAdd(menuItemComponents, separator);
         menuItemComponents.add(separator);
-        super.add(separator, -1);
+        super.add(separator, loc);
     }
 }

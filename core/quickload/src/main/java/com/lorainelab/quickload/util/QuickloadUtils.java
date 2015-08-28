@@ -39,7 +39,7 @@ public class QuickloadUtils {
 
     public static void loadGenomeVersionSynonyms(String urlString, Multimap<String, String> genomeVersionSynonyms) {
         try {
-            urlString = toExternalForm(urlString).replaceAll(" ", "%20");
+            urlString = toExternalForm(urlString);
             urlString += QuickloadConstants.SYNONYMS_TXT;
             URI uri = new URI(urlString);
             parseGenomeVersionSynonyms(getInputStream(uri), genomeVersionSynonyms);
@@ -180,7 +180,7 @@ public class QuickloadUtils {
         if (!urlString.endsWith("/")) {
             urlString += "/";
         }
-        return urlString;
+        return urlString.replaceAll(" ", "%20");
     }
 
     private static Stream<CSVRecord> getCSVRecordStreamFromTabDelimitedResource(final Reader reader) throws IOException {

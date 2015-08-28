@@ -42,7 +42,7 @@ public class ToolTipConstants {
     public static final String XS = "XS";
     public static final String NM = "NM";
 
-    public static final String DESCRIPTION = "Description";
+    public static final String DESCRIPTION = "description";
     public static final String CDS_START = "cds start";
     public static final String CDS_END = "cds end";
 

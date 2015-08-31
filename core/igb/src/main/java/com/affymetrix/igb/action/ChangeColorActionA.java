@@ -1,11 +1,11 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.affymetrix.genometry.event.ParameteredAction;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -95,7 +95,7 @@ public abstract class ChangeColorActionA extends SeqMapViewActionA implements Pa
     @Override
     public void performAction(Object... parameters) {
         if (parameters != null) {
-            if (parameters.length < 1 || parameters[0].getClass() != Color.class) {
+            if (parameters.length < 1 || parameters[0] == null || parameters[0].getClass() != Color.class) {
                 return;
             }
 

@@ -11,6 +11,8 @@ import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.WeightedJRPWidget;
+import com.affymetrix.igb.swing.util.WeightUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -38,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -172,10 +175,13 @@ public class IGBToolBar extends JToolBar {
         }
         SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
+    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IGBToolBar.class);
 
     public void addToolbarAction(GenericAction genericAction, int index) {
         if (!checkIfAlreadyAdded(genericAction)) {
-            JRPButton button = new JRPButtonTLP(genericAction, index);
+            logger.info(genericAction.getId() + " Adding to igbtoolbar.");
+            JRPButtonTLP button = new JRPButtonTLP(genericAction, index);
             button.setHideActionText(true);
             //button.setBorder(new LineBorder(Color.BLACK));
             button.setMargin(new Insets(0, 0, 0, 0));
@@ -183,20 +189,22 @@ public class IGBToolBar extends JToolBar {
                 button.addMouseListener(continuousActionListener);
             }
 
-            boolean actionAdded = false;
-            for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
-                JRPButtonTLP actionButton = (JRPButtonTLP) toolbarItemPanel.getComponent(i);
-                int actionIndex = actionButton.getIndex();
-                if (actionIndex != -1 && actionIndex > index) {
-                    toolbarItemPanel.add(button, i);
-                    actionAdded = true;
-                    break;
-                }
-            }
-
-            if (!actionAdded) {
-                toolbarItemPanel.add(button, -1);
-            }
+//            boolean actionAdded = false;
+//            for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
+//                JRPButtonTLP actionButton = (JRPButtonTLP) toolbarItemPanel.getComponent(i);
+//                int actionIndex = actionButton.getWeight();
+//                if (actionIndex != -1 && actionIndex > index) {
+//                    toolbarItemPanel.add(button, i);
+//                    actionAdded = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!actionAdded) {
+//                toolbarItemPanel.add(button, -1);
+//            }
+            int loc = WeightUtil.locationToAdd(toolbarItemPanel, button);
+            toolbarItemPanel.add(button, loc);
             refreshToolbar();
         }
     }
@@ -266,7 +274,7 @@ public class IGBToolBar extends JToolBar {
     private int getOrdinal(Component c) {
         int ordinal = 0;
         if (c instanceof JRPButtonTLP) {
-            ordinal = ((JRPButtonTLP) c).getIndex();
+            ordinal = ((JRPButtonTLP) c).getWeight();
         }
         return ordinal;
     }
@@ -293,23 +301,19 @@ public class IGBToolBar extends JToolBar {
         }
     };
 
-    private class JRPButtonTLP extends JRPButton {
+    private class JRPButtonTLP extends JRPButton implements WeightedJRPWidget{
 
         private static final long serialVersionUID = 1L;
-        private int index;
+        private int weight;
 
-        private JRPButtonTLP(GenericAction genericAction, int index) {
+        private JRPButtonTLP(GenericAction genericAction, int weight) {
             super("Toolbar_" + genericAction.getId(), genericAction);
             setHideActionText(true);
-            this.index = index;
-        }
-
-        private int getIndex() {
-            return index;
+            this.weight = weight;
         }
 
         private void setIndex(int i) {
-            this.index = i;
+            this.weight = i;
         }
 
         @Override
@@ -319,6 +323,11 @@ public class IGBToolBar extends JToolBar {
                         !Boolean.valueOf(getAction().getValue(AbstractAction.SELECTED_KEY).toString()));
             }
             super.fireActionPerformed(evt);
+        }
+
+        @Override
+        public int getWeight() {
+            return weight;
         }
 
     }

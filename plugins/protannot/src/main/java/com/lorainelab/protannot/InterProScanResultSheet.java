@@ -5,13 +5,13 @@
  */
 package com.lorainelab.protannot;
 
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import static com.lorainelab.protannot.ProtAnnotAction.BUNDLE;
 import com.lorainelab.protannot.model.InterProScanTableModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JViewport;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
@@ -28,7 +28,7 @@ public class InterProScanResultSheet extends JPanel {
     private final JViewport jvp;
     private static final String DEFAULT_TITLE = "InterProScan";
     private InterProScanTableModel ipsTableModel;
-    private final JTable table;
+    private final JRPStyledTable table;
     private final PropertySheetHelper helper;
     private final JButton cancelAllJobs;
     private final JButton runInterProScan;
@@ -36,7 +36,7 @@ public class InterProScanResultSheet extends JPanel {
     public InterProScanResultSheet() {
         super();
         this.title = new JLabel(DEFAULT_TITLE);
-        this.table = new JTable();
+        this.table = new JRPStyledTable("IPS Table");
         this.helper = new PropertySheetHelper(table);
         this.jvp = new JViewport();
         this.scrollPane = new JScrollPane(table);

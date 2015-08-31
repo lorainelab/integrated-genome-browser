@@ -180,7 +180,7 @@ public class QuickloadUtils {
         if (!urlString.endsWith("/")) {
             urlString += "/";
         }
-        return urlString;
+        return urlString.replaceAll(" ", "%20");
     }
 
     private static Stream<CSVRecord> getCSVRecordStreamFromTabDelimitedResource(final Reader reader) throws IOException {

@@ -39,38 +39,32 @@ public class UriUtils {
         }
     }
 
-    public static HttpRequest getRemoteHttpRequest(URI uri) throws IOException, IllegalArgumentException {
-        checkIsValidRequest(uri);
-        if (checkIsLocalFile(uri)) {
-            throw new IllegalArgumentException("URI is referencing a local file, this method is only meant for remote sources.");
-        }
-        HttpRequest httpRequest = HttpRequest.get(uri.toURL());
-        httpRequest = httpRequest.acceptGzipEncoding()
-                .uncompress(true)
-                .trustAllCerts()
-                .trustAllHosts()
-                .followRedirects(true);
-        return httpRequest;
-    }
-
     //TODO could easily be modified to use cache, but this is not required for now since cacheing needs to be updated before it will be useful
     public static InputStream getInputStream(URI uri) throws IOException {
-        checkIsValidRequest(uri);
-        if (checkIsLocalFile(uri)) {
-            File f = new File(uri);
-            InputStream inputStream = new FileInputStream(f);
-            return inputStream;
+        try {
+            checkIsValidRequest(uri);
+            if (checkIsLocalFile(uri)) {
+                File f = new File(uri);
+                InputStream inputStream = new FileInputStream(f);
+                return inputStream;
+            }
+            final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
+                    .acceptGzipEncoding()
+                    .uncompress(true)
+                    .trustAllCerts()
+                    .trustAllHosts()
+                    .followRedirects(true);
+            if (isGzipContentEncoding(httpRequest)) {
+                return GeneralUtils.getGZipInputStream(uri.toString(), httpRequest.buffer());
+            }
+            if (httpRequest.code() == HttpURLConnection.HTTP_OK) {
+                return httpRequest.buffer();
+            } else {
+                throw new IOException("HTTP response code " + httpRequest.code() + " recieved, unable to load file");
+            }
+        } catch (HttpRequest.HttpRequestException ex) {
+            throw new IOException(ex.getMessage());
         }
-        final HttpRequest httpRequest = HttpRequest.get(uri.toURL())
-                .acceptGzipEncoding()
-                .uncompress(true)
-                .trustAllCerts()
-                .trustAllHosts()
-                .followRedirects(true);
-        if (isGzipContentEncoding(httpRequest)) {
-            return GeneralUtils.getGZipInputStream(uri.toString(), httpRequest.buffer());
-        }
-        return httpRequest.buffer();
     }
 
     private static boolean isGzipContentEncoding(final HttpRequest httpRequest) {

@@ -1,6 +1,5 @@
 package com.lorainelab.protannot;
 
-import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
@@ -36,6 +35,7 @@ import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
+import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
 import com.lorainelab.protannot.event.PreferenceChangeEvent;
 import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
@@ -865,10 +865,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                     cglyph.setColor(color.darker());
                 }
 
-                String spanno = "Span " + String.valueOf(i + 1) + " of ";
+                String spanno = "Span " + String.valueOf(i + 1);
                 String interpro = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
                 if (interpro != null) {
-                    spanno += interpro;
+                    spanno += " of " + interpro;
                 }
                 cglyph.setText(spanno);
                 cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);

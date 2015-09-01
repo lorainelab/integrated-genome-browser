@@ -2,6 +2,7 @@ package com.lorainelab.image.exporter;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
@@ -22,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
@@ -77,8 +79,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
 
     public ExportDialog() {
         this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
-                SVG, new ExportFileFilter(SVG),
                 PNG, new ExportFileFilter(PNG),
+                SVG, new ExportFileFilter(SVG),
                 JPEG, new ExportFileFilter(JPEG)
         );
         exportDialogGui = new ExportDialogGui(this);
@@ -330,20 +332,31 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         if (StringUtils.isBlank(ext)) {
             defaultFileName += selectedExt;
         }
-        FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
-        dialog.setDirectory(directory);
-        dialog.setFile(defaultFileName);
-        centerAndShowSaveDialog(dialog);
-        Optional.ofNullable(dialog.getFile()).ifPresent(fileName -> {
-            String currentExt = GeneralUtils.getExtension(fileName);
-            if (!ArrayUtils.contains(EXTENSION, currentExt)) {
-                fileName += EXTENSION[1];
-                currentExt = EXTENSION[1];
+        if (IS_UBUNTU) {
+            JFileChooser fileChooser = new JFileChooser(directory);
+            fileChooser.setDialogTitle("Save Image");
+            fileChooser.setSelectedFile(new File(defaultFileName));
+            int option = fileChooser.showOpenDialog(exportDialogGui);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                completeSaveButtonAction(selectedFile);
             }
-            selectedExt = currentExt;
-            File imageFile = new File(dialog.getDirectory(), fileName);
-            completeSaveButtonAction(imageFile);
-        });
+        } else {
+            FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
+            dialog.setDirectory(directory);
+            dialog.setFile(defaultFileName);
+            centerAndShowSaveDialog(dialog);
+            Optional.ofNullable(dialog.getFile()).ifPresent(fileName -> {
+                String currentExt = GeneralUtils.getExtension(fileName);
+                if (!ArrayUtils.contains(EXTENSION, currentExt)) {
+                    fileName += EXTENSION[1];
+                    currentExt = EXTENSION[1];
+                }
+                selectedExt = currentExt;
+                File imageFile = new File(dialog.getDirectory(), fileName);
+                completeSaveButtonAction(imageFile);
+            });
+        }
     }
 
     public void saveButtonActionPerformed() {

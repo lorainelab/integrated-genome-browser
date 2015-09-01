@@ -346,8 +346,8 @@ public final class GeneralLoadView {
                                 logger.error(ex.getMessage(), ex);
                             }
                         }
-                        if(indexFileIs.isPresent()) {
-                             try {
+                        if (indexFileIs.isPresent()) {
+                            try {
                                 indexFileIs.get().close();
                             } catch (IOException ex) {
                                 logger.error(ex.getMessage(), ex);
@@ -713,7 +713,8 @@ public final class GeneralLoadView {
                 if (dataContainer.getDataProvider() instanceof LocalDataProvider) {
                     if (dataContainer.removeDataSet(feature)) {
                         SeqGroupView.getInstance().refreshTable();
-                        if (gmodel.getSelectedGenomeVersion().getSeqList() != null) {
+                        if (gmodel.getSelectedGenomeVersion().getSeqList() != null
+                                && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq().get())) {
                             gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
                         }
                     }

@@ -144,8 +144,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Handles clicking of partial residue, all residue, and refresh data
-     * buttons.
+     * Handles clicking of partial residue, all residue, and refresh data buttons.
      */
     public void loadResidues(final boolean partial) {
         final BioSeq seq = gmodel.getSelectedSeq().orElse(null);
@@ -238,8 +237,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Load any features that have a autoload strategy and haven't already been
-     * loaded.
+     * Load any features that have a autoload strategy and haven't already been loaded.
      */
     public static void loadAutoLoadFeatures() {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
@@ -249,8 +247,7 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Load any features that have a whole strategy and haven't already been
-     * loaded.
+     * Load any features that have a whole strategy and haven't already been loaded.
      */
     public static void loadWholeRangeFeatures(DataProvider dataProvider) {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
@@ -469,8 +466,8 @@ public final class GeneralLoadView {
     }
 
     /**
-     * Accessor method. See if we need to enable/disable the refresh_dataB
-     * button by looking at the features' load strategies.
+     * Accessor method. See if we need to enable/disable the refresh_dataB button by looking at the features' load
+     * strategies.
      */
     void changeVisibleDataButtonIfNecessary(List<DataSet> features) {
         if (IsGenomeSequence()) {
@@ -657,7 +654,8 @@ public final class GeneralLoadView {
                 if (dataContainer.getDataProvider() instanceof LocalDataProvider) {
                     if (dataContainer.removeDataSet(feature)) {
                         SeqGroupView.getInstance().refreshTable();
-                        if (gmodel.getSelectedGenomeVersion().getSeqList() != null) {
+                        if (gmodel.getSelectedGenomeVersion().getSeqList() != null
+                                && !gmodel.getSelectedGenomeVersion().getSeqList().contains(gmodel.getSelectedSeq().get())) {
                             gmodel.setSelectedSeq(gmodel.getSelectedGenomeVersion().getSeqList().get(0));
                         }
                     }

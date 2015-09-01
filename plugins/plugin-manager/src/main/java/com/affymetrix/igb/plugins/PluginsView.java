@@ -10,7 +10,6 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
 import com.affymetrix.igb.swing.JRPButton;
-import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.eventbus.EventBus;
@@ -75,8 +74,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final int TAB_POSITION = 7;
     private static final BundleFilter BOTH_BUNDLE_FILTER = bundle -> true;
-    private static final BundleFilter INSTALLED_BUNDLE_FILTER = PluginsView::isInstalled;
-    private static final BundleFilter UNINSTALLED_BUNDLE_FILTER = bundle -> !isInstalled(bundle);
     private static final BundleFilter NEITHER_BUNDLE_FILTER = bundle -> false;
     private BundleFilter DEFAULT_BUNDLE_FILTER;
 
@@ -94,13 +91,9 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private JScrollPane jScrollPane;
     private BundleTableModel bundleTableModel;
     private JRPStyledTable bundleTable;
-    private JRPCheckBox installedBundlesCheckbox;
-    private JRPCheckBox uninstalledBundlesCheckbox;
     private JRPButton updateAllBundlesButton;
     private JRPButton updateSelectedBundlesButton;
     private JRPButton repositoryPrefsButton;
-    private boolean isShowInstalledBundles = true;
-    private boolean isShowUninstalledBundles = true;
     private RepositoryAdmin repoAdmin;
     private BundleListener bundleListener;
     private List<Bundle> installedBundles;
@@ -108,7 +101,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private List<Bundle> unfilteredBundles; // all methods that access filteredBundles should be synchronized
     private List<Bundle> filteredBundles; // all methods that access filteredBundles should be synchronized
     private HashMap< String, Bundle> latest;
-    private BundleFilter bundleFilter;
     private List<PluginRepository> externalRepositories;
     private List< Bundle> defaultBundles;
     private IgbService igbService;
@@ -206,7 +198,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         jScrollPane = new JScrollPane(bundleTable);
         add("Center", jScrollPane);
         add("South", getButtonPanel());
-        setBundleFilter(getBundleFilter());
 
         bundleListener = (BundleEvent bundleEvent) -> {
             if (bundleContext != null) {
@@ -247,30 +238,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private JPanel getButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-
-        installedBundlesCheckbox = new JRPCheckBox("PluginsView_installedBundlesCheckbox", BUNDLE.getString("installedBundles"));
-        installedBundlesCheckbox.setToolTipText(BUNDLE.getString("installedBundlesTooltip"));
-        installedBundlesCheckbox.addActionListener(
-                ae -> {
-                    isShowInstalledBundles = !isShowInstalledBundles;
-                    setBundleFilter(getBundleFilter());
-                    reloadBundleTable();
-                    igbService.setStatus("");
-                });
-        installedBundlesCheckbox.setSelected(true);
-        buttonPanel.add(installedBundlesCheckbox);
-
-        uninstalledBundlesCheckbox = new JRPCheckBox("PluginsView_uninstalledBundlesCheckbox", BUNDLE.getString("uninstalledBundles"));
-        uninstalledBundlesCheckbox.setToolTipText(BUNDLE.getString("uninstalledBundlesTooltip"));
-        uninstalledBundlesCheckbox.addActionListener(
-                ae -> {
-                    isShowUninstalledBundles = !isShowUninstalledBundles;
-                    setBundleFilter(getBundleFilter());
-                    reloadBundleTable();
-                    igbService.setStatus("");
-                });
-        uninstalledBundlesCheckbox.setSelected(true);
-        buttonPanel.add(uninstalledBundlesCheckbox);
 
         updateAllBundlesButton = new JRPButton("PluginsView_updateAllBundlesButton", BUNDLE.getString("updateAllBundles"));
         updateAllBundlesButton.setToolTipText(BUNDLE.getString("updateAllBundlesTooltip"));
@@ -410,25 +377,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
         return filteredBundles.size();
     }
 
-    /**
-     * get the bundle filter for the given user settings
-     *
-     * @return the bundle filter
-     */
-    private BundleFilter getBundleFilter() {
-        BundleFilter bundleFilter = null;
-        if (isShowInstalledBundles && isShowUninstalledBundles) {
-            bundleFilter = BOTH_BUNDLE_FILTER;
-        } else if (isShowInstalledBundles && !isShowUninstalledBundles) {
-            bundleFilter = INSTALLED_BUNDLE_FILTER;
-        } else if (!isShowInstalledBundles && isShowUninstalledBundles) {
-            bundleFilter = UNINSTALLED_BUNDLE_FILTER;
-        } else if (!isShowInstalledBundles && !isShowUninstalledBundles) {
-            bundleFilter = NEITHER_BUNDLE_FILTER;
-        }
-        return bundleFilter;
-    }
-
 //    private boolean checkRequirements(Requirement[] requirements) {
 //        boolean checked = false;
 //        for (Requirement requirement : requirements) {
@@ -475,8 +423,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
      * called before the page is closed
      */
     public void deactivate() {
-        isShowInstalledBundles = false;
-        isShowUninstalledBundles = false;
         bundleContext.removeBundleListener(bundleListener);
         bundleContext = null;
     }
@@ -606,7 +552,7 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
     private synchronized void filterBundles() {
         filteredBundles = new ArrayList<>();
         for (Bundle bundle : unfilteredBundles) {
-            if (bundle.getLocation().startsWith("obr:") || (DEFAULT_BUNDLE_FILTER.filterBundle(bundle) && bundleFilter.filterBundle(bundle))) {
+            if (bundle.getLocation().startsWith("obr:") || (DEFAULT_BUNDLE_FILTER.filterBundle(bundle))) {
                 try {
                     Resource[] resources = repoAdmin.discoverResources("(&(" + SYMBOLIC_NAME + "=" + bundle.getSymbolicName() + ")(" + VERSION + "=" + bundle.getVersion() + "))");
                     Resolver resolver = repoAdmin.resolver();
@@ -644,15 +590,6 @@ public class PluginsView extends IgbTabPanel implements IPluginsHandler, Constan
                     }
                 });
         updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
-    }
-
-    /**
-     * set the bundle filter to use
-     *
-     * @param bundleFilter the bundle filter
-     */
-    private void setBundleFilter(BundleFilter bundleFilter) {
-        this.bundleFilter = bundleFilter;
     }
 
     public boolean addPluginRepository(PluginRepository pluginRepository) {

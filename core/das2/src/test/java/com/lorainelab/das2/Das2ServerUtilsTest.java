@@ -50,7 +50,8 @@ public class Das2ServerUtilsTest {
         });
         assemblyInfo.entrySet().forEach(entry -> logger.info(entry.getKey() + ":" + entry.getValue()));
     }
-
+    
+    @Ignore
     @Test
     public void retrieveTypesTest() throws Exception {
         final String queryUri = "H_sapiens_Feb_2009";

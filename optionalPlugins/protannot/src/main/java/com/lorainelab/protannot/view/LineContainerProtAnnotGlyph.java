@@ -31,7 +31,7 @@ public class LineContainerProtAnnotGlyph extends LineContainerGlyph {
         Rectangle compbox = view.getComponentSizeRect();
         setPixelBox(getPixelBox().intersection(compbox));
 
-        g.fillRect(getPixelBox().x, getPixelBox().y + getPixelBox().height / 2, getPixelBox().width, 1);
+        //g.fillRect(getPixelBox().x, getPixelBox().y + getPixelBox().height / 2, getPixelBox().width, 1);
     }
     
 }

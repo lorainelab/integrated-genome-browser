@@ -246,6 +246,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
     public void initSplitPane(JPanel p) {
         split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, p, tabbedPane);
+        split_pane.setResizeWeight(.8d);
+
         this.add(split_pane);
     }
 
@@ -260,20 +262,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         top.addComponentListener(this);
         top.add("South", axismap);
         mapPanel.add("North", top);
-        seqmap.setPreferredSize(new Dimension(100, seqmap_pixel_height));
         seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
         mapPanel.add("Center", seqmap);
         JPanel right = new JPanel();
         right.setLayout(new GridLayout(1, 2));
-//        right.add(y_scroller);
         right.add(getYZoomPanel());
-        int maps_height = axis_pixel_height + seq_pixel_height
-                + upper_white_space + middle_white_space + lower_white_space
-                + divider_size + seqmap_pixel_height;
 
         JPanel p = new JPanel();
         p.addComponentListener(this);
-        p.setPreferredSize(new Dimension(seqmap.getWidth(), maps_height));
         p.setLayout(new BorderLayout());
         p.add("East", y_scroller);
         p.add("Center", mapPanel);
@@ -281,8 +277,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         p.add("West", right);
 
         tabbedPane = new JRPTabbedPane(GenomeView.class.getName());
-        Dimension minimumSize = new Dimension(0, 500);
-        p.setMinimumSize(minimumSize);
+        Dimension preferredSize = new Dimension(0, 700);
+        p.setPreferredSize(preferredSize);
 
         initSplitPane(p);
 

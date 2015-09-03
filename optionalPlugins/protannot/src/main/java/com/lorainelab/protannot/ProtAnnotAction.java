@@ -31,6 +31,7 @@ import com.lorainelab.image.exporter.service.ImageExportService;
 import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusTerminateEvent;
 import com.lorainelab.protannot.model.Dnaseq;
+import com.lorainelab.protannot.model.Dnaseq.MRNA;
 import com.lorainelab.protannot.model.ProtannotParser;
 import com.lorainelab.protannot.view.StatusBar;
 import java.awt.BorderLayout;
@@ -67,6 +68,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -726,9 +728,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         }
     }
 
-    public void load(SeqMapViewI seqMapView) {
-        Dnaseq dnaseq = protAnnotService.getDnaseq();
-        BioSeq genome_seq = parser.parse(seqMapView, dnaseq, id);
+    private void setTitle(BioSeq bioSeq, Dnaseq dnaseq) {
         int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
         int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
         int relativeStart = Math.min(absoluteStart, absoluteEnd);
@@ -737,9 +737,40 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         if(absoluteStart > absoluteEnd) {
             strand = "-";
         }
-        gview.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
+        String title = "ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + bioSeq.getId() + " from " + bioSeq.getGenomeVersion().getName();
+        gview.setTitle(title);
+        frm.setTitle(title);
+    }
+
+    private void setTitleFromPaxml(Dnaseq dnaseq, String fileName) {
+        String title;
+        try {
+            int absoluteStart = Integer.parseInt(dnaseq.getAbsoluteStart());
+            int absoluteEnd = Integer.parseInt(dnaseq.getAbsoluteEnd());
+            int relativeStart = Math.min(absoluteStart, absoluteEnd);
+            int relativeEnd = Math.max(absoluteStart, absoluteEnd);
+            String strand = "+";
+            if (absoluteStart > absoluteEnd) {
+                strand = "-";
+            }
+            Optional<MRNA> mrna = dnaseq.getMRNAAndAaseq()
+                    .stream().filter(c -> c instanceof MRNA)
+                    .findFirst().map(c -> (MRNA) c);
+
+            Optional<Dnaseq.Descriptor> genomeName = mrna.get().getDescriptor().stream().filter(k -> k.getType().equals("genome name")).findFirst();
+            title = "ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + dnaseq.getVersion() + " from " + genomeName.get().getValue();
+        } catch (Exception e) {
+            title = "ProtAnnot showing file " + fileName;
+        }
+        gview.setTitle(title);
+        frm.setTitle(title);
+    }
+
+    public void load(SeqMapViewI seqMapView) {
+        Dnaseq dnaseq = protAnnotService.getDnaseq();
+        BioSeq genome_seq = parser.parse(seqMapView, dnaseq, id);
         gview.setBioSeq(genome_seq, true);
-        frm.setTitle("ProtAnnot showing region " + relativeStart + " to " + relativeEnd + " from the " + strand + " strand of " + genome_seq.getId() + " from " + genome_seq.getGenomeVersion().getName());
+        setTitle(genome_seq, dnaseq);
     }
 
     public boolean validateSelection(SeqMapViewI seqMapView) {
@@ -780,10 +811,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     public void load(BioSeq genome_seq) {
-        gview.setTitle("genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
         gview.setBioSeq(genome_seq, false);
-
-        frm.setTitle("version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
     }
 
     public void load(InputStream fistr, String filename) {
@@ -794,16 +822,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             Dnaseq dnaseq = parser.parse(fistr);
             protAnnotService.setDnaseq(dnaseq);
             genome_seq = parser.parse(dnaseq);
-//            Xml2GenometryParser parser = new Xml2GenometryParser();
-//            NormalizeXmlStrand nxs = new NormalizeXmlStrand(bistr);
-//            genome_seq = parser.parse(nxs.doc);
-            gview.setTitle("viewing file: " + filename + "\t genome version: " + genome_seq.getGenomeVersion().getName() + "\t sequence: " + genome_seq.getId());
+
+            setTitleFromPaxml(dnaseq, filename);
             gview.setBioSeq(genome_seq, true);
-            frm.setTitle(" ProtAnnot: " + filename + "\t version: " + genome_seq.getGenomeVersion().getName() + "\t id: " + genome_seq.getId());
+
         } catch (Exception ex) {
-            Reporter.report("Couldn't read file: " + filename + "\n"
-                    + "Error : " + ex.getMessage(),
-                    ex, false, false, true);
             logger.error(ex.getMessage(), ex);
             no_data();
         }

@@ -233,7 +233,7 @@ public class IGBToolBar extends JToolBar {
         int index = 0;
         for (Component c : toolbarItemPanel.getComponents()) {
             if (c instanceof JRPButtonTLP) {
-                ((JRPButtonTLP) c).setIndex(index++);
+                ((JRPButtonTLP) c).setWeight(index++);
                 // ((JRPButtonTLP) c).getm
             }
         }
@@ -294,7 +294,7 @@ public class IGBToolBar extends JToolBar {
             this.weight = weight;
         }
 
-        private void setIndex(int i) {
+        private void setWeight(int i) {
             this.weight = i;
         }
 

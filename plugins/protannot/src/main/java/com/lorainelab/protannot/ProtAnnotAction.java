@@ -99,6 +99,7 @@ import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,7 +139,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private ProtAnnotService protAnnotService;
 
     // where the application is first invoked
-    private static String user_dir = System.getProperty("user.dir");
+    private static String user_dir = FileUtils.getUserDirectoryPath();
     // used for choosing new files to load
     private JFileChooser chooser = null;
     // for printing

@@ -40,6 +40,7 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
      * This is used to answer {@link #getDisplay()}.
      */
     private String display = null;
+    private int toolbarIndex;
 
     private SeqMapViewActionA shownAction, hiddenAction;
     private boolean isToolbarDefault = false;
@@ -64,6 +65,11 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
     public SeqMapToggleAction(SeqMapViewActionA one, SeqMapViewActionA two, boolean isToolbarDefault) {
         this(one, two);
         this.isToolbarDefault = isToolbarDefault;
+    }
+    
+    public SeqMapToggleAction(SeqMapViewActionA one, SeqMapViewActionA two, boolean isToolbarDefault, int toolbarIndex) {
+        this(one, two, isToolbarDefault);
+        this.toolbarIndex = toolbarIndex;
     }
 
     public SeqMapToggleAction(SeqMapViewActionA one, SeqMapViewActionA two) {
@@ -150,5 +156,11 @@ public class SeqMapToggleAction extends SeqMapViewActionA {
         return isToolbarDefault;
     }
 
+    @Override
+    public int getToolbarIndex() {
+        return toolbarIndex; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
     
 }

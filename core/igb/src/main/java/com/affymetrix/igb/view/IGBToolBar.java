@@ -1,16 +1,18 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.ContinuousAction;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.CCPUtils;
 import com.affymetrix.genoviz.swing.DragAndDropJPanel;
 import com.affymetrix.igb.action.SelectionRuleAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.shared.Selections.RefreshSelectionListener;
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.igb.swing.WeightedJRPWidget;
+import com.affymetrix.igb.swing.util.WeightUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -172,10 +174,10 @@ public class IGBToolBar extends JToolBar {
         }
         SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
-
+    
     public void addToolbarAction(GenericAction genericAction, int index) {
         if (!checkIfAlreadyAdded(genericAction)) {
-            JRPButton button = new JRPButtonTLP(genericAction, index);
+            JRPButtonTLP button = new JRPButtonTLP(genericAction, index);
             button.setHideActionText(true);
             //button.setBorder(new LineBorder(Color.BLACK));
             button.setMargin(new Insets(0, 0, 0, 0));
@@ -183,13 +185,8 @@ public class IGBToolBar extends JToolBar {
                 button.addMouseListener(continuousActionListener);
             }
 
-            int local_index = 0;
-            while (local_index < index && local_index < toolbarItemPanel.getComponentCount()
-                    && index >= getOrdinal(toolbarItemPanel.getComponent(local_index))) {
-                local_index++;
-            }
-
-            toolbarItemPanel.add(button, local_index);
+            int loc = WeightUtil.locationToAdd(toolbarItemPanel, button);
+            toolbarItemPanel.add(button, loc);
             refreshToolbar();
         }
     }
@@ -236,7 +233,7 @@ public class IGBToolBar extends JToolBar {
         int index = 0;
         for (Component c : toolbarItemPanel.getComponents()) {
             if (c instanceof JRPButtonTLP) {
-                ((JRPButtonTLP) c).setIndex(index++);
+                ((JRPButtonTLP) c).setWeight(index++);
                 // ((JRPButtonTLP) c).getm
             }
         }
@@ -259,7 +256,7 @@ public class IGBToolBar extends JToolBar {
     private int getOrdinal(Component c) {
         int ordinal = 0;
         if (c instanceof JRPButtonTLP) {
-            ordinal = ((JRPButtonTLP) c).getIndex();
+            ordinal = ((JRPButtonTLP) c).getWeight();
         }
         return ordinal;
     }
@@ -286,23 +283,19 @@ public class IGBToolBar extends JToolBar {
         }
     };
 
-    private class JRPButtonTLP extends JRPButton {
+    private class JRPButtonTLP extends JRPButton implements WeightedJRPWidget{
 
         private static final long serialVersionUID = 1L;
-        private int index;
+        private int weight;
 
-        private JRPButtonTLP(GenericAction genericAction, int index) {
+        private JRPButtonTLP(GenericAction genericAction, int weight) {
             super("Toolbar_" + genericAction.getId(), genericAction);
             setHideActionText(true);
-            this.index = index;
+            this.weight = weight;
         }
 
-        private int getIndex() {
-            return index;
-        }
-
-        private void setIndex(int i) {
-            this.index = i;
+        private void setWeight(int i) {
+            this.weight = i;
         }
 
         @Override
@@ -312,6 +305,11 @@ public class IGBToolBar extends JToolBar {
                         !Boolean.valueOf(getAction().getValue(AbstractAction.SELECTED_KEY).toString()));
             }
             super.fireActionPerformed(evt);
+        }
+
+        @Override
+        public int getWeight() {
+            return weight;
         }
 
     }

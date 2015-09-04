@@ -6,6 +6,9 @@
 package com.affymetrix.igb.swing.util;
 
 import com.affymetrix.igb.swing.WeightedJRPWidget;
+import java.awt.Component;
+import java.awt.Container;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +35,18 @@ public class WeightUtil {
         } else {
             return menuItems.indexOf(prevMenuItem) + 1;
         }
+    }
+    
+    public static int locationToAdd(Container container, WeightedJRPWidget newMenuItem) {
+        List<WeightedJRPWidget> toolbarItems = new ArrayList<>();
+        for(Component comp : container.getComponents()) {
+            if(comp instanceof WeightedJRPWidget) {
+                toolbarItems.add((WeightedJRPWidget)comp);
+            } else {
+                return -1;
+            }
+        }
+        return locationToAdd(toolbarItems, newMenuItem);
     }
 
 }

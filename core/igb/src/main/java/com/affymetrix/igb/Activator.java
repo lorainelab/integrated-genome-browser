@@ -242,7 +242,7 @@ public class Activator implements BundleActivator {
         GenericActionHolder.getInstance().addGenericAction(
                 new SeqMapToggleAction(
                         StartAutoScrollAction.getAction(),
-                        StopAutoScrollAction.getAction(), true));
+                        StopAutoScrollAction.getAction(), true, StartAutoScrollAction.getAction().getToolbarIndex()));
         ZoomingRepackAction.getAction();
         ShowPlusStrandAction.getAction();
         ShowMinusStrandAction.getAction();

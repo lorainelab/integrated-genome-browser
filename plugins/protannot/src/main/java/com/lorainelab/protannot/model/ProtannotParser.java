@@ -352,7 +352,11 @@ public class ProtannotParser {
                     allExonsResidue = new StringBuilder(DNAUtils.getReverseComplement(allExonsResidue));
                 }
                 String mrnaProtein = DNAUtils.translate(allExonsResidue.toString(), cdsStart % 3, DNAUtils.ONE_LETTER_CODE);
-                mrna.addDescriptor("protein sequence", mrnaProtein);
+                if (cdsStart != cdsEnd) {
+                    mrna.addDescriptor("protein sequence", mrnaProtein);
+                } else {
+                    mrna.addDescriptor("protein sequence", "No translation for this gene model");
+                }
                 mrna.addDescriptor("mRNA coding sequence", allExonsResidue.toString());
             }
         }

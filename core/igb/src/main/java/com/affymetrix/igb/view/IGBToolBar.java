@@ -40,7 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -176,11 +175,8 @@ public class IGBToolBar extends JToolBar {
         SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
     
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(IGBToolBar.class);
-
     public void addToolbarAction(GenericAction genericAction, int index) {
         if (!checkIfAlreadyAdded(genericAction)) {
-            logger.info(genericAction.getId() + " Adding to igbtoolbar.");
             JRPButtonTLP button = new JRPButtonTLP(genericAction, index);
             button.setHideActionText(true);
             //button.setBorder(new LineBorder(Color.BLACK));
@@ -189,20 +185,6 @@ public class IGBToolBar extends JToolBar {
                 button.addMouseListener(continuousActionListener);
             }
 
-//            boolean actionAdded = false;
-//            for (int i = 0; i < toolbarItemPanel.getComponentCount(); i++) {
-//                JRPButtonTLP actionButton = (JRPButtonTLP) toolbarItemPanel.getComponent(i);
-//                int actionIndex = actionButton.getWeight();
-//                if (actionIndex != -1 && actionIndex > index) {
-//                    toolbarItemPanel.add(button, i);
-//                    actionAdded = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!actionAdded) {
-//                toolbarItemPanel.add(button, -1);
-//            }
             int loc = WeightUtil.locationToAdd(toolbarItemPanel, button);
             toolbarItemPanel.add(button, loc);
             refreshToolbar();

@@ -68,6 +68,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -713,6 +714,7 @@ public class ProtAnnotService {
     public void exportAsImage(Component component) {
         JFileChooser fileChooser = new UniFileChooser("Save As", "png");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setCurrentDirectory(FileUtils.getUserDirectory());
         fileChooser.rescanCurrentDirectory();
         fileChooser.setSelectedFile(new File("Protannot.png"));
         int option = fileChooser.showSaveDialog(component);

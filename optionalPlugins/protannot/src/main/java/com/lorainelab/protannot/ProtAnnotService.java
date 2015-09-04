@@ -696,6 +696,7 @@ public class ProtAnnotService {
 
     public void exportAsXml(Component component) {
         JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
+        chooser.setCurrentDirectory(FileUtils.getUserDirectory());
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.rescanCurrentDirectory();
         int option = chooser.showSaveDialog(component);

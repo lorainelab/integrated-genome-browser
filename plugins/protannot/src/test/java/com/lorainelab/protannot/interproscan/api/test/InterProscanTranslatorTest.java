@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.bioviz.protannot.interproscan.api.test;
+package com.lorainelab.protannot.interproscan.api.test;
 
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq;

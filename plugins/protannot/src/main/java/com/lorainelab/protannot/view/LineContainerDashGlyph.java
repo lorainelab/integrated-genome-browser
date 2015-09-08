@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
 
 /**
  *
@@ -23,15 +22,9 @@ public class LineContainerDashGlyph extends LineContainerProtAnnotGlyph {
 
     @Override
     public void draw(ViewI view) {
-        Rectangle2D.Double fullViewCbox = view.getFullView().getCoordBox();
-        Rectangle2D.Double scratchCbox = new Rectangle2D.Double();
-        Rectangle2D.Double coordBox = getCoordBox();
-        Rectangle pixelBox = getPixelBox();
-        scratchCbox.x = Math.max(coordBox.x, fullViewCbox.x);
-        scratchCbox.width = Math.min(coordBox.x + coordBox.width, fullViewCbox.x + fullViewCbox.width) - scratchCbox.x;
-        scratchCbox.y = coordBox.y;
-        scratchCbox.height = coordBox.height;
-        view.transformToPixels(scratchCbox, pixelBox);
+        Rectangle pixelBox = view.getScratchPixBox();
+        view.transformToPixels(this.getCoordBox(), pixelBox);
+        pixelBox = optimizeBigRectangleRendering(view, pixelBox);
         if (pixelBox.width == 0) {
             pixelBox.width = 1;
         }

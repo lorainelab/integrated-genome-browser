@@ -44,6 +44,7 @@ import com.lorainelab.protannot.model.ProtannotParser;
 import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
 import com.lorainelab.protannot.view.ProtAnnotLabelledRectGlyph;
 import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
+import com.lorainelab.protannot.view.ProtannotEfficientLabelledLineGlyph;
 import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -549,8 +550,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         int childcount = mrna2genome.getChildCount();
         ProtAnnotMapTierGlyph tier = new ProtAnnotMapTierGlyph();
         tier.setCoords(gseq.getMin(), 80, gseq.getLength(), 120);
-        tier.setState(ProtAnnotMapTierGlyph.EXPANDED);
-        tier.setLabel((String) ((TypeContainerAnnot) mrna2genome).getProperty("protein_product_id"));
+        tier.setState(MapTierGlyph.EXPANDED);
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
         seqmap.addTier(tier);
@@ -575,7 +575,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
      */
     private GlyphI glyphifyExons(
             SeqSymmetry mrna2genome, MutableSeqSymmetry annot2genome, int childcount) {
-        GlyphI tGlyph = new LineContainerDashGlyph();
+        GlyphI tGlyph = new ProtannotEfficientLabelledLineGlyph((String) ((TypeContainerAnnot) mrna2genome).getProperty("protein_product_id"));
         seqmap.setDataModel(tGlyph, mrna2genome);
         SeqSpan tSpan = annot2genome.getSpan(vseq);
         tGlyph.setCoords(tSpan.getMin(), 0, tSpan.getLength(), 20);

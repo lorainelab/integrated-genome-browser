@@ -33,7 +33,6 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
 
     public ProtAnnotMapTierGlyph() {
         super();
-        setSpacer(5);
     }
 
     @Override

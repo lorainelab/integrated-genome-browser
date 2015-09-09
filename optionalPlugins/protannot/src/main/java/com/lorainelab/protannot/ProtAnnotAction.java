@@ -256,6 +256,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
             worker.execute();
         } else {
             doLoadFile();
+            loadFileOnStart = false;
         }
     }
 

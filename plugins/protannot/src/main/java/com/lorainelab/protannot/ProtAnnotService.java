@@ -97,6 +97,9 @@ public class ProtAnnotService {
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
+    private static final String EXPORT_IMAGE_DEFAULT_LOC_KEY = "export.image.default.location";
+    private static final String DEFAULT_FILENAME = "ProtAnnot.png";
+
     private static final int TOOL_TIP_WIDTH = 30;
     private final Pattern pattern;
     private Matcher matcher;
@@ -715,17 +718,19 @@ public class ProtAnnotService {
     public void exportAsImage(Component component) {
         JFileChooser fileChooser = new UniFileChooser("Save As", "png");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setCurrentDirectory(FileUtils.getUserDirectory());
+        
         fileChooser.rescanCurrentDirectory();
-        fileChooser.setSelectedFile(new File("Protannot.png"));
+        try {
+            String currentFile = PreferenceUtils.getProtAnnotNode().get(EXPORT_IMAGE_DEFAULT_LOC_KEY, FileUtils.getUserDirectory().getAbsolutePath() + "/" + DEFAULT_FILENAME);
+            fileChooser.setSelectedFile(new File(currentFile));
+
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
         int option = fileChooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = fileChooser.getSelectedFile();
-            String filePath = exportFile.getName();
-            if (filePath.lastIndexOf(".") > 0) {
-                String ext = filePath.substring(filePath.lastIndexOf("."));
-
-            }
+            PreferenceUtils.getProtAnnotNode().put(EXPORT_IMAGE_DEFAULT_LOC_KEY, exportFile.getAbsolutePath());
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }
     }

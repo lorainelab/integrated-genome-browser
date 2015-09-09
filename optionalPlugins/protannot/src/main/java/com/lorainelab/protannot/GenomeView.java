@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
@@ -32,6 +31,7 @@ import com.affymetrix.genoviz.widget.TieredNeoMap;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
@@ -41,8 +41,8 @@ import com.lorainelab.protannot.event.ZoomInEvent;
 import com.lorainelab.protannot.event.ZoomOutEvent;
 import com.lorainelab.protannot.model.InterProScanTableModel;
 import com.lorainelab.protannot.model.ProtannotParser;
-import com.lorainelab.protannot.view.LineContainerDashGlyph;
 import com.lorainelab.protannot.view.LineContainerProtAnnotGlyph;
+import com.lorainelab.protannot.view.ProtAnnotLabelledRectGlyph;
 import com.lorainelab.protannot.view.ProtAnnotMapTierGlyph;
 import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;
@@ -57,6 +57,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -890,19 +891,27 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             for (int j = 0; j < count2; j++) {
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
-                LabelledRectGlyph cglyph = new LabelledRectGlyph();
+                ProtAnnotLabelledRectGlyph cglyph = new ProtAnnotLabelledRectGlyph();
                 if (i % 2 == 0) {
                     cglyph.setColor(color);
                 } else {
                     cglyph.setColor(color.darker());
                 }
 
-                String spanno = "Span " + String.valueOf(i + 1);
-                String interpro = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
-                if (interpro != null) {
-                    spanno += " of " + interpro;
+                //String spanno = "Span " + String.valueOf(i + 1);
+                StringWriter sw = new StringWriter();
+                String ipsName = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
+                if (!Strings.isNullOrEmpty(ipsName)) {
+                    sw.append(ipsName);
                 }
-                cglyph.setText(spanno);
+                if (count1 > 1) {
+                    if (!Strings.isNullOrEmpty(ipsName)) {
+                        sw.append(", ");
+                    }
+                    String spanText = "Span " + (i + 1) + " of " + (count1);
+                    sw.append(spanText);
+                }
+                cglyph.setText(sw.toString());
                 cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
                 aGlyph.addChild(cglyph);
                 seqmap.setDataModel(cglyph, original_child);

@@ -11,6 +11,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
@@ -68,7 +69,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -99,6 +99,7 @@ public class ProtAnnotService {
 
     private static final String EXPORT_IMAGE_DEFAULT_LOC_KEY = "export.image.default.location";
     private static final String DEFAULT_FILENAME = "ProtAnnot.png";
+    private String currentSaveImageFile = DEFAULT_FILENAME;
 
     private static final int TOOL_TIP_WIDTH = 30;
     private final Pattern pattern;
@@ -695,12 +696,13 @@ public class ProtAnnotService {
 
     public void exportAsXml(Component component) {
         JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
-        chooser.setCurrentDirectory(FileUtils.getUserDirectory());
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.rescanCurrentDirectory();
         int option = chooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = chooser.getSelectedFile();
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {
@@ -721,8 +723,8 @@ public class ProtAnnotService {
         
         fileChooser.rescanCurrentDirectory();
         try {
-            String currentFile = PreferenceUtils.getProtAnnotNode().get(EXPORT_IMAGE_DEFAULT_LOC_KEY, FileUtils.getUserDirectory().getAbsolutePath() + "/" + DEFAULT_FILENAME);
-            fileChooser.setSelectedFile(new File(currentFile));
+            fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+            fileChooser.setSelectedFile(new File(currentSaveImageFile));
 
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
@@ -730,7 +732,8 @@ public class ProtAnnotService {
         int option = fileChooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = fileChooser.getSelectedFile();
-            PreferenceUtils.getProtAnnotNode().put(EXPORT_IMAGE_DEFAULT_LOC_KEY, exportFile.getAbsolutePath());
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
+            currentSaveImageFile = exportFile.getName();
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }
     }

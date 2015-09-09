@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
@@ -96,6 +97,9 @@ public class ProtAnnotService {
     private static final String EMAIL_PATTERN
             = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    private static final String DEFAULT_FILENAME = "ProtAnnot.png";
+    private String currentSaveImageFile = DEFAULT_FILENAME;
 
     private static final int TOOL_TIP_WIDTH = 30;
     private final Pattern pattern;
@@ -696,12 +700,13 @@ public class ProtAnnotService {
 
     public void exportAsXml(Component component) {
         JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
-        chooser.setCurrentDirectory(FileUtils.getUserDirectory());
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.rescanCurrentDirectory();
         int option = chooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = chooser.getSelectedFile();
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {
@@ -721,15 +726,18 @@ public class ProtAnnotService {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(FileUtils.getUserDirectory());
         fileChooser.rescanCurrentDirectory();
-        fileChooser.setSelectedFile(new File("Protannot.png"));
+        try {
+            fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+            fileChooser.setSelectedFile(new File(currentSaveImageFile));
+
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
         int option = fileChooser.showSaveDialog(component);
         if (option == JFileChooser.APPROVE_OPTION) {
             File exportFile = fileChooser.getSelectedFile();
-            String filePath = exportFile.getName();
-            if (filePath.lastIndexOf(".") > 0) {
-                String ext = filePath.substring(filePath.lastIndexOf("."));
-                
-            }
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
+            currentSaveImageFile = exportFile.getName();
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }
     }

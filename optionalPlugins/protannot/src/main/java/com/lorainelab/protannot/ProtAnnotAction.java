@@ -13,6 +13,7 @@ import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileDropHandler;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -101,7 +102,6 @@ import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.FileUtils;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,8 +140,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private ComponentFactory protannotServiceFactory;
     private ProtAnnotService protAnnotService;
 
-    // where the application is first invoked
-    private static String user_dir = FileUtils.getUserDirectoryPath();
     // used for choosing new files to load
     private JFileChooser chooser = null;
     // for printing
@@ -377,25 +375,23 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         addProtAnnotActionsMenu(menu);
 
         frm.setJMenuBar(mbar);
-
-        if (testmode) {
-            addQuickLaunch(mbar);
-        }
     }
 
     /**
-     * Action perfomed when a path is seleced in the path browser. Calls up load(name) to load the path.
+     * Action performed when a path is selected in the path browser. Calls up load(name) to load the path.
      */
     void doLoadFile() {
         if (this.chooser == null) {
-            this.chooser = new JFileChooser(user_dir);
+            this.chooser = new JFileChooser();
             this.chooser.setDialogTitle("Open paxml");
             FileNameExtensionFilter paxmlFilter = new FileNameExtensionFilter("paxml files", "paxml");
             this.chooser.setFileFilter(paxmlFilter);
         }
+        this.chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
         int option = this.chooser.showOpenDialog(frm);
         if (option == JFileChooser.APPROVE_OPTION) {
             File cfil = this.chooser.getSelectedFile();
+            FileTracker.DATA_DIR_TRACKER.setFile(cfil.getParentFile());
             load(cfil);
         } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
             getExitAction().actionPerformed(null);
@@ -622,40 +618,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      *
      * @param mbar
      */
-    private void addQuickLaunch(JMenuBar mbar) {
-        JLabel test = new JLabel("                || Chose Test file :-");
-        JButton low = new JButton("OLD");
-        JButton med = new JButton("NEW");
-        JButton high = new JButton("Negative");
-        mbar.add(test);
-        mbar.add(low);
-        mbar.add(med);
-        mbar.add(high);
-
-        low.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                load(new File(user_dir + "/samples/ABCB4.paxml"));
-            }
-        });
-
-        med.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                load(new File(user_dir + "/pyResample/temp/aafile.paxml"));
-            }
-        });
-
-        high.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                load(new File(user_dir + "/pyResample/temp/aaafile.paxml"));
-            }
-        });
-    }
 
     /**
      * Sets up interface to select path from the server.

@@ -24,7 +24,7 @@ public class LineContainerDashGlyph extends LineContainerProtAnnotGlyph {
     public void draw(ViewI view) {
         Rectangle pixelBox = view.getScratchPixBox();
         view.transformToPixels(this.getCoordBox(), pixelBox);
-        pixelBox = optimizeBigRectangleRendering(view, pixelBox);
+//        pixelBox = optimizeBigRectangleRendering(view, pixelBox);
         if (pixelBox.width == 0) {
             pixelBox.width = 1;
         }

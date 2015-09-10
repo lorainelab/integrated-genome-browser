@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -595,8 +596,13 @@ public class ProtAnnotService {
                         sequenceName = d.getValue();
                     }
                 }
-
-                request.getJobSequences().add(new JobSequence(sequenceName, proteinSequence));
+                int cdsStart = ((Dnaseq.MRNA) obj).getCds().getStart().intValue();
+                int cdsEnd = ((Dnaseq.MRNA) obj).getCds().getEnd().intValue();
+                boolean noCds = false;
+                if (cdsStart == cdsEnd) {
+                    noCds = true;
+                }
+                request.getJobSequences().add(new JobSequence(sequenceName, proteinSequence, noCds));
             }
         }
         return request;
@@ -683,7 +689,9 @@ public class ProtAnnotService {
 
     public void loadSequence(Callback callback, GenomeView gview) {
         JobRequest jobRequest = createJobRequest();
+        List<Job> invalidJobs = filterInvalidProteinSequences(jobRequest);
         final List<Job> jobs = interProscanService.run(jobRequest);
+        jobs.addAll(invalidJobs);
         if (LOG.isDebugEnabled()) {
             jobs.stream().forEach((job) -> {
                 LOG.debug(job.getId());
@@ -692,6 +700,26 @@ public class ProtAnnotService {
 
         resultFetchTimer.schedule(buildTimerTask(jobs, callback, gview), new Date(), 1000);
 
+    }
+
+    private List<Job> filterInvalidProteinSequences(JobRequest jobRequest) {
+        List<Job> invalidJobs = new ArrayList<>();
+        Iterator<JobSequence> it = jobRequest.getJobSequences().iterator();
+        while (it.hasNext()) {
+            JobSequence js = it.next();
+            if (js.isNoCds()) {
+                Job job = new Job(js.getSequenceName(), null);
+                job.setStatus(Status.INVALID_NO_TRANSLATED_REGION);
+                invalidJobs.add(job);
+                it.remove();
+            } else if (js.getProteinSequence().contains("*")) {
+                Job job = new Job(js.getSequenceName(), null);
+                job.setStatus(Status.INVALID_INPUT_STOP_CODONS_IN_SEQUENCE);
+                invalidJobs.add(job);
+                it.remove();
+            }
+        }
+        return invalidJobs;
     }
 
     public void exportAsXml(Component component) {

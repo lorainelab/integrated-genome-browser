@@ -23,15 +23,14 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
     private boolean residuesSet = false;
     private int residue_length = 0;
     private static final Font mono_default_font = NeoConstants.default_bold_font;
-    private boolean drawRect;
+    private boolean isResidue;
 
     private final ProtAnnotPreferencesService protAnnotPreferencesService;
 
-
-    public ColoredResiduesGlyph(ProtAnnotPreferencesService protAnnotPreferencesService, boolean drawRectangle) {
+    public ColoredResiduesGlyph(ProtAnnotPreferencesService protAnnotPreferencesService, boolean isResidue) {
         super();
         setResidueFont(mono_default_font);
-        this.drawRect = drawRectangle;
+        this.isResidue = isResidue;
         // default to true for backward compatability
         setHitable(true);
         this.protAnnotPreferencesService = protAnnotPreferencesService;
@@ -120,7 +119,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
             int pixelStart) {
         int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
 
-        if (drawRect) {
+        if (isResidue) {
             drawResidueRectangles(g, pixelsPerBase, str);
         }
         drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
@@ -149,10 +148,50 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
         }
     }
 
+    private void drawProteinResidueRectangles(Graphics g, double pixelsPerBase, String str) {
+        Color color = getBackgroundColor();
+        Color altColor = getAlternateColor(color);
+        boolean flipColor = true;
+        for (int i = 0; i < str.length(); i++) {
+            if(str.charAt(i) != ' ') {
+                flipColor = flipColor ? false : true;
+            }
+            if (flipColor) {
+                g.setColor(color);
+            } else {
+                g.setColor(altColor);
+            }
+            int offset = (int) (i * pixelsPerBase);
+            g.fillRect(getPixelBox().x + offset, getPixelBox().y, (int) Math.ceil(pixelsPerBase), getPixelBox().height);
+        }
+    }
+
+    private static Color getAlternateColor(Color color) {
+        Color altColor;
+        int intensity = color.getRed() + color.getGreen() + color.getBlue();
+        if (intensity == 0) {
+            altColor = Color.darkGray;
+        } else if (intensity > (255 + 127)) {
+            altColor = color.darker();
+        } else if (color.getRed() == 255 || color.getGreen() == 0 || color.getBlue() == 0) {
+            altColor = color.darker();
+        } else if (color.getRed() == 0 || color.getGreen() == 255 || color.getBlue() == 0) {
+            altColor = color.darker();
+        } else if (color.getRed() == 0 || color.getGreen() == 0 || color.getBlue() == 255) {
+            altColor = color.darker();
+        } else {
+            altColor = color.brighter();
+        }
+        return altColor;
+    }
+
     private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
         g.setFont(getResidueFont());
-        g.setColor(getForegroundColor());
         if (this.font_width <= pixelsPerBase) {
+            if (!isResidue) {
+                drawProteinResidueRectangles(g, pixelsPerBase, str);
+            }
+            g.setColor(getEffectiveContrastColor(getBackgroundColor()));
             // Ample room to draw residue letters.
             for (int i = 0; i < str.length(); i++) {
                 String c = String.valueOf(str.charAt(i));
@@ -161,6 +200,19 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
                 }
             }
         }
+    }
+
+    private Color getEffectiveContrastColor(Color color) {
+        Color constractColor = default_bg_color;
+        if (null != color) {
+            int red = color.getRed();
+            int green = color.getGreen();
+            int blue = color.getBlue();
+
+            int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+            constractColor = (yiq >= 128) ? Color.BLACK : Color.WHITE;
+        }
+        return constractColor;
     }
 
     @Override

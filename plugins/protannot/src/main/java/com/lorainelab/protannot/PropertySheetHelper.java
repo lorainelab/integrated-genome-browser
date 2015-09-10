@@ -6,6 +6,7 @@
 package com.lorainelab.protannot;
 
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.lorainelab.protannot.model.InterProScanTableModel;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -15,9 +16,10 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import com.lorainelab.protannot.model.InterProScanTableModel;
 
 /**
  *
@@ -107,7 +109,12 @@ public class PropertySheetHelper extends DefaultTableCellRenderer implements
     private boolean isURLField(int row, int column) {
 
         if (table.getModel() instanceof InterProScanTableModel) {
-            return (column == InterProScanTableModel.URL_COLUMN);
+            try {
+                URL url = new URL((String) table.getModel().getValueAt(row, column));
+                return (column == InterProScanTableModel.URL_COLUMN);
+            } catch (MalformedURLException ex) {
+                return false;
+            }
         } else {
             return (column != 0 && table.getValueAt(row, 0).equals("URL"));
         }

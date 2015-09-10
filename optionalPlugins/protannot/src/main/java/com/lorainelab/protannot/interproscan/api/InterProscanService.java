@@ -5,9 +5,9 @@
  */
 package com.lorainelab.protannot.interproscan.api;
 
+import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import java.util.List;
 import java.util.Optional;
-import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import org.w3c.dom.Document;
 
 /**
@@ -28,6 +28,22 @@ public interface InterProscanService {
 
     public static enum Status {
 
-        RUNNING, FINISHED, ERROR, FAILURE, NOT_FOUND, CANCELLED;
+        RUNNING("Running"), FINISHED("Finished"), ERROR("Error"),
+        FAILURE("Failure"), NOT_FOUND("Not found"), CANCELLED("Cancelled"),
+        INVALID_INPUT_STOP_CODONS_IN_SEQUENCE("Invalid Protein Sequence: Translation contains multiple stop codons"),
+        INVALID_NO_TRANSLATED_REGION("Invalid Protein Sequence: No translation information for this gene model");
+
+        private final String label;
+
+        Status(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+
     }
 }

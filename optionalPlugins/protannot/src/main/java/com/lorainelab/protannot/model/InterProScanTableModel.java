@@ -5,13 +5,13 @@
  */
 package com.lorainelab.protannot.model;
 
+import com.lorainelab.protannot.ProtAnnotEventService;
+import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
+import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
+import com.lorainelab.protannot.interproscan.api.Job;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
-import com.lorainelab.protannot.ProtAnnotEventService;
-import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
-import com.lorainelab.protannot.interproscan.api.Job;
 
 /**
  *
@@ -117,9 +117,16 @@ public class InterProScanTableModel extends AbstractTableModel {
         private Status status;
 
         public InterProScanTableData(String proteinProductId, String jobId, Status status) {
-            this.proteinProductId = proteinProductId;
-            this.url = BASE_URL + jobId + "/xml";
-            this.status = status;
+            if (status.equals(Status.INVALID_INPUT_STOP_CODONS_IN_SEQUENCE)
+                    || status.equals(Status.INVALID_NO_TRANSLATED_REGION)) {
+                this.proteinProductId = proteinProductId;
+                this.url = "N/A";
+                this.status = status;
+            } else {
+                this.proteinProductId = proteinProductId;
+                this.url = BASE_URL + jobId + "/xml";
+                this.status = status;
+            }
         }
         private static final String BASE_URL = "http://www.ebi.ac.uk/Tools/services/rest/iprscan5/result/";
 

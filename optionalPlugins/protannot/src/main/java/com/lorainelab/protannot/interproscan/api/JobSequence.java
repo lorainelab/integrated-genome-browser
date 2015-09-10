@@ -12,8 +12,10 @@ package com.lorainelab.protannot.interproscan.api;
 public final class JobSequence {
     private String sequenceName;
     private String proteinSequence;
+    private boolean noCds;
     
-    public JobSequence(String sequenceName, String proteinSequence) {
+    public JobSequence(String sequenceName, String proteinSequence, boolean noCds) {
+        setNoCds(noCds);
         setSequenceName(sequenceName);
         setProteinSequence(proteinSequence);
     }
@@ -36,6 +38,14 @@ public final class JobSequence {
         }
         this.proteinSequence = proteinSequence;
     }
-    
+
+    public boolean isNoCds() {
+        return noCds;
+    }
+
+    public void setNoCds(boolean noCds) {
+        this.noCds = noCds;
+    }
+
     
 }

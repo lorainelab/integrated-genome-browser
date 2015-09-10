@@ -11,7 +11,6 @@ import static com.affymetrix.genoviz.glyph.LabelledRectGlyph.min_width_needed_fo
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.lang.reflect.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,34 +21,6 @@ import org.slf4j.LoggerFactory;
 public class ProtAnnotLabelledRectGlyph extends LabelledRectGlyph {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotLabelledRectGlyph.class);
-
-    private final String ellipsis = "...";
-
-    @Override
-    public void setText(String str) {
-        try {
-            Field textField = LabelledRectGlyph.class.getDeclaredField("text");
-            textField.setAccessible(true);
-            textField.set(this, str);
-            textField.setAccessible(false);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
-
-    @Override
-    public String getText() {
-        try {
-            Field textField = LabelledRectGlyph.class.getDeclaredField("text");
-            textField.setAccessible(true);
-            String text = (String) textField.get(this);
-            textField.setAccessible(false);
-            return text;
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-        return null;
-    }
 
     @Override
     public void draw(ViewI view) {
@@ -94,15 +65,4 @@ public class ProtAnnotLabelledRectGlyph extends LabelledRectGlyph {
         }
     }
 
-    private String trimStringToWidth(String text, int width, FontMetrics fm) {
-        int ellipsisWidth = fm.stringWidth(ellipsis);
-        String trimmedText = text;
-        for (int i = 0; i < text.length(); i++) {
-            trimmedText = trimmedText.substring(0, (trimmedText.length() - 1));
-            if ((fm.stringWidth(trimmedText) + ellipsisWidth) <= width) {
-                break;
-            }
-        }
-        return trimmedText + ellipsis;
-    }
 }

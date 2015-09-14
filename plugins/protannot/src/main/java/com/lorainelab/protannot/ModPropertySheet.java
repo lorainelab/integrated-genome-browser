@@ -1,5 +1,6 @@
 package com.lorainelab.protannot;
 
+import com.lorainelab.protannot.model.ProtannotParser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -13,7 +14,6 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import com.lorainelab.protannot.model.ProtannotParser;
 
 /**
  * Displays Properties (name, value pairs) associated with whatever Glyph objects the user has selected.
@@ -124,7 +124,48 @@ public class ModPropertySheet extends JPanel {
             rows[i][0] = vals[0];
             System.arraycopy(vals, 1, rows[i], 1, vals.length - 1);
         }
+
+        String[][] temp = new String[5][num_props + 1];
+        List<String[]> sorted = new ArrayList<>();
+        for (int i = 0; i < rows.length; i++) {
+            switch (rows[i][0]) {
+                case "InterPro name":
+                    insertInList(temp, 0, rows[i]);
+                    break;
+                case "application":
+                    insertInList(temp, 1, rows[i]);
+                    break;
+                case "library":
+                    insertInList(temp, 2, rows[i]);
+                    break;
+                case "URL":
+                    insertInList(temp, 3, rows[i]);
+                    break;
+                case "InterPro accession":
+                    insertInList(temp, 4, rows[i]);
+                    break;
+                default:
+                    sorted.add(rows[i]);
+                    break;
+            }
+
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i] != null) {
+                sorted.add(i, temp[i]);
+            }
+        }
+        if (sorted.size() == rows.length) {
+            for (int i = 0; i < rows.length; i++) {
+                rows[i] = sorted.get(i);
+            }
+        }
         return rows;
+    }
+
+    private static void insertInList(String[][] list, int position, String[] data) {
+        list[position] = data;
     }
 
     /**
@@ -191,5 +232,4 @@ public class ModPropertySheet extends JPanel {
         return table.getSize();
     }
 
-    
 }

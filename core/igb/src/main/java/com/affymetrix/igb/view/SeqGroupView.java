@@ -32,6 +32,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -98,6 +99,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
     private final IgbService igbService;
     private SelectVersionPanel selectVersionPanel;
     private boolean defSort = true;
+    private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
 
     SeqGroupView(IgbService igbService) {
         this.igbService = igbService;
@@ -188,8 +190,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
     }
 
-    static void init(IgbService igbService) {
+    static void init(IgbService igbService, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         singleton = new SeqGroupView(igbService);
+        singleton.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
         singleton.addListeners();
         EventService.getModuleEventBus().register(singleton);
         EventService.getModuleEventBus().post(new DataProviderServiceChangeEvent());
@@ -544,41 +547,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
         }
     }
 
-//    /**
-//     * group has been created independently of the discovery process (probably
-//     * by loading a file). create new "unknown" species/versionName.
-//     */
-//    private void createUnknownVersion(GenomeVersion genomeVersion) {
-//        gmodel.removeGroupSelectionListener(this);
-//        gmodel.removeSeqSelectionListener(this);
-//
-//        speciesCB.removeItemListener(this);
-//        versionCB.removeItemListener(this);
-//        DataContainer dataContainer = GeneralLoadUtils.getUnknownDataContainer(genomeVersion);
-//        String species = GeneralLoadUtils.getVersionName2Species().get(dataContainer.getGenomeVersion().getName());
-//        refreshSpeciesCB();
-//
-//        if (!species.equals(speciesCB.getSelectedItem())) {
-//            gmodel.removeGroupSelectionListener(this);
-//            gmodel.removeSeqSelectionListener(this);
-//
-//            speciesCB.removeItemListener(this);
-//            versionCB.removeItemListener(this);
-//
-//            // Set the selected species (the combo box is already populated)
-//            speciesCB.setSelectedItem(species);
-//            // populate the versionName combo box.
-//            refreshVersionCB(species);
-//        }
-//
-//        initVersion(dataContainer.getGenomeVersion().getName());
-//
-//        versionCB.setSelectedItem(dataContainer.getGenomeVersion().getName());
-//        versionCB.setEnabled(true);
-//        gviewer.getPartial_residuesButton().setEnabled(false);
-//        gviewer.getRefreshDataAction().setEnabled(false);
-//        addListeners();
-//    }
     public void refreshSpeciesCB() {
         int speciesListLength = GeneralLoadUtils.getLoadedSpeciesNames().size();
         if (speciesListLength == speciesCB.getItemCount() - 1) {
@@ -602,15 +570,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
             speciesCB.removeAllItems();
             speciesCB.addItem(SELECT_SPECIES);
-            
+
             Bundle bundle = FrameworkUtil.getBundle(SeqGroupView.class);
             SpeciesSynonymsLookup speciesSynLookup = null;
-            if(bundle != null) {
+            if (bundle != null) {
                 BundleContext bundleContext = bundle.getBundleContext();
                 ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
                 speciesSynLookup = bundleContext.getService(serviceReference);
             }
-            
+
             for (String speciesName : speciesList) {
                 speciesCBRenderer.setToolTipEntry(speciesName, speciesSynLookup.getCommonSpeciesName(speciesName));
                 speciesCB.addItem(speciesName);
@@ -652,12 +620,9 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
      */
     private void refreshVersionCB(final String speciesName) {
         final List<String> versionNames = getAllVersions(speciesName);
-        if (curGroup != null) {
-            for (String versionName : versionNames) {
-                versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, curGroup.getGenomeVersionSynonymLookup()));
-            }
-        } else {
-            logger.debug("No genome version found");
+
+        for (String versionName : versionNames) {
+            versionCBRenderer.setToolTipEntry(versionName, GeneralLoadUtils.listSynonyms(versionName, genomeVersionSynonymLookup));
         }
 
         // Sort the versions (by date)

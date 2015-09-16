@@ -200,6 +200,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         axismap.updateWidget(true);
     }
 
+    private boolean isAxisOperation(MouseEvent e) {
+        if (!(e instanceof NeoMouseEvent)) {
+            return false;
+        }
+        NeoMouseEvent nevt = (NeoMouseEvent) e;
+        if (!nevt.getItems().isEmpty()) {
+            GlyphI glyph = nevt.getItems().get(0);
+            if (glyph != axisGlyph && glyph != sg) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void mouseMoved(MouseEvent e) {
     }
@@ -238,6 +252,13 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 scene.getGlyph().addChild(axis);
                 axes.add(axis);
                 return axis;
+            }
+
+            public AxisGlyph getAxis() {
+                if (!axes.isEmpty()) {
+                    return axes.get(0);
+                }
+                return null;
             }
 
         };
@@ -1025,6 +1046,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         return to_return;
     }
 
+    ColoredResiduesGlyph sg;
+
     /**
      * Sets the axis map. Sets range,background and foreground color.
      *
@@ -1034,7 +1057,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
         axisGlyph = (AxisGlyphWithSelection) axismap.addAxis(upper_white_space + axis_pixel_height);
-        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
+        sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
         sg.setResiduesProvider(gseq, gseq.getLength());
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength(), seq_pixel_height);
@@ -1081,10 +1104,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 //        }
         int id = e.getID();
         NeoMouseEvent nevt = (NeoMouseEvent) e;
-        if(!nevt.getItems().isEmpty()) {
-            GlyphI glyph = nevt.getItems().get(0);
-        }
-        if (id == MouseEvent.MOUSE_RELEASED) {
+        if (id == MouseEvent.MOUSE_RELEASED && isAxisOperation(e)) {
             selectEnd = (int) nevt.getCoordX();
             logger.info("Start and end {},{}", selectStart, selectEnd);
             if (selectEnd < selectStart) {

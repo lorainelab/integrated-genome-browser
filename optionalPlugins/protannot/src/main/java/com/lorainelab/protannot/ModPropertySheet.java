@@ -141,7 +141,7 @@ public class ModPropertySheet extends JPanel {
             System.arraycopy(vals, 1, rows[i], 1, vals.length - 1);
         }
 
-        String[][] temp = new String[5][num_props + 1];
+        String[][] temp = new String[6][num_props + 1];
         List<String[]> sorted = new ArrayList<>();
         for (int i = 0; i < rows.length; i++) {
             switch (rows[i][0]) {
@@ -160,6 +160,9 @@ public class ModPropertySheet extends JPanel {
                 case "InterPro accession":
                     insertInList(temp, 4, rows[i]);
                     break;
+                case "InterPro description":
+                    insertInList(temp, 5, rows[i]);
+                    break;
                 default:
                     sorted.add(rows[i]);
                     break;
@@ -168,7 +171,7 @@ public class ModPropertySheet extends JPanel {
         }
 
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i] != null) {
+            if (temp[i][0] != null) {
                 sorted.add(i, temp[i]);
             }
         }

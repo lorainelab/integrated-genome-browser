@@ -30,6 +30,7 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.TieredNeoMap;
 import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
+import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;

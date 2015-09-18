@@ -32,14 +32,15 @@ public class FeedbackWidget extends JFrame {
     }
 
     private void initializeFrame() {
-        setName("IGB Console");
-        setTitle("IGB Console");
-        setSize(820, 700);
+        setName("IGB Feedback");
+        setTitle("IGB Feedback");
+        setSize(825, 700);
+        setResizable(false);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
     private void initializeLayout() {
-        layout = new MigLayout("fill", "", "[grow 98,fill][grow 2,fill]");
+        layout = new MigLayout("fill");
         setLayout(layout);
     }
 

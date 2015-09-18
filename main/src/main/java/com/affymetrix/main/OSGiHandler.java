@@ -145,6 +145,7 @@ public class OSGiHandler {
 
     private void loadFramework(String argArray) {
         try {
+            System.setProperty("jsse.enableSNIExtension", "false");
             Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
             CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));

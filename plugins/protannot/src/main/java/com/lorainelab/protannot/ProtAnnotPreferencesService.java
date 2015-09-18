@@ -12,12 +12,12 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.igb.shared.ResidueColorService;
 import com.google.common.eventbus.EventBus;
+import com.lorainelab.protannot.event.PreferenceChangeEvent;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import com.lorainelab.protannot.event.PreferenceChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

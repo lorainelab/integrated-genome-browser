@@ -17,21 +17,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genoviz</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genometry</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <scope>test</scope>
@@ -57,28 +42,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>shared-lib-wrapper</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -87,18 +52,23 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>igb</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genometry</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

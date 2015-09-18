@@ -24,6 +24,7 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
     private final int menuWeight;
     private final String parentMenuName;
     private final JRPMenuItem menuItem;
+    private FeedbackWidget feedbackWidget;
 
     public FeedbackMenuProvider() {
         super(getProperty("menu.name"),
@@ -34,6 +35,7 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
         menuWeight = Integer.parseInt(getProperty("menu.weight"));
         parentMenuName = getProperty("menu.parent.name");
         menuItem = new JRPMenuItem(getProperty("menu.name"), this, menuWeight);
+        feedbackWidget = new FeedbackWidget();
     }
 
     @Override
@@ -57,8 +59,7 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        feedbackWidget.showPanel();
     }
-
 
 }

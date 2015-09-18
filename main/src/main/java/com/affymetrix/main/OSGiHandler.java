@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +19,10 @@ import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -51,6 +57,7 @@ public class OSGiHandler {
     public void startOSGi() {
         logger.info("Loading OSGi framework");
         setUserAgent();
+        disableSSLCertValidation();
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
@@ -115,8 +122,7 @@ public class OSGiHandler {
      * delete the specified directory, and all its contents
      *
      * @param path the path of the directory to delete
-     * @return true if and only if the file or directory is successfully
-     * deleted; false otherwise
+     * @return true if and only if the file or directory is successfully deleted; false otherwise
      */
     private boolean deleteDirectory(File path) {
         if (path.exists()) {
@@ -273,5 +279,34 @@ public class OSGiHandler {
 
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.length() == 0;
+    }
+
+    private void disableSSLCertValidation() {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+            new X509TrustManager() {
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+
+// Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (GeneralSecurityException e) {
+        }
     }
 }

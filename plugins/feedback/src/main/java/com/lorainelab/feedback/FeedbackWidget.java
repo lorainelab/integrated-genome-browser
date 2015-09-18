@@ -45,29 +45,31 @@ public class FeedbackWidget extends JFrame {
 
     private void initComponents() {
         panel = new JFXPanel();
-        Platform.runLater(() -> {
-            final WebView browser = new WebView();
-            final WebEngine webEngine = browser.getEngine();
-            // Layout logic
-            VBox root = new VBox(5);
-            root.getChildren().setAll(browser);
-            root.setPrefSize(800, 400);
-            VBox.setVgrow(browser, Priority.ALWAYS);
-            try {
-                webEngine.loadContent(CharStreams.toString(new InputStreamReader(FeedbackWidget.class.getClassLoader().getResourceAsStream("bugReport.html"))));
-            } catch (IOException ex) {
-                Logger.getLogger(FeedbackWidget.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Scene scene = new Scene(root);
-            panel.setScene(scene);
-            panel.setVisible(true);
-        });
 
+    }
+
+    private void buildScene() {
+        final WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+        // Layout logic
+        VBox root = new VBox(5);
+        root.getChildren().setAll(browser);
+        root.setPrefSize(800, 400);
+        VBox.setVgrow(browser, Priority.ALWAYS);
+        try {
+            webEngine.loadContent(CharStreams.toString(new InputStreamReader(FeedbackWidget.class.getClassLoader().getResourceAsStream("bugReport.html"))));
+        } catch (IOException ex) {
+            Logger.getLogger(FeedbackWidget.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Scene scene = new Scene(root);
+        panel.setScene(scene);
+        panel.setVisible(true);
     }
 
     public void showPanel() {
 
         Platform.runLater(() -> {
+            buildScene();
             setVisible(true);
         });
 

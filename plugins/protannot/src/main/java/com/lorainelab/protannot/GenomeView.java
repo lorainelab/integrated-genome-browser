@@ -795,6 +795,19 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }  // genome_codon_start = 2
     }
 
+    private Color getEffectiveContrastColor(Color color) {
+        Color constractColor = Color.black;
+        if (null != color) {
+            int red = color.getRed();
+            int green = color.getGreen();
+            int blue = color.getBlue();
+
+            int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+            constractColor = (yiq >= 128) ? Color.BLACK : Color.WHITE;
+        }
+        return constractColor;
+    }
+
     /**
      *
      * @param annot2protein
@@ -857,6 +870,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
                 SeqSymmetry grandchild = child.getChild(j);
                 SeqSpan gSpan = grandchild.getSpan(vseq);
                 ProtAnnotLabelledRectGlyph cglyph = new ProtAnnotLabelledRectGlyph();
+                cglyph.setForegroundColor(
+                        getEffectiveContrastColor(
+                                new Color(protAnnotPreferencesService.getPanelRGB(Panel.DOMAIN))));
                 if (i % 2 == 0) {
                     cglyph.setColor(color);
                 } else {

@@ -8,7 +8,7 @@ def buildDir = 'distribution/build'
 
 //Load common properties to read version
 ext.commonProps = new Properties()
-ext.commonProps.load(new FileInputStream('core/common/src/main/resources/common.properties'))
+ext.commonProps.load(new FileInputStream('core/common/target/classes/common.properties'))
 
 //remove minor version portion of version string
 version = commonProps.get('appVersion')

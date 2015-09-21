@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
@@ -35,6 +36,7 @@ import com.affymetrix.igb.swing.JRPTabbedPane;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.lorainelab.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
 import com.lorainelab.protannot.ProtAnnotPreferencesService.Panel;
 import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
 import com.lorainelab.protannot.event.PreferenceChangeEvent;
@@ -58,6 +60,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -85,7 +88,7 @@ import org.slf4j.LoggerFactory;
  * summary that shows how the transcript structures vary.
  */
 @Component(provide = GenomeView.class, factory = "genome.view.factory.provider")
-public class GenomeView extends JPanel implements MouseListener, ComponentListener {
+public class GenomeView extends JPanel implements MouseListener, ComponentListener, MouseMotionListener {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
     JPopupMenu popup;
@@ -110,6 +113,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private boolean showhairlineLabel = true;
     private Shadow hairline, axishairline;
     private JSplitPane split_pane;
+    private AxisGlyphWithSelection axisGlyph;
 
     private final Color col_sequence = Color.black;
     private final Color col_axis_bg = Color.lightGray;
@@ -162,6 +166,56 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         protAnnotPreferencesService.unregisterEventListener(this);
     }
 
+    GlyphI subSelectedGlyph = null;
+    int selectStart;
+    int selectEnd;
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (!(e instanceof NeoMouseEvent)) {
+            return;
+        }
+        int id = e.getID();
+        NeoMouseEvent nevt = (NeoMouseEvent) e;
+        if (id == MouseEvent.MOUSE_DRAGGED) {
+            GlyphI topgl = null;
+            if (!nevt.getItems().isEmpty()) {
+                topgl = nevt.getItems().get(0);
+            }
+            if (topgl != null && topgl.supportsSubSelection()) {
+                axismap.clearSelected();
+            }
+            if (subSelectedGlyph == null) {
+                subSelectedGlyph = topgl;
+                selectStart = (int) nevt.getCoordX();
+                selectEnd = selectStart;
+            } else {
+                selectEnd = (int) nevt.getCoordX();
+            }
+            axismap.select(subSelectedGlyph, selectStart, selectEnd);
+        }
+
+        axismap.updateWidget(true);
+    }
+
+    private boolean isAxisOperation(MouseEvent e) {
+        if (!(e instanceof NeoMouseEvent)) {
+            return false;
+        }
+        NeoMouseEvent nevt = (NeoMouseEvent) e;
+        if (!nevt.getItems().isEmpty()) {
+            GlyphI glyph = nevt.getItems().get(0);
+            if (glyph != axisGlyph && glyph != sg) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+    }
+
     @Subscribe
     public void preferenceChangeEventListener(PreferenceChangeEvent event) {
         updatePreferences(protAnnotPreferencesService.getAllColorPreferences());
@@ -178,7 +232,34 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
         seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
         seqmap.setMapOffset(0, seqmap_pixel_height);
-        axismap = new NeoMap(false, false);
+        axismap = new NeoMap(false, false) {
+
+            @Override
+            public AxisGlyph addAxis(int offset) {
+                AxisGlyph axis = null;
+                if (orient == NeoConstants.VERTICAL) {
+                    axis = new AxisGlyphWithSelection(NeoConstants.VERTICAL);
+                    axis.setCoords(offset - 10, scene.getCoordBox().y, 20,
+                            scene.getCoordBox().height);
+                } else {
+                    axis = new AxisGlyphWithSelection();
+                    axis.setCoords(scene.getCoordBox().x, offset - 10,
+                            scene.getCoordBox().width, 20);
+                }
+                axis.setForegroundColor(Color.black);
+                scene.getGlyph().addChild(axis);
+                axes.add(axis);
+                return axis;
+            }
+
+            public AxisGlyph getAxis() {
+                if (!axes.isEmpty()) {
+                    return axes.get(0);
+                }
+                return null;
+            }
+
+        };
         axismap.setMapColor(col_axis_bg);
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
@@ -263,7 +344,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         top.setLayout(new BorderLayout());
         top.addComponentListener(this);
         top.add("South", axismap);
-        mapPanel.add("North", top);
+        mapPanel.add("North", axismap);
         seqmap.setBackground(new Color(protAnnotPreferencesService.getPanelRGB(Panel.BACKGROUND)));
         mapPanel.add("Center", seqmap);
         JPanel right = new JPanel();
@@ -315,9 +396,10 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     public void initListerners() {
         seqmap.addMouseListener(this);
         seqmap.setSelectionEvent(TieredNeoMap.NO_SELECTION);
-
         seqmap.setSelectionAppearance(Scene.SELECT_OUTLINE);
+        axismap.setSelectionAppearance(Scene.SELECT_OUTLINE);
         axismap.addMouseListener(this);
+        axismap.addMouseMotionListener(this);
         axismap.setSelectionEvent(NeoMap.NO_SELECTION);
     }
 
@@ -920,6 +1002,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         return to_return;
     }
 
+    ColoredResiduesGlyph sg;
+
     /**
      * Sets the axis map. Sets range,background and foreground color.
      *
@@ -928,9 +1012,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private void setupAxisMap() {
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
-
-        axismap.addAxis(upper_white_space + axis_pixel_height);
-        ColoredResiduesGlyph sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
+        axisGlyph = (AxisGlyphWithSelection) axismap.addAxis(upper_white_space + axis_pixel_height);
+        sg = new ColoredResiduesGlyph(protAnnotPreferencesService, true);
         sg.setResiduesProvider(gseq, gseq.getLength());
         sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
                 + middle_white_space, gseq.getLength(), seq_pixel_height);
@@ -975,7 +1058,35 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 //            popup.show(this, e.getX(), e.getY());
 //            return;
 //        }
+        int id = e.getID();
+        NeoMouseEvent nevt = (NeoMouseEvent) e;
+        if (id == MouseEvent.MOUSE_RELEASED && isAxisOperation(e)) {
+            selectEnd = (int) nevt.getCoordX();
+            logger.info("Start and end {},{}", selectStart, selectEnd);
+            if (selectEnd < selectStart) {
+                int temp = selectStart;
+                selectStart = selectEnd;
+                selectEnd = temp;
+            }
+            axismap.deselect(subSelectedGlyph);
+            subSelectedGlyph = null;
+            axismap.updateWidget(true);
 
+            int min = 0;
+            int max = 0;
+            if (seqmap.getTierCount() > 0) {
+                MapTierGlyph tier = seqmap.getTierAt(0);
+                min = (int) tier.getCoordBox().x;
+                max = (int) (min + tier.getCoordBox().width);
+            }
+            double coordWidth = Math.abs(Math.max(selectStart, min) - Math.min(selectEnd, max));
+            double pixelWidth = seqmap.getView().getPixelBox().width;
+            double pixelPerCoord = pixelWidth / coordWidth;
+            pixelPerCoord = Math.min(pixelPerCoord, seqmap.getMaxZoom(NeoAbstractWidget.X));
+            seqmap.zoom(NeoAbstractWidget.X, pixelPerCoord);
+            seqmap.scroll(NeoAbstractWidget.X, Math.max(selectStart, min));
+            seqmap.updateWidget();
+        }
         if (e.getClickCount() == 2) {
             zoomToSelection();
         }

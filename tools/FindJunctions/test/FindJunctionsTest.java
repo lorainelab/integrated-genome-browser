@@ -1,9 +1,9 @@
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.symloader.BED;
-import com.affymetrix.genometry.symmetry.SeqSymmetry;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.symloader.BED;
+import com.affymetrix.genometryImpl.symmetry.SeqSymmetry;
 import findjunction.FindJunction;
 import java.io.File;
 import java.net.URI;
@@ -60,7 +60,7 @@ public class FindJunctionsTest {
                 }
                 file = file.getAbsoluteFile();
                 String path = file.getAbsolutePath();
-                URI bedUri = new URI(FILE_PROTOCOL + path);
+                URI bedUri = new URI("file:" + path);
                 Map<String, SeqSymmetry> map = new HashMap<String, SeqSymmetry>();
                 AnnotatedSeqGroup group = new AnnotatedSeqGroup(name.substring(0, name.length() - 3));
                 BED bedFile = new BED(bedUri, name.substring(0, name.length() - 3), group);

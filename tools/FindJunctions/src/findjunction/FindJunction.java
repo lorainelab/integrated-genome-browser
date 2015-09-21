@@ -4,15 +4,20 @@
  */
 package findjunction;
 
-import com.affymetrix.genometry.AnnotatedSeqGroup;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symloader.TwoBit;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.SynonymLookup;
-import java.io.*;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.symloader.BAM;
+import com.affymetrix.genometryImpl.symloader.TwoBit;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -137,7 +142,7 @@ public class FindJunction {
     /* This method is used to convert the given file path from relative to absolute.
      */
     private URI relativeToAbsolute(String path) throws URISyntaxException {
-        if (!(path.startsWith(FILE_PROTOCOL) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL)))) {
+        if (!(path.startsWith("file:") && !(path.startsWith("http:")) && !(path.startsWith("ftp:")))) {
             return getAbsoluteFile(path).toURI();
         }
         return new URI(path);

@@ -187,6 +187,7 @@ public class ColoredResiduesGlyph extends SequenceGlyph {
 
     private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
         g.setFont(getResidueFont());
+        pixelStart += 1;
         if (this.font_width <= pixelsPerBase) {
             if (!isResidue) {
                 drawProteinResidueRectangles(g, pixelsPerBase, str);

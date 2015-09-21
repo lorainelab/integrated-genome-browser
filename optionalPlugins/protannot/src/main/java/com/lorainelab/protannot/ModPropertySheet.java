@@ -142,7 +142,8 @@ public class ModPropertySheet extends JPanel {
         }
 
         String[][] temp = new String[6][num_props + 1];
-        List<String[]> sorted = new ArrayList<>();
+        List<String[]> sortedImportant = new ArrayList<>();
+        List<String[]> sortedUnimportant = new ArrayList<>();
         for (int i = 0; i < rows.length; i++) {
             switch (rows[i][0]) {
                 case "InterPro name":
@@ -164,7 +165,7 @@ public class ModPropertySheet extends JPanel {
                     insertInList(temp, 5, rows[i]);
                     break;
                 default:
-                    sorted.add(rows[i]);
+                    sortedUnimportant.add(rows[i]);
                     break;
             }
 
@@ -172,12 +173,14 @@ public class ModPropertySheet extends JPanel {
 
         for (int i = 0; i < temp.length; i++) {
             if (temp[i][0] != null) {
-                sorted.add(i, temp[i]);
+                sortedImportant.add(temp[i]);
             }
         }
-        if (sorted.size() == rows.length) {
+        List<String[]> all = new ArrayList<>(sortedImportant);
+        all.addAll(sortedUnimportant);
+        if (all.size() == rows.length) {
             for (int i = 0; i < rows.length; i++) {
-                rows[i] = sorted.get(i);
+                rows[i] = all.get(i);
             }
         }
         return rows;

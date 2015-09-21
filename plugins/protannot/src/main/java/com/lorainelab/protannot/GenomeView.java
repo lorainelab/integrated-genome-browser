@@ -881,12 +881,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
                 //String spanno = "Span " + String.valueOf(i + 1);
                 StringWriter sw = new StringWriter();
-                String ipsName = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
-                if (!Strings.isNullOrEmpty(ipsName)) {
-                    sw.append(ipsName);
+                String label = null;
+                label = (String) ((SymWithProps) annot2protein).getProperty("InterPro name");
+                if (Strings.isNullOrEmpty(label)) {
+                    label = (String) ((SymWithProps) annot2protein).getProperty("InterPro accession");
+                }
+                if (Strings.isNullOrEmpty(label)) {
+                    label = (String) ((SymWithProps) annot2protein).getProperty("library");
+                }
+
+                if (!Strings.isNullOrEmpty(label)) {
+                    sw.append(label);
                 }
                 if (count1 > 1) {
-                    if (!Strings.isNullOrEmpty(ipsName)) {
+                    if (!Strings.isNullOrEmpty(label)) {
                         sw.append(", ");
                     }
                     String spanText = "Span " + (i + 1) + " of " + (count1);

@@ -79,6 +79,8 @@ public class InterProscanTranslator {
             parseEntryOnSignature(signature, simhit);
             parseLibraryReleaseOnSignature(signature, simhit);
             Optional<Descriptor> name = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro name")).findFirst();
+            Optional<Descriptor> ac = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro accession")).findFirst();
+            Optional<Descriptor> desc = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro description")).findFirst();
             NamedNodeMap attributes = signature.getAttributes();
             if (!name.isPresent() && attributes != null 
                     && attributes.getNamedItem("name") != null) {
@@ -86,6 +88,22 @@ public class InterProscanTranslator {
                 Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
                 descriptor.setType("InterPro name");
                 descriptor.setValue(signatureName);
+                simhit.getDescriptor().add(descriptor);
+            }
+            if (!ac.isPresent() && attributes != null
+                    && attributes.getNamedItem("ac") != null) {
+                String signatureAc = ((Attr) attributes.getNamedItem("ac")).getValue();
+                Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
+                descriptor.setType("InterPro accession");
+                descriptor.setValue(signatureAc);
+                simhit.getDescriptor().add(descriptor);
+            }
+            if (!desc.isPresent() && attributes != null
+                    && attributes.getNamedItem("desc") != null) {
+                String signatureDesc = ((Attr) attributes.getNamedItem("desc")).getValue();
+                Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
+                descriptor.setType("InterPro description");
+                descriptor.setValue(signatureDesc);
                 simhit.getDescriptor().add(descriptor);
             }
         } catch (XPathExpressionException ex) {

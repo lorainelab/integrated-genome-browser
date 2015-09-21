@@ -59,6 +59,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * View of genome features as a tree.
@@ -73,6 +74,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     public static final String path_separator = "/";
     private static ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
     private final static Map<DataProvider, ImageIcon> faviconReference = Maps.newHashMap();
+    private static final int TOOL_TIP_WIDTH = 75;
 
     public FeatureTreeView() {
         this.setLayout(new BorderLayout());
@@ -612,7 +614,13 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
             boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
             leafCheckBox.setText(featureText);
-            leafCheckBox.setToolTipText(dataSet.description());
+            StringBuilder sb = new StringBuilder("<html>");
+            String wrappedText = WordUtils.wrap(dataSet.description(), TOOL_TIP_WIDTH, "<br />", true);
+            if (wrappedText != null) {
+                sb.append(wrappedText);
+            }
+            sb.append("</html>");
+            leafCheckBox.setToolTipText(sb.toString());
             leafCheckBox.setSelected(isChecked);
             //leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
             if (selected) {

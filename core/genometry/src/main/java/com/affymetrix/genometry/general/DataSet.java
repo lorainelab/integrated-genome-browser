@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.general;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.SeqSpan;
@@ -12,7 +13,6 @@ import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.google.common.collect.ImmutableList;
@@ -195,9 +195,6 @@ public final class DataSet {
                 return summary;
             }
             if (descrip != null && descrip.length() > 0) {
-                if (descrip.length() > 100) {
-                    return descrip.substring(0, 100) + "...";
-                }
                 return descrip;
             }
         }

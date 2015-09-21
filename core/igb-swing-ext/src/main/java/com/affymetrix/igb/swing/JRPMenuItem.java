@@ -1,6 +1,7 @@
 package com.affymetrix.igb.swing;
 
 import com.affymetrix.igb.swing.script.ScriptManager;
+import java.util.Objects;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
@@ -71,4 +72,31 @@ public class JRPMenuItem extends JMenuItem implements WeightedJRPWidget {
     public int getWeight() {
         return weight;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        hash = 97 * hash + this.weight;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final JRPMenuItem other = (JRPMenuItem) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (this.weight != other.weight) {
+            return false;
+        }
+        return true;
+    }
+
 }

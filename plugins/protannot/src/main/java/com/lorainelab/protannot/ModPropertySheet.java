@@ -1,5 +1,6 @@
 package com.lorainelab.protannot;
 
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.protannot.model.ProtannotParser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -12,7 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
@@ -25,7 +29,7 @@ public class ModPropertySheet extends JPanel {
     private final JViewport jvp;
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
-    private final JTable table;
+    private final JRPStyledTable table;
     private final PropertySheetHelper helper;
 
     /**
@@ -34,7 +38,19 @@ public class ModPropertySheet extends JPanel {
     public ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
-        table = new JTable();
+        table = new JRPStyledTable("Protannot properties table") {
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+
+            {
+                renderer.setHorizontalAlignment(SwingConstants.LEFT);
+            }
+
+            @Override
+            public TableCellRenderer getCellRenderer(int r, int c) {
+                return renderer;
+            }
+
+        };
         helper = new PropertySheetHelper(table);
         jvp = new JViewport();
         scroll_pane = new JScrollPane(table);

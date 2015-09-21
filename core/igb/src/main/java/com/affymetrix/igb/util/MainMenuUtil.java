@@ -3,8 +3,8 @@ package com.affymetrix.igb.util;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -19,7 +19,6 @@ import com.affymetrix.igb.action.DocumentationAction;
 import com.affymetrix.igb.action.DrawCollapseControlAction;
 import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.action.ExportFileAction;
-import com.affymetrix.igb.action.IGBSupportAction;
 import com.affymetrix.igb.action.LoadFileAction;
 import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
@@ -203,7 +202,6 @@ public class MainMenuUtil implements MainMenuManager {
         JRPMenu helpMenu = MenuUtil.getRPMenu(menuBar, ID_PREFIX + "helpMenu", BUNDLE.getString("helpMenu"), 7);
         helpMenu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_aboutIGB", AboutIGBAction.getAction(), menuItemCounter++));
-        MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_IGBSupport", IGBSupportAction.getAction(), menuItemCounter++));
         MenuUtil.addToMenu(helpMenu, new JRPMenuItem(ID_PREFIX + "helpMenu_documentation", DocumentationAction.getAction(), menuItemCounter++));
     }
 

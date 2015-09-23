@@ -3,17 +3,25 @@ package com.lorainelab.feedback;
 import com.google.common.io.CharStreams;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
+import netscape.javascript.JSObject;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -23,6 +31,7 @@ public class FeedbackWidget extends JFrame {
 
     private JFXPanel panel;
     private MigLayout layout;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(FeedbackWidget.class);
 
     public FeedbackWidget() {
         initializeFrame();
@@ -56,11 +65,10 @@ public class FeedbackWidget extends JFrame {
         root.getChildren().setAll(browser);
         root.setPrefSize(800, 400);
         VBox.setVgrow(browser, Priority.ALWAYS);
-        try {
-            webEngine.loadContent(CharStreams.toString(new InputStreamReader(FeedbackWidget.class.getClassLoader().getResourceAsStream("bugReport.html"))));
-        } catch (IOException ex) {
-            Logger.getLogger(FeedbackWidget.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        webEngine.loadContent(getClassPathResourceAsString("bugReport.html"));
+        webEngine.documentProperty().addListener((ObservableValue<? extends Document> prop, Document oldDoc, Document newDoc) -> {
+            setupWebResources(webEngine);
+        });
         Scene scene = new Scene(root);
         panel.setScene(scene);
         panel.setVisible(true);
@@ -75,9 +83,69 @@ public class FeedbackWidget extends JFrame {
 
     }
 
+    public void hidePanel() {
+        Platform.runLater(() -> {
+            setVisible(false);
+        });
+    }
+
     public static void main(String[] args) {
         FeedbackWidget c = new FeedbackWidget();
         c.setVisible(true);
+    }
+
+    private void setupWebResources(final WebEngine engine) {
+        JSObject jsobj = (JSObject) engine.executeScript("window");
+        jsobj.setMember("closeTrigger", new CloseTrigger());
+        jsobj.setMember("logger", new JSLogger());
+        engine.setOnAlert((WebEvent<String> event) -> {
+            Platform.runLater(() -> {
+                Stage popup = new Stage();
+                popup.initOwner(panel.getScene().getWindow());
+                popup.initStyle(StageStyle.UTILITY);
+                popup.initModality(Modality.WINDOW_MODAL);
+                StackPane content = new StackPane();
+                content.getChildren().setAll(
+                        new Label(event.getData())
+                );
+                content.setPrefSize(200, 100);
+                popup.setScene(new Scene(content));
+                popup.showAndWait();
+            });
+
+        });
+        engine.setOnVisibilityChanged((WebEvent<Boolean> event) -> {
+            FeedbackWidget.this.hidePanel();
+        });
+        engine.executeScript(getClassPathResourceAsString("jiraCollectorDialog.js"));
+//        engine.executeScript(getClassPathResourceAsString("closeAction.js"));
+    }
+
+    public class CloseTrigger {
+
+        public void hidePanel() {
+            Platform.runLater(() -> {
+                FeedbackWidget.this.setVisible(false);
+            });
+        }
+    }
+
+    public class JSLogger {
+
+        public void log(String message) {
+            Platform.runLater(() -> {
+                logger.info(message);
+            });
+        }
+    }
+
+    private static String getClassPathResourceAsString(String resourcePath) {
+        try {
+            return CharStreams.toString(new InputStreamReader(FeedbackWidget.class.getClassLoader().getResourceAsStream(resourcePath)));
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return "";
     }
 
 }

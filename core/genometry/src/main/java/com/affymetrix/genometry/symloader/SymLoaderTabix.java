@@ -76,9 +76,11 @@ public class SymLoaderTabix extends SymLoader {
         // Set maximum number of object to be created
         this.pool.setMaxActive(MAX_ACTIVE_POOL_OBJECTS);
 
-//        if (!poolFactory.validateObject(pool.borrowObject())) {
-//            throw new IllegalStateException("tabix file does not exist or was not read");
-//        }
+        TabixReaderCached test = pool.borrowObject();
+        if (!poolFactory.validateObject(test)) {
+            throw new IllegalStateException("tabix file does not exist or was not read");
+        }
+        pool.returnObject(test);
 
         // Make sure object is not null
         this.pool.setTestOnBorrow(true);
@@ -346,7 +348,6 @@ public class SymLoaderTabix extends SymLoader {
 
         @Override
         public boolean validateObject(TabixReaderCached tabixReader) {
-            tabixReader.close();
             return tabixReader != null;
         }
     }

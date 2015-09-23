@@ -13,6 +13,7 @@ public class CacheStatus {
     private String url;
     private File data;
     private BigInteger size;
+    private boolean isCorrupt = false;
 
     public BigInteger getSize() {
         return size;
@@ -76,6 +77,14 @@ public class CacheStatus {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean isCorrupt() {
+        return isCorrupt;
+    }
+
+    public void setIsCorrupt(boolean isCorrupt) {
+        this.isCorrupt = isCorrupt;
     }
 
 }

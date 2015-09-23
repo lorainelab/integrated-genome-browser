@@ -393,6 +393,10 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             }
         }
         CacheStatus cacheStatus = getCacheStatus(path);
+        if (cacheStatus.isCorrupt() && !deleteCorruptCacheEntry(path)) {
+            LOG.error("Cache entry is corrupt: {}", path);
+            return Optional.empty();
+        }
         if (isCacheValid(cacheStatus, httpHeader, url)) {
             try {
                 updateLastRequestDate(url);
@@ -402,7 +406,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 return Optional.empty();
             }
         }
-        if(asynchronously) {
+        if (asynchronously) {
             cacheInBackground(url, path);
         } else {
             cacheSynchronously(url, path);
@@ -483,7 +487,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 }
                 return true;
             } else if (Strings.isNullOrEmpty(md5)) {
-                
+
                 FileUtils.moveFile(tmpFile, finalFile);
                 FileUtils.deleteQuietly(lockFile);
                 synchronized (this) {
@@ -609,6 +613,9 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             }
             cacheStatus.setDataExists(true);
             return cacheStatus;
+        } else if (data.exists()) {
+            //Data file exists but missing metadata.  It is corrupted.
+            cacheStatus.setIsCorrupt(true);
         }
 
         cacheStatus.setDataExists(false);
@@ -737,6 +744,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     @Override
     public void enforceEvictionPolicies() {
         cleanUpTempFiles();
+        enforceNoCorruptCachePolicy();
         //enforceCacheSize();
         //enforceCacheExpireEvictionPolicy();
     }
@@ -755,6 +763,29 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
     }
 
+    private void enforceNoCorruptCachePolicy() {
+        Collection<File> listFiles = FileUtils.listFiles(new File(DATA_DIR), new String[]{FILENAME_EXT}, true);
+        Iterator<File> it = listFiles.iterator();
+        while (it.hasNext()) {
+            File file = it.next();
+            String cacheBaseDir = getCacheBaseDirFromDat(file.getAbsolutePath());
+            CacheStatus cacheStatus = getCacheStatus(cacheBaseDir);
+            if (cacheStatus.isCorrupt()) {
+                deleteCorruptCacheEntry(cacheBaseDir);
+            }
+        }
+    }
+
+    private boolean deleteCorruptCacheEntry(String path) {
+        try {
+            FileUtils.deleteDirectory(new File(path));
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public List<CacheStatus> getCacheEntries() {
         List<CacheStatus> cacheStatuses = Lists.newArrayList();
@@ -764,7 +795,9 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             File file = it.next();
             String cacheBaseDir = getCacheBaseDirFromDat(file.getAbsolutePath());
             CacheStatus cacheStatus = getCacheStatus(cacheBaseDir);
-            cacheStatuses.add(cacheStatus);
+            if (!cacheStatus.isCorrupt()) {
+                cacheStatuses.add(cacheStatus);
+            }
         }
         return cacheStatuses;
     }

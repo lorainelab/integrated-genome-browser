@@ -57,6 +57,7 @@ public class SymLoaderTabix extends SymLoader {
     private final GenericObjectPool<TabixReaderCached> pool;
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
+
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
         strategyList.add(LoadStrategy.AUTOLOAD);
@@ -70,22 +71,23 @@ public class SymLoaderTabix extends SymLoader {
         this.lineProcessor = lineProcessor;
         PoolableObjectFactory<TabixReaderCached> poolFactory = new TabixReaderPoolableObjectFactory();
         this.pool = new GenericObjectPool<>(poolFactory);
-        // Always have minimum one reader in pool
-        this.pool.setMinIdle(1);
+        //Do not leave open connections
+        this.pool.setMinIdle(0);
         // Set maximum number of object to be created
         this.pool.setMaxActive(MAX_ACTIVE_POOL_OBJECTS);
 
-        // Test if it's working
-        if (!poolFactory.validateObject(pool.borrowObject())) {
-            throw new IllegalStateException("tabix file does not exist or was not read");
-        }
+//        if (!poolFactory.validateObject(pool.borrowObject())) {
+//            throw new IllegalStateException("tabix file does not exist or was not read");
+//        }
 
         // Make sure object is not null
         this.pool.setTestOnBorrow(true);
         this.pool.setTestOnReturn(true);
         this.pool.setTestWhileIdle(true);
-        
+        this.pool.setMinEvictableIdleTimeMillis(30000);
+        this.pool.setTimeBetweenEvictionRunsMillis(5000);
     }
+
     
     public final class TabixReaderCached extends TabixReader {
         
@@ -150,6 +152,7 @@ public class SymLoaderTabix extends SymLoader {
             throw ex;
         } finally {
             pool.returnObject(tabixReader);
+            
         }
     }
 
@@ -204,6 +207,8 @@ public class SymLoaderTabix extends SymLoader {
             throw ex;
         } finally {
             pool.returnObject(tabixReader);
+
+            
         }
     }
 
@@ -302,6 +307,11 @@ public class SymLoaderTabix extends SymLoader {
     private class TabixReaderPoolableObjectFactory extends BasePoolableObjectFactory<TabixReaderCached> {
 
         @Override
+        public void destroyObject(TabixReaderCached obj) throws Exception {
+            obj.close();
+        }
+
+        @Override
         public TabixReaderCached makeObject() throws Exception {
             String uriString = uri.toString();
             if (uriString.startsWith(FILE_PROTOCOL)) {
@@ -336,6 +346,7 @@ public class SymLoaderTabix extends SymLoader {
 
         @Override
         public boolean validateObject(TabixReaderCached tabixReader) {
+            tabixReader.close();
             return tabixReader != null;
         }
     }

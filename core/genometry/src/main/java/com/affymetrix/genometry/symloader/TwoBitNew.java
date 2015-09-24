@@ -89,7 +89,7 @@ public class TwoBitNew extends SymLoader {
                     long totalLength = genomeVersion.getSeqList().stream().mapToLong(BioSeq::getLength).sum();
                     //y = (1.59618882694367E-007)x - 21.2256064055;y=size in MB,x=contig sum
                     boolean defaultIsYes = false;
-                    if(totalLength < 1699207523) {
+                    if (totalLength < 1699207523) {
                         defaultIsYes = true;
                     }
                     remoteFileCacheService.promptToCacheInBackground(fileUrl, defaultIsYes);
@@ -149,15 +149,20 @@ public class TwoBitNew extends SymLoader {
 
     @Override
     public String getRegionResidues(SeqSpan span) throws Exception {
-        init();
-        BioSeq seq = span.getBioSeq();
-        if (chrMap.containsKey(seq)) {
-            this.setCurrentSequence(chrMap.get(seq));
-            return getResidueString(span.getMin(), span.getMax() - span.getMin());
-        }
+        try {
+            init();
+            BioSeq seq = span.getBioSeq();
+            if (chrMap.containsKey(seq)) {
+                this.setCurrentSequence(chrMap.get(seq));
+                return getResidueString(span.getMin(), span.getMax() - span.getMin());
+            }
 
-        Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
-        return "";
+            Logger.getLogger(TwoBit.class.getName()).log(Level.WARNING, "Seq {0} not present {1}", new Object[]{seq.getId(), uri.toString()});
+
+            return "";
+        } finally {
+            raf.close();
+        }
     }
 
     private String getResidueString(int start, int len) throws IOException {

@@ -57,6 +57,7 @@ public class AboutIGBAction extends GenericAction {
     private static final String ABOUT_EJ_TECH = "about/ej-tech.png";
     private static final String ABOUT_ATLASSIAN = "about/about-atlassian.jpg";
     private static final String ABOUT_UNCC = "about/about-uncc.png";
+    private static final String IGBL_LOGO = "about/igb.png";
 
     private static final Set<String> HTML_RESOURCES = Sets.newHashSet(
             ABOUT_CSS,
@@ -70,7 +71,8 @@ public class AboutIGBAction extends GenericAction {
             ABOUT_NSF,
             ABOUT_EJ_TECH,
             ABOUT_ATLASSIAN,
-            ABOUT_UNCC
+            ABOUT_UNCC,
+            IGBL_LOGO
     );
 
     private static final AboutIGBAction ACTION = new AboutIGBAction();
@@ -96,7 +98,7 @@ public class AboutIGBAction extends GenericAction {
         frame = new JFrame("About Integrated Genome Browser");
         MigLayout layout = new MigLayout("fill", "[grow 100,fill]", "[grow 100,fill]");
         frame.setLayout(layout);
-        frame.setSize(new Dimension(500, 400));
+        frame.setSize(new Dimension(600, 410));
     }
 
     @Override

@@ -11,124 +11,149 @@
             <h2 class="title text-center">
                 Integrated Genome Browser
             </h2>
-            <h3 class="text-center">version: ${project.version}</h3>
+            <div class="row">
+                <div class="col-xs-3 col-lg-3 " align="center"> 
+                    <img alt="User Pic" src="igb.png" class="img-responsive"> 
+                </div>
 
-                <div class="page-body">
-                    <!--                    <div class="hero-unit text-center">
-                                            <h1>
-                                                Our mission
-                                            </h1>
-                                            <p>
-                                                to provide the most powerful, extensible, and intuitive visual analytics
-                                                platform to the genomics community
-                                            </p>
-                                        </div>-->
-                    <section class="page-section">
-                        <p>
-                            IGB (pronounced ig-bee) is a fast, flexible, desktop genome browser first
-                            developed at
-                            <a href="http://www.affymetrix.com/">Affymetrix</a>
-                            for tiling arrays. IGB is now open source software supported by grants
-                            and donations. To find out more, visit
-                            <a href="http://bioviz.org/">BioViz.org</a>
-                            .
-                        </p>
-                    </section>
-                    <section class="page-section">
-                        <p>
-                            If you use IGB in your research, please cite Nicol JW, Helt GA, Blanchard SG Jr, Raja A, 
-                            Loraine AE. <a href="http://www.ncbi.nlm.nih.gov/pubmed/19654113">The Integrated Genome Browser: free software 
+                <div class=" col-xs-9 col-lg-9 "> 
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Version:</td>
+                                <td>${project.version}</td>
+                            </tr>
+                            <tr>
+                                <td>Licensing Information:</td>
+                                <td><a href="https://opensource.org/licenses/cpl1.0.php">Common Public License, version 1.0</a></td>
+                            </tr>
+                            <tr>
+                                <td>Data Directory:</td>
+                                <td>~/.igb</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row" >
+                <div class="col-xs-3 text-center" >
+                </div>
+                <div class="col-xs-9 " >
+                    <p>
+                        IGB (pronounced ig-bee) is a fast, flexible, desktop genome browser first
+                        developed at
+                        <a href="http://www.affymetrix.com/">Affymetrix</a>
+                        for tiling arrays. IGB is now open source software supported by grants
+                        and donations. To find out more, visit
+                        <a href="http://bioviz.org/">BioViz.org</a>
+                        .
+                    </p>
+                    <p>
+                        If you use IGB in your research, please cite Nicol JW, Helt GA, Blanchard SG Jr, Raja A, 
+                        Loraine AE. <a href="http://www.ncbi.nlm.nih.gov/pubmed/19654113">The Integrated Genome Browser: free software 
                             for distribution and exploration of genome-scale datasets. Bioinformatics.</a> 2009 25(20):2730-1.
-                        </p>
-                    </section>
-                    <section class="page-section">
-                        <a href="https://opensource.org/licenses/cpl1.0.php">Licensing Information</a>
-                    </section>
-                    <!--                    <section class="page-section" id="about-team">
-                                            <h2 class="text-center">
-                                                Team
-                                            </h2>
-                                            <div class="row team-row">
-                                                <div class="columns-3">
-                                                    <img alt="Photo Ann Loraine"
-                                                         class="img-circle" src="about-ann.png">
-                                                    <h3>
-                                                        Ann Loraine
-                                                    </h3>
-                                                    <strong>Principle Investigator</strong>
-                                                </div>
-                                                <div class="columns-3">
-                                                    <img alt="Photo David Norris"
-                                                         class="img-circle" src="about-david.png">
-                                                    <h3>
-                                                        David Norris
-                                                    </h3>
-                                                    <strong>SENIOR ENGINEER</strong>
-                                                </div>
-                                                <div class="columns-3">
-                                                    <img alt="Photo John Eckstein "
-                                                         class="img-circle" src="about-john.png">
-                                                    <h3>
-                                                        John Eckstein
-                                                    </h3>
-                                                    <strong>SENIOR ENGINEER</strong>
-                                                </div>
-                                                <div class="columns-3">
-                                                    <img alt="Photo Tarun "
-                                                         class="img-circle" src="about-tarun.png">
-                                                    <h3>
-                                                        Tarun Mall
-                                                    </h3>
-                                                    <strong>ENGINEER</strong>
-                                                </div>
-                                            </div>
-                                            <div class="row team-row">
-                                                <div class="columns-3">
-                                                    <img alt="Photo Mason "
-                                                         class="img-circle" src="about-mason.png">
-                                                    <h3>
-                                                        Mason Meyer
-                                                    </h3>
-                                                    <strong>SUPPORT SPECIALIST</strong>
-                                                </div>
-                                            </div>
-                                        </section>-->
-                    <section class="page-section" id="about-sponsors">
-                        <h2 class="text-center">
+                    </p>
+                    <section class="" id="about-sponsors">
+                        <h4 class="text-center">
                             Supporters
-                        </h2>
+                        </h4>
                         <div class="row team-row">
-                            <div class="columns-3">
+                            <div class="col-xs-3">
                                 <img width="64" height="64" alt="Photo NIH"
                                      class="img-sponser" src="about-nih.png">
-                                <h3>
+                                <p>
                                     NIH
-                                </h3>
+                                </p>
                             </div>
-                            <div class="columns-3">
+                            <div class="col-xs-3">
                                 <img width="64" height="64" alt="Photo EJ Technologies "
                                      class="img-sponser" src="ej-tech.png">
-                                <h3>
+                                <p>
                                     EJ Technologies
-                                </h3>
+                                </p>
                             </div>
-                            <div class="columns-3">
+                            <div class="col-xs-3">
                                 <img width="64" height="64" alt="Photo Atlassian "
                                      class="img-sponser" src="about-atlassian.jpg">
-                                <h3>
+                                <p>
                                     Atlassian
-                                </h3>
+                                </p>
                             </div>
-                            <div class="columns-3">
+                            <div class="col-xs-3">
                                 <img width="64" height="64" alt="Photo UNCC "
                                      class="img-sponser" src="about-uncc.png">
-                                <h3>
+                                <p>
                                     University of North Carolina at Charlotte
-                                </h3>
+                                </p>
                             </div>
                         </div>
                     </section>
                 </div>
+            </div>
+            <div class="page-body">
+                
+                <!--                    <div class="hero-unit text-center">
+                                        <h1>
+                                            Our mission
+                                        </h1>
+                                        <p>
+                                            to provide the most powerful, extensible, and intuitive visual analytics
+                                            platform to the genomics community
+                                        </p>
+                                    </div>-->
+
+
+                <!--                    <section class="page-section" id="about-team">
+                                        <h2 class="text-center">
+                                            Team
+                                        </h2>
+                                        <div class="row team-row">
+                                            <div class="columns-3">
+                                                <img alt="Photo Ann Loraine"
+                                                     class="img-circle" src="about-ann.png">
+                                                <h3>
+                                                    Ann Loraine
+                                                </h3>
+                                                <strong>Principle Investigator</strong>
+                                            </div>
+                                            <div class="columns-3">
+                                                <img alt="Photo David Norris"
+                                                     class="img-circle" src="about-david.png">
+                                                <h3>
+                                                    David Norris
+                                                </h3>
+                                                <strong>SENIOR ENGINEER</strong>
+                                            </div>
+                                            <div class="columns-3">
+                                                <img alt="Photo John Eckstein "
+                                                     class="img-circle" src="about-john.png">
+                                                <h3>
+                                                    John Eckstein
+                                                </h3>
+                                                <strong>SENIOR ENGINEER</strong>
+                                            </div>
+                                            <div class="columns-3">
+                                                <img alt="Photo Tarun "
+                                                     class="img-circle" src="about-tarun.png">
+                                                <h3>
+                                                    Tarun Mall
+                                                </h3>
+                                                <strong>ENGINEER</strong>
+                                            </div>
+                                        </div>
+                                        <div class="row team-row">
+                                            <div class="columns-3">
+                                                <img alt="Photo Mason "
+                                                     class="img-circle" src="about-mason.png">
+                                                <h3>
+                                                    Mason Meyer
+                                                </h3>
+                                                <strong>SUPPORT SPECIALIST</strong>
+                                            </div>
+                                        </div>
+                                    </section>-->
+
+            </div>
         </div>
     </body>
 </html>

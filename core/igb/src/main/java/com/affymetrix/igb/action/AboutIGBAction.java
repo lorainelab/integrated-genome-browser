@@ -98,7 +98,7 @@ public class AboutIGBAction extends GenericAction {
         frame = new JFrame("About Integrated Genome Browser");
         MigLayout layout = new MigLayout("fill", "[grow 100,fill]", "[grow 100,fill]");
         frame.setLayout(layout);
-        frame.setSize(new Dimension(600, 410));
+        frame.setSize(new Dimension(784, 580));
     }
 
     @Override

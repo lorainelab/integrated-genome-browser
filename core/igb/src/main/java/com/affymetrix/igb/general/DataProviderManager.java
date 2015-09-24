@@ -23,7 +23,6 @@ import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
 import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
 import com.affymetrix.genometry.general.DataSet;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
@@ -379,7 +378,7 @@ public class DataProviderManager {
             genomeVersionDescription.ifPresent(description -> genomeVersion.setDescription(description));
             Set<DataContainer> availableContainers = genomeVersion.getAvailableDataContainers();
             if (!availableContainers.isEmpty()) {
-                versionName = GeneralUtils.getPreferredVersionName(availableContainers);
+                versionName = genomeVersionSynonymLookup.getPreferredName(availableContainers.iterator().next().getName());
                 speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
             } else {
                 versionName = genomeName;

@@ -7,7 +7,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.github.kevinsawicki.http.HttpRequest;
 import static com.google.common.io.Closeables.close;
-import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -588,13 +588,13 @@ public final class GeneralUtils {
      */
     public static String getPreferredVersionName(Set<DataContainer> dataContainers) {
         Bundle bundle = FrameworkUtil.getBundle(GeneralUtils.class);
-        ChromosomeSynonymLookup chrSynLookup = null;
+        GenomeVersionSynonymLookup genomeVersionSynonymLookup = null;
         if (bundle != null) {
             BundleContext bundleContext = bundle.getBundleContext();
-            ServiceReference<ChromosomeSynonymLookup> serviceReference = bundleContext.getServiceReference(ChromosomeSynonymLookup.class);
-            chrSynLookup = bundleContext.getService(serviceReference);
+            ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
+            genomeVersionSynonymLookup = bundleContext.getService(serviceReference);
         }
-        return chrSynLookup.getPreferredName(dataContainers.iterator().next().getName());
+        return genomeVersionSynonymLookup.getPreferredName(dataContainers.iterator().next().getName());
     }
 
     public static String preferencesDisplay(Preferences prefs) {

@@ -54,10 +54,8 @@ public class AboutIGBAction extends GenericAction {
     private static final String ABOUT_MASON = "about/about-mason.png";
     private static final String ABOUT_NIH = "about/about-nih.png";
     private static final String ABOUT_NSF = "about/about-nsf.png";
-    private static final String ABOUT_GENENTECH = "about/about-genentech.png";
     private static final String ABOUT_EJ_TECH = "about/ej-tech.png";
     private static final String ABOUT_ATLASSIAN = "about/about-atlassian.jpg";
-    private static final String ABOUT_AFFYMETRIX = "about/about-affymetrix.png";
 
     private static final Set<String> HTML_RESOURCES = Sets.newHashSet(
             ABOUT_CSS,
@@ -69,10 +67,8 @@ public class AboutIGBAction extends GenericAction {
             ABOUT_MASON,
             ABOUT_NIH,
             ABOUT_NSF,
-            ABOUT_GENENTECH,
             ABOUT_EJ_TECH,
-            ABOUT_ATLASSIAN,
-            ABOUT_AFFYMETRIX
+            ABOUT_ATLASSIAN
     );
 
     private static final AboutIGBAction ACTION = new AboutIGBAction();

@@ -147,6 +147,11 @@
             <artifactId>synonym-lookup</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

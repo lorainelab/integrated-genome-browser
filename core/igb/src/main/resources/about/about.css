@@ -1,17 +1,8 @@
 .title {
     box-sizing: border-box;
-    color: rgb(0, 0, 0);
     font-family: Raleway, sans-serif;
-    font-size: 36px;
-    font-weight: normal;
-    height: 50px;
-    line-height: 50.4px;
-    margin-bottom: 30px;
-    margin-top: 0px;
     z-index: 0;
-    font: normal normal normal normal 36px / 50.4px Raleway, sans-serif;
-    margin: 0px 0px 30px;
-    outline: rgb(0, 0, 0) none 0px;
+    font:normal normal normal normal 34px / 43.4px Raleway, sans-serif;
 }
 #seperate {
     box-sizing: border-box;
@@ -22,7 +13,7 @@
     line-height: 28px;
     position: relative;
     text-align: center;
-     float: none;
+    float: none;
     margin: 0 auto;
     width: 120px;
     font: normal normal normal normal 16px / 28px 'Open Sans', sans-serif;
@@ -81,14 +72,14 @@
     margin: 0px 51px;
     outline: rgb(0, 0, 0) none 0px;
 }
- #content {
+#content {
     background-color: #fafbfc;
 }
 .page-section {
     background:#fff;
     margin-bottom:2rem;
     padding:3rem;
-        max-width: 800px;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }

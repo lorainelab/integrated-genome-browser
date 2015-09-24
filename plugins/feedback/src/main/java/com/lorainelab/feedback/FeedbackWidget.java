@@ -43,7 +43,7 @@ public class FeedbackWidget extends JFrame {
     private void initializeFrame() {
         setName("IGB Feedback");
         setTitle("IGB Feedback");
-        setSize(825, 700);
+        setSize(820, 588);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
@@ -118,7 +118,7 @@ public class FeedbackWidget extends JFrame {
             FeedbackWidget.this.hidePanel();
         });
         engine.executeScript(getClassPathResourceAsString("jiraCollectorDialog.js"));
-//        engine.executeScript(getClassPathResourceAsString("closeAction.js"));
+        engine.executeScript(getClassPathResourceAsString("closeAction.js"));
     }
 
     public class CloseTrigger {

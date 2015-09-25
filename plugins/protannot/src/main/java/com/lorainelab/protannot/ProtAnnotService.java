@@ -12,7 +12,6 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,6 +31,7 @@ import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import com.lorainelab.protannot.interproscan.appl.model.ValueType;
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.view.StatusBar;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -436,6 +436,9 @@ public class ProtAnnotService {
         });
     }
 
+    JLabel emailErrorLabel;
+    JLabel dbSelectionErrorLabel;
+
     private boolean showSetupModal() {
 
         configParentPanel = new JPanel(new MigLayout());
@@ -448,6 +451,12 @@ public class ProtAnnotService {
         emailPanel.add(new JLabel("Email:"));
         emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
+        emailErrorLabel = new JLabel("");
+        configParentPanel.add(emailErrorLabel, "wrap");
+        emailErrorLabel.setForeground(Color.red);
+        dbSelectionErrorLabel = new JLabel("");
+        configParentPanel.add(dbSelectionErrorLabel, "wrap");
+        dbSelectionErrorLabel.setForeground(Color.red);
         configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
         initSelectAll();
         configParentPanel.add(selectAllLabel, "wrap");
@@ -494,11 +503,51 @@ public class ProtAnnotService {
             configParentPanel
         };
         Object[] options = {"Run", "Cancel"};
-        int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]);
+        int optionChosen = 0;
+        do {
+            optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+
+        } while (optionChosen == 0 && (!isValidEmail() || !isValidDBSelection()));
         return processSetupOption(optionChosen);
+    }
+
+    private boolean isValidEmail() {
+        matcher = pattern.matcher(email.getText());
+        boolean validEmail = matcher.matches();
+        if (!validEmail) {
+            emailErrorLabel.setText("Invalid email Address.");
+        } else {
+            emailErrorLabel.setText("");
+        }
+        return matcher.matches();
+    }
+
+    private boolean isValidDBSelection() {
+        boolean dbSelection = false;
+        for (java.awt.Component parent : applicationsPanel.getComponents()) {
+            if (parent instanceof JPanel) {
+                for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                    if (child instanceof JCheckBox) {
+                        if (((JCheckBox) child).isSelected()) {
+                            dbSelection = true;
+                            break;
+                        }
+                    }
+                }
+                if (dbSelection) {
+                    break;
+                }
+            }
+        }
+        if (!dbSelection) {
+            dbSelectionErrorLabel.setText("Invalid Database selection.");
+        } else {
+            dbSelectionErrorLabel.setText("");
+        }
+        return dbSelection;
     }
 
     private boolean processSetupOption(int optionChosen) {
@@ -515,12 +564,6 @@ public class ProtAnnotService {
                         }
                     }
                 }
-            }
-            matcher = pattern.matcher(email.getText());
-            if (!matcher.matches()) {
-                ModalUtils.infoPanel("To run a search, enter an email address.");
-                emailReset = true;
-                return false;
             }
             protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
             return true;
@@ -566,7 +609,7 @@ public class ProtAnnotService {
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
             gview.getTabbedPane().setSelectedIndex(1);
             initStatusLabel("Initializing ...");
-        } else if(emailReset) {
+        } else if (emailReset) {
             interProScanRunning = false;
             emailReset = false;
             eventBus.post(new StartInterProScanEvent(id));
@@ -748,7 +791,7 @@ public class ProtAnnotService {
     public void exportAsImage(Component component) {
         JFileChooser fileChooser = new UniFileChooser("Save As", "png");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        
+
         fileChooser.rescanCurrentDirectory();
         try {
             fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());

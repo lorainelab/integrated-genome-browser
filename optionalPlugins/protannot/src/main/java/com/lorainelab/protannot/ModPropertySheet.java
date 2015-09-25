@@ -14,9 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
@@ -38,20 +36,10 @@ public class ModPropertySheet extends JPanel {
     public ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
-        table = new JRPStyledTable("Protannot properties table") {
-            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        table = new JRPStyledTable("Protannot properties table");
 
-            {
-                renderer.setHorizontalAlignment(SwingConstants.LEFT);
-            }
-
-            @Override
-            public TableCellRenderer getCellRenderer(int r, int c) {
-                return renderer;
-            }
-
-        };
         helper = new PropertySheetHelper(table);
+        helper.setHorizontalAlignment(SwingConstants.LEFT);
         jvp = new JViewport();
         scroll_pane = new JScrollPane(table);
 

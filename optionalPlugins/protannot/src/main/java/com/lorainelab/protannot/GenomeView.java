@@ -1294,7 +1294,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private static Properties convertPropsToProperties(Map<String, Object> prop) {
         Properties retval = new Properties();
         for (Entry<String, Object> ent : prop.entrySet()) {
-            retval.put(ent.getKey(), ent.getValue());
+            Object obj = ent.getValue();
+            if (obj != null) {
+                if (obj instanceof String && !Strings.isNullOrEmpty((String) obj)) {
+                    retval.put(ent.getKey(), ent.getValue());
+                } else if (!(obj instanceof String)) {
+                    retval.put(ent.getKey(), ent.getValue());
+                }
+            }
         }
         return retval;
     }

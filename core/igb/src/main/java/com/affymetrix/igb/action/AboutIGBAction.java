@@ -1,69 +1,43 @@
 package com.affymetrix.igb.action;
 
+import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.APP_NAME;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.common.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Sets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
+import com.google.common.io.Resources;
+import com.lorainelab.igb.services.window.HtmlHelpProvider;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import java.util.Set;
-import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebEvent;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import net.miginfocom.swing.MigLayout;
-import netscape.javascript.JSObject;
-import org.apache.commons.io.FileUtils;
+import javax.swing.event.HyperlinkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 /**
  * Open a window showing information about Integrated Genome Browser.
  *
  * @author aloraine
  */
-public class AboutIGBAction extends GenericAction {
+public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
 
     private static final long serialVersionUID = 1L;
-    private static final String HTML_SOURCE = "about/AboutIGB.html";
-
-    private static final String ABOUT_CSS = "about/about.css";
-    private static final String BOOTSTRAP_CSS = "about/bootstrap.min.css";
-    private static final String IGBL_LOGO = "about/igb.png";
-
-    private static final Set<String> HTML_RESOURCES = Sets.newHashSet(
-            ABOUT_CSS,
-            BOOTSTRAP_CSS,
-            IGBL_LOGO
-    );
-
     private static final AboutIGBAction ACTION = new AboutIGBAction();
     private static final Logger logger = LoggerFactory.getLogger(AboutIGBAction.class);
+    private static final String CACHE_COMMENT = "<!-- cacheInfo -->";
+    private static final String DATA_DIR_COMMENT = "<!-- dataDir -->";
+    private static final String VERSION_COMMENT = "<!-- igbVersion -->";
     private static final String PERIOD = ".";
-    private JFXPanel panel;
-    private JFrame frame;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -79,104 +53,79 @@ public class AboutIGBAction extends GenericAction {
                 "22x22/actions/about_igb.png",
                 KeyEvent.VK_A, null, false);
         this.ordinal = 100;
-        frame = new JFrame();
-        MigLayout layout = new MigLayout("fill", "[grow 100,fill]", "[grow 100,fill]");
-        frame.setLayout(layout);
-        frame.setSize(new Dimension(555, 461));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        Platform.runLater(() -> {
-            if (panel == null) {
-                initJFXPanel();
-            }
-            frame.setVisible(true);
-        });
-    }
-
-    private void initJFXPanel() {
-        panel = new JFXPanel();
-        buildScene(panel);
-        frame.add(panel);
-    }
-
-    private void buildScene(JFXPanel panel) {
-        try {
-            final WebView browser = new WebView();
-            final WebEngine webEngine = browser.getEngine();
-            // Layout logic
-            VBox root = new VBox(5);
-            root.getChildren().setAll(browser);
-            root.setPrefSize(800, 400);
-            VBox.setVgrow(browser, Priority.ALWAYS);
-            File tempDestinationDir = Files.createTempDir();
-            tempDestinationDir.deleteOnExit();
-
-            HTML_RESOURCES.forEach(source -> {
-                try {
-                    File sourceFile = new File(tempDestinationDir, source);
-                    FileUtils.copyURLToFile(AboutIGBAction.class.getClassLoader().getResource(source), sourceFile);
-                } catch (IOException ex) {
-                    logger.error(ex.getMessage(), ex);
+        String text = makeText();
+        final JEditorPane pane = new JEditorPane();
+        pane.setEditorKit(JEditorPane.createEditorKitForContentType("text/html"));
+        pane.setEditable(false);
+        pane.setText(text);
+        pane.addHyperlinkListener(e1 -> {
+            if (e1.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(e1.getURL().toURI());
+                    } catch (IOException | URISyntaxException ex) {
+                        logger.error("Error navigating to hyperlink in about IGB window", ex);
+                    }
                 }
-            });
-            File htmlFile = new File(tempDestinationDir, HTML_SOURCE);
-            String htmlString = getClassPathResourceAsString(HTML_SOURCE);
-            String dataDir = PreferenceUtils.getAppDataDirectory();
-            htmlString = htmlString.replaceFirst("\\$\\{dataDirectory\\}", dataDir);
-            Files.write(htmlString, htmlFile, Charsets.UTF_8);
-
-            webEngine.load(htmlFile.toURI().toURL().toExternalForm());
-            webEngine.documentProperty().addListener((ObservableValue<? extends Document> prop, Document oldDoc, Document newDoc) -> {
-                setupWebResources(webEngine, panel);
-            });
-            Scene scene = new Scene(root);
-            panel.setScene(scene);
-            panel.setVisible(true);
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
-
-    private static String getClassPathResourceAsString(String resourcePath) {
-        try {
-            return CharStreams.toString(new InputStreamReader(AboutIGBAction.class.getClassLoader().getResourceAsStream(resourcePath)));
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-        return "";
-    }
-
-    private void setupWebResources(final WebEngine engine, JFXPanel panel) {
-        JSObject jsobj = (JSObject) engine.executeScript("window");
-        jsobj.setMember("logger", new JSLogger());
-        engine.setOnAlert((WebEvent<String> event) -> {
-            Platform.runLater(() -> {
-                Stage popup = new Stage();
-                popup.initOwner(panel.getScene().getWindow());
-                popup.initStyle(StageStyle.UTILITY);
-                popup.initModality(Modality.WINDOW_MODAL);
-                StackPane content = new StackPane();
-                content.getChildren().setAll(
-                        new Label(event.getData())
-                );
-                content.setPrefSize(200, 100);
-                popup.setScene(new Scene(content));
-                popup.showAndWait();
-            });
-
+            }
         });
+        pane.setMargin(new Insets(10, 10, 10, 10));
+        JFrame j = new JFrame("About Integrated Genome Browser");
+        j.add(pane);
+        j.setSize(new Dimension(1000, 500));
+        j.setVisible(true);
     }
 
-    public class JSLogger {
-
-        public void log(String message) {
-            Platform.runLater(() -> {
-                logger.info(message);
-            });
+    @Override
+    public String getHelpHtml() {
+        String htmlText = null;
+        try {
+            htmlText = Resources.toString(AboutIGBAction.class.getResource("/help/com.lorainelab.igb.AboutIGB.html"), Charsets.UTF_8);
+        } catch (IOException ex) {
+            logger.error("Help file not found ", ex);
         }
+        return htmlText;
+    }
+
+    /**
+     * Create an HTML-formatted String containing information about IGB.
+     *
+     * @return String text
+     */
+    public String makeText() {
+        StringBuilder sb = new StringBuilder();
+        sb = new StringBuilder(getHelpHtml());
+
+        String cache_root = com.affymetrix.genometry.util.LocalUrlCacher.getCacheRoot();
+        File cache_file = new File(cache_root);
+        if (cache_file.exists()) {
+            StringBuilder cacheInfo = new StringBuilder();
+            cacheInfo.append("<p>");
+            cacheInfo.append("Cached data are stored in ").append(cache_file.getAbsolutePath()).append(PERIOD);
+            cacheInfo.append("</p>");
+            replace(CACHE_COMMENT, cacheInfo.toString(), sb);
+        }
+        String data_dir = PreferenceUtils.getAppDataDirectory();
+        if (data_dir != null) {
+            File data_dir_f = new File(data_dir);
+            StringBuilder dataDirInfo = new StringBuilder();
+            dataDirInfo.append("<p>");
+            dataDirInfo.append("Application data are stored in ").append(data_dir_f.getAbsolutePath()).append(PERIOD);
+            dataDirInfo.append("</p>");
+            replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
+        }
+        replace(VERSION_COMMENT, CommonUtils.getInstance().getAppVersion(), sb);
+        return sb.toString();
+    }
+
+    private void replace(String origStr, String newStr, StringBuilder sb) {
+        int index = sb.indexOf(origStr);
+        sb.replace(index, index + origStr.length(), newStr);
     }
 
 }

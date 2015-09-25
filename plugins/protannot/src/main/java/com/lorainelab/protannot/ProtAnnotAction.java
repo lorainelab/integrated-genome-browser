@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.igb.swing.JRPMenu;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
@@ -503,24 +502,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExportAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getSaveImageAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPreferencesAction()));
-        AbstractAction copyAction = getCopyAction();
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(copyAction));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExitAction()));
-        JMenu viewMenu = new JRPMenu("View");
-        viewMenu.setText("View");
-        MenuUtil.addToMenu(protannotMenu, viewMenu);
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutAction()));
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutRegionAction()));
         AbstractAction browserAction = getOpenInBrowserAction();
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
         AbstractAction zoomAction = getZoomToFeatureAction();
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(zoomAction));
         AbstractAction hairLineAction = getToggleHairlineAction();
-        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
         AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
-        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
 
-        gview.popup.add(copyAction);
         gview.popup.add(browserAction);
         gview.popup.add(new JCheckBoxMenuItem(hairLineAction));
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
@@ -614,7 +601,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      *
      * @param mbar
      */
-
     /**
      * Sets up interface to select path from the server.
      */

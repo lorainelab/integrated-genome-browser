@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2006-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -50,15 +49,17 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Text Box for displaying and setting the range of a SeqMapView.
@@ -67,6 +68,7 @@ import java.util.regex.Pattern;
  */
 public final class MapRangeBox implements ActionListener, NeoViewBoxListener, GroupSelectionListener, SeqSelectionListener, SymSelectionListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(MapRangeBox.class);
     public static final int NO_ZOOM_SPOT = -1;
 
     private final NeoMap map;
@@ -458,14 +460,14 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         return spans;
     }
 
-    private List<SeqSpan> getSpanList(SeqMapView gview, String search_text) {
+    private List<SeqSpan> getSpanList(SeqMapView gview, String searchText) {
         for (EmptySearch emptySearch : BASE_SEARCH_MODES) {
-            if (emptySearch.testInput(search_text)) {
-                List<SeqSpan> rawSpans = emptySearch.findSpans(search_text, gview.getVisibleSpan());
+            if (emptySearch.testInput(searchText)) {
+                List<SeqSpan> rawSpans = emptySearch.findSpans(searchText, gview.getVisibleSpan());
                 if (rawSpans.size() > 0) {
                     List<SeqSpan> mergedSpans = mergeSpans(rawSpans);
                     zoomToSeqAndSpan(gview, mergedSpans.get(0));
-                    int zoomSpot = emptySearch.getZoomSpot(search_text);
+                    int zoomSpot = emptySearch.getZoomSpot(searchText);
                     if (zoomSpot != NO_ZOOM_SPOT) {
                         gview.setZoomSpotX(zoomSpot);
                     }
@@ -473,22 +475,30 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                 }
             }
         }
-        String search_term = search_text;
-        search_term = Pattern.quote(search_term);// kTs n Tk
+        String searchTerm = searchText;
+        searchTerm = Pattern.quote(searchTerm);// kTs n Tk
         //for(String c : regexChars){
         //	search_term = search_term.replace(c, "\\"+c);
         //}
         for (ISearchModeSym searchMode : SearchModeRegistry.getSearchModeSyms()) {
-            if (searchMode.checkInput(search_term, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
+            if (searchMode.checkInput(searchTerm, null, null) == null /*&& searchMode.searchAllUse() >= 0*/) {
 //				for (TypeContainerAnnot trackSym : trackSyms) {
                 List<SeqSymmetry> res = null;
                 SearchResults<SeqSymmetry> searchResults = null;
-                String errorMessage = searchMode.checkInput(search_term, null, null);
+                String errorMessage = searchMode.checkInput(searchTerm, null, null);
                 if (errorMessage == null) {
-                    searchResults = searchMode.search(search_term, null, application_statusbar, false);
+                    searchResults = searchMode.search(searchTerm, null, application_statusbar, false);
                     res = searchResults != null ? searchResults.getResults() : null;
                 }
                 if (searchResults != null && res != null && res.size() > 0) {
+
+                    //sort by similarity to original search
+                    Collections.sort(res, (SeqSymmetry o1, SeqSymmetry o2) -> {
+                        Integer i1 = StringUtils.getLevenshteinDistance(o1.getID().toLowerCase(), searchText.toLowerCase());
+                        Integer i2 = StringUtils.getLevenshteinDistance(o2.getID().toLowerCase(), searchText.toLowerCase());
+                        return (i2 > i1) ? 1 : -1;
+                    });
+
                     fireSearchResult(searchResults);
                     List<SeqSpan> rawSpans = findSpansFromSyms(res);
                     if (rawSpans.size() > 0) {
@@ -515,13 +525,11 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     }
 
     /**
-     * Set range of view. This will go through all the ISearchMode instances
-     * registered, including plugins. The standard forms of region entry are
-     * hard coded. This method tries all the ISearchModes until the first one
-     * that gives a positive result.
+     * Set range of view. This will go through all the ISearchMode instances registered, including plugins. The standard
+     * forms of region entry are hard coded. This method tries all the ISearchModes until the first one that gives a
+     * positive result.
      *
-     * @param search_text - any search string like "chr1: 40000 - 60000", or
-     * "ADAR" (a gene name)
+     * @param search_text - any search string like "chr1: 40000 - 60000", or "ADAR" (a gene name)
      */
     public void setRange(String search_text) {
         List<SeqSpan> mergedSpans = getSpanList(gview, search_text);
@@ -568,13 +576,13 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
     public void zoomToSeqAndSpan(SeqMapView gview, String chrom_text, int start, int end) throws NumberFormatException {
         GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
         if (genomeVersion == null) {
-            Logger.getLogger(MapRangeBox.class.getName()).severe("Group wasn't set");
+            logger.error("Group wasn't set");
             return;
         }
 
         BioSeq newSeq = genomeVersion.getSeq(chrom_text);
         if (newSeq == null) {
-            Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, "Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, genomeVersion.getName()});
+            logger.error("Couldn''t find chromosome {0} in group {1}", new Object[]{chrom_text, genomeVersion.getName()});
             return;
         }
 
@@ -586,7 +594,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(MapRangeBox.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
             }

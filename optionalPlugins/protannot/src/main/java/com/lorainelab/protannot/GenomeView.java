@@ -1115,7 +1115,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }
         if (id == MouseEvent.MOUSE_RELEASED && isAxisOperation(e) && draggedToZoom) {
             selectEnd = (int) nevt.getCoordX();
-            logger.info("Start and end {},{}", selectStart, selectEnd);
+            logger.debug("Zoom Start and end {},{}", selectStart, selectEnd);
             if (selectEnd < selectStart) {
                 int temp = selectStart;
                 selectStart = selectEnd;
